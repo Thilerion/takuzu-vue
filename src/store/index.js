@@ -1,12 +1,30 @@
-import { createStore } from 'vuex'
+import { createStore } from 'vuex';
+import gameModule from './game';
 
-export default createStore({
-  state: {
-  },
-  mutations: {
-  },
-  actions: {
-  },
-  modules: {
-  }
-})
+const store = createStore({
+
+	strict: process.env.NODE_ENV !== 'production',
+
+	modules: {
+		game: gameModule
+	},
+
+	state: {
+			
+	},
+  
+	getters: {
+
+	},
+
+	mutations: {
+
+	},
+  
+	actions: {
+		
+	}
+
+});
+
+export default store;

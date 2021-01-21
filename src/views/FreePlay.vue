@@ -1,14 +1,18 @@
 <template>
-	<div class="home main-menu">
-	
+	<div class="free-play">
+		
 	</div>
 </template>
 
 <script>
 export default {
-	name: 'MainMenu',
+	name: 'FreePlay',
 	components: {
 		
 	}
 }
 </script>
+
+<style scoped>
+
+</style>
