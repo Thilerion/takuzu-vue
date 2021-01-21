@@ -4,6 +4,9 @@ import './registerServiceWorker';
 import router from './router';
 import store from './store';
 
+import { initTheme } from './dark-mode';
+initTheme();
+
 import "./assets/css/main.css";
 
 createApp(App).use(store).use(router).mount('#app');
