@@ -4,5 +4,12 @@
 
 html, body, #app {
 	height: 100%;
+}
+
+body {
 	@apply text-center;
+	@apply antialiased;
+	@apply font-sans;
+	@apply slashed-zero;
+	@apply tabular-nums;
 }

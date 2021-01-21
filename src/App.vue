@@ -1,11 +1,16 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/play">Free play</router-link>
-  </div>
-  <router-view/>
+	<router-view/>
 </template>
 
-<style>
+<script>
+export default {
+	
+}
+</script>
 
+<style lang="postcss">
+#app {
+	@apply text-gray-900 bg-gray-50;
+	@apply dark:bg-gray-900 dark:text-gray-50;
+}
 </style>
