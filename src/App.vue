@@ -12,5 +12,6 @@ export default {
 #app {
 	@apply text-gray-900 bg-gray-50;
 	@apply dark:bg-gray-900 dark:text-gray-50;
+	@apply relative;
 }
 </style>
