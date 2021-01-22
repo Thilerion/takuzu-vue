@@ -24,17 +24,20 @@
 			:disabled="size.value == null"
 		>Start!</button>
 	</div>
+	<GameBoard @close="$store.commit('reset')" v-if="game" />
 </template>
 
 <script>
 import DifficultySelect from '../components/DifficultySelect';
 import SizeSelection from '../components/SizeSelection';
+import GameBoard from '../components/GameBoard';
 
 export default {
 	name: 'FreePlay',
 	components: {
 		DifficultySelect,
 		SizeSelection,
+		GameBoard,
 	},
 	data() {
 		return {
@@ -50,6 +53,11 @@ export default {
 				type: 'normal',
 				value: 8
 			}
+		}
+	},
+	computed: {
+		game() {
+			return this.$store.state.game.initialized;
 		}
 	},
 	methods: {
@@ -70,6 +78,8 @@ export default {
 
 			console.log('START GAME!');
 			console.log({difficulty, width, height});
+
+			this.$store.dispatch('initGame', {width, height, difficulty});
 		}
 	}
 }
