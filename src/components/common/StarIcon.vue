@@ -3,10 +3,6 @@
 		class="star-icon"
 		:class="{ filled }"
 	>&#x2605;</div>
-	<!-- <span
-		v-else
-		class="star-icon"
-	>&#x2606;</span> -->
 </template>
 
 <script>
@@ -19,9 +15,9 @@ export default {
 
 <style lang="postcss" scoped>
 .star-icon {
-	@apply text-black dark:text-warmgray-600 bg-yellow-700;
+	@apply text-black dark:text-warmgray-600;
 }
 .star-icon.filled {
-	@apply text-yellow-400;
+	@apply dark:text-yellow-400 text-yellow-500;
 }
 </style>

@@ -2,15 +2,15 @@
 	<div class="fixed inset-0 overflow-auto px-4 pb-0 pt-6">
 		<h1 class="text-4xl font-bold">Free play</h1>
 		<div>
-			<div>
-				<h2 class="text-2xl my-3">Select difficulty</h2>
+			<div class="py-4">
+				<h2 class="text-2xl font-light pb-2">Difficulty</h2>
 				<DifficultySelect
 					v-model="difficulty"
 					:labels="difficultyLabels"
 				/>
 			</div>
-			<div>
-				<h2 class="text-2xl my-3">Select size</h2>
+			<div class="py-2">
+				<h2 class="text-2xl font-light pb-2">Size</h2>
 			</div>
 		</div>
 	</div>

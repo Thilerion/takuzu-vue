@@ -1,25 +1,33 @@
 <template>
 	<div class="difficulty-select">
-		<button @click="changeDifficulty(-1)" class="arrow-btn left"><ArrowLeftIcon /></button>
-		<div class="difficulty-current" :class="[`slide-${slideDirection}`]">
+		<button
+			@click="changeDifficulty(-1, $event)"
+			class="arrow-btn left z-10"
+		><ArrowLeftIcon /></button>
+		<div class="difficulty-current z-0" :class="[`slide-${slideDirection}`]">
 			<transition name="slide-label">
-				<div class="difficulty-label" :key="currentStars">
-					{{currentStars}}* - {{currentLabel}}
-				</div>
+				<DifficultyLabel
+					:stars="currentStars"
+					:label="currentLabel"
+					:key="currentStars"
+				/>
 			</transition>
 		</div>
-		<button @click="changeDifficulty(1)" class="arrow-btn right"><ArrowRightIcon /></button>
+		<button
+			@click="changeDifficulty(1, $event)"
+			class="arrow-btn right z-10"
+		><ArrowRightIcon /></button>
 	</div>
 </template>
 
 <script>
-import StarIcon from './common/StarIcon';
 import ArrowLeftIcon from './common/ArrowLeftIcon';
 import ArrowRightIcon from './common/ArrowRightIcon';
+import DifficultyLabel from './DifficultyLabel';
 
 export default {
 	components: {
-		StarIcon,
+		DifficultyLabel,
 		ArrowLeftIcon,
 		ArrowRightIcon,
 	},
@@ -53,7 +61,9 @@ export default {
 		}
 	},
 	methods: {
-		changeDifficulty(amount) {
+		changeDifficulty(amount, event) {
+			event.preventDefault();
+
 			const nextIdx = (this.idx + amount + this.max) % this.max;
 			
 			if (amount < 0) {
@@ -63,7 +73,6 @@ export default {
 			}
 
 			this.$emit('update:modelValue', nextIdx + 1);
-
 		}
 	}
 };
@@ -71,11 +80,9 @@ export default {
 
 <style lang="postcss" scoped>
 .difficulty-select {
-	border: 1px solid white;
-
-	@apply grid p-0;
+	@apply grid p-0 overflow-hidden relative;
 	grid-template-rows: 1fr 1fr;
-	grid-template-columns: 32px 24px auto 24px 32px;
+	grid-template-columns: 2rem 2rem auto 2rem 2rem;
 }
 
 .arrow-btn {
@@ -101,11 +108,7 @@ export default {
 	grid-row: 1 / span 2;
 	grid-column: 2 / span 3;
 	@apply relative;
-	height: 3rem;
-}
-
-.difficulty-label {
-	@apply flex px-1 py-2 m-auto items-center justify-center absolute w-full h-full;
+	height: 4rem;
 }
 
 .slide-label-enter-active, .slide-label-leave-active {
