@@ -1,6 +1,6 @@
 <template>
-	<div class="fixed inset-0 overflow-auto px-4 pb-0 pt-6">
-		<h1 class="text-4xl font-bold">Free play</h1>
+	<div class="fixed inset-0 overflow-auto px-4 pb-0 pt-6 flex flex-col">
+		<h1 class="text-4xl font-bold leading-normal">Free play</h1>
 		<div>
 			<div class="py-4">
 				<h2 class="text-2xl font-light pb-2">Difficulty</h2>
@@ -11,31 +11,65 @@
 			</div>
 			<div class="py-2">
 				<h2 class="text-2xl font-light pb-2">Size</h2>
+				<SizeSelection
+					:difficulty="difficulty"
+					v-model="size"
+					:sizes="sizeOptions"
+				/>
 			</div>
 		</div>
+		<button
+			class="mt-auto mb-4 dark:bg-truegray-100 dark:text-black w-5/6 mx-auto py-2 rounded-lg"
+			@click="createGame"
+			:disabled="size.value == null"
+		>Start!</button>
 	</div>
 </template>
 
 <script>
 import DifficultySelect from '../components/DifficultySelect';
+import SizeSelection from '../components/SizeSelection';
 
 export default {
 	name: 'FreePlay',
 	components: {
-		DifficultySelect
+		DifficultySelect,
+		SizeSelection,
 	},
 	data() {
 		return {
 			difficultyLabels: ['Beginner', 'Normal', 'Hard', 'Expert', 'Extreme'],
 			difficulty: 1,
 
-			sizeOptions: ['6x6', '8x8', '10x10'],
-			size: '6x6'
+			sizeOptions: {
+				normal: [6, 8, 10, 12, 14],
+				odd: [9, 11, 13],
+				special: ['8x12', '10x14', '10x16', '12x16']
+			},
+			size: {
+				type: 'normal',
+				value: 8
+			}
 		}
 	},
 	methods: {
 		selectStars(val) {
 			this.difficulty = val;
+		},
+		createGame() {
+			const sizeValue = this.size.value;
+			let width = sizeValue;
+			let height = sizeValue;
+
+			if (typeof sizeValue === 'string') {
+				const splitSize = sizeValue.split('x').map(Number);
+				width = splitSize[0];
+				height = splitSize[1];
+			}
+			const difficulty = this.difficulty;
+
+			console.log('START GAME!');
+			console.log({difficulty, width, height});
 		}
 	}
 }
@@ -47,5 +81,13 @@ export default {
 }
 .difficulty-btn > *:last-child {
 	@apply mr-0;
+}
+
+.disabled {
+	background: blue;
+}
+
+button:disabled {
+	background: blue;
 }
 </style>
