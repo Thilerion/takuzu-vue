@@ -25,6 +25,8 @@
 </template>
 
 <script>
+import throttle from 'lodash.throttle';
+
 export default {
 	data() {
 		return {
@@ -59,18 +61,22 @@ export default {
 		}
 	},
 	methods: {
+		handleResize(entries) {
+			for (let entry of entries) {
+				const {width, height} = entry.contentRect;
+				this.boardWrapperSize = {width, height};
+			}
+		},
 		createResizeObserver() {
 			// TODO: throttle
 			if (this.resizeObserver != null) {
 				console.warn('ResizeObserver already created');
 				return;
 			}
-			const resizeObserver = new ResizeObserver(entries => {
-				for (let entry of entries) {
-					const {width, height} = entry.contentRect;
-					this.boardWrapperSize = {width, height};
-				}
-			});
+			const throttledFn = throttle((entries) => {
+				this.handleResize(entries);
+			}, 250);
+			const resizeObserver = new ResizeObserver(throttledFn);
 			this.resizeObserver = resizeObserver;
 			this.resizeObserver.observe(this.$refs.boardWrapper);
 		},
@@ -80,15 +86,15 @@ export default {
 		}
 	},
 	mounted() {
+		const rect = this.$refs.boardWrapper.getBoundingClientRect();
+		this.boardWrapperSize = {
+			width: rect.width,
+			height: rect.height
+		}
 		this.createResizeObserver();
 	},
 	beforeUnmount() {
 		this.deleteResizeObserver();
-	},
-	watch: {
-		cellSize(newvalue, oldvalue) {
-			console.log('cell size updated', oldvalue, newvalue);
-		}
 	}
 };
 </script>
@@ -111,7 +117,7 @@ export default {
 }
 .cell-wrapper {
 	border-radius: 3px;
-	--size: max(calc(var(--cell-size) * 1px), 20px);
+	--size: clamp(1.25rem, calc(var(--cell-size) * 1px), 4rem);
 	width: var(--size);
 	height: var(--size);
 	padding: 1px;
