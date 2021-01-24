@@ -1,13 +1,13 @@
 <template>
-	<div class="fixed overflow-hidden inset-0 flex flex-col bg-truegray-900">
+	<div class="gameboard-view fixed overflow-hidden inset-0 flex flex-col z-20">
 		<div class="header">
 			<button @click="$emit('close')">Back</button>
-			<h1>Play game</h1>
+			<h1>{{columns}}x{{rows}}</h1>
 		</div>
 		<div class="board-wrapper" ref="boardWrapper">
 			<div
 				class="board"
-				:style="{'--rows': rows, '--columns': columns, '--cell-size': cellSize }"
+				:style="{'--rows': rows, '--columns': columns, '--cell-size': cellSize, '--gap': gap }"
 			>
 				<div
 					class="cell-wrapper"
@@ -46,18 +46,33 @@ export default {
 		},
 		maxCellWidth() {
 			if (this.boardWrapperSize.width == null) return 1;
-			return Math.floor((this.boardWrapperSize.width - this.columns) / this.columns);
+			return Math.floor((this.availWidth) / this.columns);
 		},
 		maxCellHeight() {
 			if (this.boardWrapperSize.height == null) return 1;
-			return Math.floor((this.boardWrapperSize.height - this.rows) / this.rows);
+			return Math.floor((this.availHeight) / this.rows);
 		},
 		cellSize() {
 			const max = Math.min(this.maxCellWidth, this.maxCellHeight);
-			return Math.floor(max / 2) * 2; // increments of 2
+			return (Math.floor(max / 2) * 2); // increments of 2
 		},
 		numCells() {
 			return this.rows * this.columns;
+		},
+		gap() {
+			return 2;
+		},
+		totalPaddingWidth() {
+			return 5 + (this.gap * this.columns);
+		},
+		totalPaddingHeight() {
+			return 5 + (this.gap * this.rows);
+		},
+		availWidth() {
+			return this.boardWrapperSize.width - this.totalPaddingWidth;
+		},
+		availHeight() {
+			return this.boardWrapperSize.height - this.totalPaddingHeight;
 		}
 	},
 	methods: {
@@ -68,7 +83,6 @@ export default {
 			}
 		},
 		createResizeObserver() {
-			// TODO: throttle
 			if (this.resizeObserver != null) {
 				console.warn('ResizeObserver already created');
 				return;
@@ -100,8 +114,12 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
+.gameboard-view {
+	background: inherit;
+}
+
 .header {
-	@apply border border-truegray-400 h-20 flex-none;
+	@apply border border-truegray-400 h-20 flex-none grid;
 }
 .board-wrapper {
 	@apply flex-1 overflow-hidden flex items-center justify-center;
@@ -114,18 +132,15 @@ export default {
 	display: inline-grid;
 	grid-template-rows: repeat(var(--rows), 1fr);
 	grid-template-columns: repeat(var(--columns), 1fr);
+	gap: calc(var(--gap) * 1px);
 }
 .cell-wrapper {
-	border-radius: 3px;
 	--size: clamp(1.25rem, calc(var(--cell-size) * 1px), 4rem);
 	width: var(--size);
 	height: var(--size);
-	padding: 1px;
 }
 
 .cell {
-	background: white;
-	height: 100%;
-	width: 100%;
+	@apply bg-gray-200 dark:bg-gray-800 rounded-sm h-full w-full;
 }
 </style>
