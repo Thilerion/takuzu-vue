@@ -5,7 +5,7 @@
 			<router-link class="nav-link" to="/tools"><span class="nav-link-text">Tools</span></router-link>
 			<router-link class="nav-link" to="/stats"><span class="nav-link-text">Statistics</span></router-link>
 			<router-link class="nav-link" to="/settings"><span class="nav-link-text">Settings</span></router-link>
-			<router-link class="nav-link" to="/more"><span class="nav-link-text">More</span></router-link>
+			<router-link class="nav-link" to="/menu"><span class="nav-link-text">More</span></router-link>
 		</div>
 	</nav>
 </template>

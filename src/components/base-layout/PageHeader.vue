@@ -1,7 +1,7 @@
 <template>
 	<header class="flex justify-center items-stretch h-24 text-gray-700">
 		<div class="header-group side left">
-			<IconBtn v-if="backBtn" @click="close">
+			<IconBtn v-if="hasBackButton" @click="close">
 				arrow_back
 			</IconBtn>
 		</div>
@@ -24,6 +24,11 @@ export default {
 	methods: {
 		close() {
 			this.$router.go(-1);
+		}
+	},
+	computed: {
+		hasBackButton() {
+			return !this.$route.meta.hasBottomNav;
 		}
 	}
 };

@@ -1,6 +1,6 @@
 <template>
 	<div class="fixed inset-0 overflow-auto flex flex-col">
-		<PageHeader back-btn>New Game</PageHeader>
+		<PageHeader>New Game</PageHeader>
 		<div class="px-4">
 			<div class="pb-4">
 				<h2 class="text-2xl font-light pb-2">Difficulty</h2>

@@ -9,21 +9,19 @@
 					<router-link to="/arcade">Arcade</router-link>
 				</div>
 				<div class="routes secondary-routes flex flex-col">
-					<router-link to="/help">How to play</router-link>
+					<router-link to="/how-to-play">How to play</router-link>
 				</div>				
 			</nav>
 		</div>
-		<BottomNav />
 	</div>
 </template>
 
 <script>
-import BottomNav from '../components/base-layout/BottomNav';
 
 export default {
 	name: 'MainMenu',
 	components: {
-		BottomNav
+		
 	}
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
-	<div class="container">
-		<h1 class="text-4xl font-extrabold py-6">Page not found</h1>
+	<div class="fixed inset-0 overflow-auto flex flex-col">
+		<PageHeader>Page not found</PageHeader>	
 		<p>You will now be redirected to the main menu...</p>
 	</div>
 </template>

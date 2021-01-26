@@ -1,6 +1,6 @@
 <template>
-	<div class="fixed inset-0 overflow-auto flex flex-col">
-		<PageHeader>Daily Puzzles</PageHeader>		
+	<div>
+		
 	</div>
 </template>
 
