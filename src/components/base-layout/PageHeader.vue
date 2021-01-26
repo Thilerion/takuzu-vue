@@ -1,7 +1,7 @@
 <template>
 	<header class="flex justify-center items-stretch h-24 text-gray-700">
 		<div class="header-group side left">
-			<IconBtn v-if="backBtn">
+			<IconBtn v-if="backBtn" @click="close">
 				arrow_back
 			</IconBtn>
 		</div>
@@ -21,6 +21,11 @@ export default {
 	props: {
 		backBtn: Boolean
 	},
+	methods: {
+		close() {
+			console.log('closing');
+		}
+	}
 };
 </script>
 

@@ -14,7 +14,7 @@ export default {
 
 <style lang="postcss" scoped>
 .icon-btn {
-	@apply w-8 h-8 flex items-center justify-center rounded-full active:bg-gray-200 transition-all outline-none text-current;
+	@apply w-8 h-8 flex items-center justify-center rounded-full active:bg-gray-300 transition-all outline-none text-current select-none;
 	-webkit-tap-highlight-color: transparent;
 }
 
