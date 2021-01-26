@@ -19,6 +19,26 @@ module.exports = {
 			warmgray: colors.warmGray,
 
 			teal: colors.teal
+		},
+		fontFamily: {
+			'sans': [
+				'Roboto',
+				'ui-sans-serif',
+				'system-ui',
+				'-apple-system',
+				'BlinkMacSystemFont',
+				'"Segoe UI"',
+				'"Helvetica Neue"',
+				'sans-serif',
+				'"Apple Color Emoji"',
+				'"Segoe UI Emoji"',
+				'"Segoe UI Symbol"',
+				'"Noto Color Emoji"',
+			],
+			'number': [
+				'Hammersmith One',
+				'sans-serif'
+			]
 		}
 	},
 	variants: {
