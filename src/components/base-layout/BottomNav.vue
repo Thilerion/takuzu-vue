@@ -1,5 +1,5 @@
 <template>
-	<nav class="block fixed inset-x-0 bottom-0 z-10 bg-white border-t border-truegray-200 h-16 shadow-xl">
+	<nav class="block absolute bottom-0 bg-white border-t border-truegray-200 h-16 shadow-xl w-full">
 		<div class="flex justify-between h-full">
 			<router-link
 				class="nav-link"

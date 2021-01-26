@@ -1,10 +1,12 @@
 <template>
-	<router-view v-slot="{ Component, route }">
-		<transition :name="transition" :mode="transitionMode">
-			<component :is="Component" :key="route.name" class="page" :class="{ 'has-bottom-nav': $route.meta.hasBottomNav }" />
-		</transition>
-	</router-view>
-	<BottomNav v-if="$route.meta.hasBottomNav" />
+	<div class="main-page">
+		<router-view v-slot="{ Component, route }">
+			<transition :name="transition" :mode="transitionMode">
+				<component :is="Component" :key="route.name" class="page" :class="{ 'has-bottom-nav': $route.meta.hasBottomNav }" />
+			</transition>
+		</router-view>
+		<BottomNav v-if="$route.meta.hasBottomNav" />
+	</div>
 </template>
 
 <script>
@@ -31,6 +33,10 @@ export default {
 	@apply bg-gray-50 dark:bg-gray-900;
 }
 
+.main-page {
+	@apply relative h-full w-full;
+}
+
 .page.has-bottom-nav {
 	@apply pb-16;
 }
@@ -49,10 +55,14 @@ export default {
 .slide-in-leave-active,
 .slide-out-enter-active,
 .slide-out-leave-active {
-	transition: all .2s ease;
+	transition: all .3s ease;
+	@apply w-full h-full z-20;
 }
 .slide-out-enter-active {
-	transition: all .2s ease .15s;
+	transition: all .3s ease;
+}
+.slide-out-enter-active {
+	transition: all .2s ease .1s;
 }
 
 .slide-in-enter-from {
