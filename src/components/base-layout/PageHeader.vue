@@ -7,7 +7,7 @@
 		</div>
 		<div class="header-group flex justify-center items-center flex-1">
 			<h1 class="text-2xl font-bold leading-normal">
-				<slot>Page Title</slot>
+				<slot/>
 			</h1>
 		</div>
 		<div class="header-group side right">

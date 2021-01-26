@@ -1,21 +1,18 @@
 <template>
 	<div class="gameboard-view fixed overflow-hidden inset-0 flex flex-col z-20">
-		<div class="header">
-			<button @click="$emit('close')">Back</button>
-			<h1>{{columns}}x{{rows}}</h1>
-		</div>
-		<div class="board-wrapper" ref="boardWrapper">
+		<PageHeader>
+			{{columns}}x{{rows}}
+		</PageHeader>
+		<div class="board-wrapper font-number" ref="boardWrapper">
 			<div
 				class="board"
-				:style="{'--rows': rows, '--columns': columns, '--cell-size': cellSize, '--gap': gap }"
+				:style="{'--rows': rows, '--columns': columns, '--cell-size': cellSize, '--gap': gap, '--cell-font-size': cellFontSize }"
 			>
-				<div
-					class="cell-wrapper"
-					v-for="n in numCells"
-					:key="n"
-				>
-					<div class="cell"></div>
-				</div>
+				<GameBoardCell
+					v-for="cell in cells"
+					:key="cell.idx"
+					:value="cell.value"
+				/>
 			</div>
 		</div>
 		<div class="footer">
@@ -27,17 +24,43 @@
 <script>
 import throttle from 'lodash.throttle';
 
+import GameBoardCell from './GameBoardCell';
+
 export default {
+	components: {
+		GameBoardCell
+	},
 	data() {
 		return {
 			boardWrapperSize: {
 				width: null,
 				height: null,
 			},
-			resizeObserver: null
+			resizeObserver: null,
+			cellFontSizes: [16, 18, 24, 32, 40, 48]
 		}
 	},
 	computed: {
+		cellFontSize() {
+			const cellSize = this.cellSize;
+			let cellFontSize = this.cellFontSizes[0];
+
+			for (let i = 1; i < this.cellFontSizes.length; i++) {
+				if (cellSize - 4 < this.cellFontSizes[i]) {
+					break;
+				}
+				cellFontSize = this.cellFontSizes[i];
+			}
+			return cellFontSize;
+		},
+		cells() {
+			if (this.rows == null || this.columns == null) return [];
+			return Array(this.numCells).fill(null).map((val, idx) => {
+				const rnd = Math.random();
+				const value = rnd < 0.1 ? '1' : rnd > 0.9 ? '0' : null;
+				return {value, idx};
+			})
+		},
 		rows() {
 			return this.$store.state.game.height;
 		},
@@ -119,13 +142,13 @@ export default {
 }
 
 .header {
-	@apply border border-truegray-400 h-20 flex-none grid;
+	@apply h-20 flex-none grid;
 }
 .board-wrapper {
 	@apply flex-1 overflow-hidden flex items-center justify-center;
 }
 .footer {
-	@apply border border-bluegray-600 h-32 flex-none;
+	@apply h-32 flex-none;
 }
 
 .board {
@@ -133,14 +156,6 @@ export default {
 	grid-template-rows: repeat(var(--rows), 1fr);
 	grid-template-columns: repeat(var(--columns), 1fr);
 	gap: calc(var(--gap) * 1px);
-}
-.cell-wrapper {
-	--size: clamp(1.25rem, calc(var(--cell-size) * 1px), 4rem);
-	width: var(--size);
-	height: var(--size);
-}
-
-.cell {
-	@apply bg-gray-200 dark:bg-gray-800 rounded-sm h-full w-full;
+	font-size: calc(var(--cell-font-size) * 1px);
 }
 </style>

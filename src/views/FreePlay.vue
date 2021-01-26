@@ -32,7 +32,7 @@
 <script>
 import DifficultySelect from '../components/DifficultySelect';
 import SizeSelection from '../components/SizeSelection';
-import GameBoard from '../components/GameBoard';
+import GameBoard from '../components/board/GameBoard';
 
 export default {
 	name: 'FreePlay',
