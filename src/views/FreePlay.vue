@@ -1,8 +1,8 @@
 <template>
-	<div class="fixed inset-0 overflow-auto px-4 pb-0 pt-6 flex flex-col">
-		<h1 class="text-4xl font-bold leading-normal">New Game</h1>
-		<div>
-			<div class="py-4">
+	<div class="fixed inset-0 overflow-auto flex flex-col">
+		<PageHeader back-btn>New Game</PageHeader>
+		<div class="px-4">
+			<div class="pb-4">
 				<h2 class="text-2xl font-light pb-2">Difficulty</h2>
 				<DifficultySelect
 					v-model="difficulty"
@@ -18,11 +18,13 @@
 				/>
 			</div>
 		</div>
-		<button
-			class="mt-auto mb-4 uppercase dark:bg-truegray-100 dark:text-black w-5/6 mx-auto py-2 rounded-lg"
-			@click="createGame"
-			:disabled="size.value == null"
-		>Start a game</button>
+		<div class="pb-4 mt-auto">
+			<button
+				class="uppercase text-sm py-3 bg-gray-700 text-white dark:bg-truegray-100 dark:text-black w-5/6 mx-auto rounded-lg"
+				@click="createGame"
+				:disabled="size.value == null"
+			>Start a game</button>
+		</div>
 	</div>
 	<GameBoard @close="$store.commit('reset')" v-if="game" />
 </template>
