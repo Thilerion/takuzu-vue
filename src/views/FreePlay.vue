@@ -1,6 +1,6 @@
 <template>
 	<div class="fixed inset-0 overflow-auto px-4 pb-0 pt-6 flex flex-col">
-		<h1 class="text-4xl font-bold leading-normal">Free play</h1>
+		<h1 class="text-4xl font-bold leading-normal">New Game</h1>
 		<div>
 			<div class="py-4">
 				<h2 class="text-2xl font-light pb-2">Difficulty</h2>
@@ -19,10 +19,10 @@
 			</div>
 		</div>
 		<button
-			class="mt-auto mb-4 dark:bg-truegray-100 dark:text-black w-5/6 mx-auto py-2 rounded-lg"
+			class="mt-auto mb-4 uppercase dark:bg-truegray-100 dark:text-black w-5/6 mx-auto py-2 rounded-lg"
 			@click="createGame"
 			:disabled="size.value == null"
-		>Start!</button>
+		>Start a game</button>
 	</div>
 	<GameBoard @close="$store.commit('reset')" v-if="game" />
 </template>
@@ -41,7 +41,7 @@ export default {
 	},
 	data() {
 		return {
-			difficultyLabels: ['Beginner', 'Normal', 'Hard', 'Expert', 'Extreme'],
+			difficultyLabels: ['Beginner', 'Normal', 'Hard', 'Very Hard', 'Extreme'],
 			difficulty: 1,
 
 			sizeOptions: {
