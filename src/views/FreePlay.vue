@@ -25,21 +25,21 @@
 				:disabled="size.value == null"
 			>Start a game</button>
 		</div>
-	<GameBoard @close="$store.commit('reset')" v-if="game" />
+	<PlayGame @close="$store.commit('reset')" v-if="game" />
 	</div>
 </template>
 
 <script>
 import DifficultySelect from '../components/DifficultySelect';
 import SizeSelection from '../components/SizeSelection';
-import GameBoard from '../components/board/GameBoard';
+import PlayGame from '../components/board/PlayGame';
 
 export default {
 	name: 'FreePlay',
 	components: {
 		DifficultySelect,
 		SizeSelection,
-		GameBoard,
+		PlayGame,
 	},
 	data() {
 		return {

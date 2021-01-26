@@ -1,8 +1,11 @@
 <template>
 	<button class="icon-btn">
 		<span class="material-icons" :style="{'--size': size + 'px' }">
-			<slot/>
+			{{icon}}
 		</span>
+		<div class="whitespace-nowrap">
+			<slot />
+		</div>
 	</button>
 </template>
 
@@ -12,6 +15,10 @@ export default {
 		size: {
 			type: [String, Number],
 			default: 24
+		},
+		icon: {
+			type: String,
+			required: true
 		}
 	}
 };
@@ -19,10 +26,8 @@ export default {
 
 <style lang="postcss" scoped>
 .icon-btn {
-	@apply flex items-center justify-center rounded-full active:bg-gray-300 outline-none text-current select-none p-2;
+	@apply flex items-center justify-center rounded-full active:bg-gray-300 outline-none text-current select-none p-3;
 	-webkit-tap-highlight-color: transparent;
-	width: var(--size);
-	height: var(--size);
 	transition-property: background color opacity;
 	transition-duration: 0.15s;
 	transition-timing-function: ease;
