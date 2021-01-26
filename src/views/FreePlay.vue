@@ -25,8 +25,8 @@
 				:disabled="size.value == null"
 			>Start a game</button>
 		</div>
-	</div>
 	<GameBoard @close="$store.commit('reset')" v-if="game" />
+	</div>
 </template>
 
 <script>

@@ -23,7 +23,7 @@ export default {
 	},
 	methods: {
 		close() {
-			console.log('closing');
+			this.$router.go(-1);
 		}
 	}
 };

@@ -7,6 +7,10 @@
 		@apply outline-none select-none;
 		-webkit-tap-highlight-color: transparent;
 	}
+	a {
+		-webkit-tap-highlight-color: transparent;
+	}
+	
 }
 
 html, body, #app {
