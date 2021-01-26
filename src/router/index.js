@@ -3,6 +3,17 @@ import Home from '../views/Home.vue';
 import NotFound from '../views/NotFound';
 import Menu from '../views/Menu';
 
+import FreePlay from '../views/FreePlay';
+import DailyPuzzles from '../views/DailyPuzzles';
+import Arcade from '../views/Arcade';
+
+import HowToPlay from '../views/HowToPlay';
+import Settings from '../views/Settings';
+import Tools from '../views/Tools';
+import Statistics from '../views/Statistics';
+
+
+
 const routes = [
 	{
 		path: '/',
@@ -11,12 +22,13 @@ const routes = [
 		meta: {
 			hasBottomNav: true,
 			depth: 0,
+			noBackButton: true
 		}
 	},
 	{
 		path: '/play',
 		name: 'FreePlay',
-		component: () => import(/* webpackChunkName: "play" */ '../views/FreePlay.vue'),
+		component: FreePlay,
 		meta: {
 			hasBottomNav: false,
 			depth: 1,
@@ -25,7 +37,7 @@ const routes = [
 	{
 		path: '/daily',
 		name: 'DailyPuzzles',
-		component: () => import(/* webpackChunkName: "play" */ '../views/DailyPuzzles.vue'),
+		component: DailyPuzzles,
 		meta: {
 			hasBottomNav: false,
 			depth: 1,
@@ -34,7 +46,7 @@ const routes = [
 	{
 		path: '/arcade',
 		name: 'Arcade',
-		component: () => import(/* webpackChunkName: "play" */ '../views/Arcade.vue'),
+		component: Arcade,
 		meta: {
 			hasBottomNav: false,
 			depth: 1,
@@ -43,7 +55,7 @@ const routes = [
 	{
 		path: '/how-to-play',
 		name: 'HowToPlay',
-		component: () => import(/* webpackChunkName: "how-to-play" */ '../views/HowToPlay.vue'),
+		component: HowToPlay,
 		meta: {
 			hasBottomNav: true,
 			depth: 0,
@@ -52,28 +64,31 @@ const routes = [
 	{
 		path: '/settings',
 		name: 'Settings',
-		component: () => import(/* webpackChunkName: "settings" */ '../views/Settings.vue'),
+		component: Settings,
 		meta: {
 			hasBottomNav: true,
 			depth: 0,
+			noBackButton: true
 		}
 	},
 	{
 		path: '/tools',
 		name: 'Tools',
-		component: () => import(/* webpackChunkName: "tools" */ '../views/Tools.vue'),
+		component: Tools,
 		meta: {
 			hasBottomNav: true,
 			depth: 0,
+			noBackButton: true
 		}
 	},
 	{
 		path: '/stats',
 		name: 'Statistics',
-		component: () => import(/* webpackChunkName: "stats" */ '../views/Statistics.vue'),
+		component: Statistics,
 		meta: {
 			hasBottomNav: true,
 			depth: 0,
+			noBackButton: true
 		}
 	},
 	{

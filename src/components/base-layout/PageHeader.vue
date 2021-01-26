@@ -28,7 +28,7 @@ export default {
 	},
 	computed: {
 		hasBackButton() {
-			return !this.$route.meta.hasBottomNav;
+			return !this.$route.meta.noBackButton;
 		}
 	}
 };
