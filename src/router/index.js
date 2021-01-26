@@ -9,7 +9,8 @@ const routes = [
 		name: 'MainMenu',
 		component: Home,
 		meta: {
-			hasBottomNav: true
+			hasBottomNav: true,
+			depth: 0,
 		}
 	},
 	{
@@ -18,8 +19,7 @@ const routes = [
 		component: () => import(/* webpackChunkName: "play" */ '../views/FreePlay.vue'),
 		meta: {
 			hasBottomNav: false,
-			isOverlay: true,
-			transition: 'slide'
+			depth: 1,
 		}
 	},
 	{
@@ -28,8 +28,7 @@ const routes = [
 		component: () => import(/* webpackChunkName: "play" */ '../views/DailyPuzzles.vue'),
 		meta: {
 			hasBottomNav: false,
-			isOverlay: true,
-			transition: 'slide'
+			depth: 1,
 		}
 	},
 	{
@@ -38,8 +37,7 @@ const routes = [
 		component: () => import(/* webpackChunkName: "play" */ '../views/Arcade.vue'),
 		meta: {
 			hasBottomNav: false,
-			isOverlay: true,
-			transition: 'slide'
+			depth: 1,
 		}
 	},
 	{
@@ -47,7 +45,8 @@ const routes = [
 		name: 'HowToPlay',
 		component: () => import(/* webpackChunkName: "how-to-play" */ '../views/HowToPlay.vue'),
 		meta: {
-			hasBottomNav: true
+			hasBottomNav: true,
+			depth: 0,
 		}
 	},
 	{
@@ -55,7 +54,8 @@ const routes = [
 		name: 'Settings',
 		component: () => import(/* webpackChunkName: "settings" */ '../views/Settings.vue'),
 		meta: {
-			hasBottomNav: true
+			hasBottomNav: true,
+			depth: 0,
 		}
 	},
 	{
@@ -63,7 +63,8 @@ const routes = [
 		name: 'Tools',
 		component: () => import(/* webpackChunkName: "tools" */ '../views/Tools.vue'),
 		meta: {
-			hasBottomNav: true
+			hasBottomNav: true,
+			depth: 0,
 		}
 	},
 	{
@@ -71,7 +72,8 @@ const routes = [
 		name: 'Statistics',
 		component: () => import(/* webpackChunkName: "stats" */ '../views/Statistics.vue'),
 		meta: {
-			hasBottomNav: true
+			hasBottomNav: true,
+			depth: 0,
 		}
 	},
 	{
@@ -83,14 +85,32 @@ const routes = [
 		path: '/:pathMatch(.*)*',
 		component: NotFound,
 		meta: {
-			hasBottomNav: true
+			hasBottomNav: true,
+			depth: 0,
 		}
 	}
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes
+	history: createWebHistory(process.env.BASE_URL),
+	routes
+});
+
+router.afterEach((to, from) => {
+	// transition based on depth (slideup or fade)
+	const toDepth = to.meta.depth || 0;
+	const fromDepth = from.meta.depth || 0;
+
+	if (toDepth === fromDepth) {
+		to.meta.transitionName = 'fade';
+		to.meta.transitionMode = 'out-in';
+	} else if (toDepth > fromDepth) {
+		to.meta.transitionName = 'slide-in';
+		to.meta.transitionMode = 'in-out';
+	} else if (toDepth < fromDepth) {
+		to.meta.transitionName = 'slide-out';
+		to.meta.transitionMode = null;
+	}
 })
 
 export default router
