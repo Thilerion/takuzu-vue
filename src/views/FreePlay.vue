@@ -78,9 +78,6 @@ export default {
 			}
 			const difficulty = this.difficulty;
 
-			console.log('START GAME!');
-			console.log({difficulty, width, height});
-
 			this.$store.dispatch('initGame', {width, height, difficulty});
 		},
 		quitGame() {

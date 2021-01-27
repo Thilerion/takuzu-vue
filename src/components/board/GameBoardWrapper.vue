@@ -73,7 +73,6 @@ export default {
 		},
 		createResizeObserver() {
 			if (this.resizeObserver != null) {
-				console.warn('ResizeObserver already created');
 				return;
 			}
 			const throttledFn = throttle((entries) => {
@@ -84,7 +83,6 @@ export default {
 			this.resizeObserver.observe(this.$refs.boardWrapper);
 		},
 		deleteResizeObserver() {
-			console.log('destroying resize observer');
 			this.resizeObserver.disconnect();
 		}
 	},
