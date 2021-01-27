@@ -36,3 +36,15 @@ export function initTheme() {
 		htmlEl.classList.remove('dark');
 	}
 }
+export function setTheme(value) {
+	if (value === 'dark') {
+		setDarkTheme();
+	} else if (value === 'light') {
+		setLightTheme();
+	} else if (!value) {
+		setThemeOSPref();
+	} else {
+		console.warn(`Unknown value for dark/light theme ("${value}"). Resetting to OS pref.`);
+		setThemeOSPref();
+	}
+}
