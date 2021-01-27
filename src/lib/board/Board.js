@@ -1,5 +1,5 @@
 import { COLUMN, EMPTY, ONE, ROW, ZERO } from "../constants";
-import { array2d, cloneArray2d, isValidCellDigit } from "../utils";
+import { array2d, cloneArray2d, getCoordsForBoardSize, isValidCellDigit, shuffle } from "../utils";
 
 export class SimpleBoard {
 	constructor(grid) {
@@ -56,7 +56,6 @@ export class SimpleBoard {
 		}
 
 		if (!isValidCellDigit(value)) {
-			console.warn(`Value: "${value}" is not a valid grid value; defaulting to "EMPTY"`);
 			value = EMPTY;
 		}
 
@@ -69,6 +68,24 @@ export class SimpleBoard {
 	_set(x, y, value) {
 		this.grid[y].splice(x, 1, value);
 		return this;
+	}
+
+	// BOARD ITERATION METHODS
+	cellCoords({ shuffled = false } = {}) {
+		const coords = getCoordsForBoardSize(this.width, this.height);
+		if (shuffled) return shuffle(coords);
+		return [...coords];
+	}
+	*cells({ skipFilled = false, skipEmpty = false, shuffled = false } = {}) {
+		for (let coords of this.cellCoords({ shuffled })) {
+			const { x, y } = coords;
+			const cellValue = this.get(x, y);
+
+			if (skipFilled && cellValue !== EMPTY) continue;
+			if (skipEmpty && cellValue === EMPTY) continue;
+
+			yield { x, y, value: cellValue };
+		}
 	}
 
 	// VALIDITY / SOLVED CHECKS
@@ -85,8 +102,18 @@ export class SimpleBoard {
 	// compare values to a solutionBoard
 	// does not check for "rule violations", only compares to the solution
 	hasIncorrectValues(solutionBoard) {
-		const incorrectValues = [];
-		// TODO: cells iterator
+		const incorrectValueCells = [];
+		for (const cell of this.cells({ skipEmpty: true })) {
+			const { x, y, value } = cell;
+			if (solutionBoard.get(x, y) !== value) {
+				incorrectValueCells.push({ x, y });
+			}
+		}
+		const hasMistakes = incorrectValueCells.length > 0;
+		return {
+			hasMistakes,
+			result: hasMistakes ? incorrectValueCells : null
+		}
 	}
 	// checks if the board is solved by comparing to the solutionBoard
 	equalsSolution(solutionBoard) {
