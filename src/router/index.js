@@ -32,6 +32,7 @@ const routes = [
 		meta: {
 			hasBottomNav: false,
 			depth: 1,
+			title: 'Free Play'
 		}
 	},
 	{
@@ -41,6 +42,7 @@ const routes = [
 		meta: {
 			hasBottomNav: false,
 			depth: 1,
+			title: 'Daily Puzzles'
 		}
 	},
 	{
@@ -50,6 +52,7 @@ const routes = [
 		meta: {
 			hasBottomNav: false,
 			depth: 1,
+			title: 'Arcade'
 		}
 	},
 	{
@@ -59,6 +62,7 @@ const routes = [
 		meta: {
 			hasBottomNav: true,
 			depth: 0,
+			title: 'How To Play'
 		}
 	},
 	{
@@ -68,7 +72,8 @@ const routes = [
 		meta: {
 			hasBottomNav: true,
 			depth: 0,
-			noBackButton: true
+			noBackButton: true,
+			title: 'Settings'
 		}
 	},
 	{
@@ -78,7 +83,8 @@ const routes = [
 		meta: {
 			hasBottomNav: true,
 			depth: 0,
-			noBackButton: true
+			noBackButton: true,
+			title: 'Tools'
 		}
 	},
 	{
@@ -88,7 +94,8 @@ const routes = [
 		meta: {
 			hasBottomNav: true,
 			depth: 0,
-			noBackButton: true
+			noBackButton: true,
+			title: 'Statistics'
 		}
 	},
 	{
@@ -110,6 +117,15 @@ const router = createRouter({
 	history: createWebHistory(process.env.BASE_URL),
 	routes
 });
+
+router.beforeEach((to, from) => {
+	// set document title based on route
+	let title = 'Takuzu';
+	if (to.meta.title) {
+		title += ' - ' + to.meta.title;
+	}
+	document.title = title;
+})
 
 router.afterEach((to, from) => {
 	// transition based on depth (slideup or fade)
