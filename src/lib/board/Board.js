@@ -1,6 +1,7 @@
 import { COLUMN, EMPTY, ONE, ROW, ZERO } from "../constants";
 import { array2d, cloneArray2d, columnIdToX, count, generateColumnIds, generateRowIds, getCoordsForBoardSize, isValidCellDigit, rowIdToY, shuffle } from "../utils";
 import { validateBoard } from "../validate/board";
+import { ThreesUnit } from "./ThreesUnit";
 
 export class SimpleBoard {
 	constructor(grid) {
@@ -128,6 +129,20 @@ export class SimpleBoard {
 				lineStr: lineValues.join(''),
 				lineType: this.rowIds.includes(lineId) ? ROW : COLUMN,
 				lineId
+			}
+		}
+	}
+	*threesUnits() {
+		const maxRowX = this.width - 2;
+		const maxColY = this.height - 2;
+
+		for (const coords of this.cellCoords()) {
+			const { x, y } = coords;
+			if (x < maxRowX) {
+				yield new ThreesUnit(x, y, ROW, this);
+			}
+			if (y < maxColY) {
+				yield new ThreesUnit(x, y, COLUMN, this);
 			}
 		}
 	}
