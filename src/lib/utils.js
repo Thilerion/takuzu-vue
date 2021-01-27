@@ -114,5 +114,14 @@ export const generateColumnIds = (width) => {
 	}
 	return range(width).map(i => String.fromCharCode(65 + i)); // 65 = uppercase A
 }
+
 export const rowIdToY = rowId => rowId.charCodeAt(0) - 65;
 export const columnIdToX = columnId => columnId * 1 - 1;
+
+export const isLineIdRow = lineId => /[A-Z]/.test(lineId);
+export const isLineIdColumn = lineId => /^\d+$/.test(lineId);
+export const lineTypeFromLineId = lineId => {
+	if (isLineIdRow(lineId)) return ROW;
+	if (isLineIdColumn(lineId)) return COLUMN;
+	throw new Error('Unrecognized lineId');
+}

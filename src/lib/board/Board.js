@@ -1,6 +1,7 @@
 import { COLUMN, EMPTY, ONE, ROW, ZERO } from "../constants";
 import { array2d, cloneArray2d, columnIdToX, count, generateColumnIds, generateRowIds, getCoordsForBoardSize, isValidCellDigit, rowIdToY, shuffle } from "../utils";
 import { validateBoard } from "../validate/board";
+import { BoardLine } from "./BoardLine";
 import { ThreesUnit } from "./ThreesUnit";
 
 export class SimpleBoard {
@@ -144,6 +145,11 @@ export class SimpleBoard {
 			if (y < maxColY) {
 				yield new ThreesUnit(x, y, COLUMN, this);
 			}
+		}
+	}
+	*boardLines() {
+		for (const lineId of this.lineIds) {
+			yield new BoardLine(this, lineId);
 		}
 	}
 
