@@ -2,7 +2,7 @@
 	<header class="flex justify-center items-stretch h-24 text-gray-700">
 		<div class="header-group side left">
 			<IconBtn v-if="hasBackButton" @click="close">
-				arrow_back
+				{{ leftButtonType }}
 			</IconBtn>
 		</div>
 		<div class="header-group flex justify-center items-center flex-1">
@@ -19,16 +19,25 @@
 <script>
 export default {
 	props: {
-		backBtn: Boolean
+		closeBtn: Boolean	
 	},
 	methods: {
 		close() {
-			this.$router.go(-1);
+			if (this.$attrs.onClose) {
+				this.$emit('close');
+			} else {
+				this.$router.go(-1);
+			}
 		}
 	},
 	computed: {
 		hasBackButton() {
 			return !this.$route.meta.noBackButton;
+		},
+		leftButtonType() {
+			if (!this.hasBackButton) return null;
+			if (this.closeBtn) return 'close';
+			return 'arrow_back';
 		}
 	}
 };

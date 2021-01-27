@@ -1,6 +1,6 @@
 <template>
 	<div class="gameboard-view fixed overflow-hidden inset-0 flex flex-col z-20">
-		<PageHeader>
+		<PageHeader close-btn @close="$emit('close')">
 			{{columns}}x{{rows}}
 		</PageHeader>
 		<GameBoardWrapper
