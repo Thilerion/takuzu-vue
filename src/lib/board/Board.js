@@ -1,5 +1,6 @@
 import { COLUMN, EMPTY, ONE, ROW, ZERO } from "../constants";
-import { array2d, cloneArray2d, getCoordsForBoardSize, isValidCellDigit, shuffle } from "../utils";
+import { array2d, cloneArray2d, columnIdToX, generateColumnIds, generateRowIds, getCoordsForBoardSize, isValidCellDigit, rowIdToY, shuffle } from "../utils";
+import { validateBoard } from "../validate/board";
 
 export class SimpleBoard {
 	constructor(grid) {
@@ -20,6 +21,10 @@ export class SimpleBoard {
 				[ZERO]: Math.floor(this.height / 2),
 			}
 		}
+
+		this.rowIds = generateRowIds(this.height);
+		this.columnIds = generateColumnIds(this.width);
+		this.lineIds = [...this.rowIds, ...this.columnIds];
 	}
 
 	// STATIC CLASS INSTANTIATION METHODS
@@ -40,6 +45,29 @@ export class SimpleBoard {
 	}
 	isCellEmpty(x, y) {
 		return this.get(x, y) === EMPTY;
+	}
+	getColumn(x) {
+		if (typeof x === 'string') {
+			x = columnIdToX(x);
+		}
+		return this.grid.map(row => row[x]);
+	}
+	getRow(y) {
+		if (typeof y === 'string') {
+			y = rowIdToY(y);
+		}
+		return [...this.grid[y]];
+	}
+	getLine(lineId) {
+		if (typeof lineId !== 'string') {
+			throw new Error('LineId in board.getLine should be a string');
+		}
+		if (this.rowIds.includes(lineId)) {
+			return this.getRow(lineId);
+		} else if (this.columnIds.includes(lineId)) {
+			return this.getColumn(lineId);
+		}
+		throw new Error(`Invalid lineId ("${lineId}")`);
 	}
 
 	// SET BOARD VALUES
@@ -87,13 +115,23 @@ export class SimpleBoard {
 			yield { x, y, value: cellValue };
 		}
 	}
+	*lineStrings() {
+		for (const lineId of this.lineIds) {
+			const lineValues = this.getLine(lineId);
+			yield {
+				lineStr: lineValues.join(''),
+				lineType: this.rowIds.includes(lineId) ? ROW : COLUMN,
+				lineId
+			}
+		}
+	}
 
 	// VALIDITY / SOLVED CHECKS
 	isFilled() {
 		return !this.grid.flat().includes(EMPTY);
 	}
 	isValid() {
-		// TODO: validateBoard
+		return validateBoard(this, true);
 	}
 	isSolved() {
 		return this.isFilled() && this.isValid();

@@ -32,6 +32,7 @@ export const shuffle = (arrOrig) => {
 	}
 	return arr;
 }
+export const range = n => Array(n).fill(null).map((_, idx) => idx);
 
 
 // BOARD / CELL UTILS //
@@ -71,3 +72,18 @@ export const getCoordsForBoardSize = memoize(
 		argsToKey: (width, height) => `${width},${height}`
 	}
 )
+
+// ROW / COLUMN / LINE UTILS //
+export const generateRowIds = (height) => {
+	// row at idx 0 has lineId: 1, then 2, etc
+	return range(height).map(val => String(val + 1));
+}
+export const generateColumnIds = (width) => {
+	// column at idx 0 has lineId: A, then B, then C
+	if (width >= 26) {
+		throw new Error('Cannot generate column ids for width higher than "Z"');
+	}
+	return range(n).map(i => String.fromCharCode(65 + i)); // 65 = uppercase A
+}
+export const rowIdToY = rowId => rowId.charCodeAt(0) - 65;
+export const columnIdToX = columnId => columnId * 1 - 1;
