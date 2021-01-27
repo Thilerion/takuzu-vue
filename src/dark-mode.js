@@ -4,7 +4,7 @@ const htmlEl = document.querySelector('html');
 const prefersColorSchemeDark = () => {
 	return !!window.matchMedia('(prefers-color-scheme: dark)').matches;
 }
-const getThemePref = () => {
+export const getThemePref = () => {
 	const result = localStorage.getItem(THEME_STORAGE_KEY);
 	if (result === 'dark' || result === 'light') return result;
 	return null;
