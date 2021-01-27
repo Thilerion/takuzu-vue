@@ -25,7 +25,7 @@
 				:disabled="size.value == null"
 			>Start a game</button>
 		</div>
-	<PlayGame @close="quitGame" v-if="game" />
+	<PlayGame @close="quitGame" v-if="gameInitialized" />
 	</div>
 </template>
 
@@ -58,7 +58,7 @@ export default {
 		}
 	},
 	computed: {
-		game() {
+		gameInitialized() {
 			return this.$store.state.game.initialized;
 		}
 	},
@@ -86,7 +86,7 @@ export default {
 	},
 	beforeRouteLeave(to, from) {
 		// if game does not exist; and the playGame view is not active, just accept the route change
-		if (!this.game) {
+		if (!this.gameInitialized) {
 			return true;
 		}
 		// if the playGame view IS active, the routeChange is always denied. Depending on the modal/popup answer, the playGame view is either closed or not

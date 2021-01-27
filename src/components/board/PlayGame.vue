@@ -40,6 +40,7 @@ import GameBoardWrapper from './GameBoardWrapper';
 import GameBoard from './GameBoard';
 
 import IconBtnText from '@/components/base-layout/IconBtnText';
+import { EMPTY } from '../../lib/constants';
 
 export default {
 	components: {
@@ -54,13 +55,20 @@ export default {
 		}
 	},
 	computed: {
+		board() {
+			return this.$store.state.game.board;
+		},
+		grid() {
+			return this.board.grid;
+		},
 		cells() {
-			if (this.rows == null || this.columns == null) return [];
-			return Array(this.numCells).fill(null).map((val, idx) => {
-				const rnd = Math.random();
-				const value = rnd < 0.1 ? '1' : rnd > 0.9 ? '0' : null;
-				return {value, idx};
-			})
+			return [...this.board.cells()].map(({x, y, value}, idx) => {
+				return {
+					x, y, 
+					value: value === EMPTY ? null : value,
+					idx
+				};
+			});
 		},
 		rows() {
 			return this.$store.state.game.height;

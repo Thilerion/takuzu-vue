@@ -38,6 +38,20 @@ export const range = n => Array(n).fill(null).map((_, idx) => idx);
 // BOARD / CELL UTILS //
 export const isValidCellDigit = (value) => value === ONE || value === ZERO;
 
+export const toggleValue = (value, oneFirst = false) => {
+	const isEmpty = !isValidCellDigit(value);
+
+	const toggleOrder = oneFirst ? [ONE, ZERO, EMPTY] : [ZERO, ONE, EMPTY];
+
+	if (isEmpty) {
+		return toggleOrder[0];
+	} else if (value === toggleOrder[0]) {
+		return toggleOrder[1];
+	} else if (value === toggleOrder[1]) {
+		return toggleOrder[2];
+	}
+}
+
 // faster than casting to strings and comparing them
 // IMPORTANT: assumes both lines have the same length; this is always the case in this game type, as rows and columns should never be compared
 export const areLinesEqual = (a, b) => {
@@ -83,7 +97,7 @@ export const generateColumnIds = (width) => {
 	if (width >= 26) {
 		throw new Error('Cannot generate column ids for width higher than "Z"');
 	}
-	return range(n).map(i => String.fromCharCode(65 + i)); // 65 = uppercase A
+	return range(width).map(i => String.fromCharCode(65 + i)); // 65 = uppercase A
 }
 export const rowIdToY = rowId => rowId.charCodeAt(0) - 65;
 export const columnIdToX = columnId => columnId * 1 - 1;
