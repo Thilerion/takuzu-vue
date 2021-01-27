@@ -1,4 +1,5 @@
 import applyTriplesConstraint from "./constraints/Triples";
+import applyLineBalanceConstraint from "./constraints/LineBalance";
 
 import { selectCell, selectValue } from "./selection";
 
@@ -19,7 +20,8 @@ export default class Solver {
 
 		// constraints to apply while solving
 		this.constraintFns = conf.constraintFns ?? [
-			applyTriplesConstraint
+			applyTriplesConstraint,
+			applyLineBalanceConstraint,
 		]
 
 		// current solver state
