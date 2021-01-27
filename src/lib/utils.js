@@ -33,6 +33,12 @@ export const shuffle = (arrOrig) => {
 	return arr;
 }
 export const range = n => Array(n).fill(null).map((_, idx) => idx);
+export const count = (arr, targetValue) => {
+	return arr.reduce((acc, val) => {
+		if (val === targetValue) acc += 1;
+		return acc;
+	}, 0);
+}
 
 
 // BOARD / CELL UTILS //
@@ -50,6 +56,15 @@ export const toggleValue = (value, oneFirst = false) => {
 	} else if (value === toggleOrder[1]) {
 		return toggleOrder[2];
 	}
+}
+
+export const countLineValues = (lineArr) => {
+	return lineArr.reduce((acc, val) => {
+		if (val === ONE) acc[ONE] += 1;
+		else if (val === ZERO) acc[ZERO] += 1;
+		else acc[EMPTY] += 1;
+		return acc;
+	}, { [ONE]: 0, [ZERO]: 0, [EMPTY]: 0 });
 }
 
 // faster than casting to strings and comparing them

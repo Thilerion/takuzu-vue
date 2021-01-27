@@ -1,5 +1,5 @@
 import { COLUMN, EMPTY, ONE, ROW, ZERO } from "../constants";
-import { array2d, cloneArray2d, columnIdToX, generateColumnIds, generateRowIds, getCoordsForBoardSize, isValidCellDigit, rowIdToY, shuffle } from "../utils";
+import { array2d, cloneArray2d, columnIdToX, count, generateColumnIds, generateRowIds, getCoordsForBoardSize, isValidCellDigit, rowIdToY, shuffle } from "../utils";
 import { validateBoard } from "../validate/board";
 
 export class SimpleBoard {
@@ -68,6 +68,12 @@ export class SimpleBoard {
 			return this.getColumn(lineId);
 		}
 		throw new Error(`Invalid lineId ("${lineId}")`);
+	}
+
+	get numEmpty() {
+		// TODO: cache gridCounts?
+		const flat = [...this.grid].flat();
+		return count(flat, EMPTY);
 	}
 
 	// SET BOARD VALUES
