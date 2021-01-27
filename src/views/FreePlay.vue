@@ -25,7 +25,7 @@
 				:disabled="size.value == null"
 			>Start a game</button>
 		</div>
-	<PlayGame @close="$store.commit('reset')" v-if="game" />
+	<PlayGame @close="quitGame" v-if="game" />
 	</div>
 </template>
 
@@ -82,6 +82,23 @@ export default {
 			console.log({difficulty, width, height});
 
 			this.$store.dispatch('initGame', {width, height, difficulty});
+		},
+		quitGame() {
+			this.$store.commit('reset');
+		}
+	},
+	beforeRouteLeave(to, from) {
+		// if game does not exist; and the playGame view is not active, just accept the route change
+		if (!this.game) {
+			return true;
+		}
+		// if the playGame view IS active, the routeChange is always denied. Depending on the modal/popup answer, the playGame view is either closed or not
+		const answer = window.confirm('Do you want to quit the current game? Progress will be lost.');
+		if (!answer) {
+			return false;
+		} else {
+			this.quitGame();
+			return false;
 		}
 	}
 }
