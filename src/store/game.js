@@ -28,6 +28,11 @@ const gameModule = {
 			for (const key of Object.keys(initState)) {
 				state[key] = initState[key];
 			}
+		},
+
+		toggleCell(state, { x, y, value }) {
+			console.log('toggling cell value...');
+			console.log({ x, y, value });
 		}
 	},
 

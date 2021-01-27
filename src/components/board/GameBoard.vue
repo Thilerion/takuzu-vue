@@ -7,6 +7,7 @@
 			v-for="cell in cells"
 			:key="cell.idx"
 			:value="cell.value"
+			@click="toggleCell(getCoords(cell.idx), cell.value)"
 		/>
 	</div>
 </template>
@@ -19,8 +20,14 @@ export default {
 		GameBoardCell,
 	},
 	props: {
-		rows: Number,
-		columns: Number,
+		rows: {
+			type: Number,
+			required: true
+		},
+		columns: {
+			type: Number,
+			required: true
+		},
 		cellSize: Number,
 		gap: Number,
 		cellFontSize: Number,
@@ -38,6 +45,16 @@ export default {
 				'--gap': this.gap,
 				'--cell-font-size': this.cellFontSize
 			}
+		}
+	},
+	methods: {
+		getCoords(index) {
+			const x = index % this.columns;
+			const y = Math.floor(index / this.columns);
+			return {x, y};
+		},
+		toggleCell({ x, y }, value) {
+			this.$store.commit('toggleCell', {x, y, value});
 		}
 	}
 };
