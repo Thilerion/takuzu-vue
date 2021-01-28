@@ -1,5 +1,7 @@
 import { SimpleBoard } from "../lib/board/Board";
 import { EMPTY, ONE, ZERO } from "../lib/constants";
+import { generateBoard } from "../lib/generation/board";
+import { createBasicMask } from "../lib/generation/mask";
 import { toggleValue } from "../lib/utils";
 
 const initialState = () => ({
@@ -7,14 +9,18 @@ const initialState = () => ({
 	width: null,
 	height: null,
 	difficulty: null,
-	board: null
+	board: null,
+	solution: null
 });
 
 const gameModule = {
 	state: () => initialState(),
 
 	getters: {
-
+		finishedAndCorrect: state => {
+			if (state.board == null || state.solution == null) return false;
+			return state.board.equalsSolution(state.solution);
+		}
 	},
 
 	mutations: {
@@ -28,8 +34,9 @@ const gameModule = {
 		setDifficulty(state, difficulty) {
 			state.difficulty = difficulty;
 		},
-		setBoard(state, board) {
+		setBoard(state, { board, solution }) {
 			state.board = board;
+			state.solution = solution;
 		},
 		reset(state) {
 			const initState = initialState();
@@ -50,12 +57,17 @@ const gameModule = {
 			commit('setInitialized', true);
 			commit('setDimensions', { width, height });
 			commit('setDifficulty', difficulty);
-			dispatch('createEmptyBoard', { width, height });
+			dispatch('createPuzzle', { width, height });
 		},
 		createEmptyBoard({ commit }, { width, height }) {
 			console.warn('Creating empty board. In the future, a real board should be generated for gameplay...');
 			const board = SimpleBoard.empty(width, height);
 			commit('setBoard', board);
+		},
+		createPuzzle({ commit }, { width, height }) {
+			const solution = generateBoard(width, height);
+			const board = createBasicMask(solution);
+			commit('setBoard', { board, solution });
 		}
 	}
 };

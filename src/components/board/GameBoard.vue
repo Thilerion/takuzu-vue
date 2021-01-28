@@ -36,6 +36,11 @@ export default {
 			required: true
 		}
 	},
+	computed: {
+		finishedAndCorrect() {
+			return this.$store.getters.finishedAndCorrect;
+		}
+	},
 	methods: {
 		getCoords(index) {
 			const x = index % this.columns;
@@ -44,6 +49,16 @@ export default {
 		},
 		toggleCell({ x, y }, value) {
 			this.$store.commit('toggleCell', {x, y, value});
+		}
+	},
+	watch: {
+		finishedAndCorrect(newValue, oldValue) {
+			if (newValue && !oldValue) {
+				setTimeout(() => {
+					window.alert('GOOD JOB!');
+					this.$store.commit('reset');
+				}, 500);
+			}
 		}
 	}
 };
