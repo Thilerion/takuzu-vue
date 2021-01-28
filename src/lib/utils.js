@@ -1,4 +1,4 @@
-import { EMPTY, ONE, ZERO } from "./constants";
+import { COLUMN, EMPTY, ONE, ROW, ZERO } from "./constants";
 
 // MEMOIZE FUNCTION //
 const defaultArgsToKey = (...args) => args.join(',');
@@ -103,11 +103,11 @@ export const getCoordsForBoardSize = memoize(
 )
 
 // ROW / COLUMN / LINE UTILS //
-export const generateRowIds = (height) => {
+export const generateColumnIds = (height) => {
 	// row at idx 0 has lineId: 1, then 2, etc
 	return range(height).map(val => String(val + 1));
 }
-export const generateColumnIds = (width) => {
+export const generateRowIds = (width) => {
 	// column at idx 0 has lineId: A, then B, then C
 	if (width >= 26) {
 		throw new Error('Cannot generate column ids for width higher than "Z"');
@@ -116,10 +116,11 @@ export const generateColumnIds = (width) => {
 }
 
 export const rowIdToY = rowId => rowId.charCodeAt(0) - 65;
-export const columnIdToX = columnId => columnId * 1 - 1;
+export const columnIdToX = columnId => (columnId * 1) - 1;
 
 export const isLineIdRow = lineId => /[A-Z]/.test(lineId);
 export const isLineIdColumn = lineId => /^\d+$/.test(lineId);
+
 export const lineTypeFromLineId = lineId => {
 	if (isLineIdRow(lineId)) return ROW;
 	if (isLineIdColumn(lineId)) return COLUMN;
