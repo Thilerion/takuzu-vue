@@ -1,5 +1,6 @@
 import applyTriplesConstraint from "./constraints/Triples";
 import applyLineBalanceConstraint from "./constraints/LineBalance";
+import applyEliminationConstraint from "./constraints/Elimination";
 
 import { selectCell, selectValue } from "./selection";
 import { OPPOSITE_VALUE } from "../constants";
@@ -23,6 +24,7 @@ export default class Solver {
 		this.constraintFns = conf.constraintFns ?? [
 			applyTriplesConstraint,
 			applyLineBalanceConstraint,
+			applyEliminationConstraint
 		]
 
 		// current solver state
