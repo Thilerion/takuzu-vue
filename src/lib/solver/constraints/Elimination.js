@@ -7,6 +7,7 @@ export default function applyEliminationConstraint(board, options = {}) {
 	const {
 		singleAction = true,
 		enforceUniqueLines = true,
+		maxLeast = 3, // reduce for easier game generation
 	} = options;
 
 	const allLines = [...board.boardLines()];
@@ -20,6 +21,7 @@ export default function applyEliminationConstraint(board, options = {}) {
 
 		if (boardLine.isFilled) continue;
 		if (boardLine.numFilled <= 1) continue;
+		if (maxLeast != null && boardLine.getLeastRemaining() > maxLeast) continue;
 
 		const filled = filledLines[boardLine.type];
 

@@ -1,7 +1,7 @@
 import { SimpleBoard } from "../lib/board/Board";
 import { EMPTY, ONE, ZERO } from "../lib/constants";
 import { generateBoard } from "../lib/generation/board";
-import { createBasicMask } from "../lib/generation/mask";
+import { createBasicMaskWithMaxDifficulty } from "../lib/generation/mask";
 import { toggleValue } from "../lib/utils";
 
 const initialState = () => ({
@@ -57,16 +57,16 @@ const gameModule = {
 			commit('setInitialized', true);
 			commit('setDimensions', { width, height });
 			commit('setDifficulty', difficulty);
-			dispatch('createPuzzle', { width, height });
+			dispatch('createPuzzle', { width, height, difficulty });
 		},
 		createEmptyBoard({ commit }, { width, height }) {
 			console.warn('Creating empty board. In the future, a real board should be generated for gameplay...');
 			const board = SimpleBoard.empty(width, height);
 			commit('setBoard', board);
 		},
-		createPuzzle({ commit }, { width, height }) {
+		createPuzzle({ commit }, { width, height, difficulty = 1 }) {
 			const solution = generateBoard(width, height);
-			const board = createBasicMask(solution);
+			const board = createBasicMaskWithMaxDifficulty(solution, difficulty);
 			commit('setBoard', { board, solution });
 		}
 	}

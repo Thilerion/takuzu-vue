@@ -1,12 +1,75 @@
 import { EMPTY } from "../constants";
+import applyEliminationConstraint from "../solver/constraints/Elimination";
+import applyLineBalanceConstraint from "../solver/constraints/LineBalance";
+import applyTriplesConstraint from "../solver/constraints/Triples";
 import Solver from "../solver/Solver";
 
 const solverConf = {
 	maxSolutions: 2,
 	timeoutDuration: 1000,
 	throwAfterTimeout: false,
-	disableBacktracking: true
+	disableBacktracking: true,
 };
+
+const difficultyConstraintsFns = {
+	1: [
+		applyTriplesConstraint,
+		applyLineBalanceConstraint,
+	],
+	2: [
+		applyTriplesConstraint,
+		applyLineBalanceConstraint,
+		(board, opts = {}) => applyEliminationConstraint(board, {
+			...opts,
+			singleAction: false,
+			maxLeast: 1,
+			enforceUniqueLines: false
+		})
+	],
+	3: [
+		applyTriplesConstraint,
+		applyLineBalanceConstraint,
+		(board, opts = {}) => applyEliminationConstraint(board, {
+			...opts,
+			singleAction: false,
+			maxLeast: 1,
+			enforceUniqueLines: true
+		})
+	],
+	4: [
+		applyTriplesConstraint,
+		applyLineBalanceConstraint,
+		(board, opts = {}) => applyEliminationConstraint(board, {
+			...opts,
+			singleAction: false,
+			maxLeast: 2,
+			enforceUniqueLines: true
+		})
+	],
+	5: [
+		applyTriplesConstraint,
+		applyLineBalanceConstraint,
+		(board, opts = {}) => applyEliminationConstraint(board, {
+			...opts,
+			singleAction: false,
+			maxLeast: 3,
+			enforceUniqueLines: true
+		})
+	]
+};
+
+export function createBasicMaskWithMaxDifficulty(board, maxDifficulty = 1) {
+	console.log('creating with max difficulty:', maxDifficulty);
+	const constraintFns = difficultyConstraintsFns[maxDifficulty];
+	const solverConfig = {
+		...solverConf,
+		constraintFns
+	};
+	if (maxDifficulty === 5) {
+		solverConfig.disableBacktracking = false;
+	}
+	return createBasicMask(board, solverConfig);
+}
 
 export function createBasicMask(board, solverConfig = solverConf) {
 	const maskedBoard = board.copy();
@@ -18,6 +81,8 @@ export function createBasicMask(board, solverConfig = solverConf) {
 			maskedBoard.assign(x, y, value);
 		}
 	}
+	const solution = Solver.run(maskedBoard.copy(), solverConfig);
+	console.log({ solution });
 	return maskedBoard;
 }
 

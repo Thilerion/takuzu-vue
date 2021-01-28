@@ -123,6 +123,12 @@ export class BoardLine {
 		return this.numRequired[value] - this.getValueCount(value);
 	}
 
+	getLeastRemaining() {
+		const oneRemaining = this.getValueRemaining(ONE);
+		const zeroRemaining = this.getValueRemaining(ZERO);
+		return Math.min(zeroRemaining, oneRemaining);
+	}
+
 	// STRINGIFY METHODS
 	toString() {
 		return this.values.join('');
