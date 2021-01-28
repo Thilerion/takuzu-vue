@@ -1,24 +1,15 @@
 <template>
 	<div class="fixed inset-0 overflow-auto flex flex-col">
 		<PageHeader>Settings</PageHeader>
-		<div class="block text-gray-900 text-left px-8">
-			<h2 class="text-gray-700">Theme</h2>
+		<div class="setting-block">
+			<DarkModeSetting />
+		</div>
+		<div class="setting-block mt-6">
+			<h2 class="text-gray-700">Board Display</h2>
 			<div class="mt-2">
 				<label class="flex items-center">
-					<input type="radio" name="radio-theme" v-model="themePref" value="">
-					<span class="ml-2">OS Preference (default)</span>
-				</label>
-			</div>
-			<div class="mt-2">
-				<label class="flex items-center">
-					<input type="radio" name="radio-theme" v-model="themePref" value="light">
-					<span class="ml-2">Light</span>
-				</label>
-			</div>
-			<div class="mt-2">
-				<label class="flex items-center">
-					<input type="radio" name="radio-theme" v-model="themePref" value="dark">
-					<span class="ml-2">Dark</span>
+					<input type="checkbox" v-model="showBoardCoordinates">
+					<span class="ml-2">Show board coordinates</span>
 				</label>
 			</div>
 		</div>
@@ -26,38 +17,49 @@
 </template>
 
 <script>
-import { setTheme, getThemePref } from '../dark-mode';
+import DarkModeSetting from '../components/settings/DarkModeSetting';
 
 export default {
+	components: {
+		DarkModeSetting
+	},
 	data() {
 		return {
-			_themePref: "",
-			themeTimeout: null
+			
 		}
 	},
 	computed: {
-		themePref: {
+		settings() {
+			return this.$store.state.settings;
+		},
+		showBoardCoordinates: {
 			get() {
-				return this._themePref;
+				return !!this.settings.showBoardCoordinates;
 			},
 			set(value) {
-				clearTimeout(this.themeTimeout);
-				this.themeTimeout = setTimeout(() => {
-					setTheme(value);
-				}, 400);
-				this._themePref = value;
+				this.$store.commit('settings/setSetting', {
+					key: 'showBoardCoordinates',
+					value: value
+				})
 			}
 		}
 	},
-	beforeMount() {
-		this._themePref = getThemePref();
-		if (!this._themePref) {
-			this._themePref = "";
+	watch: {
+		settings: {
+			handler(newValue) {
+				if (!newValue) return;
+				console.log('Saving settings to local storage');
+				this.$store.dispatch('settings/saveToStorage', newValue);
+			},
+			deep: true,
+			immediate: true
 		}
 	}
 };
 </script>
 
 <style lang="postcss" scoped>
-	
+.setting-block {
+	@apply block text-gray-900 text-left px-8;
+}
 </style>
