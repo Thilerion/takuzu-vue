@@ -47,15 +47,20 @@ export default class Solver {
 			const result = constraintFn(board);
 
 			if (result.error) return { error: result.error };
-			else if (result) return true;
+			else if (result) {
+				console.log(constraintFn.name);
+				return true;
+			}
 		}
 		return false;
 	}
 
 	// run constraints until no more further values can be deduced, or until the board is filled
 	static solveWithConstraints(board, fns = []) {
+		console.log(board.toDisplayString());
 		while (!board.isFilled()) {
 			const changed = Solver.applyConstraints(board, fns);
+			console.log(board.toDisplayString());
 			if (!changed) {
 				// constraints dont result in a change; no solution possible or start a search
 				return board;

@@ -29,8 +29,8 @@ export function checkTriplesStrategy(threesUnit) {
 			return {
 				found: true,
 				target: {
-					x: coords[2].x,
-					y: coords[2].y,
+					x: coords[0].x,
+					y: coords[0].y,
 					value: OPPOSITE_VALUE[values[1]]
 				}
 			}
@@ -38,8 +38,8 @@ export function checkTriplesStrategy(threesUnit) {
 			return {
 				found: true,
 				target: {
-					x: coords[0].x,
-					y: coords[0].y,
+					x: coords[2].x,
+					y: coords[2].y,
 					value: OPPOSITE_VALUE[values[1]]
 				}
 			}

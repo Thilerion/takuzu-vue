@@ -31,6 +31,9 @@
 			<IconBtnText size="26" icon="emoji_objects">				
 				Hint
 			</IconBtnText>
+			<IconBtnText @click="showSolution" size="26" icon="emoji_objects">				
+				Solution
+			</IconBtnText>
 		</div>
 	</div>
 </template>
@@ -41,6 +44,7 @@ import GameBoard from './GameBoard';
 
 import IconBtnText from '@/components/base-layout/IconBtnText';
 import { EMPTY } from '../../lib/constants';
+import Solver from '../../lib/solver/Solver';
 
 export default {
 	components: {
@@ -80,6 +84,25 @@ export default {
 			return this.rows * this.columns;
 		}		
 	},
+	methods: {
+		showSolution() {
+			console.log(this.board.copy());
+			const config = {
+				maxSolutions: 2,
+				timeoutDuration: 500,
+				throwAfterTimeout: true,
+				disableBacktracking: true
+			}
+			const solutions = Solver.run(this.board.copy(), config);
+			console.log({solutions});
+
+			if (solutions.length === 1) {
+				this.$store.commit('setBoard', solutions[0].copy());
+			} else {
+				console.warn('NO SINGLE SOLUTION FOUND');
+			}
+		}
+	}
 };
 </script>
 
