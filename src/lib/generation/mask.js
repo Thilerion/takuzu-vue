@@ -32,8 +32,8 @@ const difficultyConstraintsFns = {
 		(board, opts = {}) => applyEliminationConstraint(board, {
 			...opts,
 			singleAction: false,
-			maxLeast: 1,
-			enforceUniqueLines: true
+			maxLeast: 2,
+			enforceUniqueLines: false
 		})
 	],
 	4: [
@@ -52,7 +52,7 @@ const difficultyConstraintsFns = {
 		(board, opts = {}) => applyEliminationConstraint(board, {
 			...opts,
 			singleAction: false,
-			maxLeast: 3,
+			maxLeast: 6,
 			enforceUniqueLines: true
 		})
 	]
