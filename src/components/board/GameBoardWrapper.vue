@@ -1,6 +1,7 @@
 <template>
 	<div
 		class="board-wrapper font-number"
+		:style="{'--line-helper-size': lineHelperSize}"
 		ref="boardWrapper"
 	>
 		<slot :cellSize="cellSize" :cellFontSize="cellFontSize" />
@@ -9,6 +10,7 @@
 
 <script>
 import throttle from 'lodash.throttle';
+import { BASE_PADDING, GAP_SIZE, LINE_HELPER_SIZE } from './config';
 
 export default {
 	props: {
@@ -27,6 +29,19 @@ export default {
 		}
 	},
 	computed: {
+		showLineHelpers() {
+			return this.$store.state.settings.showBoardCoordinates;
+		},
+		lineHelperRawSize() {
+			if (this.showLineHelpers) {
+				return LINE_HELPER_SIZE;
+			} else {
+				return 0;
+			}
+		},
+		lineHelperSize() {
+			return this.lineHelperRawSize + 'px';
+		},
 		cellFontSize() {
 			const cellSize = this.cellSize;
 			let cellFontSize = this.cellFontSizes[0];
@@ -58,10 +73,10 @@ export default {
 			return this.boardWrapperSize.height - this.totalPaddingHeight;
 		},
 		totalPaddingWidth() {
-			return 5 + (this.gap * this.columns);
+			return BASE_PADDING + (GAP_SIZE * this.columns) + this.lineHelperRawSize;
 		},
 		totalPaddingHeight() {
-			return 5 + (this.gap * this.rows);
+			return BASE_PADDING + (GAP_SIZE * this.rows) + this.lineHelperRawSize;
 		},
 	},
 	methods: {

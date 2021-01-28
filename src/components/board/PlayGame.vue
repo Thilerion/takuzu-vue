@@ -45,6 +45,7 @@ import GameBoard from './GameBoard';
 import IconBtnText from '@/components/base-layout/IconBtnText';
 import { EMPTY } from '../../lib/constants';
 import Solver from '../../lib/solver/Solver';
+import { GAP_SIZE } from './config';
 
 export default {
 	components: {
@@ -54,7 +55,7 @@ export default {
 	},
 	data() {
 		return {
-			gap: 2,
+			gap: GAP_SIZE,
 			hasBookmark: false
 		}
 	},
@@ -120,8 +121,8 @@ export default {
 
 .board {
 	display: inline-grid;
-	grid-template-rows: repeat(var(--rows), 1fr);
-	grid-template-columns: repeat(var(--columns), 1fr);
+	grid-template-rows: var(--line-helper-size) repeat(var(--rows), 1fr) 0px;
+	grid-template-columns: var(--line-helper-size) repeat(var(--columns), 1fr) 0px;
 	gap: calc(var(--gap) * 1px);
 	font-size: calc(var(--cell-font-size) * 1px);
 }

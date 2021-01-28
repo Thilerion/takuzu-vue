@@ -7,6 +7,10 @@
 			v-for="cell in cells"
 			:key="cell.idx"
 			:value="cell.value"
+			:style="{
+				'grid-row': `${cell.y + 2} / span 1`,
+				'grid-column': `${cell.x + 2} / span 1`,
+			}"
 			@click="toggleCell(getCoords(cell.idx), cell.value)"
 		/>
 	</div>
