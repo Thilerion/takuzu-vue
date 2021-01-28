@@ -43,17 +43,6 @@ export default {
 				})
 			}
 		}
-	},
-	watch: {
-		settings: {
-			handler(newValue) {
-				if (!newValue) return;
-				console.log('Saving settings to local storage');
-				this.$store.dispatch('settings/saveToStorage', newValue);
-			},
-			deep: true,
-			immediate: true
-		}
 	}
 };
 </script>

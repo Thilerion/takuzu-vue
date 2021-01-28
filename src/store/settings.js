@@ -25,7 +25,7 @@ const saveSettings = (value) => {
 	window.localStorage.setItem('takuzu-settings', json);
 }
 
-const settingsModule = {
+export const settingsModule = {
 	namespaced: true,
 	state: loadSettings,
 
@@ -46,4 +46,21 @@ const settingsModule = {
 	}
 };
 
-export default settingsModule;
+export const initSettingsWatcher = (store) => {
+	const watchFn = (state) => state.settings;
+	const watchCb = (settings) => {
+		console.log('Store settings watcher: saving settings');
+		saveSettings(settings);
+	}
+	const opts = {
+		deep: true,
+		immediate: true
+	}
+	const watcher = store.watch(
+		watchFn,
+		watchCb,
+		opts
+	);
+	console.log('watcher initiated');
+	return watcher;
+}
