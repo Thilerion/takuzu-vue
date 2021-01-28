@@ -1,7 +1,6 @@
 <template>
 	<div
 		class="board"
-		:style="boardCssVariables"
 	>
 		<GameBoardCell
 			v-for="cell in cells"
@@ -32,23 +31,9 @@ export default {
 			type: Number,
 			required: true
 		},
-		cellSize: Number,
-		gap: Number,
-		cellFontSize: Number,
 		cells: {
 			type: Array,
 			required: true
-		}
-	},
-	computed: {
-		boardCssVariables() {
-			return {
-				'--rows': this.rows,
-				'--columns': this.columns,
-				'--cell-size': this.cellSize,
-				'--gap': this.gap,
-				'--cell-font-size': this.cellFontSize
-			}
 		}
 	},
 	methods: {

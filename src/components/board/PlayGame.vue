@@ -3,18 +3,10 @@
 		<PageHeader close-btn @close="$emit('close')">
 			{{columns}}x{{rows}}
 		</PageHeader>
-		<GameBoardWrapper
-			:rows="rows"
-			:columns="columns"
-			:gap="gap"
-			v-slot="{ cellSize, cellFontSize }"
-		>
+		<GameBoardWrapper>
 			<GameBoard
-				:cellSize="cellSize"
-				:cellFontSize="cellFontSize"
 				:rows="rows"
 				:columns="columns"
-				:gap="gap"
 				:cells="cells"
 			/>
 		</GameBoardWrapper>
@@ -121,10 +113,11 @@ export default {
 
 .board {
 	display: inline-grid;
-	grid-template-rows: var(--line-helper-size) repeat(var(--rows), 1fr) 0px;
-	grid-template-columns: var(--line-helper-size) repeat(var(--columns), 1fr) 0px;
-	gap: calc(var(--gap) * 1px);
-	font-size: calc(var(--cell-font-size) * 1px);
+	font-size: var(--cell-font-size);
+	gap: var(--grid-gap);
+
+	grid-template-rows: var(--line-helper-size) repeat(var(--board-rows), 1fr) 0px;
+	grid-template-columns: var(--line-helper-size) repeat(var(--board-cols), 1fr) 0px;
 }
 
 .footer > * {

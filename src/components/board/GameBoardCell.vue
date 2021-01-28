@@ -18,7 +18,7 @@ export default {
 
 <style lang="postcss" scoped>
 .cell-wrapper {
-	--size: clamp(1.25rem, calc(var(--cell-size) * 1px), 4rem);
+	--size: clamp(1.25rem, calc(var(--cell-size)), 4rem);
 	width: var(--size);
 	height: var(--size);
 	@apply bg-truegray-200 dark:bg-gray-800 rounded-sm relative;
@@ -30,7 +30,7 @@ export default {
 
 .cell-value {
 	@apply m-auto inline-block text-gray-700;
-	font-size: calc(var(--cell-font-size) * 1px);
+	font-size: var(--cell-font-size);
 	line-height: calc(var(--size) * 1.1);
 }
 </style>
