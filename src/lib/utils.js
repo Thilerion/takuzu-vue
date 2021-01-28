@@ -5,16 +5,22 @@ const defaultArgsToKey = (...args) => args.join(',');
 export function memoize(fn, opts = {}) {
 	const {
 		argsToKey = defaultArgsToKey,
-		cache = {}
+		initialCache = new Map()
 	} = opts;
-	return (...a) => {
-		const key = argsToKey(...a);
-		if (cache[key] == null) {
-			const result = fn(...a);
-			cache[key] = result;
+
+	let memoized = function (...args) {
+		let cache = memoized.cache;
+		const key = argsToKey(...args);
+
+		if (cache.has(key)) {
+			return cache.get(key);
 		}
-		return cache[key];
+		const result = fn(...args);
+		memoized.cache = cache.set(key, result);
+		return result;
 	}
+	memoized.cache = initialCache;
+	return memoized;
 }
 
 // ARRAY UTILS //
@@ -125,4 +131,11 @@ export const lineTypeFromLineId = lineId => {
 	if (isLineIdRow(lineId)) return ROW;
 	if (isLineIdColumn(lineId)) return COLUMN;
 	throw new Error('Unrecognized lineId');
+}
+
+const lineValueOrder = [ZERO, ONE, EMPTY];
+export const sortLineValues = (values) => {
+	return [...values].sort((a, b) => {
+		return lineValueOrder.indexOf(a) - lineValueOrder.indexOf(b);
+	})
 }
