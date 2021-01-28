@@ -29,6 +29,7 @@ export function selectCellFewestEmptyPeers(board, targetEmptyRatio = 0.7) {
 		const line = board.getLine(lineId);
 		const count = countLineValues(line);
 		acc[lineId] = count;
+		return acc;
 	}, {});
 
 	for (const cell of board.cells({ skipFilled: true })) {

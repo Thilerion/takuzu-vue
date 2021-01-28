@@ -48,7 +48,6 @@ export default class Solver {
 
 			if (result.error) return { error: result.error };
 			else if (result) {
-				console.log(constraintFn.name);
 				return true;
 			}
 		}
@@ -57,10 +56,8 @@ export default class Solver {
 
 	// run constraints until no more further values can be deduced, or until the board is filled
 	static solveWithConstraints(board, fns = []) {
-		console.log(board.toDisplayString());
 		while (!board.isFilled()) {
 			const changed = Solver.applyConstraints(board, fns);
-			console.log(board.toDisplayString());
 			if (!changed) {
 				// constraints dont result in a change; no solution possible or start a search
 				return board;
@@ -164,6 +161,7 @@ export default class Solver {
 			// TODO: set current board to view why the timeout was reached during debugging?
 			throw new Error('Solver has reached time limit.');
 		} else if (limitReached) {
+			console.warn('Solver has reached time limit.');
 			this.solving = false;
 			return true;
 		}
