@@ -26,6 +26,9 @@
 			<IconBtnText @click="showSolution" size="26" icon="emoji_objects">				
 				Solution
 			</IconBtnText>
+			<IconBtnText @click="logString" size="26" icon="emoji_objects">				
+				Log string
+			</IconBtnText>
 		</div>
 	</div>
 </template>
@@ -94,6 +97,10 @@ export default {
 			} else {
 				console.warn('NO SINGLE SOLUTION FOUND');
 			}
+		},
+		logString() {
+			console.log(this.board.toString());
+			const x = `0....010111...1011000....101.01.010010.10110110100..0..0...1..1..1....0100110110101100100110.101001.`;
 		}
 	}
 };
