@@ -111,16 +111,16 @@ export const getCoordsForBoardSize = memoize(
 )
 
 // ROW / COLUMN / LINE UTILS //
-export const generateColumnIds = (height) => {
+export const generateColumnIds = (width) => {
 	// row at idx 0 has lineId: 1, then 2, etc
-	return range(height).map(val => String(val + 1));
+	return range(width).map(val => String(val + 1));
 }
-export const generateRowIds = (width) => {
+export const generateRowIds = (height) => {
 	// column at idx 0 has lineId: A, then B, then C
-	if (width >= 26) {
-		throw new Error('Cannot generate column ids for width higher than "Z"');
+	if (height >= 26) {
+		throw new Error('Cannot generate column ids for height higher than "Z"');
 	}
-	return range(width).map(i => String.fromCharCode(65 + i)); // 65 = uppercase A
+	return range(height).map(i => String.fromCharCode(65 + i)); // 65 = uppercase A
 }
 
 export const rowIdToY = rowId => rowId.charCodeAt(0) - 65;

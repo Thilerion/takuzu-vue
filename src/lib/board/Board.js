@@ -38,7 +38,7 @@ export class SimpleBoard {
 	// RETRIEVE BOARD VALUES;
 	// TODO: retrieve lines/columns/rows
 	get(x, y) {
-		if (x < 0 || y < 0 || x >= this.width || y >= this.width) {
+		if (x < 0 || y < 0 || x >= this.width || y >= this.height) {
 			// return null;
 			// TODO: return null here? or remove this check?
 			throw new Error('X and/or Y value not in range.');
