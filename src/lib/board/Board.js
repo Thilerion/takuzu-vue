@@ -8,8 +8,8 @@ export class SimpleBoard {
 	constructor(grid) {
 		this.grid = grid;
 		
-		this.width = this.grid.length;
-		this.height = this.grid[0].length;
+		this.width = this.grid[0].length;
+		this.height = this.grid.length;
 
 		// TODO: validate grid size
 		
