@@ -1,4 +1,5 @@
-import { COLUMN, EMPTY, ROW } from "../constants";
+import { COLUMN, EMPTY, ONE, ROW, ZERO } from "../constants";
+import { getValidLinePermutations } from "../permutations";
 import { columnIdToX, rowIdToY, lineTypeFromLineId, countLineValues, lineSizeToNumRequired } from "../utils";
 
 export class BoardLine {
@@ -14,8 +15,7 @@ export class BoardLine {
 		this._coords = null;
 		this._counts = null;
 		this._numRequired = null;
-		// TODO: validPermutations properties
-		// this._validPermutations = null;
+		this._validPermutations = null;
 	}
 
 	static fromString(lineStr, lineId = 'A') {
@@ -33,7 +33,7 @@ export class BoardLine {
 		this._coords = null;
 		this._counts = null;
 		this._numRequired = null;
-		// this._validPermutations = null;
+		this._validPermutations = null;
 		return this;
 	}
 
@@ -82,9 +82,20 @@ export class BoardLine {
 		}
 		return this._numRequired;
 	}
-	// get validPermutations() {
-
-	// }
+	get validPermutations() {
+		if (this._validPermutations == null) {
+			const { values, counts, numRequired } = this;
+			const maxZero = numRequired[ZERO];
+			const maxOne = numRequired[ONE];
+			const validPerms = getValidLinePermutations(values, counts, maxZero, maxOne);
+			if (!validPerms) {
+				this._validPermutations = [];
+			} else {
+				this._validPermutations = [...validPerms];
+			}
+		}
+		return this._validPermutations;
+	}
 
 	// OTHER GETTERS
 	get length() {
