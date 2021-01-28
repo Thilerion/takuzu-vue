@@ -28,10 +28,20 @@ export class ThreesUnit {
 		return this._values;
 	}
 
+	toString() {
+		return this.values.join('');
+	}
+
 	getCoords(i) {
 		const coord = { x: this.x, y: this.y };
 		if (this.type === ROW) coord.x += i;
 		else if (this.type === COLUMN) coord.y += i;
 		return coord;
+	}
+	
+	getAllCoords() {
+		return this.coords.map(coord => {
+			return { x: coord.x, y: coord.y };
+		});
 	}
 }
