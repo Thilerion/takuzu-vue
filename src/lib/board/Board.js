@@ -101,6 +101,29 @@ export class SimpleBoard {
 		
 		return this;
 	}
+	assignRow(y, values) {
+		if (!Array.isArray(values) || values.length !== this.width) {
+			throw new Error("Can only assign row with an array of values");
+		}
+		this.grid.splice(y, 1, [...values]);
+		return this;
+	}
+	assignColumn(x, values) {
+		if (!Array.isArray(values) || values.length !== this.height) {
+			throw new Error("Can only assign column with an array of values");
+		}
+		for (let y = 0; y < this.height; y++) {
+			this._set(x, y, values[y]);
+		}
+		return this;
+	}
+	assignLine(lineId, values) {
+		if (this.rowIds.includes(lineId)) {
+			return this.assignRow(rowIdToY(lineId), values);
+		} else if (this.columnIds.includes(lineId)) {
+			return this.assignColumn(columnIdToX(lineId), values);
+		}
+	}
 	_set(x, y, value) {
 		this.grid[y].splice(x, 1, value);
 		return this;

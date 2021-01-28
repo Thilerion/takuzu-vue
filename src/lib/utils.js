@@ -45,6 +45,8 @@ export const count = (arr, targetValue) => {
 		return acc;
 	}, 0);
 }
+export const randomIndex = (arr) => Math.floor(Math.random() * arr.length);
+export const pickRandom = (arr) => arr[randomIndex(arr)];
 
 
 // BOARD / CELL UTILS //
