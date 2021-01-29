@@ -11,7 +11,7 @@
 			/>
 		</GameBoardWrapper>
 		<div class="footer flex items-center justify-center text-gray-700">
-			<IconBtnText size="26" icon="undo">
+			<IconBtnText @click="undo" :disabled="!canUndo" size="26" icon="undo">
 				Undo
 			</IconBtnText>
 			<IconBtnText @click="restart" size="26" icon="replay">
@@ -78,7 +78,10 @@ export default {
 		},
 		numCells() {
 			return this.rows * this.columns;
-		}		
+		},
+		canUndo() {
+			return this.$store.getters.canUndo;
+		}
 	},
 	methods: {
 		showSolution() {
@@ -108,6 +111,9 @@ export default {
 		check() {
 			this.$store.dispatch('checkAction');
 		},
+		undo() {
+			this.$store.dispatch('undo');
+		}
 	}
 };
 </script>

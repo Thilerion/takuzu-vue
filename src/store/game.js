@@ -4,6 +4,19 @@ import { generateBoard } from "../lib/generation/board";
 import { createBasicMaskWithMaxDifficulty } from "../lib/generation/mask";
 import { toggleValue } from "../lib/utils";
 
+class PuzzleMove {
+	constructor(x, y, value, prevValue) {
+		this.x = x;
+		this.y = y;
+
+		this.value = value;
+		this.prevValue = prevValue;
+	}
+	get cellId() {
+		return `${this.x},${this.y}`;
+	}
+}
+
 const initialState = () => ({
 	initialized: false,
 	width: null,
@@ -13,9 +26,9 @@ const initialState = () => ({
 	initialBoard: null,
 	board: null,
 	solution: null,
+	moveList: [],
 
 	// state associated with current puzzle state;
-	// when the board is reset, or action undone, etc, these must be reset as well
 	markedIncorrectValues: [],
 });
 
@@ -36,7 +49,9 @@ const gameModule = {
 			return cells.map(cell => {
 				return `${cell.x},${cell.y}`;
 			})
-		}
+		},
+
+		canUndo: state => state.moveList.length > 0,
 	},
 
 	mutations: {
@@ -60,6 +75,7 @@ const gameModule = {
 		},
 		resetPuzzleStateProps(state) {
 			state.markedIncorrectValues = [];
+			state.moveList = [];
 		},
 		reset(state) {
 			const initState = initialState();
@@ -70,6 +86,8 @@ const gameModule = {
 		setValue(state, { x, y, value }) {
 			state.board.assign(x, y, value);
 		},
+
+		// INCORRECT MARKED VALUES
 		setIncorrectValues(state, incorrectArr) {
 			state.markedIncorrectValues = [...incorrectArr];
 		},
@@ -79,7 +97,22 @@ const gameModule = {
 			if (idx > -1) {
 				state.markedIncorrectValues.splice(idx, 1);
 			}
-		}
+		},
+
+		// MOVE LIST
+		resetMoveList(state) {
+			state.moveList = [];
+		},
+		addMove(state, move) {
+			state.moveList.push(move);
+		},
+		replaceLastMove(state, move) {
+			const idx = state.moveList.length - 1;
+			state.moveList.splice(idx, 1, move);
+		},
+		popMove(state) {
+			state.moveList.pop();
+		},
 	},
 
 	actions: {
@@ -99,12 +132,22 @@ const gameModule = {
 			commit('setBoard', board);
 			commit('resetPuzzleStateProps');
 		},
-		toggleCell({ commit }, { x, y, value }) {
+		toggleCell({ commit, dispatch }, { x, y, value }) {
 			// TODO: one or zero first setting for toggling
 			const nextValue = toggleValue(value, false);
 
 			commit('setValue', { x, y, value: nextValue });
 			commit('removeFromIncorrectValues', { x, y });
+			dispatch('addToggleToMoveList', { x, y, value, nextValue });
+		},
+		addToggleToMoveList({ state, commit }, { x, y, value, nextValue }) {
+			const prevMove = state.moveList[state.moveList.length - 1];
+			if (!prevMove || prevMove.x !== x || prevMove.y !== y) {
+				commit('addMove', new PuzzleMove(x, y, nextValue, value));
+				return;
+			}
+			const combinedMove = new PuzzleMove(x, y, nextValue, prevMove.prevValue);
+			commit('replaceLastMove', combinedMove);
 		},
 
 		findIncorrectValues({ state, commit }) {
@@ -121,6 +164,18 @@ const gameModule = {
 			// TODO: check action be a) find incorrect values, or b) find rule violations
 			dispatch('findIncorrectValues');
 		},
+		undo({ state, commit }) {
+			const lastMove = state.moveList[state.moveList.length - 1];
+			if (!lastMove || lastMove.x == null) {
+				console.warn('cant undo...');
+				return;
+			}
+			const { x, y, prevValue } = lastMove;
+
+			commit('setValue', { x, y, value: prevValue });
+			commit('popMove');
+			commit('removeFromIncorrectValues', { x, y });
+		}
 	}
 };
 
