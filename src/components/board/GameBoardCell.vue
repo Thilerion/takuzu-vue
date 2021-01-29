@@ -6,6 +6,9 @@
 		@touchstart="touchedCell"
 		ref="cell"
 	>
+		<transition name="click-anim">
+			<div class="click-anim" v-if="showAnim"></div>
+		</transition>
 		<div class="cell">
 			<span class="cell-value">{{value}}</span>
 		</div>
@@ -35,6 +38,7 @@ export default {
 	data() {
 		return {
 			touchTimer: null,
+			showAnim: false
 		}
 	},
 	computed: {
@@ -58,13 +62,20 @@ export default {
 		}
 	},
 	methods: {
-		clickedCell(long = false) {
-			if (this.isLocked) return;
+		emitClick(long = false) {
 			const payload = { value: this.value, x: this.x, y: this.y, longTouch: long };
 			this.$emit('clicked', payload);
+			this.showAnim = false;
+		},
+		clickedCell(long = false) {
+			if (this.isLocked) return;
+			this.emitClick(long);
 		},
 		touchedCell(e) {
 			if (this.isLocked) return;
+
+			this.startClickAnim();
+
 			e.preventDefault();
 			this.touchStart = performance.now();
 			this.touchTimer = setTimeout(() => {
@@ -85,6 +96,14 @@ export default {
 			const vibrationPattern = lengthToPwmPattern(length, this.vibrationIntensity);
 			
 			window.navigator.vibrate(vibrationPattern);
+		},
+
+		async startClickAnim() {
+			if (this.showAnim) {
+				this.showAnim = false;
+				await this.$nextTick();
+			}
+			this.showAnim = true;
 		}
 	}
 };
@@ -95,10 +114,10 @@ export default {
 	--size: clamp(1.25rem, calc(var(--cell-size)), 4rem);
 	width: var(--size);
 	height: var(--size);
-	@apply bg-truegray-200 dark:bg-gray-800 rounded-sm relative;
+	@apply bg-truegray-200 dark:bg-gray-800 rounded-sm relative cursor-pointer overflow-hidden;
 }
 .cell-wrapper.locked {
-	@apply bg-truegray-300 dark:bg-gray-700;
+	@apply bg-truegray-300 dark:bg-gray-700 cursor-default;
 }
 .cell-wrapper.incorrect {
 	@apply bg-red-300 dark:bg-red-900;
@@ -115,5 +134,18 @@ export default {
 }
 .cell-wrapper.incorrect .cell-value {
 	@apply text-red-900 dark:text-red-400;
+}
+
+.click-anim {
+	@apply absolute w-full h-full bg-teal-400 opacity-70;
+}
+.click-anim-enter-active {
+	transition: opacity .06s ease-in;
+}
+.click-anim-enter-from, .click-anim-leave-to {
+	opacity: 0;
+}
+.click-anim-leave-active {
+	transition: opacity 1s ease-out;
 }
 </style>
