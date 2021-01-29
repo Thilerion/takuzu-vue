@@ -1,5 +1,5 @@
 import { SimpleBoard } from "../lib/board/Board";
-import { EMPTY, ONE, ZERO } from "../lib/constants";
+import { EMPTY, ONE, ZERO, OPPOSITE_VALUE } from "../lib/constants";
 import { generateBoard } from "../lib/generation/board";
 import { createBasicMaskWithMaxDifficulty } from "../lib/generation/mask";
 import { toggleValue } from "../lib/utils";
@@ -132,9 +132,19 @@ const gameModule = {
 			commit('setBoard', board);
 			commit('resetPuzzleStateProps');
 		},
-		toggleCell({ commit, dispatch }, { x, y, value }) {
+		toggleCell({ commit, dispatch }, { x, y, value, longTouch = false }) {
 			// TODO: one or zero first setting for toggling
-			const nextValue = toggleValue(value, false);
+			let nextValue;
+			if (!longTouch) {
+				nextValue = toggleValue(value, false);
+			} else {
+				// long touch switches 0 > 1 and 1 > 0, and sets EMPTY > opposite value that a standard touch would
+				if (value === EMPTY || value == null) {
+					nextValue = OPPOSITE_VALUE[toggleValue(value, false)];
+				} else {
+					nextValue = OPPOSITE_VALUE[value];
+				}
+			}
 
 			commit('setValue', { x, y, value: nextValue });
 			commit('removeFromIncorrectValues', { x, y });

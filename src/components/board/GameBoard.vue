@@ -47,8 +47,8 @@ export default {
 			const y = Math.floor(index / this.columns);
 			return {x, y};
 		},
-		toggleCell({ x, y, value }) {
-			this.$store.dispatch('toggleCell', {x, y, value});
+		toggleCell(payload) {
+			this.$store.dispatch('toggleCell', payload);
 		}
 	},
 	watch: {

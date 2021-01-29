@@ -3,6 +3,8 @@
 		class="cell-wrapper"
 		:class="{'locked': isLocked, 'incorrect': isIncorrectValue}"
 		@click="clickedCell"
+		@touchstart="touchedCell"
+		ref="cell"
 	>
 		<div class="cell">
 			<span class="cell-value">{{value}}</span>
@@ -27,6 +29,11 @@ export default {
 			required: true
 		}
 	},
+	data() {
+		return {
+			touchTimer: null,
+		}
+	},
 	computed: {
 		cellId() {
 			return `${this.x},${this.y}`;
@@ -42,10 +49,28 @@ export default {
 		}
 	},
 	methods: {
-		clickedCell() {
+		clickedCell(long = false) {
 			if (this.isLocked) return;
-			const payload = { value: this.value, x: this.x, y: this.y};
+			const payload = { value: this.value, x: this.x, y: this.y, longTouch: long };
+			if (long) {
+				window.navigator.vibrate([40, 5, 20]);
+			} else {
+				window.navigator.vibrate([10, 10, 10]);
+			}
 			this.$emit('clicked', payload);
+		},
+		touchedCell(e) {
+			e.preventDefault();
+			this.touchStart = performance.now();
+			this.touchTimer = setTimeout(() => {
+				this.$refs.cell.removeEventListener('touchend', this.touchEnd);
+				this.clickedCell(true);
+			}, 400);
+			this.$refs.cell.addEventListener('touchend', this.touchEnd);
+		},
+		touchEnd() {
+			clearTimeout(this.touchTimer);
+			this.clickedCell(false);
 		}
 	}
 };
