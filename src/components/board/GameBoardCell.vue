@@ -1,8 +1,8 @@
 <template>
 	<div
-		class="cell-wrapper"
+		class="cell-wrapper select-none"
 		:class="{'locked': isLocked, 'incorrect': isIncorrectValue}"
-		@click="clickedCell"
+		@click="clickedCell(false)"
 		@touchstart="touchedCell"
 		ref="cell"
 	>
