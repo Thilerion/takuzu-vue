@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="cell-wrapper"
-		:class="{'locked': isLocked}"
+		:class="{'locked': isLocked, 'incorrect': isIncorrectValue}"
 		@click="clickedCell"
 	>
 		<div class="cell">
@@ -33,6 +33,12 @@ export default {
 		},
 		isLocked() {
 			return this.$store.getters.lockedCells.includes(this.cellId);
+		},
+		incorrectValues() {
+			return this.$store.state.game.markedIncorrectValues;
+		},
+		isIncorrectValue() {
+			return this.incorrectValues && this.incorrectValues.includes(this.cellId);
 		}
 	},
 	methods: {
@@ -55,6 +61,9 @@ export default {
 .cell-wrapper.locked {
 	@apply bg-truegray-300 dark:bg-gray-700;
 }
+.cell-wrapper.incorrect {
+	@apply bg-red-300 dark:bg-red-900;
+}
 
 .cell {
 	@apply flex relative w-full h-full;
@@ -64,5 +73,8 @@ export default {
 	@apply m-auto inline-block text-gray-700;
 	font-size: var(--cell-font-size);
 	line-height: calc(var(--size) * 1.1);
+}
+.cell-wrapper.incorrect .cell-value {
+	@apply text-red-900 dark:text-red-400;
 }
 </style>

@@ -61,6 +61,16 @@ const gameModule = {
 		},
 		setValue(state, { x, y, value }) {
 			state.board.assign(x, y, value);
+		},
+		setIncorrectValues(state, incorrectArr) {
+			state.markedIncorrectValues = [...incorrectArr];
+		},
+		removeFromIncorrectValues(state, { x, y }) {
+			const id = `${x},${y}`;
+			const idx = state.markedIncorrectValues.indexOf(id);
+			if (idx > -1) {
+				state.markedIncorrectValues.splice(idx, 1);
+			}
 		}
 	},
 
@@ -86,6 +96,22 @@ const gameModule = {
 			const nextValue = toggleValue(value, false);
 
 			commit('setValue', { x, y, value: nextValue });
+			commit('removeFromIncorrectValues', { x, y });
+		},
+
+		findIncorrectValues({ state, commit }) {
+			const { board, solution } = state;
+			const { hasMistakes, result } = board.hasIncorrectValues(solution);
+			if (!hasMistakes) {
+				commit('setIncorrectValues', []);
+				return;
+			} else {
+				commit('setIncorrectValues', result.map(({ x, y }) => `${x},${y}`));
+			}
+		},
+		checkAction({ dispatch }) {
+			// TODO: check action be a) find incorrect values, or b) find rule violations
+			dispatch('findIncorrectValues');
 		}
 	}
 };
