@@ -1,6 +1,7 @@
 const getDefaultSettings = () => ({
 	showBoardCoordinates: true,
-
+	enableWakeLock: true,
+	
 	// vibration settings
 	vibrationIntensity: 2, // 0 1 2 or 3, off low medium or high
 	vibrateUI: true,

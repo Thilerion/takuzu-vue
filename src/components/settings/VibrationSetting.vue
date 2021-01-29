@@ -1,6 +1,5 @@
 <template>
 	<div>
-		<h2 class="text-gray-700">Other</h2>
 		<div class="mt-2">
 			<label class="flex flex-col justify-center">
 				<span class="">Vibration intensity</span>

@@ -42,6 +42,8 @@ import { EMPTY } from '../../lib/constants';
 import Solver from '../../lib/solver/Solver';
 import { GAP_SIZE } from './config';
 
+import {disableWakeLock, enableWakeLock, getWakeLockState} from '../../services/wake-lock';
+
 export default {
 	components: {
 		GameBoardWrapper,
@@ -81,6 +83,9 @@ export default {
 		},
 		canUndo() {
 			return this.$store.getters.canUndo;
+		},
+		shouldEnableWakeLock() {
+			return this.$store.state.settings.enableWakeLock;
 		}
 	},
 	methods: {
@@ -113,7 +118,42 @@ export default {
 		},
 		undo() {
 			this.$store.dispatch('undo');
+		},
+		async enableWakeLock() {
+			try {
+				await enableWakeLock();
+			} catch(e) {
+				console.error(e);
+			}
+		},
+		async reacquireWakeLock() {
+			const state = getWakeLockState();
+			const { isReleased, ref } = state;
+			if (ref !== null && isReleased) {
+				disableWakeLock();
+				enableWakeLock();
+			}
+		},
+		visibilityChange() {
+			const { isReleased, ref } = getWakeLockState();
+			if (!isReleased || ref == null) return;
+			if (document.visibilityState !== 'visible') return;
+			// Documnet is visible again, and wakeLock is released => reenable wakelock
+			this.reacquireWakeLock();
 		}
+	},
+	beforeMount() {
+		if (this.shouldEnableWakeLock) {
+			this.enableWakeLock();
+			document.addEventListener('visibilitychange', this.visibilityChange);
+		}
+	},
+	beforeUnmount() {
+		const { ref } = getWakeLockState();
+		if (ref != null) {
+			disableWakeLock();
+		}
+		document.removeEventListener('visibilitychange', this.visibilityChange);
 	}
 };
 </script>

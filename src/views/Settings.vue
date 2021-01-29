@@ -5,6 +5,9 @@
 			<DarkModeSetting />
 		</div>
 		<div class="setting-block mt-6">
+			
+		</div>
+		<div class="setting-block mt-6">
 			<h2 class="text-gray-700">Board Display</h2>
 			<div class="mt-2">
 				<label class="flex items-center">
@@ -14,7 +17,12 @@
 			</div>
 		</div>
 		<div class="setting-block mt-6">
+			<h2 class="text-gray-700">Other</h2>
 			<VibrationSetting @update-setting="updateSetting" :settings="settings" />
+			<label class="flex items-center mt-4">
+				<input type="checkbox" v-model="enableWakeLock">
+				<span class="ml-2">Enable wake lock</span>
+			</label>
 		</div>
 	</div>
 </template>
@@ -48,6 +56,14 @@ export default {
 				})
 			}
 		},
+		enableWakeLock: {
+			get() {
+				return this.settings.enableWakeLock;
+			},
+			set(value) {
+				this.updateSetting('enableWakeLock', value);
+			}
+		}
 	},
 	methods: {
 		updateSetting(key, value) {
