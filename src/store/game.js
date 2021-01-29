@@ -32,6 +32,7 @@ class PuzzleMove {
 
 const initialState = () => ({
 	initialized: false,
+	loading: false,
 	width: null,
 	height: null,
 	difficulty: null,
@@ -70,6 +71,9 @@ const gameModule = {
 	mutations: {
 		setInitialized(state, val) {
 			state.initialized = val;
+		},
+		setLoading(state, val) {
+			state.loading = val;
 		},
 		setDimensions(state, { width, height }) {
 			state.width = width;
@@ -142,6 +146,7 @@ const gameModule = {
 		},
 		async createPuzzle({ commit }, { width, height, difficulty = 1 }) {
 			// TODO: improved "loading" indication and error display
+			commit('setLoading', true);
 			const receivedData = initReceiver();
 			send({ width, height, difficulty });
 			const interval = setInterval(() => {
@@ -154,10 +159,12 @@ const gameModule = {
 				console.log(boardStr, solutionStr);
 				const board = SimpleBoard.fromString(boardStr);
 				const solution = SimpleBoard.fromString(solutionStr);
-				commit('setAllBoards', { board, solution, initialBoard: board.copy() });	
+				commit('setAllBoards', { board, solution, initialBoard: board.copy() });
+				commit('setLoading', false);
 			} catch (e) {
 				clearInterval(interval);
 				console.warn('Failed creating board');
+				commit('setLoading', false);
 				throw new Error(e);
 			}
 		},

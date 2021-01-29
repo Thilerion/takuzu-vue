@@ -20,10 +20,22 @@
 		</div>
 		<div class="pb-4 mt-auto">
 			<button
-				class="uppercase text-sm py-3 bg-gray-700 text-white dark:bg-truegray-100 dark:text-black w-5/6 mx-auto rounded-lg"
+				class="uppercase text-sm py-3 bg-gray-700 text-white dark:bg-truegray-100 dark:text-black w-5/6 mx-auto rounded-lg relative"
 				@click="createGame"
-				:disabled="size.value == null"
-			>Start a game</button>
+				:disabled="disableStartButton"
+			>
+				<template v-if="gameLoading">
+					<div class="absolute inset-y-0 w-1/3 left-0 flex justify-center items-center">
+						<LoadingSpinner
+							:size="32"
+						/>
+					</div>
+					<span>Creating game...</span>
+				</template>
+				<template v-else>
+					<span>Start a game</span>
+				</template>
+			</button>
 		</div>
 	<PlayGame @close="quitGame" v-if="gameInitialized" />
 	</div>
@@ -33,6 +45,7 @@
 import DifficultySelect from '../components/DifficultySelect';
 import SizeSelection from '../components/SizeSelection';
 import PlayGame from '../components/board/PlayGame';
+import LoadingSpinner from '../components/base-layout/LoadingSpinner';
 
 export default {
 	name: 'FreePlay',
@@ -40,6 +53,7 @@ export default {
 		DifficultySelect,
 		SizeSelection,
 		PlayGame,
+		LoadingSpinner,
 	},
 	data() {
 		return {
@@ -60,6 +74,15 @@ export default {
 	computed: {
 		gameInitialized() {
 			return this.$store.state.game.initialized;
+		},
+		gameLoading() {
+			return this.$store.state.game.loading;
+		},
+		invalidSelection() {
+			return this.size.value == null || this.size.value == null;
+		},
+		disableStartButton() {
+			return this.gameLoading || this.invalidSelection;
 		}
 	},
 	methods: {
