@@ -1,5 +1,9 @@
 <template>
-	<div class="cell-wrapper">
+	<div
+		class="cell-wrapper"
+		:class="{'locked': isLocked}"
+		@click="clickedCell"
+	>
 		<div class="cell">
 			<span class="cell-value">{{value}}</span>
 		</div>
@@ -11,7 +15,32 @@ export default {
 	components: {
 	},
 	props: {
-		value: String,
+		value: {
+			required: true
+		},
+		x: {
+			type: Number,
+			required: true
+		},
+		y: {
+			type: Number,
+			required: true
+		}
+	},
+	computed: {
+		cellId() {
+			return `${this.x},${this.y}`;
+		},
+		isLocked() {
+			return this.$store.getters.lockedCells.includes(this.cellId);
+		}
+	},
+	methods: {
+		clickedCell() {
+			if (this.isLocked) return;
+			const payload = { value: this.value, x: this.x, y: this.y};
+			this.$emit('clicked', payload);
+		}
 	}
 };
 </script>
@@ -22,6 +51,9 @@ export default {
 	width: var(--size);
 	height: var(--size);
 	@apply bg-truegray-200 dark:bg-gray-800 rounded-sm relative;
+}
+.cell-wrapper.locked {
+	@apply bg-truegray-300 dark:bg-gray-700;
 }
 
 .cell {

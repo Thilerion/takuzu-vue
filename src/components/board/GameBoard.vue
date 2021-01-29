@@ -5,12 +5,12 @@
 		<GameBoardCell
 			v-for="cell in cells"
 			:key="cell.idx"
-			:value="cell.value"
+			v-bind="cell"
 			:style="{
 				'grid-row': `${cell.y + 2} / span 1`,
 				'grid-column': `${cell.x + 2} / span 1`,
 			}"
-			@click="toggleCell(getCoords(cell.idx), cell.value)"
+			@clicked="toggleCell"
 		/>
 	</div>
 </template>
@@ -47,7 +47,7 @@ export default {
 			const y = Math.floor(index / this.columns);
 			return {x, y};
 		},
-		toggleCell({ x, y }, value) {
+		toggleCell({ x, y, value }) {
 			this.$store.commit('toggleCell', {x, y, value});
 		}
 	},

@@ -9,8 +9,12 @@ const initialState = () => ({
 	width: null,
 	height: null,
 	difficulty: null,
+
+	initialBoard: null,
 	board: null,
-	solution: null
+	solution: null,
+
+	markedIncorrectValues: []
 });
 
 const gameModule = {
@@ -20,6 +24,16 @@ const gameModule = {
 		finishedAndCorrect: state => {
 			if (state.board == null || state.solution == null) return false;
 			return state.board.equalsSolution(state.solution);
+		},
+
+		lockedCells: state => {
+			if (state.initialBoard == null) return [];
+			const cells = [...state.initialBoard.cells({
+				skipFilled: false, skipEmpty: true
+			})];
+			return cells.map(cell => {
+				return `${cell.x},${cell.y}`;
+			})
 		}
 	},
 
@@ -34,9 +48,10 @@ const gameModule = {
 		setDifficulty(state, difficulty) {
 			state.difficulty = difficulty;
 		},
-		setBoard(state, { board, solution }) {
+		setBoard(state, { board, solution, initialBoard }) {
 			state.board = board;
 			state.solution = solution;
+			state.initialBoard = initialBoard;
 		},
 		reset(state) {
 			const initState = initialState();
@@ -67,7 +82,7 @@ const gameModule = {
 		createPuzzle({ commit }, { width, height, difficulty = 1 }) {
 			const solution = generateBoard(width, height);
 			const board = createBasicMaskWithMaxDifficulty(solution, difficulty);
-			commit('setBoard', { board, solution });
+			commit('setBoard', { board, solution, initialBoard: board.copy() });
 		}
 	}
 };
