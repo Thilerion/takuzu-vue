@@ -48,7 +48,7 @@ export default {
 			return {x, y};
 		},
 		toggleCell({ x, y, value }) {
-			this.$store.commit('toggleCell', {x, y, value});
+			this.$store.dispatch('toggleCell', {x, y, value});
 		}
 	},
 	watch: {

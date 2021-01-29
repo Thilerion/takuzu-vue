@@ -59,11 +59,8 @@ const gameModule = {
 				state[key] = initState[key];
 			}
 		},
-		toggleCell(state, { x, y, value }) {
-			// TODO: one or zero first setting for toggling
-			const nextValue = toggleValue(value, false);
-
-			state.board.assign(x, y, nextValue);
+		setValue(state, { x, y, value }) {
+			state.board.assign(x, y, value);
 		}
 	},
 
@@ -83,6 +80,12 @@ const gameModule = {
 			const solution = generateBoard(width, height);
 			const board = createBasicMaskWithMaxDifficulty(solution, difficulty);
 			commit('setBoard', { board, solution, initialBoard: board.copy() });
+		},
+		toggleCell({ commit }, { x, y, value }) {
+			// TODO: one or zero first setting for toggling
+			const nextValue = toggleValue(value, false);
+
+			commit('setValue', { x, y, value: nextValue });
 		}
 	}
 };
