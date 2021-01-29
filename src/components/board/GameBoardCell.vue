@@ -14,6 +14,7 @@
 
 <script>
 import { lengthToPwmPattern } from '../../services/vibration';
+import { LONG_TOUCH_DURATION } from './config';
 
 export default {
 	components: {
@@ -70,7 +71,7 @@ export default {
 				this.$refs.cell.removeEventListener('touchend', this.touchEnd);
 				this.clickedCell(true);
 				this.vibrate(true);
-			}, 400);
+			}, LONG_TOUCH_DURATION);
 			this.$refs.cell.addEventListener('touchend', this.touchEnd);
 		},
 		touchEnd() {
