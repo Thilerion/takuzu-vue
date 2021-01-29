@@ -1,36 +1,23 @@
 const getDefaultSettings = () => ({
-	showBoardCoordinates: true
-});
+	showBoardCoordinates: true,
 
-const loadSettings = () => {
-	const defaultSettings = getDefaultSettings();
-	try {
-		const data = window.localStorage.getItem('takuzu-settings');
-		if (!data) {
-			throw new Error('No settings data in localStorage.');
-		}
-		const parsed = JSON.parse(data);
-		const result = {};
-		for (const key of Object.keys(defaultSettings)) {
-			result[key] = parsed[key] ?? defaultSettings[key];
-		}
-		return result;
-	} catch {
-		console.warn('Could not load settings from LocalStorage. Setting defaults.');
-		return defaultSettings;
-	}
-}
-const saveSettings = (value) => {
-	const json = JSON.stringify(value);
-	window.localStorage.setItem('takuzu-settings', json);
-}
+	// vibration settings
+	vibrationIntensity: 2, // 0 1 2 or 3, off low medium or high
+	vibrateUI: true,
+	vibrateGame: true,
+	vibrateInfo: true,
+
+});
 
 export const settingsModule = {
 	namespaced: true,
 	state: loadSettings,
 
 	getters: {
-
+		vibrationEnabled: state => state.vibrationIntensity > 0,
+		gameVibrationEnabled: (state, getters) => getters.vibrationEnabled && state.vibrateGame,
+		uiVibrationEnabled: (state, getters) => getters.vibrationEnabled && state.vibrateUI,
+		infoVibrationEnabled: (state, getters) => getters.vibrationEnabled && state.vibrateInfo,
 	},
 
 	mutations: {
@@ -63,4 +50,27 @@ export const initSettingsWatcher = (store) => {
 	);
 	console.log('watcher initiated');
 	return watcher;
+}
+
+function loadSettings() {
+	const defaultSettings = getDefaultSettings();
+	try {
+		const data = window.localStorage.getItem('takuzu-settings');
+		if (!data) {
+			throw new Error('No settings data in localStorage.');
+		}
+		const parsed = JSON.parse(data);
+		const result = {};
+		for (const key of Object.keys(defaultSettings)) {
+			result[key] = parsed[key] ?? defaultSettings[key];
+		}
+		return result;
+	} catch {
+		console.warn('Could not load settings from LocalStorage. Setting defaults.');
+		return defaultSettings;
+	}
+}
+function saveSettings(value) {
+	const json = JSON.stringify(value);
+	window.localStorage.setItem('takuzu-settings', json);
 }

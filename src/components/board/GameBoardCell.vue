@@ -46,31 +46,40 @@ export default {
 		},
 		isIncorrectValue() {
 			return this.incorrectValues && this.incorrectValues.includes(this.cellId);
-		}
+		},
+		vibrateOnTap() {
+			return this.$store.getters['settings/gameVibrationEnabled'];
+		},
 	},
 	methods: {
 		clickedCell(long = false) {
 			if (this.isLocked) return;
 			const payload = { value: this.value, x: this.x, y: this.y, longTouch: long };
-			if (long) {
-				window.navigator.vibrate([40, 5, 20]);
-			} else {
-				window.navigator.vibrate([10, 10, 10]);
-			}
 			this.$emit('clicked', payload);
 		},
 		touchedCell(e) {
+			if (this.isLocked) return;
 			e.preventDefault();
 			this.touchStart = performance.now();
 			this.touchTimer = setTimeout(() => {
 				this.$refs.cell.removeEventListener('touchend', this.touchEnd);
 				this.clickedCell(true);
+				this.vibrate(true);
 			}, 400);
 			this.$refs.cell.addEventListener('touchend', this.touchEnd);
 		},
 		touchEnd() {
 			clearTimeout(this.touchTimer);
 			this.clickedCell(false);
+			this.vibrate(false);
+		},
+		vibrate(long = false) {
+			if (!this.vibrateOnTap) return;
+			if (long) {
+				window.navigator.vibrate([40, 5, 20]);
+			} else {
+				window.navigator.vibrate([10, 10, 10]);
+			}
 		}
 	}
 };

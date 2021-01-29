@@ -13,15 +13,20 @@
 				</label>
 			</div>
 		</div>
+		<div class="setting-block mt-6">
+			<VibrationSetting @update-setting="updateSetting" :settings="settings" />
+		</div>
 	</div>
 </template>
 
 <script>
 import DarkModeSetting from '../components/settings/DarkModeSetting';
+import VibrationSetting from '../components/settings/VibrationSetting';
 
 export default {
 	components: {
-		DarkModeSetting
+		DarkModeSetting,
+		VibrationSetting,
 	},
 	data() {
 		return {
@@ -42,6 +47,14 @@ export default {
 					value: value
 				})
 			}
+		},
+	},
+	methods: {
+		updateSetting(key, value) {
+			this.$store.commit('settings/setSetting', {
+				key,
+				value
+			});
 		}
 	}
 };
