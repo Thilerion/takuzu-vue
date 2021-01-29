@@ -9,7 +9,7 @@ const { selectValue } = require("../solver/selection");
 const solverConf = {
 	maxSolutions: 1,
 	timeoutDuration: 400,
-	throwAfterTimeout: true,
+	throwAfterTimeout: false,
 	selectValue: selectValue.random,
 	disableBacktracking: false
 };
@@ -26,7 +26,7 @@ export class BoardGenerator {
 
 		this.maxDuration = 1000;
 
-		const baseSolverMaxDuration = Math.ceil(Math.pow(((width + height) / 4), 3));
+		const baseSolverMaxDuration = Math.ceil(Math.pow(((width + height) / 3), 3));
 		const solverMaxDuration = Math.min(Math.max(baseSolverMaxDuration, 100), this.maxDuration);
 
 		this.solverConf = {

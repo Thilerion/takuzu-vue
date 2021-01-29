@@ -4,6 +4,19 @@ import { generateBoard } from "../lib/generation/board";
 import { createBasicMaskWithMaxDifficulty } from "../lib/generation/mask";
 import { toggleValue } from "../lib/utils";
 
+
+const worker = new Worker('../generate-worker.js', { type: 'module' });
+const send = message => worker.postMessage({ message });
+function initReceiver() {
+	return new Promise((resolve, reject) => {
+		worker.onmessage = event => {
+			const { data } = event;
+			if (data.error) reject(data.error);
+			else resolve(data);
+		}
+	})
+}
+
 class PuzzleMove {
 	constructor(x, y, value, prevValue) {
 		this.x = x;
@@ -116,16 +129,37 @@ const gameModule = {
 	},
 
 	actions: {
-		initGame({ commit, dispatch }, { width, height, difficulty }) {
-			commit('setInitialized', true);
-			commit('setDimensions', { width, height });
-			commit('setDifficulty', difficulty);
-			dispatch('createPuzzle', { width, height, difficulty });
+		async initGame({ commit, dispatch }, { width, height, difficulty }) {
+			try {				
+				await dispatch('createPuzzle', { width, height, difficulty });
+				commit('setInitialized', true);
+				commit('setDimensions', { width, height });
+				commit('setDifficulty', difficulty);
+			} catch (e) {
+				console.warn(e);
+				commit('reset');
+			}
 		},
-		createPuzzle({ commit }, { width, height, difficulty = 1 }) {
-			const solution = generateBoard(width, height);
-			const board = createBasicMaskWithMaxDifficulty(solution, difficulty);
-			commit('setAllBoards', { board, solution, initialBoard: board.copy() });
+		async createPuzzle({ commit }, { width, height, difficulty = 1 }) {
+			// TODO: improved "loading" indication and error display
+			const receivedData = initReceiver();
+			send({ width, height, difficulty });
+			const interval = setInterval(() => {
+				console.log('waiting...');
+			}, 200);
+			try {
+				let data = await receivedData;
+				clearInterval(interval);
+				const { board: boardStr, solution: solutionStr } = data;
+				console.log(boardStr, solutionStr);
+				const board = SimpleBoard.fromString(boardStr);
+				const solution = SimpleBoard.fromString(solutionStr);
+				commit('setAllBoards', { board, solution, initialBoard: board.copy() });	
+			} catch (e) {
+				clearInterval(interval);
+				console.warn('Failed creating board');
+				throw new Error(e);
+			}
 		},
 		restartPuzzle({ state, commit }) {
 			const board = state.initialBoard.copy();

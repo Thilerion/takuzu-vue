@@ -34,6 +34,23 @@ export class SimpleBoard {
 		const grid = array2d(width, height, EMPTY);
 		return new SimpleBoard(grid);
 	}
+	static fromString(exportedStr) {
+		const [dimensions, boardStr] = exportedStr.split(';');
+		const [width, height] = dimensions.split('x').map(Number);
+		const grid = [];
+		for (let y = 0; y < height; y++) {
+			const row = [];
+			for (let x = 0; x < width; x++) {
+				const idx = (y * width) + x;
+				const rawVal = boardStr[idx];
+				if (rawVal == ONE) row.push(ONE);
+				else if (rawVal == ZERO) row.push(ZERO);
+				else row.push(EMPTY);
+			}
+			grid.push(row);
+		}
+		return new SimpleBoard(grid);
+	}
 
 	// RETRIEVE BOARD VALUES;
 	// TODO: retrieve lines/columns/rows
@@ -227,5 +244,9 @@ export class SimpleBoard {
 	}
 	toBoardString() {
 		return this.grid.flat().join('');
+	}
+	
+	export() {
+		return `${this.width}x${this.height};${this.toBoardString()}`;
 	}
 }

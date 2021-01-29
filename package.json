@@ -5,8 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build && copy dist\\index.html dist\\200.html",
-	"test:unit": "vue-cli-service test:unit",
-	"deploy": "vue-cli-service build && copy dist\\index.html dist\\200.html && surge dist --domain https://takuzu-vue.surge.sh"
+    "test:unit": "vue-cli-service test:unit",
+    "deploy": "vue-cli-service build && copy dist\\index.html dist\\200.html && surge dist --domain https://takuzu-vue.surge.sh"
   },
   "dependencies": {
     "@tailwindcss/postcss7-compat": "^2.0.2",
@@ -29,6 +29,7 @@
     "@vue/compiler-sfc": "^3.0.0",
     "@vue/test-utils": "^2.0.0-0",
     "typescript": "~3.9.3",
-    "vue-jest": "^5.0.0-0"
+    "vue-jest": "^5.0.0-0",
+    "worker-plugin": "^5.0.0"
   }
 }
