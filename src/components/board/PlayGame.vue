@@ -14,7 +14,7 @@
 			<IconBtnText size="26" icon="undo">
 				Undo
 			</IconBtnText>
-			<IconBtnText size="26" icon="replay">
+			<IconBtnText @click="restart" size="26" icon="replay">
 				Restart
 			</IconBtnText>
 			<IconBtnText size="26" icon="done" @click="check">
@@ -102,9 +102,12 @@ export default {
 			console.log(this.board.toString());
 			const x = `0....010111...1011000....101.01.010010.10110110100..0..0...1..1..1....0100110110101100100110.101001.`;
 		},
+		restart() {
+			this.$store.dispatch('restartPuzzle');
+		},
 		check() {
 			this.$store.dispatch('checkAction');
-		}
+		},
 	}
 };
 </script>

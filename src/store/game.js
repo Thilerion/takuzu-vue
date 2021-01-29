@@ -14,7 +14,9 @@ const initialState = () => ({
 	board: null,
 	solution: null,
 
-	markedIncorrectValues: []
+	// state associated with current puzzle state;
+	// when the board is reset, or action undone, etc, these must be reset as well
+	markedIncorrectValues: [],
 });
 
 const gameModule = {
@@ -48,10 +50,16 @@ const gameModule = {
 		setDifficulty(state, difficulty) {
 			state.difficulty = difficulty;
 		},
-		setBoard(state, { board, solution, initialBoard }) {
+		setAllBoards(state, { board, solution, initialBoard }) {
 			state.board = board;
 			state.solution = solution;
 			state.initialBoard = initialBoard;
+		},
+		setBoard(state, board) {
+			state.board = board;
+		},
+		resetPuzzleStateProps(state) {
+			state.markedIncorrectValues = [];
 		},
 		reset(state) {
 			const initState = initialState();
@@ -81,15 +89,15 @@ const gameModule = {
 			commit('setDifficulty', difficulty);
 			dispatch('createPuzzle', { width, height, difficulty });
 		},
-		createEmptyBoard({ commit }, { width, height }) {
-			console.warn('Creating empty board. In the future, a real board should be generated for gameplay...');
-			const board = SimpleBoard.empty(width, height);
-			commit('setBoard', board);
-		},
 		createPuzzle({ commit }, { width, height, difficulty = 1 }) {
 			const solution = generateBoard(width, height);
 			const board = createBasicMaskWithMaxDifficulty(solution, difficulty);
-			commit('setBoard', { board, solution, initialBoard: board.copy() });
+			commit('setAllBoards', { board, solution, initialBoard: board.copy() });
+		},
+		restartPuzzle({ state, commit }) {
+			const board = state.initialBoard.copy();
+			commit('setBoard', board);
+			commit('resetPuzzleStateProps');
 		},
 		toggleCell({ commit }, { x, y, value }) {
 			// TODO: one or zero first setting for toggling
@@ -112,7 +120,7 @@ const gameModule = {
 		checkAction({ dispatch }) {
 			// TODO: check action be a) find incorrect values, or b) find rule violations
 			dispatch('findIncorrectValues');
-		}
+		},
 	}
 };
 
