@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { getThemePref, setTheme } from '../../dark-mode';
+import { getThemePref, setTheme } from '../../services/dark-mode';
 export default {
 	data() {
 		return {

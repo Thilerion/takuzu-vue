@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { lengthToPwmPattern } from '../../vibration';
+import { lengthToPwmPattern } from '../../services/vibration';
 
 export default {
 	components: {
