@@ -18,24 +18,16 @@
 				/>
 			</div>
 		</div>
-		<div class="pb-4 mt-auto">
-			<button
-				class="uppercase text-sm py-3 bg-gray-700 text-white dark:bg-truegray-100 dark:text-black w-5/6 mx-auto rounded-lg relative"
+		<div class="pb-4 mt-auto w-5/6 mx-auto">
+			<div
+				v-if="gameCreationError"
+				class="bg-red-200 text-red-900 font-semibold rounded-lg p-1 text-xs mb-2"
+				>ERROR: Game creation timed out.</div>
+			<StartGameButton
 				@click="createGame"
-				:disabled="disableStartButton"
-			>
-				<template v-if="gameLoading">
-					<div class="absolute inset-y-0 w-1/3 left-0 flex justify-center items-center">
-						<LoadingSpinner
-							:size="32"
-						/>
-					</div>
-					<span>Creating game...</span>
-				</template>
-				<template v-else>
-					<span>Start a game</span>
-				</template>
-			</button>
+				:disable="disableStartButton"
+				:gameLoading="gameLoading"
+			/>
 		</div>
 	<PlayGame @close="quitGame" v-if="gameInitialized" />
 	</div>
@@ -45,7 +37,7 @@
 import DifficultySelect from '../components/DifficultySelect';
 import SizeSelection from '../components/SizeSelection';
 import PlayGame from '../components/board/PlayGame';
-import LoadingSpinner from '../components/base-layout/LoadingSpinner';
+import StartGameButton from '../components/board/StartGameButton';
 
 export default {
 	name: 'FreePlay',
@@ -53,7 +45,7 @@ export default {
 		DifficultySelect,
 		SizeSelection,
 		PlayGame,
-		LoadingSpinner,
+		StartGameButton,
 	},
 	data() {
 		return {
@@ -77,6 +69,9 @@ export default {
 		},
 		gameLoading() {
 			return this.$store.state.game.loading;
+		},
+		gameCreationError() {
+			return this.$store.state.game.creationError;
 		},
 		invalidSelection() {
 			return this.size.value == null || this.size.value == null;

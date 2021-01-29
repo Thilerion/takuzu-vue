@@ -1,7 +1,5 @@
 import { SimpleBoard } from "../lib/board/Board";
-import { EMPTY, ONE, ZERO, OPPOSITE_VALUE } from "../lib/constants";
-import { generateBoard } from "../lib/generation/board";
-import { createBasicMaskWithMaxDifficulty } from "../lib/generation/mask";
+import { EMPTY, OPPOSITE_VALUE } from "../lib/constants";
 import { toggleValue } from "../lib/utils";
 
 
@@ -33,6 +31,8 @@ class PuzzleMove {
 const initialState = () => ({
 	initialized: false,
 	loading: false,
+	creationError: false,
+
 	width: null,
 	height: null,
 	difficulty: null,
@@ -71,9 +71,14 @@ const gameModule = {
 	mutations: {
 		setInitialized(state, val) {
 			state.initialized = val;
+			state.creationError = false;
 		},
 		setLoading(state, val) {
 			state.loading = val;
+			state.creationError = false;
+		},
+		setCreationError(state, val) {
+			state.creationError = val;
 		},
 		setDimensions(state, { width, height }) {
 			state.width = width;
@@ -142,6 +147,7 @@ const gameModule = {
 			} catch (e) {
 				console.warn(e);
 				commit('reset');
+				commit('setCreationError', true);
 			}
 		},
 		async createPuzzle({ commit }, { width, height, difficulty = 1 }) {

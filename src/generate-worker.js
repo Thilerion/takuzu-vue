@@ -1,7 +1,10 @@
 import { generateBoard } from './lib/generation/board';
 import { createBasicMaskWithMaxDifficulty } from './lib/generation/mask';
 
-function createPuzzle({ width, height, difficulty = 1 }) {
+function createPuzzle({ width, height, difficulty = 1 }, forceError = false) {
+	if (forceError) {
+		return;
+	}
 	let start = performance.now();
 	const max = 3000;
 	const endAfter = start + max;
@@ -32,7 +35,8 @@ function createPuzzle({ width, height, difficulty = 1 }) {
 
 addEventListener('message', event => {
 	const { width, height, difficulty } = event.data.message;
-	const result = createPuzzle({ width, height, difficulty });
+	const { forceError } = event.data;
+	const result = createPuzzle({ width, height, difficulty }, forceError);
 	if (!result) {
 		postMessage({ error: 'could not generate in time...' });
 	} else {
