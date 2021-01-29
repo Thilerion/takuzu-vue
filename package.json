@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "test:unit": "vue-cli-service test:unit"
+    "build": "vue-cli-service build && copy dist\\index.html dist\\200.html",
+	"test:unit": "vue-cli-service test:unit",
+	"deploy": "vue-cli-service build && copy dist\\index.html dist\\200.html && surge dist --domain https://takuzu-vue.surge.sh"
   },
   "dependencies": {
     "@tailwindcss/postcss7-compat": "^2.0.2",
