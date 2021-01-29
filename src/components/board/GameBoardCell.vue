@@ -13,6 +13,8 @@
 </template>
 
 <script>
+import { lengthToPwmPattern } from '../../vibration';
+
 export default {
 	components: {
 	},
@@ -50,6 +52,9 @@ export default {
 		vibrateOnTap() {
 			return this.$store.getters['settings/gameVibrationEnabled'];
 		},
+		vibrationIntensity() {
+			return this.$store.state.settings.vibrationIntensity;
+		}
 	},
 	methods: {
 		clickedCell(long = false) {
@@ -75,11 +80,10 @@ export default {
 		},
 		vibrate(long = false) {
 			if (!this.vibrateOnTap) return;
-			if (long) {
-				window.navigator.vibrate([40, 5, 20]);
-			} else {
-				window.navigator.vibrate([10, 10, 10]);
-			}
+			const length = long ? 140 : 40;
+			const vibrationPattern = lengthToPwmPattern(length, this.vibrationIntensity);
+			
+			window.navigator.vibrate(vibrationPattern);
 		}
 	}
 };
