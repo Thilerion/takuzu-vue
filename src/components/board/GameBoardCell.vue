@@ -7,7 +7,7 @@
 		ref="cell"
 	>
 		<transition name="click-anim">
-			<div class="click-anim" v-if="showAnim"></div>
+			<div class="click-anim" v-show="showAnim"></div>
 		</transition>
 		<div class="cell">
 			<span class="cell-value">{{value}}</span>
@@ -74,10 +74,14 @@ export default {
 		touchedCell(e) {
 			if (this.isLocked) return;
 
+			if (e.cancelable) {
+				e.preventDefault();
+			} else {
+				console.log('not cancelable');
+			}
+
 			this.startClickAnim();
 
-			e.preventDefault();
-			this.touchStart = performance.now();
 			this.touchTimer = setTimeout(() => {
 				this.$refs.cell.removeEventListener('touchend', this.touchEnd);
 				this.clickedCell(true);
@@ -98,11 +102,7 @@ export default {
 			window.navigator.vibrate(vibrationPattern);
 		},
 
-		async startClickAnim() {
-			if (this.showAnim) {
-				this.showAnim = false;
-				await this.$nextTick();
-			}
+		startClickAnim() {
 			this.showAnim = true;
 		}
 	}
