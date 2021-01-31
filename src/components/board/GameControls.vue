@@ -46,6 +46,8 @@ export default {
 		},
 		check() {
 			this.$store.dispatch('checkAction');
+			const hasErrors = this.$store.state.game.markedIncorrectValues.length > 0;
+			this.$emit('error-check', { hasErrors });
 		},
 		showHint() {
 			// TODO: not yet implemented hinting system

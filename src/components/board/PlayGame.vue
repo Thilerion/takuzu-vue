@@ -9,9 +9,17 @@
 				:columns="columns"
 				:cells="cells"
 			/>
+			<transition name="checked" @after-enter="errorCheckValue = null">
+				<div class="check-indicator" v-if="errorCheckValue != null" :class="{correct: !errorCheckValue, incorrect: errorCheckValue}">
+					<div class="check-icon-wrapper">
+						<span v-if="!errorCheckValue" class="check-icon material-icons">check</span>
+						<span v-else class="check-icon material-icons">close</span>
+					</div>
+				</div>
+			</transition>
 		</GameBoardWrapper>
 		<div class="footer">
-			<GameControls />
+			<GameControls @error-check="enableErrorCheckIndicator" />
 		</div>
 	</div>
 </template>
@@ -37,7 +45,9 @@ export default {
 	data() {
 		return {
 			gap: GAP_SIZE,
-			hasBookmark: false
+
+			errorChecked: false,
+			errorCheckValue: null,
 		}
 	},
 	computed: {
@@ -91,6 +101,9 @@ export default {
 			if (document.visibilityState !== 'visible') return;
 			// Documnet is visible again, and wakeLock is released => reenable wakelock
 			this.reacquireWakeLock();
+		},
+		enableErrorCheckIndicator({ hasErrors }) {
+			this.errorCheckValue = !!hasErrors;
 		}
 	},
 	beforeMount() {
@@ -128,5 +141,38 @@ export default {
 
 	grid-template-rows: var(--line-helper-size) repeat(var(--board-rows), 1fr) 0px;
 	grid-template-columns: var(--line-helper-size) repeat(var(--board-cols), 1fr) 0px;
+}
+
+
+.check-indicator {
+	@apply absolute inset-0 z-30 opacity-50 flex justify-center items-center pointer-events-none;
+}
+.check-indicator.correct {
+	@apply  text-green-600;
+}
+.check-indicator.incorrect {
+	@apply  text-red-700;
+}
+.check-icon-wrapper {
+	@apply p-6 border-8 rounded-full;
+	border-width: 12px;
+}
+.correct .check-icon-wrapper {
+	@apply border-green-600;
+}
+.incorrect .check-icon-wrapper {
+	@apply border-red-700;
+}
+.check-indicator .check-icon {
+	@apply text-8xl font-black leading-none;
+}
+.checked-enter-active {
+
+}
+.checked-leave-active {
+	transition: opacity 1.5s ease;
+}
+.checked-leave-to, .checked-enter-from {
+	opacity: 0;
 }
 </style>
