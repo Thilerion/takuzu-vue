@@ -12,15 +12,18 @@
 			}"
 			@clicked="toggleCell"
 		/>
+		<GameBoardLineIds v-if="showBoardCoordinates" />
 	</div>
 </template>
 
 <script>
 import GameBoardCell from './GameBoardCell';
+import GameBoardLineIds from './GameBoardLineIds';
 
 export default {
 	components: {
 		GameBoardCell,
+		GameBoardLineIds,
 	},
 	props: {
 		rows: {
@@ -39,7 +42,10 @@ export default {
 	computed: {
 		finishedAndCorrect() {
 			return this.$store.getters.finishedAndCorrect;
-		}
+		},
+		showBoardCoordinates() {
+			return this.$store.state.settings.showBoardCoordinates;
+		},
 	},
 	methods: {
 		getCoords(index) {
