@@ -28,8 +28,8 @@
 import GameBoardWrapper from './GameBoardWrapper';
 import GameBoard from './GameBoard';
 import GameControls from './GameControls';
-
 import IconBtnText from '@/components/base-layout/IconBtnText';
+
 import { EMPTY } from '../../lib/constants';
 import { GAP_SIZE } from './config';
 
@@ -104,7 +104,7 @@ export default {
 		},
 		enableErrorCheckIndicator({ hasErrors }) {
 			this.errorCheckValue = !!hasErrors;
-		}
+		},
 	},
 	beforeMount() {
 		if (this.shouldEnableWakeLock) {

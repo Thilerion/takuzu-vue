@@ -1,3 +1,4 @@
+import { findRuleConflicts } from "@/lib/validate/board";
 import { SimpleBoard } from "../lib/board/Board";
 import { EMPTY, OPPOSITE_VALUE } from "../lib/constants";
 import { toggleValue } from "../lib/utils";
@@ -44,6 +45,7 @@ const initialState = () => ({
 
 	// state associated with current puzzle state;
 	markedIncorrectValues: [],
+	markedRuleViolations: [],
 });
 
 const gameModule = {
@@ -97,6 +99,7 @@ const gameModule = {
 		},
 		resetPuzzleStateProps(state) {
 			state.markedIncorrectValues = [];
+			state.markedRuleViolations = [];
 			state.moveList = [];
 		},
 		reset(state) {
@@ -119,6 +122,12 @@ const gameModule = {
 			if (idx > -1) {
 				state.markedIncorrectValues.splice(idx, 1);
 			}
+		},
+		setRuleViolations(state, ruleViolations) {
+			state.markedRuleViolations = [...ruleViolations];
+		},
+		clearRuleViolations(state) {
+			state.markedRuleViolations = [];
 		},
 
 		// MOVE LIST
@@ -212,14 +221,34 @@ const gameModule = {
 			const { hasMistakes, result } = board.hasIncorrectValues(solution);
 			if (!hasMistakes) {
 				commit('setIncorrectValues', []);
-				return;
+				return false;
 			} else {
 				commit('setIncorrectValues', result.map(({ x, y }) => `${x},${y}`));
+				return true;
 			}
 		},
-		checkAction({ dispatch }) {
-			// TODO: check action be a) find incorrect values, or b) find rule violations
-			dispatch('findIncorrectValues');
+		findRuleViolations({ state, commit }) {
+			const { board } = state;
+			const violations = findRuleConflicts(board, true);
+			if (!violations || !violations.length) {
+				commit('clearRuleViolations');
+				return false;
+			} else {
+				commit('setRuleViolations', violations);
+				console.log('Rule violations set.');
+				console.log([...violations]);
+				return true;
+			}
+		},
+		checkAction({ rootState, dispatch }) {
+			const checkFunction = rootState.settings.checkButton;
+			if (checkFunction === 'incorrectValues') {
+				return dispatch('findIncorrectValues');
+			} else if (checkFunction === 'ruleViolations') {
+				return dispatch('findRuleViolations');
+			} else {
+				console.warn('Unexpected value for "checkAction".');
+			}
 		},
 		undo({ state, commit }) {
 			const lastMove = state.moveList[state.moveList.length - 1];
