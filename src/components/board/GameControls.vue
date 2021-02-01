@@ -10,10 +10,26 @@
 			size="26"
 			icon="done"
 			@click="check"
-			v-if="checkButtonEnabled"
+			v-if="checkButtonEnabled && !isDevelopment"
 		>
 			Check
 		</IconBtnText>
+		<template v-if="isDevelopment">
+			<IconBtnText
+				size="26"
+				icon="done"
+				@click="checkRuleViolations"
+			>
+				Violations
+			</IconBtnText>
+			<IconBtnText
+				size="26"
+				icon="done"
+				@click="checkIncorrectValues"
+			>
+				Mistakes
+			</IconBtnText>
+		</template>
 		<IconBtnText size="26" icon="emoji_objects">				
 			Hint
 		</IconBtnText>
@@ -27,6 +43,11 @@ import Solver from '../../lib/solver/Solver';
 export default {
 	components: {
 		IconBtnText,
+	},
+	data() {
+		return {
+			isDevelopment: process.env.NODE_ENV === 'development',
+		}
 	},
 	computed: {
 		canUndo() {
@@ -48,6 +69,19 @@ export default {
 		},
 		check() {
 			this.$store.dispatch('checkAction').then(hasErrors => {
+				console.log({hasErrors});
+				this.$emit('error-check', { hasErrors });
+			});
+		},
+		checkRuleViolations() {
+			this.$store.dispatch('gameCheck/findRuleViolations').then(hasErrors => {
+				console.log({hasErrors});
+				this.$emit('error-check', { hasErrors });
+			});
+		},
+		checkIncorrectValues() {
+			this.$store.dispatch('gameCheck/findIncorrectValues').then(hasErrors => {
+				console.log({hasErrors});
 				this.$emit('error-check', { hasErrors });
 			});
 		},

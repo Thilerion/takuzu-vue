@@ -2,6 +2,7 @@ import { findRuleConflicts } from "@/lib/validate/board";
 import { SimpleBoard } from "../lib/board/Board";
 import { EMPTY, OPPOSITE_VALUE } from "../lib/constants";
 import { toggleValue } from "../lib/utils";
+import gameCheckModule from "./game-check";
 
 
 const worker = new Worker('../generate-worker.js', { type: 'module' });
@@ -42,13 +43,12 @@ const initialState = () => ({
 	board: null,
 	solution: null,
 	moveList: [],
-
-	// state associated with current puzzle state;
-	markedIncorrectValues: [],
-	markedRuleViolations: [],
 });
 
 const gameModule = {
+
+	modules: { gameCheck: gameCheckModule },
+
 	state: () => initialState(),
 
 	getters: {
@@ -98,8 +98,6 @@ const gameModule = {
 			state.board = board;
 		},
 		resetPuzzleStateProps(state) {
-			state.markedIncorrectValues = [];
-			state.markedRuleViolations = [];
 			state.moveList = [];
 		},
 		reset(state) {
@@ -110,24 +108,6 @@ const gameModule = {
 		},
 		setValue(state, { x, y, value }) {
 			state.board.assign(x, y, value);
-		},
-
-		// INCORRECT MARKED VALUES
-		setIncorrectValues(state, incorrectArr) {
-			state.markedIncorrectValues = [...incorrectArr];
-		},
-		removeFromIncorrectValues(state, { x, y }) {
-			const id = `${x},${y}`;
-			const idx = state.markedIncorrectValues.indexOf(id);
-			if (idx > -1) {
-				state.markedIncorrectValues.splice(idx, 1);
-			}
-		},
-		setRuleViolations(state, ruleViolations) {
-			state.markedRuleViolations = [...ruleViolations];
-		},
-		clearRuleViolations(state) {
-			state.markedRuleViolations = [];
 		},
 
 		// MOVE LIST
@@ -203,7 +183,6 @@ const gameModule = {
 			}
 
 			commit('setValue', { x, y, value: nextValue });
-			commit('removeFromIncorrectValues', { x, y });
 			dispatch('addToggleToMoveList', { x, y, value, nextValue });
 		},
 		addToggleToMoveList({ state, commit }, { x, y, value, nextValue }) {
@@ -215,37 +194,12 @@ const gameModule = {
 			const combinedMove = new PuzzleMove(x, y, nextValue, prevMove.prevValue);
 			commit('replaceLastMove', combinedMove);
 		},
-
-		findIncorrectValues({ state, commit }) {
-			const { board, solution } = state;
-			const { hasMistakes, result } = board.hasIncorrectValues(solution);
-			if (!hasMistakes) {
-				commit('setIncorrectValues', []);
-				return false;
-			} else {
-				commit('setIncorrectValues', result.map(({ x, y }) => `${x},${y}`));
-				return true;
-			}
-		},
-		findRuleViolations({ state, commit }) {
-			const { board } = state;
-			const violations = findRuleConflicts(board, true);
-			if (!violations || !violations.length) {
-				commit('clearRuleViolations');
-				return false;
-			} else {
-				commit('setRuleViolations', violations);
-				console.log('Rule violations set.');
-				console.log([...violations]);
-				return true;
-			}
-		},
 		checkAction({ rootState, dispatch }) {
 			const checkFunction = rootState.settings.checkButton;
 			if (checkFunction === 'incorrectValues') {
-				return dispatch('findIncorrectValues');
+				return dispatch('gameCheck/findIncorrectValues');
 			} else if (checkFunction === 'ruleViolations') {
-				return dispatch('findRuleViolations');
+				return dispatch('gameCheck/findRuleViolations');
 			} else {
 				console.warn('Unexpected value for "checkAction".');
 			}
@@ -260,7 +214,6 @@ const gameModule = {
 
 			commit('setValue', { x, y, value: prevValue });
 			commit('popMove');
-			commit('removeFromIncorrectValues', { x, y });
 		}
 	}
 };

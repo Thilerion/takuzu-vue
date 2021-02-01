@@ -49,7 +49,7 @@ export default {
 			return this.$store.getters.lockedCells.includes(this.cellId);
 		},
 		incorrectValues() {
-			return this.$store.state.game.markedIncorrectValues;
+			return this.$store.getters['gameCheck/markedIncorrectValues'];
 		},
 		isIncorrectValue() {
 			return this.incorrectValues && this.incorrectValues.includes(this.cellId);

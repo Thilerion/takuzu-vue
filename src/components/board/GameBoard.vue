@@ -50,7 +50,7 @@ export default {
 			return this.$store.state.settings.showBoardCoordinates;
 		},
 		ruleViolations() {
-			return this.$store.state.game.markedRuleViolations;
+			return this.$store.getters['gameCheck/markedRuleViolations'];
 		}
 	},
 	methods: {
