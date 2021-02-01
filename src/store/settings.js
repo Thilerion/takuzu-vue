@@ -8,6 +8,10 @@ const getDefaultSettings = () => ({
 	vibrateGame: true,
 	vibrateInfo: true,
 
+	// assistance settings
+	automaticValidation: 'disabled', // disabled/ ruleViolations/ incorrectValues
+	checkButton: 'ruleViolations',
+
 });
 
 export const settingsModule = {
