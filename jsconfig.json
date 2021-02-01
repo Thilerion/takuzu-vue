@@ -1,5 +1,15 @@
 {
-	"include": [
-		"./src/**/*"
-	]
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["./src/*"]
+		}	
+	},
+	"exclude": [
+		"node_modules",
+		"dist"
+	],
+	"typeAcquisition": {
+		"include": ["jest"]
+	}
 }
