@@ -13,17 +13,20 @@
 			@clicked="toggleCell"
 		/>
 		<GameBoardLineIds v-if="showBoardCoordinates" />
+		<GameBoardRuleViolation v-for="(conflict, idx) in ruleViolations" :value="conflict" :key="idx" />
 	</div>
 </template>
 
 <script>
 import GameBoardCell from './GameBoardCell';
 import GameBoardLineIds from './GameBoardLineIds';
+import GameBoardRuleViolation from './GameBoardRuleViolation';
 
 export default {
 	components: {
 		GameBoardCell,
 		GameBoardLineIds,
+		GameBoardRuleViolation,
 	},
 	props: {
 		rows: {
@@ -46,6 +49,9 @@ export default {
 		showBoardCoordinates() {
 			return this.$store.state.settings.showBoardCoordinates;
 		},
+		ruleViolations() {
+			return this.$store.state.game.markedRuleViolations;
+		}
 	},
 	methods: {
 		getCoords(index) {
