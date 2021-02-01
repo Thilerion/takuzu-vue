@@ -6,18 +6,17 @@
 		<IconBtnText @click="restart" size="26" icon="replay">
 			Restart
 		</IconBtnText>
-		<IconBtnText size="26" icon="done" @click="check">
+		<IconBtnText
+			size="26"
+			icon="done"
+			@click="check"
+			v-if="checkButtonEnabled"
+		>
 			Check
 		</IconBtnText>
 		<IconBtnText size="26" icon="emoji_objects">				
 			Hint
 		</IconBtnText>
-		<!-- <IconBtnText @click="showSolution" size="26" icon="emoji_objects">				
-			Solution
-		</IconBtnText>
-		<IconBtnText @click="logString" size="26" icon="emoji_objects">				
-			Export
-		</IconBtnText> -->
 	</div>
 </template>
 
@@ -36,6 +35,9 @@ export default {
 		board() {
 			return this.$store.state.game.board;
 		},
+		checkButtonEnabled() {
+			return this.$store.state.settings.checkButton !== 'disabled';
+		}
 	},
 	methods: {
 		undo() {
