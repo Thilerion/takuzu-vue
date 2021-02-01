@@ -39,6 +39,14 @@ import SizeSelection from '../components/SizeSelection';
 import PlayGame from '../components/board/PlayGame';
 import StartGameButton from '../components/board/StartGameButton';
 
+const defaultSelection = {
+	difficulty: 2,
+	size: {
+		type: 'normal',
+		value: 8
+	}
+};
+
 export default {
 	name: 'FreePlay',
 	components: {
@@ -50,17 +58,18 @@ export default {
 	data() {
 		return {
 			difficultyLabels: ['Beginner', 'Normal', 'Hard', 'Very Hard', 'Extreme'],
-			difficulty: 1,
 
 			sizeOptions: {
 				normal: [6, 8, 10, 12, 14],
 				odd: [9, 11, 13],
 				special: ['8x12', '10x14', '10x16', '12x16']
 			},
+
+			difficulty: defaultSelection.difficulty,
 			size: {
-				type: 'normal',
-				value: 8
+				...defaultSelection.size
 			}
+
 		}
 	},
 	computed: {
@@ -78,6 +87,12 @@ export default {
 		},
 		disableStartButton() {
 			return this.gameLoading || this.invalidSelection;
+		},
+		currentSelection() {
+			return {
+				difficulty: this.difficulty,
+				size: {...this.size}
+			}
 		}
 	},
 	methods: {
@@ -114,6 +129,31 @@ export default {
 		} else {
 			this.quitGame();
 			return false;
+		}
+	},
+	beforeMount() {
+		// parse previous selection
+		try {
+			const prevSelection = JSON.parse(localStorage.getItem('takuzu_freeplay-selection'));
+			const merged = {
+				...defaultSelection,
+				...prevSelection
+			};
+			const {size,  difficulty} = merged;
+			this.size = size;
+			this.difficulty = difficulty;
+			console.log('updated size', {size, difficulty});
+		} catch(e) {
+			this.size = defaultSelection.size;
+			this.difficulty = defaultSelection.difficulty;
+		}
+	},
+	watch: {
+		currentSelection: {
+			handler(newValue) {
+				localStorage.setItem('takuzu_freeplay-selection', JSON.stringify(newValue));
+			},
+			deep: true,
 		}
 	}
 }
