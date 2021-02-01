@@ -1,7 +1,7 @@
 import { ONE, ZERO } from "../constants";
 import { lineSizeToNumRequired } from "../utils";
 
-export const threeInARowRegex = new RegExp(`${ZERO}{3}|${ONE}{3}`, 'g');
+export const threeInARowRegex = new RegExp(`${ZERO}{3,}|${ONE}{3,}`, 'g');
 
 export function validateThreeInARow(lineStr) {
 	return !(lineStr.match(threeInARowRegex));

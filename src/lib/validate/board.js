@@ -1,5 +1,5 @@
 import { EMPTY, ONE, ROW, ZERO } from "../constants";
-import { validateLine, validateMaxDigitsPerLine, validateThreeInARow } from "./line";
+import { threeInARowRegex, validateLine, validateMaxDigitsPerLine, validateThreeInARow } from "./line";
 
 export function validateBoard(board, validateUniqueness = true) {
 	const filledRows = new Set();
@@ -27,28 +27,30 @@ export function validateBoard(board, validateUniqueness = true) {
 
 export function findRuleConflicts(board, validateUniqueness = true) {
 	const conflicts = [];
-	
-	// three in a row
-	for (const threesUnit of board.threesUnits()) {
-		const str = threesUnit.toString();
-		if (str.includes('.')) continue;
-		const hasConflict = !validateThreeInARow(str);
-		if (hasConflict) {
-			const cells = threesUnit.getAllCoords();
-			conflicts.push(new RuleConflict(RULE_CONFLICT_TYPE.threeInARow, { cells }));
-		}
-	}
 
 	const filledRows = {};
 	const filledColumns = {};
 
 	const { numRequired } = board;
-	// imbalanced lines
 	for (const boardLine of board.boardLines()) {
+		const str = boardLine.toString();
+		// three+ in a row
+		const threeInARowMatches = [...str.matchAll(threeInARowRegex)];
+		for (const group of threeInARowMatches) {
+			const idx = group.index;
+			const length = group[0].length;
+			const cells = [];
+			for (let i = idx; i < idx + length; i++) {
+				cells.push(boardLine.getCoords(i));
+			}
+			conflicts.push(new RuleConflict(RULE_CONFLICT_TYPE.threeInARow, { cells }));
+		}
+		if (threeInARowMatches.length) continue;
+		
+		// imbalanced lines
 		const lineType = boardLine.type;
 		const maxZero = numRequired[lineType][ZERO];
 		const maxOne = numRequired[lineType][ONE];
-		const str = boardLine.toString();
 		const hasConflict = !validateMaxDigitsPerLine(str, maxZero, maxOne);
 		if (hasConflict) {
 			const lineIds = [boardLine.lineId];
