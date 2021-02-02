@@ -3,7 +3,7 @@
 		<PageHeader close-btn @close="$emit('close')">
 			{{columns}}x{{rows}}
 		</PageHeader>
-		<GameBoardWrapper>
+		<GameBoardWrapper v-if="board">
 			<GameBoard
 				:rows="rows"
 				:columns="columns"
@@ -31,7 +31,6 @@ import GameControls from './GameControls';
 import IconBtnText from '@/components/base-layout/IconBtnText';
 
 import { EMPTY } from '../../lib/constants';
-import { GAP_SIZE } from './config';
 
 import {disableWakeLock, enableWakeLock, getWakeLockState} from '../../services/wake-lock';
 
@@ -44,7 +43,6 @@ export default {
 	},
 	data() {
 		return {
-			gap: GAP_SIZE,
 
 			errorChecked: false,
 			errorCheckValue: null,

@@ -111,7 +111,7 @@ export default {
 
 <style lang="postcss" scoped>
 .cell-wrapper {
-	--size: clamp(1.25rem, calc(var(--cell-size)), 4rem);
+	--size: clamp(1.25rem, calc(var(--cell-size)), 6rem);
 	width: var(--size);
 	height: var(--size);
 	@apply bg-truegray-200 dark:bg-gray-800 rounded-sm relative cursor-pointer overflow-hidden;

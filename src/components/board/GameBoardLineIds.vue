@@ -11,6 +11,8 @@
 </template>
 
 <script>
+import { lineIdToGridArea } from './utils';
+
 export default {
 	computed: {
 		rowIds() {
@@ -21,23 +23,30 @@ export default {
 		},
 		lineIds() {
 			const rows = this.rowIds.map((rowId, idx) => {
-				return {style: this.toGridArea('row', idx), lineId: rowId, lineType: 'row'};
+				return {
+					style: this.toGridArea(rowId),
+					lineId: rowId,
+					lineType: 'row'
+				};
 			})
 			const columns = this.columnIds.map((colId, idx) => {
-				return { style: this.toGridArea('column', idx), lineId: colId, lineType: 'column'};
+				return { 
+					style: this.toGridArea(colId),
+					lineId: colId,
+					lineType: 'column'
+				};
 			})
 			return [...rows, ...columns];
 		}
 	},
 	methods: {
-		toGridArea(type, idx) {
-			if (type === 'row') return { 
-				'grid-area': `1 / ${idx + 2} / span 1 / span 1`
-			};
-			else if (type === 'column') return { 
-				'grid-area': `${idx + 2} / 1 / span 1 / span 1`
-			};
-		}
+		toGridArea(lineId) {
+			const {row, column} = lineIdToGridArea(lineId);
+			return {
+				'grid-row': `${row} / span 1`,
+				'grid-column': `${column} / span 1`
+			}
+		},
 	}
 };
 </script>

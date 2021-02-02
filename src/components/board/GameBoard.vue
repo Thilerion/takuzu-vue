@@ -12,19 +12,25 @@
 			}"
 			@clicked="toggleCell"
 		/>
-		<GameBoardLineIds v-if="showBoardCoordinates" />
+		<GameBoardLineCounts
+			v-if="showLineCounts"
+			:count-type="lineCountType"
+		/>
+		<GameBoardLineIds v-else-if="showBoardCoordinates" />
 		<GameBoardRuleViolation v-for="(conflict, idx) in ruleViolations" :value="conflict" :key="idx" />
 	</div>
 </template>
 
 <script>
 import GameBoardCell from './GameBoardCell';
+import GameBoardLineCounts from './GameBoardLineCounts';
 import GameBoardLineIds from './GameBoardLineIds';
 import GameBoardRuleViolation from './GameBoardRuleViolation';
 
 export default {
 	components: {
 		GameBoardCell,
+		GameBoardLineCounts,
 		GameBoardLineIds,
 		GameBoardRuleViolation,
 	},
@@ -47,7 +53,13 @@ export default {
 			return this.$store.getters.finishedAndCorrect;
 		},
 		showBoardCoordinates() {
-			return this.$store.state.settings.showBoardCoordinates;
+			return this.$store.getters['settings/showBoardCoordinates'];
+		},
+		showLineCounts() {
+			return this.$store.getters['settings/showBoardLineCounts'];
+		},
+		lineCountType() {
+			return this.$store.state.settings.showLineInfo;
 		},
 		ruleViolations() {
 			return this.$store.getters['gameCheck/markedRuleViolations'];
