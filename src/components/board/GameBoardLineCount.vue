@@ -76,6 +76,7 @@ export default {
 <style lang="postcss" scoped>
 .line-count {
 	@apply flex justify-center items-center w-full h-full overflow-hidden relative transition-all font-sans;
+	@apply bg-teal-100;
 }
 .line-count.column {
 	@apply flex-row;

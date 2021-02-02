@@ -1,7 +1,7 @@
 <template>
 	<div
 		ref="boardWrapper"
-		class="flex-1 overflow-hidden flex items-center justify-center font-number relative"
+		class="flex-1 overflow-hidden flex items-center justify-center font-number relative px-1"
 		:style="cssVars"
 	>
 		<slot />
@@ -9,16 +9,13 @@
 </template>
 
 <script>
-import { BASE_PADDING, GAP_SIZE, LINE_INFO_COORD_SIZE, LINE_INFO_COUNT_SIZE, MAX_FONT_SIZE, MIN_FONT_SIZE } from './config';
+import { LINE_INFO_COORD_SIZE, MAX_FONT_SIZE, MIN_FONT_SIZE } from './config';
 import throttle from 'lodash.throttle';
 
 export default {
 	data() {
 		return {
-			gapSize: GAP_SIZE,
-			basePadding: BASE_PADDING,
 			lineInfoCoordsSize: LINE_INFO_COORD_SIZE,
-			lineInfoCountSize: LINE_INFO_COUNT_SIZE,
 
 			totalWidth: 1,
 			totalHeight: 1,
@@ -46,55 +43,82 @@ export default {
 			return this.$store.getters['settings/showBoardCoordinates'];
 		},
 
-		// CALCULATIONS
-		lineHelperPadding() {
-			if (!this.hasLineInfoPadding) {
-				return 0;
-			}
-			if (this.hasLineCountPadding) {
-				return this.lineInfoCountSize;
-			} else if (this.hasLineCoordPadding) {
-				return this.lineInfoCoordsSize;
-			}
+		// NEW CALCULATIONS
+		gapSize() {
+			const approxW = this.totalWidth / (this.boardColumns + 0.5);
+			const approxH = this.totalHeight / (this.boardRows + 0.5);
+			const approx = Math.min(approxW, approxH);
+
+			if (approx < 28) return 1;
+			if (approx < 44) return 2;
+			if (approx < 60) return 3;
+			return 4;
 		},
-		sidePadding() {
-			// if no boardCoords, remove 1* gapSize as it is part of the padding
-			if (this.hasLineInfoPadding) {
-				return (this.basePadding * 2) + this.lineHelperPadding;
-			} else {
-				return (this.basePadding * 2) - (this.gapSize * 2);
-			}
+		numGapsWidth() {
+			return this.boardColumns + 2;
+		},
+		numGapsHeight() {
+			return this.boardRows + 2;
 		},
 		gapWidth() {
-			return (this.boardColumns + 1) * this.gapSize;
+			return this.gapSize * this.numGapsWidth;
 		},
 		gapHeight() {
-			return (this.boardRows + 1) * this.gapSize;
+			return this.gapSize * this.numGapsHeight;
 		},
-		totalPaddingHeight() {
-			return this.sidePadding + this.gapHeight;
+		lineInfoPadding() {
+			if (this.hasLineCoordPadding) {
+				return this.lineInfoCoordsSize;
+			} else return 0;
 		},
-		totalPaddingWidth() {
-			return this.sidePadding + this.gapWidth;
+		availSpaceWidth() {
+			const w = this.totalWidth;
+			return w - this.gapWidth - this.lineInfoPadding;
+		},
+		availSpaceHeight() {
+			const h = this.totalHeight;
+			return h - this.gapHeight - this.lineInfoPadding;
+		},
+		numCellsWidth() {
+			const cols = this.boardColumns;
+			if (this.hasLineCountPadding) return cols + 1;
+			return cols;
+		},
+		numCellsHeight() {
+			const rows = this.boardRows;
+			if (this.hasLineCountPadding) return rows + 1;
+			return rows;
 		},
 		maxCellHeight() {
-			const size = this.totalHeight - this.totalPaddingHeight;
-			return Math.floor(size / this.boardRows);
+			return Math.floor(this.availSpaceHeight / this.numCellsHeight);
 		},
 		maxCellWidth() {
-			const size = this.totalWidth - this.totalPaddingWidth;
-			return Math.floor(size / this.boardColumns);
+			return Math.floor(this.availSpaceWidth / this.numCellsWidth)
 		},
-		cellSize() {
+
+		// CALCULATIONS
+		lineInfoSize() {
+			if (this.hasLineCountPadding) {
+				return this.cellSize;
+			} else if (this.hasLineCoordPadding) {
+				return this.lineInfoCoordsSize;
+			} else return 0;
+		},
+		baseCellSize() {
 			const base = Math.min(this.maxCellHeight, this.maxCellWidth);
 			return (Math.floor(base / 2) * 2); // increments of 2
+		},
+		cellSize() {
+			let inc = Math.floor(this.baseCellSize / 2) * 2;
+			if (inc < 20) return 20;
+			if (inc > 80) return 80;
+			return inc;
 		},
 		cellFontSize() {
 			return Math.min(Math.max(this.cellSize - 2, MIN_FONT_SIZE), MAX_FONT_SIZE);
 		},
 
 		cssVars() {
-			const lineHelperSize = this.lineHelperPadding;
 			return {
 				'--cell-size': this.cellSize + 'px',
 				'--cell-font-size': this.cellFontSize + 'px',
@@ -103,7 +127,7 @@ export default {
 				'--board-rows': this.boardRows,
 				'--board-cols': this.boardColumns,
 				'--grid-gap': this.gapSize + 'px',
-				'--line-helper-size': lineHelperSize + 'px'
+				'--line-helper-size': this.lineInfoSize + 'px'
 			}
 		}
 	},
@@ -135,7 +159,7 @@ export default {
 		createResizeObserver() {
 			if (this.resizeObserver != null) return;
 
-			const throttledFn = throttle(this.handleResize, 250);
+			const throttledFn = throttle(this.handleResize, 10);
 			this.resizeObserver = new ResizeObserver(throttledFn);
 			this.resizeObserver.observe(this.$refs.boardWrapper);
 		},
@@ -152,7 +176,7 @@ export default {
 	},
 	beforeUnmount() {
 		this.deleteResizeObserver();
-	}
+	},
 };
 </script>
 
