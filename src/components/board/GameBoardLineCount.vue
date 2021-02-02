@@ -1,14 +1,17 @@
 <template>
 	<div
-		class="text-xs line-count"
+		class="line-count"
 		:style="lineIdToGridArea(lineId)"
 		:class="[lineType, {
 			complete: lineComplete
 		}]"
 	>
-		<div class="count zero" :class="{complete: zeroComplete, error: zeroError}">{{countZero}}</div>
-		<span class="divider">/</span>
-		<div class="count one" :class="{complete: oneComplete, error: oneError}">{{countOne}}</div>
+		<div class="count-wrapper zero">
+			<div class="count zero" :class="{complete: zeroComplete, error: zeroError}">{{countZero}}</div>
+		</div>
+		<div class="count-wrapper one">
+			<div class="count one" :class="{complete: oneComplete, error: oneError}">{{countOne}}</div>
+		</div>
 	</div>
 </template>
 
@@ -75,18 +78,28 @@ export default {
 
 <style lang="postcss" scoped>
 .line-count {
-	@apply flex justify-center items-center w-full h-full overflow-hidden relative transition-all font-sans;
-	@apply bg-teal-100;
-}
-.line-count.column {
-	@apply flex-row;
-}
-.line-count.row {
-	@apply flex-col;
+	display: grid;
+	grid-template-rows: repeat(3, 1fr);
+	grid-template-columns: repeat(3, 1fr);
+
+	padding: 12%;
+
+	@apply overflow-hidden relative transition-colors font-sans justify-items-stretch items-stretch;
+	/* @apply bg-teal-100; */
+	width: var(--cell-size);
+	height: var(--cell-size);
+
+	--half-size: calc(var(--cell-size) / 3);
+	--font-size: clamp(10px, var(--half-size), 2rem);
+	font-size: var(--font-size);
+	line-height: 1;
 }
 
 .count {
-	@apply absolute text-gray-600 transition-all;
+	@apply text-gray-600 w-full h-full overflow-hidden;
+	transition-property: opacity background-color color;
+	transition-duration: 0.2s;
+	transition-timing-function: ease;
 }
 .count.complete {
 	@apply opacity-40;
@@ -95,22 +108,23 @@ export default {
 	@apply text-red-600 font-bold;
 }
 
-.row .count.zero {
-	top: 15%;
-	left: 15%;
+.count-wrapper {
+	display: flex;
 }
-.row .count.one {
-	bottom: 15%;
-	right: 15%;
+.count-wrapper.zero {
+	grid-row: 1 / span 2;
+	grid-column: 1 / span 2;
+}
+.count-wrapper.one {
+	grid-row: 2 / span 2;
+	grid-column: 2 / span 2;
 }
 
-.column .count.zero {
-	top: 10%;
-	left: 20%;
+.one {
+	@apply mt-auto ml-auto;
 }
-.column .count.one {
-	bottom: 10%;
-	right: 20%;
+.zero {
+	@apply mb-auto mr-auto;
 }
 
 .divider {
