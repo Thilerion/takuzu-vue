@@ -1,9 +1,7 @@
-import { findRuleConflicts } from "@/lib/validate/board";
 import { SimpleBoard } from "../lib/board/Board";
 import { EMPTY, OPPOSITE_VALUE } from "../lib/constants";
 import { toggleValue } from "../lib/utils";
 import gameCheckModule from "./game-check";
-
 
 const worker = new Worker('../generate-worker.js', { type: 'module' });
 const send = message => worker.postMessage({ message });

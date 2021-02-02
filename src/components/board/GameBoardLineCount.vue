@@ -19,7 +19,6 @@
 </template>
 
 <script>
-import { countLineValues } from '@/lib/utils';
 import { lineIdToGridArea } from './utils';
 import { ONE, ZERO } from '@/lib/constants';
 
@@ -36,15 +35,13 @@ export default {
 		countType: {
 			type: String,
 			required: true
+		},
+		lineCounts: {
+			type: Object,
+			required: true
 		}
 	},
 	computed: {
-		lineValues() {
-			return this.$store.state.game.board.getLine(this.lineId);
-		},
-		lineCounts() {
-			return countLineValues(this.lineValues);
-		},
 		requiredValues() {
 			return this.$store.state.game.board.numRequired[this.lineType];
 		},
@@ -68,6 +65,9 @@ export default {
 			} else if (this.countType === 'remainingCount') {
 				return this.requiredValues[ZERO] - this.countZero;
 			}
+		},
+		values() {
+			return [valueZero, valueOne];
 		},
 
 		zeroComplete() {

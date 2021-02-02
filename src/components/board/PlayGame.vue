@@ -3,7 +3,7 @@
 		<PageHeader close-btn @close="$emit('close')">
 			{{columns}}x{{rows}}
 		</PageHeader>
-		<GameBoardWrapper>
+		<GameBoardWrapper v-if="board">
 			<GameBoard
 				:rows="rows"
 				:columns="columns"
