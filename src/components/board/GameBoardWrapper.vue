@@ -1,7 +1,7 @@
 <template>
 	<div
 		ref="boardWrapper"
-		class="flex-1 overflow-hidden flex items-center justify-center font-number p-2 relative"
+		class="flex-1 overflow-hidden flex items-center justify-center font-number relative"
 		:style="cssVars"
 	>
 		<slot />
