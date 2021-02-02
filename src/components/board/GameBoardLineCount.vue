@@ -7,10 +7,10 @@
 		}]"
 	>
 		<div class="count-wrapper zero">
-			<div class="count zero" :class="{complete: zeroComplete, error: zeroError}">{{countZero}}</div>
+			<div class="count zero" :class="{complete: zeroComplete, error: zeroError}">{{valueZero}}</div>
 		</div>
 		<div class="count-wrapper one">
-			<div class="count one" :class="{complete: oneComplete, error: oneError}">{{countOne}}</div>
+			<div class="count one" :class="{complete: oneComplete, error: oneError}">{{valueOne}}</div>
 		</div>
 		<div class="divider-wrapper">
 			<div class="divider"></div>
@@ -32,6 +32,10 @@ export default {
 		lineId: {
 			type: String,
 			required: true
+		},
+		countType: {
+			type: String,
+			required: true
 		}
 	},
 	computed: {
@@ -49,6 +53,21 @@ export default {
 		},
 		countZero() {
 			return this.lineCounts[ZERO];
+		},
+
+		valueOne() {
+			if (this.countType === 'currentCount') {
+				return this.countOne;
+			} else if (this.countType === 'remainingCount') {
+				return this.requiredValues[ONE] - this.countOne;
+			}
+		},
+		valueZero() {
+			if (this.countType === 'currentCount') {
+				return this.countZero;
+			} else if (this.countType === 'remainingCount') {
+				return this.requiredValues[ZERO] - this.countZero;
+			}
 		},
 
 		zeroComplete() {

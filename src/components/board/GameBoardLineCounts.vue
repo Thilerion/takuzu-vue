@@ -4,6 +4,7 @@
 		:key="line.lineId"
 		:line-id="line.lineId"
 		:line-type="line.lineType"
+		:count-type="countType"
 	/>
 </template>
 
@@ -14,6 +15,12 @@ import GameBoardLineCount from './GameBoardLineCount';
 export default {
 	components: {
 		GameBoardLineCount,
+	},
+	props: {
+		countType: {
+			type: String,
+			required: true
+		}
 	},
 	computed: {
 		rowIds() {

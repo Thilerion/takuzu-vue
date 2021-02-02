@@ -12,7 +12,10 @@
 			}"
 			@clicked="toggleCell"
 		/>
-		<GameBoardLineCounts v-if="showLineCounts" />
+		<GameBoardLineCounts
+			v-if="showLineCounts"
+			:count-type="lineCountType"
+		/>
 		<GameBoardLineIds v-else-if="showBoardCoordinates" />
 		<GameBoardRuleViolation v-for="(conflict, idx) in ruleViolations" :value="conflict" :key="idx" />
 	</div>
@@ -54,6 +57,9 @@ export default {
 		},
 		showLineCounts() {
 			return this.$store.getters['settings/showBoardLineCounts'];
+		},
+		lineCountType() {
+			return this.$store.state.settings.showLineInfo;
 		},
 		ruleViolations() {
 			return this.$store.getters['gameCheck/markedRuleViolations'];
