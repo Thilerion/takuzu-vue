@@ -12,6 +12,9 @@
 		<div class="count-wrapper one">
 			<div class="count one" :class="{complete: oneComplete, error: oneError}">{{countOne}}</div>
 		</div>
+		<div class="divider-wrapper">
+			<div class="divider"></div>
+		</div>
 	</div>
 </template>
 
@@ -127,7 +130,17 @@ export default {
 	@apply mb-auto mr-auto;
 }
 
+.divider-wrapper {
+	@apply absolute w-full h-full opacity-50;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
 .divider {
-	@apply opacity-30 transition-opacity;
+	transform-origin: 50% 50%;
+	transform: rotate(50deg);
+	@apply opacity-30 transition-opacity bg-black;
+	width: 1px;
+	height: 50%;
 }
 </style>
