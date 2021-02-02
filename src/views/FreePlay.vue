@@ -54,6 +54,7 @@ const presetSizes = [
 	{ width: 12, height: 12, type: sizeTypes.NORMAL, maxDifficulty: 5},
 	{ width: 14, height: 14, type: sizeTypes.NORMAL, maxDifficulty: 5},
 
+	{ width: 7, height: 7, type: sizeTypes.ODD, maxDifficulty: 2},
 	{ width: 9, height: 9, type: sizeTypes.ODD, maxDifficulty: 3},
 	{ width: 11, height: 11, type: sizeTypes.ODD, maxDifficulty: 4},
 	{ width: 13, height: 13, type: sizeTypes.ODD, maxDifficulty: 5},
@@ -66,8 +67,16 @@ const presetSizes = [
 ];
 
 const getInitialSelection = () => {
-	// TODO: use localStorage prefs
-	return presetSizes[1];
+	try {
+		const data = localStorage.getItem('takuzu_freeplay-selection');
+		const {size, difficulty} = JSON.parse(data);
+		return {size, difficulty};
+	} catch {
+		return {
+			size: presetSizes[1],
+			difficulty: 1
+		}
+	}
 }
 
 export default {
@@ -81,11 +90,11 @@ export default {
 	data() {
 		return {
 			difficultyLabels: ['Beginner', 'Normal', 'Hard', 'Very Hard', 'Extreme'],
-			difficulty: 1,
-
 			presetSizes,
 			sizeTypes,
-			size: getInitialSelection(),
+			
+			difficulty: null,
+			size: null,
 		}
 	},
 	computed: {
@@ -110,7 +119,7 @@ export default {
 		currentSelection() {
 			return {
 				difficulty: this.difficulty,
-				size: {...this.size}
+				size: { ...this.size }
 			}
 		}
 	},
@@ -148,7 +157,9 @@ export default {
 	beforeMount() {
 		// parse previous selection
 		try {
-			
+			const { size, difficulty } = getInitialSelection();
+			this.size = size;
+			this.difficulty =difficulty;
 		} catch(e) {
 			
 		}
