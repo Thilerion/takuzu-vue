@@ -47,7 +47,7 @@ export default {
 			return this.$store.getters.finishedAndCorrect;
 		},
 		showBoardCoordinates() {
-			return this.$store.state.settings.showBoardCoordinates;
+			return this.$store.getters['settings/showBoardCoordinates'];
 		},
 		ruleViolations() {
 			return this.$store.getters['gameCheck/markedRuleViolations'];

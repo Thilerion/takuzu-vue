@@ -1,5 +1,5 @@
 const getDefaultSettings = () => ({
-	showBoardCoordinates: true,
+	showLineInfo: '', // '' for disabled, 'coords', 'remainingCount', 'currentCount'
 	enableWakeLock: true,
 	
 	// vibration settings
@@ -23,6 +23,10 @@ export const settingsModule = {
 		gameVibrationEnabled: (state, getters) => getters.vibrationEnabled && state.vibrateGame,
 		uiVibrationEnabled: (state, getters) => getters.vibrationEnabled && state.vibrateUI,
 		infoVibrationEnabled: (state, getters) => getters.vibrationEnabled && state.vibrateInfo,
+
+		showBoardCoordinates: state => state.showLineInfo === 'coords',
+		showBoardLineCountInfo: state => ['remainingCount', 'currentCount'].includes(state.showLineInfo),
+		boardHasLineInfoPadding: state => state.showLineInfo !== '',
 	},
 
 	mutations: {

@@ -28,12 +28,15 @@
 			</div>
 		</div>
 		<div class="setting-block mt-6">
-			<h2 class="text-gray-700">Board Display</h2>
+			<h2 class="text-gray-700">Line side information</h2>
 			<div class="mt-2">
-				<label class="flex items-center">
-					<input type="checkbox" v-model="showBoardCoordinates">
-					<span class="ml-2">Show board coordinates</span>
-				</label>
+				<select class="block w-full mt-1" v-model="showLineInfo">
+					<option
+						v-for="opt in lineInfoOptions"
+						:value="opt.value"
+						:key="opt.value"
+					>{{opt.label}}</option>
+				</select>
 			</div>
 		</div>
 		<div class="setting-block mt-6">
@@ -58,12 +61,25 @@ export default {
 	},
 	data() {
 		return {
-			
+			lineInfoOptions: [
+				{ label: 'Disabled', value: ''},
+				{ label: 'Line coordinates', value: 'coords'},
+				{ label: 'Remaining values in line', value: 'remainingCount'},
+				{ label: 'Current values in line', value: 'currentCount'},
+			]
 		}
 	},
 	computed: {
 		settings() {
 			return this.$store.state.settings;
+		},
+		showLineInfo: {
+			get() {
+				return this.settings.showLineInfo;
+			},
+			set(value) {
+				this.updateSetting('showLineInfo', value);
+			}
 		},
 		showBoardCoordinates: {
 			get() {

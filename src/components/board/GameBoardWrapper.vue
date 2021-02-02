@@ -35,13 +35,13 @@ export default {
 			return this.board.height;
 		},
 
-		showBoardCoordinates() {
-			return this.$store.state.settings.showBoardCoordinates;
+		hasLineInfoPadding() {
+			return this.$store.getters['settings/boardHasLineInfoPadding'];
 		},
 
 		// CALCULATIONS
 		lineHelperPadding() {
-			if (this.showBoardCoordinates) {
+			if (this.hasLineInfoPadding) {
 				return this.lineHelperSize;
 			} else {
 				return 0;
@@ -49,7 +49,7 @@ export default {
 		},
 		sidePadding() {
 			// if no boardCoords, remove 1* gapSize as it is part of the padding
-			if (this.showBoardCoordinates) {
+			if (this.hasLineInfoPadding) {
 				return (this.basePadding * 2) - this.gapSize;
 			} else {
 				return (this.basePadding * 2) - (this.gapSize * 2);
@@ -84,7 +84,7 @@ export default {
 		},
 
 		cssVars() {
-			const lineHelperSize = this.showBoardCoordinates ? this.lineHelperSize : 0;
+			const lineHelperSize = this.hasLineInfoPadding ? this.lineHelperSize : 0;
 			return {
 				'--cell-size': this.cellSize + 'px',
 				'--cell-font-size': this.cellFontSize + 'px',
