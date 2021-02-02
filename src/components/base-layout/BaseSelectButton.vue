@@ -15,7 +15,7 @@ export default {
 
 <style lang="postcss" scoped>
 .select-btn {
-	@apply text-sm font-bold py-1 px-4 rounded mb-2 tracking-wider bg-white text-gray-900 shadow border border-gray-300 transition-all;
+	@apply text-sm font-bold py-1 px-4 rounded mb-2 tracking-wider bg-white text-gray-700 shadow border border-gray-300 transition-all;
 	@apply focus:outline-none;
 }
 .select-btn.selected {

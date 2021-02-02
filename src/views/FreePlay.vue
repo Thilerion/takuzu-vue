@@ -11,10 +11,13 @@
 			</div>
 			<div class="py-2">
 				<h2 class="text-2xl font-light pb-2">Size</h2>
-				<SizeSelection
+				<GameSizeSelect
 					:difficulty="difficulty"
-					v-model="size"
-					:sizes="sizeOptions"
+					:initial-selection="size"
+					:preset-sizes="presetSizes"
+					:size-types="sizeTypes"
+					@select="selectSize"
+					v-if="true"
 				/>
 			</div>
 		</div>
@@ -35,41 +38,54 @@
 
 <script>
 import DifficultySelect from '../components/DifficultySelect';
-import SizeSelection from '../components/SizeSelection';
+import GameSizeSelect from '../components/GameSizeSelect';
 import PlayGame from '../components/board/PlayGame';
 import StartGameButton from '../components/board/StartGameButton';
 
-const defaultSelection = {
-	difficulty: 2,
-	size: {
-		type: 'normal',
-		value: 8
-	}
-};
+const sizeTypes = {
+	NORMAL: 'Normal',
+	ODD: 'Odd',
+	RECT: 'Rectangular'
+}
+const presetSizes = [
+	{ width: 6, height: 6, type: sizeTypes.NORMAL, maxDifficulty: 2},
+	{ width: 8, height: 8, type: sizeTypes.NORMAL, maxDifficulty: 3},
+	{ width: 10, height: 10, type: sizeTypes.NORMAL, maxDifficulty: 4},
+	{ width: 12, height: 12, type: sizeTypes.NORMAL, maxDifficulty: 5},
+	{ width: 14, height: 14, type: sizeTypes.NORMAL, maxDifficulty: 5},
+
+	{ width: 9, height: 9, type: sizeTypes.ODD, maxDifficulty: 3},
+	{ width: 11, height: 11, type: sizeTypes.ODD, maxDifficulty: 4},
+	{ width: 13, height: 13, type: sizeTypes.ODD, maxDifficulty: 5},
+
+	{ width: 6, height: 10, type: sizeTypes.RECT, maxDifficulty: 3},
+	{ width: 8, height: 12, type: sizeTypes.RECT, maxDifficulty: 3},
+	{ width: 10, height: 14, type: sizeTypes.RECT, maxDifficulty: 4},
+	{ width: 10, height: 16, type: sizeTypes.RECT, maxDifficulty: 5},
+	{ width: 12, height: 16, type: sizeTypes.RECT, maxDifficulty: 5},
+];
+
+const getInitialSelection = () => {
+	// TODO: use localStorage prefs
+	return presetSizes[1];
+}
 
 export default {
 	name: 'FreePlay',
 	components: {
 		DifficultySelect,
-		SizeSelection,
+		GameSizeSelect,
 		PlayGame,
 		StartGameButton,
 	},
 	data() {
 		return {
 			difficultyLabels: ['Beginner', 'Normal', 'Hard', 'Very Hard', 'Extreme'],
+			difficulty: 1,
 
-			sizeOptions: {
-				normal: [6, 8, 10, 12, 14],
-				odd: [9, 11, 13],
-				special: ['8x12', '10x14', '10x16', '12x16']
-			},
-
-			difficulty: defaultSelection.difficulty,
-			size: {
-				...defaultSelection.size
-			}
-
+			presetSizes,
+			sizeTypes,
+			size: getInitialSelection(),
 		}
 	},
 	computed: {
@@ -82,8 +98,11 @@ export default {
 		gameCreationError() {
 			return this.$store.state.game.creationError;
 		},
+		validSelection() {
+			return this.difficulty > 0 && this.difficulty < 6 && this.size != null && this.size.width > 3 && this.size.height > 3;
+		},
 		invalidSelection() {
-			return this.size.value == null || this.size.value == null;
+			return !this.validSelection;
 		},
 		disableStartButton() {
 			return this.gameLoading || this.invalidSelection;
@@ -99,19 +118,14 @@ export default {
 		selectStars(val) {
 			this.difficulty = val;
 		},
+		selectSize(size) {
+			this.size = size;
+		},
 		createGame() {
-			const sizeValue = this.size.value;
-			let width = sizeValue;
-			let height = sizeValue;
-
-			if (typeof sizeValue === 'string') {
-				const splitSize = sizeValue.split('x').map(Number);
-				width = splitSize[0];
-				height = splitSize[1];
-			}
+			const { width, height } = this.size;
 			const difficulty = this.difficulty;
 
-			this.$store.dispatch('initGame', {width, height, difficulty});
+			this.$store.dispatch('initGame', { width, height, difficulty });
 		},
 		quitGame() {
 			this.$store.commit('reset');
@@ -134,18 +148,9 @@ export default {
 	beforeMount() {
 		// parse previous selection
 		try {
-			const prevSelection = JSON.parse(localStorage.getItem('takuzu_freeplay-selection'));
-			const merged = {
-				...defaultSelection,
-				...prevSelection
-			};
-			const {size,  difficulty} = merged;
-			this.size = size;
-			this.difficulty = difficulty;
-			console.log('updated size', {size, difficulty});
+			
 		} catch(e) {
-			this.size = defaultSelection.size;
-			this.difficulty = defaultSelection.difficulty;
+			
 		}
 	},
 	watch: {
