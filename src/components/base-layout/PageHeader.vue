@@ -26,6 +26,7 @@ export default {
 			if (this.$attrs.onClose) {
 				this.$emit('close');
 			} else {
+				// TODO: check that previous page is home?
 				this.$router.go(-1);
 			}
 		}

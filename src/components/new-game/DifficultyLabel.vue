@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import StarIcon from './common/StarIcon';
+import StarIcon from '../common/StarIcon';
 
 export default {
 	components: {

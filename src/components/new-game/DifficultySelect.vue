@@ -21,8 +21,8 @@
 </template>
 
 <script>
-import ArrowLeftIcon from './common/ArrowLeftIcon';
-import ArrowRightIcon from './common/ArrowRightIcon';
+import ArrowLeftIcon from '../common/ArrowLeftIcon';
+import ArrowRightIcon from '../common/ArrowRightIcon';
 import DifficultyLabel from './DifficultyLabel';
 
 export default {

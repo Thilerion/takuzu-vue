@@ -1,8 +1,8 @@
 <template>
 	<div class="fixed inset-0 overflow-auto flex flex-col">
 		<PageHeader>New Game</PageHeader>
-		<div class="px-4">
-			<div class="pb-4">
+		<div>
+			<div class="pb-4 px-4">
 				<h2 class="text-2xl font-light pb-2">Difficulty</h2>
 				<DifficultySelect
 					v-model="difficulty"
@@ -37,10 +37,10 @@
 </template>
 
 <script>
-import DifficultySelect from '../components/DifficultySelect';
-import GameSizeSelect from '../components/GameSizeSelect';
-import PlayGame from '../components/board/PlayGame';
-import StartGameButton from '../components/board/StartGameButton';
+import DifficultySelect from '@/components/new-game/DifficultySelect';
+import GameSizeSelect from '@/components/new-game/GameSizeSelect';
+import PlayGame from '@/components/board/PlayGame';
+import StartGameButton from '@/components/board/StartGameButton';
 
 const sizeTypes = {
 	NORMAL: 'Normal',

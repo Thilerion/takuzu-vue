@@ -1,12 +1,9 @@
 <template>
 	<div>
-		<button
-			v-for="sizeType of sizeTypes"
-			:key="sizeType"
-			@click="currentTab = sizeType"
-		>
-			{{sizeType}}
-		</button>
+		<GameSizeSelectTabButtons
+			:sizeTypes="sizeTypes"
+			v-model="currentTab"
+		/>
 
 		<GameSizeSelectTab
 			v-for="sizeType of Object.values(sizeTypes)"
@@ -22,12 +19,14 @@
 
 <script>
 import GameSizeSelectTab from './GameSizeSelectTab';
+import GameSizeSelectTabButtons from './GameSizeSelectTabButtons';
 
 // gets previous selection from parent
 
 export default {
 	components: {
 		GameSizeSelectTab,
+		GameSizeSelectTabButtons,
 	},
 	props: {
 		difficulty: {
