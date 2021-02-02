@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { BASE_PADDING, GAP_SIZE, LINE_HELPER_SIZE, MAX_FONT_SIZE, MIN_FONT_SIZE } from './config';
+import { BASE_PADDING, GAP_SIZE, LINE_INFO_COORD_SIZE, LINE_INFO_COUNT_SIZE, MAX_FONT_SIZE, MIN_FONT_SIZE } from './config';
 import throttle from 'lodash.throttle';
 
 export default {
@@ -17,7 +17,8 @@ export default {
 		return {
 			gapSize: GAP_SIZE,
 			basePadding: BASE_PADDING,
-			lineHelperSize: LINE_HELPER_SIZE,
+			lineInfoCoordsSize: LINE_INFO_COORD_SIZE,
+			lineInfoCountSize: LINE_INFO_COUNT_SIZE,
 
 			totalWidth: 1,
 			totalHeight: 1,
@@ -38,19 +39,28 @@ export default {
 		hasLineInfoPadding() {
 			return this.$store.getters['settings/boardHasLineInfoPadding'];
 		},
+		hasLineCountPadding() {
+			return this.$store.getters['settings/showBoardLineCounts'];
+		},
+		hasLineCoordPadding() {
+			return this.$store.getters['settings/showBoardCoordinates'];
+		},
 
 		// CALCULATIONS
 		lineHelperPadding() {
-			if (this.hasLineInfoPadding) {
-				return this.lineHelperSize;
-			} else {
+			if (!this.hasLineInfoPadding) {
 				return 0;
+			}
+			if (this.hasLineCountPadding) {
+				return this.lineInfoCountSize;
+			} else if (this.hasLineCoordPadding) {
+				return this.lineInfoCoordsSize;
 			}
 		},
 		sidePadding() {
 			// if no boardCoords, remove 1* gapSize as it is part of the padding
 			if (this.hasLineInfoPadding) {
-				return (this.basePadding * 2) - this.gapSize;
+				return (this.basePadding * 2) + this.lineHelperPadding;
 			} else {
 				return (this.basePadding * 2) - (this.gapSize * 2);
 			}
@@ -84,7 +94,7 @@ export default {
 		},
 
 		cssVars() {
-			const lineHelperSize = this.hasLineInfoPadding ? this.lineHelperSize : 0;
+			const lineHelperSize = this.lineHelperPadding;
 			return {
 				'--cell-size': this.cellSize + 'px',
 				'--cell-font-size': this.cellFontSize + 'px',

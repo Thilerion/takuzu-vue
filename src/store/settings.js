@@ -25,7 +25,7 @@ export const settingsModule = {
 		infoVibrationEnabled: (state, getters) => getters.vibrationEnabled && state.vibrateInfo,
 
 		showBoardCoordinates: state => state.showLineInfo === 'coords',
-		showBoardLineCountInfo: state => ['remainingCount', 'currentCount'].includes(state.showLineInfo),
+		showBoardLineCounts: state => ['remainingCount', 'currentCount'].includes(state.showLineInfo),
 		boardHasLineInfoPadding: state => state.showLineInfo !== '',
 	},
 
