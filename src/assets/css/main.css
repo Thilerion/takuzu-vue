@@ -4,22 +4,23 @@
 
 @layer base {
 	button {
-		@apply outline-none select-none;
-		-webkit-tap-highlight-color: transparent;
-	}
-	a {
-		-webkit-tap-highlight-color: transparent;
-	}
-	
+		@apply outline-none select-none;		
+	}	
 }
+
+@layer components {
+	.text-ellipsis {
+		@apply overflow-ellipsis max-w-full overflow-hidden whitespace-nowrap;
+	}
+}
+
 
 html, body, #app {
 	height: 100%;
-	max-height: 100%;
+	-webkit-tap-highlight-color: transparent;
 }
 
 body {
-	@apply text-center;
 	@apply antialiased;
 	@apply font-sans;
 	@apply slashed-zero;
