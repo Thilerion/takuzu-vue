@@ -1,5 +1,5 @@
 <template>
-	<div class="fixed inset-0 overflow-auto flex flex-col">
+	<div>
 		<PageHeader>How To Play</PageHeader>
 		<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos, fugiat, accusantium odio minima doloremque accusamus rem autem delectus ad minus reprehenderit ea? Ipsum voluptate quidem dolores harum, sed repudiandae magni molestias blanditiis consectetur veritatis, reiciendis alias? Obcaecati dolorum sunt corrupti voluptatem ipsum quasi soluta tenetur sed quod, velit sequi quidem.</p>
 		<p>Cum reprehenderit a tempora pariatur, similique incidunt minus asperiores minima expedita debitis illum sunt voluptatibus eveniet assumenda quidem consequatur deleniti quae error id quasi adipisci. Quod dignissimos minima cupiditate iure beatae. Corrupti ea alias exercitationem unde adipisci consequuntur autem voluptatibus eaque aspernatur quia, repudiandae ratione quo aperiam deserunt? Ex, tempore?</p>

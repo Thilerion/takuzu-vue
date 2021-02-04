@@ -1,11 +1,11 @@
 <template>
 	<div class="wrapper">
-		<div class="page">
+		<div class="page" :style="{'padding-bottom': footerHeight }">
 			<BaseHeader />
 			<BaseMain />
 		</div>
 		<div id="layers">
-			<BaseFooter />
+			<BaseFooter v-model="footerHeight" />
 		</div>
 	</div>
 </template>
@@ -20,21 +20,31 @@ export default {
 		BaseHeader,
 		BaseMain,
 		BaseFooter,
+	},
+	data() {
+		return {
+			footerHeight: 0
+		}
+	},
+	watch: {
+		footerHeight(newValue, oldValue) {
+			console.log('footerheight changed');
+			console.log({newValue, oldValue});
+		}
 	}
 };
 </script>
 
 <style lang="postcss" scoped>
-.wrapper {
-	height: 100%;
-}
 .wrapper, .page {
-	height: 100%;
+	min-height: 100%;
+	min-height: 100vh;
+	min-height: -webkit-fill-available;
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
 	justify-content: flex-start;
-
+	flex: 1;
 }
 
 #layers {
@@ -42,11 +52,8 @@ export default {
 	position: fixed;
 	height: 100vh;
 	height: -webkit-fill-available;
-	width: 100%;
-	/* top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0; */
+	width: 100vw;
+	overflow-x: hidden;
 	
 	display: flex;
 	flex-direction: column;

@@ -1,5 +1,5 @@
 <template>
-	<nav class="block absolute bottom-0 bg-white border-t border-truegray-200 h-16 shadow-xl w-full">
+	<nav class="bg-white border-t border-truegray-200 h-16 shadow-xl w-full">
 		<div class="flex justify-between h-full">
 			<router-link
 				class="nav-link"
@@ -30,6 +30,12 @@ export default {
 				{ label: 'More', to: '/menu', icon: 'more_horiz' },
 			]
 		}
+	},
+	mounted() {
+		this.$emit('set-footer-height', '4rem');
+	},
+	unmounted() {
+		this.$emit('set-footer-height', 0);
 	}
 };
 </script>

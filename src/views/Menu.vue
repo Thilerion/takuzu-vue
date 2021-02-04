@@ -1,6 +1,6 @@
 <template>
 	<div>
-		
+		<PageHeader>More...</PageHeader>
 	</div>
 </template>
 

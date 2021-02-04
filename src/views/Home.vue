@@ -1,5 +1,5 @@
 <template>
-	<div class="home p-4 h-full flex flex-col items-stretch justify-center">
+	<div class="home p-4 h-full flex flex-col items-stretch justify-center text-center">
 		<div class="main-menu">
 			<h1 class="text-6xl font-extrabold pb-10">Takuzu</h1>
 			<nav class="">
