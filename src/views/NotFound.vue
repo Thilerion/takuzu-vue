@@ -7,10 +7,22 @@
 
 <script>
 export default {
+	data() {
+		return {
+			timeout: null
+		}
+	},
 	mounted() {
-		setTimeout(() => {
+		this.timeout = setTimeout(() => {
+			this.timeout = null;
 			this.$router.replace('/');
 		}, 2000);
+	},
+	unmounted() {
+		if (!this.timeout) return;
+
+		console.warn('Redirect timeout still running while unmounted... cancelling');
+		clearTimeout(this.timeout);
 	}
 };
 </script>
