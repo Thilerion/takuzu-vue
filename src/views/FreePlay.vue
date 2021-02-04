@@ -32,7 +32,9 @@
 				:gameLoading="gameLoading"
 			/>
 		</div>
-	<PlayGame @close="quitGame" v-if="gameInitialized" />
+		<transition name="overlay-fade">
+			<PlayGame @close="quitGame" v-if="gameInitialized" />
+		</transition>
 	</div>
 </template>
 
@@ -183,6 +185,7 @@ export default {
 	position: fixed;
 	top: 0;
 	overflow: hidden;
+	@apply text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-gray-50;
 }
 .difficulty-btn > * {
 	@apply mr-1;

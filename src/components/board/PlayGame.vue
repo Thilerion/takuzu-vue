@@ -122,7 +122,7 @@ export default {
 
 <style lang="postcss" scoped>
 .gameboard-view {
-	background: inherit;
+	@apply text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-gray-50;
 }
 
 .header {

@@ -12,6 +12,7 @@
 				name="overlay-fade"
 				@before-enter="hideOverflow = true"
 				@after-enter="hideOverflow = false"
+				mode="out-in"
 			>
 				<component :is="Component" />
 			</transition>
@@ -64,7 +65,7 @@ body {
 }
 
 .overlay-fade-enter-active {
-	transition: all .5s ease;
+	transition: all .4s ease;
 }
 .overlay-fade-leave-active {
 	transition: all .2s ease-in-out;
@@ -73,11 +74,16 @@ body {
 .overlay-fade-enter-from,
 .overlay-fade-leave-to {
 	opacity: 0;
-	transform: scale(1.1);
+	transform: scale(1.05);
 }
 
 .overlay-fade-enter-active.wrapper, .overlay-fade-leave-active.wrapper {
-	transition: none;
+	transition: opacity .1s ease;
+}
+.overlay-fade-enter-from.wrapper,
+.overlay-fade-leave-to.wrapper {
+	opacity: 0;
+	transform: scale(1);
 }
 /*
 .fade-enter-active,
