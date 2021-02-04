@@ -3,7 +3,8 @@
 		class="cell-wrapper select-none"
 		:class="{'locked': isLocked, 'incorrect': isIncorrectValue}"
 		@click="clickedCell(false)"
-		@touchstart="touchedCell"
+		@touchstart.prevent="touchedCell"
+		@touchend.prevent
 		ref="cell"
 	>
 		<transition name="click-anim">
@@ -67,38 +68,36 @@ export default {
 			this.$emit('clicked', payload);
 			this.showAnim = false;
 		},
-		clickedCell(long = false) {
+		clickedCell() {
+			if (this.isLocked) return;
+			this.emitClick(false);
+		},
+		emitCellChange(long = false) {
 			if (this.isLocked) return;
 			this.emitClick(long);
 		},
-		touchedCell(e) {
+		touchedCell() {
 			if (this.isLocked) return;
-
-			if (e.cancelable) {
-				e.preventDefault();
-			} else {
-				console.log('not cancelable');
-			}
 
 			this.startClickAnim();
 
 			this.touchTimer = setTimeout(() => {
 				this.$refs.cell.removeEventListener('touchend', this.touchEnd);
-				this.clickedCell(true);
+				this.emitCellChange(true);
 				this.vibrate(true);
 			}, LONG_TOUCH_DURATION);
 			this.$refs.cell.addEventListener('touchend', this.touchEnd);
 		},
 		touchEnd() {
 			clearTimeout(this.touchTimer);
-			this.clickedCell(false);
+			this.emitCellChange(false);
 			this.vibrate(false);
 		},
 		vibrate(long = false) {
 			if (!this.vibrateOnTap) return;
 			const length = long ? 140 : 40;
-			const vibrationPattern = lengthToPwmPattern(length, this.vibrationIntensity);
-			
+
+			const vibrationPattern = lengthToPwmPattern(length, this.vibrationIntensity);	
 			window.navigator.vibrate(vibrationPattern);
 		},
 
@@ -115,6 +114,7 @@ export default {
 	width: var(--size);
 	height: var(--size);
 	@apply bg-truegray-200 dark:bg-gray-800 rounded-sm relative cursor-pointer overflow-hidden;
+	touch-action: none;
 }
 .cell-wrapper.locked {
 	@apply bg-truegray-300 dark:bg-gray-700 cursor-default;
@@ -124,7 +124,7 @@ export default {
 }
 
 .cell {
-	@apply flex relative w-full h-full;
+	@apply flex relative w-full h-full overflow-hidden;
 }
 
 .cell-value {
