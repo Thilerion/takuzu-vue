@@ -9,7 +9,7 @@
 			</div>
 			<div class="routes secondary-routes flex flex-col">
 				<router-link to="/how-to-play">How to play</router-link>
-			</div>				
+			</div>			
 		</nav>
 	</div>
 </template>

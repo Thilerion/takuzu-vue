@@ -35,14 +35,4 @@ main > *:first-child {
 .fade-leave-to, .fade-enter {
   opacity: 0;
 }
-
-.main-fade-enter-active,
-.main-fade-leave-active {
-	transition: opacity 2s ease;
-}
-
-.main-fade-enter-from,
-.main-fade-leave-to {
-	opacity: 0;
-}
 </style>

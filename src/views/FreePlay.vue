@@ -1,5 +1,5 @@
 <template>
-	<div class="fixed inset-0 overflow-auto flex flex-col">
+	<div class="freeplay flex flex-col overflow-x-hidden">
 		<PageHeader>New Game</PageHeader>
 		<div>
 			<div class="pb-4 px-4">
@@ -175,7 +175,15 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
+.freeplay {
+	height: var(--vw-height);
+	z-index: 100;
+	width: 100vw;
+	position: fixed;
+	top: 0;
+	overflow: hidden;
+}
 .difficulty-btn > * {
 	@apply mr-1;
 }

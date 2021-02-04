@@ -1,7 +1,21 @@
 <template>
-	<div class="root" :style="{'min-height': viewportHeight}">
+	<div
+		class="root"
+		:class="rootOverflowStyle"
+		:style="{
+			'min-height': viewportHeight,
+			'--vw-height': viewportHeight,
+		}">
 		<!-- TODO: transition for MainPage <-> OverlayPage -->
-		<router-view />
+		<router-view v-slot="{ Component }">
+			<transition
+				name="overlay-fade"
+				@before-enter="hideOverflow = true"
+				@after-enter="hideOverflow = false"
+			>
+				<component :is="Component" />
+			</transition>
+		</router-view>
 	</div>
 </template>
 
@@ -10,6 +24,14 @@ export default {
 	data() {
 		return {
 			viewportHeight: '100%',
+			hideOverflow: false,
+		}
+	},
+	computed: {
+		rootOverflowStyle() {
+			if (this.hideOverflow) {
+				return ['overflow-hidden'];
+			} else return [];
 		}
 	},
 	methods: {
@@ -41,6 +63,22 @@ body {
 	@apply relative flex flex-col;
 }
 
+.overlay-fade-enter-active {
+	transition: all .5s ease;
+}
+.overlay-fade-leave-active {
+	transition: all .2s ease-in-out;
+}
+
+.overlay-fade-enter-from,
+.overlay-fade-leave-to {
+	opacity: 0;
+	transform: scale(1.1);
+}
+
+.overlay-fade-enter-active.wrapper, .overlay-fade-leave-active.wrapper {
+	transition: none;
+}
 /*
 .fade-enter-active,
 .fade-leave-active {

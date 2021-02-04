@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 // MAIN ROUTES
-import BottomNav from '@/components/base-layout/BottomNav';
 import MainPage from '@/components/base-layout/MainPage';
 import Home from '../views/Home.vue';
 import HowToPlay from '../views/HowToPlay';
@@ -60,7 +59,12 @@ const routes = [
 				component: NotFound
 			}
 		]
-	}
+	},
+	{
+		path: '/play',
+		component: FreePlay,
+		name: 'FreePlay'
+	},
 ]
 
 const router = createRouter({

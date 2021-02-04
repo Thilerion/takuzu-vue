@@ -1,9 +1,7 @@
 <template>
 	<div class="wrapper">
 		<div class="page" :style="{'padding-bottom': footerHeight }">
-			<BaseMain>
-				<router-view />
-			</BaseMain>
+			<BaseMain />
 		</div>
 		<div id="layers">
 			<BaseFooter v-model="footerHeight" />
