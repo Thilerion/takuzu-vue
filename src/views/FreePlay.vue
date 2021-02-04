@@ -2,15 +2,15 @@
 	<div class="freeplay flex flex-col overflow-x-hidden">
 		<PageHeader>New Game</PageHeader>
 		<div>
-			<div class="pb-4 px-4">
-				<h2 class="text-2xl font-light pb-2">Difficulty</h2>
+			<div class="pb-4 px-6">
+				<h2 class="text-2xl font-light pb-2 px-2">Difficulty</h2>
 				<DifficultySelect
 					v-model="difficulty"
 					:labels="difficultyLabels"
 				/>
 			</div>
 			<div class="py-2">
-				<h2 class="text-2xl font-light pb-2">Size</h2>
+				<h2 class="text-2xl font-light pb-2 px-8">Size</h2>
 				<GameSizeSelect
 					:difficulty="difficulty"
 					:initial-selection="size"
