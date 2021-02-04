@@ -1,16 +1,21 @@
 <template>
-	<div class="main-page">
+	<!-- <div class="main-page">
 		<router-view v-slot="{ Component, route }">
 			<transition :name="transition" :mode="transitionMode">
 				<component :is="Component" :key="route.name" class="page" :class="{ 'has-bottom-nav': $route.meta.hasBottomNav }" />
 			</transition>
 		</router-view>
 		<BottomNav v-if="$route.meta.hasBottomNav" />
-	</div>
+	</div> -->
+	<BasePage />
 </template>
 
 <script>
+import BasePage from '@/components/page/BasePage';
 export default {
+	components: {
+		BasePage,
+	},
 	computed: {
 		hasBottomNav() {
 			return this.$route.meta.hasBottomNav;
