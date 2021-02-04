@@ -58,6 +58,7 @@ html {
 body {
 	min-height: 100vh;
 	min-height: -webkit-fill-available;
+	overscroll-behavior-y: none;
 	@apply text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-gray-50;
 }
 .root {
