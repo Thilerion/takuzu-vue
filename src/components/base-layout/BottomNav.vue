@@ -42,20 +42,22 @@ export default {
 
 <style lang="postcss" scoped>
 .nav-link {
-	@apply w-full h-full focus:text-teal-500 hover:text-teal-500 justify-center text-center py-2 flex flex-col items-center text-xs text-gray-700 font-medium;
+	@apply w-full h-full justify-center text-center py-2 flex flex-col items-center text-xs text-gray-700 font-medium;
+}
+
+@media (hover:hover) {
+	.nav-link {
+		@apply focus:text-teal-500 hover:text-teal-500;
+	}
 }
 .nav-link.router-link-exact-active {
 	@apply text-teal-700 font-semibold;
 }
 .nav-link > .material-icons {
-	@apply mb-1 text-gray-600;
+	@apply mb-1 text-current opacity-80;
 	font-size: 24px;
 }
-.router-link-exact-active > .material-icons {
-	@apply text-teal-700;
-}
-
-.nav-link, .nav-link > .material-icons {
+.nav-link {
 	transition: color .1s ease;
 }
 </style>
