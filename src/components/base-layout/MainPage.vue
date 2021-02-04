@@ -1,7 +1,9 @@
 <template>
 	<div class="wrapper">
 		<div class="page" :style="{'padding-bottom': footerHeight }">
-			<router-view />
+			<BaseMain>
+				<router-view />
+			</BaseMain>
 		</div>
 		<div id="layers">
 			<BaseFooter v-model="footerHeight" />
@@ -10,9 +12,9 @@
 </template>
 
 <script>
-import BaseHeader from './BaseHeader';
-import BaseMain from './BaseMain';
-import BaseFooter from './BaseFooter';
+import BaseHeader from '@/components/page/BaseHeader';
+import BaseMain from '@/components/page/BaseMain';
+import BaseFooter from '@/components/page/BaseFooter';
 
 export default {
 	components: {
@@ -22,7 +24,8 @@ export default {
 	},
 	data() {
 		return {
-			footerHeight: 0
+			footerHeight: 0,
+			more: 1
 		}
 	},
 };
@@ -30,13 +33,8 @@ export default {
 
 <style lang="postcss">
 .wrapper, .wrapper > .page {
-	min-height: 100%;
-	min-height: 100vh;
-	min-height: -webkit-fill-available;
 	display: flex;
 	flex-direction: column;
-	/* align-items: stretch;
-	justify-content: flex-start; */
 	flex: 1;
 }
 

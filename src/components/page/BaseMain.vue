@@ -1,8 +1,8 @@
 <template>
 	<main>
-		<router-view v-slot="{ Component, route }">
-			<transition name="main-fade" mode="out-in">
-				<component :is="Component" :key="route.name" />
+		<router-view v-slot="{ Component }">
+			<transition name="fade" mode="out-in">
+					<component :is="Component" />
 			</transition>
 		</router-view>
 	</main>
@@ -10,20 +10,35 @@
 
 <script>
 export default {
-	
+
 };
 </script>
 
-<style lang="postcss" scoped>
+<style lang="postcss">
 main {
 	flex: 1;
 	min-height: 100%;
 	display: flex;
 	flex-direction: column;
+	padding-bottom: 1rem;
 }
+main > *:first-child {
+	flex: 1;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity .2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to, .fade-enter {
+  opacity: 0;
+}
+
 .main-fade-enter-active,
 .main-fade-leave-active {
-	transition: opacity .2s ease;
+	transition: opacity 2s ease;
 }
 
 .main-fade-enter-from,

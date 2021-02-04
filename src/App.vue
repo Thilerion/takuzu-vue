@@ -1,51 +1,47 @@
 <template>
-	<!-- <div class="main-page">
-		<router-view v-slot="{ Component, route }">
-			<transition :name="transition" :mode="transitionMode">
-				<component :is="Component" :key="route.name" class="page" :class="{ 'has-bottom-nav': $route.meta.hasBottomNav }" />
-			</transition>
-		</router-view>
-		<BottomNav v-if="$route.meta.hasBottomNav" />
-	</div> -->
-	<BasePage />
+	<div class="root" :style="{'min-height': viewportHeight}">
+		<!-- TODO: transition for MainPage <-> OverlayPage -->
+		<router-view />
+	</div>
 </template>
 
 <script>
-import BasePage from '@/components/page/BasePage';
 export default {
-	components: {
-		BasePage,
+	data() {
+		return {
+			viewportHeight: '100%',
+		}
 	},
-	computed: {
-		hasBottomNav() {
-			return this.$route.meta.hasBottomNav;
-		},
-		transition() {
-			return this.$route.meta.transitionName || 'fade';
-		},
-		transitionMode() {
-			return this.$route.meta.transitionMode;
-		}	
+	methods: {
+		onResize() {
+			const h = window.innerHeight;
+			this.viewportHeight = h + 'px';
+		}
+	},
+	beforeMount() {
+		window.addEventListener('resize', this.onResize);
+		this.onResize();
+	},
+	unmounted() {
+		window.removeEventListener('resize', this.onResize);
 	}
 }
 </script>
 
 <style lang="postcss">
-#app {
-	@apply relative text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-gray-50;
+html {
+	height: -webkit-fill-available;
 }
-.page {
-	@apply bg-gray-50 dark:bg-gray-900;
+body {
+	min-height: 100vh;
+	min-height: -webkit-fill-available;
+	@apply text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-gray-50;
 }
-
-.main-page {
-	@apply relative h-full w-full;
-}
-
-.page.has-bottom-nav {
-	@apply pb-16;
+.root {
+	@apply relative flex flex-col;
 }
 
+/*
 .fade-enter-active,
 .fade-leave-active {
 	transition: opacity .15s ease;
@@ -85,5 +81,5 @@ export default {
 	opacity: 0;
 	transform: scale(1.05);
 	z-index: 50;
-}
+} */
 </style>

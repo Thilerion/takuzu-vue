@@ -23,10 +23,10 @@ export default {
 	data() {
 		return {
 			menuItems: [
-				{ label: 'Home', to: '/', icon: 'home' },
+				{ label: 'Home', to: { name: 'MainMenu' }, icon: 'home' },
 				{ label: 'Tools', to: '/tools', icon: 'construction' },
 				{ label: 'Stats', to: '/stats', icon: 'leaderboard' },
-				{ label: 'Settings', to: '/settings', icon: 'settings' },
+				{ label: 'Settings', to: { name: 'Settings' }, icon: 'settings' },
 				{ label: 'More', to: '/menu', icon: 'more_horiz' },
 			]
 		}
@@ -44,14 +44,14 @@ export default {
 .nav-link {
 	@apply w-full h-full focus:text-teal-500 hover:text-teal-500 justify-center text-center py-2 flex flex-col items-center text-xs text-gray-700 font-medium;
 }
-.nav-link.router-link-active {
+.nav-link.router-link-exact-active {
 	@apply text-teal-700 font-semibold;
 }
 .nav-link > .material-icons {
 	@apply mb-1 text-gray-600;
 	font-size: 24px;
 }
-.router-link-active > .material-icons {
+.router-link-exact-active > .material-icons {
 	@apply text-teal-700;
 }
 
