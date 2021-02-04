@@ -1,7 +1,6 @@
 <template>
 	<div class="wrapper">
 		<div class="page" :style="{'padding-bottom': footerHeight }">
-			<BaseHeader />
 			<BaseMain />
 		</div>
 		<div id="layers">
@@ -26,24 +25,18 @@ export default {
 			footerHeight: 0
 		}
 	},
-	watch: {
-		footerHeight(newValue, oldValue) {
-			console.log('footerheight changed');
-			console.log({newValue, oldValue});
-		}
-	}
 };
 </script>
 
-<style lang="postcss" scoped>
-.wrapper, .page {
+<style lang="postcss">
+.wrapper, .wrapper > .page {
 	min-height: 100%;
 	min-height: 100vh;
 	min-height: -webkit-fill-available;
 	display: flex;
 	flex-direction: column;
-	align-items: stretch;
-	justify-content: flex-start;
+	/* align-items: stretch;
+	justify-content: flex-start; */
 	flex: 1;
 }
 
