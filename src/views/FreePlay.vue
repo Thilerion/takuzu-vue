@@ -162,14 +162,8 @@ export default {
 		if (!this.gameInitialized) {
 			return true;
 		}
-		// if the playGame view IS active, the routeChange is always denied. Depending on the modal/popup answer, the playGame view is either closed or not
-		const answer = window.confirm('Do you want to quit the current game? Progress will be lost.');
-		if (!answer) {
-			return false;
-		} else {
-			this.quitGame();
-			return false;
-		}
+		this.quitGame();
+		return false;
 	},
 	async beforeMount() {
 		// parse previous selection
