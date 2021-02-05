@@ -43,6 +43,7 @@ import DifficultySelect from '@/components/new-game/DifficultySelect';
 import GameSizeSelect from '@/components/new-game/GameSizeSelect';
 import PlayGame from '@/components/board/PlayGame';
 import StartGameButton from '@/components/board/StartGameButton';
+import { deleteCurrentSavedGame, hasCurrentSavedGame } from '@/services/save-game';
 
 const sizeTypes = {
 	NORMAL: 'Normal',
@@ -142,6 +143,20 @@ export default {
 			this.$store.commit('reset');
 		}
 	},
+	beforeRouteEnter(to, from, next) {
+		next(vm => {
+			if (to.query.continue) {
+
+				console.log(to);
+				if (hasCurrentSavedGame() && !vm.gameInitialized) {
+					console.log('loading saved game');
+					vm.$store.dispatch('loadSaved');
+				} else {
+					vm.$router.replace({query: null});
+				}
+			};
+		})
+	},
 	beforeRouteLeave(to, from) {
 		// if game does not exist; and the playGame view is not active, just accept the route change
 		if (!this.gameInitialized) {
@@ -156,15 +171,13 @@ export default {
 			return false;
 		}
 	},
-	beforeMount() {
+	async beforeMount() {
 		// parse previous selection
 		try {
 			const { size, difficulty } = getInitialSelection();
 			this.size = size;
 			this.difficulty =difficulty;
-		} catch(e) {
-			
-		}
+		} catch {}
 	},
 	watch: {
 		currentSelection: {
@@ -172,6 +185,11 @@ export default {
 				localStorage.setItem('takuzu_freeplay-selection', JSON.stringify(newValue));
 			},
 			deep: true,
+		},
+		gameInitialized(newValue) {
+			if (!newValue && this.$route.query.continue) {
+				this.$router.replace({query: null});
+			}
 		}
 	}
 }

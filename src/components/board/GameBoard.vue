@@ -80,7 +80,7 @@ export default {
 			if (newValue && !oldValue) {
 				setTimeout(() => {
 					window.alert('GOOD JOB!');
-					this.$store.commit('reset');
+					this.$store.dispatch('finishGame');
 				}, 500);
 			}
 		}
