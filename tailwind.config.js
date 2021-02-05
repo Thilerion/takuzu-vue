@@ -14,6 +14,15 @@ module.exports = {
 				warmgray: colors.warmGray,
 				teal: colors.teal,
 				cyan: colors.cyan,
+
+				one: {
+					primary: '#e54934',
+					dark: '#d2402d',
+				},
+				zero: {
+					primary: '#42a5f5',
+					dark: '#1f89e5',
+				},
 			}
 		},
 		fontFamily: {
