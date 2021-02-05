@@ -1,6 +1,8 @@
 const getDefaultSettings = () => ({
 	showLineInfo: '', // '' for disabled, 'coords', 'remainingCount', 'currentCount'
 	enableWakeLock: true,
+
+	cellTheme: 'binary', // binary, tictactoe, or colored
 	
 	// vibration settings
 	vibrationIntensity: 2, // 0 1 2 or 3, off low medium or high

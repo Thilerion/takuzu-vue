@@ -1,4 +1,5 @@
 const colors = require('tailwindcss/colors');
+const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
 	purge: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}', './public/index.html'],
@@ -12,22 +13,13 @@ module.exports = {
 				coolgray: colors.coolGray,
 				warmgray: colors.warmGray,
 				teal: colors.teal,
+				cyan: colors.cyan,
 			}
 		},
 		fontFamily: {
 			'sans': [
 				'Roboto',
-				'ui-sans-serif',
-				'system-ui',
-				'-apple-system',
-				'BlinkMacSystemFont',
-				'"Segoe UI"',
-				'"Helvetica Neue"',
-				'sans-serif',
-				'"Apple Color Emoji"',
-				'"Segoe UI Emoji"',
-				'"Segoe UI Symbol"',
-				'"Noto Color Emoji"',
+				...defaultTheme.fontFamily.sans,
 			],
 			'number': [
 				'Hammersmith One',

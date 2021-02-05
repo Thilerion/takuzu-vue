@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="cell-wrapper select-none"
-		:class="{'locked': isLocked, 'incorrect': isIncorrectValue}"
+		:class="[{'locked': isLocked, 'incorrect': isIncorrectValue}, cellThemeClass]"
 		@click="clickedCell(false)"
 		@touchstart.prevent="touchedCell"
 		@touchend.prevent
@@ -10,18 +10,23 @@
 		<transition name="click-anim">
 			<div class="click-anim" v-show="showAnim"></div>
 		</transition>
-		<div class="cell">
-			<span class="cell-value">{{value}}</span>
-		</div>
+		
+		<GameBoardCellValue
+			class="cell"
+			:theme="cellTheme"
+			:value="value"
+		/>
 	</div>
 </template>
 
 <script>
 import { lengthToPwmPattern } from '../../services/vibration';
 import { LONG_TOUCH_DURATION } from './config';
+import GameBoardCellValue from './GameBoardCellValue.vue';
 
 export default {
 	components: {
+		GameBoardCellValue
 	},
 	props: {
 		value: {
@@ -60,7 +65,19 @@ export default {
 		},
 		vibrationIntensity() {
 			return this.$store.state.settings.vibrationIntensity;
-		}
+		},
+
+		cellTheme() {
+			return this.$store.state.settings.cellTheme;
+		},
+		// TODO: cell theme class maybe on Board.vue?
+		cellThemeClass() {
+			let themeClass = 'cell-theme-';
+			if (this.cellTheme === 'binary') return themeClass + '01';
+			if (this.cellTheme === 'tictactoe') return themeClass + 'OX';
+			if (this.cellTheme === 'colored') return themeClass + 'color';
+			return null;
+		},
 	},
 	methods: {
 		emitClick(long = false) {
@@ -125,12 +142,6 @@ export default {
 
 .cell {
 	@apply flex relative w-full h-full overflow-hidden;
-}
-
-.cell-value {
-	@apply m-auto inline-block text-gray-700;
-	font-size: var(--cell-font-size);
-	line-height: calc(var(--size) * 1.1);
 }
 .cell-wrapper.incorrect .cell-value {
 	@apply text-red-900 dark:text-red-400;
