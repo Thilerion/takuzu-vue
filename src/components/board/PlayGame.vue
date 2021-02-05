@@ -33,6 +33,7 @@ import IconBtnText from '@/components/base-layout/IconBtnText';
 import { EMPTY } from '../../lib/constants';
 
 import WakeLock from '../../services/wake-lock';
+import { deleteCurrentSavedGame, hasCurrentSavedGame, saveCurrentGame } from '@/services/save-game';
   
 const wakeLock = new WakeLock();
 
@@ -80,6 +81,9 @@ export default {
 		},
 		shouldEnableWakeLock() {
 			return this.$store.state.settings.enableWakeLock;
+		},
+		canSaveGame() {
+			return this.$store.getters.canSave;
 		}
 	},
 	methods: {
@@ -103,6 +107,21 @@ export default {
 	},
 	unmounted() {
 		this.wakeLock.destroy();
+	},
+	watch: {
+		board: {
+			handler() {
+				if (!this.canSaveGame) {
+					console.log('Game cannot be saved');
+				} else {
+					const state = this.$store.state.game;
+					console.log('saving current game');
+					saveCurrentGame(state);
+				}
+			},
+			deep: true,
+			immediate: true
+		}
 	}
 };
 </script>
