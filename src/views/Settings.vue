@@ -5,6 +5,23 @@
 			<DarkModeSetting />
 		</div>
 		<div class="setting-block mt-6">
+			<h2 class="text-gray-700">Input mode</h2>
+			
+			<div class="mt-2">
+				<label class="flex items-center">
+					<input type="radio" name="radio-toggle-mode" v-model="toggleMode" value="0">
+					<span class="ml-2">Toggle 0 first</span>
+				</label>
+			</div>
+			<div class="mt-2">
+				<label class="flex items-center">
+					<input type="radio" name="radio-toggle-mode" v-model="toggleMode" value="1">
+					<span class="ml-2">Toggle 1 first</span>
+				</label>
+			</div>
+
+		</div>
+		<div class="setting-block mt-6">
 			<h2 class="text-gray-700">Assistance</h2>
 			<div class="mt-2">
 				<label>
@@ -72,6 +89,14 @@ export default {
 	computed: {
 		settings() {
 			return this.$store.state.settings;
+		},
+		toggleMode: {
+			get() {
+				return this.settings.toggleMode;
+			},
+			set(value) {
+				this.updateSetting('toggleMode', String(value));
+			}
 		},
 		showLineInfo: {
 			get() {

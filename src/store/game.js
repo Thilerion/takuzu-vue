@@ -66,6 +66,7 @@ const gameModule = {
 		},
 
 		canUndo: state => state.moveList.length > 0,
+		toggleOneFirst: (state, getters, rootState) => rootState.settings.toggleMode === '1',
 	},
 
 	mutations: {
@@ -166,15 +167,16 @@ const gameModule = {
 			commit('setBoard', board);
 			commit('resetPuzzleStateProps');
 		},
-		toggleCell({ commit, dispatch }, { x, y, value, longTouch = false }) {
+		toggleCell({ commit, dispatch, getters }, { x, y, value, longTouch = false }) {
 			// TODO: one or zero first setting for toggling
+			const toggleOneFirst = getters.toggleOneFirst;
 			let nextValue;
 			if (!longTouch) {
-				nextValue = toggleValue(value, false);
+				nextValue = toggleValue(value, toggleOneFirst);
 			} else {
 				// long touch switches 0 > 1 and 1 > 0, and sets EMPTY > opposite value that a standard touch would
 				if (value === EMPTY || value == null) {
-					nextValue = OPPOSITE_VALUE[toggleValue(value, false)];
+					nextValue = OPPOSITE_VALUE[toggleValue(value, toggleOneFirst)];
 				} else {
 					nextValue = OPPOSITE_VALUE[value];
 				}

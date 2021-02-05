@@ -12,6 +12,8 @@ const getDefaultSettings = () => ({
 	automaticValidation: 'disabled', // disabled/ ruleViolations/ incorrectValues
 	checkButton: 'ruleViolations',
 
+	// input
+	toggleMode: "0",
 });
 
 export const settingsModule = {
