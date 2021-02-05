@@ -32,7 +32,9 @@ import IconBtnText from '@/components/base-layout/IconBtnText';
 
 import { EMPTY } from '../../lib/constants';
 
-import {disableWakeLock, enableWakeLock, getWakeLockState} from '../../services/wake-lock';
+import WakeLock from '../../services/wake-lock';
+  
+const wakeLock = new WakeLock();
 
 export default {
 	components: {
@@ -43,6 +45,9 @@ export default {
 	},
 	data() {
 		return {
+			wakeLock,
+			wakeLockErr: null,
+			wakeLockEnabled: false,
 
 			errorChecked: false,
 			errorCheckValue: null,
@@ -80,25 +85,11 @@ export default {
 	methods: {
 		async enableWakeLock() {
 			try {
-				await enableWakeLock();
+				await this.wakeLock.enable();
+				this.wakeLockErr = null;
 			} catch(e) {
-				console.error(e);
+				this.wakeLockErr = e;
 			}
-		},
-		async reacquireWakeLock() {
-			const state = getWakeLockState();
-			const { isReleased, ref } = state;
-			if (ref !== null && isReleased) {
-				disableWakeLock();
-				enableWakeLock();
-			}
-		},
-		visibilityChange() {
-			const { isReleased, ref } = getWakeLockState();
-			if (!isReleased || ref == null) return;
-			if (document.visibilityState !== 'visible') return;
-			// Documnet is visible again, and wakeLock is released => reenable wakelock
-			this.reacquireWakeLock();
 		},
 		enableErrorCheckIndicator({ hasErrors }) {
 			this.errorCheckValue = !!hasErrors;
@@ -107,15 +98,11 @@ export default {
 	beforeMount() {
 		if (this.shouldEnableWakeLock) {
 			this.enableWakeLock();
-			document.addEventListener('visibilitychange', this.visibilityChange);
+			this.wakeLock.onChange = (isEnabled) => this.wakeLockEnabled = !!isEnabled;
 		}
 	},
-	beforeUnmount() {
-		const { ref } = getWakeLockState();
-		if (ref != null) {
-			disableWakeLock();
-		}
-		document.removeEventListener('visibilitychange', this.visibilityChange);
+	unmounted() {
+		this.wakeLock.destroy();
 	}
 };
 </script>
@@ -129,7 +116,7 @@ export default {
 	@apply flex-none grid;
 }
 .footer {
-	@apply h-24 flex-none px-6 flex items-center justify-center text-gray-700;
+	@apply h-24 flex-none px-6 flex flex-col items-center justify-center text-gray-700;
 }
 
 .board {
