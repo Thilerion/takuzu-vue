@@ -1,3 +1,4 @@
+import { deleteCurrentSavedGame, loadSavedGame } from "@/services/save-game";
 import { SimpleBoard } from "../lib/board/Board";
 import { EMPTY, OPPOSITE_VALUE } from "../lib/constants";
 import { toggleValue } from "../lib/utils";
@@ -25,6 +26,13 @@ class PuzzleMove {
 	}
 	get cellId() {
 		return `${this.x},${this.y}`;
+	}
+	toString() {
+		return [this.x, this.y, this.value, this.prevValue].join(';');
+	}
+	static fromString(str) {
+		const [x, y, value, prevValue] = str.split(';');
+		return new PuzzleMove(x * 1, y * 1, value, prevValue);
 	}
 }
 
@@ -66,6 +74,10 @@ const gameModule = {
 		},
 
 		canUndo: state => state.moveList.length > 0,
+
+		canSave: (state, getters) => {
+			return state.initialized && !getters.finishedAndCorrect && state.board != null;
+		},
 	},
 
 	mutations: {
@@ -109,8 +121,8 @@ const gameModule = {
 		},
 
 		// MOVE LIST
-		resetMoveList(state) {
-			state.moveList = [];
+		resetMoveList(state, resetTo = []) {
+			state.moveList = [...resetTo];
 		},
 		addMove(state, move) {
 			state.moveList.push(move);
@@ -212,6 +224,41 @@ const gameModule = {
 
 			commit('setValue', { x, y, value: prevValue });
 			commit('popMove');
+		},
+
+		async loadSaved({ commit }) {
+			try {
+				const result = await loadSavedGame();
+				console.log({ ...result });
+				const { initialBoard, board, solution, moveList, width, height, difficulty } = result;
+				commit('setDimensions', { width, height });
+				commit('setDifficulty', difficulty);
+
+				const parsedMoveList = moveList.map(str => {
+					return PuzzleMove.fromString(str)
+				});
+				const parsedInitial = SimpleBoard.fromString(initialBoard);
+				const parsedBoard = SimpleBoard.fromString(board);
+				const parsedSolution = SimpleBoard.fromString(solution);
+
+				commit('setAllBoards', {
+					board: parsedBoard,
+					initialBoard: parsedInitial,
+					solution: parsedSolution
+				});
+				commit('resetMoveList', parsedMoveList);
+
+				commit('setLoading', false);
+				commit('setInitialized', true);
+				console.log('loaded');
+			} catch (e) {
+				console.warn(e);
+				return false;
+			}
+		},
+		finishGame({ commit }) {
+			commit('reset');
+			deleteCurrentSavedGame();
 		}
 	}
 };

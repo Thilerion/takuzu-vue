@@ -3,6 +3,7 @@
 		<h1 class="text-6xl font-extrabold pb-10">Takuzu</h1>
 		<nav class="">
 			<div class="routes main-routes flex flex-col">
+				<router-link v-if="canContinue" :to="{ path: '/play', query: { continue: true}}">Continue</router-link>
 				<router-link to="/play">Free play</router-link>
 				<router-link to="/daily">Daily puzzles</router-link>
 				<router-link to="/arcade">Arcade</router-link>
@@ -15,12 +16,21 @@
 </template>
 
 <script>
+import { hasCurrentSavedGame } from '@/services/save-game'
 
 export default {
 	name: 'MainMenu',
 	components: {
 		
-	}
+	},
+	data() {
+		return {
+			canContinue: false,
+		}
+	},
+	beforeMount() {
+		this.canContinue = hasCurrentSavedGame();
+	},
 }
 </script>
 
