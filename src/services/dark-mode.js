@@ -1,6 +1,27 @@
 const THEME_STORAGE_KEY = 'takuzu-theme';
 const htmlEl = document.querySelector('html');
 
+const matchMediaDark = window.matchMedia("(prefers-color-scheme: dark)");
+const onMatchMediaChange = (e => {
+	console.log('match media changed: ', e.matches);
+	if (e.matches) {
+		htmlEl.classList.add('dark');
+	} else {
+		htmlEl.classList.remove('dark');
+	}
+});
+let isListening = false;
+const listenForOSPrefChange = () => {
+	if (isListening) return;
+	matchMediaDark.addEventListener('change', onMatchMediaChange);
+	isListening = true;
+}
+const stopListeningForOSPrefChange = () => {
+	if (!isListening) return;
+	matchMediaDark.removeEventListener('change', onMatchMediaChange);
+	isListening = false;
+}
+
 const prefersColorSchemeDark = () => {
 	return !!window.matchMedia('(prefers-color-scheme: dark)').matches;
 }
@@ -11,10 +32,12 @@ export const getThemePref = () => {
 }
 
 export const setDarkTheme = () => {
+	stopListeningForOSPrefChange();
 	htmlEl.classList.add('dark');
 	localStorage.setItem(THEME_STORAGE_KEY, 'dark');
 }
 export const setLightTheme = () => {
+	stopListeningForOSPrefChange();
 	htmlEl.classList.remove('dark');
 	localStorage.setItem(THEME_STORAGE_KEY, 'light');
 }
@@ -25,6 +48,7 @@ export const setThemeOSPref = () => {
 	} else {
 		htmlEl.classList.remove('dark');
 	}
+	listenForOSPrefChange();
 	localStorage.removeItem(THEME_STORAGE_KEY);
 }
 export function initTheme() {
@@ -34,6 +58,10 @@ export function initTheme() {
 		htmlEl.classList.add('dark');
 	} else {
 		htmlEl.classList.remove('dark');
+	}
+
+	if (!themePref) {
+		listenForOSPrefChange();
 	}
 }
 export function setTheme(value) {

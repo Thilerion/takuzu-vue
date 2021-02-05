@@ -10,7 +10,7 @@
 		<transition name="click-anim">
 			<div class="click-anim" v-show="showAnim"></div>
 		</transition>
-		
+
 		<GameBoardCellValue
 			class="cell"
 			:theme="cellTheme"
@@ -22,7 +22,7 @@
 <script>
 import { lengthToPwmPattern } from '../../services/vibration';
 import { LONG_TOUCH_DURATION } from './config';
-import GameBoardCellValue from './GameBoardCellValue.vue';
+import GameBoardCellValue from './GameBoardCellValue';
 
 export default {
 	components: {
