@@ -4,6 +4,9 @@ import './registerServiceWorker';
 import router from './router';
 import store from './store';
 
+// install all global components
+import { registerGlobalComponents } from './components/global';
+
 // base components
 import PageHeader from '@/components/base-layout/PageHeader';
 import IconBtn from '@/components/base-layout/IconBtn';
@@ -20,6 +23,8 @@ const app = createApp(App)
 	.component('PageHeader', PageHeader)
 	.component('BottomNav', BottomNav)
 	.component('IconBtn', IconBtn);
+
+registerGlobalComponents(app);
 	
 app.mount('#app');
 

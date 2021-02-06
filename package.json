@@ -29,6 +29,8 @@
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
     "@vue/test-utils": "^2.0.0-0",
+    "lodash.camelcase": "^4.3.0",
+    "lodash.upperfirst": "^4.3.1",
     "typescript": "~3.9.3",
     "vue-jest": "^5.0.0-0",
     "worker-plugin": "^5.0.0"
