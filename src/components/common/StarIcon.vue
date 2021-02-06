@@ -15,7 +15,7 @@ export default {
 
 <style lang="postcss" scoped>
 .star-icon {
-	@apply text-black dark:text-warmgray-600;
+	@apply text-black dark:text-gray-600;
 }
 .star-icon.filled {
 	@apply dark:text-yellow-400 text-yellow-500;
