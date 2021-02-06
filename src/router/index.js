@@ -65,6 +65,11 @@ const routes = [
 		component: FreePlay,
 		name: 'FreePlay'
 	},
+	{
+		path: '/showcase',
+		component: () => import('../views/BaseComponentShowcase.vue'),
+		name: 'BaseComponentShowcase'
+	}
 ]
 
 const router = createRouter({
