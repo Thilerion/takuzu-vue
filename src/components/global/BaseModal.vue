@@ -1,31 +1,39 @@
 <template>
-<transition name="fade-scale" appear>
-	<div class="modal">
-		<div class="modal-background" @click="backdropClose"></div>
+	<transition name="fade-scale" appear>
+		<div class="modal" v-if="isActive">
+			<div class="modal-background" @click="backdropClose"></div>
 
-		<div class="modal-content">
-			<div class="modal-box">
-				<slot :close="close" />
+			<div class="modal-content">
+				<div class="modal-box">
+					<slot :close="close" />
+				</div>
 			</div>
 		</div>
-	</div>
-</transition>
+	</transition>
 </template>
 
 <script>
 export default {
+	data() {
+		return {
+			isActive: false,
+		}
+	},
 	props: {
-		preventBgClose: Boolean,
+		// disable closing by "esc" or backdrop click => if enabled, must have at least one focusable close control!
+		preventClose: Boolean,
 	},
 	methods: {
 		backdropClose() {
-			if (this.preventBgClose) return;
+			if (this.preventClose) return;
 			this.close();
 		},
 		close() {
-			console.log('emitting close');
-			this.$emit('close');
-		}
+			this.isActive = false;
+		},
+		open() {
+			this.isActive = true;
+		},
 	}
 };
 </script>
@@ -49,17 +57,17 @@ export default {
 }
 
 .fade-scale-enter-active {
-	transition: opacity .35s ease-out;
+	transition: opacity .4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .fade-scale-leave-active {
-	transition: opacity .15s ease-out;
+	transition: opacity .15s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .fade-scale-enter-active .modal-box {
 	transition: all .4s ease;
 	transition-property: opacity transform;
 }
 .fade-scale-leave-active .modal-box {
-	transition: all .15s ease-out;
+	transition: all .15s cubic-bezier(0.22, 1, 0.36, 1);
 	transition-property: opacity transform;
 }
 
@@ -67,11 +75,11 @@ export default {
 	opacity: 0;
 }
 .fade-scale-enter-from .modal-box {
-	transform: scale(0.88);
+	transform: scale(0.87);
 	opacity: 0.5;
 }
 .fade-scale-leave-to .modal-box {
-	transform: scale(1.12);
-	opacity: 0.5;
+	transform: scale(1.15);
+	opacity: 0.75;
 }
 </style>
