@@ -9,8 +9,8 @@
 
 		<div class="showcase-block">
 			<h2 class="text-xl mb-6 pb-1 font-medium border-b self-stretch">Modal</h2>
-			<BaseButton @click="$refs.modal1.open">Open modal 1</BaseButton>
-			<BaseButton @click="$refs.modal2.open">Open modal 2</BaseButton>
+			<BaseButton @click="openModal('modal1')">Open modal 1</BaseButton>
+			<BaseButton @click="openModal('modal2')">Open modal 2</BaseButton>
 			<BaseModal ref="modal1">
 				<div>This modal can be closed by clicking the background only.</div>
 				<div>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Amet debitis vel, est tempora animi quod quisquam, quo magni aliquam a voluptatibus nam dolor illum explicabo libero sunt, iusto consequuntur temporibus. Possimus, vel fugit. Maiores reiciendis porro nemo excepturi dolor iure! Praesentium recusandae exercitationem, quidem quaerat reprehenderit magni odio voluptatem sapiente.</div>
@@ -35,6 +35,14 @@ export default {
 			modal2Active: false,
 		}
 	},
+	methods: {
+		openModal(refName) {
+			const modalRef = this.$refs[refName];
+			if (modalRef != null && !!modalRef.open) {
+				modalRef.open();
+			} 
+		}
+	}
 };
 </script>
 

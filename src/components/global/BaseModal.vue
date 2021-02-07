@@ -1,13 +1,20 @@
 <template>
 	<transition name="fade-scale" appear>
-		<div class="modal" v-if="isActive">
-			<div class="modal-background" @click="backdropClose"></div>
+		<div
+			class="modal"
+			v-if="isActive"
+			role="dialog"
+			@keydown.esc="keyClose"
+		>
 
-			<div class="modal-content">
+			<div class="modal-background" @click="backdropClose" tabindex="-1"></div>
+
+			<div class="modal-content" ref="modalContent" tabindex="-1">
 				<div class="modal-box">
-					<slot :close="close" />
+					<slot :close="close" :open="open" />
 				</div>
 			</div>
+
 		</div>
 	</transition>
 </template>
@@ -17,6 +24,7 @@ export default {
 	data() {
 		return {
 			isActive: false,
+			prevFocus: null,
 		}
 	},
 	props: {
@@ -28,12 +36,40 @@ export default {
 			if (this.preventClose) return;
 			this.close();
 		},
+		keyClose() {
+			if (this.preventClose) return;
+			if (!this.isActive) return;
+			this.close();
+		},
 		close() {
 			this.isActive = false;
 		},
 		open() {
 			this.isActive = true;
 		},
+	},
+	watch: {
+		isActive(cur, prev) {
+			if (cur && !prev) {
+				this.prevFocus = document.activeElement;
+				this.$nextTick(() => {
+					try {
+						this.$refs.modalContent.focus();
+					} catch(e) {
+						console.warn('Could not focus modalContent.');
+						console.warn(e);
+					}
+				})
+			} else if (!cur && prev && this.prevFocus != null) {
+				try {
+					this.prevFocus.focus();
+				} catch(e) {
+					console.warn('Could not focus previously focused element.');
+					console.warn({e, prevFocus: this.prevFocus});
+				}
+				this.prevFocus = null;
+			}
+		}
 	}
 };
 </script>
@@ -47,7 +83,7 @@ export default {
 }
 
 .modal-content {
-	@apply overflow-auto max-w-2xl w-full max-h-96 relative p-6 rounded;
+	@apply overflow-auto max-w-2xl w-full max-h-96 relative p-6 rounded focus:outline-none;
 }
 
 .modal-box {
