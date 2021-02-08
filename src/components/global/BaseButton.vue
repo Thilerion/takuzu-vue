@@ -29,7 +29,7 @@ export default {
 
 <style lang="postcss" scoped>
 .btn {
-	@apply font-bold rounded bg-white text-gray-800 border border-gray-200 cursor-pointer justify-center px-4 py-2 text-center whitespace-nowrap select-none;
+	@apply font-medium rounded bg-white text-gray-800 border border-gray-200 cursor-pointer justify-center px-4 py-2 text-center whitespace-nowrap select-none focus:outline-none ring-blue-600 focus:ring focus:ring-opacity-50 focus-visible:ring focus-visible:ring-opacity-90;
 }
 
 .btn-primary {

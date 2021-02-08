@@ -48,7 +48,10 @@ module.exports = {
 	},
 	variants: {
 		extend: {
-			backgroundColor: ['active']
+			backgroundColor: ['active'],
+			outline: ['focus-visible'],
+			ringWidth: ['focus-visible'],
+			ringOpacity: ['focus-visible'],
 		},
 	},
 	plugins: [
