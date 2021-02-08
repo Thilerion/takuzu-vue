@@ -8,10 +8,20 @@
 						<IconBtn @click="open">more_vert</IconBtn>
 					</template>
 					<template #content>
-						<BaseDropdownItem>Set bookmark</BaseDropdownItem>
-						<BaseDropdownItem>Delete bookmark</BaseDropdownItem>
+						<BaseDropdownItem disabled>
+							<span class="material-icons opacity-90 text-base">bookmark_add</span>
+							<span class="ml-3 mt-px">Set bookmark</span>
+						</BaseDropdownItem>
+						<BaseDropdownItem disabled>
+							<span class="material-icons opacity-90 text-base">bookmark_remove</span>
+							<span class="ml-3 mt-px">Delete bookmark</span>
+						</BaseDropdownItem>
 						<BaseDropdownDivider/>
-						<BaseDropdownItem @click="goToSettings">Settings</BaseDropdownItem>
+						<BaseDropdownItem @click="goToSettings"
+						>
+							<span class="material-icons opacity-90 text-base">settings</span>
+							<span class="ml-3 mt-px">Settings</span>
+						</BaseDropdownItem>
 					</template>
 				</BaseDropdown>
 			</template>
@@ -36,7 +46,7 @@
 		</div>
 		<router-view v-slot="{ Component }">
 			<!-- TODO: use FullScreenOverlayPage component -->
-			<div v-if="Component" class="fixed inset-0 bg-gray-50 overflow-y-auto pb-4">
+			<div v-if="Component" class="fixed inset-0 bg-gray-50 overflow-y-auto pb-8">
 				<component :is="Component" />
 			</div>
 		</router-view>
