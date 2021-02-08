@@ -46,7 +46,7 @@ const routes = [
 			{
 				path: '/settings',
 				name: 'Settings',
-				component: Settings,
+				component: Settings
 			},
 			{
 				path: '/menu',
@@ -63,7 +63,13 @@ const routes = [
 	{
 		path: '/play',
 		component: FreePlay,
-		name: 'FreePlay'
+		name: 'FreePlay',
+		children: [
+			{
+				path: 'settings',
+				component: Settings
+			}
+		]
 	},
 	{
 		path: '/showcase',

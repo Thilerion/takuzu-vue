@@ -3,7 +3,7 @@
 		<PageHeader close-btn @close="$emit('close')">
 			{{columns}}x{{rows}}
 			<template #right>
-				<BaseDropdown align-right align-below>
+				<BaseDropdown align-right align-below ref="dropdown">
 					<template #trigger="{open}">
 						<IconBtn @click="open">more_vert</IconBtn>
 					</template>
@@ -11,7 +11,7 @@
 						<BaseDropdownItem>Set bookmark</BaseDropdownItem>
 						<BaseDropdownItem>Delete bookmark</BaseDropdownItem>
 						<BaseDropdownDivider/>
-						<BaseDropdownItem>Settings</BaseDropdownItem>
+						<BaseDropdownItem @click="goToSettings">Settings</BaseDropdownItem>
 					</template>
 				</BaseDropdown>
 			</template>
@@ -34,6 +34,12 @@
 		<div class="footer">
 			<GameControls @error-check="enableErrorCheckIndicator" />
 		</div>
+		<router-view v-slot="{ Component }">
+			<!-- TODO: use FullScreenOverlayPage component -->
+			<div v-if="Component" class="fixed inset-0 bg-gray-50 overflow-y-auto pb-4">
+				<component :is="Component" />
+			</div>
+		</router-view>
 	</div>
 </template>
 
@@ -111,6 +117,11 @@ export default {
 		enableErrorCheckIndicator({ hasErrors }) {
 			this.errorCheckValue = !!hasErrors;
 		},
+		goToSettings() {
+			console.log('Should go to settings');
+			this.$refs.dropdown.closeDropdownMenu();
+			this.$router.push({ path: '/play/settings' });
+		}
 	},
 	beforeMount() {
 		if (this.shouldEnableWakeLock) {
