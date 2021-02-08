@@ -42,6 +42,17 @@
 					<BaseDropdownItem>I can be clicked!</BaseDropdownItem>
 				</template>
 			</BaseDropdown>
+			<BaseDropdown align-below align-right>
+				<template v-slot:trigger="{toggle}">
+				<BaseButton @click="toggle">DD right</BaseButton>
+				</template>
+				<template v-slot:content>
+					<BaseDropdownItem>Other item</BaseDropdownItem>
+					<BaseDropdownItem>Yet another dropdown item</BaseDropdownItem>
+					<BaseDropdownDivider />
+					<BaseDropdownItem>I can be clicked!</BaseDropdownItem>
+				</template>
+			</BaseDropdown>
 		</div>
 	</div>
 </template>
