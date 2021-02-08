@@ -46,9 +46,11 @@
 		</div>
 		<router-view v-slot="{ Component }">
 			<!-- TODO: use FullScreenOverlayPage component -->
-			<div v-if="Component" class="fixed inset-0 bg-gray-50 overflow-y-auto pb-8">
-				<component :is="Component" />
-			</div>
+			<OverlayPageTransition>
+				<div v-if="Component" class="fixed inset-0 bg-gray-50 overflow-y-auto pb-8">
+					<component :is="Component" />
+				</div>
+			</OverlayPageTransition>
 		</router-view>
 	</div>
 </template>
@@ -58,6 +60,7 @@ import GameBoardWrapper from './GameBoardWrapper';
 import GameBoard from './GameBoard';
 import GameControls from './GameControls';
 import IconBtnText from '@/components/base-layout/IconBtnText';
+import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
 
 import { EMPTY } from '../../lib/constants';
 
@@ -71,7 +74,8 @@ export default {
 		GameBoardWrapper,
 		GameBoard,
 		GameControls,
-		IconBtnText
+		IconBtnText,
+		OverlayPageTransition,
 	},
 	data() {
 		return {

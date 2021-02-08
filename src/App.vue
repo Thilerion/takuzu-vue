@@ -1,39 +1,29 @@
 <template>
 	<div
 		class="root"
-		:class="rootOverflowStyle"
 		:style="{
 			'min-height': viewportHeight,
 			'--vw-height': viewportHeight,
 		}">
 		<!-- TODO: transition for MainPage <-> OverlayPage -->
 		<router-view v-slot="{ Component }">
-			<transition
-				name="overlay-fade"
-				@before-enter="hideOverflow = true"
-				@after-enter="hideOverflow = false"
-				mode="out-in"
-			>
+			<overlay-page-transition>
 				<component :is="Component" />
-			</transition>
+			</overlay-page-transition>
 		</router-view>
 	</div>
 </template>
 
 <script>
+import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
 export default {
+	components: {
+		OverlayPageTransition,
+	},
 	data() {
 		return {
 			viewportHeight: '100%',
-			hideOverflow: false,
-		}
-	},
-	computed: {
-		rootOverflowStyle() {
-			if (this.hideOverflow) {
-				return ['overflow-hidden'];
-			} else return [];
-		}
+		}	
 	},
 	methods: {
 		onResize() {
@@ -65,27 +55,6 @@ body {
 	@apply relative flex flex-col;
 }
 
-.overlay-fade-enter-active {
-	transition: all .4s ease;
-}
-.overlay-fade-leave-active {
-	transition: all .2s ease-in-out;
-}
-
-.overlay-fade-enter-from,
-.overlay-fade-leave-to {
-	opacity: 0;
-	transform: scale(1.05);
-}
-
-.overlay-fade-enter-active.wrapper, .overlay-fade-leave-active.wrapper {
-	transition: opacity .1s ease;
-}
-.overlay-fade-enter-from.wrapper,
-.overlay-fade-leave-to.wrapper {
-	opacity: 0;
-	transform: scale(1);
-}
 /*
 .fade-enter-active,
 .fade-leave-active {
