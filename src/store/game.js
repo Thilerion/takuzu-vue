@@ -79,6 +79,14 @@ const gameModule = {
 		canSave: (state, getters) => {
 			return state.initialized && !getters.finishedAndCorrect && state.board != null;
 		},
+		lastCell: (state, getters) => {
+			if (!state.initialized) return null;
+			if (!getters.canUndo) return null;
+			const lastMove = state.moveList[state.moveList.length - 1];
+			if (!lastMove) return null;
+			const { x, y, cellId } = lastMove;
+			return { x, y, cellId };			
+		},
 	},
 
 	mutations: {

@@ -1,15 +1,25 @@
 <template>
 	<div
 		class="cell-wrapper select-none"
-		:class="[{'locked': isLocked, 'incorrect': isIncorrectValue}, cellThemeClass]"
+		:class="[
+			{
+				'locked': isLocked,
+				'incorrect': isIncorrectValue,
+				'is-active': showAnim,
+			},
+			cellThemeClass,
+		]"
+		:style="{
+			'--click-anim-dur': cancelClickFade ? '.05s' : undefined,
+		}"
 		@click="clickedCell(false)"
 		@touchstart.prevent="touchedCell"
 		@touchend.prevent
 		ref="cell"
 	>
-		<transition name="click-anim">
+		<!-- <transition name="click-anim">
 			<div class="click-anim" v-show="showAnim"></div>
-		</transition>
+		</transition> -->
 
 		<GameBoardCellValue
 			class="cell"
@@ -44,12 +54,19 @@ export default {
 	data() {
 		return {
 			touchTimer: null,
-			showAnim: false
+			showAnim: false,
+			animTimeout: null,
+			cancelClickFade: false,
 		}
 	},
 	computed: {
 		cellId() {
 			return `${this.x},${this.y}`;
+		},
+		lastCellId() {
+			const lastCell = this.$store.getters.lastCell;
+			if (lastCell == null) return null;
+			return lastCell.cellId;
 		},
 		isLocked() {
 			return this.$store.getters.lockedCells.includes(this.cellId);
@@ -83,7 +100,7 @@ export default {
 		emitClick(long = false) {
 			const payload = { value: this.value, x: this.x, y: this.y, longTouch: long };
 			this.$emit('clicked', payload);
-			this.showAnim = false;
+			this.endClickAnim();
 		},
 		clickedCell() {
 			if (this.isLocked) return;
@@ -119,7 +136,34 @@ export default {
 		},
 
 		startClickAnim() {
+			this.cancelClickFade = false;
+			if (this.animTimeout) {
+				clearTimeout(this.animTimeout);
+				this.animTimeout = null;
+			}		
 			this.showAnim = true;
+		},
+		endClickAnim(delay = 700) {
+			if (this.animTimeout) {
+				clearTimeout(this.animTimeout);
+				this.animTimeout = null;
+			}
+			this.animTimeout = setTimeout(() => {
+				this.showAnim = false;
+			}, delay);
+		}
+	},
+	beforeUnmount() {
+		if (this.animTimeout) {
+			clearTimeout(this.animTimeout);
+		}
+	},
+	watch: {
+		lastCellId(newValue, oldValue) {
+			if (newValue !== this.cellId && this.animTimeout != null) {
+				this.cancelClickFade = true;
+				this.endClickAnim(0);
+			}
 		}
 	}
 };
@@ -138,6 +182,16 @@ export default {
 }
 .cell-wrapper.incorrect {
 	@apply bg-red-300 dark:bg-red-900;
+}
+
+/* click animation ring */
+.cell-wrapper {
+	transition: box-shadow var(--click-anim-dur, .4s) cubic-bezier(1, 0, 0, 1);
+	@apply ring-0 ring-black ring-opacity-50;
+}
+.cell-wrapper.is-active {
+	transition: none;
+	@apply ring-2 ring-opacity-50;
 }
 
 .cell {
