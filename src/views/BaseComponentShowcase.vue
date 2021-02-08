@@ -27,10 +27,14 @@
 		<div class="showcase-block">
 			<h2 class="text-xl mb-6 pb-1 font-medium border-b self-stretch">Dropdown</h2>
 			<BaseDropdown>
-
+				<template v-slot:trigger="{open}">
+				<BaseButton @click="open">DD</BaseButton>
+				</template>
 			</BaseDropdown>
 			<BaseDropdown align-below>
-
+				<template v-slot:trigger="{toggle}">
+				<BaseButton @click="toggle">DD below</BaseButton>
+				</template>
 			</BaseDropdown>
 		</div>
 	</div>

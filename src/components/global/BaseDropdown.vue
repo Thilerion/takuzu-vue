@@ -1,13 +1,16 @@
 <template>
 	<div class="dropdown">
 		<div class="dropdown-trigger">
-			<BaseButton @click="openDropdownMenu">Dropdown</BaseButton>
+			<slot name="trigger" :open="openDropdownMenu" :close="closeDropdownMenu" :toggle="toggleDropdownMenu">
+				<BaseButton @click="openDropdownMenu">Dropdown</BaseButton>
+			</slot>
 		</div>
 		<div class="dropdown-menu" v-show="isOpen" :class="{'menu-align-below': alignBelow}" ref="ddMenu">
 			<div class="dropdown-content">
 				<button class="dropdown-item">Item A</button>
 				<button class="dropdown-item">Other item</button>
 				<button class="dropdown-item">Yet another dropdown item</button>
+				<hr class="dropdown-divider" />
 				<button class="dropdown-item">I can be clicked!</button>
 			</div>
 		</div>
@@ -31,12 +34,14 @@ export default {
 		closeDropdownMenu() {
 			this.isOpen = false;
 		},
+		toggleDropdownMenu() {
+			this.isOpen = !this.isOpen;
+		},
 		clickOutsideHandler(e) {
 			if (!this.isOpen) return;
 
 			const menuRef = this.$refs.ddMenu;
 			if (!menuRef || menuRef.contains(e.target)) {
-				console.log('inside box');
 				return;
 			}
 
@@ -66,10 +71,13 @@ export default {
 	@apply top-full pt-1;
 }
 .dropdown-content {
-	@apply bg-white rounded shadow-md py-2;
+	@apply bg-white rounded shadow-lg py-2;
 }
 .dropdown-item {
 	@apply pr-12 text-left whitespace-nowrap w-full text-gray-800 text-sm leading-normal relative py-2 pl-4;
 	@apply hover-hover:hover:bg-gray-100 hover-hover:hover:text-black;
+}
+.dropdown-divider {
+	@apply my-2;
 }
 </style>
