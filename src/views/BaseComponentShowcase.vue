@@ -54,6 +54,11 @@
 				</template>
 			</BaseDropdown>
 		</div>
+		<div class="showcase-block">
+			<h2 class="text-xl mb-6 pb-1 font-medium border-b self-stretch">Form inputs</h2>
+			<InputToggle v-model="input1Value" inline id="input-1-value" />
+			<label for="input-1-value">hi there! value is: {{input1Value}}</label>
+		</div>
 	</div>
 </template>
 
@@ -63,6 +68,8 @@ export default {
 		return {
 			modal1Active: false,
 			modal2Active: false,
+
+			input1Value: true
 		}
 	},
 	methods: {
