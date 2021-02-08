@@ -8,12 +8,7 @@
 		<div class="setting-block mt-6">
 			<h2 class="text-gray-700">Cell theme</h2>
 			
-			<div class="mt-2" v-for="opt in cellThemeOptions" :key="opt.value">
-				<label class="flex items-center">
-					<input type="radio" name="radio-cell-theme" v-model="cellTheme" :value="opt.value">
-					<span class="ml-2">{{opt.label}}</span>
-				</label>
-			</div>
+			<CellThemeSetting v-model="cellTheme" />
 		</div>
 
 		<div class="setting-block mt-6">
@@ -80,6 +75,7 @@
 </template>
 
 <script>
+import CellThemeSetting from '@/components/settings/CellThemeSetting.vue';
 import DarkModeSetting from '../components/settings/DarkModeSetting';
 import VibrationSetting from '../components/settings/VibrationSetting';
 
@@ -87,6 +83,7 @@ export default {
 	components: {
 		DarkModeSetting,
 		VibrationSetting,
+		CellThemeSetting,
 	},
 	data() {
 		return {
@@ -95,12 +92,7 @@ export default {
 				{ label: 'Line coordinates', value: 'coords'},
 				{ label: 'Remaining values in line', value: 'remainingCount'},
 				{ label: 'Current values in line', value: 'currentCount'},
-			],
-			cellThemeOptions: [
-				{ label: 'Binary', value: 'binary' },
-				{ label: 'Tic-tac-toe', value: 'tictactoe' },
-				{ label: 'Colored', value: 'colored' },
-			]
+			],			
 		}
 	},
 	computed: {
