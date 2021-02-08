@@ -7,11 +7,9 @@
 		</div>
 		<div class="dropdown-menu" v-show="isOpen" :class="{'menu-align-below': alignBelow}" ref="ddMenu">
 			<div class="dropdown-content">
-				<button class="dropdown-item">Item A</button>
-				<button class="dropdown-item">Other item</button>
-				<button class="dropdown-item">Yet another dropdown item</button>
-				<hr class="dropdown-divider" />
-				<button class="dropdown-item">I can be clicked!</button>
+				<slot name="content" :open="openDropdownMenu" :close="closeDropdownMenu" :toggle="toggleDropdownMenu">
+					<BaseDropdownItem @click="closeDropdownMenu">This dropdown menu is empty...</BaseDropdownItem>
+				</slot>
 			</div>
 		</div>
 	</div>
@@ -71,13 +69,7 @@ export default {
 	@apply top-full pt-1;
 }
 .dropdown-content {
+	min-height: 6rem;
 	@apply bg-white rounded shadow-lg py-2;
-}
-.dropdown-item {
-	@apply pr-12 text-left whitespace-nowrap w-full text-gray-800 text-sm leading-normal relative py-2 pl-4;
-	@apply hover-hover:hover:bg-gray-100 hover-hover:hover:text-black;
-}
-.dropdown-divider {
-	@apply my-2;
 }
 </style>

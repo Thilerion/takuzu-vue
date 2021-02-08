@@ -6,9 +6,11 @@ export function registerGlobalComponents(app) {
 	files.keys().forEach(fileName => {
 
 		const componentConfig = files(fileName);
+		const regex = new RegExp(/[^\\\/]+(?=\.[\w]+$)|[^\\\/]+$/g);
+		const baseFileName = regex.exec(fileName)[0];
 		const componentName = upperFirst(
 			camelCase(
-				fileName.replace(/^\.\/(.*)\.\w+$/, '$1')
+				baseFileName
 			)
 		);
 
