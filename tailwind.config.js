@@ -44,6 +44,7 @@ module.exports = {
 			'sm': '640px',
 			'md': '810px',
 			'lg': '1024px',
+			'hover-hover': {'raw': '(hover: hover)'},
 		}
 	},
 	variants: {
