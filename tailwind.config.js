@@ -44,15 +44,18 @@ module.exports = {
 			'sm': '640px',
 			'md': '810px',
 			'lg': '1024px',
-			'hover-hover': {'raw': '(hover: hover)'},
+			'hover-hover': { 'raw': '(hover: hover)' },
+			'hover-none': { 'raw': '(hover: none)' },
 		}
 	},
 	variants: {
 		extend: {
 			backgroundColor: ['active'],
-			outline: ['focus-visible'],
-			ringWidth: ['focus-visible'],
-			ringOpacity: ['focus-visible'],
+			borderWidth: ['active'],
+			borderColor: ['active'],
+			outline: ['focus-visible', 'active'],
+			ringWidth: ['focus-visible', 'active'],
+			ringOpacity: ['focus-visible', 'active'],
 		},
 	},
 	plugins: [
