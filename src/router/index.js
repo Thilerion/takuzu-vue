@@ -49,7 +49,7 @@ const routes = [
 				component: Settings,
 			},
 			{
-				path: '/more',
+				path: '/menu',
 				name: 'MoreMenu',
 				component: Menu,
 			},

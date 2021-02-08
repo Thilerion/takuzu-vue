@@ -1,6 +1,9 @@
 <template>
 	<div>
 		<PageHeader>More...</PageHeader>
+		<router-link custom to="/showcase" v-slot="{ navigate }">
+			<BaseButton @click="navigate" element="a">Open component showcase</BaseButton>
+		</router-link>
 	</div>
 </template>
 
