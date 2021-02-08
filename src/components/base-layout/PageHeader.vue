@@ -11,7 +11,7 @@
 			</h1>
 		</div>
 		<div class="header-group side right">
-
+			<slot name="right" />
 		</div>
 	</header>
 </template>
@@ -51,7 +51,7 @@ export default {
 .header-group.side {
 	@apply w-12 flex-none px-2;
 }
-.header-group.left {
+.header-group.left, .header-group.right {
 	@apply justify-center;
 }
 </style>

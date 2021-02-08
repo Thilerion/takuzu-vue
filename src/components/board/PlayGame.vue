@@ -2,6 +2,19 @@
 	<div class="gameboard-view fixed overflow-hidden inset-0 flex flex-col z-20">
 		<PageHeader close-btn @close="$emit('close')">
 			{{columns}}x{{rows}}
+			<template #right>
+				<BaseDropdown align-right align-below>
+					<template #trigger="{open}">
+						<IconBtn @click="open">more_vert</IconBtn>
+					</template>
+					<template #content>
+						<BaseDropdownItem>Set bookmark</BaseDropdownItem>
+						<BaseDropdownItem>Delete bookmark</BaseDropdownItem>
+						<BaseDropdownDivider/>
+						<BaseDropdownItem>Settings</BaseDropdownItem>
+					</template>
+				</BaseDropdown>
+			</template>
 		</PageHeader>
 		<GameBoardWrapper v-if="board">
 			<GameBoard
