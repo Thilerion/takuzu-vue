@@ -24,6 +24,15 @@
 				<BaseButton @click="close">Close</BaseButton>
 			</BaseModal>
 		</div>
+		<div class="showcase-block">
+			<h2 class="text-xl mb-6 pb-1 font-medium border-b self-stretch">Dropdown</h2>
+			<BaseDropdown>
+
+			</BaseDropdown>
+			<BaseDropdown align-below>
+
+			</BaseDropdown>
+		</div>
 	</div>
 </template>
 
