@@ -1,5 +1,5 @@
 <template>
-	<div class="absolute h-full w-full pointer-events-none flex flex-col px-6 pb-4">
+	<div class="absolute h-full w-full pointer-events-none flex flex-col">
 		<transition name="hint-fade">
 			<GameHint
 				v-if="showHint"
@@ -17,6 +17,11 @@ import GameHint from './GameHint.vue';
 export default {
 	components: { 
 		GameHint,
+	},
+	data() {
+		return {
+			hasOverflow: false,
+		}
 	},
 	computed: {
 		showHint() {
