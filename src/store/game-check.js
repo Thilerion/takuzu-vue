@@ -14,6 +14,10 @@ const gameCheckModule = {
 		incorrectValues: [],
 		ruleViolations: [],
 
+		allHints: [],
+		currentHint: null,
+
+		showHint: false,
 	}),
 
 	getters: {
@@ -34,7 +38,12 @@ const gameCheckModule = {
 		},
 		setRuleViolations(state, values = []) {
 			state.ruleViolations = values;
-		}
+		},
+		
+		// HINTS
+		setHintVisible(state, value) {
+			state.showHint = !!value;
+		},
 	},
 
 	actions: {
@@ -67,7 +76,14 @@ const gameCheckModule = {
 			// TODO: map rule conflicts to something more usable
 			commit('setRuleViolations', violations);
 			return true;
-		}
+		},
+
+		// HINTS
+		getHint({ commit, dispatch, state }) {
+			// TODO: not yet implemented hinting system
+			console.warn('Hints not yet implemented');
+			commit('setHintVisible', true);
+		},
 	}
 
 }

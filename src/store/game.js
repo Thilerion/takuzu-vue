@@ -1,7 +1,7 @@
 import { deleteCurrentSavedGame, loadSavedGame, saveCurrentGame } from "@/services/save-game";
 import { SimpleBoard } from "../lib/board/Board";
 import { EMPTY, OPPOSITE_VALUE } from "../lib/constants";
-import { toggleValue } from "../lib/utils";
+import { pickRandom, toggleValue } from "../lib/utils";
 import gameCheckModule from "./game-check";
 
 const worker = new Worker('../generate-worker.js', { type: 'module' });
@@ -276,6 +276,14 @@ const gameModule = {
 			}
 			
 			saveCurrentGame(state);
+		},
+		revealRandomCell({ state, commit }) {
+			// TODO: this should be replaced with a hint.execute function on the board, and a store action that executes that hint result
+			console.warn('This is for development purposes only!');
+			const emptyCells = [...state.board.cells({ skipFilled: true })];
+			const { x, y } = pickRandom(emptyCells);
+			const value = state.solution.get(x, y);
+			commit('setValue', { x, y, value });
 		}
 	}
 };

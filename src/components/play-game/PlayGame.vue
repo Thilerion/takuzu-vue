@@ -24,6 +24,7 @@
 
 		<div class="footer">
 			<PlayGameControls />
+			<PlayGameHints />
 		</div>
 
 		<!-- SETTINGS OVERLAY NESTED VIEW: -->
@@ -47,6 +48,7 @@ import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue
 import PlayGameHeader from './PlayGameHeader';
 import PlayGameControls from './PlayGameControls';
 import PlayGameCheckIndicator from './PlayGameCheckIndicator';
+import PlayGameHints from './PlayGameHints';
 
 import { EMPTY } from '../../lib/constants';
 
@@ -61,6 +63,7 @@ export default {
 		PlayGameHeader,
 		PlayGameControls,
 		PlayGameCheckIndicator,
+		PlayGameHints,
 	},
 	data() {
 		return {

@@ -30,7 +30,7 @@
 				Mistakes
 			</IconBtnText>
 		</template>
-		<IconBtnText size="26" icon="emoji_objects">				
+		<IconBtnText size="26" icon="emoji_objects" @click="getHint">				
 			Hint
 		</IconBtnText>
 	</div>
@@ -82,9 +82,8 @@ export default {
 				this.$store.commit('gameCheck/setCheckErrorResult', hasErrors);
 			});
 		},
-		showHint() {
-			// TODO: not yet implemented hinting system
-			console.warn('Hints not yet implemented');
+		getHint() {
+			this.$store.dispatch('gameCheck/getHint');
 		},
 		showSolution() {
 			console.log(this.board.copy());
