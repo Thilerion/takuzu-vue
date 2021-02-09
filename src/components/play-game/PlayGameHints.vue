@@ -27,8 +27,11 @@ export default {
 		showHint() {
 			return this.$store.state.game.gameCheck.showHint;
 		},
+		currentHint() {
+			return this.$store.state.game.gameCheck.currentHint;
+		},
 		hint() {
-			const curHint = this.$store.state.game.gameCheck.currentHint;
+			const curHint = this.currentHint;
 			if (this.showHint && curHint == null) {
 				console.warn('Showing hint but no current hint available?! Showing fallback hint.');
 				return {
@@ -54,8 +57,8 @@ export default {
 			this.hideHint();
 			// TODO: remove hint from store
 			// TODO: after executing final hint option, which just sets the value, mark which value was set!
-		}
-	}
+		},
+	},
 };
 </script>
 

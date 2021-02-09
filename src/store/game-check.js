@@ -1,4 +1,6 @@
 import { findRuleConflicts } from "@/lib/validate/board";
+import { createHint } from "./hints";
+import hintTypes from "./hints/hint-types";
 
 const gameCheckModule = {
 
@@ -26,7 +28,7 @@ const gameCheckModule = {
 		},
 		markedRuleViolations(state) {
 			return state.showRuleViolations ? state.ruleViolations : [];
-		},
+		}
 	},
 
 	mutations: {
@@ -44,6 +46,17 @@ const gameCheckModule = {
 		setHintVisible(state, value) {
 			state.showHint = !!value;
 		},
+		setAllHints(state, hints) {
+			state.allHints = hints;
+		},
+		setCurrentHint(state, hint = null) {
+			state.currentHint = hint;
+		},
+		removeHints(state) {
+			state.allHints = [];
+			state.currentHint = null;
+			state.showHint = false;
+		}
 	},
 
 	actions: {
@@ -79,11 +92,46 @@ const gameCheckModule = {
 		},
 
 		// HINTS
-		getHint({ commit, dispatch, state }) {
+		getHint({ rootState, dispatch }) {
+			// 1: check if there are incorrect values
+			// 1a: if yes, check if there are rule violations
+			// 1b: is all incorrect values are due to rule violations, show ruleViolation hint
+			// 1c: if not all incorrect due to RV, are no RV at all, show IncorrectValue hint
+			const { board, solution } = rootState.game;
+
+			// TODO: would be best to compare incorrect values and rule violatoins, but for now, just check incorrect vlaues
+
+			const {
+				hasMistakes,
+				result: incorrectValues
+			} = board.hasIncorrectValues(solution);
+			if (hasMistakes) {
+				const hint = createHint(hintTypes.MISTAKE, incorrectValues);
+				console.log({ hint });
+				dispatch('setHints', [hint]);
+				return;
+			}
+
+			// 2: Run HumanSolver to find all possible moves to make right now (probably only the easiest strategy)
+			console.warn('SHOULD RUN HUMAN SOLVER NOW, BUT IS NOT YET IMPLEMENTED');
+
+
 			// TODO: not yet implemented hinting system
-			console.warn('Hints not yet implemented');
-			commit('setHintVisible', true);
+			dispatch('setHints');
 		},
+		setHints({ commit }, hints = []) {
+			commit('setAllHints', hints);
+			if (hints.length === 0) {
+				console.warn('No hint in hints array?');
+				commit('setCurrentHint', null);
+			} else if (hints.length === 1) {
+				commit('setCurrentHint', hints[0]);
+			} else {
+				console.warn('No functionality yet for picking a single hint from the list of hints...');
+				commit('setCurrentHint', hints[0]);
+			}
+			commit('setHintVisible', true);
+		}
 	}
 
 }
