@@ -18,7 +18,7 @@
 					:columns="columns"
 					:cells="cells"
 				/>
-				<!-- TODO: check indicator -->
+				<PlayGameCheckIndicator />
 			</GameBoardWrapper>
 		</div>
 
@@ -46,6 +46,7 @@ import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue
 
 import PlayGameHeader from './PlayGameHeader';
 import PlayGameControls from './PlayGameControls';
+import PlayGameCheckIndicator from './PlayGameCheckIndicator';
 
 import { EMPTY } from '../../lib/constants';
 
@@ -59,6 +60,7 @@ export default {
 		OverlayPageTransition,
 		PlayGameHeader,
 		PlayGameControls,
+		PlayGameCheckIndicator,
 	},
 	data() {
 		return {

@@ -5,6 +5,8 @@ const gameCheckModule = {
 	namespaced: true,
 
 	state: () => ({
+
+		checkErrorResult: null,
 		
 		showIncorrectValues: true,
 		showRuleViolations: true,
@@ -24,6 +26,9 @@ const gameCheckModule = {
 	},
 
 	mutations: {
+		setCheckErrorResult(state, result) {
+			state.checkErrorResult = result;
+		},
 		setIncorrectValues(state, values = []) {
 			state.incorrectValues = values;
 		},
