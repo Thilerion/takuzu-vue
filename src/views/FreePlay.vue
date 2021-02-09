@@ -41,7 +41,7 @@
 <script>
 import DifficultySelect from '@/components/new-game/DifficultySelect';
 import GameSizeSelect from '@/components/new-game/GameSizeSelect';
-import PlayGame from '@/components/board/PlayGame';
+import PlayGame from '@/components/play-game/PlayGame';
 import StartGameButton from '@/components/board/StartGameButton';
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
 

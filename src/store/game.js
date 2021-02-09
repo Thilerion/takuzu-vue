@@ -1,4 +1,4 @@
-import { deleteCurrentSavedGame, loadSavedGame } from "@/services/save-game";
+import { deleteCurrentSavedGame, loadSavedGame, saveCurrentGame } from "@/services/save-game";
 import { SimpleBoard } from "../lib/board/Board";
 import { EMPTY, OPPOSITE_VALUE } from "../lib/constants";
 import { toggleValue } from "../lib/utils";
@@ -269,6 +269,13 @@ const gameModule = {
 		finishGame({ commit }) {
 			commit('reset');
 			deleteCurrentSavedGame();
+		},
+		saveGame({ state, getters }) {
+			if (!getters.canSave) {
+				return;
+			}
+			
+			saveCurrentGame(state);
 		}
 	}
 };
