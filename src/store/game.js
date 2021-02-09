@@ -187,7 +187,7 @@ const gameModule = {
 			commit('setBoard', board);
 			commit('resetPuzzleStateProps');
 		},
-		toggleCell({ commit, dispatch, getters }, { x, y, value, longTouch = false }) {
+		toggleCell({ dispatch, getters }, { x, y, value, longTouch = false }) {
 			// TODO: one or zero first setting for toggling
 			const toggleOneFirst = getters.toggleOneFirst;
 			let nextValue;
@@ -202,7 +202,7 @@ const gameModule = {
 				}
 			}
 
-			commit('setValue', { x, y, value: nextValue });
+			dispatch('setValue', { x, y, value: nextValue });
 			dispatch('addToggleToMoveList', { x, y, value, nextValue });
 		},
 		addToggleToMoveList({ state, commit }, { x, y, value, nextValue }) {
@@ -224,7 +224,7 @@ const gameModule = {
 				console.warn('Unexpected value for "checkAction".');
 			}
 		},
-		undo({ state, commit }) {
+		undo({ state, commit, dispatch }) {
 			const lastMove = state.moveList[state.moveList.length - 1];
 			if (!lastMove || lastMove.x == null) {
 				console.warn('cant undo...');
@@ -232,8 +232,12 @@ const gameModule = {
 			}
 			const { x, y, prevValue } = lastMove;
 
-			commit('setValue', { x, y, value: prevValue });
+			dispatch('setValue', { x, y, value: prevValue });
 			commit('popMove');
+		},
+		setValue({ commit }, { x, y, value }) {
+			commit('setValue', { x, y, value });
+			commit('gameCheck/setHintVisible', false);
 		},
 
 		async loadSaved({ commit }) {
@@ -277,13 +281,13 @@ const gameModule = {
 			
 			saveCurrentGame(state);
 		},
-		revealRandomCell({ state, commit }) {
+		revealRandomCell({ state, dispatch }) {
 			// TODO: this should be replaced with a hint.execute function on the board, and a store action that executes that hint result
 			console.warn('This is for development purposes only!');
 			const emptyCells = [...state.board.cells({ skipFilled: true })];
 			const { x, y } = pickRandom(emptyCells);
 			const value = state.solution.get(x, y);
-			commit('setValue', { x, y, value });
+			dispatch('setValue', { x, y, value });
 		}
 	}
 };

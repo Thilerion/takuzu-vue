@@ -1,5 +1,5 @@
 import { findRuleConflicts } from "@/lib/validate/board";
-import { createHint } from "./hints";
+import { createHint, validateHint } from "./hints";
 import hintTypes from "./hints/hint-types";
 
 const gameCheckModule = {
@@ -92,12 +92,29 @@ const gameCheckModule = {
 		},
 
 		// HINTS
-		getHint({ rootState, dispatch }) {
+		getHint({ state, rootState, commit, dispatch }) {
+			const { board, solution } = rootState.game;
+			// FIRST: check if current hint and if so, if it is still valid
+			// because in that case, it should be shown without "using up a new generated hint"
+			const currentHint = state.currentHint;
+			if (currentHint) {
+				const isValid = validateHint(currentHint, { board, solution });
+				if (isValid) {
+					console.log('Hint is still valid. Showing it now.');
+					commit('setHintVisible', true);
+					return;
+				} else {
+					console.log('Hint is no longer valid. Will remove it and generate a new hint.');
+					commit('setCurrentHint', null);
+				}
+			}
+			console.log('start hint gen');
+			
+
 			// 1: check if there are incorrect values
 			// 1a: if yes, check if there are rule violations
 			// 1b: is all incorrect values are due to rule violations, show ruleViolation hint
 			// 1c: if not all incorrect due to RV, are no RV at all, show IncorrectValue hint
-			const { board, solution } = rootState.game;
 
 			// TODO: would be best to compare incorrect values and rule violatoins, but for now, just check incorrect vlaues
 
