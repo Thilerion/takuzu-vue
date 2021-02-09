@@ -1,6 +1,6 @@
 <template>
 	<transition
-		name="overlay-fade"
+		:name="transitionName"
 		@before-enter="beforeEnter"
 		@after-enter="afterEnter"
 		mode="out-in"
@@ -11,9 +11,18 @@
 
 <script>
 export default {
+	props: {
+		disable: Boolean,
+	},
 	data() {
 		return {
 			hideRootOverflow: false
+		}
+	},
+	computed: {
+		transitionName() {
+			if (this.disable) return 'none';
+			return 'overlay-fade';
 		}
 	},
 	methods: {

@@ -32,9 +32,9 @@
 				:gameLoading="gameLoading"
 			/>
 		</div>
-		<transition name="overlay-fade">
+		<OverlayPageTransition :disable="disableGameBoardTransition">
 			<PlayGame @close="quitGame" v-if="gameInitialized" />
-		</transition>
+		</OverlayPageTransition>
 	</div>
 </template>
 
@@ -43,6 +43,8 @@ import DifficultySelect from '@/components/new-game/DifficultySelect';
 import GameSizeSelect from '@/components/new-game/GameSizeSelect';
 import PlayGame from '@/components/board/PlayGame';
 import StartGameButton from '@/components/board/StartGameButton';
+import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
+
 import { deleteCurrentSavedGame, hasCurrentSavedGame } from '@/services/save-game';
 
 const sizeTypes = {
@@ -89,6 +91,7 @@ export default {
 		GameSizeSelect,
 		PlayGame,
 		StartGameButton,
+		OverlayPageTransition,
 	},
 	data() {
 		return {
@@ -98,6 +101,8 @@ export default {
 			
 			difficulty: null,
 			size: null,
+
+			disableGameBoardTransition: false,
 		}
 	},
 	computed: {
@@ -151,10 +156,17 @@ export default {
 				if (hasCurrentSavedGame() && !vm.gameInitialized) {
 					console.log('loading saved game');
 					vm.$store.dispatch('loadSaved');
+					// to prevent a double transition; FreePlay and PlayGame both use enter transition
+					vm.disableGameBoardTransition = true;
+					setTimeout(() => {
+						vm.disableGameBoardTransition = false;
+					}, 400);
+					return;
 				} else {
 					vm.$router.replace({query: null});
 				}
 			};
+			vm.disableGameBoardTransition = false;
 		})
 	},
 	beforeRouteLeave(to, from) {
