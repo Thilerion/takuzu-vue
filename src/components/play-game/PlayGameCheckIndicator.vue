@@ -4,7 +4,7 @@
 			<div
 				class="check-indicator"
 				v-show="errorCheckValue != null"
-				:class="{ correct: !errorCheckValue, incorrect: !!errorCheckValue }"
+				:class="{ correct: !previousCheckValue, incorrect: !!previousCheckValue }"
 			>
 				<div class="check-icon-wrapper">
 					<span v-if="!errorCheckValue" class="check-icon material-icons">check</span>
@@ -19,7 +19,7 @@
 export default {
 	data() {
 		return {
-			
+			previousCheckValue: null,
 		}
 	},
 	computed: {
@@ -30,6 +30,15 @@ export default {
 	methods: {
 		disableIndicator() {
 			this.$store.commit('gameCheck/setCheckErrorResult', null);
+		}
+	},
+	watch: {
+		errorCheckValue: {
+			handler(newValue) {
+				if (newValue == null) return;
+				this.previousCheckValue = newValue;
+			},
+			immediate: true
 		}
 	}
 };

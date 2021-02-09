@@ -69,16 +69,19 @@ export default {
 		},
 		check() {
 			this.$store.dispatch('checkAction').then(hasErrors => {
+				console.log({hasErrors});
 				this.$store.commit('gameCheck/setCheckErrorResult', hasErrors);
 			});
 		},
 		checkRuleViolations() {
 			this.$store.dispatch('gameCheck/findRuleViolations').then(hasErrors => {
+				console.log({hasErrors});
 				this.$store.commit('gameCheck/setCheckErrorResult', hasErrors);
 			});
 		},
 		checkIncorrectValues() {
 			this.$store.dispatch('gameCheck/findIncorrectValues').then(hasErrors => {
+				console.log({hasErrors});
 				this.$store.commit('gameCheck/setCheckErrorResult', hasErrors);
 			});
 		},
