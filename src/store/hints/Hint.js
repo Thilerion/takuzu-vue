@@ -29,7 +29,9 @@ export const hintGenerators = {
 		return new Hint(type, message, targets, source);
 	},
 	[hintTypes.TRIPLES]: ({ targets, origin, type }) => {
-		const message = `There is a ${type} somewhere on the board.`;
+		// TODO: replace message coords with marking on board
+		const originCoords = origin.map(({ x, y }) => `(${x},${y})`).join(' / ');
+		const message = `There is a ${type} somewhere on the board: ${originCoords}`;
 		const hintType = hintTypes.TRIPLES;
 		const subType = type;
 
