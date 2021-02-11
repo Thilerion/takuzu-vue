@@ -1,3 +1,4 @@
+import { humanSolveTriples } from "@/lib/human-solver/triples";
 import { findRuleConflicts } from "@/lib/validate/board";
 import { createHint, validateHint } from "./hints";
 import hintTypes from "./hints/hint-types";
@@ -128,6 +129,11 @@ const gameCheckModule = {
 			}
 
 			// 2: Run HumanSolver to find all possible moves to make right now (probably only the easiest strategy)
+
+			// TRIPLES HINT
+			const triplesHumanResult = humanSolveTriples({ board });
+			console.log(triplesHumanResult);
+
 			console.warn('SHOULD RUN HUMAN SOLVER NOW, BUT IS NOT YET IMPLEMENTED');
 
 

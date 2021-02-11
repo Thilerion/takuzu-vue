@@ -7,8 +7,10 @@ const doublesRight = ['11.', '00.'];
 const doubles = [...doublesLeft, ...doublesRight];
 const sandwiches = ['1.1', '0.0'];
 
-export function checkTriplesStrategy(threesUnit) {
+export function checkTriplesStrategy(threesUnit, options = {}) {
 	if (!threesUnit) return { found: false };
+
+	const { expanded = false } = options;
 
 	const { values, coords } = threesUnit;
 	
@@ -16,34 +18,46 @@ export function checkTriplesStrategy(threesUnit) {
 	
 	const valueStr = values.join('');
 	if (sandwiches.includes(valueStr)) {
-		return {
-			found: true,
-			target: {
-				x: coords[1].x,
-				y: coords[1].y,
-				value: OPPOSITE_VALUE[values[0]]
-			}
-		}
+		return expanded ?
+			getExpandedResult(coords, values, 1, true) :
+			getBasicResult(coords, values, 1, 0);
+		
 	} else if (doubles.includes(valueStr)) {
 		if (doublesLeft.includes(valueStr)) {
-			return {
-				found: true,
-				target: {
-					x: coords[0].x,
-					y: coords[0].y,
-					value: OPPOSITE_VALUE[values[1]]
-				}
-			}
+			return expanded ?
+				getExpandedResult(coords, values, 0, false) :
+				getBasicResult(coords, values, 0, 1);
+			
 		} else if (doublesRight.includes(valueStr)) {
-			return {
-				found: true,
-				target: {
-					x: coords[2].x,
-					y: coords[2].y,
-					value: OPPOSITE_VALUE[values[1]]
-				}
-			}
+			return expanded ?
+				getExpandedResult(coords, values, 2, false) :
+				getBasicResult(coords, values, 2, 1);
 		}
 	}
 	return { found: false };
+}
+
+function getBasicResult(coords, values, targetIdx, sourceIdx) {
+	const targetCoords = coords[targetIdx];
+	return {
+		found: true,
+		target: {
+			x: targetCoords.x,
+			y: targetCoords.y,
+			value: OPPOSITE_VALUE[values[sourceIdx]]
+		}
+	}
+}
+
+function getExpandedResult(coords, values, targetIdx, isSandwich) {
+	const sourceIdxA = (targetIdx + 1) % 3;
+	const sourceIdxB = (targetIdx + 2) % 3;
+
+	const { found, target } = getBasicResult(coords, values, targetIdx, sourceIdxA);
+	const type = isSandwich ? 'sandwich' : 'double';
+	const origin = [
+		{ ...coords[sourceIdxA] },
+		{ ...coords[sourceIdxB] },
+	];
+	return { found, target, type, origin };
 }
