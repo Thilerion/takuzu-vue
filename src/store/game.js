@@ -170,7 +170,6 @@ const gameModule = {
 				let data = await receivedData;
 				clearInterval(interval);
 				const { board: boardStr, solution: solutionStr } = data;
-				console.log(boardStr, solutionStr);
 				const board = SimpleBoard.fromString(boardStr);
 				const solution = SimpleBoard.fromString(solutionStr);
 				commit('setAllBoards', { board, solution, initialBoard: board.copy() });

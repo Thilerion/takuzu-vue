@@ -88,7 +88,6 @@ export default {
 	},
 	beforeMount() {
 		if (this.initialSelection) {
-			console.log('setting initial selection', this.initialSelection);
 			const type = this.initialSelection.type;
 			this.currentTab = type;
 			this.selectSize(this.initialSelection);

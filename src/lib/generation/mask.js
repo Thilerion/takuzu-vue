@@ -59,7 +59,7 @@ const difficultyConstraintsFns = {
 };
 
 export function createBasicMaskWithMaxDifficulty(board, maxDifficulty = 1) {
-	console.log('creating with max difficulty:', maxDifficulty);
+	// console.log('creating with max difficulty:', maxDifficulty);
 	const constraintFns = difficultyConstraintsFns[maxDifficulty];
 	const solverConfig = {
 		...solverConf,
@@ -82,7 +82,6 @@ export function createBasicMask(board, solverConfig = solverConf) {
 		}
 	}
 	const solution = Solver.run(maskedBoard.copy(), solverConfig);
-	console.log({ solution });
 	return maskedBoard;
 }
 

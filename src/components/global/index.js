@@ -13,8 +13,6 @@ export function registerGlobalComponents(app) {
 				baseFileName
 			)
 		);
-
-		console.log({ fileName, componentName });
 		app.component(componentName, componentConfig.default || componentConfig);
 	})
 }
