@@ -3,13 +3,16 @@ import hintTypes from './hint-types';
 let lastHintId = -1;
 
 class Hint {
-	constructor(type, message, targets, source = []) {
+	constructor(type, message, targets, source = [], additionalData = {}) {
 		this.id = ++lastHintId;
 		this.message = message;
 		this.targets = targets;
 		this.source = source;
 
 		this.type = type;
+
+		const { subType } = additionalData;
+		this.subType = subType;
 	}
 }
 
@@ -23,4 +26,10 @@ export const hintGenerators = {
 		const source = [];
 		return new Hint(type, message, targets, source);
 	},
+	[hintTypes.TRIPLES]: ({ targets, origin, type }) => {
+		const message = `There is a ${type} somewhere on the board.`;
+		const hintType = hintTypes.TRIPLES;
+		const subType = type;
+		return new Hint(hintType, message, targets, origin, { subType });
+	}
 }
