@@ -15,6 +15,13 @@ export const hintValidators = {
 			const { x, y } = target;
 			if (board.get(x, y) !== EMPTY) return false;
 		}
+		const sourceCells = hint.source.map(({ x, y }) => {
+			return board.get(x, y);
+		});
+		if (sourceCells[0] !== sourceCells[1] || sourceCells[0] === EMPTY) {
+			// both source cells should still have the same value
+			return false;
+		}
 		return true;
 	}
 }
