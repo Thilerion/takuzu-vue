@@ -79,7 +79,7 @@ export default {
 			return [...this.board.cells()].map(({x, y, value}, idx) => {
 				return {
 					x, y, 
-					value: value === EMPTY ? null : value,
+					value,
 					idx
 				};
 			});

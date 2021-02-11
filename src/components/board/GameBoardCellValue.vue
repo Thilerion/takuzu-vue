@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { ONE, ZERO } from '@/lib/constants';
+import { EMPTY, ONE, ZERO } from '@/lib/constants';
 const displayValues = {
 	binary: {
 		[ONE]: '1',
@@ -35,7 +35,7 @@ export default {
 	},
 	computed: {
 		displayValue() {
-			if (this.value == null) return;
+			if (this.value == EMPTY) return '';
 			return displayValues[this.theme][this.value];
 		},
 	},
