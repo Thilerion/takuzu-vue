@@ -57,6 +57,17 @@ const gameCheckModule = {
 			state.allHints = [];
 			state.currentHint = null;
 			state.showHint = false;
+		},
+
+		reset(state) {
+			state.allHints = [];
+			state.currentHint = null;
+			state.showHint = false;
+
+			state.incorrectValues = [];
+			state.ruleViolations = [];
+
+			state.checkErrorResult = null;
 		}
 	},
 
@@ -132,7 +143,24 @@ const gameCheckModule = {
 
 			// TRIPLES HINT
 			const triplesHumanResult = humanSolveTriples({ board });
-			console.log(triplesHumanResult);
+			if (triplesHumanResult && triplesHumanResult.length) {
+				const triplesHints = triplesHumanResult.map(triplesResult => {
+					return createHint(hintTypes.TRIPLES, triplesResult);
+				})
+				console.log({ triplesHints });
+				
+				const sortedHints = triplesHints.sort((a, b) => {
+					const { subType: typeA } = a;
+					const { subType: typeB } = b;
+					if (typeA === 'double' && typeB === 'sandwich') return -1;
+					if (typeA === 'sandwich' && typeB === 'double') return 1;
+					return b.targets.length - a.targets.length;
+				})
+				const hint = sortedHints[0];
+				console.log({ hint });
+				dispatch('setHints', [hint]);
+				return;
+			}
 
 			console.warn('SHOULD RUN HUMAN SOLVER NOW, BUT IS NOT YET IMPLEMENTED');
 

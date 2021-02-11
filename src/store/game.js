@@ -152,6 +152,7 @@ const gameModule = {
 				commit('setInitialized', true);
 				commit('setDimensions', { width, height });
 				commit('setDifficulty', difficulty);
+				commit('gameCheck/reset');
 			} catch (e) {
 				console.warn(e);
 				commit('reset');
@@ -185,6 +186,7 @@ const gameModule = {
 			const board = state.initialBoard.copy();
 			commit('setBoard', board);
 			commit('resetPuzzleStateProps');
+			commit('gameCheck/reset');
 		},
 		toggleCell({ dispatch, getters }, { x, y, value, longTouch = false }) {
 			// TODO: one or zero first setting for toggling
@@ -287,6 +289,7 @@ const gameModule = {
 		},
 		finishGame({ commit }) {
 			commit('reset');
+			commit('gameCheck/reset');
 			deleteCurrentSavedGame();
 		},
 		saveGame({ state, getters }) {
