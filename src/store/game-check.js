@@ -61,7 +61,6 @@ const gameCheckModule = {
 
 	actions: {
 		findIncorrectValues({ rootState, commit }) {
-			console.log('running find incorrect values');
 			const { board, solution } = rootState.game;
 
 			const { hasMistakes, result } = board.hasIncorrectValues(solution);
@@ -76,7 +75,6 @@ const gameCheckModule = {
 			return true;
 		},
 		findRuleViolations({ rootState, commit }) {
-			console.log('running find rule violations');
 			const { board } = rootState.game;
 
 			const violations = findRuleConflicts(board, true);

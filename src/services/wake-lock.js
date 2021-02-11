@@ -27,7 +27,6 @@ class WakeLock {
 	}
 
 	destroy() {
-		console.log('Destroying');
 		this.disable();
 		this.removeVisListener();
 	}
