@@ -10,26 +10,10 @@
 			size="26"
 			icon="done"
 			@click="check"
-			v-if="checkButtonEnabled && !isDevelopment"
+			v-if="checkButtonEnabled"
 		>
 			Check
 		</IconBtnText>
-		<template v-if="isDevelopment">
-			<IconBtnText
-				size="26"
-				icon="done"
-				@click="checkRuleViolations"
-			>
-				Violations
-			</IconBtnText>
-			<IconBtnText
-				size="26"
-				icon="done"
-				@click="checkIncorrectValues"
-			>
-				Mistakes
-			</IconBtnText>
-		</template>
 		<IconBtnText size="26" icon="emoji_objects" @click="getHint">				
 			Hint
 		</IconBtnText>
@@ -46,7 +30,6 @@ export default {
 	},
 	data() {
 		return {
-			isDevelopment: process.env.NODE_ENV === 'development',
 		}
 	},
 	computed: {
