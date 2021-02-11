@@ -68,7 +68,7 @@ export default function applyEliminationConstraint(board, options = {}) {
 			}
 		}
 		// add current line to filled Lines if it is now filled
-		if (boardLine.isFilled) {
+		if (boardLine.isFilled && enforceUniqueLines) {
 			filled.push(boardLine);
 		}
 		// continue with loop
