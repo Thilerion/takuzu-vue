@@ -113,6 +113,14 @@ export default {
 			this.enableWakeLock();
 			this.wakeLock.onChange = (isEnabled) => this.wakeLockEnabled = !!isEnabled;
 		}
+
+		if (process.env.NODE_ENV === 'development') {
+			const getBoardString = () => this.board.toBoardString();
+			const getInitialBoardString = () => this.$store.state.game.initialBoard.toBoardString();
+			window._getBoardStr = getBoardString;
+			window._getInitBoardStr = getInitialBoardString;
+			console.log('enabled board string methods on window object.');
+		}
 	},
 	unmounted() {
 		this.wakeLock.destroy();
