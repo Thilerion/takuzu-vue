@@ -46,4 +46,7 @@ export default {
 .icon-btn:disabled {
 	@apply transition-none opacity-80 cursor-default bg-opacity-0;
 }
+.icon-btn:disabled .material-icons {
+	@apply opacity-70;
+}
 </style>
