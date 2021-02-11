@@ -4,6 +4,7 @@
 			<GameHint
 				v-if="showHint"
 				v-bind="hint"
+				:hint="hint"
 				@hide="hideHint"
 				@done="removeHint"
 			/>

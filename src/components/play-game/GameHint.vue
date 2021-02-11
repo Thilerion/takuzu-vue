@@ -33,7 +33,8 @@ export default {
 			default() {
 				return []
 			}
-		}
+		},
+		hint: Object
 	},
 	data() {
 		return {
@@ -49,8 +50,8 @@ export default {
 	},
 	methods: {
 		executeAction(idx) {
-			const onClick = this.actions[idx].onClick;
-			onClick(this, this.$store);
+			const onClick = this.actions[idx].onClick.bind(this);
+			onClick(this, this.$store, this.hint);
 			this.$emit('done');
 		},
 		setDistanceBottom() {
