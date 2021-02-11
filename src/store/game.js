@@ -206,11 +206,27 @@ const gameModule = {
 			dispatch('addToggleToMoveList', { x, y, value, nextValue });
 		},
 		addToggleToMoveList({ state, commit }, { x, y, value, nextValue }) {
+			// board null values should be "EMPTY"
+			if (value == null) value = EMPTY;
+
+
+			// get the last move to check if this toggle targets the same cell as before
 			const prevMove = state.moveList[state.moveList.length - 1];
 			if (!prevMove || prevMove.x !== x || prevMove.y !== y) {
+				// no replacement of move needed/possible; just add new move to moveList
 				commit('addMove', new PuzzleMove(x, y, nextValue, value));
 				return;
 			}
+			// if previousMove has the same before value as the next toggled value:
+			// the cell may have been toggled 3x, from EMPTY > ZERO > ONE > EMPTY
+			// in that case, just remove the puzzleMove
+			const origValue = prevMove.prevValue;
+			if (origValue === nextValue) {
+				commit('popMove');
+				return;
+			}
+
+			// both the previous move and this one target the same cell, so combine them
 			const combinedMove = new PuzzleMove(x, y, nextValue, prevMove.prevValue);
 			commit('replaceLastMove', combinedMove);
 		},
