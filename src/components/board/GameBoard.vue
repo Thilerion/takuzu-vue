@@ -8,7 +8,7 @@
 			v-for="cell in cells"
 			:key="cell.idx"
 			v-bind="cell"
-			:active="cell.idx == activeCell"
+			:active="isActiveCell(cell)"
 			:style="{
 				'grid-row': `${cell.y + 2} / span 1`,
 				'grid-column': `${cell.x + 2} / span 1`,
@@ -55,11 +55,6 @@ export default {
 			required: true
 		}
 	},
-	data() {
-		return {
-			activeCell: null,
-		}
-	},
 	computed: {
 		finishedAndCorrect() {
 			return this.$store.getters.finishedAndCorrect;
@@ -75,9 +70,17 @@ export default {
 		},
 		ruleViolations() {
 			return this.$store.getters['gameCheck/markedRuleViolations'];
-		}
+		},
+		activeCells() {
+			return this.$store.state.game.markedCells.activeCells;
+		},
 	},
 	methods: {
+		isActiveCell({x, y}) {
+			return this.activeCells.some(activeCell => {
+				return activeCell.x == x && activeCell.y == y;
+			})
+		},
 		getCoords(index) {
 			const x = index % this.columns;
 			const y = Math.floor(index / this.columns);
@@ -102,7 +105,7 @@ export default {
 		},
 		cellPointerDown(e, cellIdx) {
 			const cellRef = this.$refs[`cell-${cellIdx}`];
-			this.markActive(cellIdx);
+			this.markActive(cellIdx, e);
 			if (e.pointerType === 'mouse') {
 			} else {
 				cellRef.touchedCell();
@@ -127,11 +130,13 @@ export default {
 			}
 			e.preventDefault();
 		},
-		markActive(idx) {
-			this.activeCell = idx;
+		markActive(idx, e) {
+			const x = e.target.getAttribute('data-col') * 1;
+			const y = e.target.getAttribute('data-row') * 1;
+			this.$store.dispatch('markCellDown', { x, y });
 		},
 		unmarkActive(idx) {
-			if (this.activeCell === idx) this.activeCell = null;
+			this.$store.dispatch('markCellUp');
 		}
 	},
 	watch: {

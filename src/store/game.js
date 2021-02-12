@@ -3,6 +3,7 @@ import { SimpleBoard } from "../lib/board/Board";
 import { EMPTY, OPPOSITE_VALUE } from "../lib/constants";
 import { pickRandom, toggleValue } from "../lib/utils";
 import gameCheckModule from "./game-check";
+import markedCellsModule from "./marked-cells";
 
 const worker = new Worker('../generate-worker.js', { type: 'module' });
 const send = message => worker.postMessage({ message });
@@ -53,7 +54,10 @@ const initialState = () => ({
 
 const gameModule = {
 
-	modules: { gameCheck: gameCheckModule },
+	modules: {
+		gameCheck: gameCheckModule,
+		markedCells: markedCellsModule,
+	},
 
 	state: () => initialState(),
 
