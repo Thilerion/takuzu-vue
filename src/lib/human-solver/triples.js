@@ -37,7 +37,6 @@ export function humanSolveTriples(data, options = {}) {
 }
 
 function isOriginEqual(a, b) {
-	console.log({ a, b });
 	const [a1, a2] = a;
 	const [b1, b2] = b;
 

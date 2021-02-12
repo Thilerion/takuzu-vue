@@ -1,4 +1,5 @@
 import { EMPTY } from '@/lib/constants';
+import { lineTypeFromLineId } from '@/lib/utils';
 import hintTypes from './hint-types';
 
 let lastHintId = -1;
@@ -51,5 +52,13 @@ export const hintGenerators = {
 		}
 
 		return new Hint(hintType, message, targets, origin, { subType, actions: [action] });
+	},
+	[hintTypes.BALANCE]: ({ targets, origin }) => {
+		const lineId = origin[0];
+		const lineName = lineTypeFromLineId(lineId);
+		
+		const message = `A ${lineName} can be balanced (${lineName}: ${lineId})`;
+		const type = hintTypes.BALANCE;
+		return new Hint(type, message, targets, origin);
 	}
 }

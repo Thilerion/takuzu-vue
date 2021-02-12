@@ -1,3 +1,5 @@
+import { findAllAvailableMoves } from "@/lib/human-solver";
+import { humanSolveBalance } from "@/lib/human-solver/balance";
 import { humanSolveTriples } from "@/lib/human-solver/triples";
 import { findRuleConflicts } from "@/lib/validate/board";
 import { createHint, validateHint } from "./hints";
@@ -140,6 +142,7 @@ const gameCheckModule = {
 			}
 
 			// 2: Run HumanSolver to find all possible moves to make right now (probably only the easiest strategy)
+			findAllAvailableMoves({ board, solution });
 
 			// TRIPLES HINT
 			const triplesHumanResult = humanSolveTriples({ board });
@@ -157,6 +160,15 @@ const gameCheckModule = {
 					return b.targets.length - a.targets.length;
 				})
 				const hint = sortedHints[0];
+				console.log({ hint });
+				dispatch('setHints', [hint]);
+				return;
+			}
+
+			// BALANCE HINT
+			const balanceHintResult = humanSolveBalance({ board });
+			if (balanceHintResult) {
+				const hint = createHint(hintTypes.BALANCE, balanceHintResult[0]);
 				console.log({ hint });
 				dispatch('setHints', [hint]);
 				return;

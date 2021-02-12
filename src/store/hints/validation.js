@@ -23,5 +23,9 @@ export const hintValidators = {
 			return false;
 		}
 		return true;
+	},
+	[hintTypes.BALANCE]: (hint, { board, solution }) => {
+		console.warn('Balance hint validation TO DO');
+		return false;
 	}
 }
