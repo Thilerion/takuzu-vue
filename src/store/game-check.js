@@ -75,7 +75,7 @@ const gameCheckModule = {
 	},
 
 	actions: {
-		findIncorrectValues({ rootState, commit }) {
+		findIncorrectValues({ rootState, commit, dispatch }) {
 			const { board, solution } = rootState.game;
 
 			const { hasMistakes, result } = board.hasIncorrectValues(solution);
@@ -87,6 +87,7 @@ const gameCheckModule = {
 
 			const incorrectCellIds = result.map(({ x, y }) => `${x},${y}`);
 			commit('setIncorrectValues', incorrectCellIds);
+			dispatch('markInvalidValuesChecked', result, { root: true });
 			return true;
 		},
 		findRuleViolations({ rootState, commit }) {

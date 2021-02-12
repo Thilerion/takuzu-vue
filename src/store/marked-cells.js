@@ -1,5 +1,6 @@
 const initialState = () => ({
 	activeCells: [],
+	errorCells: [],
 })
 
 const markedCellsModule = {
@@ -24,14 +25,37 @@ const markedCellsModule = {
 		},
 		unsetActiveCell: state => state.activeCells = [],
 
+		addToErrorCells(state, cells = []) {
+			state.errorCells.push(...cells);
+		},
+		unsetAllErrorCells(state) {
+			state.errorCells = [];
+		},
+		removeCellFromErrorCells(state, { x, y }) {
+			state.errorCells = state.errorCells.filter(cell => {
+				if (cell.x === x && cell.y === y) return false;
+				return true;
+			})
+		},
+
 	},
 
 	actions: {
 		markCellDown({ commit }, { x, y }) {
 			commit('setActiveCell', { x, y });
+			commit('removeCellFromErrorCells', { x, y });
 		},
 		markCellUp({ commit }) {
 			commit('unsetActiveCell');
+			// commit('removeCellFromErrorCells', { x, y });
+		},
+		markInvalidValuesChecked({ commit }, result = []) {
+			commit('unsetAllErrorCells');
+			commit('unsetActiveCell');
+			const resultCoords = result.map(cell => {
+				return { x: cell.x, y: cell.y };
+			})
+			commit('addToErrorCells', resultCoords);
 		}
 	}
 

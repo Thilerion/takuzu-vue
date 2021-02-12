@@ -68,10 +68,14 @@ export default {
 			return this.$store.getters.lockedCells.includes(this.cellId);
 		},
 		incorrectValues() {
-			return this.$store.getters['gameCheck/markedIncorrectValues'];
+			// return this.$store.getters['gameCheck/markedIncorrectValues'];
+			return this.$store.state.game.markedCells.errorCells;
 		},
 		isIncorrectValue() {
-			return this.incorrectValues && this.incorrectValues.includes(this.cellId);
+			return this.incorrectValues.some(errorCell => {
+				return errorCell.x == this.x && errorCell.y == this.y;
+			})
+			// return this.incorrectValues && this.incorrectValues.includes(this.cellId);
 		},
 		vibrateOnTap() {
 			return this.$store.getters['settings/gameVibrationEnabled'];
