@@ -6,6 +6,7 @@
 				'locked': isLocked,
 				'incorrect': isIncorrectValue,
 				'is-active': showAnim,
+				'last-active-cell': cellId === lastCellId
 			},
 			cellThemeClass,
 		]"
@@ -188,7 +189,10 @@ export default {
 }
 .cell-wrapper.is-active {
 	transition: none;
-	@apply ring-2 ring-opacity-50 z-10;
+	@apply ring-2 ring-opacity-50;
+}
+.cell-wrapper.last-active-cell, .cell-wrapper.is-active {
+	@apply z-20;
 }
 
 .cell {
