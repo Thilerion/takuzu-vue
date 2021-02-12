@@ -1,9 +1,11 @@
 import { humanSolveBalance } from "./balance";
+import { humanSolveElimination } from "./elimination";
 import { humanSolveTriples } from "./triples";
 
 const techniqueList = [
 	humanSolveTriples,
-	humanSolveBalance
+	humanSolveBalance,
+	humanSolveElimination,
 ]
 
 export function findAllAvailableMoves({ board, solution }, options = {}) {
