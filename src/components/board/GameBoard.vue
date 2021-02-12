@@ -102,7 +102,6 @@ export default {
 		},
 		cellPointerDown(e, cellIdx) {
 			const cellRef = this.$refs[`cell-${cellIdx}`];
-			console.log({cellRef, e});
 			this.markActive(cellIdx);
 			if (e.pointerType === 'mouse') {
 			} else {
@@ -129,12 +128,9 @@ export default {
 			e.preventDefault();
 		},
 		markActive(idx) {
-			console.log('mark active');
 			this.activeCell = idx;
-			console.log(this.activeCell);
 		},
 		unmarkActive(idx) {
-			console.log('mark inactive');
 			if (this.activeCell === idx) this.activeCell = null;
 		}
 	},

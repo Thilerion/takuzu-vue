@@ -164,12 +164,8 @@ const gameModule = {
 			commit('setLoading', true);
 			const receivedData = initReceiver();
 			send({ width, height, difficulty });
-			const interval = setInterval(() => {
-				console.log('waiting...');
-			}, 200);
 			try {
 				let data = await receivedData;
-				clearInterval(interval);
 				const { board: boardStr, solution: solutionStr } = data;
 				const board = SimpleBoard.fromString(boardStr);
 				const solution = SimpleBoard.fromString(solutionStr);

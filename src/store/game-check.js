@@ -121,7 +121,6 @@ const gameCheckModule = {
 					commit('setCurrentHint', null);
 				}
 			}
-			console.log('start hint gen');
 			
 
 			// 1: check if there are incorrect values
@@ -178,7 +177,6 @@ const gameCheckModule = {
 			// ELIMINATION HINT
 			const eliminationHintResult = humanSolveElimination({ board });
 			if (eliminationHintResult && eliminationHintResult.length) {
-				console.log({ eliminationHintResult });
 				const sorted = [...eliminationHintResult].sort((a, b) => {
 					return a.elimType - b.elimType;
 				})

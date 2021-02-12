@@ -152,7 +152,6 @@ export default {
 		next(vm => {
 			if (to.query.continue) {
 
-				console.log(to);
 				if (hasCurrentSavedGame() && !vm.gameInitialized) {
 					console.log('loading saved game');
 					vm.$store.dispatch('loadSaved');
