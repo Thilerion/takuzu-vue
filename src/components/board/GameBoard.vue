@@ -1,6 +1,7 @@
 <template>
 	<div
 		class="board"
+		@pointerdown="boardClicked"
 	>
 		<GameBoardCell
 			v-for="cell in cells"
@@ -10,6 +11,10 @@
 				'grid-row': `${cell.y + 2} / span 1`,
 				'grid-column': `${cell.x + 2} / span 1`,
 			}"
+			:data-row="cell.y"
+			:data-col="cell.x"
+			:data-cell-idx="cell.idx"
+			:ref="'cell-' + cell.idx"
 			@clicked="toggleCell"
 		/>
 		<GameBoardLineCounts
@@ -72,7 +77,38 @@ export default {
 			return {x, y};
 		},
 		toggleCell(payload) {
+			console.warn({ type: 'toggling', ...payload})
 			this.$store.dispatch('toggleCell', payload);
+		},
+		boardClicked(e) {
+			const {target, path} = e;
+			const attribute = target.getAttribute('data-cell-idx');
+			if (attribute != null) {
+				this.cellPointerDown(e, attribute);
+			} else {
+				const lineId = target.getAttribute('data-line-id');
+				if (lineId != null) {
+					this.lineIdClicked(lineId);
+				}
+			}
+		},
+		cellPointerDown(e, cellIdx) {
+			const cellRef = this.$refs[`cell-${cellIdx}`];
+			console.log({cellRef, e});
+			if (e.pointerType === 'mouse') {
+				e.target.addEventListener('pointerup', this.cellClicked);
+			} else {
+				cellRef.touchedCell();
+			}
+		},
+		cellClicked(e) {
+			const cellIdx = e.target.getAttribute('data-cell-idx');
+			const cellRef = this.$refs[`cell-${cellIdx}`];
+			cellRef.clickedCell(false);
+			e.target.removeEventListener('pointerup', this.cellClicked);
+		},
+		lineIdClicked(lineId) {
+			console.log('Line helper was clicked!', lineId);
 		}
 	},
 	watch: {

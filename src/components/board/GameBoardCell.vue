@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="cell-wrapper select-none"
+		class="cell-wrapper select-none pointer-events-auto"
 		:class="[
 			{
 				'locked': isLocked,
@@ -13,14 +13,11 @@
 		:style="{
 			'--click-anim-dur': cancelClickFade ? '.05s' : undefined,
 		}"
-		@click="clickedCell(false)"
-		@touchstart.prevent="touchedCell"
-		@touchend.prevent
 		ref="cell"
 	>
 
 		<GameBoardCellValue
-			class="cell"
+			class="cell pointer-events-none"
 			:theme="cellTheme"
 			:value="value"
 		/>

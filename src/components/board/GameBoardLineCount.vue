@@ -1,6 +1,7 @@
 <template>
 	<div
 		class="line-count"
+		:data-line-id="lineId"
 		:style="lineIdToGridArea(lineId)"
 		:class="[lineType, {
 			complete: lineComplete
@@ -106,7 +107,7 @@ export default {
 
 	padding: 12%;
 
-	@apply overflow-hidden relative transition-colors font-sans justify-items-stretch items-stretch;
+	@apply overflow-hidden relative transition-colors font-sans justify-items-stretch items-stretch pointer-events-auto;
 	/* @apply bg-teal-100; */
 	width: var(--cell-size);
 	height: var(--cell-size);
@@ -115,6 +116,9 @@ export default {
 	--font-size: clamp(10px, var(--half-size), 2rem);
 	font-size: var(--font-size);
 	line-height: 1;
+}
+.line-count * {
+	@apply pointer-events-none;
 }
 
 .count {

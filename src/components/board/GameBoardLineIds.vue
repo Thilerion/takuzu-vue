@@ -2,9 +2,10 @@
 	<div
 		v-for="line in lineIds"
 		:key="line.lineId"
-		class="text-xs line-id"
+		class="text-xs line-id select-none"
 		:style="line.style"
 		:class="[line.lineType]"
+		:data-line-id="line.lineId"
 	>
 		{{ line.lineId }}
 	</div>
