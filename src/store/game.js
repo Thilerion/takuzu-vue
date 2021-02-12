@@ -250,6 +250,7 @@ const gameModule = {
 			const { x, y, prevValue } = lastMove;
 
 			dispatch('setValue', { x, y, value: prevValue });
+			dispatch('markUndoCell', { x, y });
 			commit('popMove');
 		},
 		setValue({ commit }, { x, y, value }) {

@@ -87,7 +87,6 @@ export default {
 			return {x, y};
 		},
 		toggleCell(payload) {
-			console.warn({ type: 'toggling', ...payload})
 			this.$store.dispatch('toggleCell', payload);
 		},
 		boardClicked(e) {

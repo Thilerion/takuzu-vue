@@ -47,7 +47,10 @@ const markedCellsModule = {
 		},
 		markCellUp({ commit }) {
 			commit('unsetActiveCell');
-			// commit('removeCellFromErrorCells', { x, y });
+			// TODO: maybe ? commit('removeCellFromErrorCells', { x, y });
+		},
+		markUndoCell({ commit }, { x, y }) {
+			commit('setActiveCell', { x, y });
 		},
 		markInvalidValuesChecked({ commit }, result = []) {
 			commit('unsetAllErrorCells');
