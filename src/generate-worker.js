@@ -1,5 +1,5 @@
 import { generateBoard } from './lib/generation/board';
-import { createBasicMaskWithMaxDifficulty } from './lib/generation/mask';
+import { createMaskWithDifficulty } from './lib/generation/mask';
 
 function createPuzzle({ width, height, difficulty = 1 }, forceError = false) {
 	if (forceError) {
@@ -22,8 +22,9 @@ function createPuzzle({ width, height, difficulty = 1 }, forceError = false) {
 	}
 
 	while (!board && performance.now() < endAfter) {
-		const result = createBasicMaskWithMaxDifficulty(solution, difficulty);
+		const result = createMaskWithDifficulty(solution, difficulty);
 		if (result) board = result;
+		// TODO: if this fails to often, a different board(solutionBoard) should be picked. Some filled boards just make it very hard to generate a correct mask.
 	}
 	if (!board) {
 		console.warn('Could not generate mask...');

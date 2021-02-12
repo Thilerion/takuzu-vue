@@ -1,96 +1,28 @@
 import { EMPTY } from "../constants";
-import applyEliminationConstraint from "../solver/constraints/Elimination";
-import applyLineBalanceConstraint from "../solver/constraints/LineBalance";
-import applyTriplesConstraint from "../solver/constraints/Triples";
-import Solver from "../solver/Solver";
+import { maskHasNoSolution, maskHasOneSolution } from "./mask-validation";
 
-const solverConf = {
-	maxSolutions: 2,
-	timeoutDuration: 1000,
-	throwAfterTimeout: false,
-	disableBacktracking: true,
-};
-
-const difficultyConstraintsFns = {
-	1: [
-		applyTriplesConstraint,
-		applyLineBalanceConstraint,
-	],
-	2: [
-		applyTriplesConstraint,
-		applyLineBalanceConstraint,
-		(board, opts = {}) => applyEliminationConstraint(board, {
-			...opts,
-			singleAction: false,
-			maxLeast: 1,
-			enforceUniqueLines: false
-		})
-	],
-	3: [
-		applyTriplesConstraint,
-		applyLineBalanceConstraint,
-		(board, opts = {}) => applyEliminationConstraint(board, {
-			...opts,
-			singleAction: false,
-			maxLeast: 2,
-			enforceUniqueLines: false
-		})
-	],
-	4: [
-		applyTriplesConstraint,
-		applyLineBalanceConstraint,
-		(board, opts = {}) => applyEliminationConstraint(board, {
-			...opts,
-			singleAction: false,
-			maxLeast: 2,
-			enforceUniqueLines: true
-		})
-	],
-	5: [
-		applyTriplesConstraint,
-		applyLineBalanceConstraint,
-		(board, opts = {}) => applyEliminationConstraint(board, {
-			...opts,
-			singleAction: false,
-			maxLeast: 6,
-			enforceUniqueLines: true
-		})
-	]
-};
-
-export function createBasicMaskWithMaxDifficulty(board, maxDifficulty = 1) {
-	// console.log('creating with max difficulty:', maxDifficulty);
-	const constraintFns = difficultyConstraintsFns[maxDifficulty];
-	const solverConfig = {
-		...solverConf,
-		constraintFns
-	};
-	if (maxDifficulty === 5) {
-		solverConfig.disableBacktracking = false;
-	}
-	return createBasicMask(board, solverConfig);
-}
-
-export function createBasicMask(board, solverConfig = solverConf) {
+export function createMask(board, difficulty = 1) {
 	const maskedBoard = board.copy();
-	const cellsIterator = maskedBoard.cells({ shuffled: true, skipEmpty: true });
-
-	for (const { x, y, value } of cellsIterator) {
+	
+	for (let { x, y, value } of maskedBoard.cells({ shuffled: true, skipEmpty: true })) {
 		maskedBoard.assign(x, y, EMPTY);
-		if (!maskHasOneSolution(maskedBoard, solverConfig)) {
+		if (!maskHasOneSolution(maskedBoard, difficulty)) {
+			// undo removing this as it results in an unsolvable board
 			maskedBoard.assign(x, y, value);
 		}
 	}
-	const solution = Solver.run(maskedBoard.copy(), solverConfig);
 	return maskedBoard;
 }
 
-export function maskHasOneSolution(board, solverConfig) {
-	if (solverConfig.maxSolutions !== 2) {
-		console.warn('HasOneSolution must always search for 2 solutions!');
-		solverConfig.maxSolutions = 2;
+export function createMaskWithDifficulty(board, difficulty = 1) {
+	const maxAttempts = 5;
+	let bestMask;
+	for (let i = 0; i < maxAttempts; i++) {
+		bestMask = createMask(board, difficulty);
+		if (maskHasNoSolution(bestMask, difficulty - 1)) {
+			return bestMask;
+		}
 	}
-
-	const solutions = Solver.run(board, solverConfig);
-	return solutions && solutions.length === 1;
+	console.warn('Mask could not be generated with requested difficulty...');
+	return null;
 }
