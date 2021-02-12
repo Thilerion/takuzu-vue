@@ -5,8 +5,12 @@ export function humanSolveElimination({ board, solution }, options = {}) {
 	
 	const results = [];
 
-	const leastRemainingRange = [1, 3];
-	const mostRemainingRange = [1, 8];
+	const {
+		least: leastRemainingRange = [1, 3],
+		enforceUniqueLines = false
+	} = options;
+
+	const mostRemainingRange = [1, 10];
 
 	const lines = [...board.boardLines()];
 	const filteredLines = lines.filter(boardLine => {
