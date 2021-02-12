@@ -1,5 +1,5 @@
 <template>
-	<div
+	<button
 		class="cell-wrapper select-none pointer-events-auto"
 		:class="[
 			{
@@ -11,7 +11,7 @@
 			cellThemeClass,
 		]"
 		:style="{
-			'--click-anim-dur': '.05s',
+			'--click-anim-dur': null,
 		}"
 		ref="cell"
 	>
@@ -21,7 +21,7 @@
 			:theme="cellTheme"
 			:value="value"
 		/>
-	</div>
+	</button>
 </template>
 
 <script>
@@ -152,11 +152,14 @@ export default {
 	@apply ring-0 ring-black ring-opacity-50;
 }
 .cell-wrapper.is-active {
-	transition: none;
+	transition-duration: .05s;
 	@apply ring-2 ring-opacity-50;
 }
-.cell-wrapper.last-active-cell, .cell-wrapper.is-active {
+.cell-wrapper.last-active-cell {
 	@apply z-20;
+}
+.cell-wrapper.is-active {
+	@apply z-30;
 }
 
 .cell {

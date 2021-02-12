@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="board"
+		class="board relative"
 		@pointerdown="boardClicked"
 		@pointerup="onPointerUp"
 	>
@@ -91,6 +91,7 @@ export default {
 			const {target, path} = e;
 			const attribute = target.getAttribute('data-cell-idx');
 			if (attribute != null) {
+				e.preventDefault();
 				this.cellPointerDown(e, attribute);
 			} else {
 				const lineId = target.getAttribute('data-line-id');
@@ -104,16 +105,15 @@ export default {
 			console.log({cellRef, e});
 			this.markActive(cellIdx);
 			if (e.pointerType === 'mouse') {
-				// e.target.addEventListener('pointerup', this.cellClicked);
 			} else {
 				cellRef.touchedCell();
 			}
+			e.preventDefault();
 		},
 		cellClicked(e) {
 			const cellIdx = e.target.getAttribute('data-cell-idx');
 			const cellRef = this.$refs[`cell-${cellIdx}`];
 			cellRef.clickedCell(false);
-			// e.target.removeEventListener('pointerup', this.cellClicked);
 		},
 		lineIdClicked(lineId) {
 			console.log('Line helper was clicked!', lineId);
@@ -126,6 +126,7 @@ export default {
 			if (e.pointerType === 'mouse') {
 				this.cellClicked(e);
 			}
+			e.preventDefault();
 		},
 		markActive(idx) {
 			console.log('mark active');
