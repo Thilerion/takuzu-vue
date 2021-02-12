@@ -17,9 +17,6 @@
 		@touchend.prevent
 		ref="cell"
 	>
-		<!-- <transition name="click-anim">
-			<div class="click-anim" v-show="showAnim"></div>
-		</transition> -->
 
 		<GameBoardCellValue
 			class="cell"
@@ -174,7 +171,7 @@ export default {
 	--size: clamp(1.25rem, calc(var(--cell-size)), 6rem);
 	width: var(--size);
 	height: var(--size);
-	@apply bg-truegray-200 dark:bg-gray-800 rounded-sm relative cursor-pointer overflow-hidden;
+	@apply bg-truegray-200 dark:bg-gray-800 rounded-sm cursor-pointer relative overflow-hidden;
 	touch-action: none;
 }
 .cell-wrapper.locked {
@@ -191,7 +188,7 @@ export default {
 }
 .cell-wrapper.is-active {
 	transition: none;
-	@apply ring-2 ring-opacity-50;
+	@apply ring-2 ring-opacity-50 z-10;
 }
 
 .cell {
@@ -199,18 +196,5 @@ export default {
 }
 .cell-wrapper.incorrect .cell-value {
 	@apply text-red-900 dark:text-red-400;
-}
-
-.click-anim {
-	@apply absolute w-full h-full bg-teal-400 opacity-70;
-}
-.click-anim-enter-active {
-	transition: opacity .06s ease-in;
-}
-.click-anim-enter-from, .click-anim-leave-to {
-	opacity: 0;
-}
-.click-anim-leave-active {
-	transition: opacity 1s ease-out;
 }
 </style>
