@@ -5,13 +5,13 @@
 			{
 				'locked': isLocked,
 				'incorrect': isIncorrectValue,
-				'is-active': showAnim,
+				'is-active': isActive,
 				'last-active-cell': cellId === lastCellId
 			},
 			cellThemeClass,
 		]"
 		:style="{
-			'--click-anim-dur': cancelClickFade ? '.05s' : undefined,
+			'--click-anim-dur': '.05s',
 		}"
 		ref="cell"
 	>
@@ -44,17 +44,18 @@ export default {
 		y: {
 			type: Number,
 			required: true
-		}
+		},
+		active: Boolean,
 	},
 	data() {
 		return {
 			touchTimer: null,
-			showAnim: false,
-			animTimeout: null,
-			cancelClickFade: false,
 		}
 	},
 	computed: {
+		isActive() {
+			return this.active;
+		},
 		cellId() {
 			return `${this.x},${this.y}`;
 		},
@@ -95,7 +96,6 @@ export default {
 		emitClick(long = false) {
 			const payload = { value: this.value, x: this.x, y: this.y, longTouch: long };
 			this.$emit('clicked', payload);
-			this.endClickAnim();
 		},
 		clickedCell() {
 			if (this.isLocked) return;
@@ -107,8 +107,6 @@ export default {
 		},
 		touchedCell() {
 			if (this.isLocked) return;
-
-			this.startClickAnim();
 
 			this.touchTimer = setTimeout(() => {
 				this.$refs.cell.removeEventListener('touchend', this.touchEnd);
@@ -129,38 +127,7 @@ export default {
 			const vibrationPattern = lengthToPwmPattern(length, this.vibrationIntensity);	
 			window.navigator.vibrate(vibrationPattern);
 		},
-
-		startClickAnim() {
-			this.cancelClickFade = false;
-			if (this.animTimeout) {
-				clearTimeout(this.animTimeout);
-				this.animTimeout = null;
-			}		
-			this.showAnim = true;
-		},
-		endClickAnim(delay = 700) {
-			if (this.animTimeout) {
-				clearTimeout(this.animTimeout);
-				this.animTimeout = null;
-			}
-			this.animTimeout = setTimeout(() => {
-				this.showAnim = false;
-			}, delay);
-		}
 	},
-	beforeUnmount() {
-		if (this.animTimeout) {
-			clearTimeout(this.animTimeout);
-		}
-	},
-	watch: {
-		lastCellId(newValue, oldValue) {
-			if (newValue !== this.cellId && this.animTimeout != null) {
-				this.cancelClickFade = true;
-				this.endClickAnim(0);
-			}
-		}
-	}
 };
 </script>
 

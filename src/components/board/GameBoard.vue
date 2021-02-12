@@ -2,11 +2,13 @@
 	<div
 		class="board"
 		@pointerdown="boardClicked"
+		@pointerup="onPointerUp"
 	>
 		<GameBoardCell
 			v-for="cell in cells"
 			:key="cell.idx"
 			v-bind="cell"
+			:active="cell.idx == activeCell"
 			:style="{
 				'grid-row': `${cell.y + 2} / span 1`,
 				'grid-column': `${cell.x + 2} / span 1`,
@@ -53,6 +55,11 @@ export default {
 			required: true
 		}
 	},
+	data() {
+		return {
+			activeCell: null,
+		}
+	},
 	computed: {
 		finishedAndCorrect() {
 			return this.$store.getters.finishedAndCorrect;
@@ -95,8 +102,9 @@ export default {
 		cellPointerDown(e, cellIdx) {
 			const cellRef = this.$refs[`cell-${cellIdx}`];
 			console.log({cellRef, e});
+			this.markActive(cellIdx);
 			if (e.pointerType === 'mouse') {
-				e.target.addEventListener('pointerup', this.cellClicked);
+				// e.target.addEventListener('pointerup', this.cellClicked);
 			} else {
 				cellRef.touchedCell();
 			}
@@ -105,10 +113,28 @@ export default {
 			const cellIdx = e.target.getAttribute('data-cell-idx');
 			const cellRef = this.$refs[`cell-${cellIdx}`];
 			cellRef.clickedCell(false);
-			e.target.removeEventListener('pointerup', this.cellClicked);
+			// e.target.removeEventListener('pointerup', this.cellClicked);
 		},
 		lineIdClicked(lineId) {
 			console.log('Line helper was clicked!', lineId);
+		},
+		onPointerUp(e) {
+			const attribute = e.target.getAttribute('data-cell-idx');
+			if (attribute == null) return;
+			this.unmarkActive(attribute);
+
+			if (e.pointerType === 'mouse') {
+				this.cellClicked(e);
+			}
+		},
+		markActive(idx) {
+			console.log('mark active');
+			this.activeCell = idx;
+			console.log(this.activeCell);
+		},
+		unmarkActive(idx) {
+			console.log('mark inactive');
+			if (this.activeCell === idx) this.activeCell = null;
 		}
 	},
 	watch: {
