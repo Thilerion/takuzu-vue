@@ -30,6 +30,7 @@
 				@click="createGame"
 				:disable="disableStartButton"
 				:gameLoading="gameLoading"
+				:selection="{ difficulty: difficultyLabels[difficulty - 1], size }"
 			/>
 		</div>
 		<OverlayPageTransition :disable="disableGameBoardTransition">
@@ -215,13 +216,5 @@ export default {
 }
 .difficulty-btn > *:last-child {
 	@apply mr-0;
-}
-
-.disabled {
-	background: blue;
-}
-
-button:disabled {
-	background: blue;
 }
 </style>
