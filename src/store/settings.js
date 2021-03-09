@@ -11,8 +11,8 @@ const getDefaultSettings = () => ({
 	vibrateInfo: true,
 
 	// assistance settings
-	automaticValidation: 'disabled', // disabled/ ruleViolations/ incorrectValues
-	checkButton: 'ruleViolations',
+	automaticValidation: 'ruleViolations', // disabled/ ruleViolations/ incorrectValues
+	checkButton: 'incorrectValues',
 
 	// input
 	toggleMode: "0",
