@@ -155,7 +155,7 @@ export default {
 	transition: box-shadow var(--click-anim-dur, .4s) cubic-bezier(1, 0, 0, 1);
 	@apply ring-0 ring-black ring-opacity-50;
 }
-.cell-wrapper.is-active {
+.cell-wrapper.is-active, .cell-wrapper:active {
 	transition-duration: .05s;
 	@apply ring-2 ring-opacity-50;
 }
