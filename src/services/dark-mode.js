@@ -27,7 +27,7 @@ const prefersColorSchemeDark = () => {
 }
 export const getThemePref = () => {
 	const result = localStorage.getItem(THEME_STORAGE_KEY);
-	if (result === 'dark' || result === 'light') return result;
+	if (['dark', 'light', 'auto'].includes(result)) return result;
 	return null;
 }
 
@@ -49,27 +49,37 @@ export const setThemeOSPref = () => {
 		htmlEl.classList.remove('dark');
 	}
 	listenForOSPrefChange();
-	localStorage.removeItem(THEME_STORAGE_KEY);
+	localStorage.setItem(THEME_STORAGE_KEY, 'auto');
 }
 export function initTheme() {
 	const themePref = getThemePref();
 
-	if (themePref === 'dark' || !themePref && prefersColorSchemeDark()) {
+	if (!themePref) {
+		setTheme('light');
+		return initTheme();
+	}
+
+	const isAuto = !themePref;
+
+	if (themePref === 'dark' || isAuto && prefersColorSchemeDark()) {
 		htmlEl.classList.add('dark');
 	} else {
 		htmlEl.classList.remove('dark');
 	}
 
-	if (!themePref) {
+	if (isAuto) {
 		listenForOSPrefChange();
 	}
 }
-export function setTheme(value) {
+export function setTheme(value = 'auto') {
+	if (!value) value = 'auto';
+	const isAuto = value === 'auto';
+
 	if (value === 'dark') {
 		setDarkTheme();
 	} else if (value === 'light') {
 		setLightTheme();
-	} else if (!value) {
+	} else if (isAuto) {
 		setThemeOSPref();
 	} else {
 		console.warn(`Unknown value for dark/light theme ("${value}"). Resetting to OS pref.`);

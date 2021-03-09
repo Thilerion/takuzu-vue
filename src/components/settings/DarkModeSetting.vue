@@ -3,7 +3,7 @@
 		<h2 class="text-gray-700">Theme</h2>
 		<div class="mt-2">
 			<label class="flex items-center">
-				<input type="radio" name="radio-theme" v-model="themePref" value="">
+				<input type="radio" name="radio-theme" v-model="themePref" value="auto">
 				<span class="ml-2">OS Preference (default)</span>
 			</label>
 		</div>
