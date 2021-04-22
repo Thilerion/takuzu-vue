@@ -9,18 +9,17 @@
     "deploy": "vue-cli-service build && copy dist\\index.html dist\\200.html && surge dist --domain https://takuzu-vue.surge.sh"
   },
   "dependencies": {
-    "@tailwindcss/postcss7-compat": "^2.0.2",
+    "@tailwindcss/forms": "^0.3.2",
     "core-js": "^3.6.5",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
     "register-service-worker": "^1.7.1",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {
-    "@tailwindcss/forms": "^0.3.2",
+    "@tailwindcss/postcss7-compat": "^2.1.0",
     "@vue/cli-plugin-babel": "~4.5.12",
     "@vue/cli-plugin-pwa": "~4.5.12",
     "@vue/cli-plugin-router": "~4.5.12",
@@ -29,8 +28,11 @@
     "@vue/cli-service": "~4.5.12",
     "@vue/compiler-sfc": "^3.0.0",
     "@vue/test-utils": "^2.0.0-0",
+    "autoprefixer": "^9.8.6",
     "lodash.camelcase": "^4.3.0",
     "lodash.upperfirst": "^4.3.1",
+    "postcss": "^7.0.35",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.0",
     "typescript": "~3.9.3",
     "vue-jest": "^5.0.0-0",
     "worker-plugin": "^5.0.0"
