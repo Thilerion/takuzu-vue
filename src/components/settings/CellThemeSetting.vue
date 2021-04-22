@@ -112,11 +112,6 @@ export default {
 	@apply border;
 }
 
-.example >>> .cell {
-	height: 100%;
-	width: 100%;
-}
-
 .cell-theme-box > .radio {
 	grid-area: radio;
 	@apply mx-auto focus:outline-none;
