@@ -32,16 +32,6 @@
 			<h2 class="text-gray-700">Assistance</h2>
 			<div class="mt-2">
 				<label>
-					<span>Automatic Validation</span>
-					<select class="block w-full mt-1" v-model="automaticValidation">
-						<option value="disabled">Disabled</option>
-						<option value="ruleViolations">Rule violations</option>
-						<option value="incorrectValues">Incorrect values</option>
-					</select>
-				</label>
-			</div>
-			<div class="mt-2">
-				<label>
 					<span>Check button function</span>
 				</label>
 				<select class="block w-full mt-1" v-model="checkButton">
@@ -140,14 +130,6 @@ export default {
 			},
 			set(value) {
 				this.updateSetting('enableWakeLock', value);
-			}
-		},
-		automaticValidation: {
-			get() {
-				return this.settings.automaticValidation;
-			},
-			set(value) {
-				this.updateSetting('automaticValidation', value);
 			}
 		},
 		checkButton: {
