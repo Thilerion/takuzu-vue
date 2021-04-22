@@ -24,7 +24,7 @@ export default {
 		return {
 			menuItems: [
 				{ label: 'Home', to: { name: 'MainMenu' }, icon: 'home' },
-				{ label: 'Tools', to: '/tools', icon: 'construction' },
+				// { label: 'Tools', to: '/tools', icon: 'construction' }, // TODO: Tools page
 				{ label: 'Stats', to: '/stats', icon: 'leaderboard' },
 				{ label: 'Settings', to: { name: 'Settings' }, icon: 'settings' },
 				{ label: 'More', to: '/menu', icon: 'more_horiz' },

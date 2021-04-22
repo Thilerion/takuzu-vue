@@ -4,16 +4,12 @@ import { createRouter, createWebHistory } from 'vue-router';
 import MainPage from '@/components/base-layout/MainPage';
 import Home from '../views/Home.vue';
 import HowToPlay from '../views/HowToPlay';
-import Tools from '../views/Tools';
 import Statistics from '../views/Statistics';
 import Settings from '../views/Settings';
 import Menu from '../views/Menu';
 
 // NESTED PAGES / OVERLAY PAGES
 import FreePlay from '../views/FreePlay';
-import DailyPuzzles from '../views/DailyPuzzles';
-import Arcade from '../views/Arcade';
-
 
 // 404 Page
 import NotFound from '../views/NotFound';
@@ -32,11 +28,6 @@ const routes = [
 				path: '/how-to-play',
 				name: 'HowToPlay',
 				component: HowToPlay,
-			},
-			{
-				path: '/tools',
-				name: 'Tools',
-				component: Tools,
 			},
 			{
 				path: '/stats',

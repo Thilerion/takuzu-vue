@@ -4,9 +4,9 @@
 		<nav class="">
 			<div class="routes main-routes flex flex-col">
 				<router-link v-if="canContinue" :to="{ path: '/play', query: { continue: true}}">Continue</router-link>
-				<router-link to="/play">Free play</router-link>
-				<router-link to="/daily">Daily puzzles</router-link>
-				<router-link to="/arcade">Arcade</router-link>
+				<router-link to="/play">New game</router-link>
+				<!-- <router-link to="/daily">Daily puzzles</router-link> -->
+				<!-- <router-link to="/arcade">Arcade</router-link> -->
 			</div>
 			<div class="routes secondary-routes flex flex-col">
 				<router-link to="/how-to-play">How to play</router-link>
