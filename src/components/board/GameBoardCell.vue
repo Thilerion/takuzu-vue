@@ -78,7 +78,7 @@ export default {
 			// return this.incorrectValues && this.incorrectValues.includes(this.cellId);
 		},
 		vibrateOnTap() {
-			return this.$store.getters['settings/gameVibrationEnabled'];
+			return this.vibrationIntensity > 0;
 		},
 		vibrationIntensity() {
 			return this.$store.state.settings.vibrationIntensity;

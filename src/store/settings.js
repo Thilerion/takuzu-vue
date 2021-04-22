@@ -6,9 +6,6 @@ const getDefaultSettings = () => ({
 	
 	// vibration settings
 	vibrationIntensity: 2, // 0 1 2 or 3, off low medium or high
-	vibrateUI: true,
-	vibrateGame: true,
-	vibrateInfo: true,
 
 	// assistance settings
 	// automaticValidation: 'ruleViolations', // TODO: automatic validation, with values: disabled/ ruleViolations/ incorrectValues
@@ -24,9 +21,6 @@ export const settingsModule = {
 
 	getters: {
 		vibrationEnabled: state => state.vibrationIntensity > 0,
-		gameVibrationEnabled: (state, getters) => getters.vibrationEnabled && state.vibrateGame,
-		uiVibrationEnabled: (state, getters) => getters.vibrationEnabled && state.vibrateUI,
-		infoVibrationEnabled: (state, getters) => getters.vibrationEnabled && state.vibrateInfo,
 
 		showBoardCoordinates: state => state.showLineInfo === 'coords',
 		showBoardLineCounts: state => ['remainingCount', 'currentCount'].includes(state.showLineInfo),
