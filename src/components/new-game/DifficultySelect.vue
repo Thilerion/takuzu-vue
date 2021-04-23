@@ -2,7 +2,7 @@
 	<div class="difficulty-select">
 		<button
 			@click="changeDifficulty(-1, $event)"
-			class="arrow-btn left z-10"
+			class="arrow-btn left z-10 focus:outline-none"
 		><ArrowLeftIcon /></button>
 		<div class="difficulty-current z-0" :class="[`slide-${slideDirection}`]">
 			<transition name="slide-label">
@@ -15,7 +15,7 @@
 		</div>
 		<button
 			@click="changeDifficulty(1, $event)"
-			class="arrow-btn right z-10"
+			class="arrow-btn right z-10 focus:outline-none"
 		><ArrowRightIcon /></button>
 	</div>
 </template>

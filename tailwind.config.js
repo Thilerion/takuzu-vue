@@ -53,7 +53,7 @@ module.exports = {
 			backgroundColor: ['active', 'disabled'],
 			borderWidth: ['active'],
 			borderColor: ['active'],
-			outline: ['focus-visible', 'active'],
+			outline: ['focus-visible', 'active', 'focus'],
 			ringWidth: ['focus-visible', 'active'],
 			ringOpacity: ['focus-visible', 'active'],
 		},
