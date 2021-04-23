@@ -34,6 +34,13 @@ export default {
 				return size === this.modelValue;
 			})
 		}
+	},
+	mounted() {
+		if (this.modelValue == null) {
+			const size = this.sizeTypes.NORMAL;
+			// TODO: use something like a default sizeType
+			this.$emit('update:modelValue', size);
+		}
 	}
 };
 </script>
