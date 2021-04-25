@@ -136,15 +136,23 @@ export default {
 		},
 		unmarkActive(idx) {
 			this.$store.dispatch('markCellUp');
+		},
+		checkGameEnd() {
+			// first check if still correct (and user has not changed a value again)
+			if (this.finishedAndCorrect) {		
+				window.alert('GOOD JOB!');
+				this.$store.dispatch('finishGame');
+			} else {
+				console.warn('Not correct anymore!');
+			}
 		}
 	},
 	watch: {
 		finishedAndCorrect(newValue, oldValue) {
 			if (newValue && !oldValue) {
 				setTimeout(() => {
-					window.alert('GOOD JOB!');
-					this.$store.dispatch('finishGame');
-				}, 500);
+					this.checkGameEnd();
+				}, 600);
 			}
 		}
 	}
