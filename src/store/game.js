@@ -50,6 +50,9 @@ const initialState = () => ({
 	board: null,
 	solution: null,
 	moveList: [],
+
+	timeElapsedOnLoad: 0,
+	timeElapsedUnmount: null,
 });
 
 const gameModule = {
@@ -119,6 +122,13 @@ const gameModule = {
 		},
 		setBoard(state, board) {
 			state.board = board;
+		},
+		setTimeElapsedOnLoad(state, ms = 0) {
+			console.log('setting time elapsed on load: ' + ms);
+			state.timeElapsedOnLoad = Math.ceil(ms);
+		},
+		setUnmountTimeElapsed(state, ms = 0) {
+			state.timeElapsedUnmount = Math.ceil(ms);
 		},
 		resetPuzzleStateProps(state) {
 			state.moveList = [];
@@ -262,7 +272,7 @@ const gameModule = {
 			try {
 				const result = await loadSavedGame();
 				console.log({ ...result });
-				const { initialBoard, board, solution, moveList, width, height, difficulty } = result;
+				const { initialBoard, board, solution, moveList, width, height, difficulty, timeElapsed } = result;
 				commit('setDimensions', { width, height });
 				commit('setDifficulty', difficulty);
 
@@ -278,6 +288,7 @@ const gameModule = {
 					initialBoard: parsedInitial,
 					solution: parsedSolution
 				});
+				commit('setTimeElapsedOnLoad', timeElapsed);
 				commit('resetMoveList', parsedMoveList);
 
 				commit('setLoading', false);

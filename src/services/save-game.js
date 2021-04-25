@@ -4,8 +4,8 @@ export async function loadSavedGame() {
 		if (!data) return false;
 
 		const result = JSON.parse(data);
-		const { initialBoard, board, solution, moveList, width, height, difficulty } = result;
-		return { initialBoard, board, solution, moveList, width, height, difficulty };
+		const { initialBoard, board, solution, moveList, width, height, difficulty, timeElapsed } = result;
+		return { initialBoard, board, solution, moveList, width, height, difficulty, timeElapsed };
 
 	} catch (e) {
 		console.warn('Could not load saved game');
@@ -15,9 +15,9 @@ export async function loadSavedGame() {
 
 export async function saveCurrentGame(state) {
 	try {
-		const { initialBoard, board, solution, moveList, width, height, difficulty } = state;
+		const { initialBoard, board, solution, moveList, width, height, difficulty, timeElapsedUnmount } = state;
 
-		const result = { width, height, difficulty };
+		const result = { width, height, difficulty, timeElapsed: timeElapsedUnmount };
 		result.moveList = moveList.map(move => move.toString());
 		result.initialBoard = initialBoard.export();
 		result.board = board.export();

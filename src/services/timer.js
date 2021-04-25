@@ -1,15 +1,25 @@
 export default class Timer {
-	constructor() {
+	constructor(elapsed = 0) {
 		this.running = false;
 		this.paused = false;
 
-		this.savedTime = 0;
+		this.savedTime = elapsed;
 		this.startTime = null;
 		this.updatedTime = null;
 
 		this.elapsed = 0;
 		
 		this._timeout = null;
+	}
+
+	getCurrentElapsed() {
+		const updatedTime = performance.now();
+
+		if (this.savedTime) {
+			return updatedTime - this.startTime + this.savedTime;
+		} else {
+			return updatedTime - this.startTime;
+		}
 	}
 
 	start() {
@@ -37,12 +47,6 @@ export default class Timer {
 
 		const distanceFromSec = this.elapsed % 1000;
 		const distanceToSec = Math.floor(1000 - distanceFromSec);
-
-		console.log({
-			elapsed: this.elapsed,
-			distanceFromSec,
-			distanceToSec
-		})
 
 		this._timeout = setTimeout(() => {
 			this.tick();

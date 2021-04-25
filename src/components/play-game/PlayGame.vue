@@ -113,6 +113,7 @@ export default {
 	},
 	methods: {
 		exitGame() {
+			this.saveGameWithTime();
 			this.$emit('close');
 		},
 		openSettings() {
@@ -127,7 +128,9 @@ export default {
 				this.timer.reset();
 			} else if (!this.timer) {
 				console.log('init timer');
-				this.timer = new Timer();
+				const elapsed = this.$store.state.game.timeElapsedOnLoad ?? 0;
+				console.log({elapsed, store: this.$store.state.game});
+				this.timer = new Timer(elapsed);
 			}
 		},
 		startPlayTimer() {
@@ -154,6 +157,15 @@ export default {
 			const seconds = fullSeconds % 60;
 			return `${format(minutes)}:${format(seconds)}`;
 		},
+		saveGameWithTime() {
+			if (!this.board) {
+				console.warn('No board; cant save game');
+				return;
+			}
+			const elapsed = this.timer?.getCurrentElapsed() ?? 0;
+			this.$store.commit('setUnmountTimeElapsed', elapsed);
+			this.$store.dispatch('saveGame');
+		}
 	},
 	beforeMount() {
 		if (this.shouldEnableWakeLock) {
@@ -170,15 +182,20 @@ export default {
 		}
 	},
 	beforeUnmount() {
+		console.log('before unmount');
 		this.stopPlayTimer();
+		this.saveGameWithTime();
 	},
 	unmounted() {
+		this.stopPlayTimer();
+		this.saveGameWithTime();
 		this.wakeLock.destroy();
 	},
 	watch: {
 		board: {
-			handler() {
-				this.$store.dispatch('saveGame');
+			handler(val) {
+				if (!val) return;
+				this.saveGameWithTime();
 			},
 			deep: true,
 			immediate: true
@@ -193,6 +210,7 @@ export default {
 					this.startPlayTimer();
 				} else if (!newValue) {
 					this.pausePlayTimer();
+					this.saveGameWithTime();
 				}
 			},
 			immediate: true
