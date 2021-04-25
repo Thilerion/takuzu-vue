@@ -10,7 +10,7 @@
 		/>
 			
 		<div class="main">
-			<div class="text-center text-sm opacity-70 -mt-3">{{msToMinSec(playTime)}}</div>
+			<div v-if="timer && !!timer.elapsed" class="text-center text-sm opacity-70 -mt-3">{{msToMinSec(timer.elapsed)}}</div>
 			<GameBoardWrapper
 				v-if="board"
 			>
@@ -56,6 +56,8 @@ import { EMPTY } from '../../lib/constants';
 import WakeLock from '../../services/wake-lock';
 const wakeLock = new WakeLock();
 
+import Timer from '../../services/timer';
+
 export default {
 	components: {
 		GameBoardWrapper,
@@ -70,10 +72,9 @@ export default {
 		return {
 			wakeLock,
 			wakeLockEnabled: false,
-
-			playTime: 0,
-			prevTime: null,
+			
 			timer: null,
+			pausedByVisibility: false,
 		}
 	},
 	computed: {
@@ -121,28 +122,28 @@ export default {
 			this.wakeLock.enable();
 		},
 		initPlayTimer() {
-			this.prevTime = performance.now();
-			// TODO: use setTimeout with self-correcting timeout number to next second
-			this.timer = setInterval(() => {
-				if (this.isBoardVisible) {
-					const now = performance.now();
-					const timeDiff = now - this.prevTime;
-					this.playTime += timeDiff;
-					this.prevTime = now;
-				}
-			}, 200);
+			if (this.timer && this.timer.reset) {
+				console.log('Init timer; already exists; resetting.');
+				this.timer.reset();
+			} else if (!this.timer) {
+				console.log('init timer');
+				this.timer = new Timer();
+			}
+		},
+		startPlayTimer() {
+			console.log('start timer');
+			if (!this.timer) {
+				console.warn('No timer object initialized!');
+				return;
+			}
+			this.timer.start();			
 		},
 		pausePlayTimer() {
-			this.prevTime = null;
-			clearTimeout(this.timer);
-			this.timer = null;
+			console.log('pausing timer');
+			this.timer.pause();
 		},
 		stopPlayTimer() {
-			console.log('Stopping play timer');
-			// TODO: add current play time to stored "currentGame" object, to be used in "continue game"
 			this.pausePlayTimer();
-			const timePlayed = Math.round(this.playTime / 100) / 10; // in seconds
-			console.log('Time played: ' + timePlayed + 's');
 		},
 		msToMinSec(ms) {
 			const format = val => `0${Math.floor(val)}`.slice(-2);
@@ -152,6 +153,22 @@ export default {
 			const minutes = fullSeconds / 60;
 			const seconds = fullSeconds % 60;
 			return `${format(minutes)}:${format(seconds)}`;
+		},
+		addVisibilityListener() {
+			document.addEventListener('visibilitychange', this.handleVisibilityChange);
+		},
+		removeVisibilityListener() {
+			document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+		},
+		handleVisibilityChange() {
+			if (document.hidden && this.timer && this.timer.running && !this.timer.paused) {
+				this.pausePlayTimer();
+				this.pausedByVisibility = true;
+				return;
+			} else if (!document.hidden && this.pausedByVisibility) {
+				this.startPlayTimer();
+			}
+			this.pausedByVisibility = false;
 		}
 	},
 	beforeMount() {
@@ -167,11 +184,11 @@ export default {
 			window._getInitBoardStr = getInitialBoardString;
 			console.log('enabled board string methods on window object.');
 		}
-	},
-	mounted() {
-		this.initPlayTimer();
+
+		this.addVisibilityListener();
 	},
 	beforeUnmount() {
+		this.removeVisibilityListener();
 		this.stopPlayTimer();
 	},
 	unmounted() {
@@ -187,8 +204,12 @@ export default {
 		},
 		isBoardVisible: {
 			handler(newValue) {
-				if (!!newValue && this.timer == null) {
+				if (this.timer == null) {
 					this.initPlayTimer();
+				}
+
+				if (!!newValue) {
+					this.startPlayTimer();
 				} else if (!newValue) {
 					this.pausePlayTimer();
 				}
