@@ -10,6 +10,7 @@
 		/>
 			
 		<div class="main">
+			<div class="text-center text-sm opacity-70 -mt-3">{{msToMinSec(playTime)}}</div>
 			<GameBoardWrapper
 				v-if="board"
 			>
@@ -69,6 +70,10 @@ export default {
 		return {
 			wakeLock,
 			wakeLockEnabled: false,
+
+			playTime: 0,
+			prevTime: null,
+			timer: null,
 		}
 	},
 	computed: {
@@ -95,7 +100,15 @@ export default {
 		},
 		canSaveGame() {
 			return this.$store.getters.canSave;
-		}
+		},
+		isSettingsOpen() {
+			const route = this.$route || { path: '' };
+			console.log({route});
+			return route.path.endsWith('settings');
+		},
+		isBoardVisible() {
+			return !!this.board && !this.isSettingsOpen;
+		},
 	},
 	methods: {
 		exitGame() {
@@ -106,6 +119,39 @@ export default {
 		},
 		enableWakeLock() {
 			this.wakeLock.enable();
+		},
+		initPlayTimer() {
+			this.prevTime = performance.now();
+			// TODO: use setTimeout with self-correcting timeout number to next second
+			this.timer = setInterval(() => {
+				if (this.isBoardVisible) {
+					const now = performance.now();
+					const timeDiff = now - this.prevTime;
+					this.playTime += timeDiff;
+					this.prevTime = now;
+				}
+			}, 200);
+		},
+		pausePlayTimer() {
+			this.prevTime = null;
+			clearTimeout(this.timer);
+			this.timer = null;
+		},
+		stopPlayTimer() {
+			console.log('Stopping play timer');
+			// TODO: add current play time to stored "currentGame" object, to be used in "continue game"
+			this.pausePlayTimer();
+			const timePlayed = Math.round(this.playTime / 100) / 10; // in seconds
+			console.log('Time played: ' + timePlayed + 's');
+		},
+		msToMinSec(ms) {
+			const format = val => `0${Math.floor(val)}`.slice(-2);
+
+			const fullSeconds = Math.floor(ms / 1000);
+
+			const minutes = fullSeconds / 60;
+			const seconds = fullSeconds % 60;
+			return `${format(minutes)}:${format(seconds)}`;
 		}
 	},
 	beforeMount() {
@@ -122,6 +168,12 @@ export default {
 			console.log('enabled board string methods on window object.');
 		}
 	},
+	mounted() {
+		this.initPlayTimer();
+	},
+	beforeUnmount() {
+		this.stopPlayTimer();
+	},
 	unmounted() {
 		this.wakeLock.destroy();
 	},
@@ -132,7 +184,17 @@ export default {
 			},
 			deep: true,
 			immediate: true
-		}
+		},
+		isBoardVisible: {
+			handler(newValue) {
+				if (!!newValue && this.timer == null) {
+					this.initPlayTimer();
+				} else if (!newValue) {
+					this.pausePlayTimer();
+				}
+			},
+			immediate: true
+		},
 	}
 };
 </script>
