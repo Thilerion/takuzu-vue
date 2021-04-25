@@ -51,12 +51,13 @@ import PlayGameControls from './PlayGameControls';
 import PlayGameCheckIndicator from './PlayGameCheckIndicator';
 import PlayGameHints from './PlayGameHints';
 
-import { EMPTY } from '../../lib/constants';
-
 import WakeLock from '../../services/wake-lock';
 const wakeLock = new WakeLock();
 
 import Timer from '../../services/timer';
+
+import {usePageVisibility} from '@/composables/use-page-visibility';
+const {visibility, hidden} = usePageVisibility();
 
 export default {
 	components: {
@@ -74,7 +75,6 @@ export default {
 			wakeLockEnabled: false,
 			
 			timer: null,
-			pausedByVisibility: false,
 		}
 	},
 	computed: {
@@ -108,7 +108,7 @@ export default {
 			return route.path.endsWith('settings');
 		},
 		isBoardVisible() {
-			return !!this.board && !this.isSettingsOpen;
+			return !!this.board && !this.isSettingsOpen && !hidden.value;
 		},
 	},
 	methods: {
@@ -154,22 +154,6 @@ export default {
 			const seconds = fullSeconds % 60;
 			return `${format(minutes)}:${format(seconds)}`;
 		},
-		addVisibilityListener() {
-			document.addEventListener('visibilitychange', this.handleVisibilityChange);
-		},
-		removeVisibilityListener() {
-			document.removeEventListener('visibilitychange', this.handleVisibilityChange);
-		},
-		handleVisibilityChange() {
-			if (document.hidden && this.timer && this.timer.running && !this.timer.paused) {
-				this.pausePlayTimer();
-				this.pausedByVisibility = true;
-				return;
-			} else if (!document.hidden && this.pausedByVisibility) {
-				this.startPlayTimer();
-			}
-			this.pausedByVisibility = false;
-		}
 	},
 	beforeMount() {
 		if (this.shouldEnableWakeLock) {
@@ -184,11 +168,8 @@ export default {
 			window._getInitBoardStr = getInitialBoardString;
 			console.log('enabled board string methods on window object.');
 		}
-
-		this.addVisibilityListener();
 	},
 	beforeUnmount() {
-		this.removeVisibilityListener();
 		this.stopPlayTimer();
 	},
 	unmounted() {
