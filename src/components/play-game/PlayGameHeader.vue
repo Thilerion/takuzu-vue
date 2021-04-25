@@ -16,6 +16,13 @@
 						<span class="ml-3 mt-px">Delete bookmark</span>
 					</BaseDropdownItem>
 					<BaseDropdownDivider/>
+					<BaseDropdownItem>
+						<label class="flex items-center">
+							<input type="checkbox" v-model="showTimer">
+							<span class="ml-2">Show timer</span>
+						</label>
+					</BaseDropdownItem>
+					<BaseDropdownDivider/>
 					<BaseDropdownItem @click="goToSettings"
 					>
 						<span class="material-icons opacity-90 text-base">settings</span>
@@ -32,6 +39,19 @@ export default {
 	props: [
 		'columns', 'rows',
 	],
+	computed: {
+		showTimer: {
+			get() {
+				return this.$store.state.settings.showTimer;
+			},
+			set(value) {
+				this.$store.commit('settings/setSetting', {
+					key: 'showTimer',
+					value
+				});
+			}
+		}
+	},
 	methods: {
 		goToSettings() {
 			this.$refs.dropdown.closeDropdownMenu();
