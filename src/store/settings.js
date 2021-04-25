@@ -1,6 +1,7 @@
 const getDefaultSettings = () => ({
 	showLineInfo: '', // '' for disabled, 'coords', 'remainingCount', 'currentCount'
 	enableWakeLock: true,
+	showTimer: true,
 
 	cellTheme: 'binary', // binary, tictactoe, or colored
 	

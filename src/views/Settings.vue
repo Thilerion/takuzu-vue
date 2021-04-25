@@ -60,6 +60,10 @@
 				<input type="checkbox" v-model="enableWakeLock">
 				<span class="ml-2">Enable wake lock</span>
 			</label>
+			<label class="flex items-center mt-4">
+				<input type="checkbox" v-model="showTimer">
+				<span class="ml-2">Show timer</span>
+			</label>
 		</div>
 	</div>
 </template>
@@ -130,6 +134,14 @@ export default {
 			},
 			set(value) {
 				this.updateSetting('enableWakeLock', value);
+			}
+		},
+		showTimer: {
+			get() {
+				return this.settings.showTimer;
+			},
+			set(value) {
+				this.updateSetting('showTimer', value);
 			}
 		},
 		checkButton: {

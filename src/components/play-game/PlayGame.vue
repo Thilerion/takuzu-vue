@@ -10,7 +10,7 @@
 		/>
 			
 		<div class="main">
-			<div v-if="timer && !!timer.elapsed" class="text-center text-sm opacity-70 -mt-3">{{msToMinSec(timer.elapsed)}}</div>
+			<div v-if="showTimer && timer && !!timer.elapsed" class="text-center text-sm opacity-70 -mt-3">{{msToMinSec(timer.elapsed)}}</div>
 			<GameBoardWrapper
 				v-if="board"
 			>
@@ -109,6 +109,9 @@ export default {
 		},
 		isBoardVisible() {
 			return !!this.board && !this.isSettingsOpen && !hidden.value;
+		},
+		showTimer() {
+			return this.$store.state.settings.showTimer;
 		},
 	},
 	methods: {
