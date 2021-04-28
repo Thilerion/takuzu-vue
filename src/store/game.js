@@ -186,8 +186,7 @@ const gameModule = {
 				commit('setAllBoards', { board, solution, initialBoard: board.copy() });
 				commit('setLoading', false);
 			} catch (e) {
-				clearInterval(interval);
-				console.warn('Failed creating board');
+				console.error('Failed creating board');
 				commit('setLoading', false);
 				throw new Error(e);
 			}
