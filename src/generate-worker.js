@@ -1,14 +1,9 @@
 import { generateBoard } from './lib/generation/board';
-import { createMaskWithDifficulty, getMaskQuality } from './lib/generation/mask';
+import { createMaskWithDifficulty } from './lib/generation/mask';
+import { getOptimalMaskRatio, getMaskQuality } from './lib/generation/quality';
 
-function getMinMaskQuality(difficulty = 1) {
-	let base = 0.98;
-
-	// adjust based on difficulty; lower difficulty puzzles can not be masked as efficiently
-	const maxDiffMod = Math.max(4 - difficulty, 0);
-	const difficultyModifier = maxDiffMod * 0.025;
-	return base - difficultyModifier;
-}
+const minMaskedRatioQuality = 0.94;
+const minSymbolDistributionQuality = 0.6;
 
 function createPuzzle({ width, height, difficulty = 1 }, forceError = false) {
 	if (forceError) {
@@ -31,25 +26,27 @@ function createPuzzle({ width, height, difficulty = 1 }, forceError = false) {
 		return;
 	}
 
-	// TODO: improve quality calculation with other modifiers than numMasked
-	const minMaskQuality = getMinMaskQuality(difficulty);
+	// TODO: improve quality calculation with other modifiers than numMasked and distribution
+	const optimalMaskedRatio = getOptimalMaskRatio(width, height, difficulty);
 
 	while (!board && performance.now() < endAfter) {
 		const result = createMaskWithDifficulty(solution, difficulty);
 		// TODO: prevent recalculating optimalRatio etc inside getMaskQuality
-		let quality = -1;
+		let quality = null;
+
 		if (result) {
-			quality = getMaskQuality(result);
+			quality = getMaskQuality(result, optimalMaskedRatio);
 		}
 
-		if (result && quality >= minMaskQuality) {
+		if (result && quality.maskedRatio >= minMaskedRatioQuality && quality.symbolDistribution >= minSymbolDistributionQuality) {
 			board = result;
 			resultQuality = quality;
 		}
 		// TODO: if this fails to often, a different board(solutionBoard) should be picked. Some filled boards just make it very hard to generate a correct mask.
 		else if (result) {
 			console.error('Mask quality was not good enough...');
-			console.log({ board: result, quality, minMaskQuality });
+			console.log(result.toDisplayString());
+			console.log({ board: result, quality, minMaskedRatioQuality, minSymbolDistributionQuality });
 		}
 	}
 	if (!board) {
@@ -57,7 +54,7 @@ function createPuzzle({ width, height, difficulty = 1 }, forceError = false) {
 		return;
 	}
 
-	return { solution, board, quality: resultQuality, minMaskQuality };
+	return { solution, board, quality: resultQuality };
 }
 
 addEventListener('message', event => {
