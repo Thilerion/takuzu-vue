@@ -1,4 +1,9 @@
 import { PuzzleData } from "@/services/stats/PuzzleData";
+import { puzzleHistoryDb, default as db } from '@/services/stats/db';
+import { statsQueries } from '@/services/stats';
+
+// window._statsDb = db;
+// window._statsQueries = statsQueries;
 
 export const statsModule = {
 	namespaced: true,
@@ -23,10 +28,11 @@ export const statsModule = {
 	},
 
 	actions: {
-		addFinishedPuzzleToHistory({ commit }, gameState) {
+		addFinishedPuzzleToHistory({ commit, dispatch }, gameState) {
 			const historyEntry = PuzzleData.fromGameState(gameState);
 			console.log(historyEntry);
 			commit('addToHistory', historyEntry);
+			dispatch('addFinishedPuzzleToDb', historyEntry);
 		},
 		initStats({state, commit}) {
 			const currentState = { ...state };
@@ -34,6 +40,9 @@ export const statsModule = {
 
 			commit('setInitialState', loadedState);
 		},
+		addFinishedPuzzleToDb({ }, historyEntry) {
+			puzzleHistoryDb.add(historyEntry);
+		}
 	}
 
 };
