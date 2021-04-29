@@ -298,7 +298,17 @@ const gameModule = {
 				return false;
 			}
 		},
-		finishGame({ commit }) {
+		finishGame({ state, commit, dispatch }) {
+			if (!state.initialized) {
+				console.warn('No game state, cant finish.');
+				return;
+			}
+
+			// set finished game in stats store before resetting
+			// make sure time elapsed is updated in store (done in PlayGame component)
+			const finishedGameState = { ...state };
+			dispatch('stats/addFinishedPuzzleToHistory', finishedGameState);
+
 			commit('reset');
 			commit('gameCheck/reset');
 			deleteCurrentSavedGame();

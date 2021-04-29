@@ -18,6 +18,7 @@
 					:rows="rows"
 					:columns="columns"
 					:cells="cells"
+					@finish-game="finishGame"
 				/>
 				<PlayGameCheckIndicator />
 			</GameBoardWrapper>
@@ -162,6 +163,11 @@ export default {
 			const elapsed = this.timer?.getCurrentElapsed() ?? 0;
 			this.$store.commit('setUnmountTimeElapsed', elapsed);
 			this.$store.dispatch('saveGame');
+		},
+		finishGame() {
+			const elapsed = this.timer?.getCurrentElapsed() ?? 0;
+			this.$store.commit('setUnmountTimeElapsed', elapsed);
+			this.$store.dispatch('finishGame');
 		}
 	},
 	beforeMount() {

@@ -1,6 +1,7 @@
 import { createStore } from 'vuex';
 import gameModule from './game';
 import { settingsModule, initSettingsWatcher } from './settings';
+import { statsModule, initStatsWatcher } from './stats';
 
 const store = createStore({
 
@@ -9,6 +10,7 @@ const store = createStore({
 	modules: {
 		game: gameModule,
 		settings: settingsModule,
+		stats: statsModule,
 	},
 
 	state: {
@@ -30,5 +32,6 @@ const store = createStore({
 });
 
 const unwatchSettings = initSettingsWatcher(store);
+const unwatchStats = initStatsWatcher(store);
 
 export default store;

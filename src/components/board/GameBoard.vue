@@ -41,6 +41,7 @@ export default {
 		GameBoardLineIds,
 		GameBoardRuleViolation,
 	},
+	emits: ['finish-game'],
 	props: {
 		rows: {
 			type: Number,
@@ -141,7 +142,7 @@ export default {
 			// first check if still correct (and user has not changed a value again)
 			if (this.finishedAndCorrect) {		
 				window.alert('GOOD JOB!');
-				this.$store.dispatch('finishGame');
+				this.$emit('finish-game');
 			} else {
 				console.warn('Not correct anymore!');
 			}
