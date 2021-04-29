@@ -27,7 +27,19 @@ export const hintGenerators = {
 		const type = hintTypes.MISTAKE;
 		const targets = [...cells];
 		const source = [];
-		return new Hint(type, message, targets, source);
+
+		const action = {
+			label: 'Fix',
+			onClick: (vm, store, hint) => {
+				console.log('Executing mistake hint now, fixing all mistakes.');
+				hint.targets.forEach(target => {
+					const { x, y } = target;
+					store.dispatch('setValue', { x, y, value: EMPTY });
+				})
+			}
+		}
+
+		return new Hint(type, message, targets, source, { actions: [action]});
 	},
 	[hintTypes.TRIPLES]: ({ targets, origin, type }) => {
 		// TODO: replace message coords with marking on board
