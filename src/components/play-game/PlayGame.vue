@@ -104,7 +104,6 @@ export default {
 		},
 		isSettingsOpen() {
 			const route = this.$route || { path: '' };
-			console.log({route});
 			return route.path.endsWith('settings');
 		},
 		isBoardVisible() {
@@ -130,14 +129,11 @@ export default {
 				console.log('Init timer; already exists; resetting.');
 				this.timer.reset();
 			} else if (!this.timer) {
-				console.log('init timer');
 				const elapsed = this.$store.state.game.timeElapsedOnLoad ?? 0;
-				console.log({elapsed, store: this.$store.state.game});
 				this.timer = new Timer(elapsed);
 			}
 		},
 		startPlayTimer() {
-			console.log('start timer');
 			if (!this.timer) {
 				console.warn('No timer object initialized!');
 				return;
@@ -145,7 +141,6 @@ export default {
 			this.timer.start();			
 		},
 		pausePlayTimer() {
-			console.log('pausing timer');
 			this.timer.pause();
 		},
 		stopPlayTimer() {
@@ -162,7 +157,6 @@ export default {
 		},
 		saveGameWithTime() {
 			if (!this.board) {
-				console.warn('No board; cant save game');
 				return;
 			}
 			const elapsed = this.timer?.getCurrentElapsed() ?? 0;
@@ -175,19 +169,6 @@ export default {
 			this.enableWakeLock();
 			this.wakeLock.onChange = (isEnabled) => this.wakeLockEnabled = !!isEnabled;
 		}
-
-		if (process.env.NODE_ENV === 'development') {
-			const getBoardString = () => this.board.toBoardString();
-			const getInitialBoardString = () => this.$store.state.game.initialBoard.toBoardString();
-			window._getBoardStr = getBoardString;
-			window._getInitBoardStr = getInitialBoardString;
-			console.log('enabled board string methods on window object.');
-		}
-	},
-	beforeUnmount() {
-		console.log('before unmount');
-		this.stopPlayTimer();
-		this.saveGameWithTime();
 	},
 	unmounted() {
 		this.stopPlayTimer();
