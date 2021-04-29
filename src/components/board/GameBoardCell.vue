@@ -21,6 +21,10 @@
 			:theme="cellTheme"
 			:value="value"
 		/>
+		<div
+			class="incorrect-cell-cross"
+			v-if="isIncorrectValue"
+		></div>
 	</button>
 </template>
 
@@ -171,5 +175,32 @@ export default {
 }
 .cell-wrapper.incorrect .cell-value {
 	@apply text-red-900 dark:text-red-400;
+}
+
+.incorrect-cell-cross {
+	@apply absolute inset-0 overflow-hidden pointer-events-none;
+}
+.incorrect-cell-cross::before, .incorrect-cell-cross::after {
+	content: '';
+    position: absolute;
+    width: 150%;
+    height: 2px;
+    top: 50%;
+    left: 50%;
+	background-color: rgba(194, 11, 11, 0.753);
+}
+.incorrect-cell-cross::after {
+	transform: translate(-50%, -50%) rotate(-45deg);
+}
+.incorrect-cell-cross::before {
+	transform: translate(-50%, -50%) rotate(45deg);
+	opacity: 0;
+}
+
+.cell-theme-color .incorrect-cell-cross::before, .cell-theme-color .incorrect-cell-cross::after {
+	background-color: rgba(95, 0, 0, 0.9);
+}
+.cell-theme-color .incorrect-cell-cross::before {
+	opacity: 1;
 }
 </style>
