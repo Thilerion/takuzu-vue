@@ -19,7 +19,8 @@
 <script>
 export default {
 	props: {
-		closeBtn: Boolean	
+		closeBtn: Boolean,
+		hideBack: Boolean,
 	},
 	methods: {
 		close() {
@@ -33,6 +34,7 @@ export default {
 	},
 	computed: {
 		hasBackButton() {
+			if (this.hideBack) return false;
 			return !this.$route.meta.noBackButton;
 		},
 		leftButtonType() {
