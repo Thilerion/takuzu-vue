@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="board relative"
+		class="board relative z-10"
 		@pointerdown="boardClicked"
 		@pointerup="onPointerUp"
 	>
