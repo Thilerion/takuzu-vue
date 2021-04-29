@@ -2,8 +2,8 @@ import { PuzzleData } from "@/services/stats/PuzzleData";
 import { puzzleHistoryDb, default as db } from '@/services/stats/db';
 import { statsQueries } from '@/services/stats';
 
-// window._statsDb = db;
-// window._statsQueries = statsQueries;
+window._statsDb = db;
+window._statsQueries = statsQueries;
 
 export const statsModule = {
 	namespaced: true,
