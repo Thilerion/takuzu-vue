@@ -1,3 +1,5 @@
+import { PuzzleData } from "@/services/stats/PuzzleData";
+
 export const statsModule = {
 	namespaced: true,
 
@@ -22,17 +24,9 @@ export const statsModule = {
 
 	actions: {
 		addFinishedPuzzleToHistory({ commit }, gameState) {
-			const puzzleData = {
-				time: gameState.timeElapsedUnmount,
-				width: gameState.width,
-				height: gameState.height,
-				difficulty: gameState.difficulty,
-				initialBoard: gameState.initialBoard.toBoardString(),
-				solution: gameState.solution.toBoardString(),
-				solveDate: Date.now(),
-			}
-			console.log(puzzleData);
-			commit('addToHistory', puzzleData);
+			const historyEntry = PuzzleData.fromGameState(gameState);
+			console.log(historyEntry);
+			commit('addToHistory', historyEntry);
 		},
 		initStats({state, commit}) {
 			const currentState = { ...state };
