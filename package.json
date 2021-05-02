@@ -5,6 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build && copy dist\\index.html dist\\200.html",
+	"build:netlify": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "deploy": "vue-cli-service build && copy dist\\index.html dist\\200.html && surge dist --domain https://takuzu-vue.surge.sh"
   },
