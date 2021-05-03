@@ -56,6 +56,8 @@ module.exports = {
 			outline: ['focus-visible', 'active', 'focus'],
 			ringWidth: ['focus-visible', 'active'],
 			ringOpacity: ['focus-visible', 'active'],
+			ringColor: ['focus', 'active'],
+			opacity: ['active'],
 		},
 	},
 	plugins: [

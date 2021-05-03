@@ -9,7 +9,7 @@
 			<span>{{msToMinSec(averageTime)}}</span>
 		</section>
 		<section class="stats-btns">
-			<button class="download-btn" @click="downloadStats">Download stats</button>
+			<button :disabled="exportInProgress" class="download-btn" @click="exportStats">Export data</button>
 			<button class="reset-btn" @click="confirmReset">Reset stats</button>
 		</section>
 	</div>
@@ -25,6 +25,8 @@ export default {
 		return {
 			puzzlesSolved: null,
 			averageTime: null,
+
+			exportInProgress: false,
 		}
 	},
 	methods: {
@@ -57,20 +59,41 @@ export default {
 			return `${format(minutes)}:${format(seconds)}`;
 		},
 		confirmReset() {
-			const result = window.confirm('Are you sure you want to delete all your statistics, including game history and other progress? This can NOT be undone.');
-			if (!result) return;
-			window.alert('TODO: woops, not yet implemented reset...');
+			setTimeout(() => {
+				// TODO: use modal
+				const result = window.confirm('Are you sure you want to delete all your statistics, including game history and other progress? This can NOT be undone.');
+				if (!result) return;
+
+				window.alert('Just kidding, not yet implemented reset...');
+			}, 150);			
 		},
-		async downloadStats() {
-			const blob = await exportDB(db);
-			const text = await blob.text();
-			const json = JSON.parse(text);
-			const dateStr = new Date().toLocaleDateString('en-GB');
+		async exportStats() {
+			try {
+				this.exportInProgress = true;
+				const blob = await exportDB(db, {
+					prettyJson: true,
+					filter: (table) => table === 'puzzleHistory',
+					progressCallback: ({totalRows, completedRows}) => {
+						console.log(`Progress: ${completedRows} of ${totalRows} rows completed`)
+					}
+				});
+				this.downloadBlob(blob);
+			} catch(e) {
+				console.error(e);
+			} finally {
+				setTimeout(() => {
+					// prevent accidental redownloads
+					this.exportInProgress = false;
+				}, 1000);
+			}
+		},
+		downloadBlob(blob, filename = 'puzzle-history-export') {
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
 
-			const key = `db-backup-${dateStr}`;
-
-			localStorage.setItem(key, JSON.stringify(json));
-			window.alert('Data backed up to localStorage.');
+			a.href = url;
+			a.download = filename + '.json';
+			a.click();
 		}
 	},
 	beforeMount() {
@@ -89,14 +112,16 @@ section > h2 {
 }
 
 .stats-btns {
-	margin-top: auto;
+	@apply mt-auto flex mx-auto space-x-2;
 }
 
 .stats-btns > button {
-	@apply p-2 font-bold text-sm opacity-60;
+	@apply px-3 py-2 font-bold text-xs opacity-50 tracking-wide focus:outline-none active:ring active:ring-teal-600 active:ring-opacity-70 rounded;
+
+	@apply hover-hover:hover:opacity-90 active:opacity-90;
 }
 
 .reset-btn {
-	@apply text-red-600;
+	@apply text-red-700 active:ring-red-600;
 }
 </style>
