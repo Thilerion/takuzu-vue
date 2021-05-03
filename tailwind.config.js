@@ -50,7 +50,7 @@ module.exports = {
 	},
 	variants: {
 		extend: {
-			backgroundColor: ['active', 'disabled'],
+			backgroundColor: ['active', 'disabled', 'odd', 'even'],
 			borderWidth: ['active'],
 			borderColor: ['active'],
 			outline: ['focus-visible', 'active', 'focus'],

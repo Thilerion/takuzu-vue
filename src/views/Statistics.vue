@@ -1,30 +1,55 @@
 <template>
 	<div class="flex flex-col">
 		<PageHeader hide-back>Statistics</PageHeader>
-		<section>
-			<h2 class="text-lg font-medium">Overall</h2>
+		<section class="grid section-block mb-4">
+			<h2 class="text-lg font-medium pb-2">Overall</h2>
 			<span>Puzzles solved:</span>
 			<span>{{puzzlesSolved}}</span>
 			<span>Average time per puzzle:</span>
 			<span>{{msToMinSec(averageTime)}}</span>
 		</section>
+
+		<section class="px-8 mb-4">
+			<h2 class="text-lg font-medium pt-2 pb-2">By puzzle size</h2>
+			<StatsTable
+				v-if="byPuzzleSizeData && byPuzzleSizeData.length"
+				:headers="byPuzzleSizeHeaders"
+				:items="byPuzzleSizeData"
+				:group="groupByPuzzleSize"
+				:groups="['Square', 'Rectangular', 'Odd']"
+			/>
+		</section>
+
 		<section class="stats-btns">
 			<button :disabled="exportInProgress" class="download-btn" @click="exportStats">Export data</button>
+			<button class="import-btn" @click="startStatsImport">Import stats</button>
 			<button class="reset-btn" @click="confirmReset">Reset stats</button>
 		</section>
+		<input type="file" hidden id="file-upload" ref="fileUpload" @change="handleStatsImport">
 	</div>
 </template>
 
 <script>
 import { statsQueries } from '@/services/stats';
 import { puzzleHistoryDb, default as db } from '@/services/stats/db';
-import { exportDB } from "dexie-export-import";
+import { exportDB, importInto } from "dexie-export-import";
+import StatsTable from '@/components/StatsTable.vue';
 
 export default {
+	components: { StatsTable },
 	data() {
 		return {
 			puzzlesSolved: null,
 			averageTime: null,
+			
+			byPuzzleSize: null,
+			byPuzzleSizeData: null,
+			byPuzzleSizeHeaders: [
+				{ text: 'Size', value: 'dimensions', colHeader: true },
+				{ text: 'Played', value: 'played' },
+				{ text: 'Average Time', value: 'averageTime', align: 'right' },
+			],
+			groupByPuzzleSize: true,
 
 			exportInProgress: false,
 		}
@@ -48,6 +73,54 @@ export default {
 		async getInitialData() {
 			this.puzzlesSolved = await this.getPuzzlesSolved();
 			this.averageTime = await this.getAverageTime();
+
+			const bySize = await this.getStatsBySize();
+			this.byPuzzleSize = bySize.raw;
+			this.byPuzzleSizeData = bySize.tableData;
+			
+			
+		},
+		async getStatsBySize() {
+			const total = {};
+			await puzzleHistoryDb.each((item, cursor) => {
+				const size = item.width + 'x' + item.height;
+				const curTotal = total[size] ?? { amount: 0, elapsed: 0, numCells: item.width * item.height };
+				curTotal.amount += 1;
+				curTotal.elapsed += item.timeElapsed;
+				total[size] = curTotal;
+				total[size].width = item.width;
+				total[size].height = item.height;
+			}).then(res => {
+				for (const key of Object.keys(total)) {
+					const sizeData = total[key];
+					total[key].averageTime = sizeData.elapsed / sizeData.amount;
+				}
+				return total;
+			})
+			
+			const tableData = [];
+			for (const puzzleDims of Object.keys(total)) {
+				const origData = total[puzzleDims];
+
+				const {width, height, numCells, averageTime, amount} = origData;
+				const sizeGroup = width !== height ? 'Odd' : width % 2 === 0 ? 'Rectangular' : 'Square';
+				console.log({width, height, sizeGroup});
+				const obj = {
+					dimensions: puzzleDims,
+					numCells,
+					averageTime: this.msToMinSec(averageTime),
+					played: amount,
+					sizeGroup
+				}
+				tableData.push(obj);
+			}
+			tableData.sort((a, b) => {
+				const numA = a.numCells;
+				const numB = b.numCells;
+				return numA - numB;
+			})
+
+			return {raw: total, tableData};
 		},
 		msToMinSec(ms = 0) {
 			const format = val => `0${Math.floor(val)}`.slice(-2);
@@ -94,6 +167,26 @@ export default {
 			a.href = url;
 			a.download = filename + '.json';
 			a.click();
+		},
+		startStatsImport() {
+			this.$refs.fileUpload.click();
+		},
+		async handleStatsImport(ev) {
+			try {
+				const file = ev.target.files[0];
+				await this.importStatsIntoDb(file);
+			} catch(e) {
+				window.alert('An error occurred importing stats...');
+				console.warn(e);
+			}
+		},
+		async importStatsIntoDb(blob) {
+			await importInto(db, blob, {
+				clearTablesBeforeImport: true,
+				filter: (table) => table === 'puzzleHistory'
+			});
+			console.log('succesfull import!');
+			this.getInitialData();
 		}
 	},
 	beforeMount() {
@@ -104,8 +197,11 @@ export default {
 
 <style lang="postcss" scoped>
 section {
+	@apply text-gray-900 dark:text-white text-left;
+}
+.section-block {
 	grid-template-columns: 2;
-	@apply text-gray-900 dark:text-white text-left px-8 grid;
+	@apply px-8;
 }
 section > h2 {
 	grid-column: 1 / span 2;
