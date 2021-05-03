@@ -42,21 +42,21 @@ export default {
 					num += 1;
 					time += (timeElapsed * 1);
 				});
-			console.log({num, time});
+			if (num < 1 || time < 1) return 0;
 			return time / num;			
 		},
 		async getInitialData() {
 			this.puzzlesSolved = await this.getPuzzlesSolved();
 			this.averageTime = await this.getAverageTime();
 		},
-		msToMinSec(ms) {
+		msToMinSec(ms = 0) {
 			const format = val => `0${Math.floor(val)}`.slice(-2);
 
 			const fullSeconds = Math.floor(ms / 1000);
 
 			const minutes = fullSeconds / 60;
 			const seconds = fullSeconds % 60;
-			return `${format(minutes)}:${format(seconds)}`;
+			return `${Math.floor(minutes)}:${format(seconds)}`;
 		},
 		confirmReset() {
 			setTimeout(() => {
