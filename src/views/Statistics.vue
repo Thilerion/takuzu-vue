@@ -15,6 +15,8 @@
 				v-if="byPuzzleSizeData && byPuzzleSizeData.length"
 				:headers="byPuzzleSizeHeaders"
 				:items="byPuzzleSizeData"
+				:group="groupByPuzzleSize"
+				:groups="['Square', 'Rectangular', 'Odd']"
 			/>
 		</section>
 
@@ -47,6 +49,7 @@ export default {
 				{ text: 'Played', value: 'played' },
 				{ text: 'Average Time', value: 'averageTime', align: 'right' },
 			],
+			groupByPuzzleSize: true,
 
 			exportInProgress: false,
 		}
@@ -85,6 +88,8 @@ export default {
 				curTotal.amount += 1;
 				curTotal.elapsed += item.timeElapsed;
 				total[size] = curTotal;
+				total[size].width = item.width;
+				total[size].height = item.height;
 			}).then(res => {
 				for (const key of Object.keys(total)) {
 					const sizeData = total[key];
@@ -96,11 +101,16 @@ export default {
 			const tableData = [];
 			for (const puzzleDims of Object.keys(total)) {
 				const origData = total[puzzleDims];
+
+				const {width, height, numCells, averageTime, amount} = origData;
+				const sizeGroup = width !== height ? 'Odd' : width % 2 === 0 ? 'Rectangular' : 'Square';
+				console.log({width, height, sizeGroup});
 				const obj = {
 					dimensions: puzzleDims,
-					numCells: origData.numCells,
-					averageTime: this.msToMinSec(origData.averageTime),
-					played: origData.amount
+					numCells,
+					averageTime: this.msToMinSec(averageTime),
+					played: amount,
+					sizeGroup
 				}
 				tableData.push(obj);
 			}

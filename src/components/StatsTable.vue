@@ -14,23 +14,29 @@
 
 		<tbody class="divide-y divide-gray-200">
 			<tr
-				v-for="(row, rowIdx) in items"
+				v-for="(row, rowIdx) in groupedItems"
 				:key="rowIdx"
-				class="even:bg-gray-100 odd:bg-white"
+				:class="{'group-row': row.group != null}"
 			>
-				<template v-for="header in headers" :key="header">
-					<th
-						v-if="header.colHeader"
-						scope="row"
-						class="px-3 py-2 text-xs"
-					>{{row[header.value]}}</th>
-					<td
-						v-else
-						class="px-3 py-2 text-xs"
-						:class="header.align === 'right' ? 'text-right' : 'text-left'"
-					>{{row[header.value]}}</td>
-				</template>				
-
+				<template v-if="row.group == null">
+					<template v-for="header in headers" :key="header">
+						<th
+							v-if="header.colHeader"
+							scope="row"
+							class="px-3 py-2 text-xs"
+						>{{row[header.value]}}</th>
+						<td
+							v-else
+							class="px-3 py-2 text-xs"
+							:class="header.align === 'right' ? 'text-right' : 'text-left'"
+						>{{row[header.value]}}</td>
+					</template>	
+				</template>		
+				<template v-else>
+						<td
+							:colspan="columns"
+						>Category: {{row.group}}</td>
+				</template>
 			</tr>
 		</tbody>
 
@@ -48,24 +54,49 @@ export default {
 			type: Array,
 			required: true
 		},
+		group: {
+			type: Boolean
+		},
+		groups: {
+			type: Array,
+			default: () => ([])
+		}
 	},
 	computed: {
-		dataHeaders() {
-			return this.headers.filter(val => val !== this.rowHeader);
-		},
-		columnClasses() {
-			const aligns = this.headerAlign;
-			const res = {};
-			this.headers.forEach(header => {
-				const alignment = aligns[header] ?? 'left';
-				res[header] = [`text-${alignment}`];
+		groupedItems() {
+			if (!this.group) return this.items;
+
+			const groupItems = {};
+			this.groups.forEach(groupName => {
+				groupItems[groupName] = [];
 			})
-			return res;
+
+			this.items.forEach(item => {
+				groupItems[item.sizeGroup].push(item);
+			})
+
+			const grouped = [];
+			this.groups.forEach(groupName => {
+				grouped.push({
+					group: groupName
+				});
+				grouped.push(...groupItems[groupName]);
+			})
+
+			return grouped;
+		},
+		columns() {
+			return this.headers.length;
 		}
 	}
 }
 </script>
 
-<style scoped>
-
+<style lang="postcss" scoped>
+.group-row td {
+	@apply bg-white px-3 pt-3 pb-2 text-xs font-medium text-gray-700;
+}
+tbody tr:not(.group-row) {
+	@apply even:bg-gray-100 odd:bg-white;
+}
 </style>
