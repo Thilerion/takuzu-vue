@@ -9,52 +9,66 @@ function createPuzzle({ width, height, difficulty = 1 }, forceError = false) {
 	if (forceError) {
 		return;
 	}
-	let start = performance.now();
-	const max = 3000;
-	const endAfter = start + max;
 
-	let solution;
-	let board;
-	let resultQuality;
-
-	while (!solution && performance.now() < endAfter) {
-		const result = generateBoard(width, height);
-		if (result) solution = result;
-	}
-	if (!solution) {
-		console.warn('Could not generate solution...');
-		return;
-	}
+	const tryDurations = [750, 1250, 1750, 2500];
 
 	// TODO: improve quality calculation with other modifiers than numMasked and distribution
 	const optimalMaskedRatio = getOptimalMaskRatio(width, height, difficulty);
 
-	while (!board && performance.now() < endAfter) {
-		const result = createMaskWithDifficulty(solution, difficulty);
-		// TODO: prevent recalculating optimalRatio etc inside getMaskQuality
-		let quality = null;
+	for (let currentTry = 0; currentTry < 4; currentTry++) {
+		const maxTime = tryDurations[currentTry];
+		const generationResult = createBoardAndMaskOnce({ width, height, difficulty, optimalMaskedRatio }, maxTime);
 
-		if (result) {
-			quality = getMaskQuality(result, optimalMaskedRatio);
+		if (generationResult.success) {
+			const { solution, board, quality } = generationResult;
+			return { solution, board, quality };
 		}
-
-		if (result && quality.maskedRatio >= minMaskedRatioQuality && quality.symbolDistribution >= minSymbolDistributionQuality) {
-			board = result;
-			resultQuality = quality;
-		}
-		// TODO: if this fails to often, a different board(solutionBoard) should be picked. Some filled boards just make it very hard to generate a correct mask.
-		else if (result) {
-			console.error('Mask quality was not good enough...');
-			console.log(result.toDisplayString());
-			console.log({ board: result, quality, minMaskedRatioQuality, minSymbolDistributionQuality });
+		if (generationResult.error) {
+			console.warn(`Puzzle generation, try [${currentTry}/4]: ${generationResult.error}`);
 		}
 	}
-	if (!board) {
-		console.warn('Could not generate mask...');
-		return;
+
+	console.warn('After 4 tries generating boards and masks: timeout reached.');
+	return;
+}
+
+function createBoardAndMaskOnce({width, height, difficulty = 1, optimalMaskedRatio}, maxTime = 1000) {
+	const start = performance.now();
+	const timeoutAfter = start + maxTime;
+
+	const timeoutReached = () => performance.now() > timeoutAfter;
+
+	const data = { solution: null, board: null, quality: null };
+
+	while (!data.solution && !timeoutReached()) {
+		const result = generateBoard(width, height);
+		if (result) data.solution = result;
 	}
 
-	return { solution, board, quality: resultQuality };
+	if (!data.solution) {
+		return { error: 'Solution generation timeout reached.' };
+	}
+
+	while (!data.board && !timeoutReached()) {
+		const maskResult = createMaskWithDifficulty(data.solution, difficulty);
+
+		if (!maskResult) continue;
+
+		const quality = getMaskQuality(maskResult, optimalMaskedRatio);
+		if (maskResult && quality.maskedRatio >= minMaskedRatioQuality && quality.symbolDistribution >= minSymbolDistributionQuality) {
+			data.board = maskResult;
+			data.quality = quality;
+		} else if (maskResult) {
+			console.warn('Generated mask quality was not good enough.');
+			console.log({ board: maskResult, quality, minMaskedRatioQuality, minSymbolDistributionQuality });
+		}
+	}
+
+	if (!data.board) {
+		return { error: 'Mask/board generation timeout reached. Maybe retry with another solutionBoard.' };
+	} else {
+		return { ...data, success: true };
+	}
 }
 
 addEventListener('message', event => {
