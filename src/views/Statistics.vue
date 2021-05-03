@@ -1,13 +1,26 @@
 <template>
 	<div class="flex flex-col">
 		<PageHeader hide-back>Statistics</PageHeader>
-		<section>
-			<h2 class="text-lg font-medium">Overall</h2>
+		<section class="grid section-block mb-4">
+			<h2 class="text-lg font-medium pb-2">Overall</h2>
 			<span>Puzzles solved:</span>
 			<span>{{puzzlesSolved}}</span>
 			<span>Average time per puzzle:</span>
 			<span>{{msToMinSec(averageTime)}}</span>
 		</section>
+
+		<section class="px-8 mb-4">
+			<h2 class="text-lg font-medium pt-2 pb-2">By puzzle size</h2>
+			<StatsTable
+				v-if="byPuzzleSizeData && byPuzzleSizeData.length"
+				:table-data="byPuzzleSizeData"
+				:headers="['dimensions', 'played', 'averageTime']"
+				:header-labels="{dimensions: 'Size', played: 'Played', averageTime: 'Average time'}"
+				:header-align="{averageTime: 'right'}"
+				row-header="dimensions"
+			/>
+		</section>
+
 		<section class="stats-btns">
 			<button :disabled="exportInProgress" class="download-btn" @click="exportStats">Export data</button>
 			<button class="import-btn" @click="startStatsImport">Import stats</button>
@@ -21,12 +34,17 @@
 import { statsQueries } from '@/services/stats';
 import { puzzleHistoryDb, default as db } from '@/services/stats/db';
 import { exportDB, importInto } from "dexie-export-import";
+import StatsTable from '@/components/StatsTable.vue';
 
 export default {
+	components: { StatsTable },
 	data() {
 		return {
 			puzzlesSolved: null,
 			averageTime: null,
+			
+			byPuzzleSize: null,
+			byPuzzleSizeData: null,
 
 			exportInProgress: false,
 		}
@@ -50,6 +68,47 @@ export default {
 		async getInitialData() {
 			this.puzzlesSolved = await this.getPuzzlesSolved();
 			this.averageTime = await this.getAverageTime();
+
+			const bySize = await this.getStatsBySize();
+			this.byPuzzleSize = bySize.raw;
+			this.byPuzzleSizeData = bySize.tableData;
+			
+			
+		},
+		async getStatsBySize() {
+			const total = {};
+			await puzzleHistoryDb.each((item, cursor) => {
+				const size = item.width + 'x' + item.height;
+				const curTotal = total[size] ?? { amount: 0, elapsed: 0, numCells: item.width * item.height };
+				curTotal.amount += 1;
+				curTotal.elapsed += item.timeElapsed;
+				total[size] = curTotal;
+			}).then(res => {
+				for (const key of Object.keys(total)) {
+					const sizeData = total[key];
+					total[key].averageTime = sizeData.elapsed / sizeData.amount;
+				}
+				return total;
+			})
+			
+			const tableData = [];
+			for (const puzzleDims of Object.keys(total)) {
+				const origData = total[puzzleDims];
+				const obj = {
+					dimensions: puzzleDims,
+					numCells: origData.numCells,
+					averageTime: this.msToMinSec(origData.averageTime),
+					played: origData.amount
+				}
+				tableData.push(obj);
+			}
+			tableData.sort((a, b) => {
+				const numA = a.numCells;
+				const numB = b.numCells;
+				return numA - numB;
+			})
+
+			return {raw: total, tableData};
 		},
 		msToMinSec(ms = 0) {
 			const format = val => `0${Math.floor(val)}`.slice(-2);
@@ -126,8 +185,11 @@ export default {
 
 <style lang="postcss" scoped>
 section {
+	@apply text-gray-900 dark:text-white text-left;
+}
+.section-block {
 	grid-template-columns: 2;
-	@apply text-gray-900 dark:text-white text-left px-8 grid;
+	@apply px-8;
 }
 section > h2 {
 	grid-column: 1 / span 2;
