@@ -30,7 +30,6 @@
 </template>
 
 <script>
-import { lengthToPwmPattern } from '../../services/vibration';
 import { LONG_TOUCH_DURATION } from './config';
 import GameBoardCellValue from './GameBoardCellValue';
 
@@ -55,6 +54,7 @@ export default {
 	data() {
 		return {
 			touchTimer: null,
+			vibrationActive: false,
 		}
 	},
 	computed: {
@@ -120,7 +120,7 @@ export default {
 			this.touchTimer = setTimeout(() => {
 				this.$refs.cell.removeEventListener('touchend', this.touchEnd);
 				this.emitCellChange(true);
-				this.vibrate(true);
+				this.vibrate();
 			}, LONG_TOUCH_DURATION);
 			this.$refs.cell.addEventListener('touchend', this.touchEnd);
 		},
@@ -131,10 +131,17 @@ export default {
 		},
 		vibrate(long = false) {
 			if (!this.vibrateOnTap) return;
-			const length = long ? 140 : 40;
 
-			const vibrationPattern = lengthToPwmPattern(length, this.vibrationIntensity);	
-			window.navigator.vibrate(vibrationPattern);
+			const length = long ? 100 : 20;
+			const delay = this.vibrationActive ? 10 : 0;
+
+			setTimeout(() => {
+				window.navigator.vibrate(length);
+				this.vibrationActive = true;
+				setTimeout(() => {
+					this.vibrationActive = false;
+				}, length);
+			}, delay);
 		},
 	},
 };
