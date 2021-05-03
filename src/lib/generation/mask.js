@@ -1,5 +1,5 @@
 import { EMPTY } from "../constants";
-import { maskHasNoSolution, maskHasOneSolution } from "./mask-validation";
+import { getMinimumDifficultyConstraints, maskHasNoSolution, maskHasOneSolution } from "./mask-validation";
 
 export function createMask(board, difficulty = 1) {
 	const maskedBoard = board.copy();
@@ -19,7 +19,11 @@ export function createMaskWithDifficulty(board, difficulty = 1) {
 	let bestMask;
 	for (let i = 0; i < maxAttempts; i++) {
 		bestMask = createMask(board, difficulty);
-		if (maskHasNoSolution(bestMask, difficulty - 1)) {
+
+		// verify that puzzle is not too easy
+		const minDiffConstraints = getMinimumDifficultyConstraints(difficulty);
+		if (minDiffConstraints == null) return bestMask; // easiest puzzle, cannot be too easy
+		if (maskHasNoSolution(bestMask, minDiffConstraints)) {
 			return bestMask;
 		}
 	}
