@@ -70,7 +70,7 @@ export default {
 	},
 	created() {
 		this.debouncedUpdateLineCounts = debounce(this.updateLineCounts, 350, {
-			maxWait: 800,
+			maxWait: 10000,
 			trailing: true,
 			leading: false
 		});
