@@ -5,8 +5,7 @@ const getDefaultSettings = () => ({
 
 	cellTheme: 'binary', // binary, tictactoe, or colored
 	
-	// vibration settings
-	vibrationIntensity: 2, // 0 1 2 or 3, off low medium or high
+	enableVibration: true,
 
 	// assistance settings
 	// automaticValidation: 'ruleViolations', // TODO: automatic validation, with values: disabled/ ruleViolations/ incorrectValues
@@ -21,7 +20,7 @@ export const settingsModule = {
 	state: loadSettings,
 
 	getters: {
-		vibrationEnabled: state => state.vibrationIntensity > 0,
+		vibrationEnabled: state => state.enableVibration,
 
 		showBoardCoordinates: state => state.showLineInfo === 'coords',
 		showBoardLineCounts: state => ['remainingCount', 'currentCount'].includes(state.showLineInfo),

@@ -83,10 +83,7 @@ export default {
 			// return this.incorrectValues && this.incorrectValues.includes(this.cellId);
 		},
 		vibrateOnTap() {
-			return this.vibrationIntensity > 0;
-		},
-		vibrationIntensity() {
-			return this.$store.state.settings.vibrationIntensity;
+			return this.$store.state.settings.enableVibration;
 		},
 
 		cellTheme() {

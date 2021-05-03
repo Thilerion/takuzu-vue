@@ -55,10 +55,13 @@
 		</div>
 		<div class="setting-block mt-6">
 			<h2 class="text-gray-700">Other</h2>
-			<VibrationSetting @update-setting="updateSetting" :settings="settings" />
+			<label class="flex items-center mt-4">
+				<input type="checkbox" v-model="enableVibration">
+				<span class="ml-2">Enable vibration</span>
+			</label>
 			<label class="flex items-center mt-4">
 				<input type="checkbox" v-model="enableWakeLock">
-				<span class="ml-2">Enable wake lock</span>
+				<span class="ml-2">Keep screen active while playing</span>
 			</label>
 			<label class="flex items-center mt-4">
 				<input type="checkbox" v-model="showTimer">
@@ -71,12 +74,10 @@
 <script>
 import CellThemeSetting from '@/components/settings/CellThemeSetting.vue';
 import DarkModeSetting from '../components/settings/DarkModeSetting';
-import VibrationSetting from '../components/settings/VibrationSetting';
 
 export default {
 	components: {
 		DarkModeSetting,
-		VibrationSetting,
 		CellThemeSetting,
 	},
 	data() {
@@ -134,6 +135,14 @@ export default {
 			},
 			set(value) {
 				this.updateSetting('enableWakeLock', value);
+			}
+		},
+		enableVibration: {
+			get() {
+				return this.settings.enableVibration;
+			},
+			set(value) {
+				this.updateSetting('enableVibration', value);
 			}
 		},
 		showTimer: {
