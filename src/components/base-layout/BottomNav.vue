@@ -32,10 +32,10 @@ export default {
 		}
 	},
 	mounted() {
-		this.$emit('set-footer-height', '4rem');
+		// this.$emit('set-footer-height', '4rem');
 	},
 	unmounted() {
-		this.$emit('set-footer-height', 0);
+		// this.$emit('set-footer-height', 0);
 	}
 };
 </script>
