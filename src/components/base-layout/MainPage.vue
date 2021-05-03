@@ -10,13 +10,11 @@
 </template>
 
 <script>
-import BaseHeader from '@/components/page/BaseHeader';
 import BaseMain from '@/components/page/BaseMain';
 import BaseFooter from '@/components/page/BaseFooter';
 
 export default {
 	components: {
-		BaseHeader,
 		BaseMain,
 		BaseFooter,
 	},
