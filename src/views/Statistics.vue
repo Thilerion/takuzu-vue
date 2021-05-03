@@ -10,15 +10,17 @@
 		</section>
 		<section class="stats-btns">
 			<button :disabled="exportInProgress" class="download-btn" @click="exportStats">Export data</button>
+			<button class="import-btn" @click="startStatsImport">Import stats</button>
 			<button class="reset-btn" @click="confirmReset">Reset stats</button>
 		</section>
+		<input type="file" hidden id="file-upload" ref="fileUpload" @change="handleStatsImport">
 	</div>
 </template>
 
 <script>
 import { statsQueries } from '@/services/stats';
 import { puzzleHistoryDb, default as db } from '@/services/stats/db';
-import { exportDB } from "dexie-export-import";
+import { exportDB, importInto } from "dexie-export-import";
 
 export default {
 	data() {
@@ -94,6 +96,26 @@ export default {
 			a.href = url;
 			a.download = filename + '.json';
 			a.click();
+		},
+		startStatsImport() {
+			this.$refs.fileUpload.click();
+		},
+		async handleStatsImport(ev) {
+			try {
+				const file = ev.target.files[0];
+				await this.importStatsIntoDb(file);
+			} catch(e) {
+				window.alert('An error occurred importing stats...');
+				console.warn(e);
+			}
+		},
+		async importStatsIntoDb(blob) {
+			await importInto(db, blob, {
+				clearTablesBeforeImport: true,
+				filter: (table) => table === 'puzzleHistory'
+			});
+			console.log('succesfull import!');
+			this.getInitialData();
 		}
 	},
 	beforeMount() {
