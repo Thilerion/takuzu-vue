@@ -76,6 +76,7 @@ export default {
 			wakeLockEnabled: false,
 			
 			timer: null,
+			storeSubscription: null,
 		}
 	},
 	computed: {
@@ -147,6 +148,9 @@ export default {
 		stopPlayTimer() {
 			this.pausePlayTimer();
 		},
+		resetPlayTimer() {
+			this.timer.reset();
+		},
 		msToMinSec(ms) {
 			const format = val => `0${Math.floor(val)}`.slice(-2);
 
@@ -175,11 +179,18 @@ export default {
 			this.enableWakeLock();
 			this.wakeLock.onChange = (isEnabled) => this.wakeLockEnabled = !!isEnabled;
 		}
+
+		this.storeSubscription = this.$store.subscribeAction((action) => {
+			if (action.type === 'restartPuzzle') {
+				this.resetPlayTimer();
+			}
+		})
 	},
 	unmounted() {
 		this.stopPlayTimer();
 		this.saveGameWithTime();
 		this.wakeLock.destroy();
+		this.storeSubscription();
 	},
 	watch: {
 		board: {

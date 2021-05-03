@@ -79,6 +79,17 @@ export default class Timer {
 	}
 
 	reset() {
-		console.log('Timer: should reset or stop'); // TODO: reset timer
+		const origPaused = this.paused;
+
+		this.pause();
+
+		this.elapsed = 0;
+		this.savedTime = 0;
+		this.startTime = null;
+		this.updatedTime = null;
+
+		if (!origPaused) {
+			this.start();
+		}
 	}
 }
