@@ -12,7 +12,7 @@
 export default {
 	computed: {
 		enableComponentShowcase() {
-			return process.env.NODE_ENV !== 'development';
+			return process.env.NODE_ENV === 'development';
 		},
 		appVersion() {
 			return process.env.VUE_APP_VERSION;
