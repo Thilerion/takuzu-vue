@@ -1,33 +1,35 @@
 <template>
-	<table class="mx-auto w-full whitespace-nowrap rounded divide-y bg-white border border-gray-200">
+	<table class="mx-auto w-full whitespace-nowrap rounded divide-y bg-white border border-gray-200 table-fixed">
 		<thead>
 			<tr class="text-gray-600 text-left font-semibold capitalize text-xs">
 				<th
 					class="px-3 py-4"
-					:class="columnClasses[header] ?? []"
+					:class="header.align === 'right' ? 'text-right' : 'text-left'"
 					scope="col"
 					v-for="header in headers"
-					:key="header"
-				>{{headerLabels[header]}}</th>
+					:key="header.value"
+				>{{header.text}}</th>
 			</tr>
 		</thead>
 
 		<tbody class="divide-y divide-gray-200">
 			<tr
-				v-for="row in tableData"
-				:key="'row' + row[rowHeader]"
+				v-for="(row, rowIdx) in items"
+				:key="rowIdx"
+				class="even:bg-gray-100 odd:bg-white"
 			>
-				<th
-					scope="row"
-					class="px-3 py-2 text-xs"
-				>{{row[rowHeader]}}</th>
-
-				<td
-					v-for="colName in dataHeaders"
-					:key="colName"
-					:class="columnClasses[colName] ?? []"
-					class="px-3 py-2 text-xs"
-				>{{row[colName]}}</td>
+				<template v-for="header in headers" :key="header">
+					<th
+						v-if="header.colHeader"
+						scope="row"
+						class="px-3 py-2 text-xs"
+					>{{row[header.value]}}</th>
+					<td
+						v-else
+						class="px-3 py-2 text-xs"
+						:class="header.align === 'right' ? 'text-right' : 'text-left'"
+					>{{row[header.value]}}</td>
+				</template>				
 
 			</tr>
 		</tbody>
@@ -38,7 +40,7 @@
 <script>
 export default {
 	props: {
-		tableData: {
+		items: {
 			type: Array,
 			required: true
 		},
@@ -46,17 +48,6 @@ export default {
 			type: Array,
 			required: true
 		},
-		rowHeader: {
-			type: String
-		},
-		headerLabels: {
-			type: Object,
-			required: true
-		},
-		headerAlign: {
-			type: Object,
-			default: () => ({})
-		}
 	},
 	computed: {
 		dataHeaders() {

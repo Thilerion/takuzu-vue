@@ -13,11 +13,8 @@
 			<h2 class="text-lg font-medium pt-2 pb-2">By puzzle size</h2>
 			<StatsTable
 				v-if="byPuzzleSizeData && byPuzzleSizeData.length"
-				:table-data="byPuzzleSizeData"
-				:headers="['dimensions', 'played', 'averageTime']"
-				:header-labels="{dimensions: 'Size', played: 'Played', averageTime: 'Average time'}"
-				:header-align="{averageTime: 'right'}"
-				row-header="dimensions"
+				:headers="byPuzzleSizeHeaders"
+				:items="byPuzzleSizeData"
 			/>
 		</section>
 
@@ -45,6 +42,11 @@ export default {
 			
 			byPuzzleSize: null,
 			byPuzzleSizeData: null,
+			byPuzzleSizeHeaders: [
+				{ text: 'Size', value: 'dimensions', colHeader: true },
+				{ text: 'Played', value: 'played' },
+				{ text: 'Average Time', value: 'averageTime', align: 'right' },
+			],
 
 			exportInProgress: false,
 		}
