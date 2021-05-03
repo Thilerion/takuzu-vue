@@ -83,4 +83,13 @@ router.beforeEach((to, from) => {
 	document.title = title;
 })
 
+router.afterEach((to, from) => {
+	console.log({ from });
+	if (from && from.matched && from.matched.length) {
+		to.meta.prev = from;
+	} else {
+		to.meta.prev = null;
+	}
+})
+
 export default router

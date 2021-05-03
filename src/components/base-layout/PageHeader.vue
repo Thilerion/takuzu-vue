@@ -28,7 +28,12 @@ export default {
 				this.$emit('close');
 			} else {
 				// TODO: check that previous page is home?
-				this.$router.go(-1);
+				if (this.$route.meta.prev) {
+					this.$router.go(-1);
+				} else {
+					// console.log('No prev found, going to MainMenu instead');
+					this.$router.replace({ name: 'MainMenu' });
+				}
 			}
 		}
 	},
