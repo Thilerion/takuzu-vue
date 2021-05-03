@@ -59,6 +59,13 @@ const markedCellsModule = {
 				return { x: cell.x, y: cell.y };
 			})
 			commit('addToErrorCells', resultCoords);
+		},
+
+		removeCellErrorMarks({ commit }, { x, y }) {
+			commit('removeCellFromErrorCells', { x, y });
+		},
+		removeAllErrorMarks({ commit }) {
+			commit('unsetAllErrorCells');
 		}
 	}
 

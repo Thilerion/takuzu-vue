@@ -191,11 +191,12 @@ const gameModule = {
 				throw new Error(e);
 			}
 		},
-		restartPuzzle({ state, commit }) {
+		restartPuzzle({ state, commit, dispatch }) {
 			const board = state.initialBoard.copy();
 			commit('setBoard', board);
 			commit('resetPuzzleStateProps');
 			commit('gameCheck/reset');
+			dispatch('removeAllErrorMarks');
 		},
 		toggleCell({ dispatch, getters }, { x, y, value, longTouch = false }) {
 			// TODO: one or zero first setting for toggling
@@ -260,6 +261,7 @@ const gameModule = {
 
 			dispatch('setValue', { x, y, value: prevValue });
 			dispatch('markUndoCell', { x, y });
+			dispatch('removeCellErrorMarks', { x, y });
 			commit('popMove');
 		},
 		setValue({ commit }, { x, y, value }) {
@@ -311,6 +313,7 @@ const gameModule = {
 
 			commit('reset');
 			commit('gameCheck/reset');
+			dispatch('removeAllErrorMarks');
 			deleteCurrentSavedGame();
 		},
 		saveGame({ state, getters }) {
