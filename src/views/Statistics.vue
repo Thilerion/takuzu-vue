@@ -11,13 +11,15 @@
 
 		<section class="px-8 mb-4">
 			<h2 class="text-lg font-medium pt-2 pb-2">By puzzle size</h2>
-			<StatsTable
-				v-if="byPuzzleSizeData && byPuzzleSizeData.length"
-				:headers="byPuzzleSizeHeaders"
-				:items="byPuzzleSizeData"
-				:group="groupByPuzzleSize"
-				:groups="['Normal', 'Rectangular', 'Odd']"
-			/>
+			<transition name="fade">
+				<StatsTable
+					v-if="byPuzzleSizeData && byPuzzleSizeData.length"
+					:headers="byPuzzleSizeHeaders"
+					:items="byPuzzleSizeData"
+					:group="groupByPuzzleSize"
+					:groups="['Normal', 'Rectangular', 'Odd']"
+				/>
+			</transition>
 		</section>
 
 		<section class="stats-btns">
