@@ -16,8 +16,8 @@
 					v-if="byPuzzleSizeData && byPuzzleSizeData.length"
 					:headers="byPuzzleSizeHeaders"
 					:items="byPuzzleSizeData"
-					:group="groupByPuzzleSize"
-					:groups="['Normal', 'Rectangular', 'Odd']"
+					:group="groupByPuzzleType"
+					:groups="puzzleBoardTypes"
 				/>
 			</transition>
 		</section>
@@ -36,6 +36,8 @@ import { statsQueries } from '@/services/stats';
 import { puzzleHistoryDb, default as db } from '@/services/stats/db';
 import { exportDB, importInto } from "dexie-export-import";
 import StatsTable from '@/components/StatsTable.vue';
+import { boardTypes } from '@/config';
+import { dimensionsToBoardType } from '@/utils';
 
 export default {
 	components: { StatsTable },
@@ -51,7 +53,12 @@ export default {
 				{ text: 'Played', value: 'played' },
 				{ text: 'Average Time', value: 'averageTime', align: 'right' },
 			],
-			groupByPuzzleSize: true,
+			groupByPuzzleType: true,
+			puzzleBoardTypes: [
+				boardTypes.NORMAL,
+				boardTypes.RECT,
+				boardTypes.ODD
+			],
 
 			exportInProgress: false,
 		}
@@ -105,13 +112,13 @@ export default {
 				const origData = total[puzzleDims];
 
 				const {width, height, numCells, averageTime, amount} = origData;
-				const sizeGroup = width % 2 === 1 ? 'Odd' : width !== height ? 'Rectangular' : 'Normal';
+				const boardType = dimensionsToBoardType(width, height);
 				const obj = {
 					dimensions: puzzleDims,
 					numCells,
 					averageTime: this.msToMinSec(averageTime),
 					played: amount,
-					sizeGroup
+					sizeGroup: boardType
 				}
 				tableData.push(obj);
 			}

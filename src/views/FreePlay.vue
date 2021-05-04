@@ -46,31 +46,8 @@ import PlayGame from '@/components/play-game/PlayGame';
 import StartGameButton from '@/components/board/StartGameButton';
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
 
-import { deleteCurrentSavedGame, hasCurrentSavedGame } from '@/services/save-game';
-
-const sizeTypes = {
-	NORMAL: 'Normal',
-	ODD: 'Odd',
-	RECT: 'Rectangular'
-}
-const presetSizes = [
-	{ width: 6, height: 6, type: sizeTypes.NORMAL, maxDifficulty: 2},
-	{ width: 8, height: 8, type: sizeTypes.NORMAL, maxDifficulty: 3},
-	{ width: 10, height: 10, type: sizeTypes.NORMAL, maxDifficulty: 4},
-	{ width: 12, height: 12, type: sizeTypes.NORMAL, maxDifficulty: 5},
-	{ width: 14, height: 14, type: sizeTypes.NORMAL, maxDifficulty: 5},
-
-	{ width: 7, height: 7, type: sizeTypes.ODD, maxDifficulty: 2},
-	{ width: 9, height: 9, type: sizeTypes.ODD, maxDifficulty: 3},
-	{ width: 11, height: 11, type: sizeTypes.ODD, maxDifficulty: 4},
-	{ width: 13, height: 13, type: sizeTypes.ODD, maxDifficulty: 5},
-
-	{ width: 6, height: 10, type: sizeTypes.RECT, maxDifficulty: 3},
-	{ width: 8, height: 12, type: sizeTypes.RECT, maxDifficulty: 3},
-	{ width: 10, height: 14, type: sizeTypes.RECT, maxDifficulty: 4},
-	{ width: 10, height: 16, type: sizeTypes.RECT, maxDifficulty: 5},
-	{ width: 12, height: 16, type: sizeTypes.RECT, maxDifficulty: 5},
-];
+import { hasCurrentSavedGame } from '@/services/save-game';
+import { boardTypes, PRESET_BOARD_SIZES } from '@/config';
 
 const getInitialSelection = () => {
 	try {
@@ -94,11 +71,15 @@ export default {
 		StartGameButton,
 		OverlayPageTransition,
 	},
+	setup() {
+		return {
+			presetSizes: PRESET_BOARD_SIZES,
+			sizeTypes: boardTypes,
+		}
+	},
 	data() {
 		return {
 			difficultyLabels: ['Beginner', 'Normal', 'Hard', 'Very Hard', 'Extreme'],
-			presetSizes,
-			sizeTypes,
 			
 			difficulty: null,
 			size: null,
