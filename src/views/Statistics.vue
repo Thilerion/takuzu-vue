@@ -106,7 +106,6 @@ export default {
 
 				const {width, height, numCells, averageTime, amount} = origData;
 				const sizeGroup = width % 2 === 1 ? 'Odd' : width !== height ? 'Rectangular' : 'Normal';
-				console.log({width, height, sizeGroup});
 				const obj = {
 					dimensions: puzzleDims,
 					numCells,

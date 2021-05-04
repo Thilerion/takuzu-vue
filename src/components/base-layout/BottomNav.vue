@@ -1,5 +1,5 @@
 <template>
-	<nav class="bg-white border-t border-truegray-200 h-16 shadow-xl w-full">
+	<nav class="bg-white h-16 w-full bg-opacity-90">
 		<div class="flex justify-between h-full">
 			<router-link
 				class="nav-link"
@@ -31,12 +31,6 @@ export default {
 			]
 		}
 	},
-	mounted() {
-		this.$emit('set-footer-height', '4rem');
-	},
-	unmounted() {
-		this.$emit('set-footer-height', 0);
-	}
 };
 </script>
 
@@ -59,5 +53,14 @@ export default {
 }
 .nav-link {
 	transition: color .1s ease;
+}
+
+nav {
+	box-shadow: 0px 7px 15px rgba(0, 0, 0, 0.2);
+}
+@supports (backdrop-filter: blur(4px)) {
+	nav {
+		@apply bg-opacity-70 backdrop-filter backdrop-blur-sm;
+	}
 }
 </style>

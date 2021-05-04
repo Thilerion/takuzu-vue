@@ -91,7 +91,7 @@ export default {
 	column-gap: 0.5rem;
 	box-shadow: 0 5px 10px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
 	min-height: 4rem;
-	@apply mt-auto border-t bg-white text-gray-700 pointer-events-auto text-sm overflow-y-auto origin-bottom pl-2 pb-2;
+	@apply mt-auto border-t bg-white text-gray-700 pointer-events-auto text-sm overflow-y-auto origin-bottom pl-2 pb-2 w-full;
 }
 
 .close {

@@ -84,7 +84,6 @@ router.beforeEach((to, from) => {
 })
 
 router.afterEach((to, from) => {
-	console.log({ from });
 	if (from && from.matched && from.matched.length) {
 		to.meta.prev = from;
 	} else {

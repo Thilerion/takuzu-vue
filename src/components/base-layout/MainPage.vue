@@ -1,31 +1,29 @@
 <template>
 	<div class="wrapper">
-		<div class="page" :style="{'padding-bottom': footerHeight }">
-			<BaseMain />
+		<div class="page pb-16">
+			<main>
+				<router-view v-slot="{ Component }">
+					<transition name="fade" mode="out-in">
+							<component :is="Component" />
+					</transition>
+				</router-view>
+			</main>
 		</div>
-		<div id="layers">
-			<BaseFooter v-model="footerHeight" />
+		<div class="footer">
+			<div>
+				<BottomNav />
+			</div>
 		</div>
 	</div>
 </template>
 
 <script>
-import BaseHeader from '@/components/page/BaseHeader';
-import BaseMain from '@/components/page/BaseMain';
-import BaseFooter from '@/components/page/BaseFooter';
+import BottomNav from './BottomNav.vue';
 
 export default {
 	components: {
-		BaseHeader,
-		BaseMain,
-		BaseFooter,
-	},
-	data() {
-		return {
-			footerHeight: 0,
-			more: 1
-		}
-	},
+		BottomNav,
+	}
 };
 </script>
 
@@ -36,7 +34,14 @@ export default {
 	flex: 1;
 }
 
-#layers {
+main {
+	@apply min-h-full flex flex-col flex-1;
+}
+main > *:first-child {
+	@apply flex-1 pb-4;
+}
+
+.footer {
 	pointer-events: none;
 	position: fixed;
 	height: 100vh;
@@ -48,5 +53,18 @@ export default {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
+}
+.footer > * {
+	@apply pointer-events-auto flex flex-row justify-center items-center fixed bottom-0 w-screen;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity .2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to, .fade-enter {
+  opacity: 0;
 }
 </style>
