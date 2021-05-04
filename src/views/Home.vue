@@ -1,15 +1,31 @@
-<template>
+	<template>
 	<div class="main-menu h-full flex-1 flex flex-col items-center justify-center text-center">
 		<AppTitle />
-		<nav class="">
-			<div class="routes main-routes flex flex-col">
-				<router-link v-if="canContinue" :to="{ path: '/play', query: { continue: true}}">Continue</router-link>
-				<router-link to="/play">New game</router-link>
-				<!-- <router-link to="/daily">Daily puzzles</router-link> -->
-				<!-- <router-link to="/arcade">Arcade</router-link> -->
+		<nav class="flex flex-col w-full px-6 space-y-4">
+			<div class="routes main-routes flex flex-col space-y-4">
+				<router-link
+					v-if="canContinue"
+					:to="{ path: '/play', query: { continue: true}}"
+					custom
+					v-slot="{ navigate }"
+				><BaseButton
+					@click="navigate"
+					class="btn-primary text-base uppercase shadow-md"
+				>Continue</BaseButton></router-link>
+
+				<router-link
+					to="/play"
+					custom
+					v-slot="{ navigate }"
+				><BaseButton
+					@click="navigate"
+					class="text-base uppercase"
+					:class="{'btn-primary': !canContinue, 'shadow-md': !canContinue}"
+				>New Game</BaseButton></router-link>
+
 			</div>
-			<div class="routes secondary-routes flex flex-col">
-				<router-link to="/how-to-play">How to play</router-link>
+			<div class="routes secondary-routes flex flex-col flex-1">
+				<router-link to="/how-to-play" class="py-3">How to play</router-link>
 			</div>			
 		</nav>
 	</div>
@@ -17,12 +33,14 @@
 
 <script>
 import { hasCurrentSavedGame } from '@/services/save-game'
-import AppTitle from '@/components/AppTitle.vue';
+import AppTitle from '@/components/AppTitle';
+import BaseButton from '@/components/global/BaseButton';
 
 export default {
 	name: 'MainMenu',
 	components: {
-		AppTitle,		
+		AppTitle,
+		BaseButton,
 	},
 	data() {
 		return {
@@ -41,11 +59,15 @@ export default {
 }
 
 .main-routes {
-	@apply text-2xl tracking-wide;
+	@apply text-2xl tracking-wide items-center;
 	line-height: 3rem;
 }
 .secondary-routes {
-	@apply text-lg pt-4;
+	@apply text-lg;
 	line-height: 2.25rem;
+}
+
+.main-menu .btn {
+	@apply font-normal py-4 w-2/3;
 }
 </style>
