@@ -1,6 +1,6 @@
 <template>
 	<div class="main-menu h-full flex-1 flex flex-col items-center justify-center text-center">
-		<h1 class="text-6xl font-extrabold pb-10">Takuzu</h1>
+		<AppTitle />
 		<nav class="">
 			<div class="routes main-routes flex flex-col">
 				<router-link v-if="canContinue" :to="{ path: '/play', query: { continue: true}}">Continue</router-link>
@@ -17,11 +17,12 @@
 
 <script>
 import { hasCurrentSavedGame } from '@/services/save-game'
+import AppTitle from '@/components/AppTitle.vue';
 
 export default {
 	name: 'MainMenu',
 	components: {
-		
+		AppTitle,		
 	},
 	data() {
 		return {
