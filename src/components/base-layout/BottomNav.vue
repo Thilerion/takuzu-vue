@@ -1,5 +1,5 @@
 <template>
-	<nav class="bg-white border-t border-truegray-200 h-16 shadow-xl w-full">
+	<nav class="bg-white h-16 w-full">
 		<div class="flex justify-between h-full">
 			<router-link
 				class="nav-link"
@@ -59,5 +59,9 @@ export default {
 }
 .nav-link {
 	transition: color .1s ease;
+}
+
+nav {
+	box-shadow: 0px 7px 15px rgba(0, 0, 0, 0.2);
 }
 </style>

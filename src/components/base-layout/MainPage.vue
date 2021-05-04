@@ -35,10 +35,10 @@ export default {
 }
 
 main {
-	@apply min-h-full flex flex-col pb-4 flex-1;
+	@apply min-h-full flex flex-col flex-1;
 }
 main > *:first-child {
-	flex: 1;
+	@apply flex-1 pb-4;
 }
 
 .footer {
