@@ -16,7 +16,7 @@
 				:headers="byPuzzleSizeHeaders"
 				:items="byPuzzleSizeData"
 				:group="groupByPuzzleSize"
-				:groups="['Square', 'Rectangular', 'Odd']"
+				:groups="['Normal', 'Rectangular', 'Odd']"
 			/>
 		</section>
 
@@ -103,7 +103,7 @@ export default {
 				const origData = total[puzzleDims];
 
 				const {width, height, numCells, averageTime, amount} = origData;
-				const sizeGroup = width !== height ? 'Odd' : width % 2 === 0 ? 'Rectangular' : 'Square';
+				const sizeGroup = width % 2 === 1 ? 'Odd' : width !== height ? 'Rectangular' : 'Normal';
 				console.log({width, height, sizeGroup});
 				const obj = {
 					dimensions: puzzleDims,
