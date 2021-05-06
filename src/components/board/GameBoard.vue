@@ -141,7 +141,7 @@ export default {
 		checkGameEnd() {
 			// first check if still correct (and user has not changed a value again)
 			if (this.finishedAndCorrect) {		
-				window.alert('GOOD JOB!');
+				// window.alert('GOOD JOB!');
 				this.$emit('finish-game');
 			} else {
 				console.warn('Not correct anymore!');

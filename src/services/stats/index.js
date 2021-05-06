@@ -20,3 +20,16 @@ export const statsQueries = {
 		return puzzleHistoryDb.toArray();
 	}
 }
+
+export const getGameEndStats = async ({ width, height, difficulty }) => {
+	console.log({ width, height, difficulty });
+	debugger;
+	const items = await puzzleHistoryDb.where('[width+height]').equals([width, height]).and(item => item.difficulty === difficulty).sortBy('timeElapsed');
+
+	const bestTime = items[0].timeElapsed;
+	const sum = items.reduce((acc, item) => acc + item.timeElapsed, 0);
+	const avg = (sum / items.length) || 0;
+
+	console.log({ bestTime, sum, avg });
+	return { best: bestTime, avg };
+}

@@ -58,6 +58,7 @@ const wakeLock = new WakeLock();
 import Timer from '../../services/timer';
 
 import {usePageVisibility} from '@/composables/use-page-visibility';
+import { getGameEndStats } from '@/services/stats';
 const {visibility, hidden} = usePageVisibility();
 
 export default {
@@ -169,8 +170,32 @@ export default {
 			this.$store.dispatch('saveGame');
 		},
 		finishGame() {
-			const elapsed = this.timer?.getCurrentElapsed() ?? 0;
-			this.$store.commit('setUnmountTimeElapsed', elapsed);
+			// const elapsed = this.timer?.getCurrentElapsed() ?? 0;
+			// this.$store.commit('setUnmountTimeElapsed', elapsed);
+			// this.$store.dispatch('finishGame');
+			this.handleGameEnd();
+		},
+		async handleGameEnd() {
+			const time = this.timer?.getCurrentElapsed() ?? 0;
+			this.$store.commit('setUnmountTimeElapsed', time);
+
+			const {width, height, difficulty} = this.$store.state.game;
+			const {best, avg} = await getGameEndStats({width, height, difficulty});
+
+			const times = {
+				current: this.msToMinSec(time),
+				best: this.msToMinSec(best),
+				avg: this.msToMinSec(avg)
+			};
+
+			const isHighScore = Math.floor(time / 10) < Math.floor(best / 10);
+			let str = '';
+			if (isHighScore) str += "Wow, you've set a new high score!\n\n";
+			else str += 'Nice job!\n\n';
+
+			str += `Time: ${times.current}, best: ${times.best}, average: ${times.avg}`;
+
+			window.alert(str);
 			this.$store.dispatch('finishGame');
 		}
 	},
