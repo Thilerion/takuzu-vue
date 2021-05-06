@@ -39,6 +39,7 @@ export default {
 	props: [
 		'columns', 'rows',
 	],
+	emits: ['close', 'open-settings'],
 	computed: {
 		showTimer: {
 			get() {

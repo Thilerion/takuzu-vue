@@ -11,6 +11,8 @@ import Menu from '../views/Menu';
 // NESTED PAGES / OVERLAY PAGES
 import FreePlay from '../views/FreePlay';
 
+import PlayPuzzle from '../views/PlayPuzzle';
+
 // 404 Page
 import NotFound from '../views/NotFound';
 
@@ -61,6 +63,11 @@ const routes = [
 				component: Settings
 			}
 		]
+	},
+	{
+		path: '/puzzle',
+		component: PlayPuzzle,
+		name: 'PlayPuzzle'
 	},
 	{
 		path: '/showcase',

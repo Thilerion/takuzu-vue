@@ -71,6 +71,7 @@ export default {
 		PlayGameCheckIndicator,
 		PlayGameHints,
 	},
+	emits: ['close'],
 	data() {
 		return {
 			wakeLock,

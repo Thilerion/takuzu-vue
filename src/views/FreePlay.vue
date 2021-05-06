@@ -34,7 +34,7 @@
 			/>
 		</div>
 		<OverlayPageTransition :disable="disableGameBoardTransition">
-			<PlayGame @close="quitGame" v-if="gameInitialized" />
+			<PlayGame @close="quitGame" v-if="gameInitialized && false" />
 		</OverlayPageTransition>
 	</div>
 </template>
@@ -121,11 +121,14 @@ export default {
 		selectSize(size) {
 			this.size = size;
 		},
-		createGame() {
+		async createGame() {
 			const { width, height } = this.size;
 			const difficulty = this.difficulty;
 
-			this.$store.dispatch('initGame', { width, height, difficulty });
+			await this.$store.dispatch('initGame', { width, height, difficulty });
+			console.log('game created?');
+			console.log(this.$store.state.game);
+			this.$router.push({ name: 'PlayPuzzle' });
 		},
 		quitGame() {
 			this.$store.commit('reset');
@@ -154,6 +157,9 @@ export default {
 	beforeRouteLeave(to, from) {
 		// if game does not exist; and the playGame view is not active, just accept the route change
 		if (!this.gameInitialized) {
+			return true;
+		}
+		if (to.name === 'PlayPuzzle') {
 			return true;
 		}
 		this.quitGame();
