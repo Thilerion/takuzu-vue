@@ -26,7 +26,7 @@ export const getGameEndStats = async ({ width, height, difficulty }) => {
 	let items;
 
 	try {
-		items = await puzzleHistoryDb.where('[width+height]').equals([width, height]).and(item => item.difficulty === difficulty).sortBy('timeElapsed');
+		items = await puzzleHistoryDb.where('[width+height+difficulty]').equals([width, height, difficulty]).sortBy('timeElapsed');
 	} catch (e) {
 		console.warn('Could not retrieve puzzle history data for gameEnd stats.');
 		console.warn(e);
