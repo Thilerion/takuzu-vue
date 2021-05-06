@@ -22,14 +22,28 @@ export const statsQueries = {
 }
 
 export const getGameEndStats = async ({ width, height, difficulty }) => {
-	console.log({ width, height, difficulty });
-	debugger;
-	const items = await puzzleHistoryDb.where('[width+height]').equals([width, height]).and(item => item.difficulty === difficulty).sortBy('timeElapsed');
 
-	const bestTime = items[0].timeElapsed;
-	const sum = items.reduce((acc, item) => acc + item.timeElapsed, 0);
-	const avg = (sum / items.length) || 0;
+	let items;
 
-	console.log({ bestTime, sum, avg });
-	return { best: bestTime, avg };
+	try {
+		items = await puzzleHistoryDb.where('[width+height]').equals([width, height]).and(item => item.difficulty === difficulty).sortBy('timeElapsed');
+	} catch (e) {
+		console.warn('Could not retrieve puzzle history data for gameEnd stats.');
+		console.warn(e);
+	}
+
+	if (!items || !items.length) {
+		return { count: 0 };
+	}
+
+	const result = {
+		best: items[0].timeElapsed,
+		timeSum: items.reduce((acc, item) => acc + item.timeElapsed, 0),
+		count: items.length,
+	}
+
+	return {
+		...result,
+		average: (result.timeSum / result.count) || 0
+	}
 }

@@ -180,20 +180,31 @@ export default {
 			this.$store.commit('setUnmountTimeElapsed', time);
 
 			const {width, height, difficulty} = this.$store.state.game;
-			const {best, avg} = await getGameEndStats({width, height, difficulty});
+			
+			let { best, average, count } = await getGameEndStats({width, height, difficulty});
+
+			if (count < 1) {
+				best = time;
+				average = time;
+				count = 1;
+			} else {
+				count += 1;
+			}
 
 			const times = {
 				current: this.msToMinSec(time),
 				best: this.msToMinSec(best),
-				avg: this.msToMinSec(avg)
+				avg: this.msToMinSec(average)
 			};
 
-			const isHighScore = Math.floor(time / 10) < Math.floor(best / 10);
+			const isHighScore = count === 1 || Math.floor(time / 10) < Math.floor(best / 10);
 			let str = '';
 			if (isHighScore) str += "Wow, you've set a new high score!\n\n";
 			else str += 'Nice job!\n\n';
 
-			str += `Time: ${times.current}, best: ${times.best}, average: ${times.avg}`;
+			str += `Puzzles solved: ${count} @ ${width}x${height} - ${difficulty}*\n`;
+
+			str += `Time: ${times.current}, previous best: ${times.best}, average: ${times.avg}`;
 
 			window.alert(str);
 			this.$store.dispatch('finishGame');
