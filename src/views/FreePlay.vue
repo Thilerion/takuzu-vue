@@ -1,7 +1,7 @@
 <template>
 	<div class="freeplay flex flex-col overflow-x-hidden">
 		<PageHeader>New Game</PageHeader>
-		<div>
+		<div v-if="difficulty != null && !!size">
 			<div class="pb-4 px-6">
 				<h2 class="text-2xl font-light pb-2 px-2">Difficulty</h2>
 				<DifficultySelect
@@ -52,11 +52,12 @@ import { boardTypes, PRESET_BOARD_SIZES } from '@/config';
 const getInitialSelection = () => {
 	try {
 		const data = localStorage.getItem('takuzu_freeplay-selection');
+		if (!data) throw new Error('No data for difficulty select in storage');
 		const {size, difficulty} = JSON.parse(data);
 		return {size, difficulty};
 	} catch {
 		return {
-			size: presetSizes[1],
+			size: PRESET_BOARD_SIZES[1],
 			difficulty: 1
 		}
 	}
@@ -158,13 +159,17 @@ export default {
 		this.quitGame();
 		return false;
 	},
-	async beforeMount() {
+	created() {
 		// parse previous selection
 		try {
 			const { size, difficulty } = getInitialSelection();
 			this.size = size;
-			this.difficulty =difficulty;
-		} catch {}
+			this.difficulty = difficulty;
+		} catch(e) {
+			console.warn(e);
+			this.size = PRESET_BOARD_SIZES[1];
+			this.difficulty = 1;
+		}
 	},
 	watch: {
 		currentSelection: {
