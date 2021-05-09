@@ -163,6 +163,10 @@ export default {
 		// parse previous selection
 		try {
 			const { size, difficulty } = getInitialSelection();
+			const {width, height} = size;
+			if (width == null || height == null) {
+				throw new Error(`Invalid width and/or height in parsing previous FreePlay selection (w: ${width}, h: ${height})`);
+			}
 			this.size = size;
 			this.difficulty = difficulty;
 		} catch(e) {
@@ -173,7 +177,12 @@ export default {
 	},
 	watch: {
 		currentSelection: {
-			handler(newValue) {
+			handler(newValue, oldValue) {
+				if (!newValue || newValue.difficulty == null || newValue.size == null || newValue.size.width == null || newValue.size.height == null) {
+					// console.warn('Invalid current selection. Cannot save to localStorage.');
+					// console.log({...newValue});
+					return;
+				}
 				localStorage.setItem('takuzu_freeplay-selection', JSON.stringify(newValue));
 			},
 			deep: true,
