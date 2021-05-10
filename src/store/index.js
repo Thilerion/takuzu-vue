@@ -14,7 +14,7 @@ const store = createStore({
 	},
 
 	state: {
-			
+		devMode: !!localStorage.getItem('takuzu-dev-mode'),
 	},
   
 	getters: {
@@ -22,7 +22,15 @@ const store = createStore({
 	},
 
 	mutations: {
-
+		setDevMode(state, value) {
+			if (value) {
+				state.devMode = true;
+				localStorage.setItem('takuzu-dev-mode', true);
+			} else {
+				state.devMode = false;
+				localStorage.removeItem('takuzu-dev-mode');
+			}
+		}
 	},
   
 	actions: {

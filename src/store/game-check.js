@@ -1,5 +1,6 @@
 import { findAllAvailableMoves } from "@/lib/human-solver";
 import { humanSolveBalance } from "@/lib/human-solver/balance";
+import { humanSolveDuplicateLine } from "@/lib/human-solver/duplicate";
 import { humanSolveElimination } from "@/lib/human-solver/elimination";
 import { humanSolveTriples } from "@/lib/human-solver/triples";
 import { findRuleConflicts } from "@/lib/validate/board";
@@ -179,10 +180,32 @@ const gameCheckModule = {
 			const eliminationHintResult = humanSolveElimination({ board });
 			if (eliminationHintResult && eliminationHintResult.length) {
 				const sorted = [...eliminationHintResult].sort((a, b) => {
-					return a.elimType - b.elimType;
+					if (a.elimType === b.elimType) {
+						return 0;
+					} else if (a.elimType > b.elimType) {
+						return 1;
+					} else return -1;
 				})
 				const hint = createHint(hintTypes.ELIMINATION, sorted[0]);
 				console.log({ eliminationHintResult, sorted, hint });
+				dispatch('setHints', [hint]);
+				return;
+			}
+
+			// ELIMINATION/DUPE HINT
+			const dupeHintResult = humanSolveDuplicateLine({ board });
+			console.log({ dupeHintResult });
+			if (dupeHintResult && dupeHintResult.length) {
+				const sorted = [...dupeHintResult].sort((a, b) => {
+					if (a.elimType === b.elimType) {
+						return 0;
+					} else if (a.elimType > b.elimType) {
+						return 1;
+					} else return -1;
+				})
+				console.log('DUPE HINTS!')
+				const hint = createHint(hintTypes.ELIM_DUPE, sorted[0]);
+				console.log({ dupeHintResult, sorted, hint });
 				dispatch('setHints', [hint]);
 				return;
 			}

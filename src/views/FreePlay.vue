@@ -1,7 +1,7 @@
 <template>
 	<div class="freeplay flex flex-col overflow-x-hidden">
 		<PageHeader>New Game</PageHeader>
-		<div v-if="difficulty != null && !!size">
+		<div v-if="difficulty != null">
 			<div class="pb-4 px-6">
 				<h2 class="text-2xl font-light pb-2 px-2">Difficulty</h2>
 				<DifficultySelect
@@ -169,6 +169,10 @@ export default {
 		// parse previous selection
 		try {
 			const { size, difficulty } = getInitialSelection();
+			const {width, height} = size;
+			if (width == null || height == null) {
+				throw new Error(`Invalid width and/or height in parsing previous FreePlay selection (w: ${width}, h: ${height})`);
+			}
 			this.size = size;
 			this.difficulty = difficulty;
 		} catch(e) {
@@ -179,7 +183,12 @@ export default {
 	},
 	watch: {
 		currentSelection: {
-			handler(newValue) {
+			handler(newValue, oldValue) {
+				if (!newValue || newValue.difficulty == null || newValue.size == null || newValue.size.width == null || newValue.size.height == null) {
+					// console.warn('Invalid current selection. Cannot save to localStorage.');
+					// console.log({...newValue});
+					return;
+				}
 				localStorage.setItem('takuzu_freeplay-selection', JSON.stringify(newValue));
 			},
 			deep: true,

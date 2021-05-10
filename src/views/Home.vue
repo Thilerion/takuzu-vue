@@ -1,43 +1,19 @@
 <template>
-	<div class="main-menu h-full min-h-full flex flex-col text-center flex-1 space-y-14">
-		<div class="flex flex-col title-wrapper justify-end bg-opacity-20">
+	<div class="main-menu h-full min-h-full flex flex-col text-center flex-1">
+		<div class="flex flex-col title-wrapper justify-center bg-opacity-20 pt-12">
 			<app-title/>
-			<!-- <span>Title here</span> -->
 		</div>
-		<div class="flex flex-col items-center justify-start route-wrapper space-y-4">
-			<router-link
-				v-if="canContinue"
-				:to="{ path: '/play', query: { continue: true}}"
-				custom
-				v-slot="{ navigate }"
-			><BaseButton
-				@click="navigate"
-				class="btn-primary text-base uppercase shadow-md route-btn route-primary"
-			>Continue</BaseButton></router-link>
-
-			<router-link
-				to="/play"
-				custom
-				v-slot="{ navigate }"
-			><BaseButton
-				@click="navigate"
-				class="text-base uppercase route-btn route-primary"
-				:class="{'btn-primary': !canContinue, 'shadow-md': !canContinue}"
-			>New Game</BaseButton></router-link>
-
-			<div class="pt-4">
-				<router-link to="/how-to-play" class="route-btn route-secondary">How to play</router-link>
-			</div>
-		</div>
+		<MainMenuButtons class="menu-wrapper" :can-continue="canContinue" />
 	</div>
 </template>
 
 <script>
 import { hasCurrentSavedGame } from '@/services/save-game';
 import AppTitle from '@/components/AppTitle.vue';
-import BaseButton from '@/components/global/BaseButton';
+import MainMenuButtons from '@/components/MainMenuButtons.vue';
+
 export default {
-	components: { AppTitle, BaseButton },
+	components: { AppTitle, MainMenuButtons },
 	data() {
 		return {
 			canContinue: null,
@@ -57,19 +33,11 @@ export default {
 .title-wrapper {
 	@apply flex-1;
 	flex-grow: 2;
-	max-height: 35vh;
 }
-.route-wrapper {
-	@apply flex-auto;
-}
-.route-btn {
-	@apply w-2/3 font-normal;
-	max-width: 18rem;
-}
-.route-btn.route-primary {
-	@apply tracking-wider py-3;
-}
-.route-btn.route-secondary {
-	@apply tracking-wide;
+.menu-wrapper {
+	@apply mt-auto;
+
+	min-height: 14rem;
+	height: 30vh;
 }
 </style>

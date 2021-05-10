@@ -13,9 +13,10 @@ class Hint {
 
 		this.type = type;
 
-		const { subType, actions = [] } = optionalData;
+		const { subType, actions = [], targetLine } = optionalData;
 		this.subType = subType;
 		this.actions = actions;
+		this.targetLine = targetLine;
 	}
 }
 
@@ -113,4 +114,31 @@ export const hintGenerators = {
 
 		return new Hint(type, message, targets, source, { subType: elimType, actions: [action] });
 	},
+	[hintTypes.ELIM_DUPE]: ({ targets, source, elimType, targetLine }) => {
+		const lineId = targetLine;
+		const lineName = lineTypeFromLineId(lineId);
+		const sourceLines = source.join(',');
+		const message = `${titleCase(lineName)} ${lineId} has potential duplicate ${lineName}s: "${sourceLines}". Values can be eliminated from this ${lineName}.`;
+		const type = hintTypes.ELIM_DUPE;
+
+		const action = {
+			label: 'Execute',
+			onClick: (vm, store, hint) => {
+				console.log('Executing elim/dupe hint now.');
+				console.log(store.state.game);
+				const board = store.state.game.board;
+				hint.targets.forEach(target => {
+					const { x, y, value } = target;
+					const boardValue = board.get(x, y);
+					if (boardValue !== EMPTY) return;
+					store.dispatch('setValue', { x, y, value });
+				})
+			}
+		}
+		return new Hint(type, message, targets, source, { subType: elimType, actions: [action], targetLine });
+	}
+}
+
+function titleCase(str) {
+	return str[0].toUpperCase() + str.slice(1);
 }
