@@ -1,26 +1,40 @@
 <template>
-	<PlayGame @close="closeCurrentPuzzle" />
+	<div class="fixed overflow-hidden inset-0 flex flex-col z-20 text-gray-900 bg-gray-50">
+		<PlayGameHeader
+			class="header"
+			:rows="rows"
+			:columns="columns"
+			@close="exitGame"
+			@open-settings="openSettings"
+		/>
+	</div>
 </template>
 
 <script>
 import store from '@/store';
-import PlayGame from '@/components/play-game/PlayGame';
+import PlayGameHeader from '@/components/play-game/PlayGameHeader.vue';
 
 export default {
-	components: {PlayGame},
+	components: {PlayGameHeader},
 	computed: {
-		gameInitialized() {
-			return this.$store.state.game.initialized;
+		rows() {
+			return this.$store.state.puzzle.height;
+		},
+		columns() {
+			return this.$store.state.puzzle.width;
 		}
 	},
 	methods: {
-		closeCurrentPuzzle() {
+		exitGame() {
 			console.log('Should close puzzle');
+		},
+		openSettings() {
+			console.log('Should open settings');
 		}
 	},
 	beforeRouteEnter(to, from, next) {
-		if (!store.state.game.initialized) {
-			console.log(store.state.game);
+		if (!store.state.puzzle.initialized) {
+			console.log(store.state.puzzle);
 			console.warn('Game not initialized... Redirecting to New Game.');
 			return next({ name: 'FreePlay', replace: true});
 		}
@@ -31,19 +45,6 @@ export default {
 		}
 		next();
 	},
-	watch: {
-		gameInitialized(value, prevValue) {
-			if (prevValue && !value) {
-				if (this.$route.meta.from) {
-					console.log('going back one');
-					this.$router.go(-1);
-				} else {
-					console.log('replacing route to FreePlay');
-					this.$router.replace({ name: 'FreePlay' });
-				}
-			}
-		}
-	}
 };
 </script>
 

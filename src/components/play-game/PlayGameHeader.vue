@@ -71,7 +71,7 @@ export default {
 			}
 		},
 		board() {
-			return this.$store.state.game.board;
+			return this.$store.state.puzzle.board;
 		}
 	},
 	methods: {

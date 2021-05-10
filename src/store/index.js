@@ -1,5 +1,6 @@
 import { createStore } from 'vuex';
 import gameModule from './game';
+import puzzleModule from './puzzle';
 import { settingsModule, initSettingsWatcher } from './settings';
 import { statsModule, initStatsWatcher } from './stats';
 
@@ -9,6 +10,7 @@ const store = createStore({
 
 	modules: {
 		game: gameModule,
+		puzzle: puzzleModule,
 		settings: settingsModule,
 		stats: statsModule,
 	},

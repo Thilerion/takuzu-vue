@@ -125,13 +125,13 @@ export default {
 			const { width, height } = this.size;
 			const difficulty = this.difficulty;
 
-			await this.$store.dispatch('initGame', { width, height, difficulty });
+			await this.$store.dispatch('puzzle/initPuzzle', { width, height, difficulty });
 			console.log('game created?');
-			console.log(this.$store.state.game);
+			console.log(this.$store.state.puzzle);
 			this.$router.push({ name: 'PlayPuzzle' });
 		},
 		quitGame() {
-			this.$store.commit('reset');
+			this.$store.commit('puzzle/reset');
 		}
 	},
 	beforeRouteEnter(to, from, next) {
