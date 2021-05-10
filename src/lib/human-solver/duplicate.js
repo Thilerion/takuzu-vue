@@ -21,9 +21,14 @@ export function humanSolveDuplicateLine({ board, solution }, options = {}) {
 	console.log({ filteredLines });
 
 	const filledLines = findFilledLines(lines);
+	if (!filledLines || (!filledLines[ROW].length && !filledLines[COLUMN].length)) {
+		return results;
+	}
+		
 
 	for (const boardLine of filteredLines) {
 		const filled = filledLines[boardLine.type];
+		if (!filled || !filled.length) continue;
 
 		const validPerms = boardLine.validPermutations;
 		if (!validPerms || !validPerms.length) {
