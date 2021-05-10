@@ -179,7 +179,11 @@ const gameCheckModule = {
 			const eliminationHintResult = humanSolveElimination({ board });
 			if (eliminationHintResult && eliminationHintResult.length) {
 				const sorted = [...eliminationHintResult].sort((a, b) => {
-					return a.elimType - b.elimType;
+					if (a.elimType === b.elimType) {
+						return 0;
+					} else if (a.elimType > b.elimType) {
+						return 1;
+					} else return -1;
 				})
 				const hint = createHint(hintTypes.ELIMINATION, sorted[0]);
 				console.log({ eliminationHintResult, sorted, hint });
