@@ -1,7 +1,7 @@
 <template>
 	<div class="freeplay flex flex-col overflow-x-hidden">
 		<PageHeader>New Game</PageHeader>
-		<div v-if="difficulty != null && !!size">
+		<div v-if="difficulty != null">
 			<div class="pb-4 px-6">
 				<h2 class="text-2xl font-light pb-2 px-2">Difficulty</h2>
 				<DifficultySelect
