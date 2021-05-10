@@ -31,5 +31,9 @@ export const hintValidators = {
 	[hintTypes.ELIMINATION]: (hint, { board, solution }) => {
 		console.warn('Elimination hint validation TO DO');
 		return false;
+	},
+	[hintTypes.ELIM_DUPE]: (hint, { board, solution }) => {
+		console.warn('Elimination-Duplicate hint validation TO DO');
+		return false;
 	}
 }

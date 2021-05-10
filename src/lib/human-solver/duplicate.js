@@ -56,7 +56,8 @@ export function humanSolveDuplicateLine({ board, solution }, options = {}) {
 			targets,
 			technique: 'elim-duplicate',
 			elimType: `${boardLine._least}-${boardLine._most}`,
-			source: [...sources]
+			source: [...sources],
+			targetLine: boardLine.lineId
 		});
 	}
 	return results;

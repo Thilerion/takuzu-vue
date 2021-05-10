@@ -204,7 +204,7 @@ const gameCheckModule = {
 					} else return -1;
 				})
 				console.log('DUPE HINTS!')
-				const hint = createHint(hintTypes.ELIMINATION, sorted[0]);
+				const hint = createHint(hintTypes.ELIM_DUPE, sorted[0]);
 				console.log({ dupeHintResult, sorted, hint });
 				dispatch('setHints', [hint]);
 				return;
