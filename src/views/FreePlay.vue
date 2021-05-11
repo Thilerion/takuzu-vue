@@ -204,7 +204,7 @@ export default {
 
 <style scoped lang="postcss">
 .freeplay {
-	height: var(--vw-height);
+	height: var(--vh-total);
 	z-index: 100;
 	width: 100vw;
 	position: fixed;

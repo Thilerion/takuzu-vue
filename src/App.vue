@@ -3,7 +3,7 @@
 		class="root"
 		:style="{
 			'min-height': viewportHeight,
-			'--vw-height': viewportHeight,
+			'--vh-total': viewportHeight,
 		}">
 		<!-- TODO: transition for MainPage <-> OverlayPage -->
 		<router-view v-slot="{ Component }">
