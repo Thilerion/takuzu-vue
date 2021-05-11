@@ -6,7 +6,7 @@
 			<IconBtn>more_vert</IconBtn>
 		</header>
 		
-		<div class="main justify-center">
+		<div class="main justify-center relative">
 			<span class="main-board-wrapper">
 				<GameBoard
 					v-if="board"
@@ -14,6 +14,7 @@
 					:columns="columns"
 					:headerHeight="'64px'"
 					:controlsHeight="'96px'"
+					:rulerSize="'16px'"
 				/>
 			</span>
 			
