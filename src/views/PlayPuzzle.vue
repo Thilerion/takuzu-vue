@@ -12,6 +12,8 @@
 					v-if="board"
 					:rows="rows"
 					:columns="columns"
+					:headerHeight="'64px'"
+					:controlsHeight="'96px'"
 				/>
 			</span>
 			

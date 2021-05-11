@@ -7,24 +7,27 @@
 </template>
 
 <script>
-const CSS_VAR_KEYS = ['rows', 'columns'];
-function toCssVarName(name) {
-	return `--${name}`;
-}
-
 export default {
 	props: {
 		rows: Number,
 		columns: Number,
+		headerHeight: {
+			type: String,
+			default: '64px'
+		},
+		controlsHeight: {
+			type: String,
+			default: '96px'
+		}
 	},
 	computed: {
 		cssVars() {
-			const result = {};
-			for (const key of CSS_VAR_KEYS) {
-				result[toCssVarName(key)] = this[key];
+			return {
+				'--rows': this.rows,
+				'--columns': this.columns,
+				'--header-height': this.headerHeight,
+				'--controls-height': this.controlsHeight,
 			}
-			console.log(result);
-			return result;
 		}
 	}
 };
@@ -32,8 +35,6 @@ export default {
 
 <style lang="postcss" scoped>
 .board {
-	--header-height: 64px;
-	--controls-height: 96px;
 
 	--unavail-height: calc(var(--header-height) + var(--controls-height));
 
