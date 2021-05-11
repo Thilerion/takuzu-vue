@@ -20,10 +20,14 @@ export default {
 		amount: {
 			type: Number,
 			required: true
+		},
+		disabled: {
+			type: Boolean
 		}
 	},
 	computed: {
 		rulerLines() {
+			if (this.disabled) return [];
 			if (this.lineType === 'rows') {
 				return Array(this.amount).fill(null).map((_val, idx) => {
 					return String.fromCharCode(idx + 65);
@@ -38,8 +42,8 @@ export default {
 
 <style lang="postcss" scoped>
 .ruler {
-	@apply flex bg-black bg-opacity-5 leading-none;
-	font-size: 12px;
+	@apply flex leading-none;
+	font-size: 10px;
 }
 .ruler-rows {
 	grid-column: 1 / span 1;
@@ -59,16 +63,16 @@ export default {
 }
 
 .ruler > div {
-	@apply text-center;
+	@apply text-center flex items-center justify-center h-full w-full;
 }
 .ruler-rows > div {
 	@apply mr-auto;
-	width: 12px;
-	height: 12px;
+	/* width: 12px; */
+	/* height: 12px; */
 }
 .ruler-columns > div {
 	@apply mb-auto;
-	width: calc(100% - var(--cell-padding) * 2);
-	height: 12px;
+	/* width: calc(100% - var(--cell-padding) * 2); */
+	/* height: 12px; */
 }
 </style>
