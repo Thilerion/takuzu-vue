@@ -1,7 +1,13 @@
 <template>
 	<div class="board new-board relative" :style="cssVars">
-		<div class="ruler ruler-row"></div>
-		<div class="ruler ruler-column"></div>
+		<Ruler
+			line-type="columns"
+			:amount="columns"
+		/>
+		<Ruler
+			line-type="rows"
+			:amount="rows"
+		/>
 		<div class="cell" v-for="n in rows * columns" :key="n">
 			<div class="inner-celll">{{n}}</div>
 		</div>
@@ -9,7 +15,12 @@
 </template>
 
 <script>
+import Ruler from './Ruler';
+
 export default {
+	components: {
+		Ruler,
+	},
 	props: {
 		rows: Number,
 		columns: Number,
@@ -41,17 +52,6 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
-.ruler-row {
-	grid-column: 1 / span 1;
-	grid-row: 1 / span calc(var(--rows) + 1);
-}
-.ruler-column {
-	grid-row: 1 / span 1;
-	grid-column: 1 / span calc(var(--columns) + 1);
-}
-.ruler {
-	@apply bg-red-400 bg-opacity-50;
-}
 .board {
 
 	--unavail-height: calc(var(--header-height) + var(--controls-height) + var(--ruler-size));
@@ -64,6 +64,8 @@ export default {
 
 	--cell-max-h: calc(var(--grid-max-h) / var(--rows));
 	--cell-max-w: calc(var(--grid-max-w) / var(--columns));
+
+	--cell-padding: 2px;
 }
 .board {
 	@apply grid relative mx-auto;
@@ -86,7 +88,7 @@ export default {
 
 .inner-celll {
 	@apply bg-teal-200 m-auto overflow-hidden;
-	width: calc(100% - 5px);
-	height: calc(100% - 5px);
+	width: calc(100% - var(--cell-padding) * 2);
+	height: calc(100% - var(--cell-padding) * 2);
 }
 </style>
