@@ -6,10 +6,13 @@ process.env.VUE_APP_VERSION = packageAppVersion;
 module.exports = {
 	configureWebpack: {
 		output: {
-			globalObject: 'this'
+			globalObject: 'self'
 		},
 		plugins: [
-			new WorkerPlugin()
+			new WorkerPlugin({
+				filename: '[name].[hash:5].js',
+				chunkFilename: '[name].[hash:5].js'
+			})
 		]
 	},
 }
