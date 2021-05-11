@@ -136,12 +136,12 @@ export default {
 }
 
 .inner-celll.red {
-	@apply bg-red-500;
+	@apply bg-red-500 dark:bg-red-600 dark:bg-opacity-70;
 }
 .inner-celll.blue {
-	@apply bg-blue-500;
+	@apply bg-blue-500 dark:bg-blue-600 dark:bg-opacity-90;
 }
 .inner-celll.none {
-	@apply bg-gray-100;
+	@apply bg-gray-100 dark:bg-gray-600 dark:bg-opacity-25;
 }
 </style>

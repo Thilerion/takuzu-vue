@@ -42,7 +42,7 @@
 				<PlayGameCheckIndicator />
 			</OldGameBoardWrapper> -->
 		</div>
-		<div class="flex-shrink-0 my-footer bg-gray-50 border-t text-center h-24">
+		<div class="flex-shrink-0 my-footer bg-none dark:bg-gray-800 dark:bg-opacity-30 text-gray-900 text-opacity-80 text-sm px-8 py-2 dark:text-opacity-80 dark:text-white border-t border-gray-200 dark:border-gray-800 text-center h-24">
 			Controls are here!
 		</div>
 	</div>
@@ -156,7 +156,7 @@ export default {
 }
 
 .puzzle-info {
-	@apply px-1 pb-1 text-xs flex flex-1 items-end text-gray-500 dark:text-gray-400 font-medium tracking-wider border-b border-gray-400 dark:border-gray-300 border-opacity-20;
+	@apply px-1 pb-1 text-xs flex flex-1 items-end text-gray-500 dark:text-gray-400 font-medium tracking-wider border-b border-gray-400 dark:border-gray-300 border-opacity-20 dark:border-opacity-10;
 	min-width: 220px;
 }
 .puzzle-info > *:nth-child(2) {
