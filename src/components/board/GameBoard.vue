@@ -1,12 +1,12 @@
 <template>
 	<div
-		class="board relative z-10"
+		class="board relative z-10 old-board"
 		@pointerdown="boardClicked"
 		@pointerup="onPointerUp"
 	>
 		<GameBoardCell
 			v-for="cell in cells"
-			:key="cell.idx"
+			:key="cell.x + ',' + cell.y"
 			v-bind="cell"
 			:active="isActiveCell(cell)"
 			:style="{
@@ -19,12 +19,12 @@
 			:ref="'cell-' + cell.idx"
 			@clicked="toggleCell"
 		/>
-		<GameBoardLineCounts
+		<!-- <GameBoardLineCounts
 			v-if="showLineCounts"
 			:count-type="lineCountType"
-		/>
-		<GameBoardLineIds v-else-if="showBoardCoordinates" />
-		<GameBoardRuleViolation v-for="(conflict, idx) in ruleViolations" :value="conflict" :key="idx" />
+		/> -->
+		<!-- <GameBoardLineIds v-else-if="showBoardCoordinates" /> -->
+		<!-- <GameBoardRuleViolation v-for="(conflict, idx) in ruleViolations" :value="conflict" :key="idx" /> -->
 	</div>
 </template>
 
@@ -58,12 +58,15 @@ export default {
 	},
 	computed: {
 		finishedAndCorrect() {
+			return false;
 			return this.$store.getters.finishedAndCorrect;
 		},
 		showBoardCoordinates() {
+			return false;
 			return this.$store.getters['settings/showBoardCoordinates'];
 		},
 		showLineCounts() {
+			return false;
 			return this.$store.getters['settings/showBoardLineCounts'];
 		},
 		lineCountType() {

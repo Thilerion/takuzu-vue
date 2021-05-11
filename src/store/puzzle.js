@@ -1,6 +1,5 @@
-const { SimpleBoard } = require("@/lib/board/Board");
-
-const worker = new Worker('../generate-worker.js', { type: 'module' });
+import { SimpleBoard } from '../lib/board/Board';
+import { sendWorkerMessage, initPuzzleWorkerReceiver } from '@/workers/generate-puzzle';
 
 const defaultState = () => ({
 	// game config
@@ -53,6 +52,9 @@ const puzzleModule = {
 		},
 		reset: state => Object.assign(state, defaultState()),
 		setInitialized: (state, val) => state.initialized = val,
+
+		// puzzle actions
+		setValue: (state, {x, y, value}) => state.board.assign(x, y, value),
 	},
 
 	actions: {
@@ -61,10 +63,11 @@ const puzzleModule = {
 			
 			try {
 				// setup worker message receiving and sending
-				const receivedDataPromise = initReceiver();
+				const receivedDataPromise = initPuzzleWorkerReceiver();
 				sendWorkerMessage({ width, height, difficulty });
-				
+				console.log('awaiting data...');
 				const data = await receivedDataPromise;
+				console.log('data received!');
 				const {
 					board: boardStr, solution: solutionStr
 				} = data;
@@ -96,19 +99,6 @@ const puzzleModule = {
 		}
 	}
 
-}
-
-function sendWorkerMessage(message) {
-	worker.postMessage({ message });
-}
-function initReceiver() {
-	return new Promise((resolve, reject) => {
-		worker.onmessage = event => {
-			const { data } = event;
-			if (data.error) reject(data.error);
-			else resolve(data);
-		}
-	})
 }
 
 export default puzzleModule;

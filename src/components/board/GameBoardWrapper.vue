@@ -13,6 +13,9 @@ import { LINE_INFO_COORD_SIZE, MAX_FONT_SIZE, MIN_FONT_SIZE } from './config';
 import throttle from 'lodash.throttle';
 
 export default {
+	props: {
+		board: Object
+	},
 	data() {
 		return {
 			lineInfoCoordsSize: LINE_INFO_COORD_SIZE,
@@ -23,9 +26,6 @@ export default {
 		}
 	},
 	computed: {
-		board() {
-			return this.$store.state.game.board;
-		},
 		boardColumns() {
 			return this.board.width;
 		},
@@ -34,12 +34,15 @@ export default {
 		},
 
 		hasLineInfoPadding() {
+			return false;
 			return this.$store.getters['settings/boardHasLineInfoPadding'];
 		},
 		hasLineCountPadding() {
+			return false;
 			return this.$store.getters['settings/showBoardLineCounts'];
 		},
 		hasLineCoordPadding() {
+			return false;
 			return this.$store.getters['settings/showBoardCoordinates'];
 		},
 
