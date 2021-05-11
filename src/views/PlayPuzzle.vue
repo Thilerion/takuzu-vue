@@ -1,21 +1,32 @@
 <template>
-	<div class="fixed overflow-hidden inset-0 flex flex-col z-20 text-gray-900 bg-white">
-		<header class="bg-gray-50 flex justify-between items-center h-16 border-b px-1 flex-shrink-0">
-			<IconBtn>close</IconBtn>
-			<button @click="cycleFakeSize" class="font-medium tracking-widest text-xl">{{columns}}x{{rows}}</button>
-			<IconBtn>more_vert</IconBtn>
-		</header>
+	<div class="fixed box-border overflow-auto inset-0 flex flex-col z-20 text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-white">
+
+		<GameBoardHeader
+			class="flex-shrink-0"
+			@cycle-size="cycleFakeSize"
+			:rows="rows"
+			:columns="columns"	
+		/>
 		
 		<div class="main justify-center relative">
-			<span class="main-board-wrapper">
+			<span class="main-board-wrapper py-2">
 				<GameBoard
 					v-if="board"
 					:rows="rows"
 					:columns="columns"
-					:headerHeight="'64px'"
+					:headerHeight="'3rem'"
 					:controlsHeight="'96px'"
 					:rulerSize="'16px'"
-				/>
+				>
+					<div
+						class="puzzle-info"
+					>
+						<div>Easy</div>
+						<div>Hints: 2</div>
+						<div>1:45</div>
+						<!-- TODO: set max width to rendered board size somehow -->
+					</div>
+				</GameBoard>
 			</span>
 			
 			<!-- <OldGameBoardWrapper
@@ -39,10 +50,13 @@
 
 <script>
 import store from '@/store';
+
 import PlayGameHeader from '@/components/play-game/PlayGameHeader.vue';
 import OldGameBoardWrapper from '@/components/board/GameBoardWrapper';
 import OldGameBoard from '@/components/board/GameBoard';
+
 import GameBoard from '@/components/gameboard/GameBoard';
+import GameBoardHeader from '@/components/gameboard/GameBoardHeader';
 
 export default {
 	components: {
@@ -51,6 +65,7 @@ export default {
 		OldGameBoard,
 
 		GameBoard,
+		GameBoardHeader,
 	},
 	data() {
 		return {
@@ -132,11 +147,20 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
-.header {
-	@apply flex-none h-16;
+.inset-0 {
+	max-height: var(--vh-total);
 }
+
 .main {
 	@apply flex-1 flex flex-col;
+}
+
+.puzzle-info {
+	@apply px-1 pb-1 text-xs flex flex-1 items-end text-gray-500 dark:text-gray-400 font-medium tracking-wider border-b border-gray-400 dark:border-gray-300 border-opacity-20;
+	min-width: 220px;
+}
+.puzzle-info > *:nth-child(2) {
+	@apply flex-1 text-center;
 }
 
 .old-board {

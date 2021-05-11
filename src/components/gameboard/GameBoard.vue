@@ -10,6 +10,9 @@
 				:amount="rows"
 				:disabled="!rulerSize || rulerSize === '0px'"			
 			/>
+			<div class="puzzle-info-wrapper">
+				<slot />
+			</div>
 		<div class="cell" v-for="n in rows * columns" :key="n">
 			<div class="inner-celll red" v-if="coloredCells.red.includes(n)"></div>
 			<div class="inner-celll blue" v-else-if="coloredCells.blue.includes(n)"></div>
@@ -84,8 +87,9 @@ export default {
 
 <style lang="postcss" scoped>
 .board {
+	--puzzle-info-height: 1.5rem;
 
-	--unavail-height: calc(var(--header-height) + var(--controls-height) + var(--ruler-size));
+	--unavail-height: calc(var(--header-height) + var(--controls-height) + var(--ruler-size) + var(--puzzle-info-height));
 	--unavail-width: calc(var(--ruler-size));
 
 	--vh98: calc(var(--vh-total) * 0.98);
@@ -100,12 +104,20 @@ export default {
 }
 .board {
 	@apply grid relative mx-auto;
-	grid-template-rows: var(--ruler-size) repeat(var(--rows), 1fr);
+	grid-template-rows: var(--puzzle-info-height) var(--ruler-size) repeat(var(--rows), 1fr);
 	grid-template-columns: var(--ruler-size) repeat(var(--columns), 1fr);
 	gap: 1px;
 	max-width: var(--grid-max-w);
 	max-height: var(--grid-max-h);
 	aspect-ratio: calc(var(--columns) / var(--rows));
+}
+
+.puzzle-info-wrapper {
+	grid-row: 1 / span 1;
+	grid-column: 1 / span calc(var(--columns) + 1);
+	padding-left: var(--ruler-size);
+	/* Flexbox with child min-width to keep center on overflow */
+	@apply relative flex flex-row justify-center w-full items-start;
 }
 
 .new-board .cell {

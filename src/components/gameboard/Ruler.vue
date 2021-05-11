@@ -47,14 +47,14 @@ export default {
 }
 .ruler-rows {
 	grid-column: 1 / span 1;
-	grid-row: 1 / span calc(var(--rows) + 1);
+	grid-row: 2 / span calc(var(--rows) + 1);
 
 	margin-top: calc(var(--ruler-size) + var(--cell-padding));
 	margin-bottom: var(--cell-padding);
 	@apply flex-col justify-around items-center;
 }
 .ruler-columns {
-	grid-row: 1 / span 1;
+	grid-row: 2 / span 1;
 	grid-column: 1 / span calc(var(--columns) + 1);
 
 	margin-left: calc(var(--ruler-size) + var(--cell-padding));
