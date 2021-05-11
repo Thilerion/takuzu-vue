@@ -6,14 +6,14 @@
 			<IconBtn>more_vert</IconBtn>
 		</header>
 		
-		<div class="main">
-			<div class="main-board-wrapper flex-1 h-full">
+		<div class="main justify-center">
+			<span class="main-board-wrapper">
 				<GameBoard
 					v-if="board"
 					:rows="rows"
 					:columns="columns"
 				/>
-			</div>
+			</span>
 			
 			<!-- <OldGameBoardWrapper
 				v-if="board"
