@@ -9,13 +9,13 @@
 		/>
 		
 		<div class="main justify-center relative">
-			<span class="main-board-wrapper py-2">
+			<span class="main-board-wrapper mx-auto py-2">
 				<GameBoard
 					v-if="board"
 					:rows="rows"
 					:columns="columns"
-					:headerHeight="'3rem'"
-					:controlsHeight="'96px'"
+					:headerHeight="'80px'"
+					:controlsHeight="'112px'"
 					:rulerSize="'16px'"
 				>
 					<div
@@ -28,21 +28,8 @@
 					</div>
 				</GameBoard>
 			</span>
-			
-			<!-- <OldGameBoardWrapper
-				v-if="board"
-				:board="board"
-			>
-				<OldGameBoard
-					:rows="rows"
-					:columns="columns"
-					:cells="cells"
-					@finish-game="finishGame"
-				/>
-				<PlayGameCheckIndicator />
-			</OldGameBoardWrapper> -->
 		</div>
-		<div class="flex-shrink-0 my-footer bg-none dark:bg-gray-800 dark:bg-opacity-30 text-gray-900 text-opacity-80 text-sm px-8 py-2 dark:text-opacity-80 dark:text-white border-t border-gray-200 dark:border-gray-800 text-center h-24">
+		<div class="flex-shrink-0 my-footer bg-none dark:bg-gray-800 dark:bg-opacity-30 text-gray-900 text-opacity-80 text-sm px-8 py-2 dark:text-opacity-80 dark:text-white border-t border-gray-200 dark:border-gray-800 text-center h-28">
 			Controls are here!
 		</div>
 	</div>

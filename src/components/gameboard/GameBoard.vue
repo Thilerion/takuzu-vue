@@ -95,21 +95,33 @@ export default {
 	--vh98: calc(var(--vh-total) * 0.98);
 
 	--grid-max-h: calc(var(--vh98) - var(--unavail-height));
-	--grid-max-w: calc(100vw - 0.25rem - var(--unavail-width));
+	--grid-max-w: calc(100vw - 1.4rem - var(--unavail-width));
 
 	--cell-max-h: calc(var(--grid-max-h) / var(--rows));
 	--cell-max-w: calc(var(--grid-max-w) / var(--columns));
 
 	--cell-padding: 0.5px;
+
+	--aspect-ratio: calc(var(--columns) / var(--rows));
+	
+	--ar-width: calc(var(--grid-max-h) * var(--aspect-ratio));
+	--ar-height: calc(var(--grid-max-w) / var(--aspect-ratio));
+
+	--grid-height: min(var(--grid-max-h), var(--ar-height));
+	--grid-width: min(var(--grid-max-w), var(--ar-width));
+
+	--cell-size-w: calc(var(--grid-width) / var(--columns) - var(--cell-padding));
+	--cell-size-h: calc(var(--grid-height) / var(--rows) - var(--cell-padding));
+	--cell-size: min(var(--cell-size-w), var(--cell-size-h));
 }
 .board {
-	@apply grid relative mx-auto;
-	grid-template-rows: var(--puzzle-info-height) var(--ruler-size) repeat(var(--rows), 1fr);
-	grid-template-columns: var(--ruler-size) repeat(var(--columns), 1fr);
+	@apply inline-grid relative mx-auto;
+	grid-template-rows: var(--puzzle-info-height) var(--ruler-size) repeat(var(--rows), var(--cell-size));
+	grid-template-columns: var(--ruler-size) repeat(var(--columns), var(--cell-size));
 	gap: 1px;
-	max-width: var(--grid-max-w);
-	max-height: var(--grid-max-h);
-	aspect-ratio: calc(var(--columns) / var(--rows));
+	/* max-width: var(--grid-max-w); */
+	/* max-height: var(--grid-max-h); */
+	/* aspect-ratio: calc(var(--columns) / var(--rows)); */
 }
 
 .puzzle-info-wrapper {
@@ -121,12 +133,13 @@ export default {
 }
 
 .new-board .cell {
-	@apply bg-blue-300 text-xs overflow-hidden flex justify-center items-center bg-opacity-0 rounded-sm;	
-	aspect-ratio: 1;
+	@apply bg-blue-300 text-xs overflow-hidden flex justify-center items-center bg-opacity-0 rounded-sm;
+	/* aspect-ratio: 1; */
+	padding: var(--cell-padding);
 	min-height: 1rem;
 	min-width: 1rem;
-	width: 100%;
-	height: 100%;
+	width: var(--cell-size);
+	height: var(--cell-size);
 }
 
 .inner-celll {
