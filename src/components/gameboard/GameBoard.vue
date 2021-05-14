@@ -1,5 +1,5 @@
 <template>
-	<div class="board new-board relative" :style="cssVars">
+	<div class="board new-board relative">
 			<Ruler
 				line-type="columns"
 				:amount="columns"
@@ -13,10 +13,12 @@
 			<div class="puzzle-info-wrapper">
 				<slot />
 			</div>
-		<div class="cell" v-for="n in rows * columns" :key="n">
-			<div class="inner-celll red" v-if="coloredCells.red.includes(n)"></div>
-			<div class="inner-celll blue" v-else-if="coloredCells.blue.includes(n)"></div>
-			<div class="inner-celll none" v-else></div>
+		<div class="puzzle-grid" :style="{width: gridWidth, height: gridHeight}">
+			<div class="cell" v-for="n in rows * columns" :key="n">
+				<div class="inner-celll red" v-if="coloredCells.red.includes(n)"></div>
+				<div class="inner-celll blue" v-else-if="coloredCells.blue.includes(n)"></div>
+				<div class="inner-celll none" v-else></div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -31,18 +33,9 @@ export default {
 	props: {
 		rows: Number,
 		columns: Number,
-		headerHeight: {
-			type: String,
-			default: '64px'
-		},
-		controlsHeight: {
-			type: String,
-			default: '96px'
-		},
-		rulerSize: {
-			type: String,
-			default: '0px'
-		},
+		rulerSize: String,
+		gridHeight: String,
+		gridWidth: String,
 	},
 	data() {
 		return {
@@ -53,15 +46,6 @@ export default {
 		}
 	},
 	computed: {
-		cssVars() {
-			return {
-				'--rows': this.rows,
-				'--columns': this.columns,
-				'--header-height': this.headerHeight,
-				'--controls-height': this.controlsHeight,
-				'--ruler-size': this.rulerSize,
-			}
-		},
 		cells() {
 			return Array(this.rows * this.columns)
 		}
@@ -87,47 +71,22 @@ export default {
 
 <style lang="postcss" scoped>
 .board {
-	--puzzle-info-height: 1.5rem;
-
-	--unavail-height: calc(var(--header-height) + var(--controls-height) + var(--ruler-size) + var(--puzzle-info-height));
-	--unavail-width: calc(var(--ruler-size));
-
-	--vh98: calc(var(--vh-total) * 0.98);
-
-	--grid-max-h: calc(var(--vh98) - var(--unavail-height));
-	--grid-max-w: calc(100vw - 1.4rem - var(--unavail-width));
-
-	--cell-max-h: calc(var(--grid-max-h) / var(--rows));
-	--cell-max-w: calc(var(--grid-max-w) / var(--columns));
-
-	--cell-padding: 0.5px;
-
-	--aspect-ratio: calc(var(--columns) / var(--rows));
-	
-	--ar-width: calc(var(--grid-max-h) * var(--aspect-ratio));
-	--ar-height: calc(var(--grid-max-w) / var(--aspect-ratio));
-
-	--grid-height: min(var(--grid-max-h), var(--ar-height));
-	--grid-width: min(var(--grid-max-w), var(--ar-width));
-
-	--cell-size-w: calc(var(--grid-width) / var(--columns) - var(--cell-padding));
-	--cell-size-h: calc(var(--grid-height) / var(--rows) - var(--cell-padding));
-	--cell-size: min(var(--cell-size-w), var(--cell-size-h));
+	@apply inline-grid relative;
+	grid-template-areas: "none info"
+		"none ruler-cols"
+		"ruler-rows puzzle-grid";
 }
-.board {
-	@apply inline-grid relative mx-auto;
-	grid-template-rows: var(--puzzle-info-height) var(--ruler-size) repeat(var(--rows), var(--cell-size));
-	grid-template-columns: var(--ruler-size) repeat(var(--columns), var(--cell-size));
-	gap: 1px;
-	/* max-width: var(--grid-max-w); */
-	/* max-height: var(--grid-max-h); */
-	/* aspect-ratio: calc(var(--columns) / var(--rows)); */
+
+.puzzle-grid {
+	@apply bg-green-300;
+	grid-area: puzzle-grid;
+	display: grid;
+	grid-template-rows: repeat(var(--rows), 1fr);
+	grid-template-columns: repeat(var(--columns), 1fr);
 }
 
 .puzzle-info-wrapper {
-	grid-row: 1 / span 1;
-	grid-column: 1 / span calc(var(--columns) + 1);
-	padding-left: var(--ruler-size);
+	grid-area: info;
 	/* Flexbox with child min-width to keep center on overflow */
 	@apply relative flex flex-row justify-center w-full items-start;
 }

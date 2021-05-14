@@ -46,19 +46,19 @@ export default {
 	font-size: 10px;
 }
 .ruler-rows {
-	grid-column: 1 / span 1;
-	grid-row: 2 / span calc(var(--rows) + 1);
+	grid-area: ruler-rows;
+	width: 16px;
 
-	margin-top: calc(var(--ruler-size) + var(--cell-padding));
-	margin-bottom: var(--cell-padding);
+	/* margin-top: calc(var(--ruler-size) + var(--cell-padding));
+	margin-bottom: var(--cell-padding); */
 	@apply flex-col justify-around items-center;
 }
 .ruler-columns {
-	grid-row: 2 / span 1;
-	grid-column: 1 / span calc(var(--columns) + 1);
+	grid-area: ruler-cols;
+	height: 16px;
 
-	margin-left: calc(var(--ruler-size) + var(--cell-padding));
-	margin-right: var(--cell-padding);
+	/* margin-left: calc(var(--ruler-size) + var(--cell-padding));
+	margin-right: var(--cell-padding); */
 	@apply flex-row justify-around items-center;
 }
 

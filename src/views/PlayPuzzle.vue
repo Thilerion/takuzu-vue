@@ -30,14 +30,30 @@
 		</div> -->
 		<div class="main bg-blue-100 justify-center items-center">
 			<GameBoardWrapper
-				:header-height="'80px'"
-				:controls-height="'112px'"
 				:ruler-height="'16px'"
 				:ruler-width="'16px'"
 				:info-height="'21px'"
 				:rows="rows"
 				:columns="columns"
-			/>
+				v-slot="{width, height}"
+			>
+				<GameBoard
+					v-if="board"
+					:rows="rows"
+					:columns="columns"
+					:ruler-size="'16px'"
+					:grid-height="height"
+					:grid-width="width"
+				>
+					<div
+						class="puzzle-info"
+					>
+						<div>Easy</div>
+						<div>Hints: 2</div>
+						<div>1:45</div>
+					</div>
+				</GameBoard>
+			</GameBoardWrapper>
 		</div>
 		<div class="flex-none my-footer bg-none dark:bg-gray-800 dark:bg-opacity-30 text-gray-900 text-opacity-80 text-sm px-8 py-2 dark:text-opacity-80 dark:text-white border-t border-gray-200 dark:border-gray-800 text-center h-28">
 			Controls are here!
