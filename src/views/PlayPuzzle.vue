@@ -28,7 +28,6 @@
 				</GameBoard>
 			</span>
 		</div> -->
-		<div class="main bg-blue-100 justify-center items-center">
 			<GameBoardWrapper
 				:ruler-height="'16px'"
 				:ruler-width="'16px'"
@@ -54,7 +53,6 @@
 					</div>
 				</GameBoard>
 			</GameBoardWrapper>
-		</div>
 		<div class="flex-none my-footer bg-none dark:bg-gray-800 dark:bg-opacity-30 text-gray-900 text-opacity-80 text-sm px-8 py-2 dark:text-opacity-80 dark:text-white border-t border-gray-200 dark:border-gray-800 text-center h-28">
 			Controls are here!
 		</div>

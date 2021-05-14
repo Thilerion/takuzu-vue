@@ -1,7 +1,7 @@
 <template>
+<div class="main justify-center items-center" ref="container">
 	<div
-		class="puzzle-wrapper bg-red-200"
-		ref="puzzleWrapper"
+		class="puzzle-wrapper"
 		:style="{
 			'--unavail-height': heightUnavailable,
 			'--unavail-width': widthUnavailable,
@@ -12,6 +12,7 @@
 	>
 		<slot v-bind="puzzleGridDimensions" />
 	</div>
+</div>
 </template>
 
 <script>
@@ -22,11 +23,11 @@ export default {
 		infoHeight: String,
 		paddingX: {
 			type: String,
-			default: '16px'
+			default: '24px'
 		},
 		paddingY: {
 			type: String,
-			default: '8px'
+			default: '12px'
 		},
 
 		rows: Number,
@@ -78,7 +79,7 @@ export default {
 	},
 	methods: {
 		getWrapperSizes() {
-			const el = this.$refs.puzzleWrapper.parentNode;
+			const el = this.$refs.container;
 			return {
 				width: el.clientWidth,
 				height: el.clientHeight

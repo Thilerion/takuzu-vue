@@ -78,7 +78,6 @@ export default {
 }
 
 .puzzle-grid {
-	@apply bg-green-300;
 	grid-area: puzzle-grid;
 	display: grid;
 	grid-template-rows: repeat(var(--rows), 1fr);
@@ -93,18 +92,22 @@ export default {
 
 .new-board .cell {
 	@apply bg-blue-300 text-xs overflow-hidden flex justify-center items-center bg-opacity-0 rounded-sm;
+	box-sizing: border-box;
 	/* aspect-ratio: 1; */
-	padding: var(--cell-padding);
-	min-height: 1rem;
-	min-width: 1rem;
-	width: var(--cell-size);
-	height: var(--cell-size);
+	/* padding: var(--cell-padding); */
+	/* min-height: 1rem; */
+	/* min-width: 1rem; */
+	/* padding: 1px */
+	/* width: var(--cell-size); */
+	/* height: var(--cell-size); */
 }
 
 .inner-celll {
 	@apply m-auto overflow-hidden rounded-sm;
-	width: calc(100% - var(--cell-padding) * 2);
-	height: calc(100% - var(--cell-padding) * 2);
+	width: 100%;
+	height: 100%;
+	/* width: calc(100% - var(--cell-padding) * 2); */
+	/* height: calc(100% - var(--cell-padding) * 2); */
 }
 
 .inner-celll.red {
@@ -114,6 +117,6 @@ export default {
 	@apply bg-blue-500 dark:bg-blue-600 dark:bg-opacity-90;
 }
 .inner-celll.none {
-	@apply bg-gray-100 dark:bg-gray-600 dark:bg-opacity-25;
+	@apply bg-gray-200 bg-opacity-90 dark:bg-gray-600 dark:bg-opacity-40;
 }
 </style>
