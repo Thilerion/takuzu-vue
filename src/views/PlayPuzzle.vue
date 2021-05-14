@@ -164,10 +164,6 @@ export default {
 	max-height: var(--vh-total);
 }
 
-.main {
-	@apply flex-1 flex flex-col;
-}
-
 .puzzle-info {
 	@apply px-1 pb-1 text-xs flex flex-1 items-end text-gray-500 dark:text-gray-400 font-medium tracking-wider border-b border-gray-400 dark:border-gray-300 border-opacity-20 dark:border-opacity-10;
 	min-width: 220px;

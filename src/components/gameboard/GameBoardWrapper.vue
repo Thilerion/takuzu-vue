@@ -16,6 +16,9 @@
 </template>
 
 <script>
+import debounce from 'lodash.debounce';
+let resizeObserver;
+
 export default {
 	props: {
 		rulerHeight: String,
@@ -78,31 +81,48 @@ export default {
 		}
 	},
 	methods: {
-		getWrapperSizes() {
-			const el = this.$refs.container;
-			return {
-				width: el.clientWidth,
-				height: el.clientHeight
-			}
-		},
 		setWrapperSizes() {
-			const {width, height} = this.getWrapperSizes();
-			this.width = width;
-			this.height = height;
+			const el = this.$refs.container;
+			if (!el) {
+				console.warn('No container element for board.');
+				this.width = 100;
+				this.height = 100;
+				return;
+			}
+			this.width = el.clientWidth;
+			this.height = el.clientHeight;
+		},
+		setContainerSize({contentRect}) {
+			this.width = contentRect.width;
+			this.height = contentRect.height;
 		}
 	},
 	mounted() {
+		console.log('mounted2');
+		resizeObserver.observe(this.$refs.container);
 		this.setWrapperSizes();
 	},
 	created() {
-		window.addEventListener('resize', this.setWrapperSizes);
+		console.log('created');
+		const debounced = debounce(this.setContainerSize, 500);
+		const fn = (entries) => {
+			if (entries.length) {
+				debounced(entries[0]);
+			}
+		}
+		resizeObserver = new ResizeObserver(fn);
 	},
-	unmounted() {
-		window.removeEventListener('resize', this.getWrapperSizes);
-	}
+	beforeUnmount() {
+		console.log('beforeunmount');
+		resizeObserver.disconnect();
+		resizeObserver = null;
+	},
 };
 </script>
 
 <style lang="postcss" scoped>
-
+.main {
+	@apply flex-1 flex flex-col;
+	overflow: hidden;
+}
 </style>
