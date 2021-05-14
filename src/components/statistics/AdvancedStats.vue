@@ -15,7 +15,7 @@
 	</section>
 	<section class="section-block mb-4 text-sm">
 		<h2 class="text-lg font-medium pb-2">By size</h2>
-		<div class="table-header flex flex-row font-medium bg-blue-800 text-white text-right pr-1">
+		<div class="stats-header flex flex-row font-medium bg-blue-800 text-white text-right pr-1">
 			<div class="w-1/5">Size</div>
 			<div class="w-1/4">Solved</div>
 			<div class="w-1/4">Avg</div>
@@ -24,7 +24,7 @@
 		<div
 			v-for="size in bySize"
 			:key="size.key"
-			class="flex flex-row"
+			class="flex flex-row stat-row"
 		>
 			<div class="w-1/5 text-right">{{size.key}}</div>
 			<div class="w-1/4 text-right">{{size.played}}</div>
@@ -34,7 +34,7 @@
 	</section>
 	<section class="section-block mb-4 text-sm">
 		<h2 class="text-lg font-medium pb-2">By difficulty</h2>
-		<div class="table-header flex flex-row font-medium bg-blue-800 text-white text-right pr-1">
+		<div class="stats-header flex flex-row font-medium bg-blue-800 text-white text-right pr-1">
 			<div class="w-1/4">Difficulty</div>
 			<div class="w-1/3">Solved</div>
 			<div class="w-1/3">Rel. avg</div>
@@ -42,7 +42,7 @@
 		<div
 			v-for="diff in byDifficulty"
 			:key="diff.key"
-			class="flex flex-row"
+			class="flex flex-row stat-row"
 		>
 			<div class="w-1/4 text-right">{{diff.key}}</div>
 			<div class="w-1/3 text-right">{{diff.played}}</div>
@@ -51,7 +51,7 @@
 	</section>
 	<section class="section-block mb-4 text-sm">
 		<h2 class="text-lg font-medium pb-2">Combined</h2>
-		<div class="table-header flex flex-row font-medium bg-blue-800 text-white text-right pr-1">
+		<div class="stats-header flex flex-row font-medium bg-blue-800 text-white text-right pr-1">
 			<div class="w-2/12 text-left pl-1">Size</div>
 			<div class="w-2/12">Diff</div>
 			<div class="w-3/12">Solved</div>
@@ -61,7 +61,7 @@
 		<div
 			v-for="item in bySizeAndDifficulty"
 			:key="item.key"
-			class="flex flex-row"
+			class="flex flex-row stat-row"
 		>
 			<div class="w-2/12 text-left pl-1">{{item.size}}</div>
 			<div class="w-2/12 text-right">{{item.difficulty}}</div>
@@ -167,5 +167,26 @@ section > h2 {
 }
 .stats-line .value-1 {
 	@apply w-2/12 text-right;
+}
+
+.stat-row {
+	@apply odd:bg-gray-200 odd:bg-opacity-70 py-2 text-xs;
+}
+
+.stat-row > div:first-child {
+	@apply font-medium text-left;
+}
+.stat-row > div {
+	@apply px-1;
+}
+
+.stats-header > *:first-child {
+	@apply text-left;
+}
+.stats-header {
+	@apply py-2;
+}
+.stats-header > * {
+	@apply px-1;
 }
 </style>
