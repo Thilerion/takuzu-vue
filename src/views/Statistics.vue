@@ -1,6 +1,10 @@
 <template>
 	<div class="flex flex-col">
 		<PageHeader hide-back>Statistics</PageHeader>
+		<BaseButton v-if="!showAdvanced" @click="showAdvanced = true" class="mx-8 mb-4">Show advanced stats</BaseButton>
+		<BaseButton v-else @click="showAdvanced = false" class="mx-8 mb-4">Hide advanced stats</BaseButton>
+
+		<template v-if="!showAdvanced">
 		<section class="grid section-block mb-4">
 			<h2 class="text-lg font-medium pb-2">Overall</h2>
 			<span>Puzzles solved:</span>
@@ -28,21 +32,26 @@
 			<button class="reset-btn" @click="confirmReset">Reset stats</button>
 		</section>
 		<input type="file" hidden id="file-upload" ref="fileUpload" @change="handleStatsImport">
+		</template>
+		<advanced-stats v-bind="advancedStats" v-else-if="advancedStats != null" />
 	</div>
 </template>
 
 <script>
-import { statsQueries } from '@/services/stats';
+import { getAllStats, statsQueries } from '@/services/stats';
 import { puzzleHistoryDb, default as db } from '@/services/stats/db';
 import { exportDB, importInto } from "dexie-export-import";
 import StatsTable from '@/components/StatsTable.vue';
 import { boardTypes } from '@/config';
 import { dimensionsToBoardType } from '@/utils';
+import AdvancedStats from '@/components/statistics/AdvancedStats.vue';
 
 export default {
-	components: { StatsTable },
+	components: { StatsTable, AdvancedStats },
 	data() {
 		return {
+			showAdvanced: false,
+
 			puzzlesSolved: null,
 			averageTime: null,
 			
@@ -61,6 +70,8 @@ export default {
 			],
 
 			exportInProgress: false,
+
+			advancedStats: null,
 		}
 	},
 	methods: {
@@ -195,10 +206,15 @@ export default {
 			});
 			console.log('succesfull import!');
 			this.getInitialData();
+		},
+		async testUniqueKeys() {
+			const r = await getAllStats();
+			this.advancedStats = r;
 		}
 	},
 	beforeMount() {
 		this.getInitialData();
+		this.testUniqueKeys();
 	}
 };
 </script>
