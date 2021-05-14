@@ -32,6 +32,44 @@
 			<div class="w-1/4 text-right">{{size.best}}</div>
 		</div>
 	</section>
+	<section class="section-block mb-4 text-sm">
+		<h2 class="text-lg font-medium pb-2">By difficulty</h2>
+		<div class="table-header flex flex-row font-medium bg-blue-800 text-white text-right pr-1">
+			<div class="w-1/4">Difficulty</div>
+			<div class="w-1/3">Solved</div>
+			<div class="w-1/3">Rel. avg</div>
+		</div>
+		<div
+			v-for="diff in byDifficulty"
+			:key="diff.key"
+			class="flex flex-row"
+		>
+			<div class="w-1/4 text-right">{{diff.key}}</div>
+			<div class="w-1/3 text-right">{{diff.played}}</div>
+			<div class="w-1/3 text-right">{{diff.average}}</div>
+		</div>
+	</section>
+	<section class="section-block mb-4 text-sm">
+		<h2 class="text-lg font-medium pb-2">Combined</h2>
+		<div class="table-header flex flex-row font-medium bg-blue-800 text-white text-right pr-1">
+			<div class="w-2/12 text-left pl-1">Size</div>
+			<div class="w-2/12">Diff</div>
+			<div class="w-3/12">Solved</div>
+			<div class="w-3/12">Average</div>
+			<div class="w-3/12">Best</div>
+		</div>
+		<div
+			v-for="item in bySizeAndDifficulty"
+			:key="item.key"
+			class="flex flex-row"
+		>
+			<div class="w-2/12 text-left pl-1">{{item.size}}</div>
+			<div class="w-2/12 text-right">{{item.difficulty}}</div>
+			<div class="w-3/12 text-right">{{item.played}}</div>
+			<div class="w-3/12 text-right">{{item.average}}</div>
+			<div class="w-3/12 text-right">{{item.best}}</div>
+		</div>
+	</section>
 </div>
 </template>
 
@@ -65,10 +103,30 @@ export default {
 			});
 		},
 		byDifficulty() {
-			return this.results.difficulty;
+			return this.results.difficulty.map(item => {
+				// TODO: must be average adjusted by size...
+				const average = 'TODO';
+				return {...item, average};
+			}).sort((a, b) => a.key - b.key);
 		},
 		bySizeAndDifficulty() {
-			return this.results.sizeAndDifficulty;
+			const typeOrder = [boardTypes.NORMAL, boardTypes.RECT, boardTypes.ODD];
+			return this.results.sizeAndDifficulty.map(item => {
+				const [size, difficulty] = item.key.split('-');
+				const average = this.msToMinSec(item.average);
+				const best = this.msToMinSec(item.best);
+				const [width, height] = size.split('x').map(Number);
+				const numCells = width * height;
+				return {...item, size, difficulty, average, best, numCells};
+			}).sort((a, b) => {
+				if (a.type !== b.type) {
+					return typeOrder.indexOf(a.type) - typeOrder.indexOf(b.type);
+				}
+				if (a.numCells !== b.numCells) {
+					return a.numCells - b.numCells;
+				}
+				return a.difficulty - b.difficulty;
+			})
 		},
 	},
 	methods: {
