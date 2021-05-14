@@ -8,7 +8,7 @@
 			:columns="columns"	
 		/>
 		
-		<div class="main justify-center relative">
+		<!-- <div class="main justify-center relative">
 			<span class="main-board-wrapper mx-auto py-2">
 				<GameBoard
 					v-if="board"
@@ -24,12 +24,22 @@
 						<div>Easy</div>
 						<div>Hints: 2</div>
 						<div>1:45</div>
-						<!-- TODO: set max width to rendered board size somehow -->
 					</div>
 				</GameBoard>
 			</span>
+		</div> -->
+		<div class="main bg-blue-100 justify-center items-center">
+			<GameBoardWrapper
+				:header-height="'80px'"
+				:controls-height="'112px'"
+				:ruler-height="'16px'"
+				:ruler-width="'16px'"
+				:info-height="'21px'"
+				:rows="rows"
+				:columns="columns"
+			/>
 		</div>
-		<div class="flex-shrink-0 my-footer bg-none dark:bg-gray-800 dark:bg-opacity-30 text-gray-900 text-opacity-80 text-sm px-8 py-2 dark:text-opacity-80 dark:text-white border-t border-gray-200 dark:border-gray-800 text-center h-28">
+		<div class="flex-none my-footer bg-none dark:bg-gray-800 dark:bg-opacity-30 text-gray-900 text-opacity-80 text-sm px-8 py-2 dark:text-opacity-80 dark:text-white border-t border-gray-200 dark:border-gray-800 text-center h-28">
 			Controls are here!
 		</div>
 	</div>
@@ -44,6 +54,7 @@ import OldGameBoard from '@/components/board/GameBoard';
 
 import GameBoard from '@/components/gameboard/GameBoard';
 import GameBoardHeader from '@/components/gameboard/GameBoardHeader';
+import GameBoardWrapper from '@/components/gameboard/GameBoardWrapper';
 
 export default {
 	components: {
@@ -53,6 +64,7 @@ export default {
 
 		GameBoard,
 		GameBoardHeader,
+		GameBoardWrapper,
 	},
 	data() {
 		return {
