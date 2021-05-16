@@ -23,6 +23,18 @@
 				<span class="label">Most played combination:</span>
 				<span class="value-1">{{mostPlayedSizePlusDifficulty.size}} @ {{mostPlayedSizePlusDifficulty.difficulty}}*</span>
 			</div>
+			<div class="stats-line">
+				<span class="label">Favorite size:</span>
+				<span class="value-1">{{favoriteSize[0].key}}</span>
+			</div>
+			<div class="stats-line">
+				<span class="label">Favorite difficulty:</span>
+				<span class="value-1">{{favoriteDifficulty.key}}</span>
+			</div>
+			<div class="stats-line">
+				<span class="label">Favorite combination:</span>
+				<span class="value-1">{{favoriteSizePlusDifficulty[0].size}} @ {{favoriteSizePlusDifficulty[0].difficulty}}*</span>
+			</div>
 		</div>
 	</section>
 	<section class="section-block mb-4 text-sm">
@@ -159,6 +171,46 @@ export default {
 				return bestData;
 			}, { played: -1});
 		},
+
+		// TODO: turn favorites into moving averages? over last 30 days or something?
+
+		// favorite stats (should) take into account:
+		// - amount played
+		// - total time played
+		// - expected time for a certain board size, which is used as a modifier for the score in some way
+		favoriteSize() {
+			const getRelativeModifier = cellCount => 0.75 * Math.sqrt(cellCount / 100) + 0.25;
+
+			const withScores = this.bySize.map(sizeStats => {
+				const {width, height} = sizeStats;
+				const cellCount = width * height;
+				const relMod = getRelativeModifier(cellCount);
+				const score = sizeStats.totalTime / relMod;
+				return {...sizeStats, score };
+			})
+			const sorted = withScores.sort((a, b) => b.score - a.score);
+			return sorted;
+		},
+		favoriteDifficulty() {
+			return this.byDifficulty.reduce((bestData, diffData) => {
+				if (diffData.totalTime > bestData.totalTime) return diffData;
+				return bestData;
+			}, { totalTime: 0});
+		},
+		favoriteSizePlusDifficulty() {
+			// TODO: weigh cellCount/timeSpent score separately from amount played
+			const getRelativeModifier = cellCount => 1.2 * Math.sqrt(cellCount / 100) - 0.2;
+
+			const withScores = this.bySizeAndDifficulty.map(sizeStats => {
+				const { numCells, played } = sizeStats;
+				const relMod = getRelativeModifier(numCells);
+				// const score = totalTime / relMod;
+				const score = played * relMod;
+				return {...sizeStats, score };
+			})
+			const sorted = withScores.sort((a, b) => b.score - a.score);
+			return sorted;
+		}
 	},
 	methods: {
 		msToMinSec(ms = 0) {
