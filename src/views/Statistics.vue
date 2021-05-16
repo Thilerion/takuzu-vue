@@ -41,7 +41,7 @@
 import { getAllStats, statsQueries } from '@/services/stats';
 import { puzzleHistoryDb, default as db } from '@/services/stats/db';
 import { exportDB, importInto } from "dexie-export-import";
-import StatsTable from '@/components/StatsTable.vue';
+import StatsTable from '@/components/statistics/StatsTable.vue';
 import { boardTypes } from '@/config';
 import { dimensionsToBoardType } from '@/utils';
 import AdvancedStats from '@/components/statistics/AdvancedStats.vue';
@@ -209,6 +209,7 @@ export default {
 		},
 		async testUniqueKeys() {
 			const r = await getAllStats();
+			console.log(r);
 			this.advancedStats = r;
 		}
 	},

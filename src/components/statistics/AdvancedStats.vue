@@ -11,6 +11,18 @@
 				<span class="label">Average time:</span>
 				<span class="value-1">{{msToMinSec(totalTime / totalPlayed)}}</span>
 			</div>
+			<div class="stats-line">
+				<span class="label">Most played size:</span>
+				<span class="value-1">{{mostPlayedSize.key}}</span>
+			</div>
+			<div class="stats-line">
+				<span class="label">Most played difficulty:</span>
+				<span class="value-1">{{mostPlayedDifficulty.key}}</span>
+			</div>
+			<div class="stats-line">
+				<span class="label">Most played combination:</span>
+				<span class="value-1">{{mostPlayedSizePlusDifficulty.size}} @ {{mostPlayedSizePlusDifficulty.difficulty}}*</span>
+			</div>
 		</div>
 	</section>
 	<section class="section-block mb-4 text-sm">
@@ -128,6 +140,25 @@ export default {
 				return a.difficulty - b.difficulty;
 			})
 		},
+
+		mostPlayedSize() {
+			return this.bySize.reduce((maxSizeData, sizeData) => {
+				if (sizeData.played > maxSizeData.played) return sizeData;
+				return maxSizeData;
+			}, { played: -1});
+		},
+		mostPlayedDifficulty() {
+			return this.byDifficulty.reduce((bestData, diffData) => {
+				if (diffData.played > bestData.played) return diffData;
+				return bestData;
+			}, { played: -1});
+		},
+		mostPlayedSizePlusDifficulty() {
+			return this.bySizeAndDifficulty.reduce((bestData, diffData) => {
+				if (diffData.played > bestData.played) return diffData;
+				return bestData;
+			}, { played: -1});
+		},
 	},
 	methods: {
 		msToMinSec(ms = 0) {
@@ -139,6 +170,13 @@ export default {
 			const seconds = fullSeconds % 60;
 			return `${Math.floor(minutes)}:${format(seconds)}`;
 		},
+	},
+	mounted() {
+		console.log({
+			bySize: this.bySize,
+			byDifficulty: this.byDifficulty,
+			bySizeAndDifficulty: this.bySizeAndDifficulty,
+		})
 	}
 };
 </script>
@@ -157,16 +195,19 @@ section > h2 {
 }
 
 .stats-group {
-	@apply space-y-2 text-sm;
+	@apply text-sm;
 }
 .stats-line {
-	@apply flex;
+	@apply flex leading-none px-2 py-3;
 }
 .stats-line .label {
-	@apply w-4/12 font-medium;
+	@apply w-8/12 font-medium;
 }
 .stats-line .value-1 {
-	@apply w-2/12 text-right;
+	@apply w-3/12 text-left;
+}
+.stats-line:nth-child(odd) {
+	@apply bg-gray-200 bg-opacity-50;
 }
 
 .stat-row {
