@@ -1,8 +1,8 @@
 <template>
 	<div class="flex flex-col">
 		<PageHeader hide-back>Statistics</PageHeader>
-		<BaseButton v-if="!showAdvanced" @click="showAdvanced = true" class="mx-8 mb-4">Show advanced stats</BaseButton>
-		<BaseButton v-else @click="showAdvanced = false" class="mx-8 mb-4">Hide advanced stats</BaseButton>
+		<BaseButton v-if="!showAdvanced" @click="showAdvanced = true" class="mx-8 mb-4">Show new stats screen</BaseButton>
+		<BaseButton v-else @click="showAdvanced = false" class="mx-8 mb-4">Show original stats screen</BaseButton>
 
 		<template v-if="!showAdvanced">
 		<section class="grid section-block mb-4">
@@ -33,7 +33,10 @@
 		</section>
 		<input type="file" hidden id="file-upload" ref="fileUpload" @change="handleStatsImport">
 		</template>
-		<advanced-stats v-bind="advancedStats" v-else-if="advancedStats != null" />
+		<template v-else>
+			<advanced-stats v-bind="advancedStats" v-if="advancedStats != null" />
+			<div class="p-4 text-lg text-center">Loading...</div>
+		</template>
 	</div>
 </template>
 
@@ -50,7 +53,7 @@ export default {
 	components: { StatsTable, AdvancedStats },
 	data() {
 		return {
-			showAdvanced: false,
+			showAdvanced: true,
 
 			puzzlesSolved: null,
 			averageTime: null,

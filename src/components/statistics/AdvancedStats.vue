@@ -1,7 +1,7 @@
 <template>
 <div>
 	<section class="section-block mb-4">
-		<h2 class="text-lg font-medium pb-2">Overall</h2>
+		<!-- <h2 class="text-lg font-medium pb-2">Overall</h2> -->
 		<div class="stats-group">
 			<div class="stats-line">
 				<span class="label">Puzzles solved:</span>
@@ -11,6 +11,11 @@
 				<span class="label">Average time:</span>
 				<span class="value-1">{{msToMinSec(totalTime / totalPlayed)}}</span>
 			</div>
+		</div>
+	</section>
+	<section class="section-block mb-4">
+		<h2 class="text-lg font-medium pb-2">Most played</h2>
+		<div class="stats-group">
 			<div class="stats-line">
 				<span class="label">Most played size:</span>
 				<span class="value-1">{{mostPlayedSize.key}}</span>
@@ -23,6 +28,12 @@
 				<span class="label">Most played combination:</span>
 				<span class="value-1">{{mostPlayedSizePlusDifficulty.size}} @ {{mostPlayedSizePlusDifficulty.difficulty}}*</span>
 			</div>
+		</div>
+	</section>
+	<section class="section-block mb-4">
+		<h2 class="text-lg font-medium">Favorites</h2>
+		<div class="pb-3 text-xs leading-snug tracking-wide opacity-80">Based on number of puzzles played, combined with total time and expected time for a puzzle size</div>
+		<div class="stats-group">
 			<div class="stats-line">
 				<span class="label">Favorite size:</span>
 				<span class="value-1">{{favoriteSize[0].key}}</span>
