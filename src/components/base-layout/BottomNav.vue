@@ -57,6 +57,7 @@ export default {
 
 nav {
 	box-shadow: 0px 7px 15px rgba(0, 0, 0, 0.2);
+	@apply bg-opacity-90;
 }
 @supports (backdrop-filter: blur(4px)) {
 	nav {
