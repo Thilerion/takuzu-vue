@@ -23,14 +23,17 @@
 				:data-col="colIdx"
 				@click="cellClick($event, { x: colIdx, y: rowIdx })"
 			>
-				<div class="cell-bg"></div>
+				<div class="cell-wrap">
+					<div class="cell-bg"></div>
 
-				<div class="inner-celll red" v-if="grid[rowIdx][colIdx] == '1'"></div>
-				<div class="inner-celll blue" v-else-if="grid[rowIdx][colIdx] == '0'"></div>
+					<div class="inner-celll red" v-if="grid[rowIdx][colIdx] == '1'"></div>
+					<div class="inner-celll blue" v-else-if="grid[rowIdx][colIdx] == '0'"></div>
 
-				<transition name="touch-anim" @after-enter="removeTouchAnim(`${colIdx},${rowIdx}`)">
-				<div v-if="touchStates.has(`${colIdx},${rowIdx}`)" class="touch-anim-el"></div>
-				</transition>
+					<transition name="touch-anim" @after-enter="removeTouchAnim(`${colIdx},${rowIdx}`)">
+						<div v-if="touchStates.has(`${colIdx},${rowIdx}`)" class="touch-anim-el"></div>
+					</transition>
+				</div>
+				
 			</button>
 		</template>
 	</div>
@@ -87,12 +90,15 @@ export default {
 }
 
 .cell {
-	@apply text-xs flex justify-center items-center bg-opacity-0 rounded-sm p-px focus:outline-none relative;
+	@apply text-xs flex justify-center items-center bg-opacity-0 rounded-sm p-px focus:outline-none;
 	width: var(--cell-size);
 	height: var(--cell-size);
 }
 .cell.locked {
 	@apply cursor-default;
+}
+.cell-wrap {
+	@apply h-full w-full relative;
 }
 .cell-bg {
 	@apply z-0 absolute w-full h-full rounded;
@@ -125,7 +131,7 @@ export default {
 }
 
 .touch-anim-el {
-	@apply absolute pointer-events-none w-full h-full z-20 ring-2 ring-gray-700 opacity-100 rounded;
+	@apply absolute inset-0 pointer-events-none w-full h-full z-30 ring-2 ring-gray-700 opacity-100 rounded;
 }
 .touch-anim-enter-active {
 	transition: opacity .1s ease;
