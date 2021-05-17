@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { getAllStats, statsQueries } from '@/services/stats';
+import { clearPuzzleHistory, getAllStats, statsQueries } from '@/services/stats';
 import { puzzleHistoryDb, default as db } from '@/services/stats/db';
 import { exportDB, importInto } from "dexie-export-import";
 import StatsTable from '@/components/statistics/StatsTable.vue';
@@ -159,8 +159,18 @@ export default {
 				// TODO: use modal
 				const result = window.confirm('Are you sure you want to delete all your statistics, including game history and other progress? This can NOT be undone.');
 				if (!result) return;
-
-				window.alert('Just kidding, not yet implemented reset...');
+				const result2 = window.confirm('Are you REALLY SURE???');
+				if (!result2) return;
+				
+				clearPuzzleHistory().then(() => {
+					window.alert('Puzzle statistics and puzzle history have succesfully been reset.');
+					this.getInitialData();
+					this.testUniqueKeys();
+				}).catch(e => {
+					const str = `[ERROR]: Puzzle statistics and history could not be reset due to error: ${e.toString()}`;
+					window.alert(str);
+				})
+				
 			}, 150);			
 		},
 		async exportStats() {

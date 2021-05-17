@@ -176,3 +176,7 @@ async function getStreaksStats(dates) {
 
 	return { currentStreak, longestStreak: bestStreak };
 }
+
+export function clearPuzzleHistory() {
+	return puzzleHistoryDb.clear();
+}
