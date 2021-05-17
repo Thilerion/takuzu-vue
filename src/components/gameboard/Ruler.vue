@@ -4,6 +4,7 @@
 		:class="[`ruler-${lineType}`]"
 	>
 		<div
+			class="ruler-cell"
 			v-for="lineId in rulerLines"
 			:key="lineId"
 		>{{lineId}}</div>
@@ -48,31 +49,21 @@ export default {
 .ruler-rows {
 	grid-area: ruler-rows;
 	width: 16px;
-
-	/* margin-top: calc(var(--ruler-size) + var(--cell-padding));
-	margin-bottom: var(--cell-padding); */
 	@apply flex-col justify-around items-center;
 }
 .ruler-columns {
 	grid-area: ruler-cols;
 	height: 16px;
-
-	/* margin-left: calc(var(--ruler-size) + var(--cell-padding));
-	margin-right: var(--cell-padding); */
 	@apply flex-row justify-around items-center;
 }
 
-.ruler > div {
+.ruler-cell {
 	@apply text-center flex items-center justify-center h-full w-full;
 }
-.ruler-rows > div {
+.ruler-rows > .ruler-cell {
 	@apply mr-auto;
-	/* width: 12px; */
-	/* height: 12px; */
 }
-.ruler-columns > div {
+.ruler-columns > .ruler-cell {
 	@apply mb-auto;
-	/* width: calc(100% - var(--cell-padding) * 2); */
-	/* height: 12px; */
 }
 </style>
