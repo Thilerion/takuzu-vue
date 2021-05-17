@@ -120,7 +120,7 @@
 </template>
 
 <script>
-import { dimensionsToBoardType } from '@/utils';
+import { dimensionsToBoardType } from '@/utils/puzzle.utils.js';
 import { boardTypes } from '@/config';
 export default {
 	props: {

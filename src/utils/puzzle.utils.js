@@ -1,4 +1,4 @@
-import { boardTypes } from "./config";
+import { boardTypes } from "@/config";
 
 export const dimensionsToBoardType = (w, h = w) => {
 	if (w !== h) return boardTypes.RECT;

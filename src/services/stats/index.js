@@ -1,4 +1,4 @@
-import { isNextDay, isSameDay } from '@/date.utils';
+import { isNextDay, isSameDay } from '@/utils/date.utils.js';
 import { puzzleHistoryDb, default as db } from './db';
 import { PuzzleData } from './PuzzleData';
 

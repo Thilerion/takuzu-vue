@@ -47,7 +47,7 @@ import { puzzleHistoryDb, default as db } from '@/services/stats/db';
 import { exportDB, importInto } from "dexie-export-import";
 import StatsTable from '@/components/statistics/StatsTable.vue';
 import { boardTypes } from '@/config';
-import { dimensionsToBoardType } from '@/utils';
+import { dimensionsToBoardType } from '@/utils/puzzle.utils.js';
 import AdvancedStats from '@/components/statistics/AdvancedStats.vue';
 
 export default {
