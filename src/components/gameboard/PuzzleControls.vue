@@ -62,14 +62,14 @@ export default {
 
 <style lang="postcss" scoped>
 .puzzle-controls {
-	@apply flex-none flex text-sm text-center h-28 overflow-hidden;
+	@apply flex-none flex text-sm text-center h-24 overflow-hidden;
 	
 	@apply bg-none dark:bg-gray-800 dark:bg-opacity-30;
 	@apply text-gray-900 text-opacity-80 dark:text-white dark:text-opacity-80;
 }
 
 .control-btns {
-	@apply h-24;
+	@apply h-20;
 	@apply flex flex-row items-center justify-center mt-auto w-full space-x-2 px-6;
 	box-shadow: 0 -1px 14px -6px rgba(0,0,0,.2);
 }
