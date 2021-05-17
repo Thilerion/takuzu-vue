@@ -1,9 +1,9 @@
 <template>
-	<button class="icon-btn">
+	<button class="icon-btn" :class="{ vertical }">
 		<span class="material-icons" :style="{'--size': size + 'px' }">
 			{{icon}}
 		</span>
-		<div class="whitespace-nowrap">
+		<div class="btn-label whitespace-nowrap">
 			<slot />
 		</div>
 	</button>
@@ -19,7 +19,8 @@ export default {
 		icon: {
 			type: String,
 			required: true
-		}
+		},
+		vertical: Boolean
 	}
 };
 </script>
@@ -34,7 +35,7 @@ export default {
 }
 
 .material-icons {
-	font-size: var(--size);
+	font-size: var(--size)!important;
 }
 
 @media (hover:hover) and (pointer:fine) {
@@ -48,5 +49,12 @@ export default {
 }
 .icon-btn:disabled .material-icons {
 	@apply opacity-70;
+}
+
+.icon-btn.vertical {
+	@apply flex flex-col justify-start;
+}
+.icon-btn.vertical > .btn-label {
+	@apply mr-0 mt-1;
 }
 </style>

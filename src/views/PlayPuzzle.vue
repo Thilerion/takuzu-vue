@@ -7,56 +7,35 @@
 			:rows="rows"
 			:columns="columns"	
 		/>
-		
-		<!-- <div class="main justify-center relative">
-			<span class="main-board-wrapper mx-auto py-2">
-				<GameBoard
-					v-if="board"
-					:rows="rows"
-					:columns="columns"
-					:headerHeight="'80px'"
-					:controlsHeight="'112px'"
-					:rulerSize="'16px'"
-				>
-					<div
-						class="puzzle-info"
-					>
-						<div>Easy</div>
-						<div>Hints: 2</div>
-						<div>1:45</div>
-					</div>
-				</GameBoard>
-			</span>
-		</div> -->
-			<GameBoardWrapper
-				:ruler-height="'16px'"
-				:ruler-width="'16px'"
-				:info-height="'21px'"
+		<GameBoardWrapper
+			:ruler-height="'16px'"
+			:ruler-width="'16px'"
+			:info-height="'21px'"
+			:rows="rows"
+			:columns="columns"
+			v-slot="{width, height, cellSize}"
+		>
+			<GameBoard
+				v-if="board"
 				:rows="rows"
 				:columns="columns"
-				v-slot="{width, height, cellSize}"
+				:ruler-size="'16px'"
+				:grid-height="height"
+				:grid-width="width"
+				:cell-size="cellSize"
 			>
-				<GameBoard
-					v-if="board"
-					:rows="rows"
-					:columns="columns"
-					:ruler-size="'16px'"
-					:grid-height="height"
-					:grid-width="width"
-					:cell-size="cellSize"
+				<div
+					class="puzzle-info"
 				>
-					<div
-						class="puzzle-info"
-					>
-						<div>Easy</div>
-						<div>Hints: 2</div>
-						<div>1:45</div>
-					</div>
-				</GameBoard>
-			</GameBoardWrapper>
-		<div class="flex-none my-footer bg-none dark:bg-gray-800 dark:bg-opacity-30 text-gray-900 text-opacity-80 text-sm px-8 py-2 dark:text-opacity-80 dark:text-white border-t border-gray-200 dark:border-gray-800 text-center h-28">
-			Controls are here!
-		</div>
+					<div>Easy</div>
+					<div>Hints: 2</div>
+					<div>1:45</div>
+				</div>
+			</GameBoard>
+		</GameBoardWrapper>
+		
+		<PuzzleControls
+		/>
 	</div>
 </template>
 
@@ -70,6 +49,7 @@ import OldGameBoard from '@/components/board/GameBoard';
 import GameBoard from '@/components/gameboard/GameBoard';
 import GameBoardHeader from '@/components/gameboard/GameBoardHeader';
 import GameBoardWrapper from '@/components/gameboard/GameBoardWrapper';
+import PuzzleControls from '@/components/gameboard/PuzzleControls.vue';
 
 export default {
 	components: {
@@ -80,6 +60,7 @@ export default {
 		GameBoard,
 		GameBoardHeader,
 		GameBoardWrapper,
+		PuzzleControls,
 	},
 	data() {
 		return {
