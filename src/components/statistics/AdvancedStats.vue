@@ -1,8 +1,8 @@
 <template>
 <div>
-	<section class="section-block mb-4">
+	<section class="section-block mb-8">
 		<!-- <h2 class="text-lg font-medium pb-2">Overall</h2> -->
-		<div class="stats-group">
+		<div class="stats-group stats-card">
 			<div class="stats-line">
 				<span class="label">Puzzles solved:</span>
 				<span class="value-1">{{totalPlayed}}</span>
@@ -21,9 +21,9 @@
 			</div>
 		</div>
 	</section>
-	<section class="section-block mb-4">
+	<section class="section-block mb-8">
 		<h2 class="text-lg font-medium pb-2">Most played</h2>
-		<div class="stats-group">
+		<div class="stats-group stats-card">
 			<div class="stats-line">
 				<span class="label">Most played size:</span>
 				<span class="value-1">{{mostPlayedSize.key}}</span>
@@ -38,10 +38,10 @@
 			</div>
 		</div>
 	</section>
-	<section class="section-block mb-4">
+	<section class="section-block mb-8">
 		<h2 class="text-lg font-medium">Favorites</h2>
-		<div class="pb-3 text-xs leading-snug tracking-wide opacity-80">Based on number of puzzles played, combined with total time and expected time for a puzzle size</div>
-		<div class="stats-group">
+		<div class="pl-2 pb-3 text-xs leading-snug tracking-wide opacity-80">Based on number of puzzles played, combined with total time and expected time for a puzzle size</div>
+		<div class="stats-group stats-card">
 			<div class="stats-line">
 				<span class="label">Favorite size:</span>
 				<span class="value-1">{{favoriteSize[0].key}}</span>
@@ -56,7 +56,7 @@
 			</div>
 		</div>
 	</section>
-	<section class="section-block mb-4 text-sm">
+	<section class="section-block mb-8 text-sm">
 		<h2 class="text-lg font-medium pb-2">By size</h2>
 		<div class="stats-header flex flex-row font-medium bg-blue-800 text-white text-right pr-1">
 			<div class="w-1/5">Size</div>
@@ -75,7 +75,7 @@
 			<div class="w-1/4 text-right">{{size.best}}</div>
 		</div>
 	</section>
-	<section class="section-block mb-4 text-sm">
+	<section class="section-block mb-8 text-sm">
 		<h2 class="text-lg font-medium pb-2">By difficulty</h2>
 		<div class="stats-header flex flex-row font-medium bg-blue-800 text-white text-right pr-1">
 			<div class="w-1/4">Difficulty</div>
@@ -92,7 +92,7 @@
 			<div class="w-1/3 text-right">{{diff.average}}</div>
 		</div>
 	</section>
-	<section class="section-block mb-4 text-sm">
+	<section class="section-block mb-8 text-sm">
 		<h2 class="text-lg font-medium pb-2">Combined</h2>
 		<div class="stats-header flex flex-row font-medium bg-blue-800 text-white text-right pr-1">
 			<div class="w-2/12 text-left pl-1">Size</div>
@@ -253,11 +253,15 @@ section {
 }
 .section-block {
 	grid-template-columns: 2;
-	@apply px-8;
+	@apply px-4;
 }
 section > h2 {
-	grid-column: 1 / span 2;
-	@apply text-opacity-60;
+	@apply text-opacity-60 pl-2;
+}
+
+.stats-card {
+	@apply bg-white rounded overflow-hidden;
+	box-shadow: 0 3px 8px rgba(154,160,185,.05), 0 8px 25px rgba(166,173,201,.2);
 }
 
 .stats-group {
@@ -272,8 +276,8 @@ section > h2 {
 .stats-line .value-1 {
 	@apply w-3/12 text-left;
 }
-.stats-line:nth-child(odd) {
-	@apply bg-gray-200 bg-opacity-50;
+.stats-line:nth-child(even) {
+	@apply bg-gray-200 bg-opacity-10 border-t border-b;
 }
 
 .stat-row {
