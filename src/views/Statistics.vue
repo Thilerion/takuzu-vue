@@ -33,7 +33,7 @@
 		</template>
 
 		<section class="stats-btns">
-			<button :disabled="exportInProgress" class="download-btn" @click="exportStats">Export data</button>
+			<button :disabled="exportInProgress || !puzzlesSolved" class="download-btn" @click="exportStats">Export data</button>
 			<button class="import-btn" @click="startStatsImport">Import stats</button>
 			<button class="reset-btn" @click="confirmReset">Reset stats</button>
 			<input type="file" hidden id="file-upload" ref="fileUpload" @change="handleStatsImport">
@@ -251,9 +251,10 @@ section > h2 {
 }
 
 .stats-btns > button {
-	@apply px-3 py-2 font-bold text-xs opacity-50 tracking-wide focus:outline-none active:ring active:ring-teal-600 active:ring-opacity-70 rounded;
+	@apply px-3 py-2 font-bold text-xs opacity-60 tracking-wide focus:outline-none active:ring active:ring-teal-600 active:ring-opacity-70 rounded;
 
 	@apply hover-hover:hover:opacity-90 active:opacity-90;
+	@apply disabled:opacity-30;
 }
 
 .reset-btn {
