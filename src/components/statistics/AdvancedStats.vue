@@ -11,6 +11,14 @@
 				<span class="label">Average time:</span>
 				<span class="value-1">{{msToMinSec(totalTime / totalPlayed)}}</span>
 			</div>
+			<div class="stats-line">
+				<span class="label">Current daily streak:</span>
+				<span class="value-1">{{currentStreak}}</span>
+			</div>
+			<div class="stats-line">
+				<span class="label">Longest daily streak:</span>
+				<span class="value-1">{{longestStreak}}</span>
+			</div>
 		</div>
 	</section>
 	<section class="section-block mb-4">
@@ -115,7 +123,9 @@ export default {
 	props: {
 		totalPlayed: Number,
 		totalTime: Number,
-		results: Object
+		results: Object,
+		currentStreak: Number,
+		longestStreak: Number,
 	},
 	computed: {
 		averageTotal() {
@@ -233,13 +243,6 @@ export default {
 			const seconds = fullSeconds % 60;
 			return `${Math.floor(minutes)}:${format(seconds)}`;
 		},
-	},
-	mounted() {
-		console.log({
-			bySize: this.bySize,
-			byDifficulty: this.byDifficulty,
-			bySizeAndDifficulty: this.bySizeAndDifficulty,
-		})
 	}
 };
 </script>

@@ -1,3 +1,4 @@
+import { isNextDay, isSameDay } from '@/date.utils';
 import { puzzleHistoryDb, default as db } from './db';
 import { PuzzleData } from './PuzzleData';
 
@@ -116,9 +117,10 @@ export async function getAllStats() {
 		summary.sizeAndDifficulty[key] = new StatsGroup('sizeAndDifficulty', key);
 	}
 	// console.log(summary);
+	let dates = [];
 
 	await puzzleHistoryDb.each(item => {
-		const { width, height, difficulty, timeElapsed } = item;
+		const { width, height, difficulty, timeElapsed, date } = item;
 		const size = `${width}x${height}`;
 		const sizeAndDifficulty = `${size}-${difficulty}`;
 
@@ -128,6 +130,8 @@ export async function getAllStats() {
 		summary.size[size].addItem(timeElapsed);
 		summary.difficulty[difficulty].addItem(timeElapsed);
 		summary.sizeAndDifficulty[sizeAndDifficulty].addItem(timeElapsed);
+
+		dates.push(new Date(date));
 	})
 	
 	const results = {};
@@ -136,6 +140,39 @@ export async function getAllStats() {
 		const summaryOfType = Object.values(summary[key]).map(s => s.toResult());
 		results[key] = summaryOfType;
 	})
+	
+	const {currentStreak, longestStreak} = await getStreaksStats([...dates].sort((a, b) => a < b ? -1 : a === b ? 0 : 1));
 
-	return { results, totalPlayed, totalTime };
+	return { results, totalPlayed, totalTime, currentStreak, longestStreak };
+}
+
+async function getStreaksStats(dates) {
+	let bestStreak = 0;
+	let currentStreak = 0;
+	let currentDay = null;
+
+	dates.forEach(date => {
+		if (currentDay == null) {
+			currentDay = date;
+			currentStreak = 1;
+			return;
+		}
+
+		if (isSameDay(date, currentDay)) {
+			return;
+		} else if (isNextDay(currentDay, date)) {
+			currentDay = date;
+			currentStreak += 1;
+			return;
+		} else {
+			if (currentStreak > bestStreak) bestStreak = currentStreak;
+			currentDay = date;
+			currentStreak = 0;
+		}
+	})
+
+	if (currentStreak > bestStreak) bestStreak = currentStreak;
+	if (isSameDay(currentDay, new Date())) currentStreak += 1;
+
+	return { currentStreak, longestStreak: bestStreak };
 }
