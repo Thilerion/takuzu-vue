@@ -26,11 +26,11 @@ export default {
 		infoHeight: String,
 		paddingX: {
 			type: String,
-			default: '24px'
+			default: '4px'
 		},
 		paddingY: {
 			type: String,
-			default: '12px'
+			default: '6px'
 		},
 
 		rows: Number,
@@ -47,13 +47,13 @@ export default {
 			return this.columns / this.rows;
 		},
 		heightUnavailable() {
-			return [this.rulerHeight, this.infoHeight, this.paddingY].reduce((total, val) => {
+			return [this.rulerHeight, this.infoHeight, this.paddingY, this.paddingY].reduce((total, val) => {
 				let pxVal = val.slice(0, -2) * 1;
 				return total + pxVal;
 			}, 0);
 		},
 		widthUnavailable() {
-			return [this.rulerWidth, this.paddingX].reduce((total, val) => {
+			return [this.rulerWidth, this.paddingX, this.paddingX].reduce((total, val) => {
 				let pxVal = val.slice(0, -2) * 1;
 				return total + pxVal;
 			}, 0);
