@@ -3,7 +3,7 @@
 
 		<GameBoardHeader
 			class="flex-shrink-0"
-			@cycle-size="cycleFakeSize"
+			@cycle-size="() => {}"
 			:rows="rows"
 			:columns="columns"	
 		/>
@@ -19,6 +19,7 @@
 				v-if="board"
 				:rows="rows"
 				:columns="columns"
+				:board="board"
 				:ruler-size="'16px'"
 				:grid-height="height"
 				:grid-width="width"
@@ -42,9 +43,9 @@
 <script>
 import store from '@/store';
 
-import PlayGameHeader from '@/components/play-game/PlayGameHeader.vue';
-import OldGameBoardWrapper from '@/components/board/GameBoardWrapper';
-import OldGameBoard from '@/components/board/GameBoard';
+// import PlayGameHeader from '@/components/play-game/PlayGameHeader.vue';
+// import OldGameBoardWrapper from '@/components/board/GameBoardWrapper';
+// import OldGameBoard from '@/components/board/GameBoard';
 
 import GameBoard from '@/components/gameboard/GameBoard';
 import GameBoardHeader from '@/components/gameboard/GameBoardHeader';
@@ -53,9 +54,9 @@ import PuzzleControls from '@/components/gameboard/PuzzleControls.vue';
 
 export default {
 	components: {
-		PlayGameHeader,
-		OldGameBoardWrapper,
-		OldGameBoard,
+		// PlayGameHeader,
+		// OldGameBoardWrapper,
+		// OldGameBoard,
 
 		GameBoard,
 		GameBoardHeader,
@@ -64,19 +65,19 @@ export default {
 	},
 	data() {
 		return {
-			cells: [],
-			sizes: [[6, 10], [9, 9], [14, 14], [6, 6], [10, 16]],
-			currentFakeSizeIdx: null,
-			fakeRows: null,
-			fakeColumns: null,
+			// cells: [],
+			// sizes: [[6, 10], [9, 9], [14, 14], [6, 6], [10, 16]],
+			// currentFakeSizeIdx: null,
+			// fakeRows: null,
+			// fakeColumns: null,
 		}
 	},
 	computed: {
 		rows() {
-			return this.fakeRows ?? this.$store.state.puzzle.height;
+			return this.$store.state.puzzle.height;
 		},
 		columns() {
-			return this.fakeColumns ?? this.$store.state.puzzle.width;
+			return this.$store.state.puzzle.width;
 		},
 		board() {
 			return this.$store.state.puzzle.board;
@@ -95,20 +96,20 @@ export default {
 		finishGame() {
 			console.log('Should finish game');
 		},
-		cycleFakeSize() {
-			if (this.currentFakeSizeIdx == null) {
-				this.currentFakeSizeIdx = 0;
-			} else {
-				this.currentFakeSizeIdx += 1;
-			}
-			if (this.currentFakeSizeIdx >= this.sizes.length) {
-				this.currentFakeSizeIdx = 0;
-			}
-			this.fakeSize = this.sizes[this.currentFakeSizeIdx];
-			const [columns, rows] = this.fakeSize;
-			this.fakeColumns = columns;
-			this.fakeRows = rows;
-		}
+		// cycleFakeSize() {
+		// 	if (this.currentFakeSizeIdx == null) {
+		// 		this.currentFakeSizeIdx = 0;
+		// 	} else {
+		// 		this.currentFakeSizeIdx += 1;
+		// 	}
+		// 	if (this.currentFakeSizeIdx >= this.sizes.length) {
+		// 		this.currentFakeSizeIdx = 0;
+		// 	}
+		// 	this.fakeSize = this.sizes[this.currentFakeSizeIdx];
+		// 	const [columns, rows] = this.fakeSize;
+		// 	this.fakeColumns = columns;
+		// 	this.fakeRows = rows;
+		// }
 	},
 	beforeRouteEnter(to, from, next) {
 		if (!store.state.puzzle.initialized) {

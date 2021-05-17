@@ -98,12 +98,10 @@ export default {
 		}
 	},
 	mounted() {
-		console.log('mounted2');
 		resizeObserver.observe(this.$refs.container);
 		this.setWrapperSizes();
 	},
 	created() {
-		console.log('created');
 		const debounced = debounce(this.setContainerSize, 500);
 		const fn = (entries) => {
 			if (entries.length) {
@@ -113,7 +111,6 @@ export default {
 		resizeObserver = new ResizeObserver(fn);
 	},
 	beforeUnmount() {
-		console.log('beforeunmount');
 		resizeObserver.disconnect();
 		resizeObserver = null;
 	},
