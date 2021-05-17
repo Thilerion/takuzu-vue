@@ -5,38 +5,39 @@
 		<BaseButton v-else @click="showAdvanced = false" class="mx-8 mb-4">Show original stats screen</BaseButton>
 
 		<template v-if="!showAdvanced">
-		<section class="grid section-block mb-4">
-			<h2 class="text-lg font-medium pb-2">Overall</h2>
-			<span>Puzzles solved:</span>
-			<span>{{puzzlesSolved}}</span>
-			<span>Average time per puzzle:</span>
-			<span>{{msToMinSec(averageTime)}}</span>
-		</section>
+			<section class="grid section-block mb-4">
+				<h2 class="text-lg font-medium pb-2">Overall</h2>
+				<span>Puzzles solved:</span>
+				<span>{{puzzlesSolved}}</span>
+				<span>Average time per puzzle:</span>
+				<span>{{msToMinSec(averageTime)}}</span>
+			</section>
 
-		<section class="px-8 mb-4">
-			<h2 class="text-lg font-medium pt-2 pb-2">By puzzle size</h2>
-			<transition name="fade">
-				<StatsTable
-					v-if="byPuzzleSizeData && byPuzzleSizeData.length"
-					:headers="byPuzzleSizeHeaders"
-					:items="byPuzzleSizeData"
-					:group="groupByPuzzleType"
-					:groups="puzzleBoardTypes"
-				/>
-			</transition>
-		</section>
+			<section class="px-8 mb-4">
+				<h2 class="text-lg font-medium pt-2 pb-2">By puzzle size</h2>
+				<transition name="fade">
+					<StatsTable
+						v-if="byPuzzleSizeData && byPuzzleSizeData.length"
+						:headers="byPuzzleSizeHeaders"
+						:items="byPuzzleSizeData"
+						:group="groupByPuzzleType"
+						:groups="puzzleBoardTypes"
+					/>
+				</transition>
+			</section>
+		</template>
+
+		<template v-else>
+			<advanced-stats v-bind="advancedStats" v-if="advancedStats != null" />
+			<div class="p-4 text-lg text-center" v-else>Loading...</div>
+		</template>
 
 		<section class="stats-btns">
 			<button :disabled="exportInProgress" class="download-btn" @click="exportStats">Export data</button>
 			<button class="import-btn" @click="startStatsImport">Import stats</button>
 			<button class="reset-btn" @click="confirmReset">Reset stats</button>
+			<input type="file" hidden id="file-upload" ref="fileUpload" @change="handleStatsImport">
 		</section>
-		<input type="file" hidden id="file-upload" ref="fileUpload" @change="handleStatsImport">
-		</template>
-		<template v-else>
-			<advanced-stats v-bind="advancedStats" v-if="advancedStats != null" />
-			<div class="p-4 text-lg text-center">Loading...</div>
-		</template>
 	</div>
 </template>
 
