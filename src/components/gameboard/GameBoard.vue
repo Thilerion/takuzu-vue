@@ -13,7 +13,18 @@
 			<div class="puzzle-info-wrapper">
 				<slot />
 			</div>
-		<div class="puzzle-grid" :style="{'max-width': gridWidth, 'max-height': gridHeight, '--cell-size': cellSize + 'px'}">
+		<div
+			:class="{
+				'decreased-padding': decreaseCellPadding,
+				'increased-padding': increaseCellPadding,
+			}"
+			class="puzzle-grid"
+			:style="{
+				'max-width': gridWidth,
+				'max-height': gridHeight,
+				'--cell-size': cellSizePx
+			}
+		">
 			<div class="cell" v-for="n in rows * columns" :key="n">
 				<div class="inner-celll red" v-if="coloredCells.red.includes(n)"></div>
 				<div class="inner-celll blue" v-else-if="coloredCells.blue.includes(n)"></div>
@@ -36,6 +47,10 @@ export default {
 		rulerSize: String,
 		gridHeight: String,
 		gridWidth: String,
+		cellSize: {
+			type: Number,
+			required: true
+		}
 	},
 	data() {
 		return {
@@ -49,8 +64,14 @@ export default {
 		cells() {
 			return Array(this.rows * this.columns)
 		},
-		cellSize() {
-			return parseInt(this.gridWidth) / this.columns;
+		cellSizePx() {
+			return (this.cellSize ?? 16) + 'px';
+		},
+		decreaseCellPadding() {
+			return this.cellSize < 28;
+		},
+		increaseCellPadding() {
+			return this.cellSize > 48;
 		}
 	},
 	methods: {
@@ -82,9 +103,15 @@ export default {
 
 .puzzle-grid {
 	grid-area: puzzle-grid;
-	display: grid;
 	grid-template-rows: repeat(var(--rows), 1fr);
 	grid-template-columns: repeat(var(--columns), 1fr);
+	@apply mr-auto mb-auto inline-grid relative;
+}
+.puzzle-grid.decreased-padding {
+	gap: 1px;
+}
+.puzzle-grid.increased-padding {
+	gap: 4px;
 }
 
 .puzzle-info-wrapper {
@@ -94,36 +121,34 @@ export default {
 }
 
 .new-board .cell {
-	@apply bg-blue-300 text-xs overflow-hidden flex justify-center items-center bg-opacity-0 rounded-sm;
-	box-sizing: border-box;
-	/* aspect-ratio: 1; */
-	/* padding: var(--cell-padding); */
-	/* min-height: 1rem; */
-	/* min-width: 1rem; */
-	/* padding: 1px */
-	/* width: var(--cell-size); */
-	/* height: var(--cell-size); */
+	@apply bg-blue-300 text-xs overflow-hidden flex justify-center items-center bg-opacity-0 rounded-sm p-px;
 	width: var(--cell-size);
-	height: 0;
-	padding-bottom: 100%;
-	position: relative;
+	height: var(--cell-size);
+}
+.decreased-padding .cell {
+	@apply p-0;
+	width: calc(var(--cell-size) - 1px);
+	height: calc(var(--cell-size) - 1px);
+}
+.increased-padding .cell {
+	@apply p-0;
+	width: calc(var(--cell-size) - 4px);
+	height: calc(var(--cell-size) - 4px);
 }
 
 .inner-celll {
-	@apply absolute inset-0 m-auto overflow-hidden rounded-sm;
+	@apply m-auto overflow-hidden rounded-sm w-full h-full;
 	width: 100%;
 	height: 100%;
-	/* width: calc(100% - var(--cell-padding) * 2); */
-	/* height: calc(100% - var(--cell-padding) * 2); */
 }
 
 .inner-celll.red {
-	@apply bg-red-500 dark:bg-red-600 dark:bg-opacity-70;
+	@apply bg-red-500 dark:bg-red-500 dark:bg-opacity-90;
 }
 .inner-celll.blue {
-	@apply bg-blue-500 dark:bg-blue-600 dark:bg-opacity-90;
+	@apply bg-blue-500 dark:bg-blue-500 dark:bg-opacity-90;
 }
 .inner-celll.none {
-	@apply bg-gray-200 bg-opacity-90 dark:bg-gray-600 dark:bg-opacity-40;
+	@apply bg-gray-200 bg-opacity-90 dark:bg-gray-700 dark:bg-opacity-50;
 }
 </style>

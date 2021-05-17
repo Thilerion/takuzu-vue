@@ -34,7 +34,7 @@
 				:info-height="'21px'"
 				:rows="rows"
 				:columns="columns"
-				v-slot="{width, height}"
+				v-slot="{width, height, cellSize}"
 			>
 				<GameBoard
 					v-if="board"
@@ -43,6 +43,7 @@
 					:ruler-size="'16px'"
 					:grid-height="height"
 					:grid-width="width"
+					:cell-size="cellSize"
 				>
 					<div
 						class="puzzle-info"

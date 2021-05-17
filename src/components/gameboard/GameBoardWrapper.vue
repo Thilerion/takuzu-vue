@@ -71,13 +71,13 @@ export default {
 				const cellSize = Math.floor(heightA / this.rows);
 				const w = cellSize * this.columns;
 				const h = cellSize * this.rows;
-				return { width: w + 'px', height: h + 'px'};
+				return { width: w + 'px', height: h + 'px', cellSize };
 			}
 			const widthB = maxHeight * this.aspectRatio;
 			const cellSize = Math.floor(widthB / this.columns);
 			const w = cellSize * this.columns;
 			const h = cellSize * this.rows;
-			return { width: w + 'px', height: h + 'px' };
+			return { width: w + 'px', height: h + 'px', cellSize };
 		}
 	},
 	methods: {
