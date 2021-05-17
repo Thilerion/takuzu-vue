@@ -13,7 +13,7 @@
 			<div class="puzzle-info-wrapper">
 				<slot />
 			</div>
-		<div class="puzzle-grid" :style="{width: gridWidth, height: gridHeight}">
+		<div class="puzzle-grid" :style="{'max-width': gridWidth, 'max-height': gridHeight, '--cell-size': cellSize + 'px'}">
 			<div class="cell" v-for="n in rows * columns" :key="n">
 				<div class="inner-celll red" v-if="coloredCells.red.includes(n)"></div>
 				<div class="inner-celll blue" v-else-if="coloredCells.blue.includes(n)"></div>
@@ -48,6 +48,9 @@ export default {
 	computed: {
 		cells() {
 			return Array(this.rows * this.columns)
+		},
+		cellSize() {
+			return parseInt(this.gridWidth) / this.columns;
 		}
 	},
 	methods: {
@@ -100,10 +103,14 @@ export default {
 	/* padding: 1px */
 	/* width: var(--cell-size); */
 	/* height: var(--cell-size); */
+	width: var(--cell-size);
+	height: 0;
+	padding-bottom: 100%;
+	position: relative;
 }
 
 .inner-celll {
-	@apply m-auto overflow-hidden rounded-sm;
+	@apply absolute inset-0 m-auto overflow-hidden rounded-sm;
 	width: 100%;
 	height: 100%;
 	/* width: calc(100% - var(--cell-padding) * 2); */
