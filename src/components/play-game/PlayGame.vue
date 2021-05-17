@@ -180,34 +180,51 @@ export default {
 			const time = this.timer?.getCurrentElapsed() ?? 0;
 			this.$store.commit('setUnmountTimeElapsed', time);
 
-			const {width, height, difficulty} = this.$store.state.game;
+			const { width, height, difficulty } = this.$store.state.game;
 			
-			let { best, average, count } = await getGameEndStats({width, height, difficulty});
+			const gameEndStats = await getGameEndStats({width, height, difficulty});
+			let {
+				count: previousCount = 0, 
+				average: previousAverage,
+				best: previousBest
+			} = gameEndStats;
 
-			if (count < 1) {
-				best = time;
-				average = time;
-				count = 1;
+			if (previousCount === 0) {
+				// high score because first puzzle solved @ size+difficulty
+				let str = `Nice! You've solved your first puzzle @ ${width}x${height} with ${difficulty} stars!\n\n`;
+				str += `Time: ${this.msToMinSec(time)}`;
+				window.alert(str);
+			} else if (time < previousBest) {
+				// high score
+				const newCount = previousCount + 1;
+				const newAverage = ((previousAverage * previousCount) + time) / newCount;
+				const highScoreImprovement = Math.round((previousBest - time) / 10) / 100;
+				let str = `Wow! You've set a new high score!\n\n`;
+				str += `Puzzles solved: ${newCount} @ ${width}x${height} - ${difficulty}*\n`;
+				str += `Time: ${this.msToMinSec(time)}, previous best: ${this.msToMinSec(previousBest)}, average: ${this.msToMinSec(newAverage)}\n\n`;
+				str += `You've improved your high score by ${highScoreImprovement}s!`;
+				window.alert(str);
+			} else if (time < previousAverage) {
+				// not a high score, but faster than average
+				const newCount = previousCount + 1;
+				const newAverage = ((previousAverage * previousCount) + time) / newCount;
+				const fasterThanAverage = Math.round((previousAverage - time) / 10) / 100;
+
+				let str = `Nice! You were ${fasterThanAverage}s faster than your previous average!\n\n`;
+				str += `Puzzles solved: ${newCount} @ ${width}x${height} - ${difficulty}*\n`;
+				str += `Time: ${this.msToMinSec(time)}, best: ${this.msToMinSec(previousBest)}, average: ${this.msToMinSec(newAverage)}`;
+				window.alert(str);
 			} else {
-				count += 1;
+				// no improvement
+				const newCount = previousCount + 1;
+				const newAverage = ((previousAverage * previousCount) + time) / newCount;
+				
+				let str = `Good job!\n\n`;
+				str += `Puzzles solved: ${newCount} @ ${width}x${height} - ${difficulty}*\n`;
+				str += `Time: ${this.msToMinSec(time)}, best: ${this.msToMinSec(previousBest)}, average: ${this.msToMinSec(newAverage)}`;
+				window.alert(str);
 			}
-
-			const times = {
-				current: this.msToMinSec(time),
-				best: this.msToMinSec(best),
-				avg: this.msToMinSec(average)
-			};
-
-			const isHighScore = count === 1 || Math.floor(time / 10) < Math.floor(best / 10);
-			let str = '';
-			if (isHighScore) str += "Wow, you've set a new high score!\n\n";
-			else str += 'Nice job!\n\n';
-
-			str += `Puzzles solved: ${count} @ ${width}x${height} - ${difficulty}*\n`;
-
-			str += `Time: ${times.current}, previous best: ${times.best}, average: ${times.avg}`;
-
-			window.alert(str);
+			
 			this.$store.dispatch('finishGame');
 		}
 	},

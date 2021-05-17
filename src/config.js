@@ -1,4 +1,4 @@
-import { dimensionsToBoardType } from "./utils";
+import { dimensionsToBoardType } from "./utils/puzzle.utils.js";
 
 class BoardPreset {
 	constructor(w, h, maxDifficulty) {

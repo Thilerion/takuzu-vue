@@ -6,6 +6,7 @@ module.exports = {
 	darkMode: 'class', // or 'media' or 'class'
 	theme: {
 		colors: {
+			...colors,
 			transparent: colors.transparent,
 			current: colors.current,
 			black: colors.black,
@@ -14,10 +15,7 @@ module.exports = {
 			truegray: colors.trueGray,
 			teal: colors.teal,
 			bluegray: colors.blueGray,
-			yellow: {
-				'400': colors.yellow[400],
-				'500': colors.yellow[500],
-			},
+			yellow: colors.yellow,
 			red: colors.red,
 			blue: colors.blue,
 			green: colors.green,
@@ -58,7 +56,8 @@ module.exports = {
 			ringWidth: ['focus-visible', 'active'],
 			ringOpacity: ['focus-visible', 'active'],
 			ringColor: ['focus', 'active'],
-			opacity: ['active'],
+			opacity: ['active', 'disabled'],
+			backgroundOpacity: ['odd', 'even'],
 		},
 	},
 	plugins: [
