@@ -18,11 +18,15 @@
 			:increasePadding="increaseCellPadding"
 			:decreasePadding="decreaseCellPadding"
 			:board="board"
+			:initial-board="initialBoard"
+			:rows="rows"
+			:columns="columns"
 			:style="{
 				'max-width': gridWidth,
 				'max-height': gridHeight,
 				'--cell-size': cellSizePx
 			}"
+			@toggle-cell="toggleCell"
 		/>
 	</div>
 </template>
@@ -49,6 +53,10 @@ export default {
 		board: {
 			type: Object,
 			required: true
+		},
+		initialBoard: {
+			type: Object,
+			required: true
 		}
 	},
 	data() {
@@ -65,7 +73,13 @@ export default {
 		increaseCellPadding() {
 			return this.cellSize > 48;
 		},
+	},
+	methods: {
+		toggleCell({x, y}) {
+			console.log(x, y);
+		}
 	}
+	
 };
 </script>
 

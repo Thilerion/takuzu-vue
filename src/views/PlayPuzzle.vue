@@ -20,6 +20,7 @@
 				:rows="rows"
 				:columns="columns"
 				:board="board"
+				:initial-board="initialBoard"
 				:ruler-size="'16px'"
 				:grid-height="height"
 				:grid-width="width"
@@ -43,10 +44,6 @@
 <script>
 import store from '@/store';
 
-// import PlayGameHeader from '@/components/play-game/PlayGameHeader.vue';
-// import OldGameBoardWrapper from '@/components/board/GameBoardWrapper';
-// import OldGameBoard from '@/components/board/GameBoard';
-
 import GameBoard from '@/components/gameboard/GameBoard';
 import GameBoardHeader from '@/components/gameboard/GameBoardHeader';
 import GameBoardWrapper from '@/components/gameboard/GameBoardWrapper';
@@ -54,10 +51,6 @@ import PuzzleControls from '@/components/gameboard/PuzzleControls.vue';
 
 export default {
 	components: {
-		// PlayGameHeader,
-		// OldGameBoardWrapper,
-		// OldGameBoard,
-
 		GameBoard,
 		GameBoardHeader,
 		GameBoardWrapper,
@@ -84,6 +77,9 @@ export default {
 		},
 		boardGrid() {
 			return this.board.grid;
+		},
+		initialBoard() {
+			return this.$store.state.puzzle.initialBoard;
 		}
 	},
 	methods: {
