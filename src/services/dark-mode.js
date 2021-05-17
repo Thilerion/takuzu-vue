@@ -59,7 +59,7 @@ export function initTheme() {
 		return initTheme();
 	}
 
-	const isAuto = !themePref;
+	const isAuto = !themePref || themePref === 'auto';
 
 	if (themePref === 'dark' || isAuto && prefersColorSchemeDark()) {
 		htmlEl.classList.add('dark');
