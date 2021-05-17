@@ -1,5 +1,5 @@
 <template>
-<div>
+<div v-if="totalPlayed > 0">
 	<section class="section-block mb-8">
 		<!-- <h2 class="text-lg font-medium pb-2">Overall</h2> -->
 		<div class="stats-group stats-card">
@@ -114,6 +114,9 @@
 		</div>
 	</section>
 </div>
+<div class="py-4 px-8 text-center" v-else-if="totalPlayed === 0">
+	You haven't solved any puzzles yet! Go play some!
+</div>
 </template>
 
 <script>
@@ -132,6 +135,9 @@ export default {
 			return this.totalTime / this.totalPlayed;
 		},
 		bySize() {
+			if (!this.results.size.length) {
+				return [];
+			}
 			const typeOrder = [boardTypes.NORMAL, boardTypes.RECT, boardTypes.ODD];
 			return this.results.size.map(item => {
 				const avg = this.msToMinSec(item.average);
@@ -148,6 +154,7 @@ export default {
 			});
 		},
 		byDifficulty() {
+			if (!this.results.difficulty.length) return [];
 			return this.results.difficulty.map(item => {
 				// TODO: must be average adjusted by size...
 				const average = 'TODO';
@@ -155,6 +162,9 @@ export default {
 			}).sort((a, b) => a.key - b.key);
 		},
 		bySizeAndDifficulty() {
+			if (!this.results.sizeAndDifficulty.length) {
+				return [];
+			}
 			const typeOrder = [boardTypes.NORMAL, boardTypes.RECT, boardTypes.ODD];
 			return this.results.sizeAndDifficulty.map(item => {
 				const [size, difficulty] = item.key.split('-');

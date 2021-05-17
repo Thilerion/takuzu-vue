@@ -151,6 +151,10 @@ async function getStreaksStats(dates) {
 	let currentStreak = 0;
 	let currentDay = null;
 
+	if (!dates || !dates.length) {
+		return { currentStreak, longestStreak: bestStreak };
+	}
+
 	dates.forEach(date => {
 		if (currentDay == null) {
 			currentDay = date;
