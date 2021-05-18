@@ -1,16 +1,7 @@
 <template>
 	<div
 		class="puzzle-grid"
-		:class="{'extra-padding': increasePadding, 'less-padding': decreasePadding }"
 	>
-		<!-- <template v-for="(row, rowIdx) in grid" :key="rowIdx">
-			<div class="cell" v-for="(cell, colIdx) in row" :key="colIdx">
-				<div class="inner-celll none" v-if="cell === '.' || cell == null"></div>
-				<div class="inner-celll red" v-else-if="cell === '1' || cell === 1"></div>
-				<div class="inner-celll blue" v-else></div>
-			</div>
-		</template> -->
-
 		<template
 			v-for="(_row, rowIdx) in rows"
 			:key="rowIdx"
@@ -42,8 +33,6 @@
 <script>
 export default {
 	props: {
-		increasePadding: Boolean,
-		decreasePadding: Boolean,
 		board: {
 			type: Object,
 			required: true,
@@ -77,22 +66,45 @@ export default {
 
 <style lang="postcss" scoped>
 .puzzle-grid {
+	/* Default grid gap: */
+	--grid-gap: 2px; 
+
 	grid-area: puzzle-grid;
 	grid-template-rows: repeat(var(--rows), 1fr);
 	grid-template-columns: repeat(var(--columns), 1fr);
 	@apply mr-auto mb-auto inline-grid relative;
+	gap: var(--grid-gap);
 }
-.puzzle-grid.less-padding {
-	gap: 1px;
+
+.puzzle-grid.size-xs {
+	--grid-gap: 1px;
+	--cell-rounding: theme(borderRadius.none);
 }
-.puzzle-grid.extra-padding {
-	gap: 4px;
+.puzzle-grid.size-s {
+	--grid-gap: 1px;
+	--cell-rounding: theme(borderRadius.sm);
+}
+.puzzle-grid.size-m {
+	--grid-gap: 2px;
+	--cell-rounding: theme(borderRadius.sm);
+}
+.puzzle-grid.size-l {
+	--grid-gap: 3px;
+	--cell-rounding: theme(borderRadius.DEFAULT);
+}
+.puzzle-grid.size-xl {
+	--grid-gap: 4px;
+	--cell-rounding: theme(borderRadius.DEFAULT);
+}
+
+.cell, .cell-bg, .inner-celll, .touch-anim-el {
+	border-radius: var(--cell-rounding)!important;
 }
 
 .cell {
-	@apply text-xs flex justify-center items-center bg-opacity-0 rounded-sm p-px focus:outline-none;
-	width: var(--cell-size);
-	height: var(--cell-size);
+	@apply text-xs flex justify-center items-center bg-opacity-0 focus:outline-none;
+	width: calc(var(--cell-size) - var(--grid-gap));
+	height: calc(var(--cell-size) - var(--grid-gap));
 }
 .cell.locked {
 	@apply cursor-default;
@@ -101,23 +113,12 @@ export default {
 	@apply h-full w-full relative;
 }
 .cell-bg {
-	@apply z-0 absolute w-full h-full rounded;
+	@apply z-0 absolute w-full h-full;
 	@apply bg-gray-200 bg-opacity-90 dark:bg-gray-700 dark:bg-opacity-50;
 }
 
-.less-padding .cell {
-	@apply p-0;
-	width: calc(var(--cell-size) - 1px);
-	height: calc(var(--cell-size) - 1px);
-}
-.extra-padding .cell {
-	@apply p-0;
-	width: calc(var(--cell-size) - 4px);
-	height: calc(var(--cell-size) - 4px);
-}
-
 .inner-celll {
-	@apply m-auto w-full h-full rounded overflow-hidden;
+	@apply m-auto w-full h-full overflow-hidden;
 	width: 100%;
 	height: 100%;
 }
@@ -131,7 +132,7 @@ export default {
 }
 
 .touch-anim-el {
-	@apply absolute inset-0 pointer-events-none w-full h-full z-30 ring-2 ring-gray-700 opacity-100 rounded;
+	@apply absolute inset-0 pointer-events-none w-full h-full z-30 ring-2 ring-gray-700 opacity-100;
 }
 .touch-anim-enter-active {
 	transition: opacity .1s ease;

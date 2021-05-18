@@ -15,8 +15,6 @@
 		</div>
 
 		<PuzzleGrid
-			:increasePadding="increaseCellPadding"
-			:decreasePadding="decreaseCellPadding"
 			:board="board"
 			:initial-board="initialBoard"
 			:rows="rows"
@@ -24,8 +22,9 @@
 			:style="{
 				'max-width': gridWidth,
 				'max-height': gridHeight,
-				'--cell-size': cellSizePx
+				'--cell-size': cellSizePx,
 			}"
+			:class="[`size-${gridGapSizing}`]"
 			@toggle-cell="toggleCell"
 		/>
 	</div>
@@ -67,19 +66,25 @@ export default {
 		cellSizePx() {
 			return (this.cellSize ?? 16) + 'px';
 		},
-		decreaseCellPadding() {
-			return this.cellSize < 28;
-		},
-		increaseCellPadding() {
-			return this.cellSize > 48;
-		},
+		gridGapSizing() {
+			if (this.cellSize <= 28) {
+				return 'xs';
+			} else if (this.cellSize <= 36) {
+				return 's';
+			} else if (this.cellSize <= 48) {
+				return 'm';
+			} else if (this.cellSize <= 64) {
+				return 'l';
+			} else {
+				return 'xl';
+			}
+		}
 	},
 	methods: {
 		toggleCell({x, y}) {
 			console.log(x, y);
 		}
-	}
-	
+	},
 };
 </script>
 
