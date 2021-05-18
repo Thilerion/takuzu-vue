@@ -1,6 +1,6 @@
 <template>
 	<header>
-		<IconBtn>close</IconBtn>
+		<IconBtn @click="$emit('close')">close</IconBtn>
 		<button @click="$emit('cycle-size')" class="font-medium tracking-widest text-xl">{{columns}}x{{rows}}</button>
 		<IconBtn>more_vert</IconBtn>
 	</header>
@@ -8,7 +8,7 @@
 
 <script>
 export default {
-	emits: ['cycle-size'],
+	emits: ['cycle-size', 'close'],
 	props: {
 		rows: Number,
 		columns: Number

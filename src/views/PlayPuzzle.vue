@@ -4,6 +4,7 @@
 		<GameBoardHeader
 			class="flex-shrink-0"
 			@cycle-size="() => {}"
+			@close="exitGame"
 			:rows="rows"
 			:columns="columns"	
 		/>
@@ -58,11 +59,6 @@ export default {
 	},
 	data() {
 		return {
-			// cells: [],
-			// sizes: [[6, 10], [9, 9], [14, 14], [6, 6], [10, 16]],
-			// currentFakeSizeIdx: null,
-			// fakeRows: null,
-			// fakeColumns: null,
 		}
 	},
 	computed: {
@@ -84,7 +80,12 @@ export default {
 	},
 	methods: {
 		exitGame() {
-			console.log('Should close puzzle');
+			const metaFrom = this.$route.from;
+			if (metaFrom == null) {
+				this.$router.replace({ name: 'FreePlay' });
+			} else {
+				this.$router.go(-1);
+			}
 		},
 		openSettings() {
 			console.log('Should open settings');
@@ -92,24 +93,11 @@ export default {
 		finishGame() {
 			console.log('Should finish game');
 		},
-		// cycleFakeSize() {
-		// 	if (this.currentFakeSizeIdx == null) {
-		// 		this.currentFakeSizeIdx = 0;
-		// 	} else {
-		// 		this.currentFakeSizeIdx += 1;
-		// 	}
-		// 	if (this.currentFakeSizeIdx >= this.sizes.length) {
-		// 		this.currentFakeSizeIdx = 0;
-		// 	}
-		// 	this.fakeSize = this.sizes[this.currentFakeSizeIdx];
-		// 	const [columns, rows] = this.fakeSize;
-		// 	this.fakeColumns = columns;
-		// 	this.fakeRows = rows;
-		// }
 	},
 	beforeRouteEnter(to, from, next) {
 		if (!store.state.puzzle.initialized) {
-			console.log(store.state.puzzle);
+			// TODO: check for saved game!
+			console.log('Should check for saved game now...');
 			console.warn('Game not initialized... Redirecting to New Game.');
 			return next({ name: 'FreePlay', replace: true});
 		}
@@ -120,21 +108,11 @@ export default {
 		}
 		next();
 	},
-	watch: {
-		boardGrid: {
-			handler() {
-				this.cells = [...this.board.cells()].map(({x, y, value}, idx) => {
-					return {
-						x, y, 
-						value,
-						idx
-					};
-				});
-			},
-			deep: true,
-			immediate: true
-		}
-	}
+	beforeRouteLeave(to, from, next) {
+		// TODO: save game! pause game if going to settings!
+		console.warn('Should save game first probably');
+		next();
+	},
 };
 </script>
 
