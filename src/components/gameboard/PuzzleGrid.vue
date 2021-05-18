@@ -6,16 +6,17 @@
 			v-for="(_row, rowIdx) in rows"
 			:key="rowIdx"
 		>
-			<button
+			<PuzzleCell
 				v-for="(_col, colIdx) in columns"
-				:key="colIdx"
 				class="cell"
+				:key="colIdx"
 				:data-row="rowIdx"
 				:data-col="colIdx"
-				@click="cellClick($event, { x: colIdx, y: rowIdx })"
+				@click="cellClick"
+				:x="colIdx"
+				:y="rowIdx"
+				:value="grid[rowIdx][colIdx]"
 			>
-				<div class="cell-wrap">
-					<div class="cell-bg"></div>
 
 					<div class="inner-celll red" v-if="grid[rowIdx][colIdx] == '1'"></div>
 					<div class="inner-celll blue" v-else-if="grid[rowIdx][colIdx] == '0'"></div>
@@ -23,15 +24,19 @@
 					<transition name="touch-anim" @after-enter="removeTouchAnim(`${colIdx},${rowIdx}`)">
 						<div v-if="touchStates.has(`${colIdx},${rowIdx}`)" class="touch-anim-el"></div>
 					</transition>
-				</div>
 				
-			</button>
+			</PuzzleCell>
 		</template>
 	</div>
 </template>
 
 <script>
+import PuzzleCell from '@/components/gameboard/PuzzleCell.vue';
+
 export default {
+	components: {
+		PuzzleCell
+	},
 	props: {
 		board: {
 			type: Object,
@@ -52,9 +57,8 @@ export default {
 		}
 	},
 	methods: {
-		cellClick(ev, {x, y}) {
-			this.$emit('toggle-cell', {x, y});
-
+		cellClick({ x, y, value }) {
+			this.$emit('toggle-cell', { x, y, value });
 			this.touchStates.add(`${x},${y}`);
 		},
 		removeTouchAnim(value) {
@@ -97,21 +101,6 @@ export default {
 	--cell-rounding: theme(borderRadius.DEFAULT);
 }
 
-.cell, .cell-bg, .inner-celll, .touch-anim-el {
-	border-radius: var(--cell-rounding)!important;
-}
-
-.cell {
-	@apply text-xs flex justify-center items-center bg-opacity-0 focus:outline-none;
-	width: calc(var(--cell-size) - var(--grid-gap));
-	height: calc(var(--cell-size) - var(--grid-gap));
-}
-.cell.locked {
-	@apply cursor-default;
-}
-.cell-wrap {
-	@apply h-full w-full relative;
-}
 .cell-bg {
 	@apply z-0 absolute w-full h-full;
 	@apply bg-gray-200 bg-opacity-90 dark:bg-gray-700 dark:bg-opacity-50;
