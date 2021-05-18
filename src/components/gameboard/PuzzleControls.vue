@@ -71,7 +71,7 @@ export default {
 .control-btns {
 	@apply h-20;
 	@apply flex flex-row items-center justify-center mt-auto w-full space-x-2 px-6;
-	box-shadow: 0 -1px 14px -6px rgba(0,0,0,.2);
+	box-shadow: 0 -12px 14px -16px rgba(0,0,0,.2);
 }
 .control-btns > * {
 	@apply text-xs flex-auto;
