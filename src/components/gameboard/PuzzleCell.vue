@@ -10,7 +10,7 @@
 					v-if="hasValue"
 					class="cell-value"
 					:class="cellValueClassList"
-				></div>
+				><div class="cell-symbol">{{cellSymbol}}</div></div>
 			</transition>
 		</div>
 	</button>
@@ -47,6 +47,13 @@ export default {
 			const list = [];
 			if (this.hasValue) list.push(`value-${this.value}`);
 			return list;
+		},
+		cellSymbol() {
+			if (this.value === ONE) {
+				return '1';
+			} else if (this.value === ZERO) {
+				return '0';
+			} else return '';
 		}
 	},
 	methods: {
@@ -60,12 +67,27 @@ export default {
 </script>
 
 <style lang="postcss">
+.cell-btn {
+	--one-light-normal: hsl(7, 77%, 55%);
+	--one-light-locked: hsl(7, 77%, 52%);
+
+	--zero-light-normal: hsl(207, 90%, 61%);
+	--zero-light-locked: hsl(207, 96%, 58%);
+
+	--color-one: var(--one-light-normal);
+	--color-zero: var(--zero-light-normal);
+}
+.cell-btn:disabled {
+	--color-one: var(--one-light-locked);
+	--color-zero: var(--zero-light-locked);
+}
+
 .cell-btn, .cell-wrapper, .inner-celll, .touch-anim-el {
 	border-radius: var(--cell-rounding)!important;
 }
 
 .cell-btn {
-	@apply text-xs flex justify-center items-center bg-opacity-0 focus:outline-none;
+	@apply flex justify-center items-center bg-opacity-0 focus:outline-none font-number;
 	width: calc(var(--cell-size) - var(--grid-gap));
 	height: calc(var(--cell-size) - var(--grid-gap));
 }
@@ -79,20 +101,16 @@ export default {
 }
 
 .cell-value {
-	@apply m-auto w-full h-full overflow-hidden absolute inset-0;
+	@apply m-auto w-full h-full overflow-hidden absolute inset-0 opacity-100 flex;
 	transition: background-color .15s ease;
 }
 .cell-value.value-1 {
-	@apply bg-red-500 dark:bg-red-500 dark:bg-opacity-90;
+	/* @apply bg-red-500 dark:bg-red-500 dark:bg-opacity-90; */
+	background-color: var(--color-one);
 }
 .cell-value.value-0 {
-	@apply bg-blue-500 dark:bg-blue-500 dark:bg-opacity-90;
-}
-.cell-btn:disabled .cell-value.value-1 {
-	@apply bg-red-600 dark:bg-red-600 dark:bg-opacity-90;
-}
-.cell-btn:disabled .cell-value.value-0 {
-	@apply bg-blue-600 dark:bg-blue-600 dark:bg-opacity-90;
+	/* @apply bg-blue-500 dark:bg-blue-500 dark:bg-opacity-90; */
+	background-color: var(--color-zero);
 }
 
 .cell-value-anim-enter-active {
@@ -105,5 +123,15 @@ export default {
 }
 .cell-value-anim-enter-from, .cell-value-anim-leave-to {
 	opacity: 0;
+}
+
+.cell-symbol {
+	@apply pointer-events-none m-auto inline-block text-gray-700;
+	
+	--base-cell-font-size: calc(var(--cell-size) - 2px);
+	--cell-font-size: clamp(16px, var(--base-cell-font-size), 48px);
+
+	font-size: var(--cell-font-size);
+	line-height: calc(var(--cell-size) * 1.1);
 }
 </style>
