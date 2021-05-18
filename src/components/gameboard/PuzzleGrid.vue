@@ -1,6 +1,7 @@
 <template>
 	<div
 		class="puzzle-grid"
+		:class="[`cell-theme-${cellTheme}`]"
 	>
 		<template
 			v-for="(_row, rowIdx) in rows"
@@ -16,10 +17,8 @@
 				:x="colIdx"
 				:y="rowIdx"
 				:value="grid[rowIdx][colIdx]"
+				:theme="cellTheme"
 			>
-
-					<div class="inner-celll red" v-if="grid[rowIdx][colIdx] == '1'"></div>
-					<div class="inner-celll blue" v-else-if="grid[rowIdx][colIdx] == '0'"></div>
 
 					<transition name="touch-anim" @after-enter="removeTouchAnim(`${colIdx},${rowIdx}`)">
 						<div v-if="touchStates.has(`${colIdx},${rowIdx}`)" class="touch-anim-el"></div>
@@ -54,7 +53,10 @@ export default {
 	computed: {
 		grid() {
 			return this.board.grid;
-		}
+		},
+		cellTheme() {
+			return this.$store.state.settings.cellTheme;
+		},
 	},
 	methods: {
 		cellClick({ x, y, value }) {

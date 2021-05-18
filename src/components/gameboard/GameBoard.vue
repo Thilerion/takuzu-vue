@@ -78,7 +78,7 @@ export default {
 			} else {
 				return 'xl';
 			}
-		}
+		},
 	},
 	methods: {
 		toggleCell({x, y, value}) {

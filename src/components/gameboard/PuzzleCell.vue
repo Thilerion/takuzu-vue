@@ -33,6 +33,10 @@ export default {
 			validator(value) {
 				return [ONE, ZERO, EMPTY].includes(value);
 			}
+		},
+		theme: {
+			type: String,
+			required: true
 		}
 	},
 	emits: ['click'],
@@ -49,11 +53,16 @@ export default {
 			return list;
 		},
 		cellSymbol() {
+			if (this.theme === 'colored' || this.value == null || this.value === EMPTY) {
+				return '';
+			}
+
 			if (this.value === ONE) {
-				return '1';
+				return this.theme === 'tictactoe' ? 'X' : '1';
 			} else if (this.value === ZERO) {
-				return '0';
-			} else return '';
+				return this.theme === 'binary' ? '0' : 'O';
+			}
+			return '';
 		}
 	},
 	methods: {
@@ -66,7 +75,7 @@ export default {
 };
 </script>
 
-<style lang="postcss">
+<style lang="postcss" scoped>
 .cell-btn {
 	--one-light-normal: hsl(7, 77%, 55%);
 	--one-light-locked: hsl(7, 77%, 52%);
@@ -87,17 +96,30 @@ export default {
 }
 
 .cell-btn {
-	@apply flex justify-center items-center bg-opacity-0 focus:outline-none font-number;
+	@apply flex justify-center items-center bg-opacity-0 focus:outline-none;
 	width: calc(var(--cell-size) - var(--grid-gap));
 	height: calc(var(--cell-size) - var(--grid-gap));
+}
+.cell-theme-binary .cell-btn {
+	@apply font-number text-gray-700;
+}
+.cell-theme-tictactoe .cell-btn {
+	@apply font-sans font-medium text-gray-700;
+}
+.cell-theme-colored .cell-btn {
+	@apply text-white;
 }
 .cell-btn:disabled {
 	@apply cursor-default;
 }
+.cell-theme-binary .cell-btn:disabled .cell-wrapper,
+.cell-theme-tictactoe .cell-btn:disabled .cell-wrapper {
+	@apply bg-gray-300 bg-opacity-70 dark:bg-gray-700 dark:bg-opacity-30;
+}
 
 .cell-wrapper {
 	@apply h-full w-full relative;
-	@apply bg-gray-200 bg-opacity-90 dark:bg-gray-700 dark:bg-opacity-50;
+	@apply bg-gray-200 bg-opacity-60 dark:bg-gray-700 dark:bg-opacity-50;
 }
 
 .cell-value {
@@ -126,12 +148,17 @@ export default {
 }
 
 .cell-symbol {
-	@apply pointer-events-none m-auto inline-block text-gray-700;
+	@apply pointer-events-none m-auto inline-block;
 	
-	--base-cell-font-size: calc(var(--cell-size) - 2px);
+	--base-size: calc(var(--cell-size) - var(--grid-gap));
+	--base-cell-font-size: calc(var(--base-size) - 2px);
 	--cell-font-size: clamp(16px, var(--base-cell-font-size), 48px);
 
 	font-size: var(--cell-font-size);
-	line-height: calc(var(--cell-size) * 1.1);
+	line-height: calc(var(--base-size) * 1.1);
+}
+
+.cell-theme-binary .cell-value, .cell-theme-tictactoe .cell-value {
+	background-color: transparent;
 }
 </style>
