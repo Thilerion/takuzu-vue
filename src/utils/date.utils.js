@@ -20,3 +20,30 @@ export const formatBasicDDMMYYYY = (date) => {
 		date.getFullYear()
 	].join('-');
 }
+
+export const timeFormatter = (formatOptions) => {
+	const {
+		padMinutes = true,
+		msPrecision = null,
+	} = formatOptions;
+
+	const padLeft = (num) => `0${num}`.slice(-2);
+
+	return (timestampMS = 0) => {
+		const fullSeconds = Math.floor(timestampMS / 1000);
+
+		const seconds = padLeft(Math.floor(fullSeconds % 60));
+		let minutes = Math.floor(fullSeconds / 60);
+		if (padMinutes) minutes = padLeft(minutes);
+
+		let str = `${minutes}:${seconds}`;
+
+		if (msPrecision) {
+			const precisionDivider = 1000 / msPrecision;
+			let remainingMs = timestampMS - (fullSeconds * 1000);
+			let msToPrecision = Math.floor(remainingMs / precisionDivider);
+			str += `.${msToPrecision}`;
+		}
+		return str;
+	}
+}

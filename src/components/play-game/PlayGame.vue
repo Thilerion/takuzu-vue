@@ -59,6 +59,7 @@ import Timer from '../../services/timer';
 
 import {usePageVisibility} from '@/composables/use-page-visibility';
 import { getGameEndStats } from '@/services/stats';
+import { timeFormatter } from '@/utils/date.utils';
 const {visibility, hidden} = usePageVisibility();
 
 export default {
@@ -152,15 +153,7 @@ export default {
 		resetPlayTimer() {
 			this.timer.reset();
 		},
-		msToMinSec(ms) {
-			const format = val => `0${Math.floor(val)}`.slice(-2);
-
-			const fullSeconds = Math.floor(ms / 1000);
-
-			const minutes = fullSeconds / 60;
-			const seconds = fullSeconds % 60;
-			return `${format(minutes)}:${format(seconds)}`;
-		},
+		msToMinSec: timeFormatter({ padMinutes: true }),
 		saveGameWithTime() {
 			if (!this.board) {
 				return;

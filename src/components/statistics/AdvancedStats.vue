@@ -122,6 +122,7 @@
 <script>
 import { dimensionsToBoardType } from '@/utils/puzzle.utils.js';
 import { boardTypes } from '@/config';
+import { timeFormatter } from '@/utils/date.utils';
 export default {
 	props: {
 		totalPlayed: Number,
@@ -244,15 +245,7 @@ export default {
 		}
 	},
 	methods: {
-		msToMinSec(ms = 0) {
-			const format = val => `0${Math.floor(val)}`.slice(-2);
-
-			const fullSeconds = Math.floor(ms / 1000);
-
-			const minutes = fullSeconds / 60;
-			const seconds = fullSeconds % 60;
-			return `${Math.floor(minutes)}:${format(seconds)}`;
-		},
+		msToMinSec: timeFormatter({ padMinutes: false }),
 	}
 };
 </script>

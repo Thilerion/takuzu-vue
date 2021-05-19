@@ -49,6 +49,7 @@ import StatsTable from '@/components/statistics/StatsTable.vue';
 import { boardTypes } from '@/config';
 import { dimensionsToBoardType } from '@/utils/puzzle.utils.js';
 import AdvancedStats from '@/components/statistics/AdvancedStats.vue';
+import { timeFormatter } from '@/utils/date.utils';
 
 export default {
 	components: { StatsTable, AdvancedStats },
@@ -145,15 +146,7 @@ export default {
 
 			return {raw: total, tableData};
 		},
-		msToMinSec(ms = 0) {
-			const format = val => `0${Math.floor(val)}`.slice(-2);
-
-			const fullSeconds = Math.floor(ms / 1000);
-
-			const minutes = fullSeconds / 60;
-			const seconds = fullSeconds % 60;
-			return `${Math.floor(minutes)}:${format(seconds)}`;
-		},
+		msToMinSec: timeFormatter({ padMinutes: false, msPrecision: false }),
 		confirmReset() {
 			setTimeout(() => {
 				// TODO: use modal
