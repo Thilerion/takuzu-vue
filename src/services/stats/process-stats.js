@@ -1,4 +1,5 @@
 import { isNextDay, isSameDay } from "@/utils/date.utils";
+import { puzzleHistoryTable } from "./db";
 
 export async function getGameEndStats({ width, height, difficulty }) {
 	let items;
