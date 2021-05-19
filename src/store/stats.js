@@ -1,5 +1,5 @@
 import { PuzzleData } from "@/services/stats/models";
-import { puzzleHistoryDb } from '@/services/stats/db';
+import { puzzleHistoryTable } from '@/services/stats/db';
 
 export const statsModule = {
 	namespaced: true,
@@ -37,7 +37,7 @@ export const statsModule = {
 			commit('setInitialState', loadedState);
 		},
 		addFinishedPuzzleToDb({ }, historyEntry) {
-			puzzleHistoryDb.add(historyEntry);
+			puzzleHistoryTable.add(historyEntry);
 		}
 	}
 

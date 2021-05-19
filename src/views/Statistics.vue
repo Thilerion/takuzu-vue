@@ -43,7 +43,7 @@
 
 <script>
 import { clearPuzzleHistory, getAllStats } from '@/services/stats';
-import { puzzleHistoryDb, default as db } from '@/services/stats/db';
+import { puzzleHistoryTable, default as db } from '@/services/stats/db';
 import { exportDB, importInto } from "dexie-export-import";
 import StatsTable from '@/components/statistics/StatsTable.vue';
 import { boardTypes } from '@/config';
@@ -80,12 +80,12 @@ export default {
 	},
 	methods: {
 		getPuzzlesSolved() {
-			return puzzleHistoryDb.count();
+			return puzzleHistoryTable.count();
 		},
 		async getAverageTime() {
 			let num = 0;
 			let time = 0;
-			await puzzleHistoryDb
+			await puzzleHistoryTable
 				.orderBy('timeElapsed')
 				.eachKey((timeElapsed) => {
 					num += 1;
@@ -106,7 +106,7 @@ export default {
 		},
 		async getStatsBySize() {
 			const total = {};
-			await puzzleHistoryDb.each((item, cursor) => {
+			await puzzleHistoryTable.each((item, cursor) => {
 				const size = item.width + 'x' + item.height;
 				const curTotal = total[size] ?? { amount: 0, elapsed: 0, numCells: item.width * item.height };
 				curTotal.amount += 1;

@@ -22,4 +22,9 @@ describe('date utilities', () => {
 		expect(dateUtils.isNextDay(dateA, dateB)).toBe(false);
 		expect(dateUtils.isNextDay(dateB, dateA)).toBe(true);
 	})
+
+	test('formatBasicDDMMYYYY', () => {
+		const date = new Date(2021, 4, 19); // 19-5-2021
+		expect(dateUtils.formatBasicDDMMYYYY(date)).toBe('19-5-2021');
+	})
 })

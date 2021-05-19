@@ -12,3 +12,11 @@ export const isNextDay = (dateA, dateB) => {
 	const nextDay = getNextDay(dateA);
 	return isSameDay(dateB, nextDay);
 }
+
+export const formatBasicDDMMYYYY = (date) => {
+	return [
+		date.getDate(),
+		date.getMonth() + 1,
+		date.getFullYear()
+	].join('-');
+}

@@ -6,5 +6,5 @@ db.version(2).stores({
 });
 db.open();
 
-export const puzzleHistoryDb = db.puzzleHistory;
+export const puzzleHistoryTable = db.puzzleHistory;
 export default db;
