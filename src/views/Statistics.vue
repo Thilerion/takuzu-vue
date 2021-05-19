@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { clearPuzzleHistory, getAllStats, statsQueries } from '@/services/stats';
+import { clearPuzzleHistory, getAllStats } from '@/services/stats';
 import { puzzleHistoryDb, default as db } from '@/services/stats/db';
 import { exportDB, importInto } from "dexie-export-import";
 import StatsTable from '@/components/statistics/StatsTable.vue';
@@ -80,7 +80,7 @@ export default {
 	},
 	methods: {
 		getPuzzlesSolved() {
-			return statsQueries.numSolved();
+			return puzzleHistoryDb.count();
 		},
 		async getAverageTime() {
 			let num = 0;
