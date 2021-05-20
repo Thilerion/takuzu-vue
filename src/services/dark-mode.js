@@ -1,88 +1,62 @@
+import { usePreferredColorScheme } from '@vueuse/core';
+import { ref, watchEffect } from 'vue';
+
+const autoColorScheme = usePreferredColorScheme();
+const userColorScheme = ref('no-preference');
+
 const THEME_STORAGE_KEY = 'takuzu-theme';
 const htmlEl = document.querySelector('html');
 
-const matchMediaDark = window.matchMedia("(prefers-color-scheme: dark)");
-const onMatchMediaChange = (e => {
-	console.log('match media changed: ', e.matches);
-	if (e.matches) {
-		htmlEl.classList.add('dark');
+const getUserColorScheme = () => {
+	let value = localStorage.getItem(THEME_STORAGE_KEY);
+	if (value == null || value == 'auto') {
+		value = 'no-preference';
+	}
+	userColorScheme.value = value;
+}
+const setUserColorScheme = (value = 'no-preference') => {
+	if (value === 'auto') {
+		userColorScheme.value = 'no-preference';
 	} else {
+		userColorScheme.value = value;
+	}
+	localStorage.setItem(THEME_STORAGE_KEY, userColorScheme.value);
+}
+
+watchEffect(() => {
+	console.log('auto: ' + autoColorScheme.value);
+	console.log('user: ' + userColorScheme.value);
+
+	if (userColorScheme.value === 'light') {
+		htmlEl.classList.add('light');
 		htmlEl.classList.remove('dark');
+		return;
+	} else if (userColorScheme.value === 'dark') {
+		htmlEl.classList.add('dark');
+		htmlEl.classList.remove('light');
+		return;
+	}
+
+	if (autoColorScheme.value === 'dark') {
+		htmlEl.classList.add('dark');
+		htmlEl.classList.remove('light');
+		return;
+	} else {
+		htmlEl.classList.add('light');
+		htmlEl.classList.remove('dark');
+		return;
 	}
 });
-let isListening = false;
-const listenForOSPrefChange = () => {
-	if (isListening) return;
-	matchMediaDark.addEventListener('change', onMatchMediaChange);
-	isListening = true;
-}
-const stopListeningForOSPrefChange = () => {
-	if (!isListening) return;
-	matchMediaDark.removeEventListener('change', onMatchMediaChange);
-	isListening = false;
-}
 
-const prefersColorSchemeDark = () => {
-	return !!window.matchMedia('(prefers-color-scheme: dark)').matches;
-}
 export const getThemePref = () => {
-	const result = localStorage.getItem(THEME_STORAGE_KEY);
-	if (['dark', 'light', 'auto'].includes(result)) return result;
-	return null;
+	return userColorScheme.value;
 }
 
-export const setDarkTheme = () => {
-	stopListeningForOSPrefChange();
-	htmlEl.classList.add('dark');
-	localStorage.setItem(THEME_STORAGE_KEY, 'dark');
-}
-export const setLightTheme = () => {
-	stopListeningForOSPrefChange();
-	htmlEl.classList.remove('dark');
-	localStorage.setItem(THEME_STORAGE_KEY, 'light');
-}
-export const setThemeOSPref = () => {
-	const osPref = prefersColorSchemeDark();
-	if (osPref) {
-		htmlEl.classList.add('dark');
-	} else {
-		htmlEl.classList.remove('dark');
-	}
-	listenForOSPrefChange();
-	localStorage.setItem(THEME_STORAGE_KEY, 'auto');
-}
 export function initTheme() {
-	const themePref = getThemePref();
-
-	if (!themePref) {
-		setTheme('light');
-		return initTheme();
-	}
-
-	const isAuto = !themePref || themePref === 'auto';
-
-	if (themePref === 'dark' || isAuto && prefersColorSchemeDark()) {
-		htmlEl.classList.add('dark');
-	} else {
-		htmlEl.classList.remove('dark');
-	}
-
-	if (isAuto) {
-		listenForOSPrefChange();
-	}
+	getUserColorScheme();
+	return;
 }
 export function setTheme(value = 'auto') {
-	if (!value) value = 'auto';
-	const isAuto = value === 'auto';
-
-	if (value === 'dark') {
-		setDarkTheme();
-	} else if (value === 'light') {
-		setLightTheme();
-	} else if (isAuto) {
-		setThemeOSPref();
-	} else {
-		console.warn(`Unknown value for dark/light theme ("${value}"). Resetting to OS pref.`);
-		setThemeOSPref();
-	}
+	setUserColorScheme(value);
+	return;
 }
