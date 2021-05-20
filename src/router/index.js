@@ -4,6 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import MainPage from '@/components/base-layout/MainPage';
 import Home from '../views/Home.vue';
 import HowToPlay from '../views/HowToPlay';
+import Tutorial from '../views/Tutorial';
 import Statistics from '../views/Statistics';
 import Settings from '../views/Settings';
 import Menu from '../views/Menu';
@@ -23,16 +24,6 @@ const routes = [
 				path: '',
 				name: 'MainMenu',
 				component: Home,
-			},
-			{
-				path: '/help',
-				name: 'HowToPlay',
-				component: HowToPlay,
-			},
-			{
-				path: '/help/tutorial',
-				name: 'Tutorial',
-				component: HowToPlay,
 			},
 			{
 				path: '/stats',
@@ -55,6 +46,16 @@ const routes = [
 				component: NotFound
 			}
 		]
+	},
+	{
+		path: '/help',
+		name: 'HowToPlay',
+		component: HowToPlay,
+	},
+	{
+		path: '/help/tutorial',
+		name: 'Tutorial',
+		component: Tutorial,
 	},
 	{
 		path: '/play',
