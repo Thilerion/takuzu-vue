@@ -86,7 +86,6 @@ export default {
 			const idx = values.indexOf(value);
 			const nextIdx = (idx + 1) % 3;
 			const nextValue = values[nextIdx];
-			console.log({x, y, value, nextValue});
 			this.$store.commit('puzzle/setValue', { x, y, value: nextValue });
 		}
 	},

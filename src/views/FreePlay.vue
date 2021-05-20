@@ -93,10 +93,10 @@ export default {
 			return this.$store.state.game.initialized;
 		},
 		gameLoading() {
-			return this.$store.state.game.loading;
+			return this.$store.state.game.loading || !!this.$store.state.puzzle.loading;
 		},
 		gameCreationError() {
-			return this.$store.state.game.creationError;
+			return this.$store.state.game.creationError || !!this.$store.state.puzzle.creationError;
 		},
 		validSelection() {
 			return this.difficulty > 0 && this.difficulty < 6 && this.size != null && this.size.width > 3 && this.size.height > 3;
