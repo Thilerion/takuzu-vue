@@ -1,5 +1,5 @@
 <template>
-	<div class="flex flex-col items-center justify-start space-y-4">
+	<div class="flex flex-col items-center justify-start space-y-6 main-menu-buttons mx-auto">
 		<router-link
 			v-if="canContinue"
 			:to="{ path: '/play', query: { continue: true}}"
@@ -17,11 +17,27 @@
 		><BaseButton
 			@click="navigate"
 			class="text-base uppercase route-btn route-primary"
-			:class="{'btn-primary': !canContinue, 'shadow-md': !canContinue}"
+			:class="{'btn-primary': !canContinue, 'shadow-md': !canContinue, 'shadow-sm': canContinue }"
 		>New Game</BaseButton></router-link>
 
-		<div class="pt-4">
-			<router-link to="/how-to-play" class="route-btn route-secondary">How to play</router-link>
+		<div class="flex w-full space-x-6">
+			<router-link
+				custom
+				v-slot="{navigate}"
+				to="/help"
+			><BaseButton
+				@click="navigate"
+				class="route-btn route-secondary w-1/2"
+			>Help</BaseButton></router-link>
+
+			<router-link
+				custom
+				v-slot="{navigate}"
+				to="/help/tutorial"
+			><BaseButton
+				@click="navigate"
+				class="route-btn route-secondary w-1/2"
+			>Tutorial</BaseButton></router-link>
 		</div>
 	</div>
 </template>
@@ -38,9 +54,12 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
+.main-menu-buttons {
+	@apply w-4/6;
+}
+
 .route-btn {
-	@apply w-2/3 font-normal;
-	max-width: 18rem;
+	@apply block w-full font-normal;
 	@apply transition-colors;
 }
 .route-btn.btn-primary {

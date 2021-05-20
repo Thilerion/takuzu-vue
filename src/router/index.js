@@ -25,8 +25,13 @@ const routes = [
 				component: Home,
 			},
 			{
-				path: '/how-to-play',
+				path: '/help',
 				name: 'HowToPlay',
+				component: HowToPlay,
+			},
+			{
+				path: '/help/tutorial',
+				name: 'Tutorial',
 				component: HowToPlay,
 			},
 			{
