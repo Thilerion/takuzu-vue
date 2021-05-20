@@ -41,6 +41,11 @@ export default {
 .route-btn {
 	@apply w-2/3 font-normal;
 	max-width: 18rem;
+	@apply transition-colors;
+}
+.route-btn.btn-primary {
+	--shadow-color: 12, 148, 136;
+	--tw-shadow: 0 6px 14px 1px rgba(var(--shadow-color), 0.3), 0 4px 6px -2px rgba(var(--shadow-color), 0.35);
 }
 .route-btn.route-primary {
 	@apply tracking-wider py-3;
