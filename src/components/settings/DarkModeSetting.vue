@@ -3,12 +3,6 @@
 		<h2 class="text-gray-700">Theme</h2>
 		<div class="mt-2">
 			<label class="flex items-center">
-				<input type="radio" name="radio-theme" v-model="themePref" value="no-preference">
-				<span class="ml-2">OS Preference (default)</span>
-			</label>
-		</div>
-		<div class="mt-2">
-			<label class="flex items-center">
 				<input type="radio" name="radio-theme" v-model="themePref" value="light">
 				<span class="ml-2">Light</span>
 			</label>
@@ -17,6 +11,12 @@
 			<label class="flex items-center">
 				<input type="radio" name="radio-theme" v-model="themePref" value="dark">
 				<span class="ml-2">Dark</span>
+			</label>
+		</div>
+		<div class="mt-2">
+			<label class="flex items-center">
+				<input type="radio" name="radio-theme" v-model="themePref" value="no-preference">
+				<span class="ml-2">Automatic (OS preference)</span>
 			</label>
 		</div>
 	</div>
