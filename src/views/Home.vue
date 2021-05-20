@@ -1,9 +1,11 @@
 <template>
-	<div class="main-menu h-full min-h-full flex flex-col text-center flex-1">
+	<div class="main-menu h-full min-h-full flex flex-col text-center flex-1 relative z-0">
+		<div class="background-pattern"></div>
+		<div class="background-pattern-2"></div>
 		<div class="flex flex-col title-wrapper justify-center bg-opacity-20 pt-12">
 			<app-title/>
 		</div>
-		<MainMenuButtons class="menu-wrapper" :can-continue="canContinue" />
+		<MainMenuButtons class="menu-wrapper relative" :can-continue="canContinue" />
 	</div>
 </template>
 
@@ -27,17 +29,33 @@ export default {
 
 <style lang="postcss" scoped>
 .main-menu {
-	background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cdefs%3E%3Cpattern id='pattern' width='52' height='52' viewBox='0 0 40 40' patternUnits='userSpaceOnUse' patternTransform='rotate(28)'%3E%3Crect id='pattern-background' width='400%25' height='400%25' fill='rgba(247, 250, 252,0.4)'%3E%3C/rect%3E%3Cpath fill='rgba(237, 242, 247,0.4)' d='M0 0L20 0L20 20L0 20L0 0zM6 6L6 14L17.9 17.9L14 6zM20 20L40 20L40 40L20 40L20 20zM22.1 22.1L26 34L34 34L34 26z'%3E%3C/path%3E%3Cpath fill='rgba(237, 242, 247,0.3)' d='M26 6L34 6L34 14L26 14zM6 26L14 26L14 34L6 34z'%3E%3C/path%3E%3C/pattern%3E%3C/defs%3E%3Crect fill='url(%23pattern)' height='100%25' width='100%25'%3E%3C/rect%3E%3C/svg%3E");
+	@apply bg-gray-50;
+}
+
+.background-pattern {
+	--pattern-color: hsla(175, 84%, 32%, 0.5);
+	@apply h-full w-full absolute inset-0 z-0;
+	background-color: #ffffff;
+	background-image:  linear-gradient(var(--pattern-color) 1.8px, transparent 1.8px), linear-gradient(to right, var(--pattern-color) 1.8px, #ffffff 1.8px);
+	background-size: 24px 24px;
+	background-position: 18px 8px;
+}
+.background-pattern-2 {
+	background-image: linear-gradient( 180deg, hsla(213, 40%, 98%, 0.9) 0%,  hsla(213, 58%, 97%, 0.995) 40%, theme(colors.gray.50) 91.1% );
+	@apply h-full w-full absolute inset-0 z-0;
 }
 
 .title-wrapper {
 	@apply flex-1;
-	flex-grow: 2;
+	flex-grow: 4;
+	min-height: 10rem;
 }
 .menu-wrapper {
-	@apply mt-auto;
+	@apply mt-auto flex-1;
+	flex-grow: 1;
 
 	min-height: 14rem;
-	height: 30vh;
+	height: 34vh;
+	max-height: 20rem;
 }
 </style>
