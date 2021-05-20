@@ -29,7 +29,7 @@ export default {
 
 <style lang="postcss" scoped>
 .btn {
-	@apply font-medium rounded bg-white text-gray-800 border border-gray-200 cursor-pointer justify-center px-4 py-2 text-center whitespace-nowrap select-none ring-blue-600 tracking-wide;
+	@apply font-medium rounded bg-white text-gray-800 border border-gray-200 cursor-pointer justify-center px-4 py-2 text-center whitespace-nowrap select-none ring-teal-500 tracking-wide;
 
 	@apply focus:outline-none;
 	@apply hover-none:active:ring hover-none:active:ring-opacity-50 hover-hover:focus:ring hover-hover:focus:ring-opacity-50;
@@ -39,7 +39,7 @@ export default {
 
 .btn-primary {
 	@apply bg-teal-600 text-white border-0;
-	@apply hover-hover:hover:bg-blue-700 hover-none:active:bg-blue-700;
+	@apply hover-hover:hover:bg-teal-800 hover-none:active:bg-teal-800;
 }
 
 .btn-elevated {

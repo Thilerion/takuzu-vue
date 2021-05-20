@@ -42,13 +42,14 @@
 </template>
 
 <script>
-import { clearPuzzleHistory, getAllStats, statsQueries } from '@/services/stats';
-import { puzzleHistoryDb, default as db } from '@/services/stats/db';
+import { clearPuzzleHistory, getAllStats } from '@/services/stats';
+import { puzzleHistoryTable, default as db } from '@/services/stats/db';
 import { exportDB, importInto } from "dexie-export-import";
 import StatsTable from '@/components/statistics/StatsTable.vue';
 import { boardTypes } from '@/config';
 import { dimensionsToBoardType } from '@/utils/puzzle.utils.js';
 import AdvancedStats from '@/components/statistics/AdvancedStats.vue';
+import { timeFormatter } from '@/utils/date.utils';
 
 export default {
 	components: { StatsTable, AdvancedStats },
@@ -80,12 +81,12 @@ export default {
 	},
 	methods: {
 		getPuzzlesSolved() {
-			return statsQueries.numSolved();
+			return puzzleHistoryTable.count();
 		},
 		async getAverageTime() {
 			let num = 0;
 			let time = 0;
-			await puzzleHistoryDb
+			await puzzleHistoryTable
 				.orderBy('timeElapsed')
 				.eachKey((timeElapsed) => {
 					num += 1;
@@ -106,7 +107,7 @@ export default {
 		},
 		async getStatsBySize() {
 			const total = {};
-			await puzzleHistoryDb.each((item, cursor) => {
+			await puzzleHistoryTable.each((item, cursor) => {
 				const size = item.width + 'x' + item.height;
 				const curTotal = total[size] ?? { amount: 0, elapsed: 0, numCells: item.width * item.height };
 				curTotal.amount += 1;
@@ -145,15 +146,7 @@ export default {
 
 			return {raw: total, tableData};
 		},
-		msToMinSec(ms = 0) {
-			const format = val => `0${Math.floor(val)}`.slice(-2);
-
-			const fullSeconds = Math.floor(ms / 1000);
-
-			const minutes = fullSeconds / 60;
-			const seconds = fullSeconds % 60;
-			return `${Math.floor(minutes)}:${format(seconds)}`;
-		},
+		msToMinSec: timeFormatter({ padMinutes: false, msPrecision: false }),
 		confirmReset() {
 			setTimeout(() => {
 				// TODO: use modal

@@ -1,6 +1,6 @@
 <template>
-	<div class="how-to-play flex flex-col">
-		<PageHeader>Help</PageHeader>
+	<div class="tutorial flex flex-col">
+		<PageHeader>Tutorial</PageHeader>
 		<div class="content">
 			
 		</div>
@@ -9,12 +9,12 @@
 
 <script>
 export default {
-
+	
 };
 </script>
 
 <style lang="postcss" scoped>
-.how-to-play {
+.tutorial {
 	@apply overflow-x-hidden fixed inset-0 overscroll-y-auto;
 }
 
