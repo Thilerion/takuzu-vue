@@ -29,7 +29,7 @@
 			>
 				<template v-slot:puzzle-info>
 					<PuzzleInfo
-						show-timer
+						:show-timer="showTimer"
 						:difficulty="difficulty"
 					/>
 				</template>
@@ -73,6 +73,9 @@ export default {
 			rows: state => state.height,
 			columns: state => state.width,
 		}),
+		showTimer() {
+			return this.$store.state.settings.showTimer;
+		},
 		boardGrid() {
 			return this.board.grid;
 		},
