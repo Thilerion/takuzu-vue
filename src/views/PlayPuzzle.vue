@@ -1,5 +1,5 @@
 <template>
-	<div class="fixed box-border overflow-auto inset-0 flex flex-col z-20 text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-white">
+	<div class="play-puzzle fixed box-border overflow-auto inset-0 flex flex-col z-20 text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-white">
 
 		<GameBoardHeader
 			class="flex-shrink-0"
@@ -82,6 +82,7 @@ export default {
 		exitGame() {
 			const metaFrom = this.$route.from;
 			if (metaFrom == null) {
+				this.$router.go(-1);
 				this.$router.replace({ name: 'FreePlay' });
 			} else {
 				this.$router.go(-1);
@@ -119,6 +120,12 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
+.play-puzzle {
+	--bg-a: theme(colors.bluegray.50);
+	--bg-b: theme(colors.white);
+	background: linear-gradient(180deg, var(--bg-a) 0%, var(--bg-a) 15%, var(--bg-b) 90%, var(--bg-b) 100%);
+}
+
 .inset-0 {
 	max-height: var(--vh-total);
 }
