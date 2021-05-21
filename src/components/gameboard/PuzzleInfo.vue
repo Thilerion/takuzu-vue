@@ -8,7 +8,6 @@
 
 		<PuzzleInfoTimer
 			v-if="showTimer"
-			:timeElapsed="timeElapsed"
 		/>
 
 		<div
@@ -30,11 +29,6 @@ export default {
 			type: Number,
 			required: true,
 		},
-	},
-	data() {
-		return {
-			timeElapsed: 100000,
-		}
 	},
 	computed: {
 		difficultyLabel() {

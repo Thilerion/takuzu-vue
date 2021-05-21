@@ -1,5 +1,6 @@
 import { SimpleBoard } from '../lib/board/Board';
 import { sendWorkerMessage, initPuzzleWorkerReceiver } from '@/workers/generate-puzzle';
+import puzzleTimerModule from './puzzle-timer';
 
 const defaultState = () => ({
 	// game config
@@ -27,6 +28,7 @@ const puzzleModule = {
 	namespaced: true,
 
 	modules: {
+		timer: puzzleTimerModule,
 		// gameCheck
 		// markedCells
 	},
@@ -94,18 +96,23 @@ const puzzleModule = {
 				commit('setInitialized', true);
 				commit('setPuzzleConfig', puzzleConfig);
 			} catch (e) {
-				commit('reset');
+				dispatch('reset');
 				commit('setCreationError', true);
 				throw new Error(e);
 			}
 		},
 
+		reset({ commit }) {
+			commit('reset');
+			commit('timer/reset');
+		},
+
 		startPuzzle({ state, commit }) {
 			if (!state.initialized) throw new Error('Cannot start uninitialized game!');
-			if (state.started) throw new Error('Cannot start a game that already has started!');
+			if (state.started) throw new Error('Cannot start a game that already has started !');
 
 			commit('setStarted', true);
-			// TODO: start timer
+			commit('timer/start');
 		},
 	}
 

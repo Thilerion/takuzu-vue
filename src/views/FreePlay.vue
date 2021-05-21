@@ -122,7 +122,7 @@ export default {
 			this.size = size;
 		},
 		async createGame() {
-			this.$store.commit('puzzle/reset');
+			this.$store.dispatch('puzzle/reset');
 			const { width, height } = this.size;
 			const difficulty = this.difficulty;
 
@@ -136,7 +136,7 @@ export default {
 			}			
 		},
 		quitGame() {
-			this.$store.commit('puzzle/reset');
+			this.$store.dispatch('puzzle/reset');
 		}
 	},
 	beforeRouteEnter(to, from, next) {
