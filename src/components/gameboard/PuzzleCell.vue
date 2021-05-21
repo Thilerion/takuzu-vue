@@ -91,7 +91,7 @@ export default {
 	--color-zero: var(--zero-light-locked);
 }
 
-.cell-btn, .cell-wrapper, .inner-celll, .touch-anim-el {
+.cell-btn, .cell-wrapper, .cell-value, .touch-anim-el {
 	border-radius: var(--cell-rounding)!important;
 }
 
