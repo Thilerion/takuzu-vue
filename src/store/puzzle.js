@@ -1,6 +1,8 @@
 import { SimpleBoard } from '../lib/board/Board';
 import { sendWorkerMessage, initPuzzleWorkerReceiver } from '@/workers/generate-puzzle';
+
 import puzzleTimerModule from './puzzle-timer';
+import puzzleHistoryModule from './puzzle-history';
 
 const defaultState = () => ({
 	// game config
@@ -12,7 +14,6 @@ const defaultState = () => ({
 	initialBoard: null,
 	board: null,
 	solution: null,
-	moveList: [],
 
 	// play/ui state
 	initialized: false,
@@ -29,6 +30,7 @@ const puzzleModule = {
 
 	modules: {
 		timer: puzzleTimerModule,
+		history: puzzleHistoryModule,
 		// gameCheck
 		// markedCells
 	},
@@ -61,6 +63,11 @@ const puzzleModule = {
 	},
 
 	actions: {
+		toggle({ state, commit, dispatch }, { x, y, value, prevValue }) {
+			commit('setValue', { x, y, value });
+			dispatch('history/addMove', { x, y, value: prevValue, nextValue: value });
+			console.log(state.history);
+		},
 		async createPuzzle({ commit }, { width, height, difficulty }) {
 			commit('setLoading', true);
 			
@@ -105,6 +112,7 @@ const puzzleModule = {
 		reset({ commit }) {
 			commit('reset');
 			commit('timer/reset');
+			commit('history/reset');
 		},
 
 		startPuzzle({ state, commit }) {
