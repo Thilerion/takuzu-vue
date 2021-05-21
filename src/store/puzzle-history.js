@@ -9,6 +9,7 @@ const puzzleHistoryModule = {
 
 	getters: {
 		lastMove: state => state.moveList.length > 0 ? state.moveList[state.moveList.length - 1] : null,
+		canUndo: state => state.moveList.length > 0,
 	},
 
 	mutations: {
@@ -42,6 +43,11 @@ const puzzleHistoryModule = {
 				commit('addMove', newMove);
 				return;
 			}
+		},
+		undoMove({ getters, commit }) {
+			const lastMove = { ...getters.lastMove };
+			commit('popLastMove');
+			return lastMove;
 		}
 	}
 

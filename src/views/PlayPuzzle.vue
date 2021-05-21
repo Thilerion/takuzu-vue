@@ -37,6 +37,8 @@
 		</GameBoardWrapper>
 		
 		<PuzzleControls
+			:can-undo="canUndo"
+			@undo="undo"
 		/>
 	</div>
 </template>
@@ -73,6 +75,9 @@ export default {
 			rows: state => state.height,
 			columns: state => state.width,
 		}),
+		canUndo() {
+			return this.$store.getters['puzzle/history/canUndo'];
+		},
 		showTimer() {
 			return this.$store.state.settings.showTimer;
 		},
@@ -110,6 +115,9 @@ export default {
 		finishGame() {
 			console.log('Should finish game');
 		},
+		undo() {
+			this.$store.dispatch('puzzle/undoLastMove');
+		}
 	},
 	mounted() {
 		this.startGame();

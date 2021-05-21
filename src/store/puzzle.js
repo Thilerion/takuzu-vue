@@ -68,6 +68,12 @@ const puzzleModule = {
 			dispatch('history/addMove', { x, y, value: prevValue, nextValue: value });
 			console.log(state.history);
 		},
+		undoLastMove({ getters, commit, dispatch }) {
+			const move = {...getters['history/lastMove']};
+			dispatch('history/undoMove');
+			const { x, y, prevValue: value } = move;
+			commit('setValue', { x, y, value });
+		},
 		async createPuzzle({ commit }, { width, height, difficulty }) {
 			commit('setLoading', true);
 			
