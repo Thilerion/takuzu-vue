@@ -57,14 +57,23 @@ export default {
 		cellTheme() {
 			return this.$store.state.settings.cellTheme;
 		},
+		vibrateOnTap() {
+			return this.$store.state.settings.enableVibration;
+		}
 	},
 	methods: {
 		cellClick({ x, y, value }) {
+			this.vibrate();
 			this.$emit('toggle-cell', { x, y, value });
 			this.touchStates.add(`${x},${y}`);
 		},
 		removeTouchAnim(value) {
 			this.touchStates.delete(value);
+		},
+		vibrate() {
+			if (!this.vibrateOnTap) return;
+			const length = 20;
+			window.navigator.vibrate(length);
 		}
 	},
 };
