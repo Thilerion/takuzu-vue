@@ -29,7 +29,7 @@ export class SaveGameData {
 			if (!data) return false;
 			const result = JSON.parse(data);
 
-			if (!data.width || !data.height || !data.board) {
+			if (!result.width || !result.height || !result.board) {
 				return false;
 			}
 
@@ -38,6 +38,12 @@ export class SaveGameData {
 			console.warn('Could not load saved game');
 			return false;
 		}
+	}
+
+	static deleteSavedGame() {
+		console.log('deleting saved game');
+		localStorage.removeItem('takuzu_saved-game');
+		return true;
 	}
 }
 

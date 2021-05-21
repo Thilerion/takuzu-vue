@@ -53,6 +53,7 @@ import GameBoardHeader from '@/components/gameboard/GameBoardHeader';
 import GameBoardWrapper from '@/components/gameboard/GameBoardWrapper';
 import PuzzleControls from '@/components/gameboard/PuzzleControls.vue';
 import PuzzleInfo from '@/components/gameboard/PuzzleInfo.vue';
+import { hasCurrentSavedGame } from '@/services/save-game';
 
 export default {
 	components: {
@@ -105,6 +106,11 @@ export default {
 			this.$store.dispatch('puzzle/startPuzzle');
 		},
 		exitGame() {
+			console.log('exitGame');
+			if (this.canSaveGame()) {
+				console.log('Saving game before exit');
+				this.saveGame();
+			}
 			const metaFrom = this.$route.from;
 			if (metaFrom == null) {
 				this.$router.go(-1);
@@ -112,8 +118,6 @@ export default {
 			} else {
 				this.$router.go(-1);
 			}
-			console.warn('Resetting puzzle store. TODO: save game and more.');
-			this.$store.dispatch('puzzle/reset');
 		},
 		openSettings() {
 			console.log('Should open settings');
@@ -122,6 +126,15 @@ export default {
 			console.log('Should finish game');
 			window.alert('Good job! You finished this puzzle.');
 			this.$store.dispatch('puzzle/finishPuzzle');
+			this.leaveAfterFinishPuzzle();
+		},
+		leaveAfterFinishPuzzle() {
+			const routeMeta = this.$route.meta ?? { prev: {} };
+			if (routeMeta.prev.name === 'FreePlay') {
+				this.$router.go(-1);
+			} else {
+				this.$router.replace({ name: 'FreePlay' });
+			}
 		},
 		undo() {
 			this.$store.dispatch('puzzle/undoLastMove');
@@ -153,16 +166,29 @@ export default {
 		this.startGame();
 		this.initAutoSave();
 	},
-	beforeUnmount() {
-		this.stopAutoSave();
-	},
 	beforeRouteEnter(to, from, next) {
 		if (!store.state.puzzle.initialized) {
-			// TODO: check for saved game
+			if (hasCurrentSavedGame()) {
+				console.log('should load saved game');
+				store.dispatch('puzzle/loadSavedPuzzle');
+				return next();
+			}
 			console.warn('No puzzle in store. Redirecting from PlayPuzzle to Create game route');
 			return next({ name: 'FreePlay', replace: true });
 		}
 		next();
+	},
+	beforeUnmount() {
+		console.log('before unmount');
+		if (this.canSaveGame()) {
+			console.log('Saving game before unmount PlayPuzzle.');
+			this.saveGame();
+		}
+		this.stopAutoSave();
+	},
+	unmounted() {
+		console.log('unmounted');
+		this.$store.dispatch('puzzle/reset');
 	},
 	watch: {
 		finishedAndSolved: {

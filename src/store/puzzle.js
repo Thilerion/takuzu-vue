@@ -125,16 +125,23 @@ const puzzleModule = {
 			}
 		},
 		finishPuzzle({ commit }) {
+			SaveGameData.deleteSavedGame();
 			commit('setFinished');
 			commit('timer/pause');
 		},
 
-		reset({ commit }) {
+		reset({ state, commit }) {
+			if (!state.initialized) {
+				console.log('puzzle not initialized. cannot reset');
+			} else {
+				console.log('resetting puzzle state');
+			}
 			commit('reset');
 			commit('timer/reset');
 			commit('history/reset');
 		},
 		restartPuzzle({ state, commit }) {
+			SaveGameData.deleteSavedGame();
 			const { initialBoard, solution } = state;
 			const board = initialBoard.copy();
 			commit('setAllBoards', { board, solution, initialBoard });
@@ -151,6 +158,7 @@ const puzzleModule = {
 		},
 
 		async savePuzzle({ state, dispatch }) {
+			console.log('saving game');
 			let timeElapsed = state.timer.timeElapsed;
 			if (state.timer.running && !!state.timer.startTime) {
 				timeElapsed += (Date.now() - state.timer.startTime);
@@ -161,9 +169,33 @@ const puzzleModule = {
 			const saveGameData = new SaveGameData({
 				moveList, timeElapsed, initialBoard, board, solution, width, height, difficulty
 			});
-
 			saveGameData.saveToLocalStorage();
-		}
+		},
+		loadSavedPuzzle({ commit, dispatch }) {
+			dispatch('reset');
+			const saveData = SaveGameData.loadFromLocalStorage();
+
+			// import moveList
+			const { moveList } = saveData;
+			const { width, height, difficulty } = saveData;
+			commit('setPuzzleConfig', { width, height, difficulty });
+			
+			// set time elapsed
+			const { timeElapsed } = saveData;
+			commit('timer/setInitialTimeElapsed', timeElapsed);
+			// start timer?
+
+			const initialBoard = SimpleBoard.fromString(saveData.initialBoard);
+			const board = SimpleBoard.fromString(saveData.board);
+			const solution = SimpleBoard.fromString(saveData.solution);
+			commit('setAllBoards', { initialBoard, board, solution });
+
+			dispatch('history/importMoveHistory', moveList);
+			
+			
+			commit('setInitialized', true);
+
+		},
 	}
 
 }

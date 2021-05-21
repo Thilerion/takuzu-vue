@@ -16,6 +16,13 @@ const puzzleTimerModule = {
 	},
 
 	mutations: {
+		setInitialTimeElapsed: (state, timeElapsed) => {
+			if (state.started || state.running) {
+				console.warn('Cant set initial time elapsed when timer is running or started...');
+				return;
+			}
+			state.timeElapsed = timeElapsed;
+		},
 		start: state => {
 			if (state.started && state.running) return;
 			state.startTime = Date.now();

@@ -2,7 +2,7 @@
 	<div class="flex flex-col items-center justify-start space-y-6 main-menu-buttons mx-auto">
 		<router-link
 			v-if="canContinue"
-			:to="{ path: '/play', query: { continue: true}}"
+			:to="{ name: 'PlayPuzzle' }"
 			custom
 			v-slot="{ navigate }"
 		><BaseButton
