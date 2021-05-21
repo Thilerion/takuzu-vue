@@ -39,6 +39,7 @@
 		<PuzzleControls
 			:can-undo="canUndo"
 			@undo="undo"
+			@restart="restart"
 		/>
 	</div>
 </template>
@@ -117,6 +118,9 @@ export default {
 		},
 		undo() {
 			this.$store.dispatch('puzzle/undoLastMove');
+		},
+		restart() {
+			this.$store.dispatch('puzzle/restartPuzzle');
 		}
 	},
 	mounted() {

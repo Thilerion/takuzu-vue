@@ -120,6 +120,13 @@ const puzzleModule = {
 			commit('timer/reset');
 			commit('history/reset');
 		},
+		restartPuzzle({ state, commit }) {
+			const { initialBoard, solution } = state;
+			const board = initialBoard.copy();
+			commit('setAllBoards', { board, solution, initialBoard });
+			commit('history/reset');
+			// TODO: reset timer as well?
+		},
 
 		startPuzzle({ state, commit }) {
 			if (!state.initialized) throw new Error('Cannot start uninitialized game!');

@@ -15,6 +15,7 @@
 				size="26"
 				icon="replay"
 				vertical
+				:disabled="!canUndo"
 			>Restart</IconBtnText>
 
 			<IconBtnText
