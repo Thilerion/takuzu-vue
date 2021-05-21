@@ -17,7 +17,7 @@
 			v-slot="{width, height, cellSize}"
 		>
 			<GameBoard
-				v-if="board"
+				v-if="started && board"
 				:rows="rows"
 				:columns="columns"
 				:board="board"
@@ -44,6 +44,7 @@
 
 <script>
 import store from '@/store';
+import { mapState } from 'vuex';
 
 import GameBoard from '@/components/gameboard/GameBoard';
 import GameBoardHeader from '@/components/gameboard/GameBoardHeader';
@@ -62,23 +63,31 @@ export default {
 		}
 	},
 	computed: {
-		rows() {
-			return this.$store.state.puzzle.height;
-		},
-		columns() {
-			return this.$store.state.puzzle.width;
-		},
-		board() {
-			return this.$store.state.puzzle.board;
-		},
+		...mapState('puzzle', [
+			'board', 'initialBoard',
+			'initialized', 'started', 'paused',
+		]),
+		...mapState('puzzle', {
+			rows: state => state.height,
+			columns: state => state.width,
+		}),
 		boardGrid() {
 			return this.board.grid;
 		},
-		initialBoard() {
-			return this.$store.state.puzzle.initialBoard;
-		}
 	},
 	methods: {
+		startGame() {
+			if (!this.initialized) {
+				console.warn('Cannot start puzzle that is not initialized');
+				return;
+			}
+			if (this.started) {
+				console.warn('Cannot start puzzle that is already started!');
+				return;
+			}
+			console.log('Starting game now.');
+			this.$store.dispatch('puzzle/startPuzzle');
+		},
 		exitGame() {
 			const metaFrom = this.$route.from;
 			if (metaFrom == null) {
@@ -97,25 +106,36 @@ export default {
 			console.log('Should finish game');
 		},
 	},
+	mounted() {
+		this.startGame();
+	},
 	beforeRouteEnter(to, from, next) {
 		if (!store.state.puzzle.initialized) {
-			// TODO: check for saved game!
-			console.log('Should check for saved game now...');
-			console.warn('Game not initialized... Redirecting to New Game.');
-			return next({ name: 'FreePlay', replace: true});
-		}
-		if (from.name === 'FreePlay') {
-			to.meta.from = 'FreePlay';
-		} else {
-			to.meta.from = null;
+			// TODO: check for saved game
+			console.warn('No puzzle in store. Redirecting from PlayPuzzle to Create game route');
+			return next({ name: 'FreePlay', replace: true });
 		}
 		next();
 	},
-	beforeRouteLeave(to, from, next) {
-		// TODO: save game! pause game if going to settings!
-		console.warn('Should save game first probably');
-		next();
-	},
+	// beforeRouteEnter(to, from, next) {
+	// 	if (!store.state.puzzle.initialized) {
+	// 		// TODO: check for saved game!
+	// 		console.log('Should check for saved game now...');
+	// 		console.warn('Game not initialized... Redirecting to New Game.');
+	// 		return next({ name: 'FreePlay', replace: true});
+	// 	}
+	// 	if (from.name === 'FreePlay') {
+	// 		to.meta.from = 'FreePlay';
+	// 	} else {
+	// 		to.meta.from = null;
+	// 	}
+	// 	next();
+	// },
+	// beforeRouteLeave(to, from, next) {
+	// 	// TODO: save game! pause game if going to settings!
+	// 	console.warn('Should save game first probably');
+	// 	next();
+	// },
 };
 </script>
 

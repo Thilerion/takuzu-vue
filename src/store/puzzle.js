@@ -52,6 +52,7 @@ const puzzleModule = {
 		},
 		reset: state => Object.assign(state, defaultState()),
 		setInitialized: (state, val) => state.initialized = val,
+		setStarted: (state, val) => state.started = val,
 
 		// puzzle actions
 		setValue: (state, {x, y, value}) => state.board.assign(x, y, value),
@@ -97,7 +98,15 @@ const puzzleModule = {
 				commit('setCreationError', true);
 				throw new Error(e);
 			}
-		}
+		},
+
+		startPuzzle({ state, commit }) {
+			if (!state.initialized) throw new Error('Cannot start uninitialized game!');
+			if (state.started) throw new Error('Cannot start a game that already has started!');
+
+			commit('setStarted', true);
+			// TODO: start timer
+		},
 	}
 
 }
