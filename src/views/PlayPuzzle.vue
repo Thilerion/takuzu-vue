@@ -86,6 +86,8 @@ export default {
 			} else {
 				this.$router.go(-1);
 			}
+			console.warn('Resetting puzzle store. TODO: save game and more.');
+			this.$store.commit('puzzle/reset');
 		},
 		openSettings() {
 			console.log('Should open settings');

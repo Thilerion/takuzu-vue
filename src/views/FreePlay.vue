@@ -96,7 +96,7 @@ export default {
 			return this.$store.state.game.loading || !!this.$store.state.puzzle.loading;
 		},
 		gameCreationError() {
-			return this.$store.state.game.creationError || !!this.$store.state.puzzle.creationError;
+			return this.$store.state.puzzle.creationError;
 		},
 		validSelection() {
 			return this.difficulty > 0 && this.difficulty < 6 && this.size != null && this.size.width > 3 && this.size.height > 3;
@@ -122,13 +122,18 @@ export default {
 			this.size = size;
 		},
 		async createGame() {
+			this.$store.commit('puzzle/reset');
 			const { width, height } = this.size;
 			const difficulty = this.difficulty;
 
-			await this.$store.dispatch('puzzle/initPuzzle', { width, height, difficulty });
-			console.log('game created?');
-			console.log(this.$store.state.puzzle);
-			this.$router.push({ name: 'PlayPuzzle' });
+			try {
+				await this.$store.dispatch('puzzle/initPuzzle', { width, height, difficulty });
+				console.log('game created?');
+				console.log(this.$store.state.puzzle);
+				this.$router.push({ name: 'PlayPuzzle' });
+			} catch(e) {
+				console.warn(e);
+			}			
 		},
 		quitGame() {
 			this.$store.commit('puzzle/reset');

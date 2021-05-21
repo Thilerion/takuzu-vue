@@ -95,6 +95,7 @@ const puzzleModule = {
 			} catch (e) {
 				commit('reset');
 				commit('setCreationError', true);
+				throw new Error(e);
 			}
 		}
 	}
