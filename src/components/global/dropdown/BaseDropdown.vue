@@ -19,6 +19,7 @@
 
 <script>
 export default {
+	emits: ['toggled'],
 	props: {
 		alignBelow: Boolean,
 		alignRight: Boolean,
@@ -31,12 +32,18 @@ export default {
 	methods: {
 		openDropdownMenu() {
 			this.isOpen = true;
+			this.emitState();
 		},
 		closeDropdownMenu() {
 			this.isOpen = false;
+			this.emitState();
 		},
 		toggleDropdownMenu() {
 			this.isOpen = !this.isOpen;
+			this.emitState();
+		},
+		emitState() {
+			this.$emit('toggled', this.isOpen);
 		},
 		clickOutsideHandler(e) {
 			if (!this.isOpen) return;
@@ -52,10 +59,10 @@ export default {
 		}
 	},
 	beforeMount() {
-		document.addEventListener('click', this.clickOutsideHandler, { capture: true });
+		document.addEventListener('pointerdown', this.clickOutsideHandler, { capture: true });
 	},
 	beforeUnmount() {
-		document.removeEventListener('click', this.clickOutsideHandler, { capture: true });
+		document.removeEventListener('pointerdown', this.clickOutsideHandler, { capture: true });
 	}
 };
 </script>

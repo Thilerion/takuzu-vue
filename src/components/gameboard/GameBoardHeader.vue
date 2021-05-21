@@ -2,16 +2,31 @@
 	<header>
 		<IconBtn @click="$emit('close')">close</IconBtn>
 		<button @click="$emit('cycle-size')" class="font-medium tracking-widest text-xl">{{columns}}x{{rows}}</button>
-		<IconBtn>more_vert</IconBtn>
+		<GameBoardDropdown
+			@open-settings="openSettings"
+			@dropdown-toggled="dropdownToggled"
+		/>
 	</header>
 </template>
 
 <script>
+import GameBoardDropdown from './GameBoardDropdown.vue';
 export default {
+	components: { GameBoardDropdown },
 	emits: ['cycle-size', 'close'],
 	props: {
 		rows: Number,
 		columns: Number
+	},
+	methods: {
+		openSettings() {
+			console.warn('TODO: open settings from game board header');
+			// TODO: open settings
+			// TODO: set game paused when settings open
+		},
+		dropdownToggled(value) {
+			// TODO: set game paused when dropdown open
+		}
 	}
 };
 </script>
