@@ -64,6 +64,7 @@ export default {
 	},
 	data() {
 		return {
+			finishedTimeout: null,
 		}
 	},
 	computed: {
@@ -78,6 +79,9 @@ export default {
 		}),
 		canUndo() {
 			return this.$store.getters['puzzle/history/canUndo'];
+		},
+		finishedAndSolved() {
+			return this.$store.getters['puzzle/finishedAndSolved'];
 		},
 		showTimer() {
 			return this.$store.state.settings.showTimer;
@@ -115,6 +119,8 @@ export default {
 		},
 		finishGame() {
 			console.log('Should finish game');
+			window.alert('Good job! You finished this puzzle.');
+			this.$store.dispatch('puzzle/finishPuzzle');
 		},
 		undo() {
 			this.$store.dispatch('puzzle/undoLastMove');
@@ -134,25 +140,21 @@ export default {
 		}
 		next();
 	},
-	// beforeRouteEnter(to, from, next) {
-	// 	if (!store.state.puzzle.initialized) {
-	// 		// TODO: check for saved game!
-	// 		console.log('Should check for saved game now...');
-	// 		console.warn('Game not initialized... Redirecting to New Game.');
-	// 		return next({ name: 'FreePlay', replace: true});
-	// 	}
-	// 	if (from.name === 'FreePlay') {
-	// 		to.meta.from = 'FreePlay';
-	// 	} else {
-	// 		to.meta.from = null;
-	// 	}
-	// 	next();
-	// },
-	// beforeRouteLeave(to, from, next) {
-	// 	// TODO: save game! pause game if going to settings!
-	// 	console.warn('Should save game first probably');
-	// 	next();
-	// },
+	watch: {
+		finishedAndSolved: {
+			handler(newValue, prevValue) {
+				if (newValue) {
+					this.finishedTimeout = setTimeout(() => {
+						this.finishGame();
+					}, 600);
+				} else if (prevValue && !newValue) {
+					// no longer correct
+					clearTimeout(this.finishedTimeout);
+					this.finishedTimeout = null;
+				}
+			}
+		}
+	}
 };
 </script>
 

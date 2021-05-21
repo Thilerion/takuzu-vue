@@ -14,11 +14,13 @@ const defaultState = () => ({
 	initialBoard: null,
 	board: null,
 	solution: null,
+	solutionBoardStr: null,
 
 	// play/ui state
 	initialized: false,
 	started: false,
 	paused: false,
+	finished: false,
 
 	// game creation state/error
 	loading: false,
@@ -38,7 +40,13 @@ const puzzleModule = {
 	state: defaultState(),
 
 	getters: {
-
+		boardStr: state => {
+			return state.board.toString();
+		},
+		finishedAndSolved: (state, getters) => {
+			if (state.board == null || !state.initialized || !state.started) return false;
+			return state.solutionBoardStr === getters.boardStr;
+		}
 	},
 
 	mutations: {
@@ -53,20 +61,21 @@ const puzzleModule = {
 			state.board = board;
 			state.solution = solution;
 			state.initialBoard = initialBoard;
+			state.solutionBoardStr = solution.toString();
 		},
 		reset: state => Object.assign(state, defaultState()),
 		setInitialized: (state, val) => state.initialized = val,
 		setStarted: (state, val) => state.started = val,
+		setFinished: state => state.finished = true,
 
 		// puzzle actions
 		setValue: (state, {x, y, value}) => state.board.assign(x, y, value),
 	},
 
 	actions: {
-		toggle({ state, commit, dispatch }, { x, y, value, prevValue }) {
+		toggle({ getters, commit, dispatch }, { x, y, value, prevValue }) {
 			commit('setValue', { x, y, value });
 			dispatch('history/addMove', { x, y, value: prevValue, nextValue: value });
-			console.log(state.history);
 		},
 		undoLastMove({ getters, commit, dispatch }) {
 			const move = {...getters['history/lastMove']};
@@ -113,6 +122,10 @@ const puzzleModule = {
 				commit('setCreationError', true);
 				throw new Error(e);
 			}
+		},
+		finishPuzzle({ commit }) {
+			commit('setFinished');
+			commit('timer/pause');
 		},
 
 		reset({ commit }) {
