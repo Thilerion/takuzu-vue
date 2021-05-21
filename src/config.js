@@ -34,3 +34,11 @@ export const PRESET_BOARD_SIZES = [
 	new BoardPreset(11, 11, 5),
 	new BoardPreset(13, 13, 5),
 ]
+
+export const DIFFICULTY_LABELS = {
+	1: 'Beginner',
+	2: 'Normal',
+	3: 'Hard',
+	4: 'Very Hard',
+	5: 'Extreme',
+}

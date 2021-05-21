@@ -11,7 +11,7 @@
 			:disabled="!rulerSize || rulerSize === '0px'"			
 		/>
 		<div class="puzzle-info-wrapper">
-			<slot />
+			<slot name="puzzle-info" />
 		</div>
 
 		<PuzzleGrid

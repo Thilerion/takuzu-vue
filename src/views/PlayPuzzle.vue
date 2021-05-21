@@ -27,13 +27,12 @@
 				:grid-width="width"
 				:cell-size="cellSize"
 			>
-				<div
-					class="puzzle-info"
-				>
-					<div>Easy</div>
-					<div>Hints: 2</div>
-					<div>1:45</div>
-				</div>
+				<template v-slot:puzzle-info>
+					<PuzzleInfo
+						show-timer
+						:difficulty="difficulty"
+					/>
+				</template>
 			</GameBoard>
 		</GameBoardWrapper>
 		
@@ -50,6 +49,7 @@ import GameBoard from '@/components/gameboard/GameBoard';
 import GameBoardHeader from '@/components/gameboard/GameBoardHeader';
 import GameBoardWrapper from '@/components/gameboard/GameBoardWrapper';
 import PuzzleControls from '@/components/gameboard/PuzzleControls.vue';
+import PuzzleInfo from '@/components/gameboard/PuzzleInfo.vue';
 
 export default {
 	components: {
@@ -57,6 +57,7 @@ export default {
 		GameBoardHeader,
 		GameBoardWrapper,
 		PuzzleControls,
+		PuzzleInfo,
 	},
 	data() {
 		return {
@@ -65,6 +66,7 @@ export default {
 	computed: {
 		...mapState('puzzle', [
 			'board', 'initialBoard',
+			'difficulty',
 			'initialized', 'started', 'paused',
 		]),
 		...mapState('puzzle', {
@@ -148,14 +150,6 @@ export default {
 
 .inset-0 {
 	max-height: var(--vh-total);
-}
-
-.puzzle-info {
-	@apply px-1 pb-1 text-xs flex flex-1 items-end text-gray-500 dark:text-gray-400 font-medium tracking-wider border-b border-gray-400 dark:border-gray-300 border-opacity-20 dark:border-opacity-10;
-	min-width: 220px;
-}
-.puzzle-info > *:nth-child(2) {
-	@apply flex-1 text-center;
 }
 
 .old-board {

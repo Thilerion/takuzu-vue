@@ -47,7 +47,7 @@ import StartGameButton from '@/components/board/StartGameButton';
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
 
 import { hasCurrentSavedGame } from '@/services/save-game';
-import { boardTypes, PRESET_BOARD_SIZES } from '@/config';
+import { boardTypes, DIFFICULTY_LABELS, PRESET_BOARD_SIZES } from '@/config';
 
 const getInitialSelection = () => {
 	try {
@@ -80,7 +80,7 @@ export default {
 	},
 	data() {
 		return {
-			difficultyLabels: ['Beginner', 'Normal', 'Hard', 'Very Hard', 'Extreme'],
+			difficultyLabels: Object.values(DIFFICULTY_LABELS),
 			
 			difficulty: null,
 			size: null,
