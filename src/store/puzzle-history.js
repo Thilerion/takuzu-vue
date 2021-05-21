@@ -14,6 +14,7 @@ const puzzleHistoryModule = {
 
 	mutations: {
 		reset: state => state.moveList = [],
+		setMoveList: (state, moveList) => state.moveList = moveList,
 
 		editLastMove: (state, move) => state.moveList.splice(-1, 1, move),
 		popLastMove: state => state.moveList.pop(),
@@ -39,7 +40,7 @@ const puzzleHistoryModule = {
 				}
 			} else {
 				// push new move
-				const newMove = new PuzzleMove(x, y, nextValue, value);
+				const newMove = PuzzleMove(x, y, nextValue, value);
 				commit('addMove', newMove);
 				return;
 			}
@@ -48,12 +49,34 @@ const puzzleHistoryModule = {
 			const lastMove = { ...getters.lastMove };
 			commit('popLastMove');
 			return lastMove;
+		},
+
+		exportMoveHistory({ state }) {
+			return state.moveList.map(move => moveToString(move));
+		},
+		importMoveHistory({ commit }, moveStrings = []) {
+			commit('reset');
+			const moveList = moveStrings.map(moveStr => moveFromString(moveStr));
+			commit('setMoveList', moveList);
 		}
 	}
 
 }
 
 const PuzzleMove = (x, y, value, prevValue) => ({ x, y, value, prevValue });
+
+function moveToString(move) {
+	const { x, y, value, prevValue } = move;
+	return [x, y, value, prevValue].join(',');
+}
+function moveFromString(str) {
+	const data = str.split(',');
+	const x = parseInt(data[0]);
+	const y = parseInt(data[1]);
+	const value = data[2];
+	const prevValue = data[3];
+	return PuzzleMove(x, y, value, prevValue);
+}
 
 function moveIsSameCell(prevMove, x, y) {
 	return prevMove && prevMove.x === x && prevMove.y === y;
@@ -63,7 +86,7 @@ function moveShouldBePopped(prevMove, value) {
 }
 function combineMove(prevMove, value) {
 	const { x, y, prevValue } = prevMove;
-	return new PuzzleMove(x, y, value, prevValue);
+	return PuzzleMove(x, y, value, prevValue);
 }
 
 export default puzzleHistoryModule;

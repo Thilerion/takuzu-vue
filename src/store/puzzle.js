@@ -3,6 +3,7 @@ import { sendWorkerMessage, initPuzzleWorkerReceiver } from '@/workers/generate-
 
 import puzzleTimerModule from './puzzle-timer';
 import puzzleHistoryModule from './puzzle-history';
+import { SaveGameData } from '@/services/save-game';
 
 const defaultState = () => ({
 	// game config
@@ -73,7 +74,7 @@ const puzzleModule = {
 	},
 
 	actions: {
-		toggle({ getters, commit, dispatch }, { x, y, value, prevValue }) {
+		toggle({ commit, dispatch }, { x, y, value, prevValue }) {
 			commit('setValue', { x, y, value });
 			dispatch('history/addMove', { x, y, value: prevValue, nextValue: value });
 		},
@@ -148,6 +149,21 @@ const puzzleModule = {
 			commit('setStarted', true);
 			commit('timer/start');
 		},
+
+		async savePuzzle({ state, dispatch }) {
+			let timeElapsed = state.timer.timeElapsed;
+			if (state.timer.running && !!state.timer.startTime) {
+				timeElapsed += (Date.now() - state.timer.startTime);
+			}
+			const { initialBoard, board, solution, width, height, difficulty } = state;
+			const moveList = await dispatch('history/exportMoveHistory');			
+			
+			const saveGameData = new SaveGameData({
+				moveList, timeElapsed, initialBoard, board, solution, width, height, difficulty
+			});
+
+			saveGameData.saveToLocalStorage();
+		}
 	}
 
 }

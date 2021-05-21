@@ -17,11 +17,15 @@ const puzzleTimerModule = {
 
 	mutations: {
 		start: state => {
+			if (state.started && state.running) return;
 			state.startTime = Date.now();
 			state.started = true;
 			state.running = true;
 		},
 		pause: state => {
+			if (!state.running) {
+				return;
+			}
 			const curElapsed = Date.now() - state.startTime;
 			state.timeElapsed += curElapsed;
 
@@ -29,6 +33,7 @@ const puzzleTimerModule = {
 			state.startTime = null;
 		},
 		resume: state => {
+			if (state.running) return;
 			state.startTime = Date.now();
 			state.running = true;
 		},

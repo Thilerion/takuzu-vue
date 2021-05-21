@@ -65,13 +65,14 @@ export default {
 	data() {
 		return {
 			finishedTimeout: null,
+			autoSaveInterval: null,
 		}
 	},
 	computed: {
 		...mapState('puzzle', [
 			'board', 'initialBoard',
 			'difficulty',
-			'initialized', 'started', 'paused',
+			'initialized', 'started', 'paused', 'finished',
 		]),
 		...mapState('puzzle', {
 			rows: state => state.height,
@@ -87,7 +88,7 @@ export default {
 			return this.$store.state.settings.showTimer;
 		},
 		boardGrid() {
-			return this.board.grid;
+			return this.board?.grid;
 		},
 	},
 	methods: {
@@ -127,10 +128,33 @@ export default {
 		},
 		restart() {
 			this.$store.dispatch('puzzle/restartPuzzle');
+		},
+		canSaveGame() {
+			return this.initialized && this.started && !this.finished && !!this.boardGrid;
+		},
+		saveGame() {
+			if (this.canSaveGame()) {
+				this.$store.dispatch('puzzle/savePuzzle');
+			}
+		},
+		initAutoSave() {
+			console.log('init auto save');
+			this.autoSaveInterval = setInterval(() => {
+				this.saveGame();
+			}, 1500);
+		},
+		stopAutoSave() {
+			console.log('stop auto save');
+			clearInterval(this.autoSaveInterval);
+			this.autoSaveInterval = null;
 		}
 	},
 	mounted() {
 		this.startGame();
+		this.initAutoSave();
+	},
+	beforeUnmount() {
+		this.stopAutoSave();
 	},
 	beforeRouteEnter(to, from, next) {
 		if (!store.state.puzzle.initialized) {
