@@ -6,10 +6,10 @@
 			class="difficulty text-left"
 		>{{difficulty}}* {{difficultyLabel}}</div>
 
-		<div
-			class="timer text-center"
+		<PuzzleInfoTimer
 			v-if="showTimer"
-		><span class="minutes">{{minutes}}</span>:<span class="seconds">{{seconds}}</span></div>
+			:timeElapsed="timeElapsed"
+		/>
 
 		<div
 			class="hints-used text-right"
@@ -19,9 +19,11 @@
 </template>
 
 <script>
-import { timeFormatter } from '@/utils/date.utils';
 import { DIFFICULTY_LABELS } from '@/config';
+import PuzzleInfoTimer from './PuzzleInfoTimer.vue';
+
 export default {
+	components: { PuzzleInfoTimer },
 	props: {
 		showTimer: Boolean,
 		difficulty: {
@@ -38,18 +40,6 @@ export default {
 		difficultyLabel() {
 			return DIFFICULTY_LABELS[this.difficulty];
 		},
-		formattedTime() {
-			return this.formatTime(this.timeElapsed).split(':');
-		},
-		minutes() {
-			return this.formattedTime[0];
-		},
-		seconds() {
-			return this.formattedTime[1];
-		}
-	},
-	methods: {
-		formatTime: timeFormatter({ padMinutes: false }),
 	}
 };
 </script>
@@ -62,14 +52,5 @@ export default {
 
 .puzzle-info > * {
 	@apply w-1/3 flex-none;
-}
-
-.minutes {
-	width: 2ch;
-	@apply inline-block text-right;
-}
-.seconds {
-	width: 2ch;
-	@apply inline-block text-left;
 }
 </style>
