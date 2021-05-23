@@ -111,9 +111,9 @@ export default {
 				console.log('Saving game before exit');
 				this.saveGame();
 			}
-			const metaFrom = this.$route.from;
+			const metaFrom = this.$route.meta.prev;
+			console.log({metaFrom})
 			if (metaFrom == null) {
-				this.$router.go(-1);
 				this.$router.replace({ name: 'FreePlay' });
 			} else {
 				this.$router.go(-1);
@@ -127,14 +127,6 @@ export default {
 			window.alert('Good job! You finished this puzzle.');
 			this.$store.dispatch('puzzle/finishPuzzle');
 			this.leaveAfterFinishPuzzle();
-		},
-		leaveAfterFinishPuzzle() {
-			const routeMeta = this.$route.meta ?? { prev: {} };
-			if (routeMeta.prev.name === 'FreePlay') {
-				this.$router.go(-1);
-			} else {
-				this.$router.replace({ name: 'FreePlay' });
-			}
 		},
 		undo() {
 			this.$store.dispatch('puzzle/undoLastMove');
@@ -175,6 +167,14 @@ export default {
 			}
 			console.warn('No puzzle in store. Redirecting from PlayPuzzle to Create game route');
 			return next({ name: 'FreePlay', replace: true });
+		}
+		next();
+	},
+	beforeRouteLeave(to, from, next) {
+		const toName = to.name;
+		const prevName = from.meta.prev.name;
+		if (toName === prevName && toName === 'MainMenu') {
+			return next({ name: 'FreePlay' });
 		}
 		next();
 	},

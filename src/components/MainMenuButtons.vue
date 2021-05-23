@@ -11,7 +11,7 @@
 		>Continue</BaseButton></router-link>
 
 		<router-link
-			to="/play"
+			:to="{ name: 'FreePlay' }"
 			custom
 			v-slot="{ navigate }"
 		><BaseButton
