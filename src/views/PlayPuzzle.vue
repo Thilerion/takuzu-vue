@@ -123,7 +123,7 @@ export default {
 		finishGame() {
 			window.alert('Good job! You finished this puzzle.');
 			this.$store.dispatch('puzzle/finishPuzzle');
-			this.leaveAfterFinishPuzzle();
+			this.exitGame();
 		},
 		undo() {
 			this.$store.dispatch('puzzle/undoLastMove');
