@@ -2,7 +2,7 @@ import { createStore } from 'vuex';
 import gameModule from './game';
 import puzzleModule from './puzzle';
 import { settingsModule, initSettingsWatcher } from './settings';
-import { statsModule, initStatsWatcher } from './stats';
+import { statsModule } from './stats';
 
 const store = createStore({
 
@@ -42,6 +42,5 @@ const store = createStore({
 });
 
 const unwatchSettings = initSettingsWatcher(store);
-const unwatchStats = initStatsWatcher(store);
 
 export default store;
