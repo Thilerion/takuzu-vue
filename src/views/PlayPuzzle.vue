@@ -102,17 +102,13 @@ export default {
 				console.warn('Cannot start puzzle that is already started!');
 				return;
 			}
-			console.log('Starting game now.');
 			this.$store.dispatch('puzzle/startPuzzle');
 		},
 		exitGame() {
-			console.log('exitGame');
 			if (this.canSaveGame()) {
-				console.log('Saving game before exit');
 				this.saveGame();
 			}
 			const metaFrom = this.$route.meta.prev;
-			console.log({metaFrom})
 			if (metaFrom == null) {
 				this.$router.replace({ name: 'FreePlay' });
 			} else {
@@ -120,10 +116,11 @@ export default {
 			}
 		},
 		openSettings() {
+			// TODO: open child route settings
+			// TODO: check beforeRouteLeave when going to settings works correctly
 			console.log('Should open settings');
 		},
 		finishGame() {
-			console.log('Should finish game');
 			window.alert('Good job! You finished this puzzle.');
 			this.$store.dispatch('puzzle/finishPuzzle');
 			this.leaveAfterFinishPuzzle();
@@ -143,13 +140,13 @@ export default {
 			}
 		},
 		initAutoSave() {
-			console.log('init auto save');
+			// console.log('init auto save');
 			this.autoSaveInterval = setInterval(() => {
 				this.saveGame();
 			}, 1500);
 		},
 		stopAutoSave() {
-			console.log('stop auto save');
+			// console.log('stop auto save');
 			clearInterval(this.autoSaveInterval);
 			this.autoSaveInterval = null;
 		}
@@ -161,7 +158,6 @@ export default {
 	beforeRouteEnter(to, from, next) {
 		if (!store.state.puzzle.initialized) {
 			if (hasCurrentSavedGame()) {
-				console.log('should load saved game');
 				store.dispatch('puzzle/loadSavedPuzzle');
 				return next();
 			}
@@ -172,22 +168,19 @@ export default {
 	},
 	beforeRouteLeave(to, from, next) {
 		const toName = to.name;
-		const prevName = from.meta.prev.name;
+		const prevName = from.meta?.prev?.name;
 		if (toName === prevName && toName === 'MainMenu') {
 			return next({ name: 'FreePlay' });
 		}
 		next();
 	},
 	beforeUnmount() {
-		console.log('before unmount');
 		if (this.canSaveGame()) {
-			console.log('Saving game before unmount PlayPuzzle.');
 			this.saveGame();
 		}
 		this.stopAutoSave();
 	},
 	unmounted() {
-		console.log('unmounted');
 		this.$store.dispatch('puzzle/reset');
 	},
 	watch: {

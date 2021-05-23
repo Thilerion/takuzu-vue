@@ -71,7 +71,7 @@ export const initStatsWatcher = (store) => {
 
 	const watchFn = (state) => state.stats;
 	const watchCb = (stats) => {
-		console.log('Store stats watcher: saving stats');
+		// console.log('Store stats watcher: saving stats');
 		saveStatsToStorage(stats);
 	}
 	const opts = {
@@ -83,6 +83,6 @@ export const initStatsWatcher = (store) => {
 		watchCb,
 		opts
 	);
-	console.log('watcher initiated: stats');
+	// console.log('watcher initiated: stats');
 	return watcher;
 }

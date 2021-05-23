@@ -91,9 +91,7 @@ const puzzleModule = {
 				// setup worker message receiving and sending
 				const receivedDataPromise = initPuzzleWorkerReceiver();
 				sendWorkerMessage({ width, height, difficulty });
-				console.log('awaiting data...');
 				const data = await receivedDataPromise;
-				console.log('data received!');
 				const {
 					board: boardStr, solution: solutionStr
 				} = data;
@@ -132,9 +130,8 @@ const puzzleModule = {
 
 		reset({ state, commit }) {
 			if (!state.initialized) {
-				console.log('puzzle not initialized. cannot reset');
-			} else {
-				console.log('resetting puzzle state');
+				// console.log('puzzle not initialized. cannot reset');
+				return;
 			}
 			commit('reset');
 			commit('timer/reset');
@@ -158,7 +155,6 @@ const puzzleModule = {
 		},
 
 		async savePuzzle({ state, dispatch }) {
-			console.log('saving game');
 			let timeElapsed = state.timer.timeElapsed;
 			if (state.timer.running && !!state.timer.startTime) {
 				timeElapsed += (Date.now() - state.timer.startTime);

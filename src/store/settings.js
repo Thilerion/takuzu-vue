@@ -43,7 +43,7 @@ export const settingsModule = {
 export const initSettingsWatcher = (store) => {
 	const watchFn = (state) => state.settings;
 	const watchCb = (settings) => {
-		console.log('Store settings watcher: saving settings');
+		// console.log('Store settings watcher: saving settings');
 		saveSettings(settings);
 	}
 	const opts = {
@@ -55,7 +55,7 @@ export const initSettingsWatcher = (store) => {
 		watchCb,
 		opts
 	);
-	console.log('watcher initiated');
+	// console.log('watcher initiated');
 	return watcher;
 }
 

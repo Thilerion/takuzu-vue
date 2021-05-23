@@ -24,9 +24,6 @@ const setUserColorScheme = (value = 'no-preference') => {
 }
 
 watchEffect(() => {
-	console.log('auto: ' + autoColorScheme.value);
-	console.log('user: ' + userColorScheme.value);
-
 	if (userColorScheme.value === 'light') {
 		htmlEl.classList.add('light');
 		htmlEl.classList.remove('dark');
