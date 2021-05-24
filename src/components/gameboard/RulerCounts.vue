@@ -1,13 +1,13 @@
 <template>
 	<div class="ruler counts" :class="{'ruler-rows': lineType === 'rows', 'ruler-columns': lineType === 'columns'}">
-		<div class="ruler-cell" v-for="(lineCount, lineIdx) in displayedCountValues" :key="lineIdx">
+		<div class="ruler-cell" v-for="(lineCount, lineIdx) in debouncedCounts" :key="lineIdx">
 
-			<div class="count-wrapper zero">
+			<div class="count-wrapper zero" :class="{'count-error': lineCount[0] < 0}">
 				<div class="count zero">
 					{{lineCount[0]}}
 				</div>
 			</div>
-			<div class="count-wrapper one">
+			<div class="count-wrapper one" :class="{'count-error': lineCount[1] < 0}">
 				<div class="count one">
 					{{lineCount[1]}}
 				</div>
@@ -20,20 +20,41 @@
 </template>
 
 <script>
-import { COLUMN, ROW } from '@/lib/constants';
+import debounce from 'lodash.debounce';
 export default {
 	props: {
 		lineType: {
 			type: String,
 			required: true
+		},
+		counts: {
+			type: Array,
+			required: true
 		}
 	},
-	computed: {
-		displayedCountValues() {
-			const key = this.lineType === 'rows' ? ROW : COLUMN;
-			const countsKey = 'currentCounts';
-			const counts = this.$store.getters[`puzzle/${countsKey}`][key];
-			return counts;
+	data() {
+		return {
+			debouncedCounts: []
+		}
+	},
+	beforeMount() {
+		this.debouncedCounts = this.counts;
+	},
+	methods: {
+		setDebouncedCounts() {
+			this.debouncedCounts = this.counts;
+		}
+	},
+	created() {
+		this.updateCounts = debounce(this.setDebouncedCounts, 195, {
+			leading: false,
+		});
+	},
+	watch: {
+		counts: {
+			handler() {
+				this.updateCounts();
+			}
 		}
 	}
 };
@@ -79,13 +100,17 @@ export default {
 }
 
 .count-wrapper {
-	display: flex;
+	transform: translateX(0) rotateY(0deg);
+	min-width: 1.5ch;
+	@apply flex;
 }
 .count-wrapper.zero {
+	@apply text-right;
 	grid-row: 1 / span 2;
 	grid-column: 1 / span 2;
 }
 .count-wrapper.one {
+	@apply text-right;
 	grid-row: 2 / span 2;
 	grid-column: 2 / span 2;
 }
@@ -97,11 +122,23 @@ export default {
 	@apply mb-auto mr-auto;
 }
 
+.count-error {
+	/*
+	when count becomes error, set color with a delay
+	when becomes correct again, no transition
+	*/
+	transition: color .15s ease-out 1s;
+	animation: headShake 1s ease-in-out 2s;
+	animation-fill-mode: forwards;
+	@apply text-red-700;
+}
+
 .divider-wrapper {
 	@apply absolute w-full h-full opacity-50;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	padding-left: 2px;
 }
 .divider {
 	transform-origin: 50% 50%;
@@ -109,5 +146,42 @@ export default {
 	@apply opacity-30 transition-opacity bg-black;
 	width: 1px;
 	height: 50%;
+}
+
+.animate__headShake {
+	animation-timing-function: ease-in-out;
+	animation-name: headShake;
+}
+@keyframes headShake {
+  0% {
+    transform: translateX(0);
+	font-weight: normal;
+  }
+
+  6.5% {
+    transform: translateX(-1.5px) rotateY(-9deg);
+  }
+
+  18.5% {
+    transform: translateX(1px) rotateY(7deg);
+	font-weight: 600;
+  }
+
+  31.5% {
+    transform: translateX(-0.75px) rotateY(-5deg);
+	
+  }
+
+  43.5% {
+    transform: translateX(0.6px) rotateY(3deg);
+  }
+
+  50% {
+    transform: translateX(0);
+  }
+  100% {
+	  transform: translateX(0) rotateY(0deg);
+	  font-weight: 600;
+  }
 }
 </style>

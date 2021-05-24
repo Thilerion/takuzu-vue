@@ -27,8 +27,6 @@
 				:grid-height="height"
 				:grid-width="width"
 				:cell-size="cellSize"
-				:col-counts="colCounts"
-				:row-counts="rowCounts"
 			>
 				<template v-slot:puzzle-info>
 					<PuzzleInfo
@@ -39,11 +37,11 @@
 				</template>
 				<template v-slot:ruler-rows>
 					<RulerCoords v-if="rulerType === 'coords'" line-type="rows" :line-ids="board.rowIds" />
-					<RulerCounts v-else-if="rulerType != null" line-type="rows" />
+					<RulerCounts v-else-if="rulerType != null" line-type="rows" :counts="displayCounts[rowKey]" />
 				</template>
 				<template v-slot:ruler-columns>
 					<RulerCoords v-if="rulerType === 'coords'" line-type="columns" :line-ids="board.columnIds" />
-					<RulerCounts v-else-if="rulerType != null" line-type="columns" />
+					<RulerCounts v-else-if="rulerType != null" line-type="columns" :counts="displayCounts[columnKey]" />
 				</template>
 			</GameBoard>
 		</GameBoardWrapper>
@@ -68,6 +66,7 @@ import PuzzleInfo from '@/components/gameboard/PuzzleInfo.vue';
 import RulerCoords from '@/components/gameboard/RulerCoords';
 import RulerCounts from '@/components/gameboard/RulerCounts';
 import { hasCurrentSavedGame } from '@/services/save-game';
+import { COLUMN, ROW } from '@/lib/constants';
 
 export default {
 	components: {
@@ -83,6 +82,9 @@ export default {
 		return {
 			finishedTimeout: null,
 			autoSaveInterval: null,
+			
+			rowKey: ROW,
+			columnKey: COLUMN,
 		}
 	},
 	computed: {
@@ -90,18 +92,25 @@ export default {
 			'board', 'initialBoard',
 			'difficulty',
 			'initialized', 'started', 'paused', 'finished',
-			'rowCounts', 'colCounts',
 		]),
 		...mapState('puzzle', {
 			rows: state => state.height,
 			columns: state => state.width,
 		}),
+		...mapGetters('puzzle', [			
+			'currentCounts', 'remainingCounts',
+		]),
 		...mapState('settings', [
 			'showLineInfo',
 		]),
 		...mapGetters('settings', [
 			'showBoardCoordinates', 'showBoardLineCounts',
 		]),
+		displayCounts() {
+			if (this.rulerType === 'count-remaining') return this.remainingCounts;
+			if (this.rulerType === 'count-current') return this.currentCounts;
+			return {};
+		},
 		rulerSize() {
 			if (this.showBoardCoordinates) {
 				return '16px';
