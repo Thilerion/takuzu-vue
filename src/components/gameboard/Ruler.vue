@@ -15,7 +15,12 @@
 				class="ruler-cell ruler-counts"
 				v-for="(count, lineIdx) in displayedCountValues"
 				:key="lineIdx"
-			>{{count[0]}}|{{count[1]}}</div>
+			>
+				<div class="ruler-line-count zero">{{count[0]}}</div>
+				<span class="count-divider" v-if="lineType === 'columns'">|</span>
+				<span class="count-divider" v-else-if="lineType === 'rows'">--</span>
+				<div class="ruler-line-count one">{{count[1]}}</div>
+			</div>
 		</template>
 	</div>
 </template>
@@ -73,14 +78,13 @@ export default {
 	font-size: 10px;
 }
 .ruler-rows {
-	grid-area: ruler-rows;
 	width: 16px;
-	@apply flex-col justify-around items-center;
+	@apply flex-col justify-around items-center h-full overflow-y-hidden;
+	
 }
 .ruler-columns {
-	grid-area: ruler-cols;
 	height: 16px;
-	@apply flex-row justify-around items-center;
+	@apply flex-row justify-around items-center w-full overflow-x-hidden;
 }
 
 .ruler-cell {
@@ -88,8 +92,32 @@ export default {
 }
 .ruler-rows > .ruler-cell {
 	@apply mr-auto;
+	max-height: var(--cell-size);
 }
 .ruler-columns > .ruler-cell {
 	@apply mb-auto;
+	max-width: var(--cell-size);
+}
+
+.ruler-counts {
+	@apply flex even:bg-blue-100 even:bg-opacity-50;
+}
+.ruler-rows .ruler-counts {
+	@apply flex-col text-right leading-none;
+}
+.ruler-columns .ruler-counts {
+	@apply flex justify-around;
+	max-width: 6ch;
+}
+.ruler-rows .count-divider {
+	height: 1px;
+	width: 50%;
+	@apply bg-gray-500 mb-px;
+}
+.ruler-columns .ruler-line-count {
+	@apply flex-1;
+}
+.ruler-columns .count-divider {
+	@apply mx-px;
 }
 </style>

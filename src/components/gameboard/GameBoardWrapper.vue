@@ -2,6 +2,7 @@
 <div class="main justify-center items-center" ref="container">
 	<div
 		class="puzzle-wrapper"
+		:class="[`cell-size-${gridGapSizing}`]"
 		:style="{
 			'--unavail-height': heightUnavailable,
 			'--unavail-width': widthUnavailable,
@@ -43,17 +44,41 @@ export default {
 		}
 	},
 	computed: {
+		gridGapSizing() {
+			const { cellSize } = this.puzzleGridDimensions;
+			if (cellSize <= 28) {
+				return 'xs';
+			} else if (cellSize <= 36) {
+				return 's';
+			} else if (cellSize <= 48) {
+				return 'm';
+			} else if (cellSize <= 64) {
+				return 'l';
+			} else {
+				return 'xl';
+			}
+		},
+		rowsWithRuler() {
+			if (this.rulerHeight === 'cellSize') return this.rows + 1;
+			return this.rows;
+		},
+		columnsWithRuler() {
+			if (this.rulerWidth === 'cellSize') return this.columns + 1;
+			return this.columns;
+		},
 		aspectRatio() {
-			return this.columns / this.rows;
+			return this.columnsWithRuler / this.rowsWithRuler;
 		},
 		heightUnavailable() {
 			return [this.rulerHeight, this.infoHeight, this.paddingY, this.paddingY].reduce((total, val) => {
+				if (val === 'cellSize') return total;
 				let pxVal = val.slice(0, -2) * 1;
 				return total + pxVal;
 			}, 0);
 		},
 		widthUnavailable() {
 			return [this.rulerWidth, this.paddingX, this.paddingX].reduce((total, val) => {
+				if (val === 'cellSize') return total;
 				let pxVal = val.slice(0, -2) * 1;
 				return total + pxVal;
 			}, 0);
@@ -61,22 +86,24 @@ export default {
 		maxDimensionsPuzzleGrid() {
 			const maxWidth = this.width - this.widthUnavailable;
 			const maxHeight = this.height - this.heightUnavailable;
-			return {maxWidth, maxHeight};
+			return { maxWidth, maxHeight };
 		},
 		puzzleGridDimensions() {
-			const {maxWidth, maxHeight} = this.maxDimensionsPuzzleGrid;
+			const { maxWidth, maxHeight } = this.maxDimensionsPuzzleGrid;
 
 			const heightA = maxWidth / this.aspectRatio;
 			if (heightA < maxHeight) {
-				const cellSize = Math.floor(heightA / this.rows);
+				const cellSize = Math.floor(heightA / this.rowsWithRuler);
 				const w = cellSize * this.columns;
 				const h = cellSize * this.rows;
+				console.log({cellSize, w, h});
 				return { width: w + 'px', height: h + 'px', cellSize };
 			}
 			const widthB = maxHeight * this.aspectRatio;
-			const cellSize = Math.floor(widthB / this.columns);
+			const cellSize = Math.floor(widthB / this.columnsWithRuler);
 			const w = cellSize * this.columns;
 			const h = cellSize * this.rows;
+			console.log({cellSize, w, h});
 			return { width: w + 'px', height: h + 'px', cellSize };
 		}
 	},
@@ -121,5 +148,30 @@ export default {
 .main {
 	@apply flex-1 flex flex-col;
 	overflow: hidden;
+}
+
+.puzzle-wrapper {
+	/* default grid gap for puzzle-grid and rulers */
+	--grid-gap: 2px;
+}
+.puzzle-wrapper.cell-size-xs {
+	--grid-gap: 1px;
+	--cell-rounding: theme(borderRadius.none);
+}
+.puzzle-wrapper.cell-size-s {
+	--grid-gap: 1px;
+	--cell-rounding: theme(borderRadius.sm);
+}
+.puzzle-wrapper.cell-size-m {
+	--grid-gap: 2px;
+	--cell-rounding: theme(borderRadius.sm);
+}
+.puzzle-wrapper.cell-size-l {
+	--grid-gap: 3px;
+	--cell-rounding: theme(borderRadius.DEFAULT);
+}
+.puzzle-wrapper.cell-size-xl {
+	--grid-gap: 4px;
+	--cell-rounding: theme(borderRadius.DEFAULT);
 }
 </style>

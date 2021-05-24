@@ -81,35 +81,11 @@ export default {
 
 <style lang="postcss" scoped>
 .puzzle-grid {
-	/* Default grid gap: */
-	--grid-gap: 2px; 
-
 	grid-area: puzzle-grid;
 	grid-template-rows: repeat(var(--rows), 1fr);
 	grid-template-columns: repeat(var(--columns), 1fr);
 	@apply mr-auto mb-auto inline-grid relative;
 	gap: var(--grid-gap);
-}
-
-.puzzle-grid.size-xs {
-	--grid-gap: 1px;
-	--cell-rounding: theme(borderRadius.none);
-}
-.puzzle-grid.size-s {
-	--grid-gap: 1px;
-	--cell-rounding: theme(borderRadius.sm);
-}
-.puzzle-grid.size-m {
-	--grid-gap: 2px;
-	--cell-rounding: theme(borderRadius.sm);
-}
-.puzzle-grid.size-l {
-	--grid-gap: 3px;
-	--cell-rounding: theme(borderRadius.DEFAULT);
-}
-.puzzle-grid.size-xl {
-	--grid-gap: 4px;
-	--cell-rounding: theme(borderRadius.DEFAULT);
 }
 
 .cell-bg {
