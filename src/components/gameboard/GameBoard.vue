@@ -10,6 +10,7 @@
 			:board="board"
 			:rows="rows"
 			:columns="columns"
+			:paused="paused"
 			:style="{
 				'max-width': gridWidth,
 				'max-height': gridHeight,
@@ -40,6 +41,7 @@ export default {
 			type: Object,
 			required: true
 		},
+		paused: Boolean,
 	},
 	data() {
 		return {}

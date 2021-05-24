@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="puzzle-grid"
-		:class="[`cell-theme-${cellTheme}`]"
+		:class="[`cell-theme-${cellTheme}`, { 'paused': paused }]"
 	>
 		<template
 			v-for="(_row, rowIdx) in rows"
@@ -18,6 +18,7 @@
 				:y="rowIdx"
 				:value="grid[rowIdx][colIdx]"
 				:theme="cellTheme"
+				:hidden="paused"
 			>
 
 					<transition name="touch-anim" @after-enter="removeTouchAnim(`${colIdx},${rowIdx}`)">
@@ -43,6 +44,7 @@ export default {
 		},
 		rows: Number,
 		columns: Number,
+		paused: Boolean,
 	},
 	emits: ['toggle-cell'],
 	data() {
@@ -86,6 +88,9 @@ export default {
 	grid-template-columns: repeat(var(--columns), 1fr);
 	@apply mr-auto mb-auto inline-grid relative;
 	gap: var(--grid-gap);
+}
+.puzzle-grid.paused {
+	@apply pointer-events-none;
 }
 
 .cell-bg {

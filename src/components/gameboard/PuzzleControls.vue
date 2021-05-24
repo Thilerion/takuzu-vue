@@ -4,7 +4,7 @@
 
 			<IconBtnText
 				@click="$emit('undo')"
-				:disabled="!canUndo"
+				:disabled="!canUndo || paused"
 				size="26"
 				icon="undo"
 				vertical
@@ -15,7 +15,7 @@
 				size="26"
 				icon="replay"
 				vertical
-				:disabled="!canUndo"
+				:disabled="!canUndo || paused"
 			>Restart</IconBtnText>
 
 			<IconBtnText
@@ -24,6 +24,7 @@
 				vertical
 				@click="$emit('check')"
 				v-if="checkButtonEnabled"
+				:disabled="paused"
 			>Check</IconBtnText>
 
 			<IconBtnText
@@ -31,6 +32,7 @@
 				icon="emoji_objects"
 				vertical
 				@click="$emit('get-hint')"
+				:disabled="paused"
 			>Hint</IconBtnText>
 
 		</div>
@@ -50,7 +52,8 @@ export default {
 		board: {
 			type: Object,
 			// required: true,
-		}
+		},
+		paused: Boolean,
 	},
 	computed: {
 		// settings
@@ -67,6 +70,9 @@ export default {
 	
 	@apply bg-none dark:bg-gray-800 dark:bg-opacity-30;
 	@apply text-gray-900 text-opacity-80 dark:text-white dark:text-opacity-80;
+}
+.puzzle-paused .puzzle-controls {
+	@apply pointer-events-none;
 }
 
 .control-btns {

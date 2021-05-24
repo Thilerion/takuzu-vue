@@ -93,17 +93,17 @@ export default {
 
 			const heightA = maxWidth / this.aspectRatio;
 			if (heightA < maxHeight) {
-				const cellSize = Math.floor(heightA / this.rowsWithRuler);
+				let cellSize = Math.floor(heightA / this.rowsWithRuler);
+				if (cellSize < 12) cellSize = 12;
 				const w = cellSize * this.columns;
 				const h = cellSize * this.rows;
-				console.log({cellSize, w, h});
 				return { width: w + 'px', height: h + 'px', cellSize };
 			}
 			const widthB = maxHeight * this.aspectRatio;
-			const cellSize = Math.floor(widthB / this.columnsWithRuler);
+			let cellSize = Math.floor(widthB / this.columnsWithRuler);
+			if (cellSize < 12) cellSize = 12;
 			const w = cellSize * this.columns;
 			const h = cellSize * this.rows;
-			console.log({cellSize, w, h});
 			return { width: w + 'px', height: h + 'px', cellSize };
 		}
 	},

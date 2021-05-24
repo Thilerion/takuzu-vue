@@ -1,5 +1,5 @@
 <template>
-	<div class="play-puzzle fixed box-border overflow-auto inset-0 flex flex-col z-20 text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-white">
+	<div class="play-puzzle fixed box-border overflow-auto inset-0 flex flex-col z-20 text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-white" :class="{'puzzle-paused': paused}">
 
 		<GameBoardHeader
 			class="flex-shrink-0"
@@ -18,6 +18,7 @@
 		>
 			<GameBoard
 				v-if="started && board"
+				:paused="paused"
 				:rows="rows"
 				:columns="columns"
 				:board="board"
@@ -48,6 +49,7 @@
 		
 		<PuzzleControls
 			:can-undo="canUndo"
+			:paused="paused"
 			@undo="undo"
 			@restart="restart"
 		/>
@@ -80,6 +82,7 @@ import { hasCurrentSavedGame } from '@/services/save-game';
 import { usePageVisibility } from '@/composables/use-page-visibility';
 
 import { COLUMN, ROW } from '@/lib/constants';
+import debounce from 'lodash.debounce';
 
 export default {
 	components: {
@@ -234,7 +237,12 @@ export default {
 			// console.log('stop auto save');
 			clearInterval(this.autoSaveInterval);
 			this.autoSaveInterval = null;
-		}
+		},
+	},
+	created() {
+		this.debouncedPause = debounce((value) => {
+			this.$store.dispatch('puzzle/pauseGame', value);
+		}, 150);
 	},
 	mounted() {
 		this.startGame();
@@ -281,7 +289,6 @@ export default {
 	},
 	unmounted() {
 		this.$store.dispatch('puzzle/reset');
-		console.log('unmount');
 	},
 	watch: {
 		finishedAndSolved: {
@@ -298,12 +305,13 @@ export default {
 			}
 		},
 		puzzleShouldBePaused(newValue, prevValue) {
-			const { windowHidden, settingsOpen, dropdownOpen} = this;
-			console.log({ windowHidden, settingsOpen, dropdownOpen });
 			if (newValue && !prevValue) {
-				this.$store.dispatch('puzzle/pauseGame', true);
+				// immediately pause
+				this.debouncedPause(true);
+				this.debouncedPause.flush();
 			} else if (!newValue && prevValue) {
-				this.$store.dispatch('puzzle/pauseGame', false);
+				// but have a small delay when resuming
+				this.debouncedPause(false);
 			}
 		},
 	}

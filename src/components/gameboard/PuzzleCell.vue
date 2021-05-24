@@ -7,7 +7,7 @@
 		<div class="cell-wrapper">
 			<transition name="cell-value-anim">
 				<div
-					v-if="hasValue"
+					v-if="hasValue && !hidden"
 					class="cell-value"
 					:class="cellValueClassList"
 				><div class="cell-symbol">{{cellSymbol}}</div></div>
@@ -37,7 +37,8 @@ export default {
 		theme: {
 			type: String,
 			required: true
-		}
+		},
+		hidden: Boolean
 	},
 	emits: ['click'],
 	computed: {
