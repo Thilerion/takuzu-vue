@@ -3,17 +3,33 @@
 		class="ruler"
 		:class="[`ruler-${lineType}`]"
 	>
-		<div
-			class="ruler-cell"
-			v-for="lineId in rulerLines"
-			:key="lineId"
-		>{{lineId}}</div>
+		<template v-if="rulerType === 'coords'">
+			<div
+				class="ruler-cell ruler-coords"
+				v-for="lineId in rulerLines"
+				:key="lineId"
+			>{{lineId}}</div>
+		</template>
+		<template v-else>
+			<div
+				class="ruler-cell ruler-counts"
+				v-for="(count, lineIdx) in displayedCountValues"
+				:key="lineIdx"
+			>{{count[0]}}|{{count[1]}}</div>
+		</template>
 	</div>
 </template>
 
 <script>
+import { COLUMN, ROW } from '@/lib/constants';
+
 export default {
 	props: {
+		rulerType: {
+			validator(value) {
+				return ['coords', 'count-remaining', 'count-current'].includes(value);
+			}
+		},
 		lineType: {
 			type: String,
 			required: true
@@ -24,6 +40,9 @@ export default {
 		},
 		disabled: {
 			type: Boolean
+		},
+		countValues: {
+			type: Array
 		}
 	},
 	computed: {
@@ -36,6 +55,13 @@ export default {
 			} else if (this.lineType === 'columns') {
 				return Array(this.amount).fill(null).map((_val, idx) => idx + 1);
 			}
+		},
+		displayedCountValues() {
+			if (this.rulerType === 'coords') return [];
+			const key = this.lineType === 'rows' ? ROW : COLUMN;
+			const countsKey = this.rulerType === 'count-current' ? 'currentCounts' : 'remainingCounts';
+			const counts = this.$store.getters[`puzzle/${countsKey}`][key];
+			return counts;
 		}
 	}
 };

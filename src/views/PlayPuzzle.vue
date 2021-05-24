@@ -26,6 +26,8 @@
 				:grid-height="height"
 				:grid-width="width"
 				:cell-size="cellSize"
+				:col-counts="colCounts"
+				:row-counts="rowCounts"
 			>
 				<template v-slot:puzzle-info>
 					<PuzzleInfo
@@ -75,6 +77,7 @@ export default {
 			'board', 'initialBoard',
 			'difficulty',
 			'initialized', 'started', 'paused', 'finished',
+			'rowCounts', 'colCounts',
 		]),
 		...mapState('puzzle', {
 			rows: state => state.height,

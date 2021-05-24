@@ -1,14 +1,18 @@
 <template>
 	<div class="board new-board relative">
 		<Ruler
+			ruler-type="count-remaining"
 			line-type="columns"
 			:amount="columns"
 			:disabled="!rulerSize || rulerSize === '0px'"
+			:countValues="colCounts"
 		/>
 		<Ruler
+			ruler-type="count-current"
 			line-type="rows"
 			:amount="rows"
-			:disabled="!rulerSize || rulerSize === '0px'"			
+			:disabled="!rulerSize || rulerSize === '0px'"
+			:countValues="rowCounts"		
 		/>
 		<div class="puzzle-info-wrapper">
 			<slot name="puzzle-info" />
@@ -56,7 +60,9 @@ export default {
 		initialBoard: {
 			type: Object,
 			required: true
-		}
+		},
+		rowCounts: Array,
+		colCounts: Array
 	},
 	data() {
 		return {}

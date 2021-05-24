@@ -5,7 +5,7 @@ import puzzleTimerModule from './puzzle-timer';
 import puzzleHistoryModule from './puzzle-history';
 import { SaveGameData } from '@/services/save-game';
 import { calculateGridCounts, calculateLineCounts } from './puzzle-line-counts';
-import { EMPTY } from '@/lib/constants';
+import { COLUMN, EMPTY, ONE, ROW, ZERO } from '@/lib/constants';
 
 const defaultState = () => ({
 	// game config
@@ -54,6 +54,7 @@ const puzzleModule = {
 		},
 		finishedAndSolved: (state, getters) => {
 			if (state.board == null || !state.initialized || !state.started) return false;
+			if (getters.progress < 1) return false;
 			return state.solutionBoardStr === getters.boardStr;
 		},
 		progress: state => {
@@ -61,6 +62,33 @@ const puzzleModule = {
 			const currentEmpty = state.gridCounts[EMPTY];
 			const progress = 1 - (currentEmpty / initialEmpty);
 			return progress;
+		},
+		currentCounts: state => {
+			const transformCount = lineCount => {
+				const zero = lineCount[ZERO];
+				const one = lineCount[ONE];
+				return [zero, one];
+			}
+			const row = state.rowCounts.map(transformCount);
+			const column = state.colCounts.map(transformCount);
+			return { [ROW]: row, [COLUMN]: column };
+		},
+		remainingCounts: (state, getters) => {
+			const currentCounts = getters.currentCounts;
+			const currentRow = currentCounts[ROW];
+			const currentColumn = currentCounts[COLUMN];
+			const requiredRow = state.board.numRequired[ROW];
+			const requiredColumn = state.board.numRequired[COLUMN];
+
+			const remainingRow = currentRow.map(val => {
+				const [zero, one] = val;
+				return [requiredRow[ZERO] - zero, requiredRow[ONE] - one];
+			})
+			const remainingColumn = currentColumn.map(val => {
+				const [zero, one] = val;
+				return [requiredColumn[ZERO] - zero, requiredColumn[ONE] - one];
+			})
+			return { [ROW]: remainingRow, [COLUMN]: remainingColumn };
 		}
 	},
 
