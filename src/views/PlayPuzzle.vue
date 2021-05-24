@@ -77,6 +77,8 @@ import RulerCounts from '@/components/gameboard/RulerCounts';
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
 
 import { hasCurrentSavedGame } from '@/services/save-game';
+import { usePageVisibility } from '@/composables/use-page-visibility';
+
 import { COLUMN, ROW } from '@/lib/constants';
 
 export default {
@@ -89,6 +91,10 @@ export default {
 		RulerCoords,
 		RulerCounts,
 		OverlayPageTransition,
+	},
+	setup() {
+		const { hidden } = usePageVisibility();
+		return { windowHidden: hidden };
 	},
 	data() {
 		return {
@@ -160,6 +166,9 @@ export default {
 		},
 		overlayActive() {
 			return this.settingsOpen || this.dropdownOpen;
+		},
+		puzzleShouldBePaused() {
+			return this.settingsOpen || this.dropdownOpen || this.windowHidden;
 		}
 	},
 	methods: {
@@ -288,13 +297,15 @@ export default {
 				}
 			}
 		},
-		overlayActive(newValue, prevValue) {
+		puzzleShouldBePaused(newValue, prevValue) {
+			const { windowHidden, settingsOpen, dropdownOpen} = this;
+			console.log({ windowHidden, settingsOpen, dropdownOpen });
 			if (newValue && !prevValue) {
 				this.$store.dispatch('puzzle/pauseGame', true);
 			} else if (!newValue && prevValue) {
 				this.$store.dispatch('puzzle/pauseGame', false);
 			}
-		}
+		},
 	}
 };
 </script>
