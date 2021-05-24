@@ -11,7 +11,7 @@
 		/>
 
 		<div
-			class="progress text-right"
+			class="progress text-right whitespace-nowrap"
 		>Progress:<div class="progress-percentage">{{progress}}</div>%</div>
 
 	</div>
@@ -44,16 +44,22 @@ export default {
 
 <style lang="postcss" scoped>
 .puzzle-info {
-	@apply px-1 pb-1 text-xs flex flex-1 items-end text-gray-500 dark:text-gray-400 font-medium tracking-wider border-b border-gray-400 dark:border-gray-300 border-opacity-20 dark:border-opacity-10;
-	min-width: 220px;
+	@apply px-1 pb-1 text-xs text-gray-500 dark:text-gray-400 font-medium tracking-wider border-b border-gray-400 dark:border-gray-300 border-opacity-20 dark:border-opacity-10;
+
+	@apply grid w-full;
+	grid-template-rows: 1fr;
+	grid-template-columns: calc(50% - 3ch) 6ch calc(50% - 3ch);
 }
 
 .puzzle-info > * {
-	@apply w-1/3 flex-none;
+	/* @apply w-1/3 flex-none; */
 }
 
 .progress-percentage {
 	@apply inline-block text-right;
 	width: 3.5ch;
+}
+.progress {
+	grid-column: 3 / span 1;
 }
 </style>
