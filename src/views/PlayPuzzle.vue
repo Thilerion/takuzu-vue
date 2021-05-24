@@ -37,11 +37,11 @@
 				</template>
 				<template v-slot:ruler-rows>
 					<RulerCoords v-if="rulerType === 'coords'" line-type="rows" :line-ids="board.rowIds" />
-					<RulerCounts v-else-if="rulerType != null" line-type="rows" :counts="displayCounts[rowKey]" />
+					<RulerCounts v-else-if="rulerType != null" line-type="rows" :ruler-type="rulerType" :counts="displayCounts[rowKey]" />
 				</template>
 				<template v-slot:ruler-columns>
 					<RulerCoords v-if="rulerType === 'coords'" line-type="columns" :line-ids="board.columnIds" />
-					<RulerCounts v-else-if="rulerType != null" line-type="columns" :counts="displayCounts[columnKey]" />
+					<RulerCounts v-else-if="rulerType != null" line-type="columns" :ruler-type="rulerType" :counts="displayCounts[columnKey]" />
 				</template>
 			</GameBoard>
 		</GameBoardWrapper>

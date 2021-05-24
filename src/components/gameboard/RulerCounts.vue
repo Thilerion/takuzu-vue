@@ -2,12 +2,12 @@
 	<div class="ruler counts" :class="{'ruler-rows': lineType === 'rows', 'ruler-columns': lineType === 'columns'}">
 		<div class="ruler-cell" v-for="(lineCount, lineIdx) in debouncedCounts" :key="lineIdx">
 
-			<div class="count-wrapper zero" :class="{'count-error': lineCount[0] < 0}">
+			<div class="count-wrapper zero" :class="{'count-error': checkCountError(lineCount[0]), 'count-complete': checkCountComplete(lineCount[0])}">
 				<div class="count zero">
 					{{lineCount[0]}}
 				</div>
 			</div>
-			<div class="count-wrapper one" :class="{'count-error': lineCount[1] < 0}">
+			<div class="count-wrapper one" :class="{'count-error': checkCountError(lineCount[1]), 'count-complete': checkCountComplete(lineCount[1])}">
 				<div class="count one">
 					{{lineCount[1]}}
 				</div>
@@ -30,6 +30,12 @@ export default {
 		counts: {
 			type: Array,
 			required: true
+		},
+		rulerType: {
+			validator(value) {
+				return ['count-remaining', 'count-current'].includes(value);
+			},
+			required: true,
 		}
 	},
 	data() {
@@ -38,11 +44,19 @@ export default {
 		}
 	},
 	beforeMount() {
-		this.debouncedCounts = this.counts;
+		this.setDebouncedCounts();
 	},
 	methods: {
 		setDebouncedCounts() {
 			this.debouncedCounts = this.counts;
+		},
+		checkCountError(amount) {
+			if (amount < 0 && this.rulerType === 'count-remaining') return true;
+			return false;
+		},
+		checkCountComplete(amount) {
+			if (amount === 0 && this.rulerType === 'count-remaining') return true;
+			return false;
 		}
 	},
 	created() {
@@ -131,6 +145,10 @@ export default {
 	animation: headShake 1s ease-in-out 2s;
 	animation-fill-mode: forwards;
 	@apply text-red-700;
+}
+.count-complete {
+	transition: opacity .15s ease-out .5s;
+	@apply opacity-50;
 }
 
 .divider-wrapper {
