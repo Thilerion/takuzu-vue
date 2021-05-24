@@ -12,7 +12,7 @@
 
 		<div
 			class="progress text-right"
-		>Progress: {{progress}}</div>
+		>Progress:<div class="progress-percentage">{{progress}}</div>%</div>
 
 	</div>
 </template>
@@ -50,5 +50,10 @@ export default {
 
 .puzzle-info > * {
 	@apply w-1/3 flex-none;
+}
+
+.progress-percentage {
+	@apply inline-block text-right;
+	width: 3.5ch;
 }
 </style>
