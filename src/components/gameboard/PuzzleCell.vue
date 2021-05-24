@@ -7,7 +7,7 @@
 		<div class="cell-wrapper">
 			<transition name="cell-value-anim">
 				<div
-					v-if="hasValue && !hidden"
+					v-show="hasValue"
 					class="cell-value"
 					:class="cellValueClassList"
 				><div class="cell-symbol">{{cellSymbol}}</div></div>
@@ -125,7 +125,7 @@ export default {
 
 .cell-value {
 	@apply m-auto w-full h-full overflow-hidden absolute inset-0 opacity-100 flex;
-	transition: background-color .15s ease;
+	transition: background-color .15s ease, opacity .15s ease;
 }
 .cell-value.value-1 {
 	/* @apply bg-red-500 dark:bg-red-500 dark:bg-opacity-90; */
@@ -138,11 +138,9 @@ export default {
 
 .cell-value-anim-enter-active {
 	transition: opacity 0.2s ease;
-	z-index: 1;
 }
 .cell-value-anim-leave-active {
 	transition: opacity 0.15s ease;
-	z-index: 0;
 }
 .cell-value-anim-enter-from, .cell-value-anim-leave-to {
 	opacity: 0;
