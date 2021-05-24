@@ -85,7 +85,14 @@ const routes = [
 		name: 'PlayPuzzle',
 		meta: {
 			title: 'Play Puzzle'
-		}
+		},
+		children: [
+			{
+				path: 'settings',
+				name: 'PlayPuzzle.settings',
+				component: Settings
+			}
+		]
 	},
 	{
 		path: '/showcase',

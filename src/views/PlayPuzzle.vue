@@ -3,7 +3,6 @@
 
 		<GameBoardHeader
 			class="flex-shrink-0"
-			@cycle-size="() => {}"
 			@close="exitGame"
 			:rows="rows"
 			:columns="columns"	
@@ -51,6 +50,15 @@
 			@undo="undo"
 			@restart="restart"
 		/>
+
+		<router-view v-slot="{ Component }">
+			<!-- TODO: use FullScreenOverlayPage component -->
+			<OverlayPageTransition>
+				<div v-if="Component" class="fixed inset-0 bg-gray-50 overflow-y-auto pb-8 z-40">
+					<component :is="Component" />
+				</div>
+			</OverlayPageTransition>
+		</router-view>
 	</div>
 </template>
 
@@ -65,6 +73,8 @@ import PuzzleControls from '@/components/gameboard/PuzzleControls.vue';
 import PuzzleInfo from '@/components/gameboard/PuzzleInfo.vue';
 import RulerCoords from '@/components/gameboard/RulerCoords';
 import RulerCounts from '@/components/gameboard/RulerCounts';
+import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
+
 import { hasCurrentSavedGame } from '@/services/save-game';
 import { COLUMN, ROW } from '@/lib/constants';
 
@@ -77,6 +87,7 @@ export default {
 		PuzzleInfo,
 		RulerCoords,
 		RulerCounts,
+		OverlayPageTransition,
 	},
 	data() {
 		return {

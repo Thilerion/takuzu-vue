@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<PageHeader>Settings</PageHeader>
+		<PageHeader @close="closeSettings">Settings</PageHeader>
 		<div class="setting-block">
 			<DarkModeSetting />
 		</div>
@@ -168,6 +168,16 @@ export default {
 				key,
 				value
 			});
+		},
+		closeSettings() {
+			const prev = this.$route.meta.prev;
+			if (this.$route.name === 'PlayPuzzle.settings') {
+				if (prev == null || (prev && prev.name !== 'PlayPuzzle')) this.$router.replace({ name: 'PlayPuzzle' });
+				else this.$router.go(-1);
+			} else {
+				if (prev) this.$router.go(-1);
+				else this.$router.replace({ name: 'MainMenu' });
+			}
 		}
 	}
 };
