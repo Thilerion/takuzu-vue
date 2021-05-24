@@ -1,9 +1,19 @@
 <template>
 	<div class="ruler counts" :class="{'ruler-rows': lineType === 'rows', 'ruler-columns': lineType === 'columns'}">
 		<div class="ruler-cell" v-for="(lineCount, lineIdx) in displayedCountValues" :key="lineIdx">
-			<div class="ruler-cell-inner">
-				<div class="zero-wrapper"><div>{{lineCount[0]}}</div></div>
-				<div class="one-wrapper"><div>{{lineCount[1]}}</div></div>
+
+			<div class="count-wrapper zero">
+				<div class="count zero">
+					{{lineCount[0]}}
+				</div>
+			</div>
+			<div class="count-wrapper one">
+				<div class="count one">
+					{{lineCount[1]}}
+				</div>
+			</div>
+			<div class="divider-wrapper">
+				<div class="divider"></div>
 			</div>
 		</div>
 	</div>
@@ -52,21 +62,52 @@ export default {
 }
 
 .ruler-cell {
-	@apply flex;
-	height: var(--ruler-cell-size);
+	grid-template-rows: repeat(3, 1fr);
+	grid-template-columns: repeat(3, 1fr);
+
+	padding: 15%;
+	@apply grid leading-none overflow-hidden relative transition-colors font-sans justify-items-stretch items-stretch pointer-events-auto;
 	width: var(--ruler-cell-size);
-	padding: 12%;
+	height: var(--ruler-cell-size);
+
+	--half-size: calc(var(--ruler-cell-size) * 0.3);
+	--font-size: clamp(10px, var(--half-size), 2rem);
+	font-size: var(--font-size);
 }
-.ruler-cell-inner {
-	@apply relative w-full h-full bg-blue-100 m-auto overflow-hidden font-sans;
+.count {
+	@apply w-full h-full overflow-hidden opacity-80;
 }
-.ruler-cell .zero-wrapper {
-	@apply text-center absolute w-2/3 h-2/3 left-0 top-0 flex pr-px pb-px;
+
+.count-wrapper {
+	display: flex;
 }
-.ruler-cell .one-wrapper {
-	@apply text-center absolute w-2/3 h-2/3 right-0 bottom-0 flex pl-px pt-px;
+.count-wrapper.zero {
+	grid-row: 1 / span 2;
+	grid-column: 1 / span 2;
 }
-.one-wrapper > div, .zero-wrapper > div {
-	@apply m-auto;
+.count-wrapper.one {
+	grid-row: 2 / span 2;
+	grid-column: 2 / span 2;
+}
+
+.one {
+	@apply mt-auto ml-auto;
+}
+.zero {
+	@apply mb-auto mr-auto;
+}
+
+.divider-wrapper {
+	@apply absolute w-full h-full opacity-50;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.divider {
+	transform-origin: 50% 50%;
+	transform: rotate(50deg);
+	@apply opacity-30 transition-opacity bg-black;
+	width: 1px;
+	height: 50%;
 }
 </style>
