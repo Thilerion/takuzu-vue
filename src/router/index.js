@@ -31,11 +31,17 @@ const routes = [
 				path: '/stats',
 				name: 'Statistics',
 				component: Statistics,
+				meta: {
+					title: 'Statistics'
+				}
 			},
 			{
 				path: '/settings',
 				name: 'Settings',
-				component: Settings
+				component: Settings,
+				meta: {
+					title: 'Settings'
+				}
 			},
 			{
 				path: '/menu',
@@ -68,12 +74,18 @@ const routes = [
 				path: 'settings',
 				component: Settings
 			}
-		]
+		],
+		meta: {
+			title: 'New Game'
+		}
 	},
 	{
 		path: '/puzzle',
 		component: PlayPuzzle,
-		name: 'PlayPuzzle'
+		name: 'PlayPuzzle',
+		meta: {
+			title: 'Play Puzzle'
+		}
 	},
 	{
 		path: '/showcase',
