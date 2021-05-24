@@ -9,8 +9,8 @@
 			:columns="columns"	
 		/>
 		<GameBoardWrapper
-			:ruler-height="'16px'"
-			:ruler-width="'16px'"
+			:ruler-height="rulerSize"
+			:ruler-width="rulerSize"
 			:info-height="'21px'"
 			:rows="rows"
 			:columns="columns"
@@ -22,7 +22,8 @@
 				:columns="columns"
 				:board="board"
 				:initial-board="initialBoard"
-				:ruler-size="'16px'"
+				:ruler-size="rulerSize"
+				:ruler-type="rulerType"
 				:grid-height="height"
 				:grid-width="width"
 				:cell-size="cellSize"
@@ -35,6 +36,12 @@
 						:difficulty="difficulty"
 						:progress="progress"
 					/>
+				</template>
+				<template v-slot:ruler-rows>
+					<RulerCoords v-if="rulerType === 'coords'" line-type="rows" :line-ids="board.rowIds" />
+				</template>
+				<template v-slot:ruler-columns>
+					<RulerCoords v-if="rulerType === 'coords'" line-type="columns" :line-ids="board.columnIds" />
 				</template>
 			</GameBoard>
 		</GameBoardWrapper>
@@ -49,13 +56,14 @@
 
 <script>
 import store from '@/store';
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 import GameBoard from '@/components/gameboard/GameBoard';
 import GameBoardHeader from '@/components/gameboard/GameBoardHeader';
 import GameBoardWrapper from '@/components/gameboard/GameBoardWrapper';
 import PuzzleControls from '@/components/gameboard/PuzzleControls.vue';
 import PuzzleInfo from '@/components/gameboard/PuzzleInfo.vue';
+import RulerCoords from '@/components/gameboard/RulerCoords';
 import { hasCurrentSavedGame } from '@/services/save-game';
 
 export default {
@@ -65,6 +73,7 @@ export default {
 		GameBoardWrapper,
 		PuzzleControls,
 		PuzzleInfo,
+		RulerCoords,
 	},
 	data() {
 		return {
@@ -83,6 +92,25 @@ export default {
 			rows: state => state.height,
 			columns: state => state.width,
 		}),
+		...mapState('settings', [
+			'showLineInfo',
+		]),
+		...mapGetters('settings', [
+			'showBoardCoordinates', 'showBoardLineCounts',
+		]),
+		rulerSize() {
+			if (this.showBoardCoordinates) {
+				return '16px';
+			} else if (this.showBoardLineCounts) {
+				return '24px';
+			} else return '0px';
+		},
+		rulerType() {
+			if (this.showBoardCoordinates) return 'coords';
+			if (this.showLineInfo === 'remainingCount') return 'count-remaining';
+			if (this.showLineInfo === 'currentCount') return 'count-current';
+			return null;
+		},
 		progress() {
 			const base = this.$store.getters['puzzle/progress'];
 			const rounded = Math.ceil(base * 100);

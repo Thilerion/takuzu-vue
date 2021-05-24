@@ -1,32 +1,18 @@
 <template>
-	<div class="board new-board relative">
-		<Ruler
-			ruler-type="count-remaining"
-			line-type="columns"
-			:amount="columns"
-			:disabled="!rulerSize || rulerSize === '0px'"
-			:countValues="colCounts"
-		/>
-		<Ruler
-			ruler-type="count-current"
-			line-type="rows"
-			:amount="rows"
-			:disabled="!rulerSize || rulerSize === '0px'"
-			:countValues="rowCounts"		
-		/>
+	<div class="board new-board relative" :style="{ '--cell-size': cellSizePx }">
+		<div class="ruler-wrapper-columns"><slot name="ruler-columns" /></div>
+		<div class="ruler-wrapper-rows"><slot name="ruler-rows" /></div>
 		<div class="puzzle-info-wrapper">
 			<slot name="puzzle-info" />
 		</div>
 
 		<PuzzleGrid
 			:board="board"
-			:initial-board="initialBoard"
 			:rows="rows"
 			:columns="columns"
 			:style="{
 				'max-width': gridWidth,
 				'max-height': gridHeight,
-				'--cell-size': cellSizePx,
 			}"
 			:class="[`size-${gridGapSizing}`]"
 			@toggle-cell="toggleCell"
@@ -35,18 +21,15 @@
 </template>
 
 <script>
-import Ruler from './Ruler';
 import PuzzleGrid from './PuzzleGrid';
 
 export default {
 	components: {
-		Ruler,
 		PuzzleGrid,
 	},
 	props: {
 		rows: Number,
 		columns: Number,
-		rulerSize: String,
 		gridHeight: String,
 		gridWidth: String,
 		cellSize: {
@@ -57,12 +40,6 @@ export default {
 			type: Object,
 			required: true
 		},
-		initialBoard: {
-			type: Object,
-			required: true
-		},
-		rowCounts: Array,
-		colCounts: Array
 	},
 	data() {
 		return {}
@@ -110,5 +87,16 @@ export default {
 	grid-area: info;
 	/* Flexbox with child min-width to keep center on overflow */
 	@apply relative flex flex-row justify-center w-full items-start;
+}
+
+.ruler-wrapper-columns {
+	grid-area: ruler-cols;
+	@apply h-full overflow-y-hidden;
+	/* @apply bg-red-100; */
+}
+.ruler-wrapper-rows {
+	grid-area: ruler-rows;
+	@apply w-full overflow-x-hidden;
+	/* @apply bg-blue-100; */
 }
 </style>
