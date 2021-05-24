@@ -13,7 +13,7 @@
 import GameBoardDropdown from './GameBoardDropdown.vue';
 export default {
 	components: { GameBoardDropdown },
-	emits: ['close'],
+	emits: ['close', 'dropdown-toggled'],
 	props: {
 		rows: Number,
 		columns: Number
@@ -21,10 +21,10 @@ export default {
 	methods: {
 		openSettings() {
 			this.$router.push({ name: 'PlayPuzzle.settings'});
-			// TODO: set game paused when settings open
+			this.$emit('dropdown-toggled', false);
 		},
 		dropdownToggled(value) {
-			// TODO: set game paused when dropdown open
+			this.$emit('dropdown-toggled', value);
 		}
 	}
 };

@@ -4,6 +4,7 @@
 		<GameBoardHeader
 			class="flex-shrink-0"
 			@close="exitGame"
+			@dropdown-toggled="dropdownToggled"
 			:rows="rows"
 			:columns="columns"	
 		/>
@@ -96,6 +97,9 @@ export default {
 			
 			rowKey: ROW,
 			columnKey: COLUMN,
+
+			dropdownOpen: false,
+			settingsOpen: false,
 		}
 	},
 	computed: {
@@ -154,6 +158,9 @@ export default {
 		boardGrid() {
 			return this.board?.grid;
 		},
+		overlayActive() {
+			return this.settingsOpen || this.dropdownOpen;
+		}
 	},
 	methods: {
 		startGame() {
@@ -182,6 +189,12 @@ export default {
 			// TODO: open child route settings
 			// TODO: check beforeRouteLeave when going to settings works correctly
 			console.log('Should open settings');
+		},
+		settingsToggled(value) {
+			this.settingsOpen = value;
+		},
+		dropdownToggled(value) {
+			this.dropdownOpen = value;
 		},
 		finishGame() {
 			window.alert('Good job! You finished this puzzle.');
@@ -218,6 +231,16 @@ export default {
 		this.startGame();
 		this.initAutoSave();
 	},
+	beforeMount() {
+		if (!this.$store.state.puzzle.initialized) {
+			if (hasCurrentSavedGame()) {
+				this.$store.dispatch('puzzle/loadSavedPuzzle');
+				return;
+			}
+			console.warn('No puzzle in store. Redirecting from PlayPuzzle to Create game route');
+			this.$router.replace({ name: 'FreePlay' });
+		}
+	},
 	beforeRouteEnter(to, from, next) {
 		if (!store.state.puzzle.initialized) {
 			if (hasCurrentSavedGame()) {
@@ -237,6 +260,10 @@ export default {
 		}
 		next();
 	},
+	beforeRouteUpdate(to, from) {
+		if (to.name.includes('settings')) this.settingsOpen = true;
+		else this.settingsOpen = false;
+	},
 	beforeUnmount() {
 		if (this.canSaveGame()) {
 			this.saveGame();
@@ -245,6 +272,7 @@ export default {
 	},
 	unmounted() {
 		this.$store.dispatch('puzzle/reset');
+		console.log('unmount');
 	},
 	watch: {
 		finishedAndSolved: {
@@ -258,6 +286,13 @@ export default {
 					clearTimeout(this.finishedTimeout);
 					this.finishedTimeout = null;
 				}
+			}
+		},
+		overlayActive(newValue, prevValue) {
+			if (newValue && !prevValue) {
+				this.$store.dispatch('puzzle/pauseGame', true);
+			} else if (!newValue && prevValue) {
+				this.$store.dispatch('puzzle/pauseGame', false);
 			}
 		}
 	}

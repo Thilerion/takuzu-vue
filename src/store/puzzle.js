@@ -119,6 +119,7 @@ const puzzleModule = {
 		setInitialized: (state, val) => state.initialized = val,
 		setStarted: (state, val) => state.started = val,
 		setFinished: state => state.finished = true,
+		setPaused: (state, val) => state.paused = val,
 
 		// puzzle actions
 		setValue: (state, { x, y, value }) => state.board.assign(x, y, value),
@@ -136,6 +137,14 @@ const puzzleModule = {
 	},
 
 	actions: {
+		pauseGame({ commit }, value) {
+			commit('setPaused', value);
+			if (value) {
+				commit('timer/pause');
+			} else {
+				commit('timer/resume');
+			}
+		},
 		setValue({ commit }, { x, y, value, prevValue }) {
 			commit('setValue', { x, y, value });
 			commit('updateGridCount', { value, amount: 1 });
