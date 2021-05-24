@@ -31,6 +31,7 @@
 					<PuzzleInfo
 						:show-timer="showTimer"
 						:difficulty="difficulty"
+						:progress="progress"
 					/>
 				</template>
 			</GameBoard>
@@ -79,6 +80,13 @@ export default {
 			rows: state => state.height,
 			columns: state => state.width,
 		}),
+		progress() {
+			const base = this.$store.getters['puzzle/progress'];
+			const rounded = Math.ceil(base * 100);
+			// prevent progress from being 100 when not every cell is filled
+			if (rounded == 100 && base < 1) return 99;
+			return rounded;
+		},
 		canUndo() {
 			return this.$store.getters['puzzle/history/canUndo'];
 		},

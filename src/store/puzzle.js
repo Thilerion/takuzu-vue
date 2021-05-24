@@ -4,11 +4,14 @@ import { sendWorkerMessage, initPuzzleWorkerReceiver } from '@/workers/generate-
 import puzzleTimerModule from './puzzle-timer';
 import puzzleHistoryModule from './puzzle-history';
 import { SaveGameData } from '@/services/save-game';
+import { calculateGridCounts, calculateLineCounts } from './puzzle-line-counts';
+import { EMPTY } from '@/lib/constants';
 
 const defaultState = () => ({
 	// game config
 	width: null,
 	height: null,
+	numCells: null,
 	difficulty: null,
 
 	// game boards and state
@@ -16,6 +19,11 @@ const defaultState = () => ({
 	board: null,
 	solution: null,
 	solutionBoardStr: null,
+
+	initialEmpty: null,
+	rowCounts: [],
+	colCounts: [],
+	gridCounts: {},
 
 	// play/ui state
 	initialized: false,
@@ -47,6 +55,12 @@ const puzzleModule = {
 		finishedAndSolved: (state, getters) => {
 			if (state.board == null || !state.initialized || !state.started) return false;
 			return state.solutionBoardStr === getters.boardStr;
+		},
+		progress: state => {
+			const initialEmpty = state.initialEmpty;
+			const currentEmpty = state.gridCounts[EMPTY];
+			const progress = 1 - (currentEmpty / initialEmpty);
+			return progress;
 		}
 	},
 
@@ -57,12 +71,21 @@ const puzzleModule = {
 			state.width = width;
 			state.height = height;
 			state.difficulty = difficulty;
+			state.numCells = width * height;
 		},
 		setAllBoards: (state, { board, solution, initialBoard }) => {
 			state.board = board;
 			state.solution = solution;
 			state.initialBoard = initialBoard;
 			state.solutionBoardStr = solution.toString();
+
+			const { rowCounts, colCounts } = calculateLineCounts(board);
+			state.rowCounts = rowCounts;
+			state.colCounts = colCounts;
+			
+			state.gridCounts = calculateGridCounts(board);
+
+			state.initialEmpty = [...state.initialBoard.cells({ skipFilled: true })].length;
 		},
 		reset: state => Object.assign(state, defaultState()),
 		setInitialized: (state, val) => state.initialized = val,
@@ -70,19 +93,38 @@ const puzzleModule = {
 		setFinished: state => state.finished = true,
 
 		// puzzle actions
-		setValue: (state, {x, y, value}) => state.board.assign(x, y, value),
+		setValue: (state, { x, y, value }) => state.board.assign(x, y, value),
+		updateGridCount: (state, { value, amount }) => state.gridCounts[value] += amount,
+		updateRowCount: (state, { lineIndex, value, prevValue }) => {
+			const rowCount = state.rowCounts[lineIndex];
+			rowCount[value] += 1;
+			rowCount[prevValue] -= 1;
+		},
+		updateColumnCount: (state, { lineIndex, value, prevValue }) => {
+			const colCount = state.colCounts[lineIndex];
+			colCount[value] += 1;
+			colCount[prevValue] -= 1;
+		},
 	},
 
 	actions: {
-		toggle({ commit, dispatch }, { x, y, value, prevValue }) {
+		setValue({ commit }, { x, y, value, prevValue }) {
 			commit('setValue', { x, y, value });
+			commit('updateGridCount', { value, amount: 1 });
+			commit('updateGridCount', { value: prevValue, amount: -1 });
+
+			commit('updateRowCount', { lineIndex: y, value, prevValue });
+			commit('updateColumnCount', { lineIndex: x, value, prevValue });
+		},
+		toggle({ dispatch }, { x, y, value, prevValue }) {
+			dispatch('setValue', { x, y, value, prevValue });
 			dispatch('history/addMove', { x, y, value: prevValue, nextValue: value });
 		},
-		undoLastMove({ getters, commit, dispatch }) {
+		undoLastMove({ getters, dispatch }) {
 			const move = {...getters['history/lastMove']};
 			dispatch('history/undoMove');
-			const { x, y, prevValue: value } = move;
-			commit('setValue', { x, y, value });
+			const { x, y, prevValue: value, value: prevValue } = move;
+			dispatch('setValue', { x, y, value, prevValue });
 		},
 		async createPuzzle({ commit }, { width, height, difficulty }) {
 			commit('setLoading', true);

@@ -11,8 +11,8 @@
 		/>
 
 		<div
-			class="hints-used text-right"
-		>Hints: 2</div>
+			class="progress text-right"
+		>Progress: {{progress}}</div>
 
 	</div>
 </template>
@@ -29,6 +29,10 @@ export default {
 			type: Number,
 			required: true,
 		},
+		progress: {
+			type: Number,
+			default: -1
+		}
 	},
 	computed: {
 		difficultyLabel() {
