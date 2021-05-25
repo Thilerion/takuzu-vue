@@ -71,7 +71,7 @@ export default {
 	@apply bg-none dark:bg-gray-800 dark:bg-opacity-30;
 	@apply text-gray-900 text-opacity-80 dark:text-white dark:text-opacity-80;
 }
-.puzzle-paused .puzzle-controls {
+.puzzle-paused .puzzle-controls, .puzzle-finished .puzzle-controls {
 	@apply pointer-events-none;
 }
 

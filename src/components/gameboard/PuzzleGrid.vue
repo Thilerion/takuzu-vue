@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="puzzle-grid"
-		:class="[`cell-theme-${cellTheme}`, { 'paused': paused }]"
+		:class="[`cell-theme-${cellTheme}`]"
 	>
 		<template
 			v-for="(_row, rowIdx) in rows"
@@ -86,7 +86,7 @@ export default {
 	@apply mr-auto mb-auto inline-grid relative;
 	gap: var(--grid-gap);
 }
-.puzzle-grid.paused {
+.puzzle-paused .puzzle-grid, .puzzle-finished .puzzle-grid {
 	@apply pointer-events-none;
 }
 
