@@ -17,11 +17,21 @@ const puzzleAssistanceModule = {
 	},
 
 	actions: {
-		checkErrors({ commit }) {
-			const foundErrors = Math.random() < 0.5;
-
+		checkErrors({ commit, dispatch }) {
+			dispatch('findIncorrectValues');
 			commit('incrementErrorCheckId');
-			commit('setErrorCheckResult', foundErrors);
+		},
+		findIncorrectValues({ rootState, commit }) {
+			const { board, solution } = rootState.puzzle;
+			const { hasMistakes, result } = board.hasIncorrectValues(solution);
+
+			if (!hasMistakes) {
+				commit('setErrorCheckResult', false);
+				return;
+			}
+
+			const incorrectCellIds = result.map(({ x, y }) => `${x},${y}`);
+			commit('setErrorCheckResult', incorrectCellIds);
 		}
 	}
 
