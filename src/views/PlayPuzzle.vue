@@ -51,6 +51,7 @@
 			:paused="paused"
 			@undo="undo"
 			@restart="restart"
+			@check="checkErrors"
 		/>
 
 		<router-view v-slot="{ Component }">
@@ -240,6 +241,9 @@ export default {
 			clearInterval(this.autoSaveInterval);
 			this.autoSaveInterval = null;
 		},
+		checkErrors() {
+			this.$store.dispatch('puzzle/assistance/checkErrors');
+		}
 	},
 	created() {
 		this.debouncedPause = debounce((value) => {

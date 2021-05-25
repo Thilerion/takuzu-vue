@@ -20,22 +20,25 @@
 		/>
 
 		<transition name="fade-pause">
-		<div class="pause-overlay" v-show="paused">
-			<div>
-				<span class="material-icons">pause</span>
-				<div>Paused</div>
+			<div class="pause-overlay" v-show="paused">
+				<div>
+					<span class="material-icons">pause</span>
+					<div>Paused</div>
+				</div>
 			</div>
-		</div>
 		</transition>
+		<PuzzleCheckIndicator />
 	</div>
 </template>
 
 <script>
+import PuzzleCheckIndicator from './PuzzleCheckIndicator.vue';
 import PuzzleGrid from './PuzzleGrid';
 
 export default {
 	components: {
 		PuzzleGrid,
+		PuzzleCheckIndicator,
 	},
 	props: {
 		rows: Number,

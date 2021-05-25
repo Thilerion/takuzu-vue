@@ -3,6 +3,8 @@ import { sendWorkerMessage, initPuzzleWorkerReceiver } from '@/workers/generate-
 
 import puzzleTimerModule from './puzzle-timer';
 import puzzleHistoryModule from './puzzle-history';
+import puzzleAssistanceModule from './puzzle-assistance';
+
 import { SaveGameData } from '@/services/save-game';
 import { calculateGridCounts, calculateLineCounts } from './puzzle-line-counts';
 import { COLUMN, EMPTY, ONE, ROW, ZERO } from '@/lib/constants';
@@ -42,6 +44,7 @@ const puzzleModule = {
 	modules: {
 		timer: puzzleTimerModule,
 		history: puzzleHistoryModule,
+		assistance: puzzleAssistanceModule,
 		// gameCheck
 		// markedCells
 	},
