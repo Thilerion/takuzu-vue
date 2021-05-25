@@ -68,7 +68,7 @@ body {
 
 #overlay-wrapper {
 	height: var(--vh-total);
-	@apply w-full pointer-events-none overscroll-contain fixed z-20;
+	@apply w-full pointer-events-none overscroll-contain fixed z-20 top-0 left-0 overflow-hidden;
 }
 #overlay-container {
 	@apply h-full w-full flex pointer-events-none;

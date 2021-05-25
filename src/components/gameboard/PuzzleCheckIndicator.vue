@@ -51,7 +51,9 @@ export default {
 
 <style lang="postcss" scoped>
 .check-indicator-wrapper {
-	@apply pointer-events-none fixed inset-0 z-10 flex justify-center items-center;
+	@apply pointer-events-none fixed top-0 left-0 z-10 flex justify-center items-center;
+	height: var(--vh-total);
+	width: 100vw;
 }
 .check-indicator {
 	@apply opacity-0;
@@ -87,5 +89,9 @@ export default {
 	100% {
 		opacity: 0;
 	}
+}
+.checked-leave-active {
+	display: none;
+	position: absolute;
 }
 </style>

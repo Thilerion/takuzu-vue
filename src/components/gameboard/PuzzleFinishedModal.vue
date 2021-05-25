@@ -1,8 +1,8 @@
 <template>
-	<transition name="finished-modal3" :duration="{enter: 500, leave: 200}" @after-enter="afterEnterOuter" appear @after-leave="afterLeaveOuter">
+	<transition name="finished-modal3" :duration="{enter: 500, leave: 200}" @after-enter="afterEnterOuter" @after-leave="afterLeaveOuter">
 		<div class="modal-wrapper w-full h-full flex" v-show="show">
 			<transition name="finished-modal-inner" @after-enter="afterEnterInner">
-				<div class="flex modal-expander backdrop" v-if="transitionInner">
+				<div class="flex modal-expander backdrop" v-show="transitionInner">
 					<div class="inner-content" :class="{'opacity-0': !showContent }">
 						<PuzzleFinishedModalStats
 							v-show="gameEndStats.width && lastPuzzleEntry.width"
@@ -143,9 +143,11 @@ export default {
 		},
 		openModal() {
 			this.reset();
-			const idx = Math.floor(Math.random() * GOOD_JOB_STRINGS.length);
-			this.goodJobString = GOOD_JOB_STRINGS[idx];
-			this.show = true;
+			this.$nextTick(() => {
+				const idx = Math.floor(Math.random() * GOOD_JOB_STRINGS.length);
+				this.goodJobString = GOOD_JOB_STRINGS[idx];
+				this.show = true;
+			})
 		}
 	},
 	watch: {
@@ -228,6 +230,9 @@ export default {
 .finished-modal-inner-enter-active {
 	transform: scaleY(0.01) scaleX(1);
   	animation: unfoldIn 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+.finished-modal-inner-enter-from {
+	transform: scaleY(0.01) scaleX(1);
 }
 @keyframes unfoldIn {
 0% {

@@ -55,7 +55,6 @@
 		/>
 
 		<router-view v-slot="{ Component }">
-			<!-- TODO: use FullScreenOverlayPage component -->
 			<OverlayPageTransition>
 				<div v-if="Component" class="fixed inset-0 bg-gray-50 overflow-y-auto pb-8 z-40">
 					<component :is="Component" />
@@ -64,9 +63,7 @@
 		</router-view>
 
 		<teleport to="#overlay-container">
-			<!-- <transition name="finished-modal" :duration="1300"> -->
 			<PuzzleFinishedModal @exit-game="exitGame" :finished="finished" />
-			<!-- </transition> -->
 		</teleport>
 	</div>
 </template>
