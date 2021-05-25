@@ -59,12 +59,14 @@ body {
 .root {
 	@apply relative flex flex-col z-0;
 }
+
+
 #overlay-wrapper {
 	height: var(--vh-total);
 	@apply w-full pointer-events-none overscroll-contain fixed z-20;
 }
 #overlay-container {
-	@apply h-full w-full bg-white bg-opacity-20 flex pointer-events-none;
+	@apply h-full w-full flex pointer-events-none;
 }
 #overlay-container > * {
 	@apply pointer-events-auto;

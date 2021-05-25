@@ -1,5 +1,6 @@
 <template>
 	<div class="play-puzzle fixed box-border overflow-auto inset-0 flex flex-col z-20 text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-white" :class="{'puzzle-paused': paused, 'puzzle-finished': finished }">
+		<button class="absolute mt-16 bg-red-200" v-if="finished && $store.state.stats.modalHidden" @click="$store.commit('stats/setModalVisibility', false)">open again</button>
 
 		<GameBoardHeader
 			class="flex-shrink-0"
@@ -63,8 +64,10 @@
 			</OverlayPageTransition>
 		</router-view>
 
-		<teleport to="body">
-			<PuzzleFinishedModal v-show="finished" @exit-game="exitGame" />
+		<teleport to="#overlay-container">
+			<!-- <transition name="finished-modal" :duration="1300"> -->
+			<PuzzleFinishedModal v-show="finished && !$store.state.stats.modalHidden" @exit-game="exitGame" />
+			<!-- </transition> -->
 		</teleport>
 	</div>
 </template>

@@ -9,6 +9,7 @@ export const statsModule = {
 		// puzzleHistory: [],
 		gameEndStats: {},
 		lastPuzzleEntry: {},
+		modalHidden: false,
 	}),
 
 	getters: {
@@ -21,7 +22,10 @@ export const statsModule = {
 		},
 		setLastPuzzleEntry(state, puzzleEntry = {}) {
 			state.lastPuzzleEntry = puzzleEntry;
-		} 
+		},
+		setModalVisibility(state, val) {
+			state.modalHidden = val;
+		}
 	},
 
 	actions: {
@@ -49,11 +53,13 @@ export const statsModule = {
 			commit('setGameEndStats', gameEndStats);
 			commit('setLastPuzzleEntry', historyEntry);
 			console.log({ gameEndStats, historyEntry });
+			commit('setModalVisibility', false);
 			return true;
 		},
 		clearGameEndStats({ commit }) {
 			commit('setGameEndStats', {});
 			commit('setLastPuzzleEntry', {});
+			// commit('setModalVisibility', false);
 		}
 	}
 
