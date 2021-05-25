@@ -19,19 +19,14 @@
 				:value="grid[rowIdx][colIdx]"
 				:theme="cellTheme"
 				:hidden="paused"
-			>
-
-					<transition name="touch-anim" @after-enter="removeTouchAnim(`${colIdx},${rowIdx}`)">
-						<div v-if="touchStates.has(`${colIdx},${rowIdx}`)" class="touch-anim-el"></div>
-					</transition>
-				
-			</PuzzleCell>
+			></PuzzleCell>
 		</template>
 	</div>
 </template>
 
 <script>
 import PuzzleCell from '@/components/gameboard/PuzzleCell.vue';
+import debounce from 'lodash.debounce';
 
 export default {
 	components: {
@@ -49,7 +44,7 @@ export default {
 	emits: ['toggle-cell'],
 	data() {
 		return {
-			touchStates: new Set()
+			VIBRATE_DURATION: 20,	
 		}
 	},
 	computed: {
@@ -65,19 +60,21 @@ export default {
 	},
 	methods: {
 		cellClick({ x, y, value }) {
-			this.vibrate();
+			this.debouncedVibrate();
 			this.$emit('toggle-cell', { x, y, value });
-			this.touchStates.add(`${x},${y}`);
-		},
-		removeTouchAnim(value) {
-			this.touchStates.delete(value);
 		},
 		vibrate() {
 			if (!this.vibrateOnTap) return;
-			const length = 20;
-			window.navigator.vibrate(length);
+			window.navigator.vibrate(this.VIBRATE_DURATION);
 		}
 	},
+	created() {
+		this.debouncedVibrate = debounce(this.vibrate, this.VIBRATE_DURATION, {
+			leading: true,
+			trailing: true,
+			maxWait: this.VIBRATE_DURATION * 2
+		});
+	}
 };
 </script>
 
