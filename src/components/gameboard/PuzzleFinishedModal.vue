@@ -3,7 +3,7 @@
 		<div class="modal-wrapper w-full h-full flex" v-show="show">
 			<transition name="finished-modal-inner" @after-enter="afterEnterInner">
 				<div class="flex modal-expander backdrop" v-if="transitionInner">
-					<div class="inner-content bg-white text-black w-full py-4 px-6 m-auto" :class="{'opacity-0': !showContent }">
+					<div class="inner-content" :class="{'opacity-0': !showContent }">
 						<PuzzleFinishedModalStats
 							v-show="gameEndStats.width && lastPuzzleEntry.width"
 							:stats="gameEndStats"
@@ -246,7 +246,7 @@ export default {
 }
 
 .inner-content {
-	@apply rounded overflow-hidden;
+	@apply rounded overflow-hidden flex m-auto w-full;
 	transition: opacity .5s ease;
 	min-height: 8rem;
 }
