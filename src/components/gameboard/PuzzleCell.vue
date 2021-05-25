@@ -7,11 +7,12 @@
 		<div class="cell-wrapper">
 			<transition name="cell-value-anim">
 				<div
-					v-show="hasValue"
+					v-if="hasValue"
 					class="cell-value"
 					:class="cellValueClassList"
 				><div class="cell-symbol">{{cellSymbol}}</div></div>
 			</transition>
+			<div class="cell-tap-shadow"></div>
 		</div>
 	</button>
 </template>
@@ -92,7 +93,7 @@ export default {
 	--color-zero: var(--zero-light-locked);
 }
 
-.cell-btn, .cell-wrapper, .cell-value, .touch-anim-el {
+.cell-btn, .cell-wrapper, .cell-value, .cell-tap-shadow {
 	border-radius: var(--cell-rounding)!important;
 }
 
@@ -123,16 +124,40 @@ export default {
 	@apply bg-gray-200 bg-opacity-60 dark:bg-gray-700 dark:bg-opacity-50;
 }
 
+/* Tap active animation */
+.cell-tap-shadow {
+	@apply pointer-events-none absolute;
+	@apply inset-0;
+	@apply ring-2 ring-gray-800 dark:ring-white ring-inset ring-opacity-70;
+	@apply opacity-0;
+}
+.cell-size-l .cell-tap-shadow {
+	@apply ring;
+}
+.cell-size-xl .cell-tap-shadow {
+	@apply ring-4;
+}
+.cell-btn:active .cell-tap-shadow {
+	@apply opacity-100;
+	/* easeOutCirc */
+	transition: opacity .1s cubic-bezier(0, 0.55, 0.45, 1);
+}
+.cell-btn:disabled .cell-tap-shadow {
+	@apply ring-0;
+}
+.cell-tap-shadow {
+	transition: opacity 2s cubic-bezier(.97,.25,.16,.71) .15s;
+}
+/* END Tap active animation */
+
 .cell-value {
 	@apply m-auto w-full h-full overflow-hidden absolute inset-0 opacity-100 flex;
 	transition: background-color .15s ease, opacity .15s ease;
 }
 .cell-value.value-1 {
-	/* @apply bg-red-500 dark:bg-red-500 dark:bg-opacity-90; */
 	background-color: var(--color-one);
 }
 .cell-value.value-0 {
-	/* @apply bg-blue-500 dark:bg-blue-500 dark:bg-opacity-90; */
 	background-color: var(--color-zero);
 }
 
@@ -140,7 +165,7 @@ export default {
 	transition: opacity 0.2s ease;
 }
 .cell-value-anim-leave-active {
-	transition: opacity 0.15s ease;
+	transition: opacity 0.25s ease;
 }
 .cell-value-anim-enter-from, .cell-value-anim-leave-to {
 	opacity: 0;
@@ -150,11 +175,15 @@ export default {
 	@apply pointer-events-none m-auto inline-block;
 	
 	--base-size: calc(var(--cell-size) - var(--grid-gap));
-	--base-cell-font-size: calc(var(--base-size) - 2px);
+	--base-cell-font-size: calc(var(--base-size) - 4px);
 	--cell-font-size: clamp(16px, var(--base-cell-font-size), 48px);
 
 	font-size: var(--cell-font-size);
 	line-height: calc(var(--base-size) * 1.1);
+}
+.cell-theme-tictactoe .cell-symbol {
+	--base-cell-font-size: calc(var(--base-size) - 6px);
+	line-height: calc(var(--base-size) * 1.01);
 }
 
 .cell-theme-binary .cell-value, .cell-theme-tictactoe .cell-value {
