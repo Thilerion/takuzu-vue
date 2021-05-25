@@ -19,6 +19,7 @@
 				:value="grid[rowIdx][colIdx]"
 				:theme="cellTheme"
 				:hidden="paused"
+				:incorrect="incorrectMarkedCells.includes(`${colIdx},${rowIdx}`)"
 			></PuzzleCell>
 		</template>
 	</div>
@@ -56,6 +57,9 @@ export default {
 		},
 		vibrateOnTap() {
 			return this.$store.state.settings.enableVibration;
+		},
+		incorrectMarkedCells() {
+			return this.$store.state.puzzle.assistance.errorCheckCells;
 		}
 	},
 	methods: {

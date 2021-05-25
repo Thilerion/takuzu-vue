@@ -155,6 +155,7 @@ const puzzleModule = {
 
 			commit('updateRowCount', { lineIndex: y, value, prevValue });
 			commit('updateColumnCount', { lineIndex: x, value, prevValue });
+			commit('assistance/removeIdFromErrorCells', `${x},${y}`);
 		},
 		toggle({ dispatch }, { x, y, value, prevValue }) {
 			dispatch('setValue', { x, y, value, prevValue });
@@ -226,6 +227,7 @@ const puzzleModule = {
 			commit('reset');
 			commit('timer/reset');
 			commit('history/reset');
+			commit('assistance/reset');
 		},
 		restartPuzzle({ state, commit }) {
 			SaveGameData.deleteSavedGame();
@@ -233,6 +235,7 @@ const puzzleModule = {
 			const board = initialBoard.copy();
 			commit('setAllBoards', { board, solution, initialBoard });
 			commit('history/reset');
+			commit('assistance/reset');
 			// TODO: reset timer as well?
 		},
 

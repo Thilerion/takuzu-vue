@@ -3,6 +3,7 @@
 		class="cell-btn"
 		@pointerdown="cellClickHandler"
 		:disabled="locked"
+		:class="{ incorrect }"
 	>
 		<div class="cell-wrapper">
 			<transition name="cell-value-anim">
@@ -13,6 +14,9 @@
 				><div class="cell-symbol">{{cellSymbol}}</div></div>
 			</transition>
 			<div class="cell-tap-shadow"></div>
+			<div class="incorrect-mark" v-if="incorrect">
+				x
+			</div>
 		</div>
 	</button>
 </template>
@@ -39,7 +43,8 @@ export default {
 			type: String,
 			required: true
 		},
-		hidden: Boolean
+		hidden: Boolean,
+		incorrect: Boolean,
 	},
 	emits: ['click'],
 	computed: {
@@ -98,7 +103,7 @@ export default {
 }
 
 .cell-btn {
-	@apply flex justify-center items-center bg-opacity-0 focus:outline-none;
+	@apply flex justify-center items-center bg-opacity-0 focus:outline-none relative;
 	width: calc(var(--cell-size) - var(--grid-gap));
 	height: calc(var(--cell-size) - var(--grid-gap));
 }
@@ -149,6 +154,10 @@ export default {
 	transition: opacity 2s cubic-bezier(.97,.25,.16,.71) .15s;
 }
 /* END Tap active animation */
+
+.incorrect-mark {
+	@apply absolute inset-0 text-black flex items-center justify-center pointer-events-none leading-none;
+}
 
 .cell-value {
 	@apply m-auto w-full h-full overflow-hidden absolute inset-0 opacity-100 flex;

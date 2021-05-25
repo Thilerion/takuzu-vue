@@ -4,6 +4,7 @@ const puzzleAssistanceModule = {
 
 	state: () => ({
 		errorCheckResult: null,
+		errorCheckCells: [],
 		errorCheckId: -1,
 	}),
 
@@ -14,6 +15,15 @@ const puzzleAssistanceModule = {
 	mutations: {
 		incrementErrorCheckId: state => state.errorCheckId += 1,
 		setErrorCheckResult: (state, val) => state.errorCheckResult = val,
+		setErrorCheckCells: (state, cells = []) => state.errorCheckCells = cells,
+		removeIdFromErrorCells: (state, id) => {
+			state.errorCheckCells = state.errorCheckCells.filter(val => val !== id);
+		},
+		reset: state => {
+			state.errorCheckCells = [];
+			state.errorCheckId = -1;
+			state.errorCheckResult = null;
+		}
 	},
 
 	actions: {
@@ -27,11 +37,13 @@ const puzzleAssistanceModule = {
 
 			if (!hasMistakes) {
 				commit('setErrorCheckResult', false);
+				commit('setErrorCheckCells', []);
 				return;
 			}
 
+			commit('setErrorCheckResult', true);
 			const incorrectCellIds = result.map(({ x, y }) => `${x},${y}`);
-			commit('setErrorCheckResult', incorrectCellIds);
+			commit('setErrorCheckCells', incorrectCellIds);			
 		}
 	}
 
