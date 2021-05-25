@@ -206,10 +206,10 @@ export default {
 		dropdownToggled(value) {
 			this.dropdownOpen = value;
 		},
-		finishGame() {
+		async finishGame() {
 			// window.alert('Good job! You finished this puzzle.');
-			this.$store.dispatch('puzzle/finishPuzzle');
-			// this.exitGame();
+			const historyEntry = await this.$store.dispatch('puzzle/finishPuzzle');
+			await this.$store.dispatch('stats/getGameEndStats', historyEntry);
 		},
 		undo() {
 			this.$store.dispatch('puzzle/undoLastMove');

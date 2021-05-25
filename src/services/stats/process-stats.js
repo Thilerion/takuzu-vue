@@ -13,10 +13,11 @@ export async function getGameEndStats({ width, height, difficulty }) {
 	if (!items || !items.length) return { count: 0 };
 
 	const best = items[0].timeElapsed;
+	const secondBest = items.length > 1 ? items[1].timeElapsed : null;
 	const count = items.length;
 	const totalTime = items.reduce((total, item) => total + item.timeElapsed, 0);
 	const average = totalTime / count;
-	return { best, count, totalTime, average };
+	return { best, secondBest, count, totalTime, average };
 }
 
 export function getDailyStreaks(dates = []) {

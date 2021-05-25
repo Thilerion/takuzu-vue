@@ -208,11 +208,11 @@ const puzzleModule = {
 			let timeElapsed = state.timer.timeElapsed;
 			const finishedPuzzleState = { ...state, timeElapsed };
 
-			dispatch('stats/addFinishedPuzzleToHistoryFromPuzzle', finishedPuzzleState, { root: true }).then(historyEntry => {
+			return dispatch('stats/addFinishedPuzzleToHistoryFromPuzzle', finishedPuzzleState, { root: true }).then(historyEntry => {
 				console.log('Puzzle saved to history.');
 				SaveGameData.deleteSavedGame();
-			})
-			
+				return historyEntry;
+			})			
 		},
 
 		reset({ state, commit }) {
