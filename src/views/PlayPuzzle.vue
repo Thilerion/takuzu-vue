@@ -1,7 +1,5 @@
 <template>
 	<div class="play-puzzle fixed box-border overflow-auto inset-0 flex flex-col z-20 text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-white" :class="{'puzzle-paused': paused, 'puzzle-finished': finished }">
-		<button class="absolute mt-16 bg-red-200" v-if="finished && $store.state.stats.modalHidden" @click="$store.commit('stats/setFinishedModalHidden', false)">open again</button>
-
 		<GameBoardHeader
 			class="flex-shrink-0"
 			@close="exitGame"
@@ -139,6 +137,9 @@ export default {
 		...mapGetters('settings', [
 			'showBoardCoordinates', 'showBoardLineCounts',
 		]),
+		puzzleKey() {
+			return this.$store.state.puzzleKey;
+		},
 		displayCounts() {
 			if (this.rulerType === 'count-remaining') return this.remainingCounts;
 			if (this.rulerType === 'count-current') return this.currentCounts;
@@ -273,23 +274,22 @@ export default {
 	beforeRouteLeave(to, from, next) {
 		const toName = to.name;
 		const prevName = from.meta?.prev?.name;
+		this.$store.dispatch('puzzle/reset');
 		if (toName === prevName && toName === 'MainMenu') {
 			return next({ name: 'FreePlay' });
 		}
 		next();
 	},
-	beforeRouteUpdate(to, from) {
+	beforeRouteUpdate(to, from, next) {
 		if (to.name.includes('settings')) this.settingsOpen = true;
 		else this.settingsOpen = false;
+		next();
 	},
 	beforeUnmount() {
 		if (this.canSaveGame()) {
 			this.saveGame();
 		}
 		this.stopAutoSave();
-	},
-	unmounted() {
-		this.$store.dispatch('puzzle/reset');
 	},
 	watch: {
 		finishedAndSolved: {

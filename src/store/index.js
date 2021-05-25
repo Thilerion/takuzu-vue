@@ -17,6 +17,9 @@ const store = createStore({
 
 	state: {
 		devMode: !!localStorage.getItem('takuzu-dev-mode'),
+
+		// to force playPuzzle route to rerender after "restart" game
+		puzzleKey: 0,
 	},
   
 	getters: {
@@ -32,7 +35,8 @@ const store = createStore({
 				state.devMode = false;
 				localStorage.removeItem('takuzu-dev-mode');
 			}
-		}
+		},
+		incrementPuzzleKey: state => state.puzzleKey += 1,
 	},
   
 	actions: {

@@ -6,9 +6,9 @@
 			'--vh-total': viewportHeight,
 		}">
 		<!-- TODO: transition for MainPage <-> OverlayPage -->
-		<router-view v-slot="{ Component }">
+		<router-view v-slot="{ Component, route }">
 			<overlay-page-transition>
-				<component :is="Component" />
+				<component :is="Component" :key="route.meta.usePuzzleKey ? puzzleKey : undefined" />
 			</overlay-page-transition>
 		</router-view>
 		
@@ -29,6 +29,11 @@ export default {
 		return {
 			viewportHeight: '100%',
 		}	
+	},
+	computed: {
+		puzzleKey() {
+			return this.$store.state.puzzleKey;
+		}
 	},
 	methods: {
 		onResize() {

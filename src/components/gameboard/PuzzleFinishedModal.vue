@@ -4,9 +4,12 @@
 			<transition name="finished-modal-inner" @after-enter="afterEnterInner">
 				<div class="flex modal-expander backdrop" v-if="transitionInner">
 					<div class="inner-content bg-white text-black w-full py-4 px-6 m-auto" :class="{'opacity-0': !showContent }">
-						<p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Magni illo autem atque explicabo cumque deleniti?</p>
-						<p>Blanditiis repellendus, magni libero alias culpa non, quo facilis ipsam eius, maxime veritatis soluta aut.</p>
-						<BaseButton @click="emitClose">Close me!</BaseButton>
+						<PuzzleFinishedModalStats
+							v-show="gameEndStats.width && lastPuzzleEntry.width"
+							:stats="gameEndStats"
+							:last-puzzle="lastPuzzleEntry"
+							@exit-to="exitTo"
+						/>
 					</div>
 				</div>
 			</transition>
@@ -22,6 +25,8 @@
 </template>
 
 <script>
+import PuzzleFinishedModalStats from './PuzzleFinishedModalStats';
+
 const GOOD_JOB_STRINGS = [
 	'Good job!',
 	'Sensational!',
@@ -46,6 +51,9 @@ export default {
 	props: {
 		finished: Boolean,
 	},
+	components: {
+		PuzzleFinishedModalStats,
+	},
 	data() {
 		return {
 			transitionInner: false,
@@ -56,6 +64,10 @@ export default {
 
 			show: false,
 			goodJobString: 'Good job!',
+
+			afterLeaveAction: null,
+
+			expandFromEncouragementDuration: 550,
 		}
 	},
 	computed: {
@@ -70,6 +82,38 @@ export default {
 		},
 	},
 	methods: {
+		exitTo(destination) {
+			if (destination === 'new-game') {
+				this.afterLeaveAction = () => this.$router.go(-1);
+				this.emitClose();
+			} else if (destination === 'home') {
+				this.afterLeaveAction = () => this.$router.replace({ name: 'MainMenu' });
+				this.emitClose();
+			} else if (destination === 'statistics') {
+				this.afterLeaveAction = () => this.$router.replace({ name: 'Statistics' });
+				this.emitClose();
+			} else if (destination === 'play-again') {
+				console.warn('TODO: implement play again from modal');
+				this.afterLeaveAction = () => {};
+				this.playAgainAction();
+				this.emitClose();
+			} else {
+				console.log('No destination after leaving puzzleFinishedModal');
+				this.afterLeaveAction = () => {};
+				this.emitClose();
+			}
+		},
+		async playAgainAction() {
+			const { width, height, difficulty } = this.lastPuzzleEntry;
+			try {
+				this.$store.dispatch('puzzle/reset');
+				await this.$store.dispatch('puzzle/initPuzzle', { width, height, difficulty });
+				this.$store.commit('incrementPuzzleKey');
+			} catch(e) {
+				console.warn(e);
+				console.warn('Error while trying to create new puzzle in PlayAgain')
+			}
+		},
 		emitClose() {
 			this.$store.commit('stats/setFinishedModalHidden', true);
 		},
@@ -78,7 +122,7 @@ export default {
 				this.transitionInner = true;
 				this.fadeOutBase = true;
 				this.afterEnterOuterTimeout = null;
-			}, 1000);
+			}, this.expandFromEncouragementDuration);
 		},
 		afterEnterInner() {
 			this.showContent = true;
@@ -86,7 +130,7 @@ export default {
 		afterLeaveOuter() {
 			setTimeout(() => {
 				this.reset();
-				// this.$emit('exit-game');
+				this.afterLeaveAction();
 			}, 100);
 		},
 		reset() {
@@ -202,7 +246,8 @@ export default {
 }
 
 .inner-content {
-	@apply rounded;
+	@apply rounded overflow-hidden;
 	transition: opacity .5s ease;
+	min-height: 8rem;
 }
 </style>

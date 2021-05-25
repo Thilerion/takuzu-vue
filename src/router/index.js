@@ -84,7 +84,8 @@ const routes = [
 		component: PlayPuzzle,
 		name: 'PlayPuzzle',
 		meta: {
-			title: 'Play Puzzle'
+			title: 'Play Puzzle',
+			usePuzzleKey: true,
 		},
 		children: [
 			{
