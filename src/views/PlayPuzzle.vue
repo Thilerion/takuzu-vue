@@ -327,10 +327,6 @@ export default {
 	background: linear-gradient(180deg, var(--bg-a) 0%, var(--bg-a) 15%, var(--bg-b) 90%, var(--bg-b) 100%);
 }
 
-.puzzle-paused::v-deep(.cell-value) {
-	opacity: 0;
-}
-
 .inset-0 {
 	max-height: var(--vh-total);
 }

@@ -18,6 +18,15 @@
 			:class="[`size-${gridGapSizing}`]"
 			@toggle-cell="toggleCell"
 		/>
+
+		<transition name="fade-pause">
+		<div class="pause-overlay" v-show="paused">
+			<div>
+				<span class="material-icons">pause</span>
+				<div>Paused</div>
+			</div>
+		</div>
+		</transition>
 	</div>
 </template>
 
@@ -83,6 +92,24 @@ export default {
 	grid-template-areas: "none info"
 		"none ruler-cols"
 		"ruler-rows puzzle-grid";
+}
+
+.pause-overlay {
+	grid-area: puzzle-grid;
+	@apply relative z-10 pointer-events-none bg-gray-100 text-gray-400 grid place-items-center text-4xl;
+	border-radius: var(--cell-rounding);
+}
+.pause-overlay .material-icons {
+	@apply text-7xl;
+}
+.fade-pause-enter-active,
+.fade-pause-leave-active {
+	transition: opacity .3s ease;
+}
+
+.fade-pause-enter-from,
+.fade-pause-leave-to {
+	opacity: 0;
 }
 
 .puzzle-info-wrapper {

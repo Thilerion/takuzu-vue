@@ -1,7 +1,7 @@
 <template>
 	<header>
 		<IconBtn @click="$emit('close')">close</IconBtn>
-		<button class="font-medium tracking-widest text-xl">{{columns}}x{{rows}}</button>
+		<span class="font-medium tracking-widest text-xl">{{columns}}x{{rows}}</span>
 		<GameBoardDropdown
 			@open-settings="openSettings"
 			@dropdown-toggled="dropdownToggled"
