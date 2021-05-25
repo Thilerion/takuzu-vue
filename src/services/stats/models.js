@@ -31,4 +31,18 @@ export class PuzzleData {
 			width, height, difficulty, initialBoard, solution, timeElapsed, date
 		});
 	}
+
+	static fromPuzzleState(puzzleState) {
+		if (puzzleState == null) {
+			throw new Error('Invalid puzzleState; cannot turn this into a PuzzleData entry');
+		}
+
+		const { width, height, difficulty, timeElapsed } = puzzleState;
+		const date = Date.now();
+		const initialBoard = puzzleState.initialBoard.toBoardString();
+		const solution = puzzleState.solution.toBoardString();
+		return new PuzzleData({
+			width, height, difficulty, initialBoard, solution, timeElapsed, date
+		});
+	}
 }

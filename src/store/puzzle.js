@@ -201,10 +201,18 @@ const puzzleModule = {
 				throw new Error(e);
 			}
 		},
-		finishPuzzle({ commit }) {
-			SaveGameData.deleteSavedGame();
+		finishPuzzle({ state, commit, dispatch }) {
 			commit('setFinished');
 			commit('timer/pause');
+
+			let timeElapsed = state.timer.timeElapsed;
+			const finishedPuzzleState = { ...state, timeElapsed };
+
+			dispatch('stats/addFinishedPuzzleToHistoryFromPuzzle', finishedPuzzleState, { root: true }).then(historyEntry => {
+				console.log('Puzzle saved to history.');
+				SaveGameData.deleteSavedGame();
+			})
+			
 		},
 
 		reset({ state, commit }) {

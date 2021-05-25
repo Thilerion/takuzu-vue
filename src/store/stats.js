@@ -22,7 +22,12 @@ export const statsModule = {
 			console.log(historyEntry);
 			dispatch('addFinishedPuzzleToDb', historyEntry);
 		},
-		addFinishedPuzzleToDb({ }, historyEntry) {
+		async addFinishedPuzzleToHistoryFromPuzzle({ dispatch }, puzzleState) {
+			const historyEntry = PuzzleData.fromPuzzleState(puzzleState);
+			await dispatch('addFinishedPuzzleToDb', historyEntry);
+			return historyEntry;
+		},
+		addFinishedPuzzleToDb(_, historyEntry) {
 			puzzleHistoryTable.add(historyEntry);
 		}
 	}

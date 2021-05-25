@@ -30,6 +30,7 @@ export default {
 	props: {
 		// disable closing by "esc" or backdrop click => if enabled, must have at least one focusable close control!
 		preventClose: Boolean,
+		autoOpen: Boolean
 	},
 	methods: {
 		backdropClose() {
@@ -70,13 +71,18 @@ export default {
 				this.prevFocus = null;
 			}
 		}
+	},
+	beforeMount() {
+		if (this.autoOpen) {
+			this.open();
+		}
 	}
 };
 </script>
 
 <style lang="postcss">
 .modal {
-	@apply overflow-hidden fixed inset-0 z-10 flex items-center flex-col justify-center h-full w-full;
+	@apply overflow-hidden fixed inset-0 z-20 flex items-center flex-col justify-center h-full w-full;
 }
 .modal-background {
 	@apply bg-gray-600 bg-opacity-80 absolute inset-0;

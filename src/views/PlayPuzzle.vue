@@ -62,6 +62,10 @@
 				</div>
 			</OverlayPageTransition>
 		</router-view>
+
+		<teleport to="body">
+			<PuzzleFinishedModal v-show="finished" @exit-game="exitGame" />
+		</teleport>
 	</div>
 </template>
 
@@ -77,6 +81,7 @@ import PuzzleInfo from '@/components/gameboard/PuzzleInfo.vue';
 import RulerCoords from '@/components/gameboard/RulerCoords';
 import RulerCounts from '@/components/gameboard/RulerCounts';
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
+import PuzzleFinishedModal from '@/components/gameboard/PuzzleFinishedModal.vue';
 
 import { hasCurrentSavedGame } from '@/services/save-game';
 import { usePageVisibility } from '@/composables/use-page-visibility';
@@ -94,6 +99,7 @@ export default {
 		RulerCoords,
 		RulerCounts,
 		OverlayPageTransition,
+		PuzzleFinishedModal,
 	},
 	setup() {
 		const { hidden } = usePageVisibility();
@@ -167,9 +173,6 @@ export default {
 		boardGrid() {
 			return this.board?.grid;
 		},
-		overlayActive() {
-			return this.settingsOpen || this.dropdownOpen;
-		},
 		puzzleShouldBePaused() {
 			return this.settingsOpen || this.dropdownOpen || this.windowHidden;
 		}
@@ -197,11 +200,6 @@ export default {
 				this.$router.go(-1);
 			}
 		},
-		openSettings() {
-			// TODO: open child route settings
-			// TODO: check beforeRouteLeave when going to settings works correctly
-			console.log('Should open settings');
-		},
 		settingsToggled(value) {
 			this.settingsOpen = value;
 		},
@@ -209,9 +207,9 @@ export default {
 			this.dropdownOpen = value;
 		},
 		finishGame() {
-			window.alert('Good job! You finished this puzzle.');
+			// window.alert('Good job! You finished this puzzle.');
 			this.$store.dispatch('puzzle/finishPuzzle');
-			this.exitGame();
+			// this.exitGame();
 		},
 		undo() {
 			this.$store.dispatch('puzzle/undoLastMove');
