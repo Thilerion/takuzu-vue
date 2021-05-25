@@ -153,10 +153,11 @@ export default {
 .puzzle-wrapper {
 	/* default grid gap for puzzle-grid and rulers */
 	--grid-gap: 2px;
+	--cell-rounding: theme(borderRadius.sm);
 }
 .puzzle-wrapper.cell-size-xs {
 	--grid-gap: 1px;
-	--cell-rounding: theme(borderRadius.none);
+	--cell-rounding: 1px;
 }
 .puzzle-wrapper.cell-size-s {
 	--grid-gap: 1px;
