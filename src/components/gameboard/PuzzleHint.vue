@@ -14,6 +14,8 @@
 
 <script>
 export default {
+	emits: ['hide', 'done'],
+	inheritAttrs: false,
 	props: {
 		message: {
 			type: String,
@@ -68,15 +70,19 @@ export default {
 }
 
 .hint-fade-enter-active {
-  	transition: opacity .30s ease .05s, transform .35s ease;
+  	transition: opacity .35s ease, transform .35s ease;
 }
 .hint-fade-leave-active {
-  	transition: opacity .1s ease .2s, transform .20s ease .2s;
+  	transition: opacity .15s ease, transform .20s ease;
 }
 
-.hint-fade-enter-from,
 .hint-fade-leave-to {
 	opacity: 0;
-	transform: scale(0.8);
+	transform: scale(0.9) translateY(100%);
+}
+
+.hint-fade-enter-from {
+	opacity: 0;
+	transform: translateY(50%);
 }
 </style>

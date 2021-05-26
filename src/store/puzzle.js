@@ -159,7 +159,9 @@ const puzzleModule = {
 
 			commit('updateRowCount', { lineIndex: y, value, prevValue });
 			commit('updateColumnCount', { lineIndex: x, value, prevValue });
+
 			commit('assistance/removeIdFromErrorCells', `${x},${y}`);
+			commit('assistance/setHintVisible', false);
 		},
 		toggle({ state, dispatch }, { x, y, value, prevValue }) {
 			if (!prevValue) {
