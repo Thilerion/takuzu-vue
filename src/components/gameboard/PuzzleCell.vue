@@ -14,9 +14,7 @@
 				><div class="cell-symbol">{{cellSymbol}}</div></div>
 			</transition>
 			<div class="cell-tap-shadow"></div>
-			<div class="incorrect-mark" v-if="incorrect">
-				x
-			</div>
+			<div class="incorrect-mark" v-if="incorrect && theme === 'colored'"></div>
 		</div>
 	</button>
 </template>
@@ -98,7 +96,7 @@ export default {
 	--color-zero: var(--zero-light-locked);
 }
 
-.cell-btn, .cell-wrapper, .cell-value, .cell-tap-shadow {
+.cell-btn, .cell-wrapper, .cell-wrapper::before, .cell-value, .cell-tap-shadow {
 	border-radius: var(--cell-rounding)!important;
 }
 
@@ -127,6 +125,7 @@ export default {
 .cell-wrapper {
 	@apply h-full w-full relative;
 	@apply bg-gray-200 bg-opacity-60 dark:bg-gray-700 dark:bg-opacity-50;
+	transition: background-color .2s ease .15s;
 }
 
 /* Tap active animation */
@@ -197,5 +196,10 @@ export default {
 
 .cell-theme-binary .cell-value, .cell-theme-tictactoe .cell-value {
 	background-color: transparent;
+}
+
+:not(.cell-theme-colored) .incorrect .cell-wrapper {
+	@apply bg-red-400 bg-opacity-20 ring-1 ring-inset ring-red-900 ring-opacity-40;
+	transition: none;
 }
 </style>
