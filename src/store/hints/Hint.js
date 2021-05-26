@@ -35,7 +35,7 @@ export const hintGenerators = {
 				console.log('Executing mistake hint now, fixing all mistakes.');
 				hint.targets.forEach(target => {
 					const { x, y } = target;
-					store.dispatch('setValue', { x, y, value: EMPTY });
+					store.dispatch('puzzle/toggle', { x, y, value: EMPTY });
 				})
 			}
 		}
@@ -54,12 +54,12 @@ export const hintGenerators = {
 			onClick: (vm, store, hint) => {
 				console.log('Executing triples hint now.');
 				console.log(store.state.game);
-				const board = store.state.game.board;
+				const board = store.state.puzzle.board;
 				hint.targets.forEach(target => {
 					const { x, y, value } = target;
 					const boardValue = board.get(x, y);
 					if (boardValue !== EMPTY) return;
-					store.dispatch('setValue', { x, y, value });
+					store.dispatch('puzzle/toggle', { x, y, value });
 				})
 			}
 		}
@@ -75,12 +75,12 @@ export const hintGenerators = {
 			onClick: (vm, store, hint) => {
 				console.log('Executing balance hint now.');
 				console.log(store.state.game);
-				const board = store.state.game.board;
+				const board = store.state.puzzle.board;
 				hint.targets.forEach(target => {
 					const { x, y, value } = target;
 					const boardValue = board.get(x, y);
 					if (boardValue !== EMPTY) return;
-					store.dispatch('setValue', { x, y, value });
+					store.dispatch('puzzle/toggle', { x, y, value });
 				})
 			}
 		}
@@ -102,12 +102,12 @@ export const hintGenerators = {
 			onClick: (vm, store, hint) => {
 				console.log('Executing elim hint now.');
 				console.log(store.state.game);
-				const board = store.state.game.board;
+				const board = store.state.puzzle.board;
 				hint.targets.forEach(target => {
 					const { x, y, value } = target;
 					const boardValue = board.get(x, y);
 					if (boardValue !== EMPTY) return;
-					store.dispatch('setValue', { x, y, value });
+					store.dispatch('puzzle/toggle', { x, y, value });
 				})
 			}
 		}
@@ -126,12 +126,12 @@ export const hintGenerators = {
 			onClick: (vm, store, hint) => {
 				console.log('Executing elim/dupe hint now.');
 				console.log(store.state.game);
-				const board = store.state.game.board;
+				const board = store.state.puzzle.board;
 				hint.targets.forEach(target => {
 					const { x, y, value } = target;
 					const boardValue = board.get(x, y);
 					if (boardValue !== EMPTY) return;
-					store.dispatch('setValue', { x, y, value });
+					store.dispatch('puzzle/toggle', { x, y, value });
 				})
 			}
 		}

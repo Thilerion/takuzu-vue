@@ -148,7 +148,11 @@ const puzzleModule = {
 				commit('timer/resume');
 			}
 		},
-		setValue({ commit }, { x, y, value, prevValue }) {
+		setValue({ state, commit }, { x, y, value, prevValue }) {
+			if (!prevValue) {
+				prevValue = state.board.grid[y][x];
+				console.log({ prevValue });
+			}
 			commit('setValue', { x, y, value });
 			commit('updateGridCount', { value, amount: 1 });
 			commit('updateGridCount', { value: prevValue, amount: -1 });
@@ -157,7 +161,11 @@ const puzzleModule = {
 			commit('updateColumnCount', { lineIndex: x, value, prevValue });
 			commit('assistance/removeIdFromErrorCells', `${x},${y}`);
 		},
-		toggle({ dispatch }, { x, y, value, prevValue }) {
+		toggle({ state, dispatch }, { x, y, value, prevValue }) {
+			if (!prevValue) {
+				prevValue = state.board.grid[y][x];
+				console.log({ prevValue });
+			}
 			dispatch('setValue', { x, y, value, prevValue });
 			dispatch('history/addMove', { x, y, value: prevValue, nextValue: value });
 		},

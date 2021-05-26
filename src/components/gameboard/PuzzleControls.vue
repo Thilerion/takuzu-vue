@@ -66,7 +66,7 @@ export default {
 
 <style lang="postcss" scoped>
 .puzzle-controls {
-	@apply flex-none flex text-sm text-center h-24 overflow-hidden;
+	@apply flex-none flex text-sm text-center h-full overflow-hidden;
 	
 	@apply bg-none dark:bg-gray-800 dark:bg-opacity-30;
 	@apply text-gray-900 text-opacity-80 dark:text-white dark:text-opacity-80;

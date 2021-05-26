@@ -46,13 +46,17 @@
 			</GameBoard>
 		</GameBoardWrapper>
 		
-		<PuzzleControls
-			:can-undo="canUndo"
-			:paused="paused"
-			@undo="undo"
-			@restart="restart"
-			@check="checkErrors"
-		/>
+		<div class="footer2 h-24 w-full relative">
+			<PuzzleControls
+				:can-undo="canUndo"
+				:paused="paused"
+				@undo="undo"
+				@restart="restart"
+				@check="checkErrors"
+				@get-hint="getHint"
+			/>
+			<PuzzleHintWrapper />
+		</div>
 
 		<router-view v-slot="{ Component }">
 			<OverlayPageTransition>
@@ -81,6 +85,7 @@ import RulerCoords from '@/components/gameboard/RulerCoords';
 import RulerCounts from '@/components/gameboard/RulerCounts';
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
 import PuzzleFinishedModal from '@/components/gameboard/PuzzleFinishedModal.vue';
+import PuzzleHintWrapper from '@/components/gameboard/PuzzleHintWrapper.vue';
 
 import { hasCurrentSavedGame } from '@/services/save-game';
 import { usePageVisibility } from '@/composables/use-page-visibility';
@@ -99,6 +104,7 @@ export default {
 		RulerCounts,
 		OverlayPageTransition,
 		PuzzleFinishedModal,
+		PuzzleHintWrapper,
 	},
 	setup() {
 		const { hidden } = usePageVisibility();
@@ -240,6 +246,9 @@ export default {
 		},
 		checkErrors() {
 			this.$store.dispatch('puzzle/assistance/checkErrors');
+		},
+		getHint() {
+			this.$store.dispatch('puzzle/assistance/getHint');
 		}
 	},
 	created() {
