@@ -14,7 +14,12 @@
 				><div class="cell-symbol">{{cellSymbol}}</div></div>
 			</transition>
 			<div class="cell-tap-shadow"></div>
-			<div class="incorrect-mark" v-if="incorrect && theme === 'colored'"></div>
+			<transition name="mark-fade">
+				<div class="incorrect-mark" v-if="incorrect && theme === 'colored'">
+					<div></div>
+					<div></div>
+				</div>
+			</transition>
 		</div>
 	</button>
 </template>
@@ -96,7 +101,7 @@ export default {
 	--color-zero: var(--zero-light-locked);
 }
 
-.cell-btn, .cell-wrapper, .cell-wrapper::before, .cell-value, .cell-tap-shadow {
+.cell-btn, .cell-wrapper, .cell-wrapper::before, .cell-value, .cell-tap-shadow, .incorrect-mark {
 	border-radius: var(--cell-rounding)!important;
 }
 
@@ -155,7 +160,24 @@ export default {
 /* END Tap active animation */
 
 .incorrect-mark {
-	@apply absolute inset-0 text-black flex items-center justify-center pointer-events-none leading-none;
+	@apply absolute inset-0 text-black flex items-center justify-center pointer-events-none leading-none w-full h-full overflow-hidden opacity-60;
+}
+.incorrect-mark > div {
+	width: 2px;
+	height: 200%;
+	@apply bg-black transform -rotate-45 -translate-x-px;
+}
+.incorrect-mark > div:first-child {
+	@apply rotate-45 translate-x-px;
+}
+.mark-fade-leave-active {
+	transition: none
+}
+.mark-fade-leave-active {
+	transition: opacity .2s ease;
+}
+.mark-fade-leave-to, .mark-fade-enter-from {
+	opacity: 0;
 }
 
 .cell-value {
