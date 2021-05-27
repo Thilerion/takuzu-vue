@@ -178,12 +178,15 @@ export default {
 				}, 1000);
 			}
 		},
-		downloadBlob(blob, filename = 'puzzle-history-export') {
+		downloadBlob(blob, baseName = 'puzzle-history') {
+			const dateStr = new Date().toLocaleDateString();
+			const count = this.puzzlesSolved ?? 0;
+			const filename = `${baseName}-${count}-${dateStr}.json`;
 			const url = URL.createObjectURL(blob);
 			const a = document.createElement('a');
 
 			a.href = url;
-			a.download = filename + '.json';
+			a.download = filename;
 			a.click();
 		},
 		startStatsImport() {
