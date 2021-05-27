@@ -5,9 +5,9 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build && copy dist\\index.html dist\\200.html",
-    "build:netlify": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "deploy": "vue-cli-service build && copy dist\\index.html dist\\200.html && surge dist --domain https://takuzu-vue.surge.sh",
+    "build:netlify": "vue-cli-service build",
     "deploy:test": "vue-cli-service build && copy dist\\index.html dist\\200.html && surge dist --domain https://takuzu-vue-test.surge.sh"
   },
   "dependencies": {
@@ -21,23 +21,23 @@
     "register-service-worker": "^1.7.1",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
-    "vuex": "^4.0.0-0"
+    "vuex": "^4.0.1"
   },
   "devDependencies": {
-    "@tailwindcss/postcss7-compat": "^2.1.0",
-    "@vue/cli-plugin-babel": "~4.5.12",
-    "@vue/cli-plugin-pwa": "~4.5.12",
-    "@vue/cli-plugin-router": "~4.5.12",
-    "@vue/cli-plugin-unit-jest": "~4.5.12",
-    "@vue/cli-plugin-vuex": "~4.5.12",
-    "@vue/cli-service": "~4.5.12",
+    "@tailwindcss/postcss7-compat": "^2.1.2",
+    "@vue/cli-plugin-babel": "~4.5.13",
+    "@vue/cli-plugin-pwa": "~4.5.13",
+    "@vue/cli-plugin-router": "~4.5.13",
+    "@vue/cli-plugin-unit-jest": "~4.5.13",
+    "@vue/cli-plugin-vuex": "~4.5.13",
+    "@vue/cli-service": "~4.5.13",
     "@vue/compiler-sfc": "^3.0.0",
     "@vue/test-utils": "^2.0.0-0",
     "autoprefixer": "^9.8.6",
     "lodash.camelcase": "^4.3.0",
     "lodash.upperfirst": "^4.3.1",
     "postcss": "^7.0.35",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.0",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.2",
     "typescript": "~3.9.3",
     "vue-jest": "^5.0.0-0",
     "worker-plugin": "^5.0.0"
