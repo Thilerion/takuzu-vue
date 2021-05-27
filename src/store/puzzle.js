@@ -53,7 +53,7 @@ const puzzleModule = {
 
 	getters: {
 		boardStr: state => {
-			return state.board.toString();
+			return state.board?.toString();
 		},
 		finishedAndSolved: (state, getters) => {
 			if (state.board == null || !state.initialized || !state.started) return false;
@@ -77,6 +77,8 @@ const puzzleModule = {
 			return { [ROW]: row, [COLUMN]: column };
 		},
 		remainingCounts: (state, getters) => {
+			if (state.board == null) return;
+
 			const currentCounts = getters.currentCounts;
 			const currentRow = currentCounts[ROW];
 			const currentColumn = currentCounts[COLUMN];
