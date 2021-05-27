@@ -42,9 +42,7 @@
 </template>
 
 <script>
-import { clearPuzzleHistory, getAllStats } from '@/services/stats';
-import { puzzleHistoryTable, default as db } from '@/services/stats/db';
-import { exportDB, importInto } from "dexie-export-import";
+import { clearPuzzleHistory, getAllStats, exportPuzzleHistory, importPuzzleHistory, puzzleHistoryTable } from '@/services/stats';
 import StatsTable from '@/components/statistics/StatsTable.vue';
 import { boardTypes } from '@/config';
 import { dimensionsToBoardType } from '@/utils/puzzle.utils.js';
@@ -158,7 +156,7 @@ export default {
 				clearPuzzleHistory().then(() => {
 					window.alert('Puzzle statistics and puzzle history have succesfully been reset.');
 					this.getInitialData();
-					this.testUniqueKeys();
+					this.getAdvancedStatsData();
 				}).catch(e => {
 					const str = `[ERROR]: Puzzle statistics and history could not be reset due to error: ${e.toString()}`;
 					window.alert(str);
@@ -169,13 +167,7 @@ export default {
 		async exportStats() {
 			try {
 				this.exportInProgress = true;
-				const blob = await exportDB(db, {
-					prettyJson: true,
-					filter: (table) => table === 'puzzleHistory',
-					progressCallback: ({totalRows, completedRows}) => {
-						console.log(`Progress: ${completedRows} of ${totalRows} rows completed`)
-					}
-				});
+				const blob = await exportPuzzleHistory();
 				this.downloadBlob(blob);
 			} catch(e) {
 				console.error(e);
@@ -207,22 +199,33 @@ export default {
 			}
 		},
 		async importStatsIntoDb(blob) {
-			await importInto(db, blob, {
-				clearTablesBeforeImport: true,
-				filter: (table) => table === 'puzzleHistory'
-			});
-			console.log('succesfull import!');
-			this.getInitialData();
+			try {
+				await importPuzzleHistory(blob);
+				console.log('successful import!');
+				// TODO: better message (modal?) that shows umport was successful
+				window.alert('Succesfully imported stats!');
+			} catch(e) {
+				window.alert('Error encountered while importing stats... Sorry!');
+			} finally {
+				this.getInitialData();
+				this.getAdvancedStatsData();
+			}
 		},
-		async testUniqueKeys() {
-			const r = await getAllStats();
-			console.log(r);
-			this.advancedStats = r;
+		async getAdvancedStatsData() {
+			try {
+				const r = await getAllStats();
+				console.log(r);
+				this.advancedStats = r;
+			} catch(e) {
+				console.warn('Error while trying to get all (advanced) stats.');
+				console.log(e);
+				this.advancedStats = null;
+			}
 		}
 	},
 	beforeMount() {
 		this.getInitialData();
-		this.testUniqueKeys();
+		this.getAdvancedStatsData();
 	}
 };
 </script>

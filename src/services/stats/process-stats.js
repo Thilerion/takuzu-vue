@@ -21,7 +21,7 @@ export async function getGameEndStats({ width, height, difficulty }) {
 }
 
 export function getDailyStreaks(dates = []) {
-	if (!dates || !dates.length) return null;
+	if (!dates || !dates.length) return {};
 
 	const streaks = [];
 	let lastStreak = new DailyStreak(dates[0]);

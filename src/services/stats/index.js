@@ -4,6 +4,7 @@ import { getDailyStreaks } from './process-stats';
 
 export * from './process-stats';
 export { PuzzleData, puzzleHistoryTable, db };
+export { clearPuzzleHistory, exportPuzzleHistory, importPuzzleHistory } from './db';
 
 puzzleHistoryTable.mapToClass(PuzzleData);
 
@@ -105,8 +106,4 @@ export async function getAllStats() {
 	const { currentStreak, longestStreak } = getDailyStreaks(sortedDates);
 
 	return { results, totalPlayed, totalTime, currentStreak, longestStreak };
-}
-
-export function clearPuzzleHistory() {
-	return puzzleHistoryTable.clear();
 }
