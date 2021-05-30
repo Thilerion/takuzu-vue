@@ -45,11 +45,14 @@ export default {
 	}
 }
 .nav-link.router-link-exact-active {
-	@apply text-teal-700 font-semibold;
+	@apply text-teal-700 font-semibold opacity-100;
 }
 .nav-link > .material-icons {
-	@apply mb-1 text-current opacity-80;
+	@apply mb-1 text-current opacity-70;
 	font-size: 24px;
+}
+.nav-link.router-link-exact-active > .material-icons {
+	@apply opacity-90;
 }
 .nav-link {
 	transition: color .1s ease;
