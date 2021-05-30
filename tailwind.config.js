@@ -45,6 +45,11 @@ module.exports = {
 			'lg': '1024px',
 			'hover-hover': { 'raw': '(hover: hover)' },
 			'hover-none': { 'raw': '(hover: none)' },
+		},
+		extend: {
+			fontSize: {
+				'xxs': ['0.625rem', '0.875rem'],
+			}
 		}
 	},
 	variants: {

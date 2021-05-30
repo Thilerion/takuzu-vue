@@ -24,8 +24,11 @@
 		<div class="pb-4 mt-auto w-5/6 mx-auto">
 			<div
 				v-if="gameCreationError"
-				class="bg-red-200 text-red-900 font-semibold rounded-lg p-1 text-xs mb-2"
-				>ERROR: Game creation timed out.</div>
+				class="error-msg"
+				>
+					<div class="error error-main">Woops! Game creation timed out. Please try again or select a different difficulty + puzzle size combination.</div>
+					<div class="error error-info">This is often a result of high difficulty and small puzzle size.</div>
+				</div>
 			<StartGameButton
 				@click="createGame"
 				:disable="disableStartButton"
@@ -222,5 +225,15 @@ export default {
 }
 .difficulty-btn > *:last-child {
 	@apply mr-0;
+}
+
+.error-msg {
+	@apply bg-red-200 text-red-900 font-semibold rounded-lg p-2 text-xs mb-2;
+}
+.error-main {
+	@apply mb-1;
+}
+.error-info {
+	@apply text-xxs tracking-wide;
 }
 </style>

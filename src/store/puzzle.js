@@ -121,6 +121,7 @@ const puzzleModule = {
 			state.initialEmpty = [...state.initialBoard.cells({ skipFilled: true })].length;
 		},
 		reset: state => Object.assign(state, defaultState()),
+		resetError: state => state.creationError = null,
 		setInitialized: (state, val) => state.initialized = val,
 		setStarted: (state, val) => state.started = val,
 		setFinished: state => state.finished = true,
@@ -232,8 +233,8 @@ const puzzleModule = {
 		},
 
 		reset({ state, commit }) {
-			if (!state.initialized) {
-				// console.log('puzzle not initialized. cannot reset');
+			if (!state.initialized && !!state.board && !state.creationError) {
+				console.log('puzzle not initialized. cannot reset');
 				return;
 			}
 			commit('reset');
