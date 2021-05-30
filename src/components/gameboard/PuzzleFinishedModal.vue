@@ -5,7 +5,7 @@
 				<div class="flex modal-expander backdrop" v-show="transitionInner">
 					<div class="inner-content" :class="{'opacity-0': !showContent }">
 						<PuzzleFinishedModalStats
-							v-show="gameEndStats.width && lastPuzzleEntry.width"
+							v-if="gameEndStats.width && lastPuzzleEntry.width && transitionInner"
 							:stats="gameEndStats"
 							:last-puzzle="lastPuzzleEntry"
 							@exit-to="exitTo"

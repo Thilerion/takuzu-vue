@@ -6,7 +6,7 @@
 					<span class="time">{{time}}</span>
 				</div>
 			</div>
-			<div class="record-type" v-if="recordTypeMsg">{{recordTypeMsg}}</div>
+			<div class="highscore-banner highscore-anim" v-if="recordTypeMsg">{{recordTypeMsg}}</div>
 		</header>
 		<div class="inner px-6 pt-4 pb-6 text-sm">
 			<div class="text-center flex">
@@ -71,6 +71,11 @@ export default {
 		}
 	},
 	emits: ['exit-to'],
+	data() {
+		return {
+			showHighscoreAnim: true
+		}
+	},
 	methods: {
 		msToMinSec: timeFormatter({ padMinutes: true }),
 		msToSec(ms) {
@@ -122,7 +127,8 @@ export default {
 			if (this.highScoreMessage === recapMsgTypes.TIME_RECORD) {
 				return 'New time record!'
 			} else if (this.highScoreMessage === recapMsgTypes.AVERAGE_IMPROVED) {
-				return 'Average improved!';
+				// return 'Average improved!';
+				return;
 			} else return;
 		},
 		recapMessage() {
@@ -184,9 +190,20 @@ export default {
 .time {
 	@apply text-2xl;
 }
-.record-type {
+.highscore-banner {
 	@apply bg-white text-teal-700 text-base inline-block px-2 py-1 rounded-full my-1 font-medium;
 	min-width: 13rem;
+}
+.highscore-anim {
+	animation: highscoreGlow .5s ease-in-out .5s forwards;
+}
+@keyframes highscoreGlow {
+	from {
+		box-shadow: 0 0 10px 4px rgba(255, 255, 255, 0);
+	}
+	to {
+		box-shadow: 0 0 10px 4px rgba(255, 255, 255, 0.6);
+	}
 }
 
 .overview {
