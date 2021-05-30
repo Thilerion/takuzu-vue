@@ -7,15 +7,34 @@
 				</div>
 			</div>
 			<div class="record-type" v-if="recordTypeMsg">{{recordTypeMsg}}</div>
-			<div v-if="highScoreMessage" class="highscore-msg">{{recapMessage}}</div>
 		</header>
 		<div class="inner px-6 pt-4 pb-6 text-sm">
 			<div class="text-center flex">
 				<div class="overview">
-					<div class="average">Average: {{average}}</div>
-					<div class="best">Best: {{best}}</div>
-					<div class="solved">You've solved {{count}} puzzles @ {{dimensions}} - {{difficulty}}*</div>
-					<BaseButton class="stats-btn" @click="$emit('exit-to', 'statistics')">View all statistics</BaseButton>
+					
+					<div
+						class="solved"
+					>You've solved {{count}} puzzles @ {{dimensions}} - {{difficulty}}*</div>
+
+					<div class="overview-item average">
+						<div class="overview-label">Average time</div>
+						<div class="overview-value">{{average}}</div>
+					</div>
+					<div class="overview-item best">
+						<div class="overview-label">Best time</div>
+						<div class="overview-value">{{best}}</div>
+					</div>
+
+					<div
+						class="stats-recap"
+					>
+						<div v-if="highScoreMessage" class="highscore-msg">{{recapMessage}}</div>
+						<button
+							class="stats-btn"
+							@click="$emit('exit-to', 'statistics')"
+						><span class="material-icons">leaderboard</span> View all statistics</button>
+					</div>
+
 				</div>
 			</div>
 			
@@ -54,7 +73,7 @@ export default {
 		msToMinSec: timeFormatter({ padMinutes: true }),
 		msToSec(ms) {
 			if (ms <= 100) {
-				return ms / 1000;
+				return Math.round(ms) / 1000;
 			} else if (ms < 1020) {
 				return (Math.round(ms / 10) / 100).toFixed(2);
 			} else if (ms < 9500) {
@@ -164,22 +183,23 @@ export default {
 	@apply text-2xl;
 }
 .record-type {
-	@apply bg-white text-teal-600 text-base inline-block px-2 py-1 rounded-full my-1 font-medium;
+	@apply bg-white text-teal-700 text-base inline-block px-2 py-1 rounded-full my-1 font-medium;
 	min-width: 13rem;
-}
-.highscore-msg {
-	@apply text-sm mt-2 px-2 leading-loose;
 }
 
 .overview {
-	@apply inline-grid text-center mx-auto mb-6;
+	@apply grid text-center mx-auto mb-6;
 	grid-template-rows: repeat(3, auto);
-	grid-template-columns: repeat(2, 50%);
+	grid-template-columns: auto 1fr 1fr auto;
 	grid-template-areas:
-		"solved solved"
-		"average best"
-		"stats stats";
-	gap: 1rem 0;
+		"solved solved solved solved"
+		"gl average best gr"
+		"stats stats stats stats";
+	gap: 1rem 3rem;
+}
+
+.overview-label {
+	@apply text-xs opacity-80 text-left;
 }
 .overview .average {
 	grid-area: average;
@@ -187,13 +207,27 @@ export default {
 }
 .overview .best {
 	grid-area: best;
-	@apply text-right;
+	@apply text-right ml-auto;
+}
+.overview .best .overview-value {
+	@apply text-left;
 }
 .overview .solved {
 	grid-area: solved;
 	@apply text-center;
 }
-.overview .stats-btn {
+.overview .stats-recap {
 	grid-area: stats;
+	@apply px-4 border-t border-b pb-3 pt-1 border-gray-200;
+}
+.highscore-msg {
+	@apply text-sm mt-2 mb-1;
+}
+
+.stats-btn {
+	@apply inline-flex w-2/3 justify-center items-center font-medium cursor-pointer py-1 text-gray-700;
+}
+.stats-btn .material-icons {
+	@apply text-sm mr-1 opacity-90;
 }
 </style>
