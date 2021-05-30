@@ -14,9 +14,9 @@
 				</div>
 			</transition>
 			<transition name="fade-base">
-			<div class="encouragement-container" v-show="!fadeOutBase">
-				<div class="encouragement" @click="emitClose">
-					<div class="encouragement-text">{{goodJobString}}</div>
+			<div class="banner-container" v-show="!fadeOutBase">
+				<div class="banner" @click="emitClose">
+					<div class="banner-text">{{goodJobString}}</div>
 				</div>
 			</div>
 			</transition>
@@ -168,15 +168,15 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
-.encouragement-container {
+.banner-container {
 	@apply bg-black text-white w-full my-auto flex justify-center items-center relative py-1;
 	box-shadow: rgba(0, 0, 0, 0.35) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
 }
-.encouragement {
+.banner {
 	min-height: 2rem;
 	@apply px-4 py-6;
 }
-.encouragement-text {
+.banner-text {
 	@apply text-xl;
 }
 .backdrop {
@@ -188,14 +188,14 @@ export default {
 	transform: translateX(-100%);
   	animation: slideIn 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
 }
-.finished-modal3-enter-active .encouragement {
+.finished-modal3-enter-active .banner {
 	opacity: 0;
   	animation: fadeInInner 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;	
 }
-.finished-modal3-enter-active .encouragement-container {	
+.finished-modal3-enter-active .banner-container {	
 	transition: box-shadow 0.5s ease;
 }
-.finished-modal3-enter-from .encouragement-container {
+.finished-modal3-enter-from .banner-container {
 	box-shadow: rgba(0, 0, 0, 0) 0px 54px 55px, rgba(0, 0, 0, 0) 0px -12px 30px, rgba(0, 0, 0, 0) 0px 4px 6px, rgba(0, 0, 0, 0) 0px 12px 13px, rgba(0, 0, 0, 0) 0px -3px 5px;
 }
 .finished-modal3-leave-active {
@@ -256,7 +256,7 @@ export default {
 }
 
 .inner-content {
-	@apply rounded overflow-hidden flex m-auto w-full;
+	@apply rounded-t-xl rounded-b-md overflow-hidden flex m-auto w-full;
 	transition: opacity .5s ease;
 	min-height: 8rem;
 }
