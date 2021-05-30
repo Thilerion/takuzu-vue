@@ -93,10 +93,14 @@ export default {
 				this.afterLeaveAction = () => this.$router.replace({ name: 'Statistics' });
 				this.emitClose();
 			} else if (destination === 'play-again') {
-				console.warn('TODO: implement play again from modal');
 				this.afterLeaveAction = () => {};
-				this.playAgainAction();
-				this.emitClose();
+				this.playAgainAction().catch((err) => {
+					// route to New Game screen if failed, where the message is also displayed
+					console.log('Routing to new game screen because PlayAgain create-new-board failed');
+					this.$router.go(-1);
+				}).finally(() => {
+					this.emitClose();
+				})
 			} else {
 				console.log('No destination after leaving puzzleFinishedModal');
 				this.afterLeaveAction = () => {};
@@ -111,7 +115,8 @@ export default {
 				this.$store.commit('incrementPuzzleKey');
 			} catch(e) {
 				console.warn(e);
-				console.warn('Error while trying to create new puzzle in PlayAgain')
+				console.warn('Error while trying to create new puzzle in PlayAgain');
+				return Promise.reject();
 			}
 		},
 		emitClose() {
