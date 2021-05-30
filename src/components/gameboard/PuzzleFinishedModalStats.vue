@@ -38,10 +38,12 @@
 				</div>
 			</div>
 			
-			<div class="grid gap-2 grid-cols-2 auto-rows-auto max-w-full">
-				<BaseButton @click="$emit('exit-to', 'new-game')">Create new game</BaseButton>
-				<BaseButton @click="$emit('exit-to', 'play-again')">Play again</BaseButton>
-				<BaseButton @click="$emit('exit-to', 'home')">Home</BaseButton>				
+			<div class="recap-btns">
+				<BaseButton class="play-again-btn btn-primary w-full" @click="$emit('exit-to', 'play-again')">Play again</BaseButton>
+				<div class="secondary-btns flex w-full">
+					<BaseButton class="mr-2 text-xs flex-1" @click="$emit('exit-to', 'home')">Home</BaseButton>
+					<BaseButton class="text-xs btn-small flex-1" @click="$emit('exit-to', 'new-game')">Change puzzle type</BaseButton>
+				</div>				
 			</div>
 		</div>
 	</div>
@@ -128,7 +130,7 @@ export default {
 				return `You've solved this puzzle for the first time, great job!`;
 			} else if (this.highScoreMessage === recapMsgTypes.TIME_RECORD) {
 				const improvement = this.msToSec(Math.abs(this.differenceFromBest));
-				return `You've improved your previous best by ${improvement}s!`;
+				return `You've improved your best time by ${improvement}s!`;
 			} else if (this.highScoreMessage === recapMsgTypes.AVERAGE_IMPROVED) {
 				const improvement = this.msToSec(Math.abs(this.amountFasterThanAverage));
 				return `You were ${improvement}s faster than your previous average!`;
@@ -174,7 +176,7 @@ export default {
 
 <style lang="postcss" scoped>
 .modal-header {
-	@apply bg-teal-600 text-white text-center py-3 px-3;
+	@apply bg-gradient-to-b from-teal-600 to-teal-500 text-white text-center py-3 px-3;
 }
 .time-container {
 	@apply mb-2 mt-1 inline-block mx-auto;
@@ -229,5 +231,9 @@ export default {
 }
 .stats-btn .material-icons {
 	@apply text-sm mr-1 opacity-90;
+}
+
+.recap-btns {
+	@apply w-9/12 flex flex-col justify-center gap-2 items-center mx-auto;
 }
 </style>
