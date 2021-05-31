@@ -46,11 +46,11 @@ export default {
 	computed: {
 		gridGapSizing() {
 			const { cellSize } = this.puzzleGridDimensions;
-			if (cellSize <= 28) {
+			if (cellSize <= 26) {
 				return 'xs';
-			} else if (cellSize <= 36) {
+			} else if (cellSize <= 32) {
 				return 's';
-			} else if (cellSize <= 48) {
+			} else if (cellSize <= 42) {
 				return 'm';
 			} else if (cellSize <= 64) {
 				return 'l';
@@ -164,15 +164,15 @@ export default {
 	--cell-rounding: theme(borderRadius.sm);
 }
 .puzzle-wrapper.cell-size-m {
-	--grid-gap: 2px;
-	--cell-rounding: theme(borderRadius.sm);
+	--grid-gap: 1px;
+	--cell-rounding: theme(borderRadius.DEFAULT);
 }
 .puzzle-wrapper.cell-size-l {
 	--grid-gap: 3px;
-	--cell-rounding: theme(borderRadius.DEFAULT);
+	--cell-rounding: theme(borderRadius.md);
 }
 .puzzle-wrapper.cell-size-xl {
 	--grid-gap: 4px;
-	--cell-rounding: theme(borderRadius.DEFAULT);
+	--cell-rounding: theme(borderRadius.md);
 }
 </style>
