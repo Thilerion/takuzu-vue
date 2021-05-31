@@ -42,7 +42,7 @@
 <script>
 import DifficultySelect from '@/components/new-game/DifficultySelect';
 import GameSizeSelect from '@/components/new-game/GameSizeSelect';
-import StartGameButton from '@/components/board/StartGameButton';
+import StartGameButton from '@/components/new-game/StartGameButton';
 import { boardTypes, DIFFICULTY_LABELS, PRESET_BOARD_SIZES } from '@/config';
 
 const getInitialSelection = () => {
