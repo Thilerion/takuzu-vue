@@ -23,7 +23,8 @@
 				:board="board"
 				:grid-height="height"
 				:grid-width="width"
-				:cell-size="cellSize"
+				:cell-size="cellSize"				
+				@pointerdown.once="checkEnableWakeLock"
 			>
 				<template v-slot:puzzle-info>
 					<PuzzleInfo
@@ -86,8 +87,11 @@ import PuzzleHintWrapper from '@/components/gameboard/PuzzleHintWrapper.vue';
 
 import { hasCurrentSavedGame } from '@/services/save-game';
 import { usePageVisibility } from '@/composables/use-page-visibility';
+import WakeLock from '../services/wake-lock';
+const wakeLock = new WakeLock();
 
 import { COLUMN, ROW } from '@/lib/constants';
+
 import debounce from 'lodash.debounce';
 
 export default {
@@ -117,6 +121,9 @@ export default {
 
 			dropdownOpen: false,
 			settingsOpen: false,
+
+			wakeLock: wakeLock,
+			isWakeLockEnabled: false,
 		}
 	},
 	computed: {
@@ -133,8 +140,11 @@ export default {
 			'currentCounts', 'remainingCounts',
 		]),
 		...mapState('settings', [
-			'showLineInfo',
+			'showLineInfo'
 		]),
+		shouldEnableWakeLock() {
+			return this.$store.state.settings.enableWakeLock;
+		},
 		...mapGetters('settings', [
 			'showBoardCoordinates', 'showBoardLineCounts',
 		]),
@@ -247,6 +257,19 @@ export default {
 		},
 		getHint() {
 			this.$store.dispatch('puzzle/assistance/getHint');
+		},
+		checkEnableWakeLock() {
+			console.log('Check if wakelock should be enabled');
+			const setting = this.shouldEnableWakeLock;
+			console.log({ setting });
+
+			if (setting) {
+				this.wakeLock.enable();
+				this.isWakeLockEnabled = this.wakeLock.enabled;
+				this.wakeLock.onChange = (isEnabled) => {
+					this.isWakeLockEnabled = !!isEnabled;
+				}
+			}
 		}
 	},
 	created() {
@@ -298,6 +321,10 @@ export default {
 			this.saveGame();
 		}
 		this.stopAutoSave();
+	},
+	unmounted() {
+		// TODO: also stop wake lock when game is paused, settings is open, etc, and enable it again when resuming
+		this.wakeLock.destroy();
 	},
 	watch: {
 		finishedAndSolved: {
