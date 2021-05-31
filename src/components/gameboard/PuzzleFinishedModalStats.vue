@@ -6,23 +6,33 @@
 					<span class="time">{{time}}</span>
 				</div>
 			</div>
-			<div class="highscore-banner highscore-anim" v-if="recordTypeMsg">{{recordTypeMsg}}</div>
+			<div
+				class="highscore-banner"
+				v-if="recordTypeMsg"
+			><span class="material-icons highscore-icon">emoji_events</span> {{recordTypeMsg}}</div>
 		</header>
 		<div class="inner px-6 pt-4 pb-6 text-sm">
 			<div class="text-center flex">
 				<div class="overview">
-					
-					<div
-						class="solved"
-					>You've solved {{count}} puzzles @ {{dimensions}} - {{difficulty}}*</div>
 
-					<div class="overview-item average">
+					<div class="overview-item puzzle-type left">
+						<div class="overview-label">Puzzle type</div>
+						<div class="overview-value">{{dimensions}} - {{difficulty}}*</div>
+					</div>
+
+					<div class="overview-item num-solved right">
+						<div class="overview-label">Solved</div>
+						<div class="overview-value">{{count}}</div>
+					</div>
+
+					<div class="overview-item average left">
 						<div class="overview-label">Average time</div>
 						<div class="overview-value">{{average}}</div>
 					</div>
-					<div class="overview-item best">
+
+					<div class="overview-item best right">
 						<div class="overview-label">Best time</div>
-						<div class="overview-value">{{best}}</div>
+						<div class="overview-value"><span class="strikethrough" v-if="isTimeRecord && !isFirstPuzzleSolved">{{prevBestFormatted}}</span> {{best}}</div>
 					</div>
 
 					<div
@@ -160,6 +170,9 @@ export default {
 		best() {
 			return this.msToMinSec(this.stats.best);
 		},
+		prevBestFormatted() {
+			return this.msToMinSec(this.stats.secondBest ?? 0);
+		},
 		previousBest() {
 			if (this.lastPuzzle.timeElapsed === this.stats.best) {
 				return this.msToMinSec(this.stats.secondBest);
@@ -191,30 +204,35 @@ export default {
 	@apply text-2xl;
 }
 .highscore-banner {
-	@apply bg-white text-teal-700 text-base inline-block px-2 py-1 rounded-full my-1 font-medium;
+	@apply bg-white text-teal-700 text-base inline-flex px-2 rounded-full my-1 font-medium justify-center items-center h-8 leading-none;
 	min-width: 13rem;
+	box-shadow: 0 0 10px 4px rgba(255, 255, 255, 0.6);
 }
-.highscore-anim {
-	animation: highscoreGlow .5s ease-in-out .5s forwards;
+.highscore-icon {
+	@apply opacity-80 mr-1;
 }
-@keyframes highscoreGlow {
-	from {
-		box-shadow: 0 0 10px 4px rgba(255, 255, 255, 0);
-	}
-	to {
-		box-shadow: 0 0 10px 4px rgba(255, 255, 255, 0.6);
-	}
-}
+
 
 .overview {
 	@apply grid text-center mx-auto mb-6;
-	grid-template-rows: repeat(3, auto);
+	grid-template-rows: 1fr 1fr auto;
 	grid-template-columns: auto 1fr 1fr auto;
 	grid-template-areas:
-		"solved solved solved solved"
+		"gl type solved gr"
 		"gl average best gr"
 		"stats stats stats stats";
-	gap: 1rem 3rem;
+	gap: 1rem 2rem;
+}
+
+.overview-item {
+	@apply w-20;
+}
+
+.overview-item.left {
+	@apply text-left ml-auto;
+}
+.overview-item.right {
+	@apply text-right ml-auto;
 }
 
 .overview-label {
@@ -228,19 +246,26 @@ export default {
 	grid-area: best;
 	@apply text-right ml-auto;
 }
-.overview .best .overview-value {
+.overview .right .overview-value {
 	@apply text-left;
 }
-.overview .solved {
+.overview .num-solved {
 	grid-area: solved;
-	@apply text-center;
 }
+.overview .puzzle-type {
+	grid-area: type;
+}
+
 .overview .stats-recap {
 	grid-area: stats;
-	@apply px-4 border-t border-b pb-3 pt-1 border-gray-200;
+	@apply border-t border-b pb-3 pt-1 border-gray-200;
 }
 .highscore-msg {
 	@apply text-sm mt-2 mb-1;
+}
+
+.overview-value > .strikethrough {
+	@apply line-through opacity-60;
 }
 
 .stats-btn {
