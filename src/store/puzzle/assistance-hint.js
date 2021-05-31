@@ -16,7 +16,11 @@ const assistanceHintModule = {
 	state: defaultState(),
 
 	getters: {
-
+		baseHintsRequested: state => state.cache.size,
+		hintAssistanceData: (state, getters) => {
+			const amountRequested = getters.baseHintsRequested;
+			return { amountRequested };
+		},
 	},
 
 	mutations: {

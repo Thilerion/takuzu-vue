@@ -218,14 +218,26 @@ const puzzleModule = {
 				throw new Error(e);
 			}
 		},
-		finishPuzzle({ state, commit, dispatch }) {
+		finishPuzzle({ state, getters, commit, dispatch }) {
 			commit('setFinished');
 			commit('timer/pause');
 
 			let timeElapsed = state.timer.timeElapsed;
-			const finishedPuzzleState = { ...state, timeElapsed };
+			const checkAssistanceData = getters['assistance/checkAssistanceData'];
+			const hintAssistanceData = getters['assistance/hintAssistanceData']
+			const finishedPuzzleState = {
+				...state, timeElapsed, assistance: {
+					checkData: checkAssistanceData,
+					hintData: hintAssistanceData
+				}
+			};
+			console.log({...finishedPuzzleState});
 
-			return dispatch('stats/addFinishedPuzzleToHistoryFromPuzzle', finishedPuzzleState, { root: true }).then(historyEntry => {
+			return dispatch(
+				'stats/addFinishedPuzzleToHistory',
+				finishedPuzzleState,
+				{ root: true }
+			).then(historyEntry => {
 				console.log('Puzzle saved to history.');
 				SaveGameData.deleteSavedGame();
 				return historyEntry;

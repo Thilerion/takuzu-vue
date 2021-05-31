@@ -17,7 +17,17 @@ const assistanceIncorrectCheckModule = {
 	state: defaultState(),
 
 	getters: {
-
+		totalUniqueChecks: state => state.cache.size,
+		totalUniqueChecksWithResults: state => {
+			const arr = Array.from(state.cache.values());
+			return arr.filter(val => val?.length).length;
+		},
+		checkAssistanceData: (state, getters) => {
+			const checks = getters.totalUniqueChecks;
+			const checksWithResults = getters.totalUniqueChecksWithResults;
+			const incorrectCellsFound = state.totalCellsFound.size;
+			return { checks, checksWithResults, incorrectCellsFound };
+		},
 	},
 	mutations: {
 		reset: state => {
