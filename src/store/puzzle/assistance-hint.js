@@ -9,6 +9,8 @@ const defaultState = () => ({
 	showHint: false,
 	allHints: [],
 	currentHint: null,
+
+	cache: new Map(),
 });
 
 const assistanceHintModule = {
@@ -36,10 +38,23 @@ const assistanceHintModule = {
 			state.currentHint = null;
 			state.showHint = false;
 		},
+		addHintToCache(state, { boardStr, hint }) {
+			state.cache.set(boardStr, hint);
+		}
 	},
 
 	actions: {
-		getHint({ state, rootState, commit, dispatch }) {
+		getHint({ state, rootState, rootGetters, commit, dispatch }) {
+			const boardStr = rootGetters['puzzle/boardStr'];
+			let result = state.cache.get(boardStr);
+			if (result) {
+				console.log('using cached hint result');
+				commit('setAllHints', []);
+				commit('setCurrentHint', result);
+				commit('setHintVisible', true);
+				return;
+			}
+
 			const { board, solution } = rootState.puzzle;
 			// FIRST: check if current hint and if so, if it is still valid
 			// because in that case, it should be shown without "using up a new generated hint"
@@ -72,6 +87,7 @@ const assistanceHintModule = {
 				const hint = createHint(hintTypes.MISTAKE, incorrectValues);
 				console.log({ hint });
 				dispatch('setHints', [hint]);
+				commit('addHintToCache', { boardStr, hint});
 				return;
 			}
 
@@ -96,6 +112,7 @@ const assistanceHintModule = {
 				const hint = sortedHints[0];
 				console.log({ hint });
 				dispatch('setHints', [hint]);
+				commit('addHintToCache', { boardStr, hint});
 				return;
 			}
 
@@ -105,6 +122,7 @@ const assistanceHintModule = {
 				const hint = createHint(hintTypes.BALANCE, balanceHintResult[0]);
 				console.log({ hint });
 				dispatch('setHints', [hint]);
+				commit('addHintToCache', { boardStr, hint});
 				return;
 			}
 
@@ -121,6 +139,7 @@ const assistanceHintModule = {
 				const hint = createHint(hintTypes.ELIMINATION, sorted[0]);
 				console.log({ eliminationHintResult, sorted, hint });
 				dispatch('setHints', [hint]);
+				commit('addHintToCache', { boardStr, hint});
 				return;
 			}
 
@@ -139,6 +158,7 @@ const assistanceHintModule = {
 				const hint = createHint(hintTypes.ELIM_DUPE, sorted[0]);
 				console.log({ dupeHintResult, sorted, hint });
 				dispatch('setHints', [hint]);
+				commit('addHintToCache', { boardStr, hint});
 				return;
 			}
 
@@ -147,6 +167,7 @@ const assistanceHintModule = {
 
 			// TODO: not yet implemented hinting system
 			dispatch('setHints');
+			commit('addHintToCache', { boardStr, hint});
 		},
 		setHints({ commit }, hints = []) {
 			commit('setAllHints', hints);
