@@ -7,7 +7,6 @@ import hintTypes from "../hints/hint-types";
 
 const defaultState = () => ({
 	showHint: false,
-	allHints: [],
 	currentHint: null,
 
 	cache: new Map(),
@@ -27,14 +26,10 @@ const assistanceHintModule = {
 		setHintVisible(state, value) {
 			state.showHint = !!value;
 		},
-		setAllHints(state, hints) {
-			state.allHints = hints;
-		},
 		setCurrentHint(state, hint = null) {
 			state.currentHint = hint;
 		},
 		removeHints(state) {
-			state.allHints = [];
 			state.currentHint = null;
 			state.showHint = false;
 		},
@@ -49,7 +44,6 @@ const assistanceHintModule = {
 			let result = state.cache.get(boardStr);
 			if (result) {
 				console.log('using cached hint result');
-				commit('setAllHints', []);
 				commit('setCurrentHint', result);
 				commit('setHintVisible', true);
 				return;
@@ -170,7 +164,6 @@ const assistanceHintModule = {
 			commit('addHintToCache', { boardStr, hint});
 		},
 		setHints({ commit }, hints = []) {
-			commit('setAllHints', hints);
 			if (hints.length === 0) {
 				console.warn('No hint in hints array?');
 				commit('setCurrentHint', null);
