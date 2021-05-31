@@ -49,9 +49,9 @@ class WakeLock {
 			.then(wakeLock => {
 				this._wakeLockRef = wakeLock;
 				this.enabled = true;
-				// console.log('Wake Lock active.');
+				console.log('Wake Lock active.');
 				this._wakeLockRef.addEventListener('release', () => {
-					// console.log('Wake Lock released.');
+					console.log('Wake Lock released.');
 					this.enabled = false;
 				})
 			})
@@ -59,7 +59,6 @@ class WakeLock {
 				this.enabled = false;
 				console.warn('Error while trying to enable wake lock.');
 				console.error(err);
-				throw err;
 			});
 	}
 

@@ -1,5 +1,8 @@
 <template>
-	<div class="board new-board relative" :style="{ '--cell-size': cellSizePx }">
+	<div
+		class="board new-board relative"
+		:style="{ '--cell-size': cellSizePx }"
+	>
 		<div class="ruler-wrapper-columns"><slot name="ruler-columns" /></div>
 		<div class="ruler-wrapper-rows"><slot name="ruler-rows" /></div>
 		<div class="puzzle-info-wrapper">
@@ -79,11 +82,15 @@ export default {
 	},
 	methods: {
 		toggleCell({x, y, value}) {
+			// TODO: 1 or 0 first? from settings
 			const values = ['0', '1', '.'];
 			const idx = values.indexOf(value);
 			const nextIdx = (idx + 1) % 3;
 			const nextValue = values[nextIdx];
-			this.$store.dispatch('puzzle/toggle', { x, y, value: nextValue, prevValue: value });
+			this.$store.dispatch(
+				'puzzle/toggle',
+				{ x, y, value: nextValue, prevValue: value }
+			);
 		}
 	},
 };
