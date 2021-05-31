@@ -36,20 +36,13 @@
 				:selection="{ difficulty: difficultyLabels[difficulty - 1], size }"
 			/>
 		</div>
-		<OverlayPageTransition :disable="disableGameBoardTransition">
-			<PlayGame @close="quitGame" v-if="gameInitialized && false" />
-		</OverlayPageTransition>
 	</div>
 </template>
 
 <script>
 import DifficultySelect from '@/components/new-game/DifficultySelect';
 import GameSizeSelect from '@/components/new-game/GameSizeSelect';
-import PlayGame from '@/components/play-game/PlayGame';
 import StartGameButton from '@/components/board/StartGameButton';
-import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
-
-import { hasCurrentSavedGame } from '@/services/save-game';
 import { boardTypes, DIFFICULTY_LABELS, PRESET_BOARD_SIZES } from '@/config';
 
 const getInitialSelection = () => {
@@ -71,9 +64,7 @@ export default {
 	components: {
 		DifficultySelect,
 		GameSizeSelect,
-		PlayGame,
 		StartGameButton,
-		OverlayPageTransition,
 	},
 	setup() {
 		return {
@@ -87,16 +78,14 @@ export default {
 			
 			difficulty: null,
 			size: null,
-
-			disableGameBoardTransition: false,
 		}
 	},
 	computed: {
 		gameInitialized() {
-			return this.$store.state.game.initialized;
+			return this.$store.state.puzzle.initialized;
 		},
 		gameLoading() {
-			return this.$store.state.game.loading || !!this.$store.state.puzzle.loading;
+			return !!this.$store.state.puzzle.loading;
 		},
 		gameCreationError() {
 			return this.$store.state.puzzle.creationError;
@@ -142,26 +131,6 @@ export default {
 			this.$store.dispatch('puzzle/reset');
 		}
 	},
-	beforeRouteEnter(to, from, next) {
-		next(vm => {
-			if (to.query.continue) {
-
-				if (hasCurrentSavedGame() && !vm.gameInitialized) {
-					console.log('loading saved game');
-					vm.$store.dispatch('loadSaved');
-					// to prevent a double transition; FreePlay and PlayGame both use enter transition
-					vm.disableGameBoardTransition = true;
-					setTimeout(() => {
-						vm.disableGameBoardTransition = false;
-					}, 400);
-					return;
-				} else {
-					vm.$router.replace({query: null});
-				}
-			};
-			vm.disableGameBoardTransition = false;
-		})
-	},
 	beforeRouteLeave(to, from) {
 		// if game does not exist; and the playGame view is not active, just accept the route change
 		if (!this.gameInitialized) {
@@ -200,11 +169,6 @@ export default {
 				localStorage.setItem('takuzu_freeplay-selection', JSON.stringify(newValue));
 			},
 			deep: true,
-		},
-		gameInitialized(newValue) {
-			if (!newValue && this.$route.query.continue) {
-				this.$router.replace({query: null});
-			}
 		}
 	}
 }
