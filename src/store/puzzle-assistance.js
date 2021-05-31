@@ -6,39 +6,42 @@ import { findRuleConflicts } from "@/lib/validate/board";
 import { createHint, validateHint } from "./hints";
 import hintTypes from "./hints/hint-types";
 
+function checkForIncorrectCells({ board, solution }) {
+	const { hasMistakes, result } = board.hasIncorrectValues(solution);
+	if (!hasMistakes) {
+		return null;
+	}
+	return result.map(({ x, y }) => `${x},${y}`);
+}
+
+const defaultState = () => ({
+	// incorrectCheck
+	incorrectCheck: {
+		checkId: -1,
+		cache: new Map(),
+		totalCellsFound: new Set(),
+		currentMarked: []
+	},
+
+	showHint: false,
+	allHints: [],
+	currentHint: null,
+
+	checkBoardMap: new Map(),
+})
+
 const puzzleAssistanceModule = {
 
 	namespaced: true,
 
-	state: () => ({
-		errorCheckResult: null,
-		errorCheckCells: [],
-		errorCheckId: -1,
-
-		showHint: false,
-		allHints: [],
-		currentHint: null,
-	}),
+	state: defaultState(),
 
 	getters: {
 
 	},
 
 	mutations: {
-		incrementErrorCheckId: state => state.errorCheckId += 1,
-		setErrorCheckResult: (state, val) => state.errorCheckResult = val,
-		setErrorCheckCells: (state, cells = []) => state.errorCheckCells = cells,
-		removeIdFromErrorCells: (state, id) => {
-			state.errorCheckCells = state.errorCheckCells.filter(val => val !== id);
-		},
-		reset: state => {
-			state.errorCheckCells = [];
-			state.errorCheckId = -1;
-			state.errorCheckResult = null;
-			state.showHint = false;
-			state.allHints = [];
-			state.currentHint = null;
-		},
+		reset: state => Object.assign(state, defaultState()),
 
 		setHintVisible(state, value) {
 			state.showHint = !!value;
@@ -54,27 +57,44 @@ const puzzleAssistanceModule = {
 			state.currentHint = null;
 			state.showHint = false;
 		},
+
+		incorrectCellsAddToCache(state, { key, value }) {
+			state.incorrectCheck.cache.set(key, value);
+		},
+		incrementIncorrectCheckId(state) {
+			state.incorrectCheck.checkId += 1;
+		},
+		addCellsToIncorrectCellsTotal(state, cellIds = []) {
+			cellIds.forEach(cellId => state.incorrectCheck.totalCellsFound.add(cellId));
+		},
+		setCurrentIncorrectCells(state, cellIds = []) {
+			state.incorrectCheck.currentMarked = [...cellIds];
+		},
+		removeFromCurrentMarkedIncorrect(state, cellId) {
+			state.incorrectCheck.currentMarked = state.incorrectCheck.currentMarked.filter(val => val !== cellId);
+		},
 	},
 
 	actions: {
-		checkErrors({ commit, dispatch }) {
-			dispatch('findIncorrectValues');
-			commit('incrementErrorCheckId');
-		},
-		findIncorrectValues({ rootState, commit }) {
-			const { board, solution } = rootState.puzzle;
-			const { hasMistakes, result } = board.hasIncorrectValues(solution);
-
-			if (!hasMistakes) {
-				commit('setErrorCheckResult', false);
-				commit('setErrorCheckCells', []);
-				return;
+		checkIncorrectCells({ state, commit }, { boardStr, board, solution }) {
+			let result = state.incorrectCheck.cache.get(boardStr);
+			if (result == null) {
+				result = checkForIncorrectCells({ board, solution });
+				commit('incorrectCellsAddToCache', { key: boardStr, value: result });
 			}
-
-			commit('setErrorCheckResult', true);
-			const incorrectCellIds = result.map(({ x, y }) => `${x},${y}`);
-			commit('setErrorCheckCells', incorrectCellIds);			
+			commit('incrementIncorrectCheckId');
+			if (!Array.isArray(result)) {
+				result = [];
+			} else {
+				commit('addCellsToIncorrectCellsTotal', result);
+			}
+			commit('setCurrentIncorrectCells', result);
 		},
+		checkErrors({ dispatch, rootState }, boardKey) {
+			const { board, solution } = rootState.puzzle;
+			dispatch('checkIncorrectCells', { boardStr: boardKey, board, solution });
+		},
+		
 
 		getHint({ state, rootState, commit, dispatch }) {
 			const { board, solution } = rootState.puzzle;

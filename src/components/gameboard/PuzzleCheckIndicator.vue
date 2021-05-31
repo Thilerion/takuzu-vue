@@ -25,21 +25,25 @@ export default {
 	},
 	computed: {
 		errorCheckValue() {
-			return this.$store.state.puzzle.assistance.errorCheckResult;
+			return this.$store.state.puzzle.assistance.incorrectCheck.currentMarked;
 		},
 		errorFound() {
-			return !!this.errorCheckValue;
+			return Array.isArray(this.errorCheckValue) && this.errorCheckValue.length > 0;
 		},
 		errorCheckId() {
 			// from store
-			return this.$store.state.puzzle.assistance.errorCheckId;
+			return this.$store.state.puzzle.assistance.incorrectCheck.checkId;
 		},
 		errorCheckKey() {
-			return `${this.errorCheckId}-${this.errorCheckValue}`;
+			return `${this.errorCheckId}`;
 		}
 	},
 	watch: {
-		errorCheckId() {
+		errorCheckId(newValue, prevValue) {
+			if (newValue < prevValue) {
+				this.show = false;
+				return;
+			}
 			this.show = false;
 			this.$nextTick(() => {
 				this.show = true;

@@ -59,7 +59,7 @@ export default {
 			return this.$store.state.settings.enableVibration;
 		},
 		incorrectMarkedCells() {
-			return this.$store.state.puzzle.assistance.errorCheckCells;
+			return this.$store.state.puzzle.assistance.incorrectCheck.currentMarked;
 		}
 	},
 	methods: {

@@ -242,7 +242,8 @@ export default {
 			this.autoSaveInterval = null;
 		},
 		checkErrors() {
-			this.$store.dispatch('puzzle/assistance/checkErrors');
+			const boardStr = this.$store.getters['puzzle/boardStr'];
+			this.$store.dispatch('puzzle/assistance/checkErrors', boardStr);
 		},
 		getHint() {
 			this.$store.dispatch('puzzle/assistance/getHint');
