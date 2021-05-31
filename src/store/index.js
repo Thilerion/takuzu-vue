@@ -1,6 +1,6 @@
 import { createStore } from 'vuex';
 import gameModule from './game';
-import puzzleModule from './puzzle';
+import puzzleModule from './puzzle/index.js';
 import { settingsModule, initSettingsWatcher } from './settings';
 import { statsModule } from './stats';
 

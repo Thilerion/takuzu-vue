@@ -21,10 +21,10 @@ export default {
 	},
 	computed: {
 		showHint() {
-			return this.$store.state.puzzle.assistance.showHint;
+			return this.$store.state.puzzle.assistance.hints.showHint;
 		},
 		currentHint() {
-			return this.$store.state.puzzle.assistance.currentHint;
+			return this.$store.state.puzzle.assistance.hints.currentHint;
 		},
 		hint() {
 			if (this.showHint && !this.currentHint) {

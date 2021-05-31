@@ -1,12 +1,12 @@
-import { SimpleBoard } from '../lib/board/Board';
+import { SimpleBoard } from '../../lib/board/Board';
 import { sendWorkerMessage, initPuzzleWorkerReceiver } from '@/workers/generate-puzzle';
 
-import puzzleTimerModule from './puzzle-timer';
-import puzzleHistoryModule from './puzzle-history';
-import puzzleAssistanceModule from './puzzle-assistance';
+import puzzleTimerModule from './timer';
+import puzzleHistoryModule from './history';
+import puzzleAssistanceModule from './assistance';
 
 import { SaveGameData } from '@/services/save-game';
-import { calculateGridCounts, calculateLineCounts } from './puzzle-line-counts';
+import { calculateGridCounts, calculateLineCounts } from './line-counts';
 import { COLUMN, EMPTY, ONE, ROW, ZERO } from '@/lib/constants';
 
 const defaultState = () => ({

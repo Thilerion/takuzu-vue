@@ -2,38 +2,16 @@ import { humanSolveBalance } from "@/lib/human-solver/balance";
 import { humanSolveDuplicateLine } from "@/lib/human-solver/duplicate";
 import { humanSolveElimination } from "@/lib/human-solver/elimination";
 import { humanSolveTriples } from "@/lib/human-solver/triples";
-import { findRuleConflicts } from "@/lib/validate/board";
-import { createHint, validateHint } from "./hints";
-import hintTypes from "./hints/hint-types";
-
-function checkForIncorrectCells({ board, solution }) {
-	const { hasMistakes, result } = board.hasIncorrectValues(solution);
-	if (!hasMistakes) {
-		return null;
-	}
-	return result.map(({ x, y }) => `${x},${y}`);
-}
+import { createHint, validateHint } from "../hints/";
+import hintTypes from "../hints/hint-types";
 
 const defaultState = () => ({
-	// incorrectCheck
-	incorrectCheck: {
-		checkId: -1,
-		cache: new Map(),
-		totalCellsFound: new Set(),
-		currentMarked: []
-	},
-
 	showHint: false,
 	allHints: [],
 	currentHint: null,
+});
 
-	checkBoardMap: new Map(),
-})
-
-const puzzleAssistanceModule = {
-
-	namespaced: true,
-
+const assistanceHintModule = {
 	state: defaultState(),
 
 	getters: {
@@ -41,8 +19,9 @@ const puzzleAssistanceModule = {
 	},
 
 	mutations: {
-		reset: state => Object.assign(state, defaultState()),
-
+		reset: state => {
+			Object.assign(state, defaultState());
+		},
 		setHintVisible(state, value) {
 			state.showHint = !!value;
 		},
@@ -57,45 +36,9 @@ const puzzleAssistanceModule = {
 			state.currentHint = null;
 			state.showHint = false;
 		},
-
-		incorrectCellsAddToCache(state, { key, value }) {
-			state.incorrectCheck.cache.set(key, value);
-		},
-		incrementIncorrectCheckId(state) {
-			state.incorrectCheck.checkId += 1;
-		},
-		addCellsToIncorrectCellsTotal(state, cellIds = []) {
-			cellIds.forEach(cellId => state.incorrectCheck.totalCellsFound.add(cellId));
-		},
-		setCurrentIncorrectCells(state, cellIds = []) {
-			state.incorrectCheck.currentMarked = [...cellIds];
-		},
-		removeFromCurrentMarkedIncorrect(state, cellId) {
-			state.incorrectCheck.currentMarked = state.incorrectCheck.currentMarked.filter(val => val !== cellId);
-		},
 	},
 
 	actions: {
-		checkIncorrectCells({ state, commit }, { boardStr, board, solution }) {
-			let result = state.incorrectCheck.cache.get(boardStr);
-			if (result == null) {
-				result = checkForIncorrectCells({ board, solution });
-				commit('incorrectCellsAddToCache', { key: boardStr, value: result });
-			}
-			commit('incrementIncorrectCheckId');
-			if (!Array.isArray(result)) {
-				result = [];
-			} else {
-				commit('addCellsToIncorrectCellsTotal', result);
-			}
-			commit('setCurrentIncorrectCells', result);
-		},
-		checkErrors({ dispatch, rootState }, boardKey) {
-			const { board, solution } = rootState.puzzle;
-			dispatch('checkIncorrectCells', { boardStr: boardKey, board, solution });
-		},
-		
-
 		getHint({ state, rootState, commit, dispatch }) {
 			const { board, solution } = rootState.puzzle;
 			// FIRST: check if current hint and if so, if it is still valid
@@ -220,6 +163,6 @@ const puzzleAssistanceModule = {
 		}
 	}
 
-};
+}
 
-export default puzzleAssistanceModule;
+export default assistanceHintModule;
