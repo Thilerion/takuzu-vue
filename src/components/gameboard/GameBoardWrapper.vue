@@ -52,7 +52,7 @@ export default {
 				return 's';
 			} else if (cellSize <= 42) {
 				return 'm';
-			} else if (cellSize <= 64) {
+			} else if (cellSize <= 58) {
 				return 'l';
 			} else {
 				return 'xl';
@@ -168,7 +168,7 @@ export default {
 	--cell-rounding: theme(borderRadius.DEFAULT);
 }
 .puzzle-wrapper.cell-size-l {
-	--grid-gap: 3px;
+	--grid-gap: 2px;
 	--cell-rounding: theme(borderRadius.md);
 }
 .puzzle-wrapper.cell-size-xl {
