@@ -82,7 +82,7 @@ import PuzzleInfo from '@/components/gameboard/PuzzleInfo.vue';
 import RulerCoords from '@/components/gameboard/RulerCoords';
 import RulerCounts from '@/components/gameboard/RulerCounts';
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
-import PuzzleFinishedModal from '@/components/gameboard/PuzzleFinishedModal.vue';
+import PuzzleFinishedModal from '@/components/gameboard/PuzzleRecapTransition.vue';
 import PuzzleHintWrapper from '@/components/gameboard/PuzzleHintWrapper.vue';
 
 import { hasCurrentSavedGame } from '@/services/save-game';

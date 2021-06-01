@@ -4,7 +4,7 @@
 			<transition name="finished-modal-inner" @after-enter="afterEnterInner">
 				<div class="flex modal-expander backdrop" v-show="transitionInner">
 					<div class="inner-content" :class="{'opacity-0': !showContent }">
-						<PuzzleFinishedModalStats
+						<PuzzleRecap
 							v-if="gameEndStats.width && lastPuzzleEntry.width && transitionInner"
 							:stats="gameEndStats"
 							:last-puzzle="lastPuzzleEntry"
@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import PuzzleFinishedModalStats from './PuzzleFinishedModalStats';
+import PuzzleRecap from './PuzzleRecap.vue';
 
 const GOOD_JOB_STRINGS = [
 	'Good job!',
@@ -52,7 +52,7 @@ export default {
 		finished: Boolean,
 	},
 	components: {
-		PuzzleFinishedModalStats,
+		PuzzleRecap,
 	},
 	data() {
 		return {
