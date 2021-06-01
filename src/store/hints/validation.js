@@ -1,6 +1,8 @@
 import { EMPTY } from "@/lib/constants";
 import hintTypes from "./hint-types";
 
+
+// TODO: before all hintValidators (except mistake), validate there are no mistakes first!
 export const hintValidators = {
 	[hintTypes.MISTAKE]: (hint, { board, solution }) => {
 		for (let { x, y } of hint.targets) {
@@ -25,6 +27,18 @@ export const hintValidators = {
 		return true;
 	},
 	[hintTypes.BALANCE]: (hint, { board, solution }) => {
+		// const anyStillEmpty = hint.targets.some(({ x, y }) => {
+		// 	return board.get(x, y) === EMPTY;
+		// });
+		// console.log({ anyStillEmpty });
+		// if (!anyStillEmpty) return false;
+		// const othersTargetValue = hint.targets.every(({ x, y, value }) => {
+		// 	return [EMPTY, value].includes(board.get(x, y));
+		// })
+		// console.log({ othersTargetValue });
+		// if (!othersTargetValue) return false;
+		// TODO: make sure all other values in the line are still the same
+		// TODO: make sure there are no mistakes
 		console.warn('Balance hint validation TO DO');
 		return false;
 	},
