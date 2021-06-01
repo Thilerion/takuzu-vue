@@ -82,8 +82,16 @@ export default {
 			this.$emit('open-settings');
 		},
 		async copyPuzzleString() {
+			try {
+				const boardStr = this.$store.state.puzzle.board.export();
+				await navigator.clipboard.writeText(boardStr);
+				console.log('copied to clipboard!');
+				console.log(boardStr);		
+			} catch(e) {
+				console.warn('could not copy to clipboard...');
+				console.warn(e);
+			}
 			this.$refs.dropdown.closeDropdownMenu();
-			console.warn('TODO: copy puzzle string method');
 		},
 		async solvePuzzle() {
 			this.$refs.dropdown.closeDropdownMenu();
