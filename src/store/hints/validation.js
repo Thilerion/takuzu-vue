@@ -6,7 +6,7 @@ export const hintValidators = {
 		for (let { x, y } of hint.targets) {
 			const boardValue = board.get(x, y);
 			const solutionValue = solution.get(x, y);
-			if (boardValue !== solutionValue) return true;
+			if (boardValue !== solutionValue && boardValue !== EMPTY) return true;
 		}
 		return false;
 	},
