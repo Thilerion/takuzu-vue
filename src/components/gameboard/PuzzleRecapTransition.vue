@@ -3,7 +3,7 @@
 		<div class="modal-wrapper w-full h-full flex" v-show="show">
 			<transition name="finished-modal-inner" @after-enter="afterEnterInner">
 				<div class="flex modal-expander backdrop" v-show="transitionInner">
-					<div class="inner-content" :class="{'opacity-0': !showContent }">
+					<div class="inner-content" :class="{'animate-modal-content': showContent}">
 						<PuzzleRecap
 							v-if="gameEndStats.width && lastPuzzleEntry.width && transitionInner"
 							:stats="gameEndStats"
@@ -57,6 +57,7 @@ export default {
 	data() {
 		return {
 			transitionInner: false,
+			backdropEntered: false,
 			fadeOutBase: false,
 			showContent: false,
 
@@ -137,6 +138,9 @@ export default {
 				this.reset();
 				this.afterLeaveAction();
 			}, 100);
+		},
+		afterEnterBackdrop() {
+			this.backdropEntered = true;
 		},
 		reset() {
 			clearTimeout(this.afterEnterOuterTimeout);
@@ -257,7 +261,20 @@ export default {
 
 .inner-content {
 	@apply rounded-t-xl rounded-b-md overflow-hidden flex m-auto w-full;
-	transition: opacity .5s ease;
 	min-height: 8rem;
+	opacity: 0;
+}
+.animate-modal-content {
+	animation: modalPop .3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+@keyframes modalPop {
+	0% {
+		opacity: 0;
+		transform: scale(0.90);
+	}
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
 }
 </style>
