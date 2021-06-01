@@ -20,18 +20,23 @@
 				:theme="cellTheme"
 				:hidden="paused"
 				:incorrect="incorrectMarkedCells.includes(`${colIdx},${rowIdx}`)"
+				:style="{ '--x': colIdx, '--y': rowIdx }"
 			></PuzzleCell>
 		</template>
+
+		<PuzzleGridHighlights />
 	</div>
 </template>
 
 <script>
 import PuzzleCell from '@/components/gameboard/PuzzleCell.vue';
+import PuzzleGridHighlights from '@/components/gameboard/PuzzleGridHighlights.vue';
 import debounce from 'lodash.debounce';
 
 export default {
 	components: {
-		PuzzleCell
+		PuzzleCell,
+		PuzzleGridHighlights,
 	},
 	props: {
 		board: {
@@ -94,23 +99,14 @@ export default {
 	@apply pointer-events-none;
 }
 
+.cell {
+	grid-row: calc(var(--y) + 1) / span 1;
+	grid-column: calc(var(--x) + 1) / span 1;
+}
+
 .cell-bg {
 	@apply z-0 absolute w-full h-full;
 	@apply bg-gray-200 bg-opacity-90 dark:bg-gray-700 dark:bg-opacity-50;
-}
-
-.inner-celll {
-	@apply m-auto w-full h-full overflow-hidden;
-	width: 100%;
-	height: 100%;
-}
-.inner-celll.red {
-	@apply z-10 relative;
-	@apply bg-red-500 dark:bg-red-500 dark:bg-opacity-90;
-}
-.inner-celll.blue {
-	@apply z-10 relative;
-	@apply bg-blue-500 dark:bg-blue-500 dark:bg-opacity-90;
 }
 
 .touch-anim-el {
