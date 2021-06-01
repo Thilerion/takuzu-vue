@@ -1,5 +1,5 @@
 <template>
-	<div class="hint" :key="id">
+	<div class="hint" :key="id" ref="hint">
 		<div class="close">
 			<IconBtn size="16" @click="$emit('hide')">close</IconBtn>
 		</div>
@@ -39,6 +39,24 @@ export default {
 			onClick(this, this.$store, this.hint);
 			this.$emit('done');
 		},
+		enableClickOutside() {
+			document.addEventListener('pointerdown', this.clickOutsideHandler);
+		},
+		disableClickOutside() {
+			document.removeEventListener('pointerdown', this.clickOutsideHandler);
+		},
+		clickOutsideHandler(e) {
+			const el = this.$refs.hint;
+			if (!(el.contains(e.target)) && e.target !== el) {
+				this.$emit('hide');
+			}
+		}
+	},
+	beforeMount() {
+		this.enableClickOutside();
+	},
+	beforeUnmount() {
+		this.disableClickOutside();
 	}
 };
 </script>
