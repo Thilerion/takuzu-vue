@@ -1,6 +1,25 @@
 <template>
 	<div class="freeplay flex flex-col overflow-x-hidden">
-		<PageHeader>New Game</PageHeader>
+		<PageHeader>
+			<template #default>New Game</template>
+			<template #right>
+				<DropdownMenu
+					class="pointer-events-auto"
+					v-if="devModeEnabled"
+				>
+					<template #items>
+						<DropdownMenuItem
+							as-element="label"
+							interactive
+						><InputToggle
+							v-model="overrideMaxDifficulty"
+							inline
+							small
+						/><span class="pl-2">Override max difficulty</span></DropdownMenuItem>
+					</template>
+				</DropdownMenu>
+			</template>
+		</PageHeader>
 		<div v-if="difficulty != null">
 			<div class="pb-4 px-6">
 				<h2 class="text-2xl font-light pb-2 px-2">Difficulty</h2>
@@ -13,6 +32,7 @@
 				<h2 class="text-2xl font-light pb-2 px-8">Size</h2>
 				<GameSizeSelect
 					:difficulty="difficulty"
+					:override-max-difficulty="overrideMaxDifficulty"
 					:initial-selection="size"
 					:preset-sizes="presetSizes"
 					:size-types="sizeTypes"
@@ -76,6 +96,7 @@ export default {
 		return {
 			difficultyLabels: Object.values(DIFFICULTY_LABELS),
 			
+			overrideMaxDifficulty: false,
 			difficulty: null,
 			size: null,
 		}
@@ -83,6 +104,9 @@ export default {
 	computed: {
 		gameInitialized() {
 			return this.$store.state.puzzle.initialized;
+		},
+		devModeEnabled() {
+			return this.$store.state.devMode;
 		},
 		gameLoading() {
 			return !!this.$store.state.puzzle.loading;

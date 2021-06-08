@@ -9,7 +9,7 @@
 			v-for="sizeType of Object.values(sizeTypes)"
 			:key="sizeType"
 			:sizes="presetSizes.filter(size => size.type === sizeType)"
-			:difficulty="difficulty"
+			:difficulty="propDifficulty"
 			:selected="selectedPerTab[sizeType]"
 			v-show="sizeType === currentTab"
 			@select="selectSize"
@@ -43,6 +43,9 @@ export default {
 		sizeTypes: {
 			type: Object,
 			required: true
+		},
+		overrideMaxDifficulty: {
+			type: Boolean
 		}
 	},
 	emits: ['select'],
@@ -59,6 +62,10 @@ export default {
 	computed: {
 		selected() {
 			return this.selectedPerTab[this.currentTab];
+		},
+		propDifficulty() {
+			if (this.overrideMaxDifficulty) return 0;
+			return this.difficulty;
 		}
 	},
 	methods: {
@@ -67,6 +74,7 @@ export default {
 		},
 		checkSelectedSizeDifficulty() {
 			if (this.selected == null) return;
+			if (this.overrideMaxDifficulty) return;
 			if (this.selected.maxDifficulty < this.difficulty) {
 				this.selectSize(null);
 			}
@@ -75,6 +83,7 @@ export default {
 	watch: {
 		difficulty: {
 			handler() {
+				if (this.overrideMaxDifficulty) return;
 				this.checkSelectedSizeDifficulty();
 			},
 			immediate: true

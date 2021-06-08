@@ -4,7 +4,7 @@
 		tabindex="0"
 		:aria-checked="modelValue"
 		class="toggle-wrapper"
-		:class="{ checked: !!modelValue, 'inline-flex': inline, 'flex': !inline }"
+		:class="{ checked: !!modelValue, 'inline-flex': inline, 'flex': !inline, small }"
 		@click="toggle"
 	>
 		<input type="hidden" v-bind="$attrs" :value="modelValue">
@@ -21,6 +21,9 @@ export default {
 		inline: {
 			type: Boolean,
 			default: false
+		},
+		small: {
+			type: Boolean
 		}
 	},
 	inheritAttrs: false,
@@ -41,6 +44,12 @@ export default {
 	height: 20px;
 	padding: 2px;
 }
+
+.toggle-wrapper.small {
+	width: 26px;
+	height: 15px;
+}
+
 .toggle-slider {
 	transition: all .2s ease;
 	width: 16px;
@@ -52,5 +61,10 @@ export default {
 }
 .checked .toggle-slider {
 	transform: translateX(calc(100%)) scale(1.1);
+}
+
+.small .toggle-slider {
+	width: 11px;
+	height: 11px;
 }
 </style>
