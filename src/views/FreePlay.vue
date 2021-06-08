@@ -11,10 +11,13 @@
 						<DropdownMenuItem
 							as-element="label"
 							interactive
+							for="max-difficulty-toggle"
+							@click="overrideMaxDifficulty = !overrideMaxDifficulty"
 						><InputToggle
-							v-model="overrideMaxDifficulty"
+							:modelValue="overrideMaxDifficulty"
 							inline
 							small
+							id="max-difficulty-toggle"
 						/><span class="pl-2">Override max difficulty</span></DropdownMenuItem>
 					</template>
 				</DropdownMenu>

@@ -7,12 +7,18 @@
 		:class="{ checked: !!modelValue, 'inline-flex': inline, 'flex': !inline, small }"
 		@click="toggle"
 	>
-		<input type="hidden" v-bind="$attrs" :value="modelValue">
+		<input type="hidden" :name="id" :id="id" v-bind="$attrs" :value="modelValue">
 		<span class="toggle-slider"></span>
 	</div>
 </template>
 
 <script>
+const getDefaultInputId = () => {
+	const timestamp = `${Date.now()}`.slice(-6);
+	const rnd = Math.floor(Math.random() * 200);
+	return `input-toggle-${timestamp}${rnd}`;
+}
+
 export default {
 	props: {
 		modelValue: {
@@ -24,6 +30,12 @@ export default {
 		},
 		small: {
 			type: Boolean
+		},
+		id: {
+			type: String,
+			default() {
+				return getDefaultInputId();
+			}
 		}
 	},
 	inheritAttrs: false,
