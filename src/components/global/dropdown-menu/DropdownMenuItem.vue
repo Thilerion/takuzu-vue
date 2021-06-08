@@ -20,12 +20,10 @@ export default {
 	methods: {
 		handleItemClick() {
 			if (!this.interactive) {
-				console.log('not interactive, so closing dropdown');
 				setTimeout(() => {
 					this.closeDropdown();
 				}, 67);
 			} else {
-				console.log('interactive, not closing dropdown');
 			}
 			this.$emit('click');
 		}
