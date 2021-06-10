@@ -63,6 +63,7 @@ export async function getAllStats() {
 		difficulty: {},
 		sizeAndDifficulty: {}
 	};
+	const allItems = [];
 	let totalTime = 0;
 	let totalPlayed = 0;
 
@@ -78,9 +79,11 @@ export async function getAllStats() {
 		const key = `${w}x${h}-${difficulty}`;
 		summary.sizeAndDifficulty[key] = new StatsGroup('sizeAndDifficulty', key);
 	}
+
 	let dates = [];
 
 	await puzzleHistoryTable.each(item => {
+		allItems.push(item);
 		const { width, height, difficulty, timeElapsed, date } = item;
 		const size = `${width}x${height}`;
 		const sizeAndDifficulty = `${size}-${difficulty}`;
@@ -105,5 +108,5 @@ export async function getAllStats() {
 	const sortedDates = [...dates].sort((a, b) => a < b ? -1 : a === b ? 0 : 1);	
 	const { currentStreak, longestStreak } = getDailyStreaks(sortedDates);
 
-	return { results, totalPlayed, totalTime, currentStreak, longestStreak };
+	return { results, totalPlayed, totalTime, currentStreak, longestStreak, allItems };
 }

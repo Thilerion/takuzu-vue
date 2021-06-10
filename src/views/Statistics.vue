@@ -28,7 +28,10 @@
 		</template>
 
 		<template v-else>
-			<advanced-stats v-bind="advancedStats" v-if="advancedStats != null" />
+			<AdvancedStats
+				v-bind="advancedStats"
+				v-if="advancedStats != null"
+			/>
 			<div class="p-4 text-lg text-center" v-else>Loading...</div>
 		</template>
 
