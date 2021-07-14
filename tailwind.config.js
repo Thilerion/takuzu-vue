@@ -4,22 +4,11 @@ const defaultTheme = require('tailwindcss/defaultTheme');
 module.exports = {
 	purge: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}', './public/index.html'],
 	darkMode: 'class', // or 'media' or 'class'
+	mode: "jit",
 	theme: {
 		colors: {
 			...colors,
-			transparent: colors.transparent,
-			current: colors.current,
-			black: colors.black,
-			white: colors.white,
-			gray: colors.gray,
-			truegray: colors.trueGray,
-			teal: colors.teal,
-			bluegray: colors.blueGray,
-			yellow: colors.yellow,
-			red: colors.red,
-			blue: colors.blue,
-			green: colors.green,
-
+			current: 'currentColor',
 			one: {
 				primary: '#e54934',
 				dark: '#d2402d',
@@ -52,28 +41,7 @@ module.exports = {
 			}
 		}
 	},
-	variants: {
-		extend: {
-			backgroundColor: ['active', 'disabled', 'odd', 'even'],
-			borderWidth: ['active'],
-			borderColor: ['active'],
-			outline: ['focus-visible', 'active', 'focus'],
-			ringWidth: ['focus-visible', 'active'],
-			ringOpacity: ['focus-visible', 'active'],
-			ringColor: ['focus', 'active'],
-			opacity: ['active', 'disabled'],
-			backgroundOpacity: ['odd', 'even'],
-		},
-	},
 	plugins: [
 		require('@tailwindcss/forms')
-	],
-	corePlugins: {
-		float: false,
-		backgroundAttachment: false,
-		backgroundClip: false,
-		backgroundAttachment: false,
-		borderCollapse: false,
-		clear: false,
-	}
+	]
 }

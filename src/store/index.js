@@ -1,3 +1,4 @@
+import { isDevModeEnabledInLocalStorage } from '@/services/dev-mode';
 import { createStore } from 'vuex';
 import puzzleModule from './puzzle/index.js';
 import { settingsModule, initSettingsWatcher } from './settings';
@@ -14,7 +15,7 @@ const store = createStore({
 	},
 
 	state: {
-		devMode: !!localStorage.getItem('takuzu-dev-mode'),
+		devMode: !!isDevModeEnabledInLocalStorage(),
 
 		// to force playPuzzle route to rerender after "restart" game
 		puzzleKey: 0,
