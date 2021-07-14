@@ -11,35 +11,32 @@
     "deploy:test": "vue-cli-service build && copy dist\\index.html dist\\200.html && surge dist --domain https://takuzu-vue-test.surge.sh"
   },
   "dependencies": {
-    "@tailwindcss/forms": "^0.3.2",
+    "@tailwindcss/forms": "^0.3.3",
     "@vueuse/core": "^4.11.0",
-    "core-js": "^3.6.5",
+    "autoprefixer": "^10.3.1",
+    "core-js": "^3.8.3",
     "dexie": "^3.0.3",
     "dexie-export-import": "^1.0.0",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
-    "register-service-worker": "^1.7.1",
-    "vue": "^3.0.0",
-    "vue-router": "^4.0.0-0",
-    "vuex": "^4.0.1"
+    "postcss": "^8.3.5",
+    "register-service-worker": "^1.7.2",
+    "tailwindcss": "^2.2.4",
+    "vue": "^3.0.4",
+    "vue-router": "^4.0.3",
+    "vuex": "^4.0.0"
   },
   "devDependencies": {
-    "@tailwindcss/postcss7-compat": "^2.1.2",
-    "@vue/cli-plugin-babel": "~4.5.13",
-    "@vue/cli-plugin-pwa": "~4.5.13",
-    "@vue/cli-plugin-router": "~4.5.13",
-    "@vue/cli-plugin-unit-jest": "~4.5.13",
-    "@vue/cli-plugin-vuex": "~4.5.13",
-    "@vue/cli-service": "~4.5.13",
-    "@vue/compiler-sfc": "^3.0.0",
+    "@vue/cli-plugin-babel": "~5.0.0-beta.2",
+    "@vue/cli-plugin-pwa": "~5.0.0-beta.2",
+    "@vue/cli-plugin-router": "~5.0.0-beta.2",
+    "@vue/cli-plugin-unit-jest": "~5.0.0-beta.2",
+    "@vue/cli-plugin-vuex": "~5.0.0-beta.2",
+    "@vue/cli-service": "~5.0.0-beta.2",
+    "@vue/compiler-sfc": "^3.0.4",
     "@vue/test-utils": "^2.0.0-0",
-    "autoprefixer": "^9.8.6",
     "lodash.camelcase": "^4.3.0",
     "lodash.upperfirst": "^4.3.1",
-    "postcss": "^7.0.35",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.2",
-    "typescript": "~3.9.3",
-    "vue-jest": "^5.0.0-0",
-    "worker-plugin": "^5.0.0"
+    "vue-jest": "^5.0.0-0"
   }
 }
