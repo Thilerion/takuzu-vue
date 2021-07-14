@@ -1,5 +1,10 @@
 <template>
 <div v-if="totalPlayed > 0">
+	<CalendarHeatmap
+		:items="allItems"
+		v-if="allItems.length"
+		class="section-block mb-8"
+	/>
 	<section class="section-block mb-8">
 		<!-- <h2 class="text-lg font-medium pb-2">Overall</h2> -->
 		<div class="stats-group stats-card">
@@ -123,14 +128,23 @@
 import { dimensionsToBoardType } from '@/utils/puzzle.utils.js';
 import { boardTypes } from '@/config';
 import { timeFormatter } from '@/utils/date.utils';
+import CalendarHeatmap from './CalendarHeatmap.vue';
+
 export default {
+	components: { 
+		CalendarHeatmap
+	},
 	props: {
 		totalPlayed: Number,
 		totalTime: Number,
 		results: Object,
 		currentStreak: Number,
 		longestStreak: Number,
-		dailyStats: Array
+		dailyStats: Array,
+		allItems: {
+			type: Array,
+			default: () => ([])
+		}
 	},
 	computed: {
 		averageTotal() {
@@ -259,7 +273,7 @@ section {
 	grid-template-columns: 2;
 	@apply px-4;
 }
-section > h2 {
+section::v-deep(h2) {
 	@apply text-opacity-60 pl-2;
 }
 

@@ -49,7 +49,7 @@ export function getDailyStreaks(dates = []) {
 	}, 0);
 	const hasCurrentStreak = lastStreak.end == null;
 	const currentStreak = hasCurrentStreak ? lastStreak.length : 0;
-	return {currentStreak, longestStreak};
+	return { currentStreak, longestStreak };
 }
 
 export function getDailyStats(entries = []) {
