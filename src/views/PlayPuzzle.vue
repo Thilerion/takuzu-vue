@@ -358,7 +358,7 @@ export default {
 
 <style lang="postcss" scoped>
 .play-puzzle {
-	--bg-a: theme(colors.bluegray.50);
+	--bg-a: theme(colors.blueGray.50);
 	--bg-b: theme(colors.white);
 	background: linear-gradient(180deg, var(--bg-a) 0%, var(--bg-a) 15%, var(--bg-b) 90%, var(--bg-b) 100%);
 }
