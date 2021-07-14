@@ -129,7 +129,7 @@ export default {
 	@apply font-sans font-bold;
 }
 .cell-theme-colored {
-	@apply text-transparent;
+	@apply text-opacity-0;
 }
 .cell-theme-colored .one {
 	@apply dark:bg-one-dark bg-one-primary border-0;
