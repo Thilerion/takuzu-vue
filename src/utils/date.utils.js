@@ -14,10 +14,14 @@ export const isNextDay = (dateA, dateB) => {
 }
 
 export const formatBasicDDMMYYYY = (date) => {
+	return new Date(date).toLocaleDateString('nl');
+}
+export const formatBasicSortableDateKey = (date) => {
+	const d = new Date(date);
 	return [
-		date.getDate(),
-		date.getMonth() + 1,
-		date.getFullYear()
+		d.getFullYear(),
+		`00${d.getMonth() + 1}`.slice(-2),
+		`00${d.getDate()}`.slice(-2),
 	].join('-');
 }
 

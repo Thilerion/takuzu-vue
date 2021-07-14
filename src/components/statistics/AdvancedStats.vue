@@ -130,6 +130,7 @@ export default {
 		results: Object,
 		currentStreak: Number,
 		longestStreak: Number,
+		dailyStats: Array
 	},
 	computed: {
 		averageTotal() {

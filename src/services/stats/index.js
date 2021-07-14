@@ -1,6 +1,6 @@
 import { puzzleHistoryTable, default as db } from './db';
 import { PuzzleData } from './models';
-import { getDailyStreaks } from './process-stats';
+import { getDailyStats, getDailyStreaks } from './process-stats';
 
 export * from './process-stats';
 export { PuzzleData, puzzleHistoryTable, db };
@@ -79,6 +79,7 @@ export async function getAllStats() {
 		summary.sizeAndDifficulty[key] = new StatsGroup('sizeAndDifficulty', key);
 	}
 	let dates = [];
+	const allEntries = [];
 
 	await puzzleHistoryTable.each(item => {
 		const { width, height, difficulty, timeElapsed, date } = item;
@@ -91,6 +92,7 @@ export async function getAllStats() {
 		summary.size[size].addItem(timeElapsed);
 		summary.difficulty[difficulty].addItem(timeElapsed);
 		summary.sizeAndDifficulty[sizeAndDifficulty].addItem(timeElapsed);
+		allEntries.push(item);
 
 		dates.push(new Date(date));
 	})
@@ -104,6 +106,7 @@ export async function getAllStats() {
 
 	const sortedDates = [...dates].sort((a, b) => a < b ? -1 : a === b ? 0 : 1);	
 	const { currentStreak, longestStreak } = getDailyStreaks(sortedDates);
+	const dailyStats = getDailyStats(allEntries);
 
-	return { results, totalPlayed, totalTime, currentStreak, longestStreak };
+	return { results, totalPlayed, totalTime, currentStreak, longestStreak, dailyStats };
 }
