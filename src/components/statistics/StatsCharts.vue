@@ -8,9 +8,19 @@
 		/>
 		<TimeLineChart
 			:dataset="solvedPerDay"
+			dataset-label="Puzzles solved"
+			title="Puzzles solved per day"
 		/>
-		<TimeLineAreaChart
+		<TimeLineChart
+			:dataset="timeSpentPerDay"
+			dataset-label="Time played"
+			title="Time played per day"
+		/>
+		<TimeLineChart
+			is-area-chart
 			:dataset="totalSolvedByDay"
+			dataset-label="Puzzles solved"
+			title="Total puzzles solved over time"
 		/>
 	</div>
 </template>
@@ -18,7 +28,6 @@
 <script>
 import BarChart from './BarChart.vue'
 import TimeLineChart from './TimeLineChart.vue'
-import TimeLineAreaChart from './TimeLineAreaChart.vue'
 
 import { parse } from 'date-fns';
 
@@ -26,7 +35,6 @@ export default {
 	components: {
 		BarChart,
 		TimeLineChart,
-		TimeLineAreaChart,
 	},
 	props: {
 		difficultyCounts: {
@@ -49,6 +57,15 @@ export default {
 				const { amount, date } = obj;
 				const parsedDate = parse(date, 'yyyy-MM-dd', new Date());
 				return { x: parsedDate, y: amount};
+			})
+		},
+		timeSpentPerDay() {
+			return this.dailyStats.map(obj => {
+				const { totalTime, date } = obj;
+				const parsedDate = parse(date, 'yyyy-MM-dd', new Date());
+				const minutesPlayed = totalTime / 60 / 1000;
+				const minutesRounded = Math.round(minutesPlayed * 100) / 100;
+				return { x: parsedDate, y: minutesRounded };
 			})
 		},
 		totalSolvedByDay() {

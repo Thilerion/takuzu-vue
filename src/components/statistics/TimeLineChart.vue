@@ -26,13 +26,16 @@ const chartOptions = {
 
 export default {
 	props: {
+		isAreaChart: Boolean,
 		chartId: {
 			type: String,
 		},
 		dataset: {
 			type: Array,
 			required: true
-		}
+		},
+		datasetLabel: String,
+		title: String
 	},
 	data() {
 		return {
@@ -55,7 +58,9 @@ export default {
 				data: {
 					datasets: [{
 						data: this.dataset,
-						label: 'Puzzles solved'
+						label: this.datasetLabel,
+						fill: this.isAreaChart ? 'stack' : undefined,
+						backgroundColor: '#0ea4e99a',
 					}]
 				},
 				options: {
@@ -63,8 +68,8 @@ export default {
 					plugins: {
 						legend: { display: false },
 						title: {
-							display: true,
-							text: 'Puzzles solved per day'
+							display: this.title != null,
+							text: this.title
 						}
 					},
 					responsive: true,
