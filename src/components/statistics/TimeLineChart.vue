@@ -35,7 +35,11 @@ export default {
 			required: true
 		},
 		datasetLabel: String,
-		title: String
+		title: String,
+		hue: {
+			type: [Number, String],
+			default: 199
+		}
 	},
 	data() {
 		return {
@@ -59,8 +63,11 @@ export default {
 					datasets: [{
 						data: this.dataset,
 						label: this.datasetLabel,
-						fill: this.isAreaChart ? 'stack' : undefined,
-						backgroundColor: '#0ea4e99a',
+						fill: this.isAreaChart ? 'stack' : false,
+						cubicInterpolationMode: 'monotone',
+						borderColor: `hsla(${this.hue}, 99%, 30%, 0.65)`,
+						backgroundColor: `hsla(${this.hue}, 89%, 48%, 0.4)`,
+						spanGaps: true,
 					}]
 				},
 				options: {
@@ -96,5 +103,5 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
-	
+
 </style>

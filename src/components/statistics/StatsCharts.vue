@@ -10,17 +10,20 @@
 			:dataset="solvedPerDay"
 			dataset-label="Puzzles solved"
 			title="Puzzles solved per day"
+			hue="305"
 		/>
 		<TimeLineChart
 			:dataset="timeSpentPerDay"
 			dataset-label="Time played"
 			title="Time played per day"
+			hue="199"
 		/>
 		<TimeLineChart
 			is-area-chart
 			:dataset="totalSolvedByDay"
 			dataset-label="Puzzles solved"
 			title="Total puzzles solved over time"
+			hue="140"
 		/>
 	</div>
 </template>
@@ -85,5 +88,5 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
-	
+
 </style>
