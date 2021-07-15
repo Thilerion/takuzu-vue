@@ -19,9 +19,9 @@ initTheme();
 
 import "./assets/css/main.css";
 
-const errorHandler = new ErrorHandler();
-if (process.env.NODE_ENV === 'development') errorHandler.toggleAlertErrors(true);
-window._GLOBAL_ERROR_HANLDER = errorHandler;
+// const errorHandler = new ErrorHandler();
+// if (process.env.NODE_ENV === 'development') errorHandler.toggleAlertErrors(true);
+// window._GLOBAL_ERROR_HANLDER = errorHandler;
 
 const app = createApp(App)
 	.use(store)
@@ -32,9 +32,9 @@ const app = createApp(App)
 
 registerGlobalComponents(app);
 
-app.config.errorHandler = (err, vm, info) => {
-	errorHandler.handleError(err, 'vue', info);
-}
-app.config.globalProperties.errorHandler = errorHandler;
+// app.config.errorHandler = (err, vm, info) => {
+// 	errorHandler.handleError(err, 'vue', info);
+// }
+// app.config.globalProperties.errorHandler = errorHandler;
 	
 app.mount('#app');
