@@ -3,6 +3,7 @@
 	<StatsCharts
 		:difficulty-counts="difficultyCounts"
 		:daily-stats="dailyStats"
+		:board-type-counts="boardTypeCounts"
 	/>
 	<CalendarHeatmap
 		:items="allItems"
@@ -130,7 +131,7 @@
 
 <script>
 import { dimensionsToBoardType } from '@/utils/puzzle.utils.js';
-import { boardTypes } from '@/config';
+import { boardTypes, DIFFICULTY_LABELS } from '@/config';
 import { timeFormatter } from '@/utils/date.utils';
 import CalendarHeatmap from './CalendarHeatmap.vue';
 import StatsCharts from './StatsCharts.vue';
@@ -157,7 +158,23 @@ export default {
 			return this.totalTime / this.totalPlayed;
 		},
 		difficultyCounts() {
-			return this.results.difficulty.map(i => i.played);
+			const numDiff = Object.values(DIFFICULTY_LABELS).length;
+			let result = [];
+			for (let i = 0; i < numDiff; i++) {
+				const inObj = this.results.difficulty[i];
+				if (!inObj) result.push(0);
+				else result.push(inObj.played);
+			}
+			return result;
+		},
+		boardTypeCounts() {
+			const result = {};
+			for (const value of this.bySize) {
+				const { played, type } = value;
+				if (result[type] == null) result[type] = 0;
+				result[type] += played;
+			}
+			return result;
 		},
 		bySize() {
 			if (!this.results.size.length) {
