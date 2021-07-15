@@ -1,5 +1,8 @@
 <template>
 <div v-if="totalPlayed > 0">
+	<StatsCharts
+		:difficultyCounts="difficultyCounts"
+	/>
 	<CalendarHeatmap
 		:items="allItems"
 		v-if="allItems.length"
@@ -129,10 +132,12 @@ import { dimensionsToBoardType } from '@/utils/puzzle.utils.js';
 import { boardTypes } from '@/config';
 import { timeFormatter } from '@/utils/date.utils';
 import CalendarHeatmap from './CalendarHeatmap.vue';
+import StatsCharts from './StatsCharts.vue';
 
 export default {
 	components: { 
-		CalendarHeatmap
+		CalendarHeatmap,
+		StatsCharts
 	},
 	props: {
 		totalPlayed: Number,
@@ -149,6 +154,9 @@ export default {
 	computed: {
 		averageTotal() {
 			return this.totalTime / this.totalPlayed;
+		},
+		difficultyCounts() {
+			return this.results.difficulty.map(i => i.played);
 		},
 		bySize() {
 			if (!this.results.size.length) {
