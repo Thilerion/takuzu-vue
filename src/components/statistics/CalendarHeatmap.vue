@@ -173,7 +173,6 @@ export default {
 
 			const startAt = startOfMonth(dates[0]);
 			const stopAfter = this.currentDate;
-			console.log(startAt, stopAfter);
 
 			const allDates = [];
 			let curDate = startOfDay(startAt);
@@ -183,7 +182,6 @@ export default {
 				allDates.push(curDate);
 			}
 			this.allDates = allDates;
-			console.log(allDates);
 
 			this.emptyTimelineStart = getISODay(startAt);
 		}
