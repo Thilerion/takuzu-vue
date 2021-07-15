@@ -9,7 +9,7 @@
 		<TimeLineChart
 			:dataset="solvedPerDay"
 		/>
-		<TimeLineChart
+		<TimeLineAreaChart
 			:dataset="totalSolvedByDay"
 		/>
 	</div>
@@ -18,6 +18,7 @@
 <script>
 import BarChart from './BarChart.vue'
 import TimeLineChart from './TimeLineChart.vue'
+import TimeLineAreaChart from './TimeLineAreaChart.vue'
 
 import { parse } from 'date-fns';
 
@@ -25,6 +26,7 @@ export default {
 	components: {
 		BarChart,
 		TimeLineChart,
+		TimeLineAreaChart,
 	},
 	props: {
 		difficultyCounts: {
