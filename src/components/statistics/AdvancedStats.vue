@@ -1,7 +1,8 @@
 <template>
 <div v-if="totalPlayed > 0">
 	<StatsCharts
-		:difficultyCounts="difficultyCounts"
+		:difficulty-counts="difficultyCounts"
+		:daily-stats="dailyStats"
 	/>
 	<CalendarHeatmap
 		:items="allItems"

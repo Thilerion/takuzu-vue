@@ -1,5 +1,5 @@
 <template>
-	<div class="relative w-full px-4">
+	<div class="relative w-full px-4 py-2">
 		<canvas :id="chartId"></canvas>
 	</div>
 </template>
