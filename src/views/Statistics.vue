@@ -22,8 +22,7 @@
 <script>
 import { clearPuzzleHistory, getAllStats, exportPuzzleHistory, importPuzzleHistory, puzzleHistoryTable } from '@/services/stats';
 import StatsTable from '@/components/statistics/StatsTable.vue';
-import { boardTypes } from '@/config';
-import { dimensionsToBoardType } from '@/utils/puzzle.utils.js';
+import { boardTypes, dimensionsToBoardType } from '@/config';
 import AdvancedStats from '@/components/statistics/AdvancedStats.vue';
 import { timeFormatter } from '@/utils/date.utils';
 
@@ -204,8 +203,13 @@ export default {
 		}
 	},
 	beforeMount() {
+		this.$store.dispatch('statsData/initialize');
 		this.getInitialData();
 		this.getAdvancedStatsData();
+
+	},
+	unmounted() {
+		this.$store.dispatch('statsData/reset');
 	}
 };
 </script>

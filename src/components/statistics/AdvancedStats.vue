@@ -133,8 +133,7 @@
 </template>
 
 <script>
-import { dimensionsToBoardType } from '@/utils/puzzle.utils.js';
-import { boardTypes, DIFFICULTY_LABELS } from '@/config';
+import { boardTypes, DIFFICULTY_LABELS, dimensionsToBoardType } from '@/config';
 import { timeFormatter } from '@/utils/date.utils';
 import CalendarHeatmap from './CalendarHeatmap.vue';
 import StatsCharts from './StatsCharts.vue';
@@ -191,21 +190,19 @@ export default {
 			}
 		},
 		difficultyCounts() {
-			const numDiff = Object.values(DIFFICULTY_LABELS).length;
-			let result = [];
-			for (let i = 0; i < numDiff; i++) {
-				const inObj = this.results.difficulty[i];
-				if (!inObj) result.push(0);
-				else result.push(inObj.played);
+			const byDiff = this.$store.getters['statsData/groupedByDifficulty'];
+			const num = Object.keys(byDiff).length;
+			let result = Array(num).fill(0);
+			for (const [diff, values] of Object.entries(byDiff)) {
+				result[diff - 1] = values.length;
 			}
 			return result;
 		},
 		boardTypeCounts() {
+			const byType = this.$store.getters['statsData/groupedByBoardType'];
 			const result = {};
-			for (const value of this.bySize) {
-				const { played, type } = value;
-				if (result[type] == null) result[type] = 0;
-				result[type] += played;
+			for (const [type, values] of Object.entries(byType)) {
+				result[type] = values.length;
 			}
 			return result;
 		},

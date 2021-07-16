@@ -1,3 +1,6 @@
+import { formatBasicSortableDateKey } from "@/utils/date.utils";
+import { dimensionsToBoardType } from "@/config";
+
 export class PuzzleData {
 	constructor(data) {
 		if (data == null) throw new Error('No data in PuzzleData constructor.');
@@ -44,5 +47,29 @@ export class PuzzleData {
 		return new PuzzleData({
 			width, height, difficulty, initialBoard, solution, timeElapsed, date
 		});
+	}
+}
+
+export class PuzzleStatisticData extends PuzzleData {
+	constructor(data) {
+		super(data);
+
+		this.boardType = dimensionsToBoardType(this.width, this.height);
+		
+		this.dateMs = this.date;
+		this.date = new Date(this.dateMs);
+		
+		this.dateStr = formatBasicSortableDateKey(this.date);
+
+		this.dimensions = `${this.width}x${this.height}`;
+		this.dimensionDifficultyStr = `${this.dimensions}-${this.difficulty}`;
+		
+		this.timeElapsedAdjusted = this.calculateAdjustedTimeElapsed();
+	}
+
+	calculateAdjustedTimeElapsed(fromBase = 100) {
+		const numCells = this.width * this.height;
+		const ratio = numCells / fromBase;
+		return Math.round(this.timeElapsed / ratio);
 	}
 }

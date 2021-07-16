@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { formatBasicDateSortable } from "@/utils/date.utils";
+import { formatBasicSortableDateKey } from "@/utils/date.utils";
 import { differenceInCalendarDays, isSameDay, startOfDay, addDays, compareAsc, startOfWeek, format, startOfMonth, startOfTomorrow, getISODay, addWeeks } from 'date-fns';
 
 const firstDOW = startOfWeek(new Date(), {
@@ -66,7 +66,7 @@ export default {
 					timestamp: item.date,
 					date,
 					dayStartDate,
-					dateKey: formatBasicDateSortable(dayStartDate)
+					dateKey: formatBasicSortableDateKey(dayStartDate)
 				}
 			})
 		},
@@ -104,13 +104,13 @@ export default {
 		},
 		formattedAllDates() {
 			return this.allDates.map(date => {
-				return formatBasicDateSortable(date);
+				return formatBasicSortableDateKey(date);
 			})
 		},
 		dateRatios() {
 			const max = this.maxValue;
 			return this.timelineDays.map(d => {
-				const dateStr = formatBasicDateSortable(d);
+				const dateStr = formatBasicSortableDateKey(d);
 				try {
 					const n = this.timelineValues[dateStr].value;
 					const result = {
@@ -146,12 +146,12 @@ export default {
 			const dates = [...this.datesWithItems];
 			const result = {};
 			for (let date of dates) {
-				const dateStr = formatBasicDateSortable(date);
+				const dateStr = formatBasicSortableDateKey(date);
 				result[dateStr] = 0;
 			}
 			for (let item of this.items) {
 				const startDate = startOfDay(new Date(item.date));
-				const dateStr = formatBasicDateSortable(startDate);
+				const dateStr = formatBasicSortableDateKey(startDate);
 				result[dateStr] += 1;
 			}
 			return result;
@@ -164,7 +164,7 @@ export default {
 		initializeTimelineData() {
 			const itemDates = [...this.items.reduce((acc, val) => {
 				const startDate = startOfDay(new Date(val.date));
-				const dateStr = formatBasicDateSortable(startDate);
+				const dateStr = formatBasicSortableDateKey(startDate);
 				acc.add(dateStr);
 				return acc;
 			}, new Set())];

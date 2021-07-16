@@ -1,5 +1,3 @@
-import { dimensionsToBoardType } from "./utils/puzzle.utils.js";
-
 class BoardPreset {
 	constructor(w, h, maxDifficulty) {
 		this.width = w;
@@ -14,6 +12,12 @@ export const boardTypes = {
 	RECT: 'Rectangular',
 	ODD: 'Odd',
 };
+export const dimensionsToBoardType = (w, h = w) => {
+	if (w !== h) return boardTypes.RECT;
+	if (w % 2 === 1) return boardTypes.ODD;
+	return boardTypes.NORMAL;
+}
+
 export const PRESET_BOARD_SIZES = [
 	// normal / square boards
 	new BoardPreset(6, 6, 2),
@@ -41,4 +45,30 @@ export const DIFFICULTY_LABELS = {
 	3: 'Hard',
 	4: 'Very Hard',
 	5: 'Extreme',
+}
+
+export const getAllDifficultyValues = () => {
+	return Object.keys(DIFFICULTY_LABELS);
+}
+export const getAllBoardPresetSizes = () => {
+	return PRESET_BOARD_SIZES.map(val => {
+		return { width: val.width, height: val.height };
+	})
+}
+export const getAllBoardPresetSizesAsStr = () => {
+	return PRESET_BOARD_SIZES.map(val => {
+		return `${val.width}x${val.height}`;
+	})
+}
+export const getAllSizeDifficultyCombinations = () => {
+	const result = [];
+	const difficulties = getAllDifficultyValues();
+	const sizes = getAllBoardPresetSizes();
+	for (const difficulty of difficulties) {
+		for (const size of sizes) {
+			const { width, height } = size;
+			result.push({ width, height, difficulty });
+		}
+	}
+	return result;
 }

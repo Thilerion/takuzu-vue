@@ -3,6 +3,7 @@ import { createStore } from 'vuex';
 import puzzleModule from './puzzle/index.js';
 import { settingsModule, initSettingsWatcher } from './settings';
 import { statsModule } from './stats';
+import { statsDataModule } from './stats-data';
 
 const store = createStore({
 
@@ -12,6 +13,7 @@ const store = createStore({
 		puzzle: puzzleModule,
 		settings: settingsModule,
 		stats: statsModule,
+		statsData: statsDataModule,
 	},
 
 	state: {
