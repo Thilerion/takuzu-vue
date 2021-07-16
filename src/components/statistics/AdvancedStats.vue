@@ -1,5 +1,11 @@
 <template>
 <div>
+	<section class="section-block mb-8 grid grid-cols-2 gap-4">
+		<StatsSummaryCard color='orange' title="Puzzles solved" :value="totalPlayed" />
+		<StatsSummaryCard color='green' title="Favorite puzzle" :value="favorites.puzzle" />
+		<StatsSummaryCard color='blue' title="Favorite size" :value="favorites.size" />
+		<StatsSummaryCard color='rose' title="Favorite difficulty" :value="favorites.difficulty" />
+	</section>
 	<section class="section-block mb-8">
 		<!-- <h2 class="text-lg font-medium pb-2">Overall</h2> -->
 		<div class="stats-group stats-card">
@@ -132,6 +138,7 @@ import { boardTypes, DIFFICULTY_LABELS } from '@/config';
 import { timeFormatter } from '@/utils/date.utils';
 import CalendarHeatmap from './CalendarHeatmap.vue';
 import StatsCharts from './StatsCharts.vue';
+import StatsSummaryCard from './StatsSummaryCard.vue';
 
 /* required data and how to get it:
 	- puzzles by difficulty (list of items with difficulty)
@@ -152,7 +159,8 @@ import StatsCharts from './StatsCharts.vue';
 export default {
 	components: { 
 		CalendarHeatmap,
-		StatsCharts
+		StatsCharts,
+		StatsSummaryCard
 	},
 	props: {
 		totalPlayed: Number,
@@ -174,6 +182,13 @@ export default {
 	computed: {
 		averageTotal() {
 			return this.totalTime / this.totalPlayed;
+		},
+		favorites() {
+			return {
+				puzzle: this.favoriteSizePlusDifficulty[0].size + ' @ ' + this.favoriteSizePlusDifficulty[0].difficulty + '*',
+				size: this.favoriteSize[0].key,
+				difficulty: this.favoriteDifficulty.key
+			}
 		},
 		difficultyCounts() {
 			const numDiff = Object.values(DIFFICULTY_LABELS).length;
