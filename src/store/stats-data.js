@@ -24,6 +24,10 @@ export const statsDataModule = {
 		finishedLoading: state => state.initialized && !state.isLoading,
 		showData: (state, getters) => getters.finishedLoading && state.puzzlesSolved > 0,
 
+		totalTime: state => state.historyItems.reduce((acc, val) => {
+			return val.timeElapsed + acc;
+		}, 0),
+
 		groupedBySize: state => {
 			const items = state.historyItems;
 			const initialMap = presetSizes.reduce((acc, val) => {

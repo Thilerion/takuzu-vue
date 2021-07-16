@@ -138,6 +138,7 @@ import { timeFormatter } from '@/utils/date.utils';
 import CalendarHeatmap from './CalendarHeatmap.vue';
 import StatsCharts from './StatsCharts.vue';
 import StatsSummaryCard from './StatsSummaryCard.vue';
+import { mapGetters, mapState } from 'vuex';
 
 /* required data and how to get it:
 	- puzzles by difficulty (list of items with difficulty)
@@ -162,23 +163,26 @@ export default {
 		StatsSummaryCard
 	},
 	props: {
-		totalPlayed: Number,
-		totalTime: Number,
 		results: Object,
 		currentStreak: Number,
 		longestStreak: Number,
 		dailyStats: Array,
-		allItems: {
-			type: Array,
-			default: () => ([])
-		}
 	},
 	data() {
 		return {
-			showCharts: false,
 		}
 	},
 	computed: {
+		...mapState('statsData', {
+			allItems: state => state.historyItems,
+			totalPlayed: state => state.puzzlesSolved,
+		}),
+		...mapGetters('statsData', [
+			'groupedBySize',
+			'groupedByDifficulty',
+			'groupedBySizeDifficultyCombination',
+			'totalTime',
+		]),
 		averageTotal() {
 			return this.totalTime / this.totalPlayed;
 		},
