@@ -3,9 +3,9 @@
 		<PageHeader hide-back>Statistics</PageHeader>
 		<AdvancedStats
 			v-bind="advancedStats"
-			v-if="advancedStats != null"
+			v-if="advancedStats != null && showStats"
 		/>
-		<div class="py-4 px-8 text-center" v-else-if="puzzlesSolved === 0">
+		<div class="py-4 px-8 text-center" v-else-if="!showStats && statsDataLoaded">
 			You haven't solved any puzzles yet! Go play some!
 		</div>
 		<div class="p-4 text-lg text-center" v-else>Loading...</div>
@@ -20,107 +20,30 @@
 </template>
 
 <script>
-import { clearPuzzleHistory, getAllStats, exportPuzzleHistory, importPuzzleHistory, puzzleHistoryTable } from '@/services/stats';
-import StatsTable from '@/components/statistics/StatsTable.vue';
-import { boardTypes, dimensionsToBoardType } from '@/config';
+import { clearPuzzleHistory, getAllStats, exportPuzzleHistory, importPuzzleHistory } from '@/services/stats';
 import AdvancedStats from '@/components/statistics/AdvancedStats.vue';
-import { timeFormatter } from '@/utils/date.utils';
 
 export default {
-	components: { StatsTable, AdvancedStats },
+	components: { AdvancedStats },
 	data() {
 		return {
-
-			puzzlesSolved: null,
-			averageTime: null,
-			
-			byPuzzleSize: null,
-			byPuzzleSizeData: null,
-			byPuzzleSizeHeaders: [
-				{ text: 'Size', value: 'dimensions', colHeader: true },
-				{ text: 'Played', value: 'played' },
-				{ text: 'Average Time', value: 'averageTime', align: 'right' },
-			],
-			groupByPuzzleType: true,
-			puzzleBoardTypes: [
-				boardTypes.NORMAL,
-				boardTypes.RECT,
-				boardTypes.ODD
-			],
-
 			exportInProgress: false,
 
 			advancedStats: null,
 		}
 	},
+	computed: {
+		puzzlesSolved() {
+			return this.$store.state.statsData.puzzlesSolved;
+		},
+		statsDataLoaded() {
+			return this.$store.getters['statsData/finishedLoading'];
+		},
+		showStats() {
+			return this.$store.getters['statsData/showData'];
+		}
+	},
 	methods: {
-		getPuzzlesSolved() {
-			return puzzleHistoryTable.count();
-		},
-		async getAverageTime() {
-			let num = 0;
-			let time = 0;
-			await puzzleHistoryTable
-				.orderBy('timeElapsed')
-				.eachKey((timeElapsed) => {
-					num += 1;
-					time += (timeElapsed * 1);
-				});
-			if (num < 1 || time < 1) return 0;
-			return time / num;			
-		},
-		async getInitialData() {
-			this.puzzlesSolved = await this.getPuzzlesSolved();
-			this.averageTime = await this.getAverageTime();
-
-			const bySize = await this.getStatsBySize();
-			this.byPuzzleSize = bySize.raw;
-			this.byPuzzleSizeData = bySize.tableData;
-			
-			
-		},
-		async getStatsBySize() {
-			const total = {};
-			await puzzleHistoryTable.each((item, cursor) => {
-				const size = item.width + 'x' + item.height;
-				const curTotal = total[size] ?? { amount: 0, elapsed: 0, numCells: item.width * item.height };
-				curTotal.amount += 1;
-				curTotal.elapsed += item.timeElapsed;
-				total[size] = curTotal;
-				total[size].width = item.width;
-				total[size].height = item.height;
-			}).then(res => {
-				for (const key of Object.keys(total)) {
-					const sizeData = total[key];
-					total[key].averageTime = sizeData.elapsed / sizeData.amount;
-				}
-				return total;
-			})
-			
-			const tableData = [];
-			for (const puzzleDims of Object.keys(total)) {
-				const origData = total[puzzleDims];
-
-				const {width, height, numCells, averageTime, amount} = origData;
-				const boardType = dimensionsToBoardType(width, height);
-				const obj = {
-					dimensions: puzzleDims,
-					numCells,
-					averageTime: this.msToMinSec(averageTime),
-					played: amount,
-					sizeGroup: boardType
-				}
-				tableData.push(obj);
-			}
-			tableData.sort((a, b) => {
-				const numA = a.numCells;
-				const numB = b.numCells;
-				return numA - numB;
-			})
-
-			return {raw: total, tableData};
-		},
-		msToMinSec: timeFormatter({ padMinutes: false, msPrecision: false }),
 		confirmReset() {
 			setTimeout(() => {
 				// TODO: use modal
@@ -204,7 +127,6 @@ export default {
 	},
 	beforeMount() {
 		this.$store.dispatch('statsData/initialize');
-		this.getInitialData();
 		this.getAdvancedStatsData();
 
 	},
