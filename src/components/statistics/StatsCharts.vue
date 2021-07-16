@@ -1,13 +1,7 @@
 <template>
 	<div>
-		<BarChart
-			chart-id="barChart"
-			:labels="labels"
-			:dataset="difficultyCounts"
-			:dataset-label="'Puzzles solved'"
-		/>
-			<PieChart
-			class="mt-6 mx-4 bg-white rounded pt-2 pb-6 shadow-lg"
+		<PieChart
+			class="mt-2 mx-4 bg-white rounded pt-2 pb-6 shadow-lg"
 			chart-id="pie-chart-difficulty"
 			:labels="difficultyLabels"
 			:dataset="difficultyCounts"
@@ -47,7 +41,7 @@
 </template>
 
 <script>
-import BarChart from './BarChart.vue'
+import Chart from 'chart.js/auto';
 import TimeLineChart from './TimeLineChart.vue'
 import PieChart from './PieChart.vue'
 
@@ -56,7 +50,6 @@ import { boardTypes, DIFFICULTY_LABELS } from '@/config';
 
 export default {
 	components: {
-		BarChart,
 		TimeLineChart,
 		PieChart,
 	},

@@ -1,15 +1,5 @@
 <template>
-<div v-if="totalPlayed > 0">
-	<StatsCharts
-		:difficulty-counts="difficultyCounts"
-		:daily-stats="dailyStats"
-		:board-type-counts="boardTypeCounts"
-	/>
-	<CalendarHeatmap
-		:items="allItems"
-		v-if="allItems.length"
-		class="section-block mb-8"
-	/>
+<div>
 	<section class="section-block mb-8">
 		<!-- <h2 class="text-lg font-medium pb-2">Overall</h2> -->
 		<div class="stats-group stats-card">
@@ -31,6 +21,16 @@
 			</div>
 		</div>
 	</section>
+	<StatsCharts
+		:difficulty-counts="difficultyCounts"
+		:daily-stats="dailyStats"
+		:board-type-counts="boardTypeCounts"
+	/>
+	<CalendarHeatmap
+		:items="allItems"
+		v-if="allItems.length"
+		class="section-block mb-8"
+	/>
 	<section class="section-block mb-8">
 		<h2 class="text-lg font-medium pb-2">Most played</h2>
 		<div class="stats-group stats-card">
@@ -124,9 +124,6 @@
 		</div>
 	</section>
 </div>
-<div class="py-4 px-8 text-center" v-else-if="totalPlayed === 0">
-	You haven't solved any puzzles yet! Go play some!
-</div>
 </template>
 
 <script>
@@ -135,6 +132,22 @@ import { boardTypes, DIFFICULTY_LABELS } from '@/config';
 import { timeFormatter } from '@/utils/date.utils';
 import CalendarHeatmap from './CalendarHeatmap.vue';
 import StatsCharts from './StatsCharts.vue';
+
+/* required data and how to get it:
+	- puzzles by difficulty (list of items with difficulty)
+	- puzzles by puzzle type (items require a puzzle type, generated from puzzle dimensions)
+	
+	- daily streak: generated from daily overview, streak is longest sequence of days with puzzles solved > 0
+
+	Puzzles in groups:
+	- difficulty
+	- size
+	- boardType, related to size
+	- size+difficulty
+	- day
+
+	Each item in these groups requires: difficulty, boardType, date/day, size (wxh), etc
+*/
 
 export default {
 	components: { 
@@ -151,6 +164,11 @@ export default {
 		allItems: {
 			type: Array,
 			default: () => ([])
+		}
+	},
+	data() {
+		return {
+			showCharts: false,
 		}
 	},
 	computed: {

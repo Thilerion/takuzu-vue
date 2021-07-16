@@ -1,39 +1,14 @@
 <template>
 	<div class="flex flex-col">
 		<PageHeader hide-back>Statistics</PageHeader>
-		<BaseButton v-if="!showAdvanced" @click="showAdvanced = true" class="mx-8 mb-4">Show new stats screen</BaseButton>
-		<BaseButton v-else @click="showAdvanced = false" class="mx-8 mb-4">Show original stats screen</BaseButton>
-
-		<template v-if="!showAdvanced">
-			<section class="grid section-block mb-4">
-				<h2 class="text-lg font-medium pb-2">Overall</h2>
-				<span>Puzzles solved:</span>
-				<span>{{puzzlesSolved}}</span>
-				<span>Average time per puzzle:</span>
-				<span>{{msToMinSec(averageTime)}}</span>
-			</section>
-
-			<section class="px-8 mb-4">
-				<h2 class="text-lg font-medium pt-2 pb-2">By puzzle size</h2>
-				<transition name="fade">
-					<StatsTable
-						v-if="byPuzzleSizeData && byPuzzleSizeData.length"
-						:headers="byPuzzleSizeHeaders"
-						:items="byPuzzleSizeData"
-						:group="groupByPuzzleType"
-						:groups="puzzleBoardTypes"
-					/>
-				</transition>
-			</section>
-		</template>
-
-		<template v-else>
-			<AdvancedStats
-				v-bind="advancedStats"
-				v-if="advancedStats != null"
-			/>
-			<div class="p-4 text-lg text-center" v-else>Loading...</div>
-		</template>
+		<AdvancedStats
+			v-bind="advancedStats"
+			v-if="advancedStats != null"
+		/>
+		<div class="py-4 px-8 text-center" v-else-if="puzzlesSolved === 0">
+			You haven't solved any puzzles yet! Go play some!
+		</div>
+		<div class="p-4 text-lg text-center" v-else>Loading...</div>
 
 		<section class="stats-btns">
 			<button :disabled="exportInProgress || !puzzlesSolved" class="download-btn" @click="exportStats">Export data</button>
@@ -56,7 +31,6 @@ export default {
 	components: { StatsTable, AdvancedStats },
 	data() {
 		return {
-			showAdvanced: true,
 
 			puzzlesSolved: null,
 			averageTime: null,
