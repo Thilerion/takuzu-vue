@@ -21,6 +21,8 @@
 
 <script>
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
+import { initPregenWorker } from './workers/pregen-puzzles';
+
 export default {
 	components: {
 		OverlayPageTransition,
@@ -39,7 +41,7 @@ export default {
 		onResize() {
 			const h = window.innerHeight;
 			this.viewportHeight = h + 'px';
-		}
+		},
 	},
 	beforeMount() {
 		window.addEventListener('resize', this.onResize);
@@ -47,6 +49,10 @@ export default {
 	},
 	unmounted() {
 		window.removeEventListener('resize', this.onResize);
+	},
+	mounted() {
+		// INIT PREGEN WORKER
+		initPregenWorker();
 	}
 }
 </script>

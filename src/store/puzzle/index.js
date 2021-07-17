@@ -8,6 +8,8 @@ import puzzleAssistanceModule from './assistance';
 import { SaveGameData } from '@/services/save-game';
 import { calculateGridCounts, calculateLineCounts } from './line-counts';
 import { COLUMN, EMPTY, ONE, ROW, ZERO } from '@/lib/constants';
+import { getPuzzle } from '@/services/puzzles-db/db';
+import { initPregenWorker } from '@/workers/pregen-puzzles';
 
 const defaultState = () => ({
 	// game config
@@ -182,6 +184,26 @@ const puzzleModule = {
 		},
 		async createPuzzle({ commit }, { width, height, difficulty }) {
 			commit('setLoading', true);
+
+			try {
+				const result = await getPuzzle({ width, height, difficulty });
+				if (!result) throw new Error('No correct puzzle found');
+				const board = SimpleBoard.import(result.boardStr);
+				const solution = SimpleBoard.import(result.solutionStr);
+				commit('setAllBoards', {
+					board, solution,
+					initialBoard: board.copy()
+				});
+				commit('setLoading', false);
+
+				setTimeout(() => {
+					initPregenWorker();
+				}, 500);
+
+				return;
+			} catch (e) {
+				console.log('Error in getting puzzle from database. Proceeding the old-fashioned way.');
+			}
 			
 			try {
 				// setup worker message receiving and sending

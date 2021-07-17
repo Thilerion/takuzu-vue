@@ -72,3 +72,14 @@ export const getAllSizeDifficultyCombinations = () => {
 	}
 	return result;
 }
+
+export const getAllPresetSizeDifficultyCombinations = () => {
+	const result = [];
+	for (const preset of PRESET_BOARD_SIZES) {
+		const { width, height } = preset;
+		for (let i = 1; i <= preset.maxDifficulty; i++) {
+			result.push({ width, height, difficulty: i });
+		}
+	}
+	return result;
+}
