@@ -72,7 +72,7 @@
 			</div>
 		</div>
 	</section>
-	<section class="section-block mb-8 text-sm">
+	<section class="section-block mb-8 text-sm table-block">
 		<h2 class="text-lg font-medium pb-2">By size</h2>
 		<div class="stats-header flex flex-row font-medium bg-blue-800 text-white text-right pr-1">
 			<div class="w-1/5">Size</div>
@@ -81,17 +81,17 @@
 			<div class="w-1/4">Best</div>
 		</div>
 		<div
-			v-for="sizeSumm in sizeSummaries"
-			:key="sizeSumm.groupData.size"
+			v-for="sizeSumm in sizeTableData"
+			:key="sizeSumm.formatted.size"
 			class="flex flex-row stat-row"
 		>
-			<div class="w-1/5 text-right">{{sizeSumm.groupData.size}}</div>
-			<div class="w-1/4 text-right">{{sizeSumm.totalPlayed}}</div>
-			<div class="w-1/4 text-right">{{sizeSumm.average}}</div>
-			<div class="w-1/4 text-right">{{sizeSumm.best}}</div>
+			<div class="w-1/5 text-right">{{sizeSumm.formatted.size}}</div>
+			<div class="w-1/4 text-right">{{sizeSumm.formatted.totalPlayed}}</div>
+			<div class="w-1/4 text-right">{{sizeSumm.formatted.average}}</div>
+			<div class="w-1/4 text-right">{{sizeSumm.formatted.best}}</div>
 		</div>
 	</section>
-	<section class="section-block mb-8 text-sm">
+	<section class="section-block mb-8 text-sm table-block">
 		<h2 class="text-lg font-medium pb-2">By difficulty</h2>
 		<div class="stats-header flex flex-row font-medium bg-blue-800 text-white text-right pr-1">
 			<div class="w-1/4">Difficulty</div>
@@ -99,34 +99,36 @@
 			<div class="w-1/3">Rel. avg</div>
 		</div>
 		<div
-			v-for="diff in byDifficulty"
-			:key="diff.key"
+			v-for="diff in difficultyTableData"
+			:key="diff.formatted.difficulty"
 			class="flex flex-row stat-row"
 		>
-			<div class="w-1/4 text-right">{{diff.key}}</div>
-			<div class="w-1/3 text-right">{{diff.played}}</div>
-			<div class="w-1/3 text-right">{{diff.average}}</div>
+			<div class="w-1/4 text-right">{{diff.formatted.difficulty}}</div>
+			<div class="w-1/3 text-right">{{diff.formatted.totalPlayed}}</div>
+			<div class="w-1/3 text-right">{{diff.formatted.adjustedAverage}}</div>
 		</div>
 	</section>
-	<section class="section-block mb-8 text-sm">
+	<section class="section-block mb-8 text-sm table-block">
 		<h2 class="text-lg font-medium pb-2">Combined</h2>
 		<div class="stats-header flex flex-row font-medium bg-blue-800 text-white text-right pr-1">
 			<div class="w-2/12 text-left pl-1">Size</div>
 			<div class="w-2/12">Diff</div>
-			<div class="w-3/12">Solved</div>
-			<div class="w-3/12">Average</div>
-			<div class="w-3/12">Best</div>
+			<div class="w-2/12">Solved</div>
+			<div class="w-2/12">Avg</div>
+			<div class="w-2/12">Rel. avg</div>
+			<div class="w-2/12">Best</div>
 		</div>
 		<div
-			v-for="item in bySizeAndDifficulty"
-			:key="item.key"
+			v-for="item in combinedTableData"
+			:key="item.raw.sizeDifficultyStr"
 			class="flex flex-row stat-row"
 		>
-			<div class="w-2/12 text-left pl-1">{{item.size}}</div>
-			<div class="w-2/12 text-right">{{item.difficulty}}</div>
-			<div class="w-3/12 text-right">{{item.played}}</div>
-			<div class="w-3/12 text-right">{{item.average}}</div>
-			<div class="w-3/12 text-right">{{item.best}}</div>
+			<div class="w-2/12 text-left pl-1">{{item.formatted.dimensions}}</div>
+			<div class="w-2/12 text-right">{{item.formatted.difficulty}}</div>
+			<div class="w-2/12 text-right">{{item.formatted.totalPlayed}}</div>
+			<div class="w-2/12 text-right">{{item.formatted.average}}</div>
+			<div class="w-2/12 text-right">{{item.formatted.adjustedAverage}}</div>
+			<div class="w-2/12 text-right">{{item.formatted.best}}</div>
 		</div>
 	</section>
 </div>
@@ -139,7 +141,6 @@ import CalendarHeatmap from './CalendarHeatmap.vue';
 import StatsCharts from './StatsCharts.vue';
 import StatsSummaryCard from './StatsSummaryCard.vue';
 import { mapGetters, mapState } from 'vuex';
-import { summarizeStatGroup } from '@/services/stats/data-handling';
 
 /* required data and how to get it:
 	- puzzles by difficulty (list of items with difficulty)
@@ -164,7 +165,6 @@ export default {
 		StatsSummaryCard
 	},
 	props: {
-		results: Object,
 		currentStreak: Number,
 		longestStreak: Number,
 		dailyStats: Array,
@@ -249,6 +249,89 @@ export default {
 			}, { score: -1 }).groupData;
 		},
 
+		sizeTableData() {
+			const boardTypeOrder = [boardTypes.NORMAL, boardTypes.RECT, boardTypes.ODD];
+			return this.sizeSummaries.map(summ => {
+				const { groupData, totalPlayed, average: averageMs, best: bestMs } = summ;
+				const { boardType, numCells, size } = groupData;
+
+				const rawData = {
+					size, totalPlayed, boardType, numCells,
+					average: averageMs, best: bestMs,
+				};
+				const formattedData = {
+					size, totalPlayed,
+					average: this.msToMinSec(averageMs),
+					best: this.msToMinSec(bestMs)
+				}
+
+				return {
+					raw: rawData,
+					formatted: formattedData
+				}
+			}).sort((a, b) => {
+				const boardTypeA = a.raw.boardType;
+				const boardTypeB = b.raw.boardType;
+				if (boardTypeA !== boardTypeB) {
+					return boardTypeOrder.indexOf(boardTypeA) - boardTypeOrder.indexOf(boardTypeB);
+				} else {
+					return a.raw.numCells - b.raw.numCells;
+				}
+			})
+		},
+		difficultyTableData() {
+			return this.difficultySummaries.reduce((acc, summ) => {
+				if (summ.totalPlayed < 1) return acc;
+				const { groupData, adjustedAverage: adjustedAverageMs, totalPlayed } = summ;
+				const { difficulty } = groupData;
+				const resVal = {
+					raw: {
+						difficulty, totalPlayed, adjustedAverage: adjustedAverageMs
+					},
+					formatted: {
+						difficulty, totalPlayed,
+						adjustedAverage: this.msToMinSec(adjustedAverageMs)
+					}
+				}
+				acc.push(resVal);
+				return acc;
+			}, []).sort((a, b) => {
+				return a.raw.difficulty - b.raw.difficulty;
+			})
+		},
+		combinedTableData() {
+			const mappedValues = this.difficultySizeSummaries
+				.filter(val => !!val.totalPlayed)
+				.map(summ => {
+					const { groupData, totalPlayed, average: averageMs, best: bestMs, adjustedAverage: adjustedAverageMs} = summ;
+					const { boardType, difficulty, numCells, dimensions, sizeDifficultyStr } = groupData;
+					return {
+						raw: {
+							totalPlayed, boardType, difficulty,
+							numCells, dimensions, sizeDifficultyStr,
+							best: bestMs, average: averageMs, adjustedAverage: adjustedAverageMs
+						},
+						formatted: {
+							totalPlayed, boardType, difficulty, numCells, dimensions,
+
+							best: this.msToMinSec(bestMs),
+							average: this.msToMinSec(averageMs),
+							adjustedAverage: this.msToMinSec(adjustedAverageMs),
+						}
+					}
+				});
+			return mappedValues.sort((a, b) => {
+				const boardTypeOrder = [boardTypes.NORMAL, boardTypes.RECT, boardTypes.ODD];
+				if (a.raw.boardType !== b.raw.boardType) {
+					return boardTypeOrder.indexOf(a.raw.boardType) - boardTypeOrder.indexOf(b.raw.boardType);
+				}
+				if (a.raw.numCells !== b.raw.numCells) {
+					return a.raw.numCells - b.raw.numCells;
+				}
+				return a.raw.difficulty - b.raw.difficulty;
+			})
+		},
+
 
 
 
@@ -276,37 +359,6 @@ export default {
 				result[type] = values.length;
 			}
 			return result;
-		},
-		byDifficulty() {
-			return this.difficultySummaries.filter(val => val.totalPlayed > 0);
-			if (!this.results.difficulty.length) return [];
-			return this.results.difficulty.map(item => {
-				// TODO: must be average adjusted by size...
-				const average = 'TODO';
-				return {...item, average};
-			}).sort((a, b) => a.key - b.key);
-		},
-		bySizeAndDifficulty() {
-			if (!this.results.sizeAndDifficulty.length) {
-				return [];
-			}
-			const typeOrder = [boardTypes.NORMAL, boardTypes.RECT, boardTypes.ODD];
-			return this.results.sizeAndDifficulty.map(item => {
-				const [size, difficulty] = item.key.split('-');
-				const average = this.msToMinSec(item.average);
-				const best = this.msToMinSec(item.best);
-				const [width, height] = size.split('x').map(Number);
-				const numCells = width * height;
-				return {...item, size, difficulty, average, best, numCells};
-			}).sort((a, b) => {
-				if (a.type !== b.type) {
-					return typeOrder.indexOf(a.type) - typeOrder.indexOf(b.type);
-				}
-				if (a.numCells !== b.numCells) {
-					return a.numCells - b.numCells;
-				}
-				return a.difficulty - b.difficulty;
-			})
 		},
 
 		// TODO: turn favorites into moving averages? over last 30 days or something?
@@ -339,6 +391,12 @@ section {
 	grid-template-columns: 2;
 	@apply px-4;
 }
+.section-block.table-block {
+	@apply px-0;
+}
+.section-block.table-block::v-deep(h2) {
+	@apply px-4;
+}
 section::v-deep(h2) {
 	@apply text-opacity-60 pl-2;
 }
@@ -346,6 +404,10 @@ section::v-deep(h2) {
 .stats-card {
 	@apply bg-white rounded overflow-hidden;
 	box-shadow: 0 3px 8px rgba(154,160,185,.05), 0 8px 25px rgba(166,173,201,.2);
+}
+
+.stats-header, .stat-row {
+	@apply px-2;
 }
 
 .stats-group {
