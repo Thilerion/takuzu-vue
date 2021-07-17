@@ -1,5 +1,5 @@
-import { getAllBoardPresetSizes, getAllDifficultyValues, getAllSizeDifficultyCombinations } from "@/config";
-import { getAllHistoryItems, getPuzzlesSolved } from "@/services/stats/data-handling";
+import { dimensionsToBoardType, getAllBoardPresetSizes, getAllDifficultyValues, getAllSizeDifficultyCombinations } from "@/config";
+import { getAllHistoryItems, getPuzzlesSolved, summarizeStatGroup } from "@/services/stats/data-handling";
 import { groupBy } from "@/utils/array.utils";
 
 const presetSizes = getAllBoardPresetSizes().map(({ width, height }) => {
@@ -7,6 +7,20 @@ const presetSizes = getAllBoardPresetSizes().map(({ width, height }) => {
 });
 const difficulties = getAllDifficultyValues();
 const sizeDifficultyCombinations = getAllSizeDifficultyCombinations();
+
+const sizeGroupsData = getAllBoardPresetSizes().map(({ width, height }) => {
+	const dimensions = `${width}x${height}`;
+	const numCells = width * height;
+	const boardType = dimensionsToBoardType(width, height);
+	return { width, height, dimensions, numCells, boardType };
+})
+const sizeDiffCombiGroupsData = sizeDifficultyCombinations.map(({ width, height, difficulty }) => {
+	const dimensions = `${width}x${height}`;
+	const sizeDifficultyStr = `${dimensions}-${difficulty}`;
+	const numCells = width * height;
+	const boardType = dimensionsToBoardType(width, height);
+	return { width, height, difficulty, dimensions, sizeDifficultyStr, numCells, boardType };
+})
 
 export const statsDataModule = {
 	namespaced: true,
@@ -45,7 +59,9 @@ export const statsDataModule = {
 		},
 		groupedBySizeDifficultyCombination: state => {
 			const initialMap = sizeDifficultyCombinations.reduce((acc, val) => {
-				acc[val] = [];
+				const { width, height, difficulty } = val;
+				const key = `${width}x${height}-${difficulty}`;
+				acc[key] = [];
 				return acc;
 			}, {});
 			return groupBy(state.historyItems, 'dimensionDifficultyStr', initialMap);
@@ -55,6 +71,67 @@ export const statsDataModule = {
 		},
 		groupedByBoardType: state => {
 			return groupBy(state.historyItems, 'boardType');
+		},
+
+		sizeSummaries: (state, getters) => {
+			const groupsObj = getters.groupedBySize;
+			const result = [];
+			for (const [size, items] of Object.entries(groupsObj)) {
+				const summary = summarizeStatGroup(items);
+				const { width, height, boardType, numCells } = sizeGroupsData.find(val => val.dimensions === size);
+				const groupData = {
+					size, width, height, boardType, numCells,
+					groupType: 'size'
+				};
+				const groupResult = {
+					...summary,
+					groupData,
+					items
+				}
+				result.push(groupResult);
+			}
+			return result;
+		},
+
+		difficultySummaries: (state, getters) => {
+			const groupsObj = getters.groupedByDifficulty;
+			const result = [];
+			for (const [difficulty, items] of Object.entries(groupsObj)) {
+				const summary = summarizeStatGroup(items);
+				const groupData = {
+					difficulty,
+					groupType: 'difficulty'
+				};
+				const groupResult = {
+					...summary,
+					groupData,
+					items
+				}
+				result.push(groupResult);
+			}
+			return result;
+		},
+
+		difficultySizeSummaries: (state, getters) => {
+			const groupsObj = getters.groupedBySizeDifficultyCombination;
+			const result = [];
+			for (const [sizeDiffCombi, items] of Object.entries(groupsObj)) {
+				if (!items.length) continue;
+				const summary = summarizeStatGroup(items);
+				const sizeDiffCombiData = sizeDiffCombiGroupsData.find(val => val.sizeDifficultyStr === sizeDiffCombi);
+				
+				const groupData = {
+					...sizeDiffCombiData,
+					groupType: 'sizeDiffCombi'
+				}
+				const groupResult = {
+					...summary,
+					groupData,
+					items
+				}
+				result.push(groupResult);
+			}
+			return result;
 		}
 	},
 

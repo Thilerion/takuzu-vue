@@ -42,15 +42,15 @@
 		<div class="stats-group stats-card">
 			<div class="stats-line">
 				<span class="label">Most played size:</span>
-				<span class="value-1">{{mostPlayedSize.key}}</span>
+				<span class="value-1">{{mostPlayedSize.size}}</span>
 			</div>
 			<div class="stats-line">
 				<span class="label">Most played difficulty:</span>
-				<span class="value-1">{{mostPlayedDifficulty.key}}</span>
+				<span class="value-1">{{mostPlayedDifficulty.difficulty}}</span>
 			</div>
 			<div class="stats-line">
 				<span class="label">Most played combination:</span>
-				<span class="value-1">{{mostPlayedSizePlusDifficulty.size}} @ {{mostPlayedSizePlusDifficulty.difficulty}}*</span>
+				<span class="value-1">{{mostPlayedSizePlusDifficulty.dimensions}} @ {{mostPlayedSizePlusDifficulty.difficulty}}*</span>
 			</div>
 		</div>
 	</section>
@@ -60,15 +60,15 @@
 		<div class="stats-group stats-card">
 			<div class="stats-line">
 				<span class="label">Favorite size:</span>
-				<span class="value-1">{{favoriteSize[0].key}}</span>
+				<span class="value-1">{{favoriteSize}}</span>
 			</div>
 			<div class="stats-line">
 				<span class="label">Favorite difficulty:</span>
-				<span class="value-1">{{favoriteDifficulty.key}}</span>
+				<span class="value-1">{{favoriteDifficulty}}</span>
 			</div>
 			<div class="stats-line">
 				<span class="label">Favorite combination:</span>
-				<span class="value-1">{{favoriteSizePlusDifficulty[0].size}} @ {{favoriteSizePlusDifficulty[0].difficulty}}*</span>
+				<span class="value-1">{{favoriteSizePlusDifficulty.dimensions}} @ {{favoriteSizePlusDifficulty.difficulty}}*</span>
 			</div>
 		</div>
 	</section>
@@ -81,14 +81,14 @@
 			<div class="w-1/4">Best</div>
 		</div>
 		<div
-			v-for="size in bySize"
-			:key="size.key"
+			v-for="sizeSumm in sizeSummaries"
+			:key="sizeSumm.groupData.size"
 			class="flex flex-row stat-row"
 		>
-			<div class="w-1/5 text-right">{{size.key}}</div>
-			<div class="w-1/4 text-right">{{size.played}}</div>
-			<div class="w-1/4 text-right">{{size.average}}</div>
-			<div class="w-1/4 text-right">{{size.best}}</div>
+			<div class="w-1/5 text-right">{{sizeSumm.groupData.size}}</div>
+			<div class="w-1/4 text-right">{{sizeSumm.totalPlayed}}</div>
+			<div class="w-1/4 text-right">{{sizeSumm.average}}</div>
+			<div class="w-1/4 text-right">{{sizeSumm.best}}</div>
 		</div>
 	</section>
 	<section class="section-block mb-8 text-sm">
@@ -133,12 +133,13 @@
 </template>
 
 <script>
-import { boardTypes, DIFFICULTY_LABELS, dimensionsToBoardType } from '@/config';
+import { boardTypes } from '@/config';
 import { timeFormatter } from '@/utils/date.utils';
 import CalendarHeatmap from './CalendarHeatmap.vue';
 import StatsCharts from './StatsCharts.vue';
 import StatsSummaryCard from './StatsSummaryCard.vue';
 import { mapGetters, mapState } from 'vuex';
+import { summarizeStatGroup } from '@/services/stats/data-handling';
 
 /* required data and how to get it:
 	- puzzles by difficulty (list of items with difficulty)
@@ -182,15 +183,80 @@ export default {
 			'groupedByDifficulty',
 			'groupedBySizeDifficultyCombination',
 			'totalTime',
+			'sizeSummaries',
+			'difficultySummaries',
+			'difficultySizeSummaries',
 		]),
 		averageTotal() {
 			return this.totalTime / this.totalPlayed;
 		},
+
+		mostPlayedSize() {
+			return this.sizeSummaries.reduce((max, summary) => {
+				const amount = summary.totalPlayed;
+				if (max == null || amount > max.totalPlayed) {
+					return summary;
+				} else return max;
+			}, null).groupData;
+		},
+		favoriteSize() {
+			const scores = this.sizeSummaries.map(summary => {
+				const score = this.sizeSummaryToScore(summary);
+				return { score, size: summary.groupData.size }
+			});
+			return scores.reduce((max, item) => {
+				if (item.score > max.score) return item;
+				return max;
+			}, { score: -1 }).size;
+		},
+
+		mostPlayedDifficulty() {
+			return this.difficultySummaries.reduce((max, summary) => {
+				const amount = summary.totalPlayed;
+				if (max == null || amount > max.totalPlayed) {
+					return summary;
+				} else return max;
+			}, null).groupData;
+		},
+		favoriteDifficulty() {
+			const scores = this.difficultySummaries.map(summary => {
+				const score = this.difficultySummaryToScore(summary);
+				return { score, difficulty: summary.groupData.difficulty};
+			})
+			return scores.reduce((max, item) => {
+				if (item.score > max.score) return item;
+				return max;
+			}, { score: -1 }).difficulty;
+		},
+
+		mostPlayedSizePlusDifficulty() {
+			return this.difficultySizeSummaries.reduce((max, summary) => {
+				const amount = summary.totalPlayed;
+				if (max == null || amount > max.totalPlayed) {
+					return summary;
+				} else return max;
+			}, null).groupData;
+		},
+		favoriteSizePlusDifficulty() {
+			const scores = this.difficultySizeSummaries.map(summary => {
+				const score = this.sizeDifficultySummaryToScore(summary);
+				return { score, groupData: summary.groupData };
+			})
+			return scores.reduce((max, item) => {
+				if (item.score > max.score) return item;
+				return max;
+			}, { score: -1 }).groupData;
+		},
+
+
+
+
+
 		favorites() {
 			return {
-				puzzle: this.favoriteSizePlusDifficulty[0].size + ' @ ' + this.favoriteSizePlusDifficulty[0].difficulty + '*',
-				size: this.favoriteSize[0].key,
-				difficulty: this.favoriteDifficulty.key
+				puzzle: this.favoriteSizePlusDifficulty.dimensions + ' @ ' + this.favoriteSizePlusDifficulty.difficulty + '*',
+				size: this.favoriteSize,
+				difficulty: this.favoriteDifficulty
 			}
 		},
 		difficultyCounts() {
@@ -209,25 +275,6 @@ export default {
 				result[type] = values.length;
 			}
 			return result;
-		},
-		bySize() {
-			if (!this.results.size.length) {
-				return [];
-			}
-			const typeOrder = [boardTypes.NORMAL, boardTypes.RECT, boardTypes.ODD];
-			return this.results.size.map(item => {
-				const avg = this.msToMinSec(item.average);
-				const best = this.msToMinSec(item.best);
-				const key = item.key;
-				const [width, height] = key.split('x').map(Number);
-				const boardType = dimensionsToBoardType(width, height);
-				return {...item, average: avg, best, width, height, type: boardType};
-			}).sort((a, b) => {
-				if (a.type !== b.type) {
-					return typeOrder.indexOf(a.type) - typeOrder.indexOf(b.type);
-				}
-				return (a.width * a.height) - (b.width * b.height);
-			});
 		},
 		byDifficulty() {
 			if (!this.results.difficulty.length) return [];
@@ -260,68 +307,25 @@ export default {
 			})
 		},
 
-		mostPlayedSize() {
-			return this.bySize.reduce((maxSizeData, sizeData) => {
-				if (sizeData.played > maxSizeData.played) return sizeData;
-				return maxSizeData;
-			}, { played: -1});
-		},
-		mostPlayedDifficulty() {
-			return this.byDifficulty.reduce((bestData, diffData) => {
-				if (diffData.played > bestData.played) return diffData;
-				return bestData;
-			}, { played: -1});
-		},
-		mostPlayedSizePlusDifficulty() {
-			return this.bySizeAndDifficulty.reduce((bestData, diffData) => {
-				if (diffData.played > bestData.played) return diffData;
-				return bestData;
-			}, { played: -1});
-		},
-
 		// TODO: turn favorites into moving averages? over last 30 days or something?
-
-		// favorite stats (should) take into account:
-		// - amount played
-		// - total time played
-		// - expected time for a certain board size, which is used as a modifier for the score in some way
-		favoriteSize() {
-			const getRelativeModifier = cellCount => 0.75 * Math.sqrt(cellCount / 100) + 0.25;
-
-			const withScores = this.bySize.map(sizeStats => {
-				const {width, height} = sizeStats;
-				const cellCount = width * height;
-				const relMod = getRelativeModifier(cellCount);
-				const score = sizeStats.totalTime / relMod;
-				return {...sizeStats, score };
-			})
-			const sorted = withScores.sort((a, b) => b.score - a.score);
-			return sorted;
-		},
-		favoriteDifficulty() {
-			return this.byDifficulty.reduce((bestData, diffData) => {
-				if (diffData.totalTime > bestData.totalTime) return diffData;
-				return bestData;
-			}, { totalTime: 0});
-		},
-		favoriteSizePlusDifficulty() {
-			// TODO: weigh cellCount/timeSpent score separately from amount played
-			const getRelativeModifier = cellCount => 1.2 * Math.sqrt(cellCount / 100) - 0.2;
-
-			const withScores = this.bySizeAndDifficulty.map(sizeStats => {
-				const { numCells, played } = sizeStats;
-				const relMod = getRelativeModifier(numCells);
-				// const score = totalTime / relMod;
-				const score = played * relMod;
-				return {...sizeStats, score };
-			})
-			const sorted = withScores.sort((a, b) => b.score - a.score);
-			return sorted;
-		}
 	},
 	methods: {
 		msToMinSec: timeFormatter({ padMinutes: false }),
-	}
+		sizeSummaryToScore(summary) {
+			const { numCells } = summary.groupData;
+			const scoreMod = 0.75 * Math.sqrt(numCells / 100) + 0.25;
+			return summary.totalTime  / scoreMod;
+		},
+		difficultySummaryToScore(summary) {
+			const { adjustedTime, totalTime } = summary;
+			return adjustedTime + Math.sqrt(totalTime);
+		},
+		sizeDifficultySummaryToScore(summary) {
+			const { numCells } = summary.groupData;
+			const scoreMod = 1.2 * Math.sqrt(numCells / 100) - 0.2;
+			return summary.totalPlayed * scoreMod;
+		}
+	},
 };
 </script>
 
