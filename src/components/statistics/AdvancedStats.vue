@@ -169,6 +169,7 @@ export default {
 		longestStreak: Number,
 		dailyStats: Array,
 	},
+	inheritAttrs: false,
 	data() {
 		return {
 		}
@@ -277,6 +278,7 @@ export default {
 			return result;
 		},
 		byDifficulty() {
+			return this.difficultySummaries.filter(val => val.totalPlayed > 0);
 			if (!this.results.difficulty.length) return [];
 			return this.results.difficulty.map(item => {
 				// TODO: must be average adjusted by size...
