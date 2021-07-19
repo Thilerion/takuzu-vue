@@ -81,7 +81,6 @@ export async function getAllStats() {
 	}
 
 	let dates = [];
-	const allEntries = [];
 
 	await puzzleHistoryTable.each(item => {
 		allItems.push(item);
@@ -95,10 +94,13 @@ export async function getAllStats() {
 		summary.size[size].addItem(timeElapsed);
 		summary.difficulty[difficulty].addItem(timeElapsed);
 		summary.sizeAndDifficulty[sizeAndDifficulty].addItem(timeElapsed);
-		allEntries.push(item);
 
 		dates.push(new Date(date));
 	})
+
+	if (!allItems.length) {
+		return { results: {}, totalPlayed: 0, totalTime: 0, currentStreak: 0, longestStreak: 0, dailyStats: [], allItems: [] };
+	}
 	
 	const results = {};
 	
@@ -109,7 +111,7 @@ export async function getAllStats() {
 
 	const sortedDates = [...dates].sort((a, b) => a < b ? -1 : a === b ? 0 : 1);	
 	const { currentStreak, longestStreak } = getDailyStreaks(sortedDates);
-	const dailyStats = getDailyStats(allEntries);
+	const dailyStats = getDailyStats(allItems);
 
 	return { results, totalPlayed, totalTime, currentStreak, longestStreak, dailyStats, allItems };
 }

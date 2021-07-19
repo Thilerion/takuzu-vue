@@ -22,6 +22,7 @@
 <script>
 import { clearPuzzleHistory, getAllStats, exportPuzzleHistory, importPuzzleHistory } from '@/services/stats';
 import AdvancedStats from '@/components/statistics/AdvancedStats.vue';
+import { importPeak } from '@/services/stats/db';
 
 export default {
 	components: { AdvancedStats },
@@ -54,7 +55,8 @@ export default {
 				
 				clearPuzzleHistory().then(() => {
 					window.alert('Puzzle statistics and puzzle history have succesfully been reset.');
-					this.getInitialData();
+					this.$store.dispatch('statsData/reset');
+					this.$store.dispatch('statsData/initialize');
 					this.getAdvancedStatsData();
 				}).catch(e => {
 					const str = `[ERROR]: Puzzle statistics and history could not be reset due to error: ${e.toString()}`;
@@ -94,6 +96,7 @@ export default {
 		async handleStatsImport(ev) {
 			try {
 				const file = ev.target.files[0];
+				await importPeak(file);
 				await this.importStatsIntoDb(file);
 			} catch(e) {
 				window.alert('An error occurred importing stats...');
@@ -109,7 +112,6 @@ export default {
 			} catch(e) {
 				window.alert('Error encountered while importing stats... Sorry!');
 			} finally {
-				this.getInitialData();
 				this.getAdvancedStatsData();
 			}
 		},
