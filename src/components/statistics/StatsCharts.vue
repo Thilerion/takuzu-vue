@@ -19,18 +19,21 @@
 			title="Puzzles solved by puzzle type"
 		/>
 		<TimeLineChart
+			chart-id="timeline-solved-daily"
 			:dataset="solvedPerDay"
 			dataset-label="Puzzles solved"
 			title="Puzzles solved per day"
 			hue="305"
 		/>
 		<TimeLineChart
+			chart-id="timeline-time-daily"
 			:dataset="timeSpentPerDay"
 			dataset-label="Time played"
 			title="Time played per day"
 			hue="199"
 		/>
 		<TimeLineChart
+			chart-id="timeline-total-solved"
 			is-area-chart
 			:dataset="totalSolvedByDay"
 			dataset-label="Puzzles solved"
