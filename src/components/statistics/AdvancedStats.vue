@@ -32,8 +32,8 @@
 		:board-type-counts="boardTypeCounts"
 	/>
 	<CalendarHeatmap
-		:items="allItems"
-		v-if="allItems.length"
+		:daily-items="dateSummaries"
+		v-if="dateSummaries && dateSummaries.length > 0"
 		class="section-block mb-8"
 	/>
 	<section class="section-block mb-8">
@@ -163,11 +163,11 @@ export default {
 		StatsCharts,
 		StatsSummaryCard
 	},
+	inheritAttrs: false,	
 	props: {
 		currentStreak: Number,
 		longestStreak: Number,
 	},
-	inheritAttrs: false,
 	data() {
 		return {
 		}
@@ -185,6 +185,7 @@ export default {
 			'sizeSummaries',
 			'difficultySummaries',
 			'difficultySizeSummaries',
+			'dateSummaries',
 		]),
 		averageTotal() {
 			return this.totalTime / this.totalPlayed;

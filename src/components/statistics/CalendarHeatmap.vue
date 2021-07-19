@@ -1,5 +1,5 @@
 <template>
-	<section class="overflow-x-hidden max-w-full">
+	<section class="overflow-x-hidden max-w-full bg-white py-4">
 		<h2 class="text-lg font-medium pb-2">Heatmap</h2>
 		<div class="heatmap-grid overflow-x-auto">
 			<div
@@ -8,24 +8,28 @@
 				:key="dayStr"
 			>{{dayStr}}</div>
 			<div
-				class="timeline-day"
-				:style="{
-					'--amount': item.amount,
-					'--ratio': item.ratio,
-					'--sat': item.saturation,
-					'--light': item.lightness,
-					'--opacity': item.ratio <= 0.0001 ? 0 : (item.ratio * 0.2 + 0.8)
-				}"
-				v-for="item in dateRatios"
+				v-for="item in dateRangeColors"
 				:key="item.dateStr"
-			><div class="timeline-color"></div></div>
+				class="timeline-item"
+				:class="{ empty: item.data.totalPlayed < 1, selected: selected && selected.dateStr === item.dateStr }"
+				:style="{ '--color': item.color }"
+				@click="selectHeatmapDate(item.data)"
+			>
+			</div>
+		</div>
+		<div class="text-xs h-12 flex flex-col justify-evenly px-8">
+			<template v-if="selected">
+			<div>{{selected.dateStr}}</div>
+			<div v-if="selected.totalPlayed">Played: {{selected.totalPlayed}}, total time: {{selected.totalTimeFormatted}}</div>
+			<div v-else>No puzzles played this day</div>
+			</template>
 		</div>
 	</section>
 </template>
 
 <script>
-import { formatBasicSortableDateKey } from "@/utils/date.utils";
-import { differenceInCalendarDays, isSameDay, startOfDay, addDays, compareAsc, startOfWeek, format, startOfMonth, startOfTomorrow, getISODay, addWeeks } from 'date-fns';
+import { formatBasicSortableDateKey, getDateRange, timeFormatter } from "@/utils/date.utils";
+import { differenceInCalendarDays, isSameDay, startOfDay, addDays, compareAsc, startOfWeek, format, startOfMonth, startOfTomorrow, getISODay, subWeeks } from 'date-fns';
 
 const firstDOW = startOfWeek(new Date(), {
 	weekStartsOn: 1
@@ -34,160 +38,152 @@ const shortWeekDaysArray = Array.from(Array(7)).map((e, i) => format(addDays(fir
 
 export default {
 	props: {
-		items: {
+		dailyItems: {
 			type: Array,
-			required: true
+			required: true,
 		}
 	},
 	data() {
-		return {
-			weekDays: [...shortWeekDaysArray],
-
+		return {			
 			currentDate: startOfDay(new Date()),
 			weeksToShow: 12,
+			dateRange: [],
+			colorScale: ['#cbdef1', '#aab7d8', '#a1a2cc', '#9b8cc1', '#9775b7', '#955bac', '#943da2', '#940098'],
 
-			datesWithItems: [],
-			allDates: [],
-			emptyTimelineStart: 0,
+			weekDays: [...shortWeekDaysArray],
+			selected: null,
 		}
 	},
 	computed: {
 		firstDate() {
 			const current = this.currentDate;
-			const weeksAgo = addWeeks(current, this.weeksToShow * -1);
+			const weeksAgo = subWeeks(current, this.weeksToShow);
 			return addDays(startOfWeek(weeksAgo), 1);
 		},
-		transformedItems() {
-			return this.items.map(item => {
-				const date = new Date(item.date);
-				const dayStartDate = startOfDay(date);
-				return {
-					...item,
-					timestamp: item.date,
-					date,
-					dayStartDate,
-					dateKey: formatBasicSortableDateKey(dayStartDate)
-				}
-			})
+		dateRangeStr() {
+			return this.dateRange.map(date => formatBasicSortableDateKey(date));
 		},
-		timelineDays() {
-			const start = this.firstDate;
-			const amount = differenceInCalendarDays(this.currentDate, this.firstDate) + 1;
-			return Array(amount).fill(null).map((_val, idx) => addDays(start, idx));
-		},
-		timelineValues() {
-			const objResult = this.transformedItems.reduce((acc, item) => {
-				const { dateKey } = item;
-				if (acc[dateKey] == null) {
-					acc[dateKey] = {
-						timeElapsed: 0,
-						amount: 0,
-						date: item.dayStartDate,
-						dateKey
-					}
-				}
-				acc[dateKey].amount += 1;
-				acc[dateKey].timeElapsed += item.timeElapsed;
+		dailyItemsByDateStr() {
+			return this.dailyItems.reduce((acc, val) => {
+				const key = val.groupData.dateStr;
+				acc[key] = val;
 				return acc;
 			}, {});
-
-			for (const dateKey of Object.keys(objResult)) {
-				const item = objResult[dateKey];
-				const {amount, timeElapsed} = item;
-				const value = amount + (amount * (Math.sqrt(timeElapsed / 10000)));
-				item.value = value;
-			}
-			return objResult;
 		},
-		maxValue() {
-			return Math.max(...Object.values(this.timelineValues).map(item => item.value));
-		},
-		formattedAllDates() {
-			return this.allDates.map(date => {
-				return formatBasicSortableDateKey(date);
-			})
-		},
-		dateRatios() {
-			const max = this.maxValue;
-			return this.timelineDays.map(d => {
-				const dateStr = formatBasicSortableDateKey(d);
-				try {
-					const n = this.timelineValues[dateStr].value;
-					const result = {
-						ratio: null,
-						amount: n,
-						dateStr,
-						saturation: 0.5,
-						lightness: 0.9
-					};
-					if  (n === 0) {
-						result.ratio = 0;
-						return result;
-					}
-					const ratio = n / max;
-					result.ratio = (ratio / 10 * 8) + 0.2;
-
-					result.saturation += (result.ratio * 0.5);
-					result.lightness -= (result.ratio * 0.5);
-
-					return result;
-				} catch {
+		timelineDaysData() {
+			return this.dateRangeStr.map(dateStr => {
+				if (this.dailyItemsByDateStr[dateStr]) {
+					return this.dailyItemsByDateStr[dateStr];
+				} else {
 					return {
-						ratio: 0,
-						amount: 0,
-						dateStr,
-						saturation: 0,
-						lightness: 1
-					};
+						totalPlayed: 0,
+						groupData: { dateStr }
+					}
 				}
 			})
 		},
-		itemsByDate() {
-			const dates = [...this.datesWithItems];
-			const result = {};
-			for (let date of dates) {
-				const dateStr = formatBasicSortableDateKey(date);
-				result[dateStr] = 0;
+		dateStrMappedToRatio() {
+			const timePlayedList = this.dailyItems.map(item => item.totalTime);
+			const totalPlayedList = this.dailyItems.map(item => item.totalPlayed);
+			const maxTimePlayed = Math.max(...timePlayedList);
+			const maxTotalPlayed = Math.max(...totalPlayedList);
+
+			const withScores = this.dailyItems.map(item => {
+				const { totalPlayed, groupData, totalTime } = item;
+				if (!totalPlayed) { 
+					return { score: 0, groupData };
+				}
+				const timeScore = totalTime / maxTimePlayed * 100;
+				const playedScore = totalPlayed / maxTotalPlayed * 100;
+
+				const score = ((playedScore * playedScore) + (timeScore * 1.4 * timeScore));
+				return { groupData, score: Math.pow(score, 1 / 1.2) };
+			})
+			const scores = withScores.map(item => item.score).filter(val => val != 0);
+			const max = Math.max(...scores);
+			const min = Math.min(...scores);
+			const average = scores.reduce((acc, val) => acc + val, 0) / scores.length;
+
+			const diffBelow = average - min;
+			const diffAbove = max - average;
+
+			const toRatio = (score) => {
+				let base;
+				if (score < average) {
+					base = (score / diffBelow) / 2;
+				} else if (score === average) {
+					base = 0.5;
+				} else {
+					base = (((score - average) / diffAbove) / 2) + 0.5;
+				}
+				return Math.round(base * 100) / 100;
 			}
-			for (let item of this.items) {
-				const startDate = startOfDay(new Date(item.date));
-				const dateStr = formatBasicSortableDateKey(startDate);
-				result[dateStr] += 1;
-			}
-			return result;
+
+			return withScores.reduce((acc, val) => {
+				const { groupData, score } = val;
+				const ratio = toRatio(score);
+				const { dateStr } = groupData;
+				acc[dateStr] = ratio;
+				return acc;
+			}, {});
 		},
-		max() {
-			return Math.max(...Object.values(this.itemsByDate));
-		}
+		colorScaleAsMinRatio() {
+			const length = this.colorScale.length;
+			return this.colorScale.map((color, idx) => {
+				const minRatio = idx > 0 ? (idx) / length : 0;
+				return { color, minRatio }
+			});
+		},
+		dateRangeColors() {
+			const colorScaleRatios = [...this.colorScaleAsMinRatio].reverse();
+			const dateRatios = this.dateStrMappedToRatio;
+
+			return this.timelineDaysData.map(val => {
+				const { totalPlayed = 0, totalTime = 0, groupData } = val;
+				const { dateStr } = groupData;
+
+				const result = { dateStr, color: null, ratio: null, data: {
+					totalPlayed, totalTime, totalTimeFormatted: this.msToMinSec(totalTime),
+					dateStr
+				}}
+
+				if (!totalPlayed) return result;
+
+				const ratio = dateRatios[dateStr] ?? -1;
+
+				if (ratio < 0) return result;
+
+				for (let { color, minRatio } of colorScaleRatios) {
+					if (ratio >= minRatio) {
+						result.color = color;
+						return result;
+					}
+				}
+
+				console.warn({ val, ratio });
+				return result;
+			})
+		},
 	},
 	methods: {
-		initializeTimelineData() {
-			const itemDates = [...this.items.reduce((acc, val) => {
-				const startDate = startOfDay(new Date(val.date));
-				const dateStr = formatBasicSortableDateKey(startDate);
-				acc.add(dateStr);
-				return acc;
-			}, new Set())];
-			const dates = itemDates.map(dateStr => new Date(dateStr));
-			this.datesWithItems = dates.sort((a, b) => compareAsc(a, b));
-
-			const startAt = startOfMonth(dates[0]);
-			const stopAfter = this.currentDate;
-
-			const allDates = [];
-			let curDate = startOfDay(startAt);
-			allDates.push(curDate);
-			while (!isSameDay(curDate, stopAfter)) {
-				curDate = addDays(curDate, 1)
-				allDates.push(curDate);
+		getAllDatesInTimelineRange() {
+			const firstDate = this.firstDate;
+			const lastDate = this.currentDate;
+			const dateRange = getDateRange(firstDate, lastDate);
+			this.dateRange = dateRange;
+		},
+		msToMinSec: timeFormatter({ padMinutes: false }),
+		selectHeatmapDate(data) {
+			const { dateStr } = data;
+			if (this.selected != null && this.selected.dateStr === dateStr) {
+				this.selected = null;
+			} else {
+				this.selected = data;
 			}
-			this.allDates = allDates;
-
-			this.emptyTimelineStart = getISODay(startAt);
 		}
 	},
 	beforeMount() {
-		this.initializeTimelineData();
+		this.getAllDatesInTimelineRange();
 	}
 };
 </script>
@@ -198,7 +194,7 @@ export default {
 	grid-template-rows: repeat(7, auto);
 	grid-auto-columns: 21px;
 	grid-auto-flow: column;
-	gap: 3px;
+	gap: 2px;
 	height: auto;
 	@apply px-2;
 }
@@ -207,10 +203,17 @@ export default {
 	@apply text-xxs flex items-center text-left leading-none;
 }
 
-.timeline-day {
-	@apply border text-xxs overflow-hidden relative bg-white bg-opacity-80 border-gray-200 rounded-sm;
+.timeline-item {
+	@apply text-xxs overflow-hidden relative bg-opacity-80 flex text-center justify-center items-center text-white;
 	width: 21px;
 	height: 21px;
+	background-color: var(--color);
+}
+.timeline-item.selected {
+	@apply border-2 border-gray-700;
+}
+.timeline-item.empty {
+	@apply bg-gray-100;
 }
 .timeline-color {
 	@apply absolute inset-0;
