@@ -10,18 +10,24 @@
 			<div
 				v-for="item in dateRangeColors"
 				:key="item.dateStr"
-				class="timeline-item"
+				class="timeline-item cursor-pointer"
 				:class="{ empty: item.data.totalPlayed < 1, selected: selected && selected.dateStr === item.dateStr }"
 				:style="{ '--color': item.color }"
-				@click="selectHeatmapDate(item.data)"
+				@mouseover="selectHeatmapDate(item.data)"
+				@mouseout="deselectHeatmapDate(item.data)"
 			>
 			</div>
 		</div>
-		<div class="text-xs h-12 flex flex-col justify-evenly px-8">
+		<div
+			class="heatmap-item-info text-xs h-16 flex items-center px-8"
+			:class="{active: selected != null}"
+		>
 			<template v-if="selected">
-			<div>{{selected.dateStr}}</div>
-			<div v-if="selected.totalPlayed">Played: {{selected.totalPlayed}}, total time: {{selected.totalTimeFormatted}}</div>
-			<div v-else>No puzzles played this day</div>
+				<span class="flex flex-col justify-center px-2 py-1 w-full">
+					<div>{{selected.dateStr}}</div>
+					<div v-if="selected.totalPlayed">Played: {{selected.totalPlayed}}, total time: {{selected.totalTimeFormatted}}</div>
+					<div v-else>No puzzles played this day</div>
+				</span>
 			</template>
 		</div>
 	</section>
@@ -180,6 +186,12 @@ export default {
 			} else {
 				this.selected = data;
 			}
+		},
+		deselectHeatmapDate(data) {
+			const { dateStr } = data;
+			if (this.selected != null && this.selected.dateStr === dateStr) {
+				this.selected = null;
+			}
 		}
 	},
 	beforeMount() {
@@ -215,8 +227,10 @@ export default {
 .timeline-item.empty {
 	@apply bg-gray-100;
 }
-.timeline-color {
-	@apply absolute inset-0;
-	background-color: hsla(123, calc(var(--sat) * 100%), calc(var(--light) * 100%), var(--opacity));
+.heatmap-item-info > span > * {
+	@apply leading-relaxed;
+}
+.heatmap-item-info > span {
+	@apply bg-gray-700 text-gray-50 rounded;
 }
 </style>
