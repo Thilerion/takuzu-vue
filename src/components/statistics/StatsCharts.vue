@@ -88,7 +88,6 @@ export default {
 			const lastDate = new Date();
 
 			const dateRange = getDateRange(firstDate, lastDate);
-			console.log(dateRange);
 
 			const result = [];
 			const dateSummaries = [...this.dateSummaries].reverse();
@@ -97,13 +96,14 @@ export default {
 
 			for (let i = 0; i < dateRange.length; i++) {
 				const date = dateRange[i];
-				if (nextSumm.groupData.distanceFromFirst === i) {
+				if (nextSumm?.groupData?.distanceFromFirst === i) {
 					const { totalPlayed, totalTime } = dateSummaries.pop();
 					result.push({ date, totalPlayed, totalTime });
 					nextSumm = dateSummaries[dateSummaries.length - 1];
 				} else {
 					result.push({ date, totalPlayed: 0, totalTime: 0 });
 				}
+				
 			}
 			return result;
 		},

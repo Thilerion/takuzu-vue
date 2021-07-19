@@ -2,8 +2,7 @@
 	<div class="flex flex-col">
 		<PageHeader hide-back>Statistics</PageHeader>
 		<AdvancedStats
-			v-bind="advancedStats"
-			v-if="advancedStats != null && showStats"
+			v-if="showStats"
 			:key="lastStatChange"
 		/>
 		<div class="py-4 px-8 text-center" v-else-if="!showStats && statsDataLoaded">
@@ -21,7 +20,7 @@
 </template>
 
 <script>
-import { clearPuzzleHistory, getAllStats, exportPuzzleHistory, importPuzzleHistory } from '@/services/stats';
+import { clearPuzzleHistory, exportPuzzleHistory, importPuzzleHistory } from '@/services/stats';
 import AdvancedStats from '@/components/statistics/AdvancedStats.vue';
 import { importPeak } from '@/services/stats/db';
 
@@ -31,8 +30,6 @@ export default {
 		return {
 			exportInProgress: false,
 			lastStatChange: Date.now(),
-
-			advancedStats: null,
 		}
 	},
 	computed: {
@@ -115,21 +112,9 @@ export default {
 				this.updateStats();
 			}
 		},
-		async getAdvancedStatsData() {
-			try {
-				const r = await getAllStats();
-				console.log(r);
-				this.advancedStats = r;
-			} catch(e) {
-				console.warn('Error while trying to get all (advanced) stats.');
-				console.log(e);
-				this.advancedStats = null;
-			}
-		},
 		updateStats(withReset = true) {
 			if (withReset) this.$store.dispatch('statsData/reset');
 			this.$store.dispatch('statsData/initialize');
-			this.getAdvancedStatsData();
 		}
 	},
 	beforeMount() {

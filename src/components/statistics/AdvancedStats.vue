@@ -19,11 +19,12 @@
 			</div>
 			<div class="stats-line">
 				<span class="label">Current daily streak:</span>
-				<span class="value-1">{{currentStreak}}</span>
+				<span class="value-1"><span>{{currentStreak.length}}</span><span class="font-bold" v-if="currentStreak.length && !currentStreak.active"> (!)</span></span>
+			
 			</div>
 			<div class="stats-line">
 				<span class="label">Longest daily streak:</span>
-				<span class="value-1">{{longestStreak}}</span>
+				<span class="value-1">{{longestStreak.length}}</span>
 			</div>
 		</div>
 	</section>
@@ -140,22 +141,7 @@ import CalendarHeatmap from './CalendarHeatmap.vue';
 import StatsCharts from './StatsCharts.vue';
 import StatsSummaryCard from './StatsSummaryCard.vue';
 import { mapGetters, mapState } from 'vuex';
-
-/* required data and how to get it:
-	- puzzles by difficulty (list of items with difficulty)
-	- puzzles by puzzle type (items require a puzzle type, generated from puzzle dimensions)
-	
-	- daily streak: generated from daily overview, streak is longest sequence of days with puzzles solved > 0
-
-	Puzzles in groups:
-	- difficulty
-	- size
-	- boardType, related to size
-	- size+difficulty
-	- day
-
-	Each item in these groups requires: difficulty, boardType, date/day, size (wxh), etc
-*/
+import { differenceInCalendarDays, isToday, isYesterday } from 'date-fns';
 
 export default {
 	components: { 
@@ -163,11 +149,7 @@ export default {
 		StatsCharts,
 		StatsSummaryCard
 	},
-	inheritAttrs: false,	
-	props: {
-		currentStreak: Number,
-		longestStreak: Number,
-	},
+	inheritAttrs: false,
 	data() {
 		return {
 		}
@@ -186,7 +168,62 @@ export default {
 			'difficultySummaries',
 			'difficultySizeSummaries',
 			'dateSummaries',
+			'allDatesWithPuzzlesSolved',
 		]),
+
+		dateStreaks() {
+			const dates = this.allDatesWithPuzzlesSolved;
+
+			let prevDate = dates[0];
+			let currentStreak = [prevDate];
+
+			const streaks = [];
+
+			for (let i = 1; i < dates.length; i++) {
+				const curDate = dates[i];
+				const diff = differenceInCalendarDays(curDate, prevDate);
+				if (diff === 1) {
+					currentStreak.push(curDate);
+				} else if (diff > 1) {
+					streaks.push(currentStreak);
+					currentStreak = [curDate];
+				}
+				prevDate = curDate;
+			}
+			streaks.push(currentStreak);
+			return streaks.filter(val => val.length > 0);
+		},
+		longestStreak() {
+			if (!this.dateStreaks.length) return { length: 0 };
+
+			const longest = this.dateStreaks.reduce((acc, val) => {
+				if (val.length >= acc.length) return val;
+				return acc;
+			}, []);
+			const length = longest.length;
+			const from = longest[0];
+			const to = longest[length - 1];
+			return { length, from, to };
+		},
+		currentStreak() {
+			if (!this.dateStreaks.length) return { length: 0 };
+			const last = this.dateStreaks[this.dateStreaks.length - 1];
+			const lastDate = last[last.length - 1];
+
+			if (isToday(lastDate)) {
+				const length = last.length;
+				const from = last[0];
+				const to = last[last.length - 1];
+				return { length, from, to, active: true };
+			} else if (isYesterday(lastDate)) {
+				const length = last.length;
+				const from = last[0];
+				const to = last[last.length - 1];
+				return { length, from, to, active: false };
+			} else {
+				return { length: 0 };
+			}
+		},
 		averageTotal() {
 			return this.totalTime / this.totalPlayed;
 		},

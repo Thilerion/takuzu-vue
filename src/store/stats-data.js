@@ -169,6 +169,13 @@ export const statsDataModule = {
 				result.push(groupResult);
 			}
 			return result;
+		},
+
+		allDatesWithPuzzlesSolved: (state, getters) => {
+			return getters.dateSummaries.map(val => {
+				if (!val.items.length) console.warn({ val });
+				return val.groupData.date;
+			})
 		}
 	},
 
