@@ -4,6 +4,7 @@
 		<AdvancedStats
 			v-bind="advancedStats"
 			v-if="advancedStats != null && showStats"
+			:key="lastStatChange"
 		/>
 		<div class="py-4 px-8 text-center" v-else-if="!showStats && statsDataLoaded">
 			You haven't solved any puzzles yet! Go play some!
@@ -29,6 +30,7 @@ export default {
 	data() {
 		return {
 			exportInProgress: false,
+			lastStatChange: Date.now(),
 
 			advancedStats: null,
 		}
@@ -55,9 +57,7 @@ export default {
 				
 				clearPuzzleHistory().then(() => {
 					window.alert('Puzzle statistics and puzzle history have succesfully been reset.');
-					this.$store.dispatch('statsData/reset');
-					this.$store.dispatch('statsData/initialize');
-					this.getAdvancedStatsData();
+					this.updateStats();
 				}).catch(e => {
 					const str = `[ERROR]: Puzzle statistics and history could not be reset due to error: ${e.toString()}`;
 					window.alert(str);
@@ -112,7 +112,7 @@ export default {
 			} catch(e) {
 				window.alert('Error encountered while importing stats... Sorry!');
 			} finally {
-				this.getAdvancedStatsData();
+				this.updateStats();
 			}
 		},
 		async getAdvancedStatsData() {
@@ -125,15 +125,25 @@ export default {
 				console.log(e);
 				this.advancedStats = null;
 			}
+		},
+		updateStats(withReset = true) {
+			if (withReset) this.$store.dispatch('statsData/reset');
+			this.$store.dispatch('statsData/initialize');
+			this.getAdvancedStatsData();
 		}
 	},
 	beforeMount() {
-		this.$store.dispatch('statsData/initialize');
-		this.getAdvancedStatsData();
+		this.updateStats(false);
 
 	},
 	unmounted() {
 		this.$store.dispatch('statsData/reset');
+	},
+	watch: {
+		puzzlesSolved(newValue, oldValue) {
+			console.log({newValue, oldValue});
+			this.lastStatChange = Date.now();
+		}
 	}
 };
 </script>
