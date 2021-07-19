@@ -1,6 +1,7 @@
 import { dimensionsToBoardType, getAllBoardPresetSizes, getAllDifficultyValues, getAllSizeDifficultyCombinations } from "@/config";
 import { getAllHistoryItems, getPuzzlesSolved, summarizeStatGroup } from "@/services/stats/data-handling";
 import { groupBy } from "@/utils/array.utils";
+import { parse, startOfDay, compareAsc, differenceInCalendarDays, addHours } from 'date-fns';
 
 const presetSizes = getAllBoardPresetSizes().map(({ width, height }) => {
 	return `${width}x${height}`;
@@ -124,6 +125,42 @@ export const statsDataModule = {
 					...sizeDiffCombiData,
 					groupType: 'sizeDiffCombi'
 				}
+				const groupResult = {
+					...summary,
+					groupData,
+					items
+				}
+				result.push(groupResult);
+			}
+			return result;
+		},
+
+		dateSummaries: (state, getters) => {
+			const groupsObj = getters.groupedByDate;
+			const result = [];
+			const sortedItems = Object.entries(groupsObj).map(([dateStr, items]) => {
+				const date = parse(dateStr + ' 12:00', 'yyyy-MM-dd HH:mm', new Date());
+				return { dateStr, date, items };
+			}).sort((a, b) => compareAsc(a.date, b.date));
+
+			const today = addHours(startOfDay(new Date()), 12);
+
+			const first = sortedItems[0];
+			const last = sortedItems[sortedItems.length - 1];
+			const { date: firstDate } = first;
+			const { date: lastDate } = last;
+
+			for (const {dateStr, date, items} of sortedItems) {
+				if (!items.length) continue;
+				const summary = summarizeStatGroup(items);
+				const groupData = {
+					dateStr,
+					date,
+					groupType: 'daily',
+					distanceFromFirst: differenceInCalendarDays(date, firstDate),
+					distanceFromLast: differenceInCalendarDays(lastDate, date),
+					distanceFromToday: differenceInCalendarDays(today, date)
+				};
 				const groupResult = {
 					...summary,
 					groupData,
