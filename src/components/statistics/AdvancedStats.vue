@@ -29,7 +29,6 @@
 	</section>
 	<StatsCharts
 		:difficulty-counts="difficultyCounts"
-		:daily-stats="dailyStats"
 		:board-type-counts="boardTypeCounts"
 	/>
 	<CalendarHeatmap
@@ -167,7 +166,6 @@ export default {
 	props: {
 		currentStreak: Number,
 		longestStreak: Number,
-		dailyStats: Array,
 	},
 	inheritAttrs: false,
 	data() {

@@ -47,6 +47,7 @@ import PieChart from './PieChart.vue'
 
 import { parse } from 'date-fns';
 import { boardTypes, DIFFICULTY_LABELS } from '@/config';
+import { getDateRange } from '@/utils/date.utils';
 
 export default {
 	components: {
@@ -55,10 +56,6 @@ export default {
 	},
 	props: {
 		difficultyCounts: {
-			type: Array,
-			required: true
-		},
-		dailyStats: {
 			type: Array,
 			required: true
 		},
@@ -80,26 +77,53 @@ export default {
 		}
 	},
 	computed: {
+		dateSummaries() {
+			return this.$store.getters['statsData/dateSummaries'];
+		},
+		dateSummariesFilledFromRange() {
+			const firstDate = this.dateSummaries[0].groupData.date;
+			const lastDate = new Date();
+
+			const dateRange = getDateRange(firstDate, lastDate);
+			console.log(dateRange);
+
+			const result = [];
+			const dateSummaries = [...this.dateSummaries].reverse();
+
+			let nextSumm = dateSummaries[dateSummaries.length - 1];
+
+			for (let i = 0; i < dateRange.length; i++) {
+				const date = dateRange[i];
+				if (nextSumm.groupData.distanceFromFirst === i) {
+					const { totalPlayed, totalTime } = dateSummaries.pop();
+					result.push({ date, totalPlayed, totalTime });
+					nextSumm = dateSummaries[dateSummaries.length - 1];
+				} else {
+					result.push({ date, totalPlayed: 0, totalTime: 0 });
+				}
+			}
+			return result;
+		},
 		boardTypeCountsData() {
 			return this.boardTypeLabels.map(typeName => {
 				return this.boardTypeCounts[typeName] || 0;
 			})
 		},
 		solvedPerDay() {
-			return this.dailyStats.map(obj => {
-				const { amount, date } = obj;
-				const parsedDate = parse(date, 'yyyy-MM-dd', new Date());
-				return { x: parsedDate, y: amount};
-			})
+			const maxDisplayed = 60;
+			const arr = [...this.dateSummariesFilledFromRange].slice(maxDisplayed * -1);
+			return arr.map(({ date, totalPlayed }) => {
+				return { x: date, y: totalPlayed};
+			});
 		},
 		timeSpentPerDay() {
-			return this.dailyStats.map(obj => {
-				const { totalTime, date } = obj;
-				const parsedDate = parse(date, 'yyyy-MM-dd', new Date());
+			const maxDisplayed = 60;
+			const arr = [...this.dateSummariesFilledFromRange].slice(maxDisplayed * -1);
+			return arr.map(({ date, totalTime }) => {
 				const minutesPlayed = totalTime / 60 / 1000;
 				const minutesRounded = Math.round(minutesPlayed * 100) / 100;
-				return { x: parsedDate, y: minutesRounded };
-			})
+				return { x: date, y: minutesRounded};
+			});
 		},
 		totalSolvedByDay() {
 			const result = [];

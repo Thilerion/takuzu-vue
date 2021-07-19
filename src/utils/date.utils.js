@@ -1,11 +1,9 @@
-export const isSameDay = (dateA, dateB) => {
-	return dateA.getFullYear() === dateB.getFullYear() && dateA.getMonth() === dateB.getMonth() && dateA.getDate() === dateB.getDate();
-}
+import { addDays, isSameDay } from 'date-fns';
+
+export { isSameDay };
 
 export const getNextDay = date => {
-	const nextDay = new Date(date);
-	nextDay.setDate(nextDay.getDate() + 1);
-	return nextDay;
+	return addDays(date, 1);
 }
 
 export const isNextDay = (dateA, dateB) => {
@@ -23,6 +21,14 @@ export const formatBasicSortableDateKey = (date) => {
 		`00${d.getMonth() + 1}`.slice(-2),
 		`00${d.getDate()}`.slice(-2),
 	].join('-');
+}
+
+export const getDateRange = (startDate, endDate = new Date()) => {
+	const arr = [];
+	for (let d = startDate; d <= endDate; d = getNextDay(d)) {
+		arr.push(d);
+	}
+	return arr;
 }
 
 export const timeFormatter = (formatOptions) => {
