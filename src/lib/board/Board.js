@@ -34,6 +34,9 @@ export class SimpleBoard {
 		const grid = array2d(width, height, EMPTY);
 		return new SimpleBoard(grid);
 	}
+	static import(exportStr) {
+		return SimpleBoard.fromString(exportStr);
+	}
 	static fromString(exportedStr) {
 		const [dimensions, boardStr] = exportedStr.split(';');
 		const [width, height] = dimensions.split('x').map(Number);

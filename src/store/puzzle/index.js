@@ -202,6 +202,7 @@ const puzzleModule = {
 
 				return;
 			} catch (e) {
+				console.warn(e);
 				console.log('Error in getting puzzle from database. Proceeding the old-fashioned way.');
 			}
 			
