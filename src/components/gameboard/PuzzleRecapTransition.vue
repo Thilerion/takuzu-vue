@@ -135,8 +135,13 @@ export default {
 		},
 		afterLeaveOuter() {
 			setTimeout(() => {
-				this.reset();
-				this.afterLeaveAction();
+				try {
+					this.reset();
+					this.afterLeaveAction();
+				} catch(e) {
+					console.warn(e);
+					console.warn('Element was probably destroyed before timeout was finished');
+				}
 			}, 100);
 		},
 		afterEnterBackdrop() {
