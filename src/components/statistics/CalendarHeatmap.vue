@@ -1,6 +1,5 @@
 <template>
-	<section class="overflow-x-hidden max-w-full bg-white py-4">
-		<h2 class="text-lg font-medium pb-2">Heatmap</h2>
+	<section class="overflow-x-hidden">
 		<div class="heatmap-grid overflow-x-auto">
 			<div
 				class="weekday"
@@ -21,14 +20,13 @@
 		<div
 			class="heatmap-item-info text-xs h-16 flex items-center px-8"
 			:class="{active: selected != null}"
+			v-if="selected"
 		>
-			<template v-if="selected">
 				<span class="flex flex-col justify-center px-2 py-1 w-full">
 					<div>{{selected.dateStr}}</div>
 					<div v-if="selected.totalPlayed">Played: {{selected.totalPlayed}}, total time: {{selected.totalTimeFormatted}}</div>
 					<div v-else>No puzzles played this day</div>
 				</span>
-			</template>
 		</div>
 	</section>
 </template>

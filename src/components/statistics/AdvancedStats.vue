@@ -7,35 +7,16 @@
 		<StatsSummaryCard color='rose' title="Favorite difficulty" :value="favorites.difficulty" />
 	</section>
 	<section class="section-block mb-8">
-		<!-- <h2 class="text-lg font-medium pb-2">Overall</h2> -->
-		<div class="stats-group stats-card">
-			<div class="stats-line">
-				<span class="label">Puzzles solved:</span>
-				<span class="value-1">{{totalPlayed}}</span>
-			</div>
-			<div class="stats-line">
-				<span class="label">Average time:</span>
-				<span class="value-1">{{msToMinSec(totalTime / totalPlayed)}}</span>
-			</div>
-			<div class="stats-line">
-				<span class="label">Current daily streak:</span>
-				<span class="value-1"><span>{{currentStreak.length}}</span><span class="font-bold" v-if="currentStreak.length && !currentStreak.active"> (!)</span></span>
-			
-			</div>
-			<div class="stats-line">
-				<span class="label">Longest daily streak:</span>
-				<span class="value-1">{{longestStreak.length}}</span>
-			</div>
-		</div>
+		<h2 class="text-lg font-medium pb-2">Play activity</h2>
+		<ActivityStats
+			:dailyItems="dateSummaries"
+			:longest-streak="longestStreak"
+			:current-streak="currentStreak"
+		/>
 	</section>
 	<StatsCharts
 		:difficulty-counts="difficultyCounts"
 		:board-type-counts="boardTypeCounts"
-	/>
-	<CalendarHeatmap
-		:daily-items="dateSummaries"
-		v-if="dateSummaries && dateSummaries.length > 0"
-		class="section-block mb-8"
 	/>
 	<section class="section-block mb-8">
 		<h2 class="text-lg font-medium pb-2">Most played</h2>
@@ -137,17 +118,17 @@
 <script>
 import { boardTypes } from '@/config';
 import { timeFormatter } from '@/utils/date.utils';
-import CalendarHeatmap from './CalendarHeatmap.vue';
 import StatsCharts from './StatsCharts.vue';
 import StatsSummaryCard from './StatsSummaryCard.vue';
+import ActivityStats from './ActivityStats.vue';
 import { mapGetters, mapState } from 'vuex';
 import { differenceInCalendarDays, isToday, isYesterday } from 'date-fns';
 
 export default {
 	components: { 
-		CalendarHeatmap,
 		StatsCharts,
-		StatsSummaryCard
+		StatsSummaryCard,
+		ActivityStats,
 	},
 	inheritAttrs: false,
 	data() {
