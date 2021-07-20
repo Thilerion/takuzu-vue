@@ -15,13 +15,31 @@ export default function applyEliminationConstraint(board, options = {}) {
 	let filledLines = findFilledLines(allLines, enforceUniqueLines);
 
 	// TODO: filter here instead of checking during the loop
-	const linesToProcess = [...allLines];
+	const linesToProcess = [...allLines].filter(boardLine => {
+		if (boardLine.isFilled) return false;
+		if (boardLine.numFilled <= 1) return false;
+		if (maxLeast != null && boardLine.getLeastRemaining() > maxLeast) return false;
+		return true;
+	}).sort((a, b) => {
+		// chance for a result is largest when difference between least and most is largest
+		// and we want the easiest results first
+
+		const aLeast = a.getLeastRemaining();
+		const bLeast = b.getLeastRemaining();
+
+		if (aLeast !== bLeast) {
+			return aLeast - bLeast;
+		}
+
+		const aMost = a.getMostRemaining();
+		const bMost = b.getMostRemaining();
+		if (aMost !== bMost) {
+			return bMost - aMost;
+		}
+		return 0;
+	})
 
 	for (const boardLine of linesToProcess) {
-
-		if (boardLine.isFilled) continue;
-		if (boardLine.numFilled <= 1) continue;
-		if (maxLeast != null && boardLine.getLeastRemaining() > maxLeast) continue;
 
 		const filled = filledLines[boardLine.type];
 

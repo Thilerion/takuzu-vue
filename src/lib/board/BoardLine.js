@@ -128,6 +128,11 @@ export class BoardLine {
 		const zeroRemaining = this.getValueRemaining(ZERO);
 		return Math.min(zeroRemaining, oneRemaining);
 	}
+	getMostRemaining() {
+		const oneRemaining = this.getValueRemaining(ONE);
+		const zeroRemaining = this.getValueRemaining(ZERO);
+		return Math.max(zeroRemaining, oneRemaining);
+	}
 
 	// STRINGIFY METHODS
 	toString() {
