@@ -27,8 +27,14 @@ class WakeLock {
 	}
 
 	destroy() {
-		this.disable();
-		this.removeVisListener();
+		if (this.enabled) {
+			this.disable();
+			this.removeVisListener();
+		} else {
+			if (this.removeVisListener != null) {
+				console.warn('Wake lock not enabled but there is a visListener??');
+			}
+		}
 	}
 
 	get enabled() {
