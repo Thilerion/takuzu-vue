@@ -1,5 +1,5 @@
 import { COLUMN, EMPTY, ONE, ROW, ZERO } from "../constants";
-import { array2d, cloneArray2d, columnIdToX, count, generateColumnIds, generateRowIds, getCoordsForBoardSize, isValidCellDigit, rowIdToY, shuffle } from "../utils";
+import { array2d, cloneArray2d, columnIdToX, count, deducePuzzleDimensionsFromLength, generateColumnIds, generateRowIds, getCoordsForBoardSize, isExportString, isValidCellDigit, rowIdToY, shuffle } from "../utils";
 import { validateBoard } from "../validate/board";
 import { BoardLine } from "./BoardLine";
 import { ThreesUnit } from "./ThreesUnit";
@@ -38,8 +38,23 @@ export class SimpleBoard {
 		return SimpleBoard.fromString(exportStr);
 	}
 	static fromString(exportedStr) {
-		const [dimensions, boardStr] = exportedStr.split(';');
-		const [width, height] = dimensions.split('x').map(Number);
+		const data = { width: null, height: null, boardStr: exportedStr };
+		if (isExportString(exportedStr)) {
+			const [dimensions, boardStr] = exportedStr.split(';');
+			const [width, height] = dimensions.split('x').map(Number);
+			data.width = width;
+			data.height = height;
+			data.boardStr = boardStr;
+		} else {
+			const { width, height } = deducePuzzleDimensionsFromLength(exportedStr.length);
+			data.width = width;
+			data.height = height;
+		}
+
+		if (boardStr.length < width * height) {
+			console.warn(`Unexpected boardStr size, smaller than board dimensions (str len: ${boardStr.length}, dimensions: ${width}x${height}=${width * height})`);
+		}
+
 		const grid = [];
 		for (let y = 0; y < height; y++) {
 			const row = [];

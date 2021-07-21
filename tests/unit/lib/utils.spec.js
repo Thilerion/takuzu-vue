@@ -1,5 +1,5 @@
 import { EMPTY, ONE, ZERO } from '../../../src/lib/constants';
-import { getCoordsForBoardSize, isValidCellDigit, areLinesEqual } from '../../../src/lib/utils';
+import { getCoordsForBoardSize, isValidCellDigit, areLinesEqual, deducePuzzleDimensionsFromLength } from '../../../src/lib/utils';
 
 describe('board and puzzle utils', () => {
 	
@@ -45,5 +45,35 @@ describe('board and puzzle utils', () => {
 			[true, null, -1, ONE, ZERO, EMPTY],
 			[true, null, -1, ONE, ZERO, EMPTY]
 		)).toBe(true);
+	})
+
+	describe('deducePuzzleDimensionsFromLength', () => {
+		test('width odd line length', () => {
+			const expectVal = (size) => ({ width: size, height: size });
+			expect(deducePuzzleDimensionsFromLength(11 * 11)).toStrictEqual(expectVal(11));
+			expect(deducePuzzleDimensionsFromLength(5 * 5)).toStrictEqual(expectVal(5));
+			expect(deducePuzzleDimensionsFromLength(1 * 1)).toStrictEqual(expectVal(1));
+		})
+
+		test('with square size', () => {
+			const expectVal = (size) => ({ width: size, height: size });
+			expect(deducePuzzleDimensionsFromLength(2 * 2)).toStrictEqual(expectVal(2));
+			expect(deducePuzzleDimensionsFromLength(10 * 10)).toStrictEqual(expectVal(10));
+			expect(deducePuzzleDimensionsFromLength(16 * 16)).toStrictEqual(expectVal(16));
+
+			const diffA = deducePuzzleDimensionsFromLength(16 * 10);
+			expect(diffA.width).not.toBeCloseTo(diffA.height);
+		})
+
+		test('width rectangular size', () => {
+			const expectVal = (width, height) => ({ width, height });
+
+			expect(deducePuzzleDimensionsFromLength(10 * 16)).toStrictEqual(expectVal(10, 16));
+			expect(deducePuzzleDimensionsFromLength(12 * 16)).toStrictEqual(expectVal(12, 16));
+			expect(deducePuzzleDimensionsFromLength(4 * 14)).toStrictEqual(expectVal(4, 14));
+			expect(deducePuzzleDimensionsFromLength(6 * 10)).toStrictEqual(expectVal(6, 10));
+
+			expect(() => deducePuzzleDimensionsFromLength(11 * 12)).toThrow();
+		})
 	})
 })

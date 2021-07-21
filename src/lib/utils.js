@@ -148,3 +148,42 @@ export const sortLineValues = (values) => {
 		return lineValueOrder.indexOf(a) - lineValueOrder.indexOf(b);
 	})
 }
+
+const exportStrRegex = /^\d{1,2}x\d{1,2};([.01])+/g;
+export const isExportString = (str) => {
+	return exportStrRegex.test(str);
+}
+
+function getValidRectPuzzleDimensions() {
+	const sizes = [4, 6, 8, 10, 12, 14, 16, 18, 20];
+	const result = new Map();
+	for (let i = 0; i < sizes.length - 1; i++) {
+		for (let j = i + 1; j < sizes.length; j++) {
+			const w = sizes[i];
+			const h = sizes[j];
+			const length = w * h;
+			result.set(length, [w, h]);
+		}
+	}
+	return result;
+}
+const puzzleSizeMap = getValidRectPuzzleDimensions();
+export const deducePuzzleDimensionsFromLength = (length) => {
+	const sqrt = Math.sqrt(length);
+	if (length % 2 === 1 && sqrt % 1 === 0) {
+		// odd
+		return { width: sqrt, height: sqrt };
+	}
+	if (sqrt % 1 === 0 && sqrt % 2 === 0) {
+		// square
+		return { width: sqrt, height: sqrt };
+	}
+
+	// rect
+	if (puzzleSizeMap.has(length)) {
+		const [width, height] = puzzleSizeMap.get(length);
+		return { width, height };
+	}
+
+	throw new Error(`Cannot deduce correct puzzle size from this length (${length})`);
+}
