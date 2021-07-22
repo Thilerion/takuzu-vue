@@ -149,9 +149,9 @@ export const sortLineValues = (values) => {
 	})
 }
 
-const exportStrRegex = new RegExp('^\\d{1,2}x\\d{1,2};([.01])+', 'g');
+const exportStrRegex = /^\d{1,2}x\d{1,2};([.01]){4,}$/;
 export const isExportString = (str) => {
-	return !!str.match(exportStrRegex);
+	return exportStrRegex.test(str);
 }
 
 function getValidRectPuzzleDimensions() {
@@ -162,7 +162,19 @@ function getValidRectPuzzleDimensions() {
 			const w = sizes[i];
 			const h = sizes[j];
 			const length = w * h;
-			result.set(length, [w, h]);
+			if (result.has(length)) {
+				const [w2, h2] = result.get(length);
+				const bestAspectRatio = 1.5;
+				const aspectRatioCurrent = h2 / w2;
+				const aspectRatioNew = h / w;
+				const diffA = Math.abs(bestAspectRatio - aspectRatioCurrent);
+				const diffB = Math.abs(bestAspectRatio - aspectRatioNew);
+				if (diffB < diffA) {
+					result.set(length, [w, h]);
+				}
+			} else {
+				result.set(length, [w, h]);
+			}			
 		}
 	}
 	return result;
