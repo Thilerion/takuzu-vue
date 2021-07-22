@@ -39,7 +39,8 @@ export class SimpleBoard {
 	}
 	static fromString(exportedStr) {
 		const data = { width: null, height: null, boardStr: exportedStr };
-		if (isExportString(exportedStr)) {
+		const isExport = isExportString(exportedStr);
+		if (isExport) {
 			const [dimensions, boardStr] = exportedStr.split(';');
 			const [width, height] = dimensions.split('x').map(Number);
 			data.width = width;
@@ -51,6 +52,7 @@ export class SimpleBoard {
 			data.height = height;
 		}
 
+		const { width, height, boardStr } = data;
 		if (boardStr.length < width * height) {
 			console.warn(`Unexpected boardStr size, smaller than board dimensions (str len: ${boardStr.length}, dimensions: ${width}x${height}=${width * height})`);
 		}

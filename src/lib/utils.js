@@ -149,9 +149,9 @@ export const sortLineValues = (values) => {
 	})
 }
 
-const exportStrRegex = /^\d{1,2}x\d{1,2};([.01])+/g;
+const exportStrRegex = new RegExp('^\\d{1,2}x\\d{1,2};([.01])+', 'g');
 export const isExportString = (str) => {
-	return exportStrRegex.test(str);
+	return !!str.match(exportStrRegex);
 }
 
 function getValidRectPuzzleDimensions() {
