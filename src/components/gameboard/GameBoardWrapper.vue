@@ -95,6 +95,7 @@ export default {
 			if (heightA < maxHeight) {
 				let cellSize = Math.floor(heightA / this.rowsWithRuler);
 				if (cellSize < 12) cellSize = 12;
+				if (cellSize > 80) cellSize = 80;
 				const w = cellSize * this.columns;
 				const h = cellSize * this.rows;
 				return { width: w + 'px', height: h + 'px', cellSize };
@@ -102,6 +103,7 @@ export default {
 			const widthB = maxHeight * this.aspectRatio;
 			let cellSize = Math.floor(widthB / this.columnsWithRuler);
 			if (cellSize < 12) cellSize = 12;
+			if (cellSize > 80) cellSize = 80;
 			const w = cellSize * this.columns;
 			const h = cellSize * this.rows;
 			return { width: w + 'px', height: h + 'px', cellSize };
@@ -165,14 +167,14 @@ export default {
 }
 .puzzle-wrapper.cell-size-m {
 	--grid-gap: 1px;
-	--cell-rounding: theme(borderRadius.DEFAULT);
+	--cell-rounding: theme(borderRadius.sm);
 }
 .puzzle-wrapper.cell-size-l {
 	--grid-gap: 2px;
-	--cell-rounding: theme(borderRadius.md);
+	--cell-rounding: theme(borderRadius.DEFAULT);
 }
 .puzzle-wrapper.cell-size-xl {
 	--grid-gap: 4px;
-	--cell-rounding: theme(borderRadius.md);
+	--cell-rounding: theme(borderRadius.sm);
 }
 </style>
