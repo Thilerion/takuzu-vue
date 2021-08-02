@@ -162,7 +162,7 @@ export class SimpleBoard {
 		}
 	}
 	_set(x, y, value) {
-		this.grid[y].splice(x, 1, value);
+		this.grid[y][x] = value;
 		return this;
 	}
 
