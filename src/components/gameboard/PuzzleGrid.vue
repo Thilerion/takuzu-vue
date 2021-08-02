@@ -3,26 +3,21 @@
 		class="puzzle-grid"
 		:class="[`cell-theme-${cellTheme}`]"
 	>
-		<template
-			v-for="(_row, rowIdx) in rows"
-			:key="rowIdx"
-		>
-			<PuzzleCell
-				v-for="(_col, colIdx) in columns"
-				class="cell"
-				:key="colIdx"
-				:data-row="rowIdx"
-				:data-col="colIdx"
-				@click="cellClick"
-				:x="colIdx"
-				:y="rowIdx"
-				:value="grid[rowIdx][colIdx]"
-				:theme="cellTheme"
-				:hidden="paused"
-				:incorrect="incorrectMarkedCells.includes(`${colIdx},${rowIdx}`)"
-				:style="{ '--x': colIdx, '--y': rowIdx }"
-			></PuzzleCell>
-		</template>
+		<PuzzleCell
+			v-for="cellCoords in coords"
+			:key="cellCoords.key"
+			:x="cellCoords.x"
+			:y="cellCoords.y"
+			class="cell"
+			:data-row="cellCoords.y"
+			:data-col="cellCoords.x"
+			@click="cellClick"
+			:value="grid[cellCoords.y][cellCoords.x]"
+			:theme="cellTheme"
+			:hidden="paused"
+			:incorrect="incorrectMarkedCells.includes(`${cellCoords.x},${cellCoords.y}`)"
+			:style="{ '--x': cellCoords.x, '--y': cellCoords.y }"
+		/>
 
 		<PuzzleGridHighlights />
 	</div>
@@ -50,7 +45,11 @@ export default {
 	emits: ['toggle-cell'],
 	data() {
 		return {
-			VIBRATE_DURATION: 20,	
+			VIBRATE_DURATION: 20,
+			nRows: 0,
+			nCols: 0,
+			nCells: 0,
+			coords: [],
 		}
 	},
 	computed: {
@@ -83,6 +82,20 @@ export default {
 			trailing: true,
 			maxWait: this.VIBRATE_DURATION * 2
 		});
+	},
+	beforeMount() {
+		this.nRows = this.rows;
+		this.nCols = this.columns;
+		this.nCells = this.nRows * this.nCols;
+		const coords = [];
+		let idx = 0;
+		for (let y = 0; y < this.nRows; y++) {
+			for (let x = 0; x < this.nCols; x++) {
+				coords.push({x, y, key: x + ',' + y, idx});
+				idx += 1;
+			}
+		}
+		this.coords = coords;
 	}
 };
 </script>

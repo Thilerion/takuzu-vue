@@ -81,7 +81,7 @@ export default {
 			const { x, y, value } = this;
 			this.$emit('click', { x, y, value });
 		}
-	}
+	},
 };
 </script>
 
@@ -106,7 +106,7 @@ export default {
 }
 
 .cell-btn {
-	@apply flex justify-center items-center bg-opacity-0 focus:outline-none relative;
+	@apply flex justify-center items-center bg-opacity-0 focus:outline-none relative overflow-hidden;
 	width: calc(var(--cell-size) - var(--grid-gap));
 	height: calc(var(--cell-size) - var(--grid-gap));
 }
