@@ -149,13 +149,13 @@ export default {
 .cell-btn:active .cell-tap-shadow {
 	@apply opacity-100;
 	/* easeOutCirc */
-	transition: opacity .1s cubic-bezier(0, 0.55, 0.45, 1);
+	transition: opacity .05s cubic-bezier(0, 0.55, 0.45, 1);
 }
 .cell-btn:disabled .cell-tap-shadow {
 	@apply ring-0;
 }
 .cell-tap-shadow {
-	transition: opacity 2s cubic-bezier(.97,.25,.16,.71) .15s;
+	transition: opacity 0.5s cubic-bezier(.97,.25,.16,.71) .6s;
 }
 /* END Tap active animation */
 
