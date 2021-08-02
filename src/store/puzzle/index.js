@@ -11,6 +11,13 @@ import { COLUMN, EMPTY, ONE, ROW, ZERO } from '@/lib/constants';
 import { getPuzzle } from '@/services/puzzles-db/db';
 import { initPregenWorker } from '@/workers/pregen-puzzles';
 
+// TODO: transform counts inside relevant components
+const transformCount = lineCount => {
+	const zero = lineCount[ZERO];
+	const one = lineCount[ONE];
+	return [zero, one];
+}
+
 const defaultState = () => ({
 	// game config
 	width: null,
@@ -69,11 +76,6 @@ const puzzleModule = {
 			return progress;
 		},
 		currentCounts: state => {
-			const transformCount = lineCount => {
-				const zero = lineCount[ZERO];
-				const one = lineCount[ONE];
-				return [zero, one];
-			}
 			const row = state.rowCounts.map(transformCount);
 			const column = state.colCounts.map(transformCount);
 			return { [ROW]: row, [COLUMN]: column };
@@ -130,17 +132,14 @@ const puzzleModule = {
 		setPaused: (state, val) => state.paused = val,
 
 		// puzzle actions
-		setValue: (state, { x, y, value }) => state.board.assign(x, y, value),
-		updateGridCount: (state, { value, amount }) => state.gridCounts[value] += amount,
-		updateRowCount: (state, { lineIndex, value, prevValue }) => {
-			const rowCount = state.rowCounts[lineIndex];
-			rowCount[value] += 1;
-			rowCount[prevValue] -= 1;
-		},
-		updateColumnCount: (state, { lineIndex, value, prevValue }) => {
-			const colCount = state.colCounts[lineIndex];
-			colCount[value] += 1;
-			colCount[prevValue] -= 1;
+		setValue: (state, { x, y, value, prevValue }) => {
+			state.board.assign(x, y, value);
+			state.gridCounts[value] += 1;
+			state.gridCounts[prevValue] -= 1;
+			state.rowCounts[y][value] += 1;
+			state.rowCounts[y][prevValue] -= 1;
+			state.colCounts[x][value] += 1;
+			state.colCounts[x][prevValue] -= 1;
 		},
 	},
 
@@ -158,12 +157,7 @@ const puzzleModule = {
 				prevValue = state.board.grid[y][x];
 				console.log({ prevValue });
 			}
-			commit('setValue', { x, y, value });
-			commit('updateGridCount', { value, amount: 1 });
-			commit('updateGridCount', { value: prevValue, amount: -1 });
-
-			commit('updateRowCount', { lineIndex: y, value, prevValue });
-			commit('updateColumnCount', { lineIndex: x, value, prevValue });
+			commit('setValue', { x, y, value, prevValue });
 
 			commit('assistance/removeFromCurrentMarkedIncorrect', `${x},${y}`);
 			commit('assistance/setHintVisible', false);
