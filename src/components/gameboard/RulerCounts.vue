@@ -21,6 +21,7 @@
 
 <script>
 import debounce from 'lodash.debounce';
+import { COLUMN, ONE, ROW, ZERO } from '@/lib/constants';
 export default {
 	props: {
 		lineType: {
@@ -47,8 +48,24 @@ export default {
 		this.setDebouncedCounts();
 	},
 	methods: {
+		transformLineCount(l) {
+			const zero = l[ZERO];
+			const one = l[ONE];
+			return [zero, one];
+		},
 		setDebouncedCounts() {
-			this.debouncedCounts = this.counts;
+			const counts = this.counts.map(l => this.transformLineCount(l));
+			if (this.rulerType === 'count-current') {
+				this.debouncedCounts = counts;
+			} else {
+				const lineType = this.lineType === 'row' ? ROW : COLUMN;
+				const req = this.$store.state.puzzle.board.numRequired[lineType];
+				this.debouncedCounts = counts.map(val => {
+					const zero = req[ZERO] - val[0];
+					const one = req[ONE] - val[1];
+					return [zero, one];
+				})
+			}
 		},
 		checkCountError(amount) {
 			if (amount < 0 && this.rulerType === 'count-remaining') return true;
@@ -68,7 +85,8 @@ export default {
 		counts: {
 			handler() {
 				this.updateCounts();
-			}
+			},
+			deep: true
 		}
 	}
 };

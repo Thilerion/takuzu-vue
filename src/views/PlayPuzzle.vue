@@ -35,11 +35,11 @@
 				</template>
 				<template v-slot:ruler-rows>
 					<RulerCoords v-if="rulerType === 'coords'" line-type="rows" :line-ids="board.rowIds" />
-					<RulerCounts v-else-if="rulerType != null" line-type="rows" :ruler-type="rulerType" :counts="displayCounts[rowKey]" />
+					<RulerCounts v-else-if="rulerType != null" line-type="rows" :ruler-type="rulerType" :counts="rowCounts" />
 				</template>
 				<template v-slot:ruler-columns>
 					<RulerCoords v-if="rulerType === 'coords'" line-type="columns" :line-ids="board.columnIds" />
-					<RulerCounts v-else-if="rulerType != null" line-type="columns" :ruler-type="rulerType" :counts="displayCounts[columnKey]" />
+					<RulerCounts v-else-if="rulerType != null" line-type="columns" :ruler-type="rulerType" :counts="columnCounts" />
 				</template>
 			</GameBoard>
 		</GameBoardWrapper>
@@ -135,10 +135,9 @@ export default {
 		...mapState('puzzle', {
 			rows: state => state.height,
 			columns: state => state.width,
+			rowCounts: state => state.rowCounts,
+			columnCounts: state => state.colCounts,
 		}),
-		...mapGetters('puzzle', [			
-			'currentCounts', 'remainingCounts',
-		]),
 		...mapState('settings', [
 			'showLineInfo'
 		]),

@@ -11,13 +11,6 @@ import { COLUMN, EMPTY, ONE, ROW, ZERO } from '@/lib/constants';
 import { getPuzzle } from '@/services/puzzles-db/db';
 import { initPregenWorker } from '@/workers/pregen-puzzles';
 
-// TODO: transform counts inside relevant components
-const transformCount = lineCount => {
-	const zero = lineCount[ZERO];
-	const one = lineCount[ONE];
-	return [zero, one];
-}
-
 const defaultState = () => ({
 	// game config
 	width: null,
@@ -75,30 +68,6 @@ const puzzleModule = {
 			const progress = 1 - (currentEmpty / initialEmpty);
 			return progress;
 		},
-		currentCounts: state => {
-			const row = state.rowCounts.map(transformCount);
-			const column = state.colCounts.map(transformCount);
-			return { [ROW]: row, [COLUMN]: column };
-		},
-		remainingCounts: (state, getters) => {
-			if (state.board == null) return;
-
-			const currentCounts = getters.currentCounts;
-			const currentRow = currentCounts[ROW];
-			const currentColumn = currentCounts[COLUMN];
-			const requiredRow = state.board.numRequired[ROW];
-			const requiredColumn = state.board.numRequired[COLUMN];
-
-			const remainingRow = currentRow.map(val => {
-				const [zero, one] = val;
-				return [requiredRow[ZERO] - zero, requiredRow[ONE] - one];
-			})
-			const remainingColumn = currentColumn.map(val => {
-				const [zero, one] = val;
-				return [requiredColumn[ZERO] - zero, requiredColumn[ONE] - one];
-			})
-			return { [ROW]: remainingRow, [COLUMN]: remainingColumn };
-		}
 	},
 
 	mutations: {
