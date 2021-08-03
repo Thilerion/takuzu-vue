@@ -7,8 +7,8 @@
 				:key="item.to"
 				:to="item.to"
 			>
-				<span class="material-icons">
-					{{item.icon}}
+				<span class="nav-icon">
+					<VIcon :name="'md-' + item.icon" scale="1.25" :label="item.label" />
 				</span>
 				<span
 					class="nav-link-text"
@@ -19,7 +19,14 @@
 </template>
 
 <script>
+import VIcon from "oh-vue-icons/dist/v3/icon.es";
+import { MdHome, MdLeaderboard, MdSettings, MdMorehoriz } from 'oh-vue-icons/icons';
+VIcon.add(MdHome, MdLeaderboard, MdSettings, MdMorehoriz);
+
 export default {
+	components: {
+		VIcon
+	},
 	data() {
 		return {
 			menuItems: [
@@ -27,7 +34,7 @@ export default {
 				// { label: 'Tools', to: '/tools', icon: 'construction' }, // TODO: Tools page
 				{ label: 'Stats', to: '/stats', icon: 'leaderboard' },
 				{ label: 'Settings', to: { name: 'Settings' }, icon: 'settings' },
-				{ label: 'More', to: '/menu', icon: 'more_horiz' },
+				{ label: 'More', to: '/menu', icon: 'morehoriz' },
 			]
 		}
 	},
@@ -47,11 +54,11 @@ export default {
 .nav-link.router-link-exact-active {
 	@apply text-teal-700 font-semibold opacity-100;
 }
-.nav-link > .material-icons {
+.nav-link > .nav-icon {
 	@apply mb-1 text-current opacity-70;
 	font-size: 24px;
 }
-.nav-link.router-link-exact-active > .material-icons {
+.nav-link.router-link-exact-active > .nav-icon {
 	@apply opacity-90;
 }
 .nav-link {
