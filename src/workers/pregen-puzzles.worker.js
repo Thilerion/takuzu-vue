@@ -39,10 +39,11 @@ async function findPresetsWithoutPuzzles() {
 		})
 	});
 	
-	if (!missingPresets.length) return true;
+	if (!missingPresets.length) return 0;
 
 	const maxTries = missingPresets.length * 6;
 	let i = 0;
+	let numGenerated = 0;
 	while (missingPresets.length) {
 		if (i >= maxTries) break;
 		i++;
@@ -60,6 +61,7 @@ async function findPresetsWithoutPuzzles() {
 			} = data;
 
 			await addPuzzle({ boardStr, solutionStr, width, height, difficulty });
+			numGenerated += 1;
 			missingPresets.splice(nextPresetIdx, 1);
 			console.log('generated puzzle:', { width, height, difficulty });
 		} catch (e) {
@@ -67,13 +69,17 @@ async function findPresetsWithoutPuzzles() {
 		}
 	}
 
-	return true;
+	return numGenerated;
 }
 
 async function initPuzzlePregen() {
-	const result = await findPresetsWithoutPuzzles();
-
-	postMessage({ warning: 'pregen not yet implemented', value: result });
+	
+	try {
+		const result = await findPresetsWithoutPuzzles();
+		postMessage({ success: true, value: result });
+	} catch (e) {
+		postMessage({ error: e });
+	}
 }
 
 addEventListener('message', event => {

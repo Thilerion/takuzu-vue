@@ -65,7 +65,6 @@ export default {
 			if (el.contains(target) || target === el) {
 				return;
 			}
-			console.log('clicked outside');
 			this.close();
 		}
 	},

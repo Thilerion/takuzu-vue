@@ -117,7 +117,6 @@ export default {
 			}			
 		},
 		dropdownToggled(value) {
-			console.log('Dropdown state toggled: ' + value);
 			this.$emit('dropdown-toggled', value);
 		}
 	}

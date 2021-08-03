@@ -18,8 +18,7 @@ export async function initPregenWorker() {
 		const receivedDataPromise = initPregenWorkerReceiver();
 		sendPregenWorkerMessage({ task: 'pregen' });
 		const data = await receivedDataPromise;
-		console.log('Pregen succesfull');
-		console.log({data});
+		console.log('Pregen succesful. Amount generated:', data.value);
 	} catch(e) {
 		console.warn('Could not init pregen worker');
 		console.warn(e);
