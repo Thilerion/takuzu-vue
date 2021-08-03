@@ -36,10 +36,17 @@ export default {
 		},
 		errorCheckKey() {
 			return `${this.errorCheckId}`;
+		},
+		lastCheckedByUser() {
+			return this.$store.state.puzzle.assistance.incorrectCheck.lastCheckType === 'user';
 		}
 	},
 	watch: {
 		errorCheckId(newValue, prevValue) {
+			if (!this.lastCheckedByUser) {
+				this.show = false;
+				return;
+			}
 			if (newValue < prevValue) {
 				this.show = false;
 				return;

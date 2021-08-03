@@ -114,6 +114,7 @@ export default {
 	data() {
 		return {
 			finishedTimeout: null,
+			mistakeCheckTimeout: null,
 			autoSaveInterval: null,
 			
 			rowKey: ROW,
@@ -180,6 +181,9 @@ export default {
 		},
 		finishedAndSolved() {
 			return this.$store.getters['puzzle/finishedAndSolved'];
+		},
+		finishedWithMistakes() {
+			return this.$store.getters['puzzle/finishedWithMistakes'];
 		},
 		showTimer() {
 			return this.$store.state.settings.showTimer;
@@ -252,7 +256,7 @@ export default {
 		},
 		checkErrors() {
 			const boardStr = this.$store.getters['puzzle/boardStr'];
-			this.$store.dispatch('puzzle/assistance/checkErrors', boardStr);
+			this.$store.dispatch('puzzle/assistance/userCheckErrors', boardStr);
 		},
 		getHint() {
 			this.$store.dispatch('puzzle/assistance/getHint');
@@ -320,6 +324,9 @@ export default {
 			this.saveGame();
 		}
 		this.stopAutoSave();
+
+		clearTimeout(this.finishedTimeout);
+		clearTimeout(this.mistakeCheckTimeout);
 	},
 	unmounted() {
 		// TODO: also stop wake lock when game is paused, settings is open, etc, and enable it again when resuming
@@ -331,11 +338,28 @@ export default {
 				if (newValue) {
 					this.finishedTimeout = setTimeout(() => {
 						this.finishGame();
+						this.finishedTimeout = null;
 					}, 600);
 				} else if (prevValue && !newValue) {
 					// no longer correct
 					clearTimeout(this.finishedTimeout);
 					this.finishedTimeout = null;
+				}
+			}
+		},
+		finishedWithMistakes: {
+			handler(newValue) {
+				if (newValue) {
+					this.mistakeCheckTimeout = setTimeout(() => {
+						this.mistakeCheckTimeout = null;
+						if (!this.finishedWithMistakes) {
+							return;
+						}
+						this.$store.dispatch('puzzle/assistance/autoCheckFinishedWithMistakes');
+					}, 2000);
+				} else {
+					clearTimeout(this.mistakeCheckTimeout);
+					this.mistakeCheckTimeout = null;
 				}
 			}
 		},

@@ -10,7 +10,8 @@ const defaultState = () => ({
 	checkId: -1,
 	cache: new Map(),
 	totalCellsFound: new Set(),
-	currentMarked: []
+	currentMarked: [],
+	lastCheckType: null, // user or auto
 });
 
 const assistanceIncorrectCheckModule = {
@@ -48,6 +49,9 @@ const assistanceIncorrectCheckModule = {
 		removeFromCurrentMarkedIncorrect(state, cellId) {
 			state.currentMarked = state.currentMarked.filter(val => val !== cellId);
 		},
+		setCheckType(state, val) {
+			state.lastCheckType = val;
+		}
 	},
 	actions: {
 		checkIncorrectCells({ state, commit }, { boardStr, board, solution }) {
@@ -68,6 +72,17 @@ const assistanceIncorrectCheckModule = {
 			const { board, solution } = rootState.puzzle;
 			dispatch('checkIncorrectCells', { boardStr: boardKey, board, solution });
 		},
+
+		userCheckErrors({ commit, dispatch }, boardKey) {
+			commit('setCheckType', 'user');
+			dispatch('checkErrors', boardKey);
+		},
+
+		autoCheckFinishedWithMistakes({ commit, dispatch, rootGetters }) {
+			const boardKey = rootGetters['puzzle/boardStr'];
+			commit('setCheckType', 'auto');
+			dispatch('checkErrors', boardKey);
+		}
 	}
 }
 
