@@ -31,6 +31,7 @@
 						:show-timer="showTimer"
 						:difficulty="difficulty"
 						:progress="progress"
+						:has-border="rulerType != null"
 					/>
 				</template>
 				<template v-slot:ruler-rows>

@@ -1,6 +1,7 @@
 <template>
 	<div
 		class="puzzle-info"
+		:class="{ 'has-border': hasBorder }"
 	>
 		<div
 			class="difficulty text-left"
@@ -32,7 +33,8 @@ export default {
 		progress: {
 			type: Number,
 			default: -1
-		}
+		},
+		hasBorder: Boolean
 	},
 	computed: {
 		difficultyLabel() {
@@ -44,15 +46,15 @@ export default {
 
 <style lang="postcss" scoped>
 .puzzle-info {
-	@apply px-1 pb-1 text-xs text-gray-500 dark:text-gray-400 font-medium tracking-wider border-b border-gray-400 dark:border-gray-300 border-opacity-20 dark:border-opacity-10;
+	@apply px-1 pb-1 text-xs text-gray-500 dark:text-gray-400 font-medium tracking-wider;
 
 	@apply grid w-full;
 	grid-template-rows: 1fr;
 	grid-template-columns: calc(50% - 3ch) 6ch calc(50% - 3ch);
 }
 
-.puzzle-info > * {
-	/* @apply w-1/3 flex-none; */
+.puzzle-info.has-border {
+	@apply border-b border-gray-400 dark:border-gray-300 border-opacity-20 dark:border-opacity-10;
 }
 
 .progress-percentage {
