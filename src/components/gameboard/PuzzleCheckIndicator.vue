@@ -7,8 +7,8 @@
 				:key="errorCheckKey"
 			>
 				<div class="check-icon-wrapper">
-					<span v-if="!errorFound" class="correct check-icon material-icons-outlined">check_circle</span>
-					<span v-else-if="errorFound" class="incorrect check-icon material-icons-outlined">cancel</span>
+					<icon-check-circle class="correct check-icon" v-if="!errorFound" />
+					<icon-cancel class="incorrect check-icon" v-else-if="errorFound" />
 				</div>
 			</div>
 		</transition>
@@ -16,7 +16,14 @@
 </template>
 
 <script>
+import IconCheckCircle from '@/components/common/IconCheckCircle.vue';
+import IconCancel from '@/components/common/IconCancel.vue';
+
 export default {
+	components: {
+		IconCheckCircle,
+		IconCancel,
+	},
 	data() {
 		return {
 			show: false,
@@ -78,6 +85,8 @@ export default {
 }
 .check-icon {
 	font-size: 50vmin;
+	width: 50vmin;
+	height: 50vmin;
 }
 .check-icon-wrapper {
 	position: absolute inset-0 flex justify-center items-center;

@@ -1,0 +1,6 @@
+svg.icon {
+	@apply text-current fill-current;
+}
+:is(svg.icon) {
+	@apply w-6 h-6;
+}
