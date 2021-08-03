@@ -1,12 +1,12 @@
 <template>
-	<div class="dropdown">
+	<div class="dropdown" ref="ddMenu">
 		<div class="dropdown-trigger">
 			<slot name="trigger" :open="openDropdownMenu" :close="closeDropdownMenu" :toggle="toggleDropdownMenu">
 				<BaseButton @click="openDropdownMenu">Dropdown</BaseButton>
 			</slot>
 		</div>
 		<transition name="drop">
-			<div class="dropdown-menu" v-show="isOpen" :class="{'menu-align-below': alignBelow, 'menu-align-right': alignRight}" ref="ddMenu">
+			<div class="dropdown-menu" v-show="isOpen" :class="{'menu-align-below': alignBelow, 'menu-align-right': alignRight}">
 				<div class="dropdown-content">
 					<slot name="content" :open="openDropdownMenu" :close="closeDropdownMenu" :toggle="toggleDropdownMenu">
 						<BaseDropdownItem @click="closeDropdownMenu">This dropdown menu is empty...</BaseDropdownItem>

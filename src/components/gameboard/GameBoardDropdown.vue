@@ -5,8 +5,8 @@
 		ref="dropdown"
 		@toggled="dropdownToggled"
 	>
-		<template #trigger="{open}">
-			<IconBtn @click="open" name="md-morevert"></IconBtn>
+		<template #trigger="{toggle}">
+			<IconBtn @click="toggle" name="md-morevert"></IconBtn>
 		</template>
 		<template #content>
 			<BaseDropdownItem disabled>

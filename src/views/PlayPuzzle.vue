@@ -264,9 +264,7 @@ export default {
 			this.$store.dispatch('puzzle/assistance/getHint');
 		},
 		checkEnableWakeLock() {
-			console.log('Check if wakelock should be enabled');
 			const setting = this.shouldEnableWakeLock;
-			console.log({ setting });
 
 			if (setting) {
 				this.wakeLock.enable();
