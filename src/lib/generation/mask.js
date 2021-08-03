@@ -15,13 +15,17 @@ export function createMask(board, difficulty = 1) {
 }
 
 export function createMaskWithDifficulty(board, difficulty = 1) {
+	const numCells = board.width * board.height;
+	if (numCells <= 60 && difficulty > 2) {
+		debugger;
+	}
 	const maxAttempts = 5;
 	let bestMask;
 	for (let i = 0; i < maxAttempts; i++) {
 		bestMask = createMask(board, difficulty);
 
 		// verify that puzzle is not too easy
-		const minDiffConstraints = getMinimumDifficultyConstraints(difficulty);
+		const minDiffConstraints = getMinimumDifficultyConstraints(difficulty, board.width, board.height);
 		if (minDiffConstraints == null) return bestMask; // easiest puzzle, cannot be too easy
 		if (maskHasNoSolution(bestMask, minDiffConstraints)) {
 			return bestMask;

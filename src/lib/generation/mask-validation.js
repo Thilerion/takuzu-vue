@@ -10,95 +10,128 @@ const baseSolverConf = {
 	disableBacktracking: true,
 };
 
+function createConstraintFn({
+	triples = true,
+	balance = true,
+	elimination,
+	duplicate
+}) {
+	const result = [];
+	if (triples) result.push(applyTriplesConstraint);
+	if (balance) result.push(applyLineBalanceConstraint);
+	if (elimination != null) {
+		const { maxLeast = 1, enforceUniqueLines = false } = elimination;
+		const elimOpts = {
+			singleAction: false,
+			maxLeast: maxLeast > 0 ? maxLeast : 1,
+			enforceUniqueLines
+		}
+		const fn = (board, opts = {}) => applyEliminationConstraint(board, {
+			...opts,
+			...elimOpts
+		});
+		result.push(fn);
+	}
+	if (duplicate != null) {
+		const { maxLeast = 1 } = duplicate;
+		const elimOpts = {
+			singleAction: false,
+			maxLeast: maxLeast > 0 ? maxLeast : 1,
+			enforceUniqueLines: true
+		}
+		const fn = (board, opts = {}) => applyEliminationConstraint(board, {
+			...opts,
+			...elimOpts
+		});
+		result.push(fn);
+	}
+	return result;
+}
+
 const difficultyConstraintFns = {
 	0: [],
-	1: [
-		applyTriplesConstraint,
-		applyLineBalanceConstraint,
-	],
-	2: [
-		applyTriplesConstraint,
-		applyLineBalanceConstraint,
-		(board, opts = {}) => applyEliminationConstraint(board, {
-			...opts,
-			singleAction: false,
-			maxLeast: 1,
-			enforceUniqueLines: false
-		})
-	],
-	3: [
-		applyTriplesConstraint,
-		applyLineBalanceConstraint,
-		(board, opts = {}) => applyEliminationConstraint(board, {
-			...opts,
-			singleAction: false,
-			maxLeast: 2,
-			enforceUniqueLines: false
-		})
-	],
-	4: [
-		applyTriplesConstraint,
-		applyLineBalanceConstraint,
-		(board, opts = {}) => applyEliminationConstraint(board, {
-			...opts,
-			singleAction: false,
-			maxLeast: 2,
-			enforceUniqueLines: true
-		})
-	],
-	5: [
-		applyTriplesConstraint,
-		applyLineBalanceConstraint,
-		(board, opts = {}) => applyEliminationConstraint(board, {
-			...opts,
-			singleAction: false,
-			maxLeast: 6,
-			enforceUniqueLines: true
-		})
-	]
+	1: createConstraintFn({ triples: true, balance: true }),
+	2: createConstraintFn({
+		triples: true, balance: true,
+		elimination: { enforceUniqueLines: false, maxLeast: 1 }
+	}),
+	3: createConstraintFn({
+		triples: true, balance: true,
+		elimination: { enforceUniqueLines: false, maxLeast: 2 }
+	}),
+	4: createConstraintFn({
+		triples: true, balance: true,
+		elimination: { enforceUniqueLines: false, maxLeast: 2 },
+		duplicate: { maxLeast: 1 },
+	}),
+	5: createConstraintFn({
+		triples: true, balance: true,
+		elimination: { enforceUniqueLines: false, maxLeast: 6 },
+		duplicate: { maxLeast: 2 },
+	}),
+};
+const minDifficultyConstraintFns = {};
+for (const difficultyValue of Object.keys(difficultyConstraintFns)) {
+	const minDiff = difficultyValue - 1;
+	if (minDiff < 1) {
+		minDifficultyConstraintFns[difficultyValue] = null;
+	} else {
+		let minConstraints = difficultyConstraintFns[minDiff];
+		if (!minConstraints || (Array.isArray(minConstraints) && !minConstraints.length)) {
+			minConstraints = null;
+		}
+		minDifficultyConstraintFns[difficultyValue] = difficultyConstraintFns[minDiff];
+	}
+}
+
+const smallPuzzleDifficultyConstraintFns = {
+	3: {
+		min: createConstraintFn({
+			triples: true, balance: true,
+			elimination: { enforceUniqueLines: false, maxLeast: 1 },
+		}),
+		max: createConstraintFn({
+			triples: true, balance: true,
+			elimination: { enforceUniqueLines: false, maxLeast: 1 },
+			duplicate: { maxLeast: 1 }
+		}),
+	}
 };
 
-export function getMinimumDifficultyConstraints(difficultyRating) {
-	if (difficultyRating <= 1) {
-		// easiest difficulty puzzle is always "hard enough"
-		return null;
+export function getDifficultyConstraintFns(difficultyRating, width, height) {
+	const numCells = width * height;
+
+	const validKeys = [...Object.keys(smallPuzzleDifficultyConstraintFns), ...Object.keys(smallPuzzleDifficultyConstraintFns).map(str => Number(str))];
+	if (numCells <= 60 && validKeys.includes(difficultyRating)) {
+		return smallPuzzleDifficultyConstraintFns[difficultyRating].max;
+	}
+	return difficultyConstraintFns[difficultyRating];
+}
+
+
+export function getMinimumDifficultyConstraints(difficultyRating, width, height) {
+	const numCells = width * height;
+	const validKeys = [...Object.keys(smallPuzzleDifficultyConstraintFns), ...Object.keys(smallPuzzleDifficultyConstraintFns).map(str => Number(str))];
+	if (numCells <= 60 && validKeys.includes(difficultyRating)) {
+		return smallPuzzleDifficultyConstraintFns[difficultyRating].min;
 	}
 
-	const minDifficulty = difficultyRating - 1;
-	let prevDifficultySettings = difficultyConstraintFns[minDifficulty];
-
-	// TODO: this is a stupid hack to make sure rating 4 is hard enough
-	// otherwise, rating 4 can be the same as rating 2, only with some easy "duplicateLine" move thrown in
-	if (difficultyRating === 4) {
-		prevDifficultySettings = [
-			applyTriplesConstraint,
-			applyLineBalanceConstraint,
-			(board, opts = {}) => applyEliminationConstraint(board, {
-				...opts,
-				singleAction: false,
-				maxLeast: 1,
-				enforceUniqueLines: true
-			}),
-			(board, opts = {}) => applyEliminationConstraint(board, {
-				...opts,
-				singleAction: false,
-				maxLeast: 2,
-				enforceUniqueLines: false
-			})
-		]
-	}
-	return prevDifficultySettings;
+	return minDifficultyConstraintFns[difficultyRating];
 }
 
 export function maskHasOneSolution(maskedBoard, difficulty = 1) {
 	const solutions = Solver.run(maskedBoard, {
 		...baseSolverConf,
-		constraintFns: difficultyConstraintFns[difficulty]
+		constraintFns: getDifficultyConstraintFns(difficulty, maskedBoard.width, maskedBoard.height)
 	});
 	return solutions && solutions.length === 1;
 }
 export function maskHasNoSolution(maskedBoard, difficulty = 1) {
-	const constraintFns = Array.isArray(difficulty) ? difficulty : difficultyConstraintFns[difficulty];
+	const constraintFns = difficulty;
+	if (!Array.isArray(difficulty)) {
+		console.warn({ difficulty });
+		return true;
+	}
 
 	const solutions = Solver.run(maskedBoard, {
 		...baseSolverConf,
