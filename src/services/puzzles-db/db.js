@@ -55,5 +55,9 @@ async function getPuzzle({ width, height, difficulty }) {
 	return puzzle;
 }
 
+function clearPuzzleDb() {
+	return puzzleDb.puzzles.clear();
+}
+
 export const puzzleTable = puzzleDb.puzzles;
-export { puzzleDb, addPuzzles, addPuzzle, getPuzzle };
+export { puzzleDb, addPuzzles, addPuzzle, getPuzzle, clearPuzzleDb };
