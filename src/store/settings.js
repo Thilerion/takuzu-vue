@@ -24,6 +24,7 @@ export const settingsModule = {
 
 		showBoardCoordinates: state => state.showLineInfo === 'coords',
 		showBoardLineCounts: state => ['remainingCount', 'currentCount'].includes(state.showLineInfo),
+		showRulers: state => !!state.showLineInfo,
 		boardHasLineInfoPadding: state => state.showLineInfo !== '',
 	},
 

@@ -31,16 +31,16 @@
 						:show-timer="showTimer"
 						:difficulty="difficulty"
 						:progress="progress"
-						:has-border="rulerType != null"
+						:has-border="showRulers"
 					/>
 				</template>
 				<template v-slot:ruler-rows>
 					<RulerCoords v-if="rulerType === 'coords'" line-type="rows" :line-ids="board.rowIds" />
-					<RulerCounts v-else-if="rulerType != null" line-type="rows" :ruler-type="rulerType" :counts="rowCounts" />
+					<RulerCounts v-else-if="showRulers" line-type="rows" :ruler-type="rulerType" :counts="rowCounts" />
 				</template>
 				<template v-slot:ruler-columns>
 					<RulerCoords v-if="rulerType === 'coords'" line-type="columns" :line-ids="board.columnIds" />
-					<RulerCounts v-else-if="rulerType != null" line-type="columns" :ruler-type="rulerType" :counts="columnCounts" />
+					<RulerCounts v-else-if="showRulers" line-type="columns" :ruler-type="rulerType" :counts="columnCounts" />
 				</template>
 			</GameBoard>
 		</GameBoardWrapper>
@@ -148,6 +148,7 @@ export default {
 		},
 		...mapGetters('settings', [
 			'showBoardCoordinates', 'showBoardLineCounts',
+			'showRulers',
 		]),
 		puzzleKey() {
 			return this.$store.state.puzzleKey;
