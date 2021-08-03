@@ -62,6 +62,11 @@ const puzzleModule = {
 			if (getters.progress < 1) return false;
 			return state.solutionBoardStr === getters.boardStr;
 		},
+		finishedWithMistakes: (state, getters) => {
+			if (state.board == null || !state.initialized || !state.started) return false;
+			if (getters.progress < 1) return false;
+			return state.solutionBoardStr !== getters.boardStr;
+		},
 		progress: state => {
 			const initialEmpty = state.initialEmpty;
 			const currentEmpty = state.gridCounts[EMPTY];

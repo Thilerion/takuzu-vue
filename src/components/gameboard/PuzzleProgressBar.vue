@@ -3,7 +3,7 @@
 	<div
 		class="progress-wrapper"
 		:class="{ 
-			error: hasErrors,
+			error: finishedWithMistakes,
 			finished
 		}"
 	>
@@ -26,11 +26,8 @@ export default {
 		finished() {
 			return this.progressValue === 1;
 		},
-		hasErrors() {
-			return this.$store.state.puzzle.assistance.incorrectCheck.currentMarked?.length > 0;
-		},
-		finishedWithErrors() {
-			return this.finished && this.hasErrors;
+		finishedWithMistakes() {
+			return this.$store.getters['puzzle/finishedWithMistakes'];
 		}
 	}
 };
