@@ -1,7 +1,7 @@
 <template>
 	<button class="icon-btn" :class="{ vertical }">
-		<span class="material-icons" :style="{'--size': size + 'px' }">
-			{{icon}}
+		<span>
+			<ui-icons class="icon-svg" :name="icon" :scale="scale" />
 		</span>
 		<div class="btn-label whitespace-nowrap">
 			<slot />
@@ -10,11 +10,16 @@
 </template>
 
 <script>
+import UiIcons from '@/components/common/UiIcons.vue';
+
 export default {
+	components: {
+		UiIcons
+	},
 	props: {
-		size: {
-			type: [String, Number],
-			default: 24
+		scale: {
+			type: [Number, String],
+			default: '1.25'
 		},
 		icon: {
 			type: String,
@@ -34,10 +39,6 @@ export default {
 	transition-timing-function: ease;
 }
 
-.material-icons {
-	font-size: var(--size)!important;
-}
-
 @media (hover:hover) and (pointer:fine) {
 	.icon-btn {
 		@apply hover:bg-gray-200 active:bg-gray-300;
@@ -47,7 +48,7 @@ export default {
 .icon-btn:disabled {
 	@apply transition-none opacity-80 cursor-default bg-opacity-0;
 }
-.icon-btn:disabled .material-icons {
+.icon-btn:disabled .icon-svg {
 	@apply opacity-70;
 }
 

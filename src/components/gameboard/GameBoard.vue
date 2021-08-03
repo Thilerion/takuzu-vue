@@ -24,7 +24,7 @@
 		<transition name="fade-pause">
 			<div class="pause-overlay" v-show="paused">
 				<div>
-					<span class="material-icons">pause</span>
+					<ui-icons name="fa-pause" scale="5" />
 					<div>Paused</div>
 				</div>
 			</div>
@@ -34,6 +34,7 @@
 </template>
 
 <script>
+import UiIcons from '@/components/common/UiIcons.vue';
 import PuzzleCheckIndicator from './PuzzleCheckIndicator.vue';
 import PuzzleGrid from './PuzzleGrid';
 
@@ -41,6 +42,7 @@ export default {
 	components: {
 		PuzzleGrid,
 		PuzzleCheckIndicator,
+UiIcons,
 	},
 	props: {
 		rows: Number,
@@ -94,9 +96,6 @@ export default {
 	grid-area: puzzle-grid;
 	@apply relative z-10 pointer-events-none bg-gray-100 text-gray-400 grid place-items-center text-4xl;
 	border-radius: var(--cell-rounding);
-}
-.pause-overlay .material-icons {
-	@apply text-7xl;
 }
 .fade-pause-enter-active,
 .fade-pause-leave-active {

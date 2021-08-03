@@ -4,7 +4,7 @@
 		ref="dropdownWrapper"
 	>
 		<div class="menu-trigger">
-			<IconBtn @click="toggle">more_vert</IconBtn>
+			<IconBtn @click="toggle" name="md-morevert"></IconBtn>
 		</div>
 
 		<transition name="drop2">

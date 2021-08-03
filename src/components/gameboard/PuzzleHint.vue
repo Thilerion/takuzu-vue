@@ -1,7 +1,7 @@
 <template>
 	<div class="hint" :key="id" ref="hint">
 		<div class="close">
-			<IconBtn size="16" @click="$emit('hide')">close</IconBtn>
+			<IconBtn size="16" @click="$emit('hide')" name="md-close"></IconBtn>
 		</div>
 		<div class="message">
 			{{message}}

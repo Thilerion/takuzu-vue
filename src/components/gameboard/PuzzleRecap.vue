@@ -9,7 +9,7 @@
 			<div
 				class="highscore-banner"
 				v-if="recordTypeMsg"
-			><span class="material-icons highscore-icon">emoji_events</span> {{recordTypeMsg}}</div>
+			><ui-icons class="highscore-icon" name="md-emojievents"></ui-icons> {{recordTypeMsg}}</div>
 		</header>
 		<div class="inner px-6 pt-4 pb-6 text-sm">
 			<div class="text-center flex">
@@ -61,6 +61,7 @@
 
 <script>
 import { timeFormatter } from '@/utils/date.utils';
+import UiIcons from '@/components/common/UiIcons.vue';
 
 const recapMsgTypes = {
 	FIRST: 'first puzzle solved',
@@ -70,6 +71,7 @@ const recapMsgTypes = {
 };
 
 export default {
+	components: { UiIcons },
 	props: {
 		stats: {
 			type: Object,

@@ -1,6 +1,6 @@
 <template>
 	<header>
-		<IconBtn @click="$emit('close')">close</IconBtn>
+		<IconBtn @click="$emit('close')" name="md-close"></IconBtn>
 		<span class="font-medium tracking-widest text-xl">{{columns}}x{{rows}}</span>
 		<GameBoardDropdown
 			@open-settings="openSettings"

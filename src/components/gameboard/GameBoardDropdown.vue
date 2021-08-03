@@ -6,15 +6,15 @@
 		@toggled="dropdownToggled"
 	>
 		<template #trigger="{open}">
-			<IconBtn @click="open">more_vert</IconBtn>
+			<IconBtn @click="open" name="md-morevert"></IconBtn>
 		</template>
 		<template #content>
 			<BaseDropdownItem disabled>
-				<span class="material-icons opacity-90 text-base">bookmark_add</span>
+				<ui-icons name="md-bookmarkadd-outlined" scale="1" class="opacity-80" />
 				<span class="ml-3 mt-px">Set bookmark</span>
 			</BaseDropdownItem>
 			<BaseDropdownItem disabled>
-				<span class="material-icons opacity-90 text-base">bookmark_remove</span>
+				<ui-icons name="md-bookmarkremove-outlined" scale="1" class="opacity-80" />
 				<span class="ml-3 mt-px">Delete bookmark</span>
 			</BaseDropdownItem>
 			<BaseDropdownDivider/>
@@ -28,7 +28,7 @@
 
 			<template v-if="devModeEnabled">
 				<BaseDropdownItem @click="copyPuzzleString">
-					<span class="material-icons opacity-90 text-base">content_copy</span>
+					<ui-icons name="fa-regular-copy" scale="1" class="opacity-80" />
 					<span class="ml-3 mt-px">Copy board string</span>
 					<span v-if="copyError" class="ml-2 text-xs text-red-700 mt-px">{{copyError}}</span>
 				</BaseDropdownItem>
@@ -40,7 +40,7 @@
 
 			<BaseDropdownItem @click="goToSettings"
 			>
-				<span class="material-icons opacity-90 text-base">settings</span>
+				<ui-icons name="md-settings" scale="1" class="opacity-80" />
 				<span class="ml-3 mt-px">Settings</span>
 			</BaseDropdownItem>
 		</template>
@@ -49,8 +49,13 @@
 
 <script>
 import { rafPromise, timeoutPromise } from '@/utils/delay.utils';
+import UiIcons from '@/components/common/UiIcons.vue';
+import VIcon from "oh-vue-icons/dist/v3/icon.es";
+import { MdBookmarkremoveOutlined, MdBookmarkaddOutlined } from 'oh-vue-icons/icons';
+VIcon.add(MdBookmarkremoveOutlined, MdBookmarkaddOutlined);
 
 export default {
+	components: { UiIcons },
 	emits: ['open-settings', 'dropdown-toggled'],
 	data() {
 		return {

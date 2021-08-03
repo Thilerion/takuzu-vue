@@ -5,22 +5,22 @@
 			<IconBtnText
 				@click="$emit('undo')"
 				:disabled="!canUndo || paused"
-				size="26"
-				icon="undo"
+				scale="1.25"
+				icon="md-undo"
 				vertical
 			>Undo</IconBtnText>
 
 			<IconBtnText
 				@click="$emit('restart')"
-				size="26"
-				icon="replay"
+				scale="1.25"
+				icon="md-replay"
 				vertical
 				:disabled="!canUndo || paused"
 			>Restart</IconBtnText>
 
 			<IconBtnText
-				size="26"
-				icon="done"
+				scale="1.25"
+				icon="md-done"
 				vertical
 				@click="$emit('check')"
 				v-if="checkButtonEnabled"
@@ -28,8 +28,8 @@
 			>Check</IconBtnText>
 
 			<IconBtnText
-				size="26"
-				icon="emoji_objects"
+				scale="1.25"
+				icon="hi-solid-light-bulb"
 				vertical
 				@click="$emit('get-hint')"
 				:disabled="paused"

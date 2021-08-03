@@ -3,7 +3,7 @@
 		<button
 			@click="changeDifficulty(-1, $event)"
 			class="arrow-btn left z-10 focus:outline-none"
-		><VIcon name="md-keyboardarrowleft" /></button>
+		><VIcon name="md-keyboardarrowleft" scale='1.5' /></button>
 		<div class="difficulty-current z-0" :class="[`slide-${slideDirection}`]">
 			<transition name="slide-label">
 				<DifficultyLabel
@@ -16,14 +16,14 @@
 		<button
 			@click="changeDifficulty(1, $event)"
 			class="arrow-btn right z-10 focus:outline-none"
-		><VIcon name="md-keyboardarrowright" /></button>
+		><VIcon name="md-keyboardarrowright" scale='1.5' /></button>
 	</div>
 </template>
 
 <script>
 import VIcon from "oh-vue-icons/dist/v3/icon.es";
-import { MdStarrate, MdKeyboardarrowleft, MdKeyboardarrowright } from 'oh-vue-icons/icons';
-VIcon.add(MdStarrate, MdKeyboardarrowleft, MdKeyboardarrowright);
+import { MdKeyboardarrowleft, MdKeyboardarrowright } from 'oh-vue-icons/icons';
+VIcon.add(MdKeyboardarrowleft, MdKeyboardarrowright);
 import DifficultyLabel from './DifficultyLabel.vue';
 
 export default {
