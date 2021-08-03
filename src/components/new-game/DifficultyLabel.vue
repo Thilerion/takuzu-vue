@@ -1,7 +1,7 @@
 <template>
 	<div class="flex flex-col px-1 justify-center m-auto items-center absolute w-full h-full select-none">
 		<div class="stars text-2xl">
-			<StarIcon v-for="n in stars" :key="n" filled />
+			<StarIcon filled v-for="n in stars" :key="n" />
 		</div>
 		<div class="label text-lg font-semibold tracking-wide pb-1">
 			{{label}}
@@ -10,11 +10,11 @@
 </template>
 
 <script>
-import StarIcon from '../common/StarIcon';
+import StarIcon from '@/components/common/StarIcon.vue';
 
 export default {
 	components: {
-		StarIcon
+		StarIcon,
 	},
 	props: {
 		stars: {

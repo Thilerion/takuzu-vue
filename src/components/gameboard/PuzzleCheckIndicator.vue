@@ -6,9 +6,9 @@
 				v-if="errorCheckValue != null && show"
 				:key="errorCheckKey"
 			>
-				<div class="check-icon-wrapper">
-					<icon-check-circle class="correct check-icon" v-if="!errorFound" />
-					<icon-cancel class="incorrect check-icon" v-else-if="errorFound" />
+				<div class="check-icon-wrapper">					
+					<v-icon name="md-checkcircleoutline" class="correct check-icon" v-if="!errorFound" />
+					<v-icon name="md-cancel-outlined" class="incorrect check-icon" v-else-if="errorFound" />
 				</div>
 			</div>
 		</transition>
@@ -16,13 +16,12 @@
 </template>
 
 <script>
-import IconCheckCircle from '@/components/common/IconCheckCircle.vue';
-import IconCancel from '@/components/common/IconCancel.vue';
+import OhVueIcon from "oh-vue-icons/dist/v3/icon.es";
+import { MdCancelOutlined, MdCheckcircleoutline } from 'oh-vue-icons/icons';
 
 export default {
 	components: {
-		IconCheckCircle,
-		IconCancel,
+		"v-icon": OhVueIcon,
 	},
 	data() {
 		return {
@@ -63,6 +62,9 @@ export default {
 				this.show = true;
 			})
 		}
+	},
+	beforeMount() {
+		OhVueIcon.add(MdCancelOutlined, MdCheckcircleoutline);
 	}
 };
 </script>

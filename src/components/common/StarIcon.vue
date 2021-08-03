@@ -1,12 +1,16 @@
 <template>
-	<div
-		class="star-icon"
-		:class="{ filled }"
-	>&#x2605;</div>
+	<VIcon class="star-icon" :class="{ filled }" name="md-starrate" />
 </template>
 
 <script>
+import VIcon from "oh-vue-icons/dist/v3/icon.es";
+import { MdStarrate } from 'oh-vue-icons/icons';
+VIcon.add(MdStarrate);
+
 export default {
+	components: {
+		VIcon
+	},
 	props: {
 		filled: Boolean
 	}
