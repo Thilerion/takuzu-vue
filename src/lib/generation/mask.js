@@ -15,10 +15,6 @@ export function createMask(board, difficulty = 1) {
 }
 
 export function createMaskWithDifficulty(board, difficulty = 1) {
-	const numCells = board.width * board.height;
-	if (numCells <= 60 && difficulty > 2) {
-		debugger;
-	}
 	const maxAttempts = 5;
 	let bestMask;
 	for (let i = 0; i < maxAttempts; i++) {
