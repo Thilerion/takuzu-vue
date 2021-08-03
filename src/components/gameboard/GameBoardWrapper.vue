@@ -1,5 +1,6 @@
 <template>
-<div class="main justify-center items-center" ref="container">
+<div class="main justify-center items-center relative" ref="container">
+	<progress-bar v-if="$store.state.puzzle.started" />
 	<div
 		class="puzzle-wrapper"
 		:class="[`cell-size-${gridGapSizing}`]"
@@ -18,9 +19,13 @@
 
 <script>
 import debounce from 'lodash.debounce';
+import ProgressBar from '@/components/gameboard/PuzzleProgressBar.vue';
 let resizeObserver;
 
 export default {
+	components: {
+		ProgressBar
+	},
 	props: {
 		rulerHeight: String,
 		rulerWidth: String,
