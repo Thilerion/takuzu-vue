@@ -58,7 +58,7 @@ export default {
 			if (this.rulerType === 'count-current') {
 				this.debouncedCounts = counts;
 			} else {
-				const lineType = this.lineType === 'row' ? ROW : COLUMN;
+				const lineType = this.lineType === 'rows' ? ROW : COLUMN;
 				const req = this.$store.state.puzzle.board.numRequired[lineType];
 				this.debouncedCounts = counts.map(val => {
 					const zero = req[ZERO] - val[0];
