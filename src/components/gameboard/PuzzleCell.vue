@@ -8,7 +8,7 @@
 		<div class="cell-wrapper">
 			<transition name="cell-value-anim">
 				<div
-					v-if="hasValue"
+					v-show="hasValue"
 					class="cell-value"
 					:class="cellValueClassList"
 				><div class="cell-symbol">{{cellSymbol}}</div></div>
@@ -16,8 +16,6 @@
 			<div class="cell-tap-shadow"></div>
 			<transition name="mark-fade">
 				<div class="incorrect-mark" v-if="incorrect && theme === 'colored'">
-					<div></div>
-					<div></div>
 				</div>
 			</transition>
 		</div>
@@ -48,14 +46,12 @@ export default {
 		},
 		hidden: Boolean,
 		incorrect: Boolean,
+		locked: Boolean,
 	},
 	emits: ['click'],
 	computed: {
 		hasValue() {
 			return this.value !== EMPTY;
-		},
-		locked() {
-			return this.$store.state.puzzle.initialBoard.grid[this.y][this.x] !== EMPTY;
 		},
 		cellValueClassList() {
 			const list = [];
@@ -106,9 +102,7 @@ export default {
 }
 
 .cell-btn {
-	@apply flex justify-center items-center bg-opacity-0 focus:outline-none relative overflow-hidden;
-	width: calc(var(--cell-size) - var(--grid-gap));
-	height: calc(var(--cell-size) - var(--grid-gap));
+	@apply flex justify-center items-center bg-opacity-0 focus:outline-none relative overflow-hidden w-full h-full;
 }
 .cell-theme-binary .cell-btn {
 	@apply font-number text-gray-700;

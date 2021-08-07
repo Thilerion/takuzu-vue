@@ -36,5 +36,7 @@ registerGlobalComponents(app);
 // 	errorHandler.handleError(err, 'vue', info);
 // }
 // app.config.globalProperties.errorHandler = errorHandler;
+
+// app.config.performance = process.env.NODE_ENV === 'development';
 	
 app.mount('#app');
