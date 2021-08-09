@@ -57,14 +57,17 @@ const puzzleModule = {
 		boardStr: state => {
 			return state.board?.toString();
 		},
+		boardFilled: state => {
+			return state.gridCounts[EMPTY] === 0;
+		},
 		finishedAndSolved: (state, getters) => {
 			if (state.board == null || !state.initialized || !state.started) return false;
-			if (getters.progress < 1) return false;
+			if (!getters.boardFilled) return false;
 			return state.solutionBoardStr === getters.boardStr;
 		},
 		finishedWithMistakes: (state, getters) => {
 			if (state.board == null || !state.initialized || !state.started) return false;
-			if (getters.progress < 1) return false;
+			if (!getters.boardFilled) return false;
 			return state.solutionBoardStr !== getters.boardStr;
 		},
 		progress: state => {

@@ -1,5 +1,4 @@
 <template>
-	<!-- <progress :max="initialEmpty" :value="currentFilled"></progress> -->
 	<div
 		class="progress-wrapper"
 		:class="{ 
@@ -8,46 +7,31 @@
 		}"
 	>
 		<div
-			:style="{'--progress': progressValueTransformed}"
+			:style="{'--progress': progressValueCapped}"
 			class="progress-value"
 		></div>
 	</div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
 	computed: {
-		progressValue() {
-			return this.$store.getters['puzzle/progress'];
-		},
-		progressValueTransformed() {
+		...mapGetters('puzzle', [
+			'finishedWithMistakes',
+		]),
+		...mapGetters('puzzle', {
+			finished: 'boardFilled',
+			progressValue: 'progress',
+		}),
+		progressValueCapped() {
 			return Math.max(this.progressValue, 0.005);
 		},
-		finished() {
-			return this.progressValue === 1;
-		},
-		finishedWithMistakes() {
-			return this.$store.getters['puzzle/finishedWithMistakes'];
-		}
 	}
 };
 </script>
 
 <style lang="postcss" scoped>
-/* progress { */
-	/* reset */
-	/* @apply appearance-none border-0; */
-	/* size and position */
-	/* @apply h-1 w-full absolute inset-x-0 top-0;
-} */
-
-/* progress::-webkit-progress-bar {
-	background-color: transparent;
-}
-progress::-webkit-progress-value {
-	background-color: red;
-} */
-
 .progress-wrapper {
 	@apply w-full absolute inset-x-0 top-0 bg-gray-400 bg-opacity-20 pointer-events-none;
 	height: 3px;
@@ -63,7 +47,9 @@ progress::-webkit-progress-value {
 	@apply opacity-100;
 }
 
+/* delay added to prevent red flash when last cell is toggled twice to the correct value */
 .finished.error .progress-value {
+	transition: background-color .05s ease .2s;
 	@apply bg-red-500;
 }
 </style>
