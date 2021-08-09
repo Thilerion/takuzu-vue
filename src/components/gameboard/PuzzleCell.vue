@@ -1,7 +1,6 @@
 <template>
 	<button
 		class="cell-btn"
-		@pointerdown="cellClickHandler"
 		:disabled="locked"
 		:class="{ incorrect }"
 	>
@@ -14,12 +13,7 @@
 				><div class="cell-symbol">{{cellSymbol}}</div></div>
 			</transition>
 			<div class="cell-tap-shadow"></div>
-			<transition name="mark-fade">
-				<div class="incorrect-mark" v-if="incorrect && theme === 'colored'">
-					<div></div>
-					<div></div>
-				</div>
-			</transition>
+			<slot name="incorrect" />
 		</div>
 	</button>
 </template>
@@ -28,14 +22,6 @@
 import { EMPTY, ONE, ZERO } from '@/lib/constants';
 export default {
 	props: {
-		x: {
-			type: Number,
-			required: true
-		},
-		y: {
-			type: Number,
-			required: true
-		},
 		value: {
 			type: String,
 			validator(value) {
@@ -50,7 +36,6 @@ export default {
 		incorrect: Boolean,
 		locked: Boolean,
 	},
-	emits: ['click'],
 	computed: {
 		hasValue() {
 			return this.value !== EMPTY;
@@ -72,14 +57,7 @@ export default {
 			}
 			return '';
 		}
-	},
-	methods: {
-		cellClickHandler() {
-			if (this.locked) return;
-			const { x, y, value } = this;
-			this.$emit('click', { x, y, value });
-		}
-	},
+	}
 };
 </script>
 

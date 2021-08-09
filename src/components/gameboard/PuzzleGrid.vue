@@ -5,24 +5,31 @@
 	>
 	<div
 		class="puzzle-cell-wrapper overflow-hidden"
-		v-for="cellCoords in coords"
-		:key="cellCoords.key"
-		:data-x="cellCoords.x"
-		:data-y="cellCoords.y"
-		:style="{ 'grid-row': `calc(${cellCoords.y} + 1) / span 1`,
-		'grid-column': `calc(${cellCoords.x} + 1) / span 1` }"
+		v-for="cell in cellData"
+		:key="cell.key"
+		:data-x="cell.x"
+		:data-y="cell.y"
+		:style="{ 'grid-row': `calc(${cell.y} + 1) / span 1`,
+		'grid-column': `calc(${cell.x} + 1) / span 1` }"
 	>
 		<PuzzleCell
-			class="cell"
-			@click="cellClick"
-			:value="gridValues[cellCoords.key]"
-			:x="cellCoords.x"
-			:y="cellCoords.y"
+			class="cell overflow-hidden"
+			@pointerdown="cellClick(cell.x, cell.y, cell.key)"
+			:value="gridValues[cell.key]"
 			:theme="cellTheme"
-			:locked="lockedCells[cellCoords.key]"
+			:locked="lockedCells[cell.key]"
 			:hidden="false"
-			:incorrect="false"
-		/>
+			:incorrect="incorrectCellKeys[cell.key]"
+		>
+		<template #incorrect v-if="cellTheme === 'colored'">
+			<transition name="mark-fade">
+				<div class="incorrect-mark" v-if="incorrectCellKeys[cell.key]">
+					<div></div>
+					<div></div>
+				</div>
+			</transition>
+		</template>
+		</PuzzleCell>
 	</div>
 		<PuzzleGridHighlights />
 	</div>
@@ -33,6 +40,8 @@ import PuzzleCell from '@/components/gameboard/PuzzleCell.vue';
 import PuzzleGridHighlights from '@/components/gameboard/PuzzleGridHighlights.vue';
 import debounce from 'lodash.debounce';
 import { EMPTY } from '@/lib/constants';
+import { computed } from 'vue';
+import { useStore } from 'vuex';
 
 export default {
 	components: {
@@ -44,17 +53,35 @@ export default {
 			type: Object,
 			required: true,
 		},
-		rows: Number,
-		columns: Number,
+		rows: {
+			type: Number,
+			required: true
+		},
+		columns: {
+			type: Number,
+			required: true
+		},
 		paused: Boolean,
 	},
 	emits: ['toggle-cell'],
-	data() {
+	setup(props) {
+		const store = useStore();
+		const initialGrid = store.state.puzzle.initialBoard.grid;
+
+		let { cellData, nRows, nCols, nCells, lockedCells, coords } = useGridData(props.columns, props.rows, initialGrid);
+
+		const { debouncedVibrate, vibrationEnabled, vibrate } = useTapVibrate(store, 20);
+
 		return {
-			VIBRATE_DURATION: 20,
-			nRows: 0,
-			nCols: 0,
-			coords: [],
+			cellData,
+			coords,
+			nRows,
+			nCols,
+			lockedCells,
+			numCells: nCells,
+			debouncedVibrate,
+			vibrationEnabled,
+			vibrate
 		}
 	},
 	computed: {
@@ -62,10 +89,17 @@ export default {
 			return this.board.grid;
 		},
 		gridValues() {
-			return this.coords.reduce((acc, {x, y, key}) => {
+			return this.coords.reduce((acc, { x, y, key }) => {
 				acc[key] = this.grid[y][x];
 				return acc;
 			}, {});
+		},
+		incorrectCellKeys() {
+			const result = {};
+			this.incorrectMarkedCells.forEach(key => {
+				result[key] = true;
+			})
+			return result;
 		},
 		cellTheme() {
 			return this.$store.state.settings.cellTheme;
@@ -76,62 +110,65 @@ export default {
 		incorrectMarkedCells() {
 			return this.$store.state.puzzle.assistance.incorrectCheck.currentMarked;
 		},
-		numCells() {
-			return this.rows * this.columns;
-		}
 	},
 	methods: {
-		cellClick({ x, y, value }) {
+		cellClick(x, y, key) {
+			const isLocked = this.lockedCells[key];
+			if (isLocked) return;
+			const value = this.gridValues[key];
 			this.debouncedVibrate();
 			this.$emit('toggle-cell', { x, y, value });
 		},
-		vibrate() {
-			if (!this.vibrateOnTap) return;
-			window.navigator.vibrate(this.VIBRATE_DURATION);
-		},
-		setCoordinates() {
-			this.nRows = this.rows;
-			this.nCols = this.columns;
-			const coords = [];
-			let idx = 0;
-			for (let y = 0; y < this.nRows; y++) {
-				for (let x = 0; x < this.nCols; x++) {
-					coords.push({x, y, key: x + ',' + y, idx});
-					idx += 1;
-				}
-			}
-			this.coords = coords;
-		}
-	},
-	created() {
-		this.debouncedVibrate = debounce(this.vibrate, this.VIBRATE_DURATION, {
-			leading: true,
-			trailing: true,
-			maxWait: this.VIBRATE_DURATION * 2
-		});
-
-		const initialBoard =  this.$store.state.puzzle.initialBoard.grid;
-		const lockedCells = {};
-		for (let y = 0; y < initialBoard.length; y++) {
-			for (let x = 0; x < initialBoard[0].length; x++) {
-				const value = initialBoard[y][x];
-				if (value !== EMPTY) {
-					const key = `${x},${y}`;
-					lockedCells[key] = true;
-				}
-			}
-		}
-		this.lockedCells = lockedCells;
-	},
-	watch: {
-		numCells: {
-			handler() {
-				this.setCoordinates();
-			},
-			immediate: true
-		}
 	},
 };
+
+function useTapVibrate(store, duration) {
+	const vibrationEnabled = computed(() => store.state.settings.enableVibration);
+
+	const vibrate = () => {
+		if (!vibrationEnabled) return;
+		window.navigator.vibrate(duration);
+	}
+
+	const debouncedVibrate = debounce(vibrate, duration, {
+		leading: true,
+		trailing: true,
+		maxWait: duration * 2
+	});
+
+	return {
+		debouncedVibrate,
+		vibrate,
+		vibrationEnabled
+	}
+}
+
+
+function useGridData(width, height, initialGrid) {
+	const staticCellData = [];
+	const lockedCells = {};
+	const coords = [];
+
+	for (let y = 0; y < height; y++) {
+		for (let x = 0; x < width; x++) {
+			const key =  `${x},${y}`;
+			const initialValue = initialGrid[y][x];
+			const locked = initialValue !== EMPTY;
+			staticCellData.push({ x, y, key, locked, initialValue });
+			coords.push({ x, y, key });
+			lockedCells[key] = locked;
+		}
+	}
+
+	return {
+		nRows: height,
+		nCols: width,
+		nCells: width * height,
+		cellData: staticCellData,
+		coords,
+		lockedCells
+	}
+}
 </script>
 
 <style lang="postcss" scoped>
@@ -142,6 +179,7 @@ export default {
 	grid-template-columns: repeat(var(--columns), var(--cell-size-total));
 	@apply mr-auto mb-auto inline-grid relative justify-items-stretch items-stretch;
 	gap: var(--grid-gap);
+	contain: strict;
 }
 .puzzle-paused .puzzle-grid, .puzzle-finished .puzzle-grid {
 	@apply pointer-events-none;
@@ -168,5 +206,26 @@ export default {
 }
 .touch-anim-leave-to, .touch-anim-enter-from {
 	/* opacity: 0; */
+}
+
+.incorrect-mark {
+	@apply absolute inset-0 text-black flex items-center justify-center pointer-events-none leading-none w-full h-full overflow-hidden opacity-60;
+}
+.incorrect-mark > div {
+	width: 2px;
+	height: 200%;
+	@apply bg-black transform -rotate-45 -translate-x-px;
+}
+.incorrect-mark > div:first-child {
+	@apply rotate-45 translate-x-px;
+}
+.mark-fade-leave-active {
+	transition: none
+}
+.mark-fade-leave-active {
+	transition: opacity .2s ease;
+}
+.mark-fade-leave-to, .mark-fade-enter-from {
+	opacity: 0;
 }
 </style>
