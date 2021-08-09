@@ -239,7 +239,7 @@ const puzzleModule = {
 		},
 
 		reset({ state, commit }) {
-			if (!state.initialized && !!state.board && !state.creationError) {
+			if (state.board != null && !state.initialized && !!state.board && !state.creationError) {
 				console.log('puzzle not initialized. cannot reset');
 				return;
 			}
