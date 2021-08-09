@@ -16,6 +16,8 @@
 			<div class="cell-tap-shadow"></div>
 			<transition name="mark-fade">
 				<div class="incorrect-mark" v-if="incorrect && theme === 'colored'">
+					<div></div>
+					<div></div>
 				</div>
 			</transition>
 		</div>
