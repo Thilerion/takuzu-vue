@@ -46,7 +46,7 @@ export default {
 }
 
 .icon-btn:disabled {
-	@apply transition-none opacity-80 cursor-default bg-opacity-0;
+	@apply transition-none opacity-80 cursor-default bg-transparent;
 }
 .icon-btn:disabled .icon-svg {
 	@apply opacity-70;

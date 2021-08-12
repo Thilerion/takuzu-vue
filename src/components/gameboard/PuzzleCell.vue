@@ -85,7 +85,7 @@ export default {
 }
 
 .cell-btn {
-	@apply flex justify-center items-center bg-opacity-0 focus:outline-none relative overflow-hidden w-full h-full;
+	@apply flex justify-center items-center bg-transparent focus:outline-none relative overflow-hidden w-full h-full;
 }
 .cell-theme-binary .cell-btn {
 	@apply font-number text-gray-700;
