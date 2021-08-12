@@ -22,10 +22,14 @@
 <script>
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
 import { initPregenWorker } from './workers/pregen-puzzles';
+import { initDarkLightAutoTheme } from '@/services/dark-light-auto-theme';
 
 export default {
 	components: {
 		OverlayPageTransition,
+	},
+	setup() {
+		initDarkLightAutoTheme();
 	},
 	data() {
 		return {

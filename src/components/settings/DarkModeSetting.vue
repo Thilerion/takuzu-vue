@@ -15,7 +15,7 @@
 		</div>
 		<div class="mt-2">
 			<label class="flex items-center">
-				<input type="radio" name="radio-theme" v-model="themePref" value="no-preference">
+				<input type="radio" name="radio-theme" v-model="themePref" value="auto">
 				<span class="ml-2">Automatic (OS preference)</span>
 			</label>
 		</div>
@@ -23,34 +23,35 @@
 </template>
 
 <script>
-import { getThemePref, setTheme } from '../../services/dark-mode';
+import { computed, ref } from 'vue';
+import { useDarkLightAutoTheme } from '../../services/dark-light-auto-theme';
 export default {
-	data() {
-		return {
-			_themePref: '',
-			themeTimeout: null
+	setup() {
+		const { value: themeValue, setTheme } = useDarkLightAutoTheme();
+
+		const _selectedValue = ref('auto');
+
+		if (themeValue.value != null && ['auto', 'light', 'dark'].includes(themeValue.value)) {
+			_selectedValue.value = themeValue.value;
 		}
-	},
-	computed: {
-		themePref: {
+
+		let themeTimeout = null;
+
+		const themePref = computed({
 			get() {
-				return this._themePref;
+				return _selectedValue.value;
 			},
 			set(value) {
-				clearTimeout(this.themeTimeout);
-				this.themeTimeout = setTimeout(() => {
+				clearTimeout(themeTimeout);
+				themeTimeout = setTimeout(() => {
 					setTheme(value);
-				}, 400);
-				this._themePref = value;
+					themeTimeout = null;
+				}, 600);
 			}
-		}
+		})
+
+		return { themePref };
 	},
-	beforeMount() {
-		this._themePref = getThemePref();
-		if (!this._themePref) {
-			this._themePref = '';
-		}
-	}
 };
 </script>
 
