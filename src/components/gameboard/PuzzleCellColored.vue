@@ -42,8 +42,11 @@ export default {
 }
 
 .cell-btn {
-	@apply cursor-pointer;
 	transition: background-color .2s ease;
+}
+.cell-btn.btn {
+	@apply cursor-pointer;
+	will-change: background-color;
 }
 .cell-btn.value-0 {
 	@apply bg-cell-blue-primary;
@@ -62,8 +65,7 @@ export default {
 .cell-tap-shadow {
 	@apply pointer-events-none absolute w-full h-full top-0;
 	@apply inset-0;
-	@apply ring-2 ring-gray-800 dark:ring-white ring-inset ring-opacity-70;
-	@apply opacity-0;
+	@apply ring-2 ring-gray-800 dark:ring-white ring-inset ring-opacity-0;
 }
 .cell-size-l .cell-tap-shadow {
 	@apply ring;
@@ -72,11 +74,11 @@ export default {
 	@apply ring-4;
 }
 .cell-btn.btn:active .cell-tap-shadow {
-	@apply opacity-100;
+	@apply ring-opacity-70;
 	/* easeOutCirc */
-	transition: opacity .05s cubic-bezier(0, 0.55, 0.45, 1);
+	transition: box-shadow .05s cubic-bezier(0, 0.55, 0.45, 1);
 }
 .cell-tap-shadow {
-	transition: opacity 0.5s cubic-bezier(.97,.25,.16,.71) .6s;
+	transition: box-shadow 0.5s cubic-bezier(.97,.25,.16,.71) .6s;
 }
 </style>

@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import PuzzleCell from '@/components/gameboard/PuzzleCell.vue';
+import PuzzleCellSymbols from '@/components/gameboard/PuzzleCellSymbols.vue';
 import PuzzleCellColored from '@/components/gameboard/PuzzleCellColored.vue';
 import PuzzleGridHighlights from '@/components/gameboard/PuzzleGridHighlights.vue';
 import debounce from 'lodash.debounce';
@@ -48,7 +48,7 @@ import { useStore } from 'vuex';
 
 export default {
 	components: {
-		PuzzleCell,
+		PuzzleCellSymbols,
 		PuzzleCellColored,
 		PuzzleGridHighlights,
 	},
@@ -112,7 +112,7 @@ export default {
 			return this.$store.getters['settings/cellThemeType'];
 		},
 		cellComponent() {
-			return this.cellThemeType === 'colored' ? 'PuzzleCellColored' : 'PuzzleCell';
+			return this.cellThemeType === 'colored' ? 'PuzzleCellColored' : 'PuzzleCellSymbols';
 		},
 		vibrateOnTap() {
 			return this.$store.state.settings.enableVibration;
