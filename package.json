@@ -1,6 +1,6 @@
 {
   "name": "takuzu",
-  "version": "0.3.12",
+  "version": "0.3.13",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -23,7 +23,6 @@
     "install": "^0.13.0",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
-    "npm": "^7.20.5",
     "oh-vue-icons": "^0.4.7",
     "postcss": "^8.3.6",
     "register-service-worker": "^1.7.2",
