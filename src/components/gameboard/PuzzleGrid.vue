@@ -12,7 +12,8 @@
 		:style="{ 'grid-row': `calc(${cell.y} + 1) / span 1`,
 		'grid-column': `calc(${cell.x} + 1) / span 1` }"
 	>
-		<PuzzleCell
+		<component
+			:is="cellComponent"
 			class="cell overflow-hidden"
 			@pointerdown="cellClick(cell.x, cell.y, cell.key)"
 			:value="gridValues[cell.key]"
@@ -22,7 +23,7 @@
 			:hidden="false"
 			:incorrect="incorrectCellKeys[cell.key]"
 		>
-		<template #incorrect v-if="cellTheme === 'colored'">
+		<template #incorrect v-if="cellThemeType === 'colored'">
 			<transition name="mark-fade">
 				<div class="incorrect-mark" v-if="incorrectCellKeys[cell.key]">
 					<div></div>
@@ -30,7 +31,7 @@
 				</div>
 			</transition>
 		</template>
-		</PuzzleCell>
+		</component>
 	</div>
 		<PuzzleGridHighlights />
 	</div>
@@ -38,6 +39,7 @@
 
 <script>
 import PuzzleCell from '@/components/gameboard/PuzzleCell.vue';
+import PuzzleCellColored from '@/components/gameboard/PuzzleCellColored.vue';
 import PuzzleGridHighlights from '@/components/gameboard/PuzzleGridHighlights.vue';
 import debounce from 'lodash.debounce';
 import { EMPTY } from '@/lib/constants';
@@ -47,6 +49,7 @@ import { useStore } from 'vuex';
 export default {
 	components: {
 		PuzzleCell,
+		PuzzleCellColored,
 		PuzzleGridHighlights,
 	},
 	props: {
@@ -107,6 +110,9 @@ export default {
 		},
 		cellThemeType() {
 			return this.$store.getters['settings/cellThemeType'];
+		},
+		cellComponent() {
+			return this.cellThemeType === 'colored' ? 'PuzzleCellColored' : 'PuzzleCell';
 		},
 		vibrateOnTap() {
 			return this.$store.state.settings.enableVibration;
