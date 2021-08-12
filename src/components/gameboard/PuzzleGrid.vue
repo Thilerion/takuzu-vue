@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="puzzle-grid"
-		:class="[`cell-theme-${cellTheme}`]"
+		:class="[`cell-theme-${cellTheme}`, `cell-theme-type-${cellThemeType}`]"
 	>
 	<div
 		class="puzzle-cell-wrapper overflow-hidden"
@@ -17,6 +17,7 @@
 			@pointerdown="cellClick(cell.x, cell.y, cell.key)"
 			:value="gridValues[cell.key]"
 			:theme="cellTheme"
+			:theme-type="cellThemeType"
 			:locked="lockedCells[cell.key]"
 			:hidden="false"
 			:incorrect="incorrectCellKeys[cell.key]"
@@ -103,6 +104,9 @@ export default {
 		},
 		cellTheme() {
 			return this.$store.state.settings.cellTheme;
+		},
+		cellThemeType() {
+			return this.$store.getters['settings/cellThemeType'];
 		},
 		vibrateOnTap() {
 			return this.$store.state.settings.enableVibration;

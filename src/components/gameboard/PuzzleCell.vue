@@ -10,7 +10,7 @@
 					v-show="hasValue"
 					class="cell-value"
 					:class="cellValueClassList"
-				><div class="cell-symbol">{{cellSymbol}}</div></div>
+				><div v-if="themeType === 'symbols'" class="cell-symbol">{{cellSymbol}}</div></div>
 			</transition>
 			<div class="cell-tap-shadow"></div>
 			<slot name="incorrect" />
@@ -32,6 +32,10 @@ export default {
 			type: String,
 			required: true
 		},
+		themeType: {
+			type: String,
+			required: true
+		},
 		hidden: Boolean,
 		incorrect: Boolean,
 		locked: Boolean,
@@ -41,12 +45,11 @@ export default {
 			return this.value !== EMPTY;
 		},
 		cellValueClassList() {
-			const list = [];
-			if (this.hasValue) list.push(`value-${this.value}`);
-			return list;
+			const valueString = 'value-' + (this.hasValue ? this.value : 'none');
+			return [valueString];
 		},
 		cellSymbol() {
-			if (this.theme === 'colored' || this.value == null || this.value === EMPTY) {
+			if (this.value == null || this.value === EMPTY) {
 				return '';
 			}
 
@@ -90,14 +93,13 @@ export default {
 .cell-theme-tictactoe .cell-btn {
 	@apply font-sans font-medium text-gray-700;
 }
-.cell-theme-colored .cell-btn {
+.cell-theme-type-colored .cell-btn {
 	@apply text-white;
 }
 .cell-btn:disabled {
 	@apply cursor-default;
 }
-.cell-theme-binary .cell-btn:disabled .cell-wrapper,
-.cell-theme-tictactoe .cell-btn:disabled .cell-wrapper {
+.cell-theme-type-symbols .cell-btn:disabled .cell-wrapper {
 	@apply bg-gray-300 bg-opacity-70 dark:bg-gray-700 dark:bg-opacity-30;
 }
 
@@ -190,11 +192,11 @@ export default {
 	line-height: calc(var(--base-size) * 1.01);
 }
 
-.cell-theme-binary .cell-value, .cell-theme-tictactoe .cell-value {
+.cell-theme-type-symbols .cell-value {
 	background-color: transparent;
 }
 
-:not(.cell-theme-colored) .incorrect .cell-wrapper {
+.cell-theme-type-symbols .incorrect .cell-wrapper {
 	@apply bg-red-400 bg-opacity-20 ring-1 ring-inset ring-red-900 ring-opacity-40;
 	transition: none;
 }

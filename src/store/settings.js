@@ -3,7 +3,7 @@ const getDefaultSettings = () => ({
 	enableWakeLock: true,
 	showTimer: true,
 
-	cellTheme: 'binary', // binary, tictactoe, or colored
+	cellTheme: 'binary', // "blue-red" for colored, or "tictactoe"/"binary" for "symbols"
 	
 	enableVibration: true,
 
@@ -15,12 +15,20 @@ const getDefaultSettings = () => ({
 	toggleMode: "0",
 });
 
+const cellThemeTypeMap = {
+	'binary': 'symbols',
+	'tictactoe': 'symbols',
+	'blue-red': 'colored'
+}
+
 export const settingsModule = {
 	namespaced: true,
 	state: loadSettings,
 
 	getters: {
 		vibrationEnabled: state => state.enableVibration,
+
+		cellThemeType: state => cellThemeTypeMap[state.cellTheme],
 
 		showBoardCoordinates: state => state.showLineInfo === 'coords',
 		showBoardLineCounts: state => ['remainingCount', 'currentCount'].includes(state.showLineInfo),
@@ -71,6 +79,9 @@ function loadSettings() {
 		const result = {};
 		for (const key of Object.keys(defaultSettings)) {
 			result[key] = parsed[key] ?? defaultSettings[key];
+		}
+		if (result.cellTheme === 'colored') {
+			result.cellTheme = 'blue-red';
 		}
 		return result;
 	} catch {

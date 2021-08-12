@@ -32,18 +32,18 @@
 				<div class="one">X</div>
 			</div>
 		</label>
-		<label class="flex items-center cell-theme-box" :class="{selected: cellTheme === 'colored'}">
+		<label class="flex items-center cell-theme-box" :class="{selected: cellTheme === 'blue-red'}">
 			<input
 				class="radio"
 				type="radio"
 				name="radio-cell-theme"
 				v-model="cellTheme"
-				value="colored"
+				value="blue-red"
 			>
 			<span
 				class="label"
 			>Colored</span>
-			<div class="example cell-theme-colored">
+			<div class="example cell-theme-blue-red">
 				<div class="zero"></div>
 				<div class="one"></div>
 			</div>
@@ -65,7 +65,7 @@ export default {
 			cellThemeOptions: [
 				{ label: 'Binary', value: 'binary' },
 				{ label: 'Tic-tac-toe', value: 'tictactoe' },
-				{ label: 'Colored', value: 'colored' },
+				{ label: 'Colored', value: 'blue-red' },
 			],
 		}
 	},
@@ -128,13 +128,13 @@ export default {
 .cell-theme-OX {
 	@apply font-sans font-bold;
 }
-.cell-theme-colored {
+.cell-theme-blue-red {
 	@apply text-opacity-0;
 }
-.cell-theme-colored .one {
+.cell-theme-blue-red .one {
 	@apply dark:bg-one-dark bg-one-primary border-0;
 }
-.cell-theme-colored .zero {
+.cell-theme-blue-red .zero {
 	@apply dark:bg-zero-dark bg-zero-primary border-0;
 }
 </style>
