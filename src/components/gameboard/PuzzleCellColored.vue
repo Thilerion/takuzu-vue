@@ -2,7 +2,7 @@
 	<component
 		:is="elementType"
 		class="cell-btn colored"
-		:class="[`value-${valueString}`]"
+		:class="[`value-${valueString}`, locked ? 'locked' : 'btn']"
 	>
 		<div class="cell-tap-shadow"></div>
 		<slot name="incorrect" />
@@ -33,40 +33,29 @@ export default {
 
 <style lang="postcss" scoped>
 .cell-btn.colored {
-	border-radius: var(--cell-rounded)!important;
+	border-radius: var(--cell-rounding)!important;
 	@apply overflow-hidden h-full w-full focus:outline-none relative block;
-}
-
-.cell-btn.colored {
-	--one-light-normal: hsl(7, 77%, 55%);
-	--one-light-locked: hsl(7, 77%, 52%);
-
-	--zero-light-normal: hsl(207, 90%, 61%);
-	--zero-light-locked: hsl(207, 96%, 58%);
-
-	--color-one: var(--one-light-normal);
-	--color-zero: var(--zero-light-normal);
 }
 
 .cell-btn.value-none {
 	@apply bg-gray-150;
 }
 
-button.cell-btn {
+.cell-btn {
 	@apply cursor-pointer;
 	transition: background-color .2s ease;
 }
-button.cell-btn.value-0 {
-	background-color: var(--zero-light-normal);
+.cell-btn.value-0 {
+	@apply bg-cell-blue-primary;
 }
-button.cell-btn.value-1 {
-	background-color: var(--one-light-normal);
+.cell-btn.value-1 {
+	@apply bg-cell-red-primary;
 }
-div.cell-btn.value-0 {
-	background-color: var(--zero-light-locked);
+.cell-btn.locked.value-0 {
+	@apply bg-cell-blue-secondary;
 }
-div.cell-btn.value-1 {
-	background-color: var(--one-light-locked);
+.cell-btn.locked.value-1 {
+	@apply bg-cell-red-secondary;
 }
 
 /* Tap active animation */
@@ -82,13 +71,10 @@ div.cell-btn.value-1 {
 .cell-size-xl .cell-tap-shadow {
 	@apply ring-4;
 }
-.cell-btn:active .cell-tap-shadow {
+.cell-btn.btn:active .cell-tap-shadow {
 	@apply opacity-100;
 	/* easeOutCirc */
 	transition: opacity .05s cubic-bezier(0, 0.55, 0.45, 1);
-}
-.cell-btn:disabled .cell-tap-shadow {
-	@apply ring-0;
 }
 .cell-tap-shadow {
 	transition: opacity 0.5s cubic-bezier(.97,.25,.16,.71) .6s;

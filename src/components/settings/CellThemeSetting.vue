@@ -132,9 +132,9 @@ export default {
 	@apply text-opacity-0;
 }
 .cell-theme-blue-red .one {
-	@apply dark:bg-one-dark bg-one-primary border-0;
+	@apply dark:bg-cell-red-secondary bg-cell-red-primary border-0;
 }
 .cell-theme-blue-red .zero {
-	@apply dark:bg-zero-dark bg-zero-primary border-0;
+	@apply dark:bg-cell-blue-secondary bg-cell-blue-primary border-0;
 }
 </style>

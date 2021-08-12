@@ -33,14 +33,16 @@ module.exports = {
 				gray: {
 					150: 'rgb(242, 242, 243)'
 				},
-				one: {
-					primary: '#e54934',
-					dark: '#d2402d',
-				},
-				zero: {
-					primary: '#42a5f5',
-					dark: '#1f89e5',
-				},
+				cell: {
+					blue: {
+						primary: 'hsl(207, 90%, 61%)',
+						secondary: 'hsl(207, 82%, 58%)'
+					},
+					red: {
+						primary: 'hsl(7, 77%, 55%)',
+						secondary: 'hsl(7, 70%, 50%)'
+					}
+				}
 			}
 		}
 	},
