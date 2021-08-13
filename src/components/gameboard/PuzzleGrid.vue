@@ -187,9 +187,8 @@ function useGridData(width, height, initialGrid) {
 	grid-area: puzzle-grid;
 	grid-template-rows: repeat(var(--rows), var(--cell-size-total));
 	grid-template-columns: repeat(var(--columns), var(--cell-size-total));
-	@apply mr-auto mb-auto inline-grid relative justify-items-stretch items-stretch;
+	@apply mr-auto mb-auto grid relative justify-items-stretch items-stretch;
 	gap: var(--grid-gap);
-	contain: strict;
 }
 .puzzle-paused .puzzle-grid, .puzzle-finished .puzzle-grid {
 	@apply pointer-events-none;
@@ -197,7 +196,6 @@ function useGridData(width, height, initialGrid) {
 
 .puzzle-cell-wrapper {
 	position: relative;
-	contain: strict;
 }
 
 .cell-bg {

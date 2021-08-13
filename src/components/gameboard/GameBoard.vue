@@ -17,6 +17,8 @@
 			:style="{
 				'max-width': gridWidth,
 				'max-height': gridHeight,
+				'width': gridWidth,
+				'height': gridHeight,
 			}"
 			@toggle-cell="toggleCell"
 		/>
