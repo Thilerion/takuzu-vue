@@ -20,7 +20,6 @@
     "date-fns": "^2.22.1",
     "dexie": "^3.0.3",
     "dexie-export-import": "^1.0.3",
-    "install": "^0.13.0",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
     "oh-vue-icons": "^0.4.7",
