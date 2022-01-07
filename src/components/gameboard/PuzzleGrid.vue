@@ -133,10 +133,13 @@ export default {
 };
 
 function useTapVibrate(store, duration) {
-	const vibrationEnabled = computed(() => store.state.settings.enableVibration);
+	const vibrationSupported = window.navigator && ('vibrate' in window.navigator);
+	const vibrationEnabled = computed(() => {
+		return store.state.settings.enableVibration;
+	});
 
 	const vibrate = () => {
-		if (!vibrationEnabled) return;
+		if (!vibrationSupported || !vibrationEnabled.value) return;
 		window.navigator.vibrate(duration);
 	}
 
@@ -147,8 +150,8 @@ function useTapVibrate(store, duration) {
 	});
 
 	return {
-		debouncedVibrate,
-		vibrate,
+		debouncedVibrate: vibrationSupported ? debouncedVibrate : () => {},
+		vibrate: vibrationSupported ? vibrate : () => {},
 		vibrationEnabled
 	}
 }
