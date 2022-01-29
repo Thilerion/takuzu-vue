@@ -8,7 +8,8 @@
     "test:unit": "vue-cli-service test:unit",
     "deploy": "vue-cli-service build && copy dist\\index.html dist\\200.html && surge dist --domain https://takuzu-vue.surge.sh",
     "build:netlify": "vue-cli-service build",
-    "deploy:test": "vue-cli-service build && copy dist\\index.html dist\\200.html && surge dist --domain https://takuzu-vue-test.surge.sh"
+    "deploy:test": "vue-cli-service build && copy dist\\index.html dist\\200.html && surge dist --domain https://takuzu-vue-test.surge.sh",
+    "deploy:test2": "vue-cli-service build && copy dist\\index.html dist\\200.html && surge dist --domain https://takuzu-vue-test2.surge.sh"
   },
   "dependencies": {
     "@tailwindcss/forms": "^0.3.3",
