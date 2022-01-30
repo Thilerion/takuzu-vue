@@ -3,11 +3,11 @@ import { createMaskWithDifficulty } from "./mask.js";
 import { getOptimalMaskRatio, getMaskQuality } from "./quality.js";
 
 const minMaskedRatioQuality = 0.94;
-const minSymbolDistributionQuality = 0.6;
+const minSymbolDistributionQuality = 0.36;
 
-const tryDurations = [250, 1000, 1750, 2000];
-const totalMaxDuration = tryDurations.reduce((acc, val) => acc + val, 0);
-const maxTries = 20;
+const _tryDurations = [250, 1000, 1750, 2000];
+const _totalMaxDuration = _tryDurations.reduce((acc, val) => acc + val, 0);
+const _maxTries = 20;
 
 
 /**
@@ -17,8 +17,13 @@ const maxTries = 20;
  * @param {number} puzzleConfig.height
  * @param {1|2|3|4|5} puzzleConfig.difficulty
  */
-export function createPuzzle(puzzleConfig) {
+export function createPuzzle(puzzleConfig, opts = {}) {
 	const { width, height, difficulty } = puzzleConfig;
+	const {
+		maxTries = 20,
+		totalMaxDuration = 5000,
+		tryDurations = [250, 1000, 1750, 2000]
+	} = opts;
 
 	const start = performance.now();
 	const end = start + totalMaxDuration;
