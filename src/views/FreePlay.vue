@@ -5,7 +5,7 @@
 			<template #right>
 				<DropdownMenu
 					class="pointer-events-auto"
-					v-if="devModeEnabled"
+					v-if="debugModeEnabled"
 				>
 					<template #items>
 						<DropdownMenuItem
@@ -108,8 +108,8 @@ export default {
 		gameInitialized() {
 			return this.$store.state.puzzle.initialized;
 		},
-		devModeEnabled() {
-			return this.$store.state.devMode;
+		debugModeEnabled() {
+			return this.$store.state.debugMode;
 		},
 		gameLoading() {
 			return !!this.$store.state.puzzle.loading;

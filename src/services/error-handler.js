@@ -1,11 +1,11 @@
-import { isDevModeEnabledInLocalStorage } from "./dev-mode.js";
+import { isDebugModeEnabledInLocalStorage } from "./debug-mode.js";
 
 let errorEventHandlersSet = false;
 
 export class ErrorHandler {
 	constructor(alertErrors) {
 		if (alertErrors == null) {
-			this.alertErrors = !!isDevModeEnabledInLocalStorage;
+			this.alertErrors = !!isDebugModeEnabledInLocalStorage;
 		} else {
 			this.alertErrors = alertErrors;
 		}

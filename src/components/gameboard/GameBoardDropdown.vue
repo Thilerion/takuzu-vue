@@ -28,7 +28,7 @@
 			</BaseDropdownItem>
 			<BaseDropdownDivider/>
 
-			<template v-if="devModeEnabled">
+			<template v-if="debugModeEnabled">
 				<BaseDropdownItem @click="copyPuzzleString">
 					<icon-heroicons-outline-clipboard-copy class="opacity-80 text-base"/>
 					<span class="ml-3 mt-px">Copy board string</span>
@@ -60,8 +60,8 @@ export default {
 		}
 	},
 	computed: {
-		devModeEnabled() {
-			return this.$store.state.devMode;
+		debugModeEnabled() {
+			return this.$store.state.debugMode;
 		},
 		showTimer: {
 			get() {

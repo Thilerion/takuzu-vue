@@ -3,20 +3,20 @@
 		<PageHeader>Takuzu</PageHeader>
 		<div class="flex-1 px-8 text-center space-y-4">
 			<button
-				@click="increaseDevModeClickCounter"
-				:disabled="isDevModeEnabled"
+				@click="increaseDebugModeClickCounter"
+				:disabled="isDebugModeEnabled"
 				class="block mx-auto"
 			>
 				<div
 					class="text-center p-2 text-sm text-gray-600"
 				>App version: {{ appVersion }}</div>
 			</button>
-			<router-link v-if="isDevModeEnabled" custom to="/showcase" v-slot="{ navigate }">
+			<router-link v-if="isDebugModeEnabled" custom to="/showcase" v-slot="{ navigate }">
 				<BaseButton @click="navigate">Open component showcase</BaseButton>
 			</router-link>
-			<BaseButton @click="disableDevMode" v-if="isDevModeEnabled">Disable dev mode</BaseButton>
-			<BaseButton @click="clearPuzzleDb" v-if="isDevModeEnabled">Clear pregen puzzle db</BaseButton>
-			<BaseButton @click="pregenPuzzles" v-if="isDevModeEnabled">Pregen puzzles</BaseButton>
+			<BaseButton @click="disableDebugMode" v-if="isDebugModeEnabled">Disable debug mode</BaseButton>
+			<BaseButton @click="clearPuzzleDb" v-if="isDebugModeEnabled">Clear pregen puzzle db</BaseButton>
+			<BaseButton @click="pregenPuzzles" v-if="isDebugModeEnabled">Pregen puzzles</BaseButton>
 			<p v-if="clearPuzzlesResult != null">{{clearPuzzlesResult}}</p>
 		</div>
 	</div>
@@ -29,7 +29,7 @@ import { initPregenWorker } from '@/workers/pregen-puzzles.js';
 export default {
 	data() {
 		return {
-			devModeClickCounter: 0,
+			debugModeClickCounter: 0,
 			clearPuzzlesResult: null,
 		}
 	},
@@ -37,24 +37,27 @@ export default {
 		appVersion() {
 			return "TODO";
 		},
-		isDevModeEnabled() {
-			return this.$store.state.devMode;
+		isDebugModeEnabled() {
+			return this.$store.state.debugMode;
+		},
+		isDebugModeEnabled() {
+			return this.$store.state.debugMode;
 		}
 	},
 	methods: {
-		increaseDevModeClickCounter() {
-			this.devModeClickCounter += 1;
-			if (this.devModeClickCounter >= 5) {
-				this.enableDevMode();
+		increaseDebugModeClickCounter() {
+			this.debugModeClickCounter += 1;
+			if (this.debugModeClickCounter >= 5) {
+				this.enableDebugMode();
 			}
 		},
-		enableDevMode() {
-			this.$store.commit('setDevMode', true);
-			this.devModeClickCounter = 0;
+		enableDebugMode() {
+			this.$store.dispatch('setDebugMode', true);
+			this.debugModeClickCounter = 0;
 		},
-		disableDevMode() {
-			this.$store.commit('setDevMode', false);
-			this.devModeClickCounter = 0;
+		disableDebugMode() {
+			this.$store.dispatch('setDebugMode', false);
+			this.debugModeClickCounter = 0;
 		},
 		async clearPuzzleDb() {
 			try {

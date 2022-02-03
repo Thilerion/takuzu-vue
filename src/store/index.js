@@ -1,21 +1,13 @@
-// const { createStore } = require("vuex");
-
-// import { isDevModeEnabledInLocalStorage } from "@/services/dev-mode.js";
+import { isDebugModeEnabledInLocalStorage, persistDebugMode } from "@/services/debug-mode.js";
 import { createStore } from "vuex";
 import puzzleModule from './puzzle/index.js';
 import { settingsModule, initSettingsWatcher } from './settings.js';
 import { statsModule } from './stats.js';
 import { statsDataModule } from './stats-data.js';
 
-const setDebugMode = (state, value) => {
-	state.debugMode = state.devMode = !!value;
-
-	if (value) {
-		localStorage.setItem('takuzu-dev-mode', true);
-	} else {
-		localStorage.removeItem('takuzu-dev-mode');
-	}
-}
+const debugModeEnabled = isDebugModeEnabledInLocalStorage({
+	defaultValue: import.meta.env.DEV
+});
 
 const store = createStore({
 	strict: import.meta.env.DEV,
@@ -28,8 +20,8 @@ const store = createStore({
 	},
 
 	state: {
-		devMode: import.meta.env.DEV, // TODO: replace devMode with debugMode
-		debugMode: import.meta.env.DEV,
+		debugMode: debugModeEnabled,
+
 		// TODO: pretty crappy way to force rerender, use something other than puzzleKey
 		// to force playPuzzle route to rerender after "restart" game
 		puzzleKey: 0,
@@ -40,13 +32,15 @@ const store = createStore({
 	},
 
 	mutations: {
-		setDevMode: setDebugMode,
-		setDebugMode,
+		setDebugMode: (state, value) => state.debugMode = !!value,
 		incrementPuzzleKey: state => state.puzzleKey += 1,
 	},
 
 	actions: {
-
+		setDebugMode({ commit }, enabled) {
+			persistDebugMode(enabled);
+			commit('setDebugMode', enabled);
+		}
 	}
 
 })
