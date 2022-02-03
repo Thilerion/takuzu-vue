@@ -1,4 +1,5 @@
-const puzzleWorker = new Worker(new URL("./generate-puzzle.worker.js", import.meta.url));
+import GeneratePuzzleWorker from './generate-puzzle.worker.js?worker';
+const puzzleWorker = new GeneratePuzzleWorker();
 
 export function sendWorkerMessage(message) {
 	puzzleWorker.postMessage({ message });

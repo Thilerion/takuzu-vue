@@ -24,10 +24,13 @@
 		/>
 
 		<transition name="fade-pause">
-			<div class="pause-overlay" v-show="paused">
-				<div>
-					<ui-icons name="fa-pause" scale="5" />
-					<div>Paused</div>
+			<div class="pause-overlay text-center" v-show="paused">
+				<div class="flex flex-col h-full px-2 pt-8 pb-6">
+					<div class="h-5/6 flex-auto mx-auto flex justify-center pause-icon-wrapper place-items-center py-2">
+						<icon-grommet-icons-pause-fill />
+					</div>
+					<div class="flex-auto pause-label-wrapper uppercase mb-2 py-2">Paused</div>
+					<!-- <div class="flex-auto restart-label">Click to continue</div> -->
 				</div>
 			</div>
 		</transition>
@@ -36,15 +39,13 @@
 </template>
 
 <script>
-import UiIcons from '@/components/common/UiIcons.vue';
 import PuzzleCheckIndicator from './PuzzleCheckIndicator.vue';
-import PuzzleGrid from './PuzzleGrid';
+import PuzzleGrid from './PuzzleGrid.vue';
 
 export default {
 	components: {
 		PuzzleGrid,
 		PuzzleCheckIndicator,
-UiIcons,
 	},
 	props: {
 		rows: Number,
@@ -60,9 +61,6 @@ UiIcons,
 			required: true
 		},
 		paused: Boolean,
-	},
-	data() {
-		return {}
 	},
 	computed: {
 		// computed properties for styling
@@ -86,7 +84,7 @@ UiIcons,
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .board {
 	@apply inline-grid relative;
 	grid-template-areas: "none info"
@@ -95,6 +93,7 @@ UiIcons,
 }
 
 .pause-overlay {
+	/* TODO: Pointer-events-none must be pointer-events-auto to prevent cell clicking */
 	grid-area: puzzle-grid;
 	@apply relative z-10 pointer-events-none bg-gray-100 text-gray-400 grid place-items-center text-4xl;
 	border-radius: var(--cell-rounding);
@@ -107,6 +106,18 @@ UiIcons,
 .fade-pause-enter-from,
 .fade-pause-leave-to {
 	opacity: 0;
+}
+
+.pause-icon-wrapper {
+	font-size: clamp(20px, 25vmin, 90px);
+}
+.pause-label-wrapper {
+	@apply opacity-80 font-light;
+	letter-spacing: 0.15em;
+	font-size: clamp(20px, 10vmin, 60px);
+}
+.restart-label {
+	@apply text-base;
 }
 
 .puzzle-info-wrapper {

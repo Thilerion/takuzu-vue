@@ -2,14 +2,13 @@
 	"compilerOptions": {
 		"baseUrl": ".",
 		"paths": {
-			"@/*": ["./src/*"]
-		}	
+			"@/*": [
+				"src/*"
+			]
+		}
 	},
 	"exclude": [
 		"node_modules",
-		"dist"
-	],
-	"typeAcquisition": {
-		"include": ["jest"]
-	}
+		"dist",
+	]
 }

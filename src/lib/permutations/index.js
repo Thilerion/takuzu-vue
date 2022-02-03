@@ -1,7 +1,7 @@
-import { EMPTY, ONE, ZERO } from "../constants";
-import { countLineValues, lineSizeToNumRequired, memoize, numRequiredOfValue, sortLineValues } from "../utils";
-import { validateLine } from "../validate/line";
-import permuteUnique from "./permute";
+import { EMPTY, ONE, ZERO } from "../constants.js";
+import { countLineValues, lineSizeToNumRequired, memoize, numRequiredOfValue, sortLineValues } from "../utils.js";
+import { validateLine } from "../validate/line.js";
+import permuteUnique from "./permute.js";
 
 export const getArrayPermutations = memoize(
 	(values) => {

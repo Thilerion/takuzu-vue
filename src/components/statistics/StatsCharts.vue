@@ -49,8 +49,8 @@ import TimeLineChart from './TimeLineChart.vue'
 import PieChart from './PieChart.vue'
 
 import { parse } from 'date-fns';
-import { boardTypes, DIFFICULTY_LABELS } from '@/config';
-import { getDateRange } from '@/utils/date.utils';
+import { boardTypes, DIFFICULTY_LABELS } from '@/config.js';
+import { getDateRange } from '@/utils/date.utils.js';
 
 export default {
 	components: {
@@ -144,6 +144,6 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 
 </style>

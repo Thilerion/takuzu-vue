@@ -4,14 +4,15 @@
 		:style="{
 			'min-height': viewportHeight,
 			'--vh-total': viewportHeight,
-		}">
+		}"
+	>
 		<!-- TODO: transition for MainPage <-> OverlayPage -->
 		<router-view v-slot="{ Component, route }">
 			<overlay-page-transition>
-				<component :is="Component" :key="route.meta.usePuzzleKey ? puzzleKey : undefined" />
+				<component :key="route.meta.puzzleKey && puzzleKey" :is="Component" />
 			</overlay-page-transition>
 		</router-view>
-		
+
 		<!-- container for overlays, for use with <teleport> component -->
 		<div id="overlay-wrapper">
 			<div id="overlay-container"></div>
@@ -21,31 +22,31 @@
 
 <script>
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
-import { initPregenWorker } from './workers/pregen-puzzles';
-import { initDarkLightAutoTheme } from '@/services/dark-light-auto-theme';
+import { initPregenWorker } from '@/workers/pregen-puzzles.js';
+import { initDarkLightAutoTheme } from '@/services/dark-light-auto-theme.js';
 
 export default {
 	components: {
-		OverlayPageTransition,
+		OverlayPageTransition
 	},
 	setup() {
 		initDarkLightAutoTheme();
 	},
 	data() {
 		return {
-			viewportHeight: '100%',
-		}	
+			viewportHeight: '100%'
+		}
 	},
 	computed: {
 		puzzleKey() {
-			return this.$store.state.puzzleKey;
+			return this.$store.state.puzzleKey || undefined;
 		}
 	},
 	methods: {
 		onResize() {
 			const h = window.innerHeight;
 			this.viewportHeight = h + 'px';
-		},
+		}
 	},
 	beforeMount() {
 		window.addEventListener('resize', this.onResize);
@@ -55,13 +56,12 @@ export default {
 		window.removeEventListener('resize', this.onResize);
 	},
 	mounted() {
-		// INIT PREGEN WORKER
 		initPregenWorker();
 	}
-}
+};
 </script>
 
-<style lang="postcss">
+<style>
 html {
 	height: -webkit-fill-available;
 }
@@ -86,46 +86,4 @@ body {
 #overlay-container > * {
 	@apply pointer-events-auto;
 }
-
-/*
-.fade-enter-active,
-.fade-leave-active {
-	transition: opacity .15s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-	opacity: 0;
-}
-
-.slide-in-enter-active,
-.slide-in-leave-active,
-.slide-out-enter-active,
-.slide-out-leave-active {
-	transition: all .3s ease;
-	@apply w-full h-full z-20;
-}
-.slide-out-enter-active {
-	transition: all .3s ease;
-}
-.slide-out-enter-active {
-	transition: all .2s ease .1s;
-}
-
-.slide-in-enter-from {
-	opacity: 0;
-	transform: scale(1.05);
-}
-.slide-in-leave-to {
-	opacity: 0;
-}
-
-.slide-out-enter-from {
-	opacity: 0;
-}
-.slide-out-leave-to {
-	opacity: 0;
-	transform: scale(1.05);
-	z-index: 50;
-} */
 </style>

@@ -37,7 +37,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .stats-group {
 	@apply text-sm;
 }

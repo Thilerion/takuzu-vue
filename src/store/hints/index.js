@@ -1,5 +1,5 @@
-import { hintGenerators } from "./Hint";
-import { hintValidators } from "./validation";
+import { hintGenerators } from "./Hint.js";
+import { hintValidators } from "./validation.js";
 
 export function createHint(type, data) {
 	if (!Object.keys(hintGenerators).includes(type)) {

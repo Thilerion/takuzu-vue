@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { formatBasicSortableDateKey, getDateRange, timeFormatter } from "@/utils/date.utils";
+import { formatBasicSortableDateKey, getDateRange, timeFormatter } from "@/utils/date.utils.js";
 import { differenceInCalendarDays, isSameDay, startOfDay, addDays, compareAsc, startOfWeek, format, startOfMonth, startOfTomorrow, getISODay, subWeeks } from 'date-fns';
 
 const firstDOW = startOfWeek(new Date(), {
@@ -198,7 +198,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .heatmap-grid {
 	display: grid;
 	grid-template-rows: repeat(7, auto);

@@ -1,6 +1,6 @@
-import { PuzzleData } from "@/services/stats/models";
-import { puzzleHistoryTable } from '@/services/stats/db';
-import { getGameEndStats } from "@/services/stats";
+import { PuzzleData } from "@/services/stats/models.js";
+import { puzzleHistoryTable } from '@/services/stats/db.js';
+import { getGameEndStats } from "@/services/stats/index.js";
 
 export const statsModule = {
 	namespaced: true,

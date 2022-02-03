@@ -1,10 +1,10 @@
-import { puzzleHistoryTable, default as db } from './db';
-import { PuzzleData } from './models';
-import { getDailyStats, getDailyStreaks } from './process-stats';
+import { puzzleHistoryTable, default as db } from './db.js';
+import { PuzzleData } from './models.js';
+import { getDailyStats, getDailyStreaks } from './process-stats.js';
 
-export * from './process-stats';
+export * from './process-stats.js';
 export { PuzzleData, puzzleHistoryTable, db };
-export { clearPuzzleHistory, exportPuzzleHistory, importPuzzleHistory } from './db';
+export { clearPuzzleHistory, exportPuzzleHistory, importPuzzleHistory } from './db.js';
 
 puzzleHistoryTable.mapToClass(PuzzleData);
 

@@ -73,7 +73,7 @@
 
 <script>
 import CellThemeSetting from '@/components/settings/CellThemeSetting.vue';
-import DarkModeSetting from '../components/settings/DarkModeSetting';
+import DarkModeSetting from '../components/settings/DarkModeSetting.vue';
 
 export default {
 	components: {
@@ -183,7 +183,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .setting-block {
 	@apply block text-gray-900 text-left px-8;
 }

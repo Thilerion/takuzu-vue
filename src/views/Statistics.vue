@@ -20,9 +20,9 @@
 </template>
 
 <script>
-import { clearPuzzleHistory, exportPuzzleHistory, importPuzzleHistory } from '@/services/stats';
+import { clearPuzzleHistory, exportPuzzleHistory, importPuzzleHistory } from '@/services/stats/index.js';
 import AdvancedStats from '@/components/statistics/AdvancedStats.vue';
-import { importPeak } from '@/services/stats/db';
+import { importPeak } from '@/services/stats/db.js';
 
 export default {
 	components: { AdvancedStats },
@@ -133,7 +133,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 section {
 	@apply text-gray-900 dark:text-white text-left;
 }

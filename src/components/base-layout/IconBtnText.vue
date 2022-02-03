@@ -1,7 +1,7 @@
 <template>
 	<button class="icon-btn" :class="{ vertical }">
-		<span>
-			<ui-icons class="icon-svg" :name="icon" :scale="scale" />
+		<span class="icon-wrapper">
+			<slot name="icon" />
 		</span>
 		<div class="btn-label whitespace-nowrap">
 			<slot />
@@ -10,12 +10,7 @@
 </template>
 
 <script>
-import UiIcons from '@/components/common/UiIcons.vue';
-
 export default {
-	components: {
-		UiIcons
-	},
 	props: {
 		scale: {
 			type: [Number, String],
@@ -23,14 +18,19 @@ export default {
 		},
 		icon: {
 			type: String,
-			required: true
+			// required: true
 		},
 		vertical: Boolean
-	}
+	},
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
+
+.icon-wrapper:deep(svg) {
+	font-size: calc(v-bind(scale) * 16px);
+}
+
 .icon-btn {
 	@apply flex items-center justify-center rounded-full active:bg-gray-300 outline-none text-current select-none p-3 cursor-pointer;
 	-webkit-tap-highlight-color: transparent;

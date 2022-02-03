@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { timeFormatter } from '@/utils/date.utils';
+import { timeFormatter } from '@/utils/date.utils.js';
 
 export default {
 	data() {
@@ -60,7 +60,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .minutes {
 	width: 2ch;
 	@apply inline-block text-right;

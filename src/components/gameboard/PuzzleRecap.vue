@@ -9,7 +9,7 @@
 			<div
 				class="highscore-banner"
 				v-if="recordTypeMsg"
-			><ui-icons class="highscore-icon" name="md-emojievents"></ui-icons> {{recordTypeMsg}}</div>
+			><icon-fxemoji-trophy class="highscore-icon"/> {{recordTypeMsg}}</div>
 		</header>
 		<div class="inner px-6 pt-4 pb-6 text-sm">
 			<div class="text-center flex">
@@ -42,7 +42,7 @@
 						<button
 							class="stats-btn"
 							@click="$emit('exit-to', 'statistics')"
-						><span class="material-icons">leaderboard</span> View all statistics</button>
+						><span class="material-icons"><icon-ic-baseline-leaderboard/></span> View all statistics</button>
 					</div>
 
 				</div>
@@ -60,8 +60,7 @@
 </template>
 
 <script>
-import { timeFormatter } from '@/utils/date.utils';
-import UiIcons from '@/components/common/UiIcons.vue';
+import { timeFormatter } from '@/utils/date.utils.js';
 
 const recapMsgTypes = {
 	FIRST: 'first puzzle solved',
@@ -71,7 +70,6 @@ const recapMsgTypes = {
 };
 
 export default {
-	components: { UiIcons },
 	props: {
 		stats: {
 			type: Object,
@@ -195,7 +193,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .modal-header {
 	@apply bg-gradient-to-b from-teal-600 to-teal-500 text-white text-center py-3 px-3;
 }
@@ -206,12 +204,12 @@ export default {
 	@apply text-2xl;
 }
 .highscore-banner {
-	@apply bg-white text-teal-700 text-base inline-flex px-2 rounded-full my-1 font-medium justify-center items-center h-8 leading-none;
+	@apply bg-white text-teal-700 text-base inline-flex pr-2 pl-1 rounded-full my-1 font-medium justify-center items-center h-8 leading-none;
 	min-width: 13rem;
 	box-shadow: 0 0 10px 4px rgba(255, 255, 255, 0.6);
 }
 .highscore-icon {
-	@apply opacity-80 mr-1;
+	@apply mr-2;
 }
 
 
@@ -274,7 +272,7 @@ export default {
 	@apply inline-flex w-2/3 justify-center items-center font-medium cursor-pointer py-1 text-gray-700;
 }
 .stats-btn .material-icons {
-	@apply text-sm mr-1 opacity-90;
+	@apply text-base mr-1 opacity-90;
 }
 
 .recap-btns {

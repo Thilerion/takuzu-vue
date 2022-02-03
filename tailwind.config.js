@@ -1,11 +1,9 @@
-const colors = require('tailwindcss/colors');
 const defaultTheme = require('tailwindcss/defaultTheme');
 
-
+/** @type {import("@types/tailwindcss/tailwind-config").TailwindConfig } */
 module.exports = {
-	purge: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}', './public/index.html', './public/**/*.html'],
-	darkMode: 'class', // or 'media' or 'class'
-	mode: "jit",
+	content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
+	darkMode: 'class',
 	theme: {
 		fontFamily: {
 			'sans': [
@@ -29,7 +27,6 @@ module.exports = {
 				'xxs': ['0.625rem', '0.875rem'],
 			},
 			colors: {
-				...colors,
 				gray: {
 					150: 'rgb(242, 242, 243)'
 				},
@@ -47,6 +44,6 @@ module.exports = {
 		}
 	},
 	plugins: [
-		require('@tailwindcss/forms')
-	]
-}
+		require('@tailwindcss/forms'),
+	],
+};

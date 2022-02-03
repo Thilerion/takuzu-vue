@@ -67,7 +67,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .dropdown {
 	@apply inline-flex relative;
 }

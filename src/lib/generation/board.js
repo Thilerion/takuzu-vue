@@ -1,9 +1,9 @@
-import { SimpleBoard } from "../board/Board";
-import { COLUMN, ROW } from "../constants";
-import { getEmptyLinePermutations } from "../permutations";
-import { selectValue } from "../solver/selection";
-import Solver from "../solver/Solver";
-import { pickRandom } from "../utils";
+import { SimpleBoard } from "../board/Board.js";
+import { COLUMN, ROW } from "../constants.js";
+import { getEmptyLinePermutations } from "../permutations/index.js";
+import { selectValue } from "../solver/selection.js";
+import Solver from "../solver/Solver.js";
+import { pickRandom } from "../utils.js";
 
 export function generateBoard(width, height, maxAttempts = 5) {
 	return new BoardGenerator(width, height, maxAttempts).start();

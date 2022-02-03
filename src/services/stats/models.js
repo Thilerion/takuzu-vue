@@ -1,5 +1,5 @@
-import { formatBasicSortableDateKey } from "@/utils/date.utils";
-import { dimensionsToBoardType } from "@/config";
+import { formatBasicSortableDateKey } from "@/utils/date.utils.js";
+import { dimensionsToBoardType } from "@/config.js";
 
 export class PuzzleData {
 	constructor(data) {

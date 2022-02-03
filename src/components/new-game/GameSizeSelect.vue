@@ -18,8 +18,8 @@
 </template>
 
 <script>
-import GameSizeSelectTab from './GameSizeSelectTab';
-import GameSizeSelectTabButtons from './GameSizeSelectTabButtons';
+import GameSizeSelectTab from './GameSizeSelectTab.vue';
+import GameSizeSelectTabButtons from './GameSizeSelectTabButtons.vue';
 
 // gets previous selection from parent
 
@@ -107,6 +107,6 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 	
 </style>

@@ -1,21 +1,21 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 // MAIN ROUTES
-import MainPage from '@/components/base-layout/MainPage';
+import MainPage from '@/components/base-layout/MainPage.vue';
 import Home from '../views/Home.vue';
-import HowToPlay from '../views/HowToPlay';
-import Tutorial from '../views/Tutorial';
-import Statistics from '../views/Statistics';
-import Settings from '../views/Settings';
-import Menu from '../views/Menu';
+import HowToPlay from '../views/HowToPlay.vue';
+import Tutorial from '../views/Tutorial.vue';
+import Statistics from '../views/Statistics.vue';
+import Settings from '../views/Settings.vue';
+import Menu from '../views/Menu.vue';
 
 // NESTED PAGES / OVERLAY PAGES
-import FreePlay from '../views/FreePlay';
+import FreePlay from '../views/FreePlay.vue';
 
-import PlayPuzzle from '../views/PlayPuzzle';
+import PlayPuzzle from '../views/PlayPuzzle.vue';
 
 // 404 Page
-import NotFound from '../views/NotFound';
+import NotFound from '../views/NotFound.vue';
 
 const routes = [
 	{
@@ -103,7 +103,7 @@ const routes = [
 ]
 
 const router = createRouter({
-	history: createWebHistory(process.env.BASE_URL),
+	history: createWebHistory(),
 	routes
 });
 
@@ -124,4 +124,4 @@ router.afterEach((to, from) => {
 	}
 })
 
-export default router
+export default router;

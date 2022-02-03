@@ -1,8 +1,9 @@
-import { getAllPresetSizeDifficultyCombinations } from "@/config";
-import { SimpleBoard } from "@/lib/board/Board";
-import { addPuzzle, addPuzzles, puzzleTable } from "@/services/puzzles-db/db";
+import { getAllPresetSizeDifficultyCombinations } from "@/config.js";
+import { SimpleBoard } from "@/lib/board/Board.js";
+import { addPuzzle, addPuzzles, puzzleTable } from "@/services/puzzles-db/db.js";
 
-const puzzleWorker = new Worker(new URL("./generate-puzzle.worker.js", import.meta.url));
+import GeneratePuzzleWorker from './generate-puzzle.worker.js?worker';
+const puzzleWorker = new GeneratePuzzleWorker();
 
 export function sendWorkerMessage(message) {
 	puzzleWorker.postMessage({ message });

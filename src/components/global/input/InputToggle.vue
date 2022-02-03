@@ -48,7 +48,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .toggle-wrapper {
 	aspect-ratio: 2;
 	@apply relative rounded-full bg-gray-500 focus:outline-none transition-colors justify-start items-center;

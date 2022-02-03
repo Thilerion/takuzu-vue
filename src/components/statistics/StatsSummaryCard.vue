@@ -23,7 +23,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .summary-card {
 	@apply bg-white shadow-md rounded px-6 py-3 h-20 flex flex-col justify-center;
 }

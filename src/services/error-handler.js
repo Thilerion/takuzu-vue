@@ -1,4 +1,4 @@
-import { isDevModeEnabledInLocalStorage } from "./dev-mode";
+import { isDevModeEnabledInLocalStorage } from "./dev-mode.js";
 
 let errorEventHandlersSet = false;
 

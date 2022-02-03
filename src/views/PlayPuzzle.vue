@@ -72,26 +72,26 @@
 </template>
 
 <script>
-import store from '@/store';
+import store from '@/store/index.js';
 import { mapGetters, mapState } from 'vuex';
 
-import GameBoard from '@/components/gameboard/GameBoard';
-import GameBoardHeader from '@/components/gameboard/GameBoardHeader';
-import GameBoardWrapper from '@/components/gameboard/GameBoardWrapper';
+import GameBoard from '@/components/gameboard/GameBoard.vue';
+import GameBoardHeader from '@/components/gameboard/GameBoardHeader.vue';
+import GameBoardWrapper from '@/components/gameboard/GameBoardWrapper.vue';
 import PuzzleControls from '@/components/gameboard/PuzzleControls.vue';
 import PuzzleInfo from '@/components/gameboard/PuzzleInfo.vue';
-import RulerCoords from '@/components/gameboard/RulerCoords';
-import RulerCounts from '@/components/gameboard/RulerCounts';
+import RulerCoords from '@/components/gameboard/RulerCoords.vue';
+import RulerCounts from '@/components/gameboard/RulerCounts.vue';
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
 import PuzzleFinishedModal from '@/components/gameboard/PuzzleRecapTransition.vue';
 import PuzzleHintWrapper from '@/components/gameboard/PuzzleHintWrapper.vue';
 
-import { hasCurrentSavedGame } from '@/services/save-game';
-import { usePageVisibility } from '@/composables/use-page-visibility';
-import WakeLock from '../services/wake-lock';
+import { hasCurrentSavedGame } from '@/services/save-game.js';
+import { usePageVisibility } from '@/composables/use-page-visibility.js';
+import WakeLock from '../services/wake-lock.js';
 const wakeLock = new WakeLock();
 
-import { COLUMN, ROW } from '@/lib/constants';
+import { COLUMN, ROW } from '@/lib/constants.js';
 
 import debounce from 'lodash.debounce';
 
@@ -379,9 +379,9 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .play-puzzle {
-	--bg-a: theme(colors.blueGray.50);
+	--bg-a: theme(colors.slate.50);
 	--bg-b: theme(colors.white);
 	background: linear-gradient(180deg, var(--bg-a) 0%, var(--bg-a) 15%, var(--bg-b) 90%, var(--bg-b) 100%);
 }

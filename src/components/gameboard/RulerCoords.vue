@@ -23,7 +23,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .ruler {
 	@apply flex leading-none;
 	font-size: 10px;

@@ -151,7 +151,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .main {
 	@apply flex-1 flex flex-col;
 	overflow: hidden;

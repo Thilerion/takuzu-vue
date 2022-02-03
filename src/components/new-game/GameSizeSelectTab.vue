@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import BaseSelectButton from '@/components/base-layout/BaseSelectButton';
+import BaseSelectButton from '@/components/base-layout/BaseSelectButton.vue';
 
 export default {
 	components: {
@@ -49,6 +49,6 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 	
 </style>

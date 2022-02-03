@@ -1,6 +1,6 @@
-import { COLUMN, EMPTY, ONE, ROW, ZERO } from "../constants";
-import { getValidLinePermutations } from "../permutations";
-import { columnIdToX, rowIdToY, lineTypeFromLineId, countLineValues, lineSizeToNumRequired } from "../utils";
+import { COLUMN, EMPTY, ONE, ROW, ZERO } from "../constants.js";
+import { getValidLinePermutations } from "../permutations/index.js";
+import { columnIdToX, rowIdToY, lineTypeFromLineId, countLineValues, lineSizeToNumRequired } from "../utils.js";
 
 export class BoardLine {
 	constructor(board, lineId) {

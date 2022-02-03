@@ -1,4 +1,4 @@
-import { ONE, ZERO } from "../constants";
+import { ONE, ZERO } from "../constants.js";
 
 export function checkLineBalanceStrategy(boardLine) {
 	if (boardLine.isFilled) return { found: false };

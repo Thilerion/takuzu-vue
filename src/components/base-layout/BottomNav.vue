@@ -8,7 +8,7 @@
 				:to="item.to"
 			>
 				<span class="nav-icon">
-					<VIcon :name="'md-' + item.icon" scale="1.25" :label="item.label" />
+					<BottomNavIcon :icon="item.icon" />
 				</span>
 				<span
 					class="nav-link-text"
@@ -19,29 +19,27 @@
 </template>
 
 <script>
-import VIcon from "oh-vue-icons/dist/v3/icon.es";
-import { MdHome, MdLeaderboard, MdSettings, MdMorehoriz } from 'oh-vue-icons/icons';
-VIcon.add(MdHome, MdLeaderboard, MdSettings, MdMorehoriz);
+import BottomNavIcon from "./BottomNavIcon.vue";
 
 export default {
 	components: {
-		VIcon
-	},
+    BottomNavIcon
+},
 	data() {
 		return {
 			menuItems: [
 				{ label: 'Home', to: { name: 'MainMenu' }, icon: 'home' },
 				// { label: 'Tools', to: '/tools', icon: 'construction' }, // TODO: Tools page
-				{ label: 'Stats', to: '/stats', icon: 'leaderboard' },
+				{ label: 'Stats', to: '/stats', icon: 'stats' },
 				{ label: 'Settings', to: { name: 'Settings' }, icon: 'settings' },
-				{ label: 'More', to: '/menu', icon: 'morehoriz' },
+				{ label: 'More', to: '/menu', icon: 'more' },
 			]
 		}
 	},
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .nav-link {
 	@apply w-full h-full justify-center text-center py-2 flex flex-col items-center text-xs text-gray-700 font-medium;
 }

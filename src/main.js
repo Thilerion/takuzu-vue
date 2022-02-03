@@ -1,39 +1,19 @@
 import { createApp } from 'vue';
+import './tailwind.css';
 import App from './App.vue';
-import './registerServiceWorker';
+
+import { registerGlobalComponents } from './global-components.js';
+
+import { registerSW } from 'virtual:pwa-register'
+registerSW({ immediate: true })
+
 import router from './router';
 import store from './store';
 
-// install all global components
-import { registerGlobalComponents } from './components/global';
-
-// base components
-import PageHeader from '@/components/base-layout/PageHeader';
-import IconBtn from '@/components/base-layout/IconBtn';
-import BottomNav from '@/components/base-layout/BottomNav';
-
-
-import "./assets/css/main.css";
-
-// import { ErrorHandler } from './services/error-handler';
-// const errorHandler = new ErrorHandler();
-// if (process.env.NODE_ENV === 'development') errorHandler.toggleAlertErrors(true);
-// window._GLOBAL_ERROR_HANLDER = errorHandler;
-
 const app = createApp(App)
 	.use(store)
-	.use(router)
-	.component('PageHeader', PageHeader)
-	.component('BottomNav', BottomNav)
-	.component('IconBtn', IconBtn);
+	.use(router);
 
 registerGlobalComponents(app);
-
-// app.config.errorHandler = (err, vm, info) => {
-// 	errorHandler.handleError(err, 'vue', info);
-// }
-// app.config.globalProperties.errorHandler = errorHandler;
-
-// app.config.performance = process.env.NODE_ENV === 'development';
 	
-app.mount('#app');
+app.mount('#app')

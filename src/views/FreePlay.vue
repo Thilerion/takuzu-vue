@@ -63,10 +63,10 @@
 </template>
 
 <script>
-import DifficultySelect from '@/components/new-game/DifficultySelect';
-import GameSizeSelect from '@/components/new-game/GameSizeSelect';
-import StartGameButton from '@/components/new-game/StartGameButton';
-import { boardTypes, DIFFICULTY_LABELS, PRESET_BOARD_SIZES } from '@/config';
+import DifficultySelect from '@/components/new-game/DifficultySelect.vue';
+import GameSizeSelect from '@/components/new-game/GameSizeSelect.vue';
+import StartGameButton from '@/components/new-game/StartGameButton.vue';
+import { boardTypes, DIFFICULTY_LABELS, PRESET_BOARD_SIZES } from '@/config.js';
 
 const getInitialSelection = () => {
 	try {

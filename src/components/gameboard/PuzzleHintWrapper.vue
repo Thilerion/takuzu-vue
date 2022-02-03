@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import PuzzleHint from './PuzzleHint';
+import PuzzleHint from './PuzzleHint.vue';
 
 export default {
 	components: {
@@ -48,6 +48,6 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 	
 </style>

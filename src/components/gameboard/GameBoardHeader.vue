@@ -1,6 +1,8 @@
 <template>
 	<header>
-		<IconBtn @click="$emit('close')" name="md-close"></IconBtn>
+		<IconBtn @click="$emit('close')" name="md-close">
+			<icon-ic-baseline-close />
+		</IconBtn>
 		<span class="font-medium tracking-widest text-xl">{{columns}}x{{rows}}</span>
 		<GameBoardDropdown
 			@open-settings="openSettings"
@@ -30,7 +32,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 header {
 	@apply bg-white dark:bg-gray-800 text-gray-900 dark:text-white;
 	@apply flex justify-between items-center h-14 shadow-sm px-2;

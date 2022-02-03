@@ -83,7 +83,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .showcase-block {
 	@apply bg-gray-100 p-4 pb-2 rounded-lg border mb-4;
 }

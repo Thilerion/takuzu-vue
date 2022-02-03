@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { EMPTY, ONE, ZERO } from '@/lib/constants';
+import { EMPTY, ONE, ZERO } from '@/lib/constants.js';
 
 const themeSymbols = {
 	tictactoe: {
@@ -61,7 +61,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .cell-btn.symbols {
 	border-radius: var(--cell-rounding)!important;
 	@apply overflow-hidden h-full w-full focus:outline-none relative text-gray-700 flex;

@@ -13,7 +13,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .tutorial {
 	@apply overflow-x-hidden fixed inset-0 overscroll-y-auto;
 }

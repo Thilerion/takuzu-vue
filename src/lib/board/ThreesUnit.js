@@ -1,4 +1,4 @@
-import { COLUMN, ROW } from "../constants";
+import { COLUMN, ROW } from "../constants.js";
 
 export class ThreesUnit {
 	constructor(x, y, type, board) {

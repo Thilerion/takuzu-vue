@@ -42,7 +42,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .overlay-fade-enter-active {
 	transition: all .4s ease;
 }

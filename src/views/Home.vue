@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { hasCurrentSavedGame } from '@/services/save-game';
+import { hasCurrentSavedGame } from '@/services/save-game.js';
 import AppTitle from '@/components/AppTitle.vue';
 import MainMenuButtons from '@/components/MainMenuButtons.vue';
 
@@ -27,7 +27,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .main-menu {
 	@apply bg-gray-50;
 }

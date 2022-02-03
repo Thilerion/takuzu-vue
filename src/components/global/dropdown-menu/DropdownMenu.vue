@@ -4,7 +4,9 @@
 		ref="dropdownWrapper"
 	>
 		<div class="menu-trigger">
-			<IconBtn @click="toggle" name="md-morevert"></IconBtn>
+			<IconBtn @click="toggle">
+				<icon-ic-baseline-more-vert />
+			</IconBtn>
 		</div>
 
 		<transition name="drop2">
@@ -86,7 +88,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .dropdown-menu {
 	--enter-dur: .25s;
 	--leave-dur: .1s;

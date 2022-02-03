@@ -1,15 +1,15 @@
-import { SimpleBoard } from '../../lib/board/Board';
-import { sendWorkerMessage, initPuzzleWorkerReceiver } from '@/workers/generate-puzzle';
+import { SimpleBoard } from '../../lib/board/Board.js';
+import { sendWorkerMessage, initPuzzleWorkerReceiver } from '@/workers/generate-puzzle.js';
 
-import puzzleTimerModule from './timer';
-import puzzleHistoryModule from './history';
-import puzzleAssistanceModule from './assistance';
+import puzzleTimerModule from './timer.js';
+import puzzleHistoryModule from './history.js';
+import puzzleAssistanceModule from './assistance.js';
 
-import { SaveGameData } from '@/services/save-game';
-import { calculateGridCounts, calculateLineCounts } from './line-counts';
-import { COLUMN, EMPTY, ONE, ROW, ZERO } from '@/lib/constants';
-import { getPuzzle } from '@/services/puzzles-db/db';
-import { initPregenWorker } from '@/workers/pregen-puzzles';
+import { SaveGameData } from '@/services/save-game.js';
+import { calculateGridCounts, calculateLineCounts } from './line-counts.js';
+import { COLUMN, EMPTY, ONE, ROW, ZERO } from '@/lib/constants.js';
+import { getPuzzle } from '@/services/puzzles-db/db.js';
+import { initPregenWorker } from '@/workers/pregen-puzzles.js';
 
 const defaultState = () => ({
 	// game config
@@ -283,7 +283,7 @@ const puzzleModule = {
 			dispatch('reset');
 			const saveData = SaveGameData.loadFromLocalStorage();
 
-			// import moveList
+			// import moveLi.jsst
 			const { moveList } = saveData;
 			const { width, height, difficulty } = saveData;
 			commit('setPuzzleConfig', { width, height, difficulty });

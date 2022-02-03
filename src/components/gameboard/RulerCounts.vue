@@ -21,7 +21,7 @@
 
 <script>
 import debounce from 'lodash.debounce';
-import { COLUMN, ONE, ROW, ZERO } from '@/lib/constants';
+import { COLUMN, ONE, ROW, ZERO } from '@/lib/constants.js';
 export default {
 	props: {
 		lineType: {
@@ -92,7 +92,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .ruler {
 	@apply grid leading-none place-items-center;
 	gap: var(--grid-gap);

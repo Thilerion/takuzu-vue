@@ -1,6 +1,6 @@
-import { EMPTY } from '@/lib/constants';
-import { lineTypeFromLineId } from '@/lib/utils';
-import hintTypes from './hint-types';
+import { EMPTY } from '@/lib/constants.js';
+import { lineTypeFromLineId } from '@/lib/utils.js';
+import hintTypes from './hint-types.js';
 
 let lastHintId = -1;
 

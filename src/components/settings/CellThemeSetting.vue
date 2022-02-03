@@ -82,7 +82,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .cell-theme-box {
 	grid-template-areas: "cell cell"
 						"radio label";

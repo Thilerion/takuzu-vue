@@ -1,7 +1,9 @@
 <template>
 	<header class="flex justify-center items-stretch h-24 text-gray-700">
 		<div class="header-group side left">
-			<IconBtn v-if="hasBackButton" @click="close" name="md-arrowback"></IconBtn>
+			<IconBtn v-if="hasBackButton" @click="close" name="md-arrowback">
+				<icon-mdi-arrow-left style="{ 'font-size': '16px' }" />
+			</IconBtn>
 		</div>
 		<div class="header-group flex justify-center items-center flex-1">
 			<h1 class="text-2xl font-bold leading-normal">
@@ -49,7 +51,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .header-group {
 	@apply flex items-center;
 }

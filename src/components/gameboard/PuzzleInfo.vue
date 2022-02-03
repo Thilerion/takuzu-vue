@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { DIFFICULTY_LABELS } from '@/config';
+import { DIFFICULTY_LABELS } from '@/config.js';
 import PuzzleInfoTimer from './PuzzleInfoTimer.vue';
 
 export default {
@@ -44,7 +44,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .puzzle-info {
 	@apply px-1 pb-1 text-xs text-gray-500 dark:text-gray-400 font-medium tracking-wider;
 

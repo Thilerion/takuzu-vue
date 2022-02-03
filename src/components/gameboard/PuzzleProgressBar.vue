@@ -31,7 +31,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .progress-wrapper {
 	@apply w-full absolute inset-x-0 top-0 bg-gray-400 bg-opacity-20 pointer-events-none;
 	height: 3px;

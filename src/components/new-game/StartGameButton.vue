@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import LoadingSpinner from '../base-layout/LoadingSpinner';
+import LoadingSpinner from '../base-layout/LoadingSpinner.vue';
 
 export default {
 	components: {
@@ -44,7 +44,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .start-btn {
 	/* @apply text-sm py-3 bg-gray-700 text-white dark:bg-truegray-100 dark:text-black w-full mx-auto rounded-lg relative; */
 	@apply w-full mx-auto shadow;

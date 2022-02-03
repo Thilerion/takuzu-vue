@@ -1,4 +1,4 @@
-import { EMPTY } from "@/lib/constants";
+import { EMPTY } from "@/lib/constants.js";
 
 const puzzleHistoryModule = {
 	namespaced: true,

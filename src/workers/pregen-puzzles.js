@@ -1,4 +1,5 @@
-const pregenWorker = new Worker(new URL("./pregen-puzzles.worker.js", import.meta.url));
+import PregenWorker from './pregen-puzzles.worker.js?worker';
+const pregenWorker = new PregenWorker();
 
 export function sendPregenWorkerMessage(message) {
 	pregenWorker.postMessage({ message });

@@ -1,5 +1,5 @@
-import { EMPTY, ONE, ZERO } from "../constants";
-import { countLineValues } from "../utils";
+import { EMPTY, ONE, ZERO } from "../constants.js";
+import { countLineValues } from "../utils.js";
 
 export function selectCellFirstEmpty(board) {
 	for (let y = 0; y < board.height; y++) {

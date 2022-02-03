@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { EMPTY } from '@/lib/constants';
+import { EMPTY } from '@/lib/constants.js';
 export default {
 	props: {
 		locked: Boolean,
@@ -31,7 +31,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .cell-btn.colored {
 	border-radius: var(--cell-rounding)!important;
 	@apply overflow-hidden h-full w-full focus:outline-none relative block;

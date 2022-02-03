@@ -1,5 +1,5 @@
-import { EMPTY, ONE, ZERO } from "@/lib/constants";
-import { countLineValues } from "@/lib/utils";
+import { EMPTY, ONE, ZERO } from "@/lib/constants.js";
+import { countLineValues } from "@/lib/utils.js";
 
 // whenever the board object changes, recheck line counts
 export const calculateLineCounts = (board) => {

@@ -8,7 +8,12 @@
 				scale="1.25"
 				icon="md-undo"
 				vertical
-			>Undo</IconBtnText>
+			>
+				<template v-slot:default>Undo</template>
+				<template v-slot:icon>
+					<icon-ic-baseline-undo/>
+				</template>
+			</IconBtnText>
 
 			<IconBtnText
 				@click="$emit('restart')"
@@ -16,7 +21,12 @@
 				icon="md-replay"
 				vertical
 				:disabled="!canUndo || paused"
-			>Restart</IconBtnText>
+			>
+				<template v-slot:default>Restart</template>
+				<template v-slot:icon>
+					<icon-ic-baseline-replay/>
+				</template>
+			</IconBtnText>
 
 			<IconBtnText
 				scale="1.25"
@@ -25,22 +35,32 @@
 				@click="$emit('check')"
 				v-if="checkButtonEnabled"
 				:disabled="paused"
-			>Check</IconBtnText>
+			>
+				<template v-slot:default>Check</template>
+				<template v-slot:icon>
+					<icon-ic-baseline-done/>
+				</template>
+			</IconBtnText>
 
 			<IconBtnText
 				scale="1.25"
-				icon="hi-solid-light-bulb"
+				icon="his-light-bulb"
 				vertical
 				@click="$emit('get-hint')"
 				:disabled="paused"
-			>Hint</IconBtnText>
+			>
+				<template v-slot:default>Hint</template>
+				<template v-slot:icon>
+					<icon-his-light-bulb/>
+				</template>
+			</IconBtnText>
 
 		</div>
 	</div>
 </template>
 
 <script>
-import IconBtnText from '@/components/base-layout/IconBtnText';
+import IconBtnText from '@/components/base-layout/IconBtnText.vue';
 
 export default {
 	components: {
@@ -64,7 +84,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .puzzle-controls {
 	@apply flex-none flex text-sm text-center h-full overflow-hidden;
 	

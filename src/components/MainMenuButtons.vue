@@ -43,17 +43,14 @@
 </template>
 
 <script>
-import BaseButton from '@/components/global/BaseButton';
-
 export default {
-	components: { BaseButton },
 	props: {
 		canContinue: Boolean,
 	}
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .main-menu-buttons {
 	@apply w-4/6;
 }

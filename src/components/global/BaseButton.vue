@@ -27,7 +27,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .btn {
 	@apply font-medium rounded bg-white text-gray-800 border border-gray-200 cursor-pointer justify-center px-4 py-2 text-center whitespace-nowrap select-none ring-teal-500 tracking-wide;
 

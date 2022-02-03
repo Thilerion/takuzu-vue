@@ -1,6 +1,6 @@
-import { dimensionsToBoardType, getAllBoardPresetSizes, getAllDifficultyValues, getAllSizeDifficultyCombinations } from "@/config";
-import { getAllHistoryItems, getPuzzlesSolved, summarizeStatGroup } from "@/services/stats/data-handling";
-import { groupBy } from "@/utils/array.utils";
+import { dimensionsToBoardType, getAllBoardPresetSizes, getAllDifficultyValues, getAllSizeDifficultyCombinations } from "@/config.js";
+import { getAllHistoryItems, getPuzzlesSolved, summarizeStatGroup } from "@/services/stats/data-handling.js";
+import { groupBy } from "@/utils/array.utils.js";
 import { parse, startOfDay, compareAsc, differenceInCalendarDays, addHours } from 'date-fns';
 
 const presetSizes = getAllBoardPresetSizes().map(({ width, height }) => {

@@ -1,5 +1,5 @@
-import { EMPTY } from "../constants";
-import { getMinimumDifficultyConstraints, maskHasNoSolution, maskHasOneSolution } from "./mask-validation";
+import { EMPTY } from "../constants.js";
+import { getMinimumDifficultyConstraints, maskHasNoSolution, maskHasOneSolution } from "./mask-validation.js";
 
 export function createMask(board, difficulty = 1) {
 	const maskedBoard = board.copy();

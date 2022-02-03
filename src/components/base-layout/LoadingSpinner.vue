@@ -41,7 +41,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 /* from: https://loading.io/css/ */
 .loading-spinner {
   display: inline-block;

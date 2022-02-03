@@ -116,8 +116,8 @@
 </template>
 
 <script>
-import { boardTypes } from '@/config';
-import { timeFormatter } from '@/utils/date.utils';
+import { boardTypes } from '@/config.js';
+import { timeFormatter } from '@/utils/date.utils.js';
 import StatsCharts from './StatsCharts.vue';
 import StatsSummaryCard from './StatsSummaryCard.vue';
 import ActivityStats from './ActivityStats.vue';
@@ -400,7 +400,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 section {
 	@apply text-gray-900 dark:text-white text-left;
 }

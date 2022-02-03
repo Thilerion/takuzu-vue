@@ -3,7 +3,7 @@
 		<button
 			@click="changeDifficulty(-1, $event)"
 			class="arrow-btn left z-10 focus:outline-none"
-		><VIcon name="md-keyboardarrowleft" scale='1.5' /></button>
+		><icon-ic-baseline-keyboard-arrow-left :style="{'font-size': '24px'}"/></button>
 		<div class="difficulty-current z-0" :class="[`slide-${slideDirection}`]">
 			<transition name="slide-label">
 				<DifficultyLabel
@@ -16,20 +16,16 @@
 		<button
 			@click="changeDifficulty(1, $event)"
 			class="arrow-btn right z-10 focus:outline-none"
-		><VIcon name="md-keyboardarrowright" scale='1.5' /></button>
+		><icon-ic-baseline-keyboard-arrow-right :style="{'font-size': '24px'}"/></button>
 	</div>
 </template>
 
 <script>
-import VIcon from "oh-vue-icons/dist/v3/icon.es";
-import { MdKeyboardarrowleft, MdKeyboardarrowright } from 'oh-vue-icons/icons';
-VIcon.add(MdKeyboardarrowleft, MdKeyboardarrowright);
 import DifficultyLabel from './DifficultyLabel.vue';
 
 export default {
 	components: {
 		DifficultyLabel,
-		VIcon
 	},
 	props: {
 		modelValue: {
@@ -78,7 +74,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .difficulty-select {
 	@apply grid p-0 overflow-hidden relative;
 	grid-template-rows: 1fr 1fr;

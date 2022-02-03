@@ -42,7 +42,7 @@ import PuzzleCellSymbols from '@/components/gameboard/PuzzleCellSymbols.vue';
 import PuzzleCellColored from '@/components/gameboard/PuzzleCellColored.vue';
 import PuzzleGridHighlights from '@/components/gameboard/PuzzleGridHighlights.vue';
 import debounce from 'lodash.debounce';
-import { EMPTY } from '@/lib/constants';
+import { EMPTY } from '@/lib/constants.js';
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 
@@ -184,7 +184,7 @@ function useGridData(width, height, initialGrid) {
 }
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .puzzle-grid {
 	--cell-size-total:  calc(var(--cell-size) - var(--grid-gap));
 	grid-area: puzzle-grid;

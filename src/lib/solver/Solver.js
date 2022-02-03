@@ -1,9 +1,9 @@
-import applyTriplesConstraint from "./constraints/Triples";
-import applyLineBalanceConstraint from "./constraints/LineBalance";
-import applyEliminationConstraint from "./constraints/Elimination";
+import applyTriplesConstraint from "./constraints/Triples.js";
+import applyLineBalanceConstraint from "./constraints/LineBalance.js";
+import applyEliminationConstraint from "./constraints/Elimination.js";
 
-import { selectCell, selectValue } from "./selection";
-import { OPPOSITE_VALUE } from "../constants";
+import { selectCell, selectValue } from "./selection.js";
+import { OPPOSITE_VALUE } from "../constants.js";
 
 export default class Solver {
 	constructor(initialBoard, conf = {}) {

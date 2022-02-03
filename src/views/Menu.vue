@@ -23,8 +23,8 @@
 </template>
 
 <script>
-import { clearPuzzleDb } from '@/services/puzzles-db/db';
-import { initPregenWorker } from '@/workers/pregen-puzzles';
+import { clearPuzzleDb } from '@/services/puzzles-db/db.js';
+import { initPregenWorker } from '@/workers/pregen-puzzles.js';
 
 export default {
 	data() {
@@ -35,7 +35,7 @@ export default {
 	},
 	computed: {
 		appVersion() {
-			return process.env.VUE_APP_VERSION;
+			return "TODO";
 		},
 		isDevModeEnabled() {
 			return this.$store.state.devMode;
@@ -84,6 +84,6 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 	
 </style>

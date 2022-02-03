@@ -1,7 +1,9 @@
 <template>
 	<div class="hint" :key="id" ref="hint">
 		<div class="close">
-			<IconBtn size="16" @click="$emit('hide')" name="md-close"></IconBtn>
+			<IconBtn size="16" @click="$emit('hide')">
+				<icon-ic-baseline-close />
+			</IconBtn>
 		</div>
 		<div class="message">
 			{{message}}
@@ -61,7 +63,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .hint {
 	display: grid;
 	grid-template-rows: auto auto;

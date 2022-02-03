@@ -1,5 +1,5 @@
-import { EMPTY, ONE, ROW, ZERO } from "../constants";
-import { threeInARowRegex, validateLine, validateMaxDigitsPerLine, validateThreeInARow } from "./line";
+import { EMPTY, ONE, ROW, ZERO } from "../constants.js";
+import { threeInARowRegex, validateLine, validateMaxDigitsPerLine, validateThreeInARow } from "./line.js";
 
 export function validateBoard(board, validateUniqueness = true) {
 	const filledRows = new Set();

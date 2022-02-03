@@ -1,5 +1,5 @@
-import { EMPTY } from "@/lib/constants";
-import hintTypes from "./hint-types";
+import { EMPTY } from "@/lib/constants.js";
+import hintTypes from "./hint-types.js";
 
 
 // TODO: before all hintValidators (except mistake), validate there are no mistakes first!

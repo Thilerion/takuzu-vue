@@ -23,9 +23,9 @@
 </template>
 
 <script>
-import hintTypes from '@/store/hints/hint-types';
-import { lineTypeFromLineId } from '@/lib/utils';
-import { COLUMN, ROW } from '@/lib/constants';
+import hintTypes from '@/store/hints/hint-types.js';
+import { lineTypeFromLineId } from '@/lib/utils.js';
+import { COLUMN, ROW } from '@/lib/constants.js';
 function determineHintHighlightType(hint) {
 	const { type } = hint;
 	if (type === hintTypes.TRIPLES) {
@@ -128,7 +128,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .cell-highlight {
 	--hint-size: 2px;
 	--hint-outside: calc(var(--hint-size) * -0.5);

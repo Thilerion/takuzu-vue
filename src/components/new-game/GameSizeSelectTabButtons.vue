@@ -45,7 +45,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .tab-wrapper {
 	display: grid;
 	grid-template-rows: auto 2px;

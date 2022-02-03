@@ -1,5 +1,5 @@
-import { ONE, ZERO } from "../constants";
-import { lineSizeToNumRequired } from "../utils";
+import { ONE, ZERO } from "../constants.js";
+import { lineSizeToNumRequired } from "../utils.js";
 
 export const threeInARowRegex = new RegExp(`${ZERO}{3,}|${ONE}{3,}`, 'g');
 

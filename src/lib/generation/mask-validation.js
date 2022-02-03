@@ -1,7 +1,7 @@
-import applyEliminationConstraint from "../solver/constraints/Elimination";
-import applyLineBalanceConstraint from "../solver/constraints/LineBalance";
-import applyTriplesConstraint from "../solver/constraints/Triples";
-import Solver from "../solver/Solver";
+import applyEliminationConstraint from "../solver/constraints/Elimination.js";
+import applyLineBalanceConstraint from "../solver/constraints/LineBalance.js";
+import applyTriplesConstraint from "../solver/constraints/Triples.js";
+import Solver from "../solver/Solver.js";
 
 const baseSolverConf = {
 	maxSolutions: 2,

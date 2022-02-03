@@ -6,15 +6,17 @@
 		@toggled="dropdownToggled"
 	>
 		<template #trigger="{toggle}">
-			<IconBtn @click="toggle" name="md-morevert"></IconBtn>
+			<IconBtn @click="toggle" name="md-morevert">
+				<icon-ic-baseline-more-vert />
+			</IconBtn>
 		</template>
 		<template #content>
 			<BaseDropdownItem disabled>
-				<ui-icons name="md-bookmarkadd-outlined" scale="1" class="opacity-80" />
+				<icon-ic-outline-bookmark-add class="opacity-80 text-base" />
 				<span class="ml-3 mt-px">Set bookmark</span>
 			</BaseDropdownItem>
 			<BaseDropdownItem disabled>
-				<ui-icons name="md-bookmarkremove-outlined" scale="1" class="opacity-80" />
+				<icon-ic-outline-bookmark-remove class="opacity-80 text-base" />
 				<span class="ml-3 mt-px">Delete bookmark</span>
 			</BaseDropdownItem>
 			<BaseDropdownDivider/>
@@ -28,7 +30,7 @@
 
 			<template v-if="devModeEnabled">
 				<BaseDropdownItem @click="copyPuzzleString">
-					<ui-icons name="fa-regular-copy" scale="1" class="opacity-80" />
+					<icon-heroicons-outline-clipboard-copy class="opacity-80 text-base"/>
 					<span class="ml-3 mt-px">Copy board string</span>
 					<span v-if="copyError" class="ml-2 text-xs text-red-700 mt-px">{{copyError}}</span>
 				</BaseDropdownItem>
@@ -40,7 +42,7 @@
 
 			<BaseDropdownItem @click="goToSettings"
 			>
-				<ui-icons name="md-settings" scale="1" class="opacity-80" />
+				<icon-ic-baseline-settings class="opacity-80" />
 				<span class="ml-3 mt-px">Settings</span>
 			</BaseDropdownItem>
 		</template>
@@ -48,14 +50,9 @@
 </template>
 
 <script>
-import { rafPromise, timeoutPromise } from '@/utils/delay.utils';
-import UiIcons from '@/components/common/UiIcons.vue';
-import VIcon from "oh-vue-icons/dist/v3/icon.es";
-import { MdBookmarkremoveOutlined, MdBookmarkaddOutlined } from 'oh-vue-icons/icons';
-VIcon.add(MdBookmarkremoveOutlined, MdBookmarkaddOutlined);
+import { rafPromise, timeoutPromise } from '@/utils/delay.utils.js';
 
 export default {
-	components: { UiIcons },
 	emits: ['open-settings', 'dropdown-toggled'],
 	data() {
 		return {
@@ -123,6 +120,6 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 	
 </style>

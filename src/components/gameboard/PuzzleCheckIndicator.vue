@@ -7,8 +7,8 @@
 				:key="errorCheckKey"
 			>
 				<div class="check-icon-wrapper">					
-					<v-icon name="md-checkcircleoutline" class="correct check-icon" v-if="!errorFound" />
-					<v-icon name="md-cancel-outlined" class="incorrect check-icon" v-else-if="errorFound" />
+					<icon-ic-outline-check-circle class="correct check-icon" v-if="!errorFound" />
+					<icon-ic-outline-cancel class="incorrect check-icon" v-else-if="errorFound" />
 				</div>
 			</div>
 		</transition>
@@ -16,13 +16,7 @@
 </template>
 
 <script>
-import OhVueIcon from "oh-vue-icons/dist/v3/icon.es";
-import { MdCancelOutlined, MdCheckcircleoutline } from 'oh-vue-icons/icons';
-
 export default {
-	components: {
-		"v-icon": OhVueIcon,
-	},
 	data() {
 		return {
 			show: false,
@@ -62,14 +56,11 @@ export default {
 				this.show = true;
 			})
 		}
-	},
-	beforeMount() {
-		OhVueIcon.add(MdCancelOutlined, MdCheckcircleoutline);
 	}
 };
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .check-indicator-wrapper {
 	@apply pointer-events-none fixed top-0 left-0 z-10 flex justify-center items-center;
 	height: var(--vh-total);

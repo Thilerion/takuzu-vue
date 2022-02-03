@@ -1,4 +1,4 @@
-import { COLUMN, EMPTY, ONE, ROW, ZERO } from "./constants";
+import { COLUMN, EMPTY, ONE, ROW, ZERO } from "./constants.js";
 
 // MEMOIZE FUNCTION //
 const defaultArgsToKey = (...args) => args.join(',');
