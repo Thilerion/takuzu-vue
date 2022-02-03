@@ -20,9 +20,60 @@
 <script>
 import debounce from 'lodash.debounce';
 import ProgressBar from '@/components/gameboard/PuzzleProgressBar.vue';
-let resizeObserver;
+import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { useResizeObserver } from '@vueuse/core';
+
+const FPS = 1000 / 30;
 
 export default {
+	setup() {
+		const container = ref(null);
+
+		// use sensible defaults for width and height:
+		const width = ref(window.clientWidth * 0.95);
+		const height = ref(window.clientHeight * 0.6);
+
+		function setWrapperSizes() {
+			const el = container.value;
+			if (!el) {
+				console.warn('No container element for board.');
+				return;
+			}
+			width.value = el.clientWidth;
+			height.value = el.clientHeight;
+		};
+		function setContainerSize(contentRect) {
+			width.value = contentRect.width;
+			height.value = contentRect.height;
+		}
+
+		const debouncedSetContainerSize = debounce(setContainerSize, FPS);
+		const roCallback = (entries) => {
+			if (!entries.length) return;
+			const entry = entries[0];
+			// console.log({ entry, entries, contentRect: entry.contentRect });
+			const { width, height } = entry.contentRect;
+			debouncedSetContainerSize({ width, height });
+		}
+		useResizeObserver(container, roCallback);
+
+		onBeforeUnmount(() => {
+			debouncedSetContainerSize.cancel();
+		})
+		onMounted(() => {
+			setWrapperSizes();
+		})
+
+		return { 
+			container,
+			
+			width,
+			height,
+
+			setWrapperSizes,
+			setContainerSize,
+		};
+	},
 	components: {
 		ProgressBar
 	},
@@ -41,12 +92,6 @@ export default {
 
 		rows: Number,
 		columns: Number,
-	},
-	data() {
-		return {
-			width: 0,
-			height: 0,
-		}
 	},
 	computed: {
 		gridGapSizing() {
@@ -113,40 +158,6 @@ export default {
 			const h = cellSize * this.rows;
 			return { width: w + 'px', height: h + 'px', cellSize };
 		}
-	},
-	methods: {
-		setWrapperSizes() {
-			const el = this.$refs.container;
-			if (!el) {
-				console.warn('No container element for board.');
-				this.width = 100;
-				this.height = 100;
-				return;
-			}
-			this.width = el.clientWidth;
-			this.height = el.clientHeight;
-		},
-		setContainerSize({contentRect}) {
-			this.width = contentRect.width;
-			this.height = contentRect.height;
-		}
-	},
-	mounted() {
-		resizeObserver.observe(this.$refs.container);
-		this.setWrapperSizes();
-	},
-	created() {
-		const debounced = debounce(this.setContainerSize, 500);
-		const fn = (entries) => {
-			if (entries.length) {
-				debounced(entries[0]);
-			}
-		}
-		resizeObserver = new ResizeObserver(fn);
-	},
-	beforeUnmount() {
-		resizeObserver.disconnect();
-		resizeObserver = null;
 	},
 };
 </script>
