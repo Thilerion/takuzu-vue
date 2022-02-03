@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import debounce from 'lodash.debounce';
+import throttle from 'lodash.throttle';
 import ProgressBar from '@/components/gameboard/PuzzleProgressBar.vue';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
@@ -47,18 +47,21 @@ export default {
 			height.value = contentRect.height;
 		}
 
-		const debouncedSetContainerSize = debounce(setContainerSize, FPS);
+		const throttledSetContainerSize = throttle(setContainerSize, FPS, {
+			leading: false,
+			trailing: true
+		});
 		const roCallback = (entries) => {
 			if (!entries.length) return;
 			const entry = entries[0];
 			// console.log({ entry, entries, contentRect: entry.contentRect });
 			const { width, height } = entry.contentRect;
-			debouncedSetContainerSize({ width, height });
+			throttledSetContainerSize({ width, height });
 		}
 		useResizeObserver(container, roCallback);
 
 		onBeforeUnmount(() => {
-			debouncedSetContainerSize.cancel();
+			throttledSetContainerSize.cancel();
 		})
 		onMounted(() => {
 			setWrapperSizes();

@@ -10,7 +10,7 @@
     "build:netlify": "vite build",
     "deploy:test": "vite build && copy dist\\index.html dist\\200.html && surge dist --domain https://takuzu-vue-test.surge.sh",
     "deploy:test2": "vite build && copy dist\\index.html dist\\200.html && surge dist --domain https://takuzu-vue-test2.surge.sh",
-	"preview": "vite preview"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@vueuse/core": "^7.5.5",
@@ -20,6 +20,7 @@
     "dexie": "^3.2.0",
     "dexie-export-import": "^1.0.3",
     "lodash.debounce": "^4.0.8",
+    "lodash.throttle": "^4.1.1",
     "oh-vue-icons": "^1.0.0-rc2",
     "vue": "^3.2.25",
     "vue-router": "^4.0.12",
