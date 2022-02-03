@@ -4,14 +4,19 @@ import App from './App.vue';
 
 import { registerGlobalComponents } from './global-components.js';
 
-import { registerSW } from 'virtual:pwa-register'
-registerSW({ immediate: true });
+import { registerSW } from 'virtual:pwa-register';
 
-const pkgVersion = import.meta.env.PACKAGE_VERSION;
-const gitRevision = import.meta.env.VERSION;
-const metaEnv = import.meta.env;
+const SW_UPDATE_INTERVAL_MS = 60 * 60 * 1000;
 
-console.log({ pkgVersion, gitRevision, metaEnv });
+const updateSW = registerSW({
+  onRegistered(r) {
+    r && setInterval(() => {
+		r.update();
+    }, SW_UPDATE_INTERVAL_MS)
+  }
+})
+
+// const pkgVersion = import.meta.env.PACKAGE_VERSION;
 
 import router from './router';
 import store from './store';

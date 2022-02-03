@@ -11,6 +11,10 @@
 					class="text-center p-2 text-sm text-gray-600"
 				>App version: {{ appVersion }}</div>
 			</button>
+			<div class="p-2">Offline ready: {{offlineReady}}; Need refresh: {{needRefresh}}</div>
+			<div class="p-2">
+				<BaseButton @click="updateSW(true)">Update now and reload</BaseButton>
+			</div>
 			<router-link v-if="isDebugModeEnabled" custom to="/showcase" v-slot="{ navigate }">
 				<BaseButton @click="navigate">Open component showcase</BaseButton>
 			</router-link>
@@ -26,7 +30,21 @@
 import { clearPuzzleDb } from '@/services/puzzles-db/db.js';
 import { initPregenWorker } from '@/workers/pregen-puzzles.js';
 
+import { useRegisterSW } from 'virtual:pwa-register/vue';
+import { watchEffect } from 'vue';
+
 export default {
+	setup() {
+		const { offlineReady, needRefresh, updateServiceWorker } = useRegisterSW();
+
+		console.log({ needRefresh: needRefresh.value, offlineReady: offlineReady.value});
+
+		watchEffect(() => {
+			console.log({ needRefresh: needRefresh.value, offlineReady: offlineReady.value});
+		})
+
+		return { offlineReady, needRefresh, updateSW: updateServiceWorker };
+	},
 	data() {
 		return {
 			debugModeClickCounter: 0,
