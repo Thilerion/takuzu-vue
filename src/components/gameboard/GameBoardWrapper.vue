@@ -100,9 +100,9 @@ export default {
 				return 'xs';
 			} else if (cellSize <= 32) {
 				return 's';
-			} else if (cellSize <= 42) {
+			} else if (cellSize <= 52) {
 				return 'm';
-			} else if (cellSize <= 58) {
+			} else if (cellSize <= 74) {
 				return 'l';
 			} else {
 				return 'xl';
@@ -175,22 +175,22 @@ export default {
 }
 .puzzle-wrapper.cell-size-xs {
 	--grid-gap: 1px;
-	--cell-rounding: 1px;
+	--cell-rounding: 0px;
 }
 .puzzle-wrapper.cell-size-s {
 	--grid-gap: 1px;
 	--cell-rounding: theme(borderRadius.sm);
 }
 .puzzle-wrapper.cell-size-m {
-	--grid-gap: 1px;
+	--grid-gap: 2px;
 	--cell-rounding: theme(borderRadius.sm);
 }
 .puzzle-wrapper.cell-size-l {
-	--grid-gap: 2px;
-	--cell-rounding: theme(borderRadius.DEFAULT);
+	--grid-gap: 3px;
+	--cell-rounding: 3px;
 }
 .puzzle-wrapper.cell-size-xl {
 	--grid-gap: 4px;
-	--cell-rounding: theme(borderRadius.sm);
+	--cell-rounding: 4px;
 }
 </style>
