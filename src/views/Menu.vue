@@ -31,15 +31,10 @@ export default {
 		return {
 			debugModeClickCounter: 0,
 			clearPuzzlesResult: null,
+			appVersion: import.meta.env.PACKAGE_VERSION
 		}
 	},
 	computed: {
-		appVersion() {
-			return "TODO";
-		},
-		isDebugModeEnabled() {
-			return this.$store.state.debugMode;
-		},
 		isDebugModeEnabled() {
 			return this.$store.state.debugMode;
 		}

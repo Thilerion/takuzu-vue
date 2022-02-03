@@ -5,7 +5,13 @@ import App from './App.vue';
 import { registerGlobalComponents } from './global-components.js';
 
 import { registerSW } from 'virtual:pwa-register'
-registerSW({ immediate: true })
+registerSW({ immediate: true });
+
+const pkgVersion = import.meta.env.PACKAGE_VERSION;
+const gitRevision = import.meta.env.VERSION;
+const metaEnv = import.meta.env;
+
+console.log({ pkgVersion, gitRevision, metaEnv });
 
 import router from './router';
 import store from './store';
