@@ -201,7 +201,7 @@ export default {
 }
 </script>
 
-<style scoped lang="postcss">
+<style scoped>
 .freeplay {
 	height: var(--vh-total);
 	z-index: 100;

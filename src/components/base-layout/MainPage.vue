@@ -27,7 +27,7 @@ export default {
 };
 </script>
 
-<style lang="postcss">
+<style>
 .wrapper, .wrapper > .page {
 	display: flex;
 	flex-direction: column;

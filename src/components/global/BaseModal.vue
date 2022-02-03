@@ -80,7 +80,7 @@ export default {
 };
 </script>
 
-<style lang="postcss">
+<style>
 .modal {
 	@apply overflow-hidden fixed inset-0 z-20 flex items-center flex-col justify-center h-full w-full;
 }
