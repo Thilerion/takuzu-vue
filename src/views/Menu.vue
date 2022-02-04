@@ -9,7 +9,7 @@
 			>
 				<div
 					class="text-center p-2 text-sm text-gray-600"
-				>App version: {{ appVersion }}</div>
+				>App version: {{ pkgVersion }}_<small>{{buildDate}}</small></div>
 			</button>
 			<div class="p-2">Offline ready: {{offlineReady}}; Need refresh: {{needRefresh}}</div>
 			<div class="p-2">
@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import { useGlobalBuildData } from '@/app.globals.js';
 import { clearPuzzleDb } from '@/services/puzzles-db/db.js';
 import { initPregenWorker } from '@/workers/pregen-puzzles.js';
 
@@ -35,6 +36,8 @@ import { watchEffect } from 'vue';
 
 export default {
 	setup() {
+		const { pkgVersion, buildDate } = useGlobalBuildData();
+
 		const { offlineReady, needRefresh, updateServiceWorker } = useRegisterSW();
 
 		console.log({ needRefresh: needRefresh.value, offlineReady: offlineReady.value});
@@ -43,7 +46,7 @@ export default {
 			console.log({ needRefresh: needRefresh.value, offlineReady: offlineReady.value});
 		})
 
-		return { offlineReady, needRefresh, updateSW: updateServiceWorker };
+		return { offlineReady, needRefresh, updateSW: updateServiceWorker, pkgVersion, buildDate };
 	},
 	data() {
 		return {

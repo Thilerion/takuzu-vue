@@ -17,6 +17,10 @@ const updateSW = registerSW({
 })
 
 // const pkgVersion = import.meta.env.PACKAGE_VERSION;
+const buildDate = __BUILD_DATE__;
+const pkgVersion = __PKG_VERSION__;
+
+console.log({ buildDate, pkgVersion });
 
 import router from './router';
 import store from './store';

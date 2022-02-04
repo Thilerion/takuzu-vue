@@ -24,6 +24,10 @@
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
 import { initPregenWorker } from '@/workers/pregen-puzzles.js';
 import { initDarkLightAutoTheme } from '@/services/dark-light-auto-theme.js';
+import { computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import { useWindowSize } from '@vueuse/core';
+import { provideGlobalBuildData } from './app.globals.js';
 
 export default {
 	components: {
@@ -31,32 +35,22 @@ export default {
 	},
 	setup() {
 		initDarkLightAutoTheme();
-	},
-	data() {
-		return {
-			viewportHeight: '100%'
+		provideGlobalBuildData();
+
+		const { height } = useWindowSize();
+		const viewportHeight = computed(() => height.value ? `${height.value}px` : '100%');
+
+		const store = useStore();
+		const puzzleKey = store.state.puzzleKey;
+
+		onMounted(() => {
+			initPregenWorker();
+		})
+
+		return { 
+			puzzleKey,
+			viewportHeight,
 		}
-	},
-	computed: {
-		puzzleKey() {
-			return this.$store.state.puzzleKey || undefined;
-		}
-	},
-	methods: {
-		onResize() {
-			const h = window.innerHeight;
-			this.viewportHeight = h + 'px';
-		}
-	},
-	beforeMount() {
-		window.addEventListener('resize', this.onResize);
-		this.onResize();
-	},
-	unmounted() {
-		window.removeEventListener('resize', this.onResize);
-	},
-	mounted() {
-		initPregenWorker();
 	}
 };
 </script>
