@@ -23,7 +23,7 @@
 				:board="board"
 				:grid-height="height"
 				:grid-width="width"
-				:cell-size="cellSize"				
+				:cell-size="cellSize"			
 				@pointerdown.once="checkEnableWakeLock"
 			>
 				<template v-slot:puzzle-info>
@@ -35,12 +35,12 @@
 					/>
 				</template>
 				<template v-slot:ruler-rows>
-					<RulerCoords v-if="rulerType === 'coords'" line-type="rows" :line-ids="board.rowIds" />
-					<RulerCounts v-else-if="showRulers" line-type="rows" :ruler-type="rulerType" :counts="rowCounts" />
+					<RulerCoords @select-line="selectLine" v-if="rulerType === 'coords'" line-type="rows" :line-ids="board.rowIds" />
+					<RulerCounts @select-line="selectLine" v-else-if="showRulers" line-type="rows" :ruler-type="rulerType" :counts="rowCounts" />
 				</template>
 				<template v-slot:ruler-columns>
-					<RulerCoords v-if="rulerType === 'coords'" line-type="columns" :line-ids="board.columnIds" />
-					<RulerCounts v-else-if="showRulers" line-type="columns" :ruler-type="rulerType" :counts="columnCounts" />
+					<RulerCoords @select-line="selectLine" v-if="rulerType === 'coords'" line-type="columns" :line-ids="board.columnIds" />
+					<RulerCounts @select-line="selectLine" v-else-if="showRulers" line-type="columns" :ruler-type="rulerType" :counts="columnCounts" />
 				</template>
 			</GameBoard>
 		</GameBoardWrapper>
@@ -126,6 +126,8 @@ export default {
 
 			wakeLock: wakeLock,
 			isWakeLockEnabled: false,
+
+			selectedLine: null
 		}
 	},
 	computed: {
@@ -198,6 +200,14 @@ export default {
 		}
 	},
 	methods: {
+		selectLine(value) {
+			if (!value) {
+				this.selectedLine = null;
+			} else {
+				const { type, index } = value;
+				this.selectedLine = { type, index };
+			}
+		},
 		startGame() {
 			if (!this.initialized) {
 				console.warn('Cannot start puzzle that is not initialized');

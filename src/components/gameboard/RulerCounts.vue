@@ -1,6 +1,6 @@
 <template>
-	<div class="ruler counts" :class="{'ruler-rows': lineType === 'rows', 'ruler-columns': lineType === 'columns'}">
-		<div class="ruler-cell" v-for="(lineCount, lineIdx) in debouncedCounts" :key="lineIdx">
+	<div class="ruler counts" :class="{'ruler-rows': lineType === 'rows', 'ruler-columns': lineType === 'columns'}" @pointerdown="handlePointerdown">
+		<div class="ruler-cell" v-for="(lineCount, lineIdx) in debouncedCounts" :key="lineIdx" @pointerenter="handlePointerover($event, lineIdx)">
 
 			<div class="count-wrapper zero" :class="{'count-error': checkCountError(lineCount[0]), 'count-complete': checkCountComplete(lineCount[0])}">
 				<div class="count zero">
@@ -39,15 +39,25 @@ export default {
 			required: true,
 		}
 	},
+	emits: ['select-line'],
 	data() {
 		return {
-			debouncedCounts: []
+			debouncedCounts: [],
 		}
 	},
 	beforeMount() {
 		this.setDebouncedCounts();
 	},
 	methods: {
+		handlePointerdown(e) {
+    		e.target.releasePointerCapture(e.pointerId);
+		},
+		handlePointerover(ev, lineIdx = 'line') {
+			ev.preventDefault();
+			console.log(`${this.lineType}: ${lineIdx}`);
+			const type = this.lineType === 'rows' ? ROW : COLUMN;
+			this.$emit('select-line', { type, index: lineIdx });
+		},
 		transformLineCount(l) {
 			const zero = l[ZERO];
 			const one = l[ONE];
@@ -114,7 +124,13 @@ export default {
 	grid-template-rows: 1fr;
 }
 
+.ruler {
+	pointer-events: none;
+	touch-action: none;
+}
 .ruler-cell {
+	touch-action: none;
+	pointer-events: auto;
 	grid-template-rows: repeat(3, 1fr);
 	grid-template-columns: repeat(3, 1fr);
 
@@ -126,6 +142,10 @@ export default {
 	--half-size: calc(var(--ruler-cell-size) * 0.3);
 	--font-size: clamp(10px, var(--half-size), 2rem);
 	font-size: var(--font-size);
+}
+.ruler-cell * {
+	pointer-events: none;
+	user-select: none;
 }
 .count {
 	@apply w-full h-full overflow-hidden opacity-80;
