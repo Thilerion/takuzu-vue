@@ -6,6 +6,7 @@ const getDefaultSettings = () => ({
 	cellTheme: 'binary', // "blue-red" for colored, or "tictactoe"/"binary" for "symbols"
 	
 	enableVibration: true,
+	vibrationStrength: 25,
 
 	// assistance settings
 	// automaticValidation: 'ruleViolations', // TODO: automatic validation, with values: disabled/ ruleViolations/ incorrectValues

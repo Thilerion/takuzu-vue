@@ -59,6 +59,30 @@
 				<input type="checkbox" v-model="enableVibration">
 				<span class="ml-2">Enable vibration</span>
 			</label>
+			<div class="setting-block mt-4">
+				<div>Vibration strength</div>
+				<div class="mt-2">
+					<label class="flex items-center">
+						<input type="radio" name="radio-vib-strength" v-model="vibrationStrength" value="15">
+						<span class="ml-2">Low</span>
+					</label>
+				</div>
+				<div class="mt-2">
+					<label class="flex items-center">
+						<input type="radio" name="radio-vib-strength" v-model="vibrationStrength" value="25">
+						<span class="ml-2">Medium</span>
+					</label>
+				</div>
+				<div class="mt-2">
+					<label class="flex items-center">
+						<input type="radio" name="radio-vib-strength" v-model="vibrationStrength" value="40">
+						<span class="ml-2">High</span>
+					</label>
+				</div>
+				<div>
+					<BaseButton @click="vibrate">Tap to test</BaseButton>
+				</div>
+			</div>
 			<label class="flex items-center mt-4">
 				<input type="checkbox" v-model="enableWakeLock">
 				<span class="ml-2">Keep screen active while playing</span>
@@ -74,11 +98,28 @@
 <script>
 import CellThemeSetting from '@/components/settings/CellThemeSetting.vue';
 import DarkModeSetting from '../components/settings/DarkModeSetting.vue';
+import BaseButton from '@/components/global/BaseButton.vue';
+import { useTapVibrate } from '@/composables/use-tap-vibrate.js';
+import { useStore } from 'vuex';
+import { computed } from 'vue';
 
 export default {
 	components: {
 		DarkModeSetting,
 		CellThemeSetting,
+		BaseButton
+	},
+	setup() {
+		const store = useStore();
+		const pattern = computed(() => {
+			return store.state.settings.vibrationStrength;
+		})
+		const { vibrate } = useTapVibrate({
+			pattern,
+			delay: null,
+			enable: true
+		})
+		return { vibrate };
 	},
 	data() {
 		return {
@@ -144,6 +185,14 @@ export default {
 			set(value) {
 				this.updateSetting('enableVibration', value);
 			}
+		},
+		vibrationStrength: {
+			get() {
+				return this.settings.vibrationStrength;
+			},
+			set(valueStr) {
+				this.updateSetting('vibrationStrength', +valueStr);
+			} 
 		},
 		showTimer: {
 			get() {
