@@ -1,15 +1,16 @@
 {
   "name": "takuzu",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "private": true,
   "scripts": {
     "serve": "vite",
     "dev": "vite",
-    "build": "vite build && copy dist\\index.html dist\\200.html",
-    "deploy": "vite build && copy dist\\index.html dist\\200.html && surge dist --domain https://takuzu-vue.surge.sh",
-    "build:netlify": "vite build",
-    "deploy:test": "vite build && copy dist\\index.html dist\\200.html && surge dist --domain https://takuzu-vue-test.surge.sh",
-    "deploy:test2": "vite build && copy dist\\index.html dist\\200.html && surge dist --domain https://takuzu-vue-test2.surge.sh",
+    "build": " vite build",
+    "build:alpha": "vite build --mode alpha",
+    "build:beta": "vite build --mode beta",
+    "deploy": "vite build && surge dist --domain https://takuzu-vue.surge.sh",
+    "deploy:test": "vite build --mode beta && surge dist --domain https://takuzu-vue-test.surge.sh",
+    "deploy:test2": "vite build --mode alpha && surge dist --domain https://takuzu-vue-test2.surge.sh",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -21,7 +22,6 @@
     "dexie-export-import": "^1.0.3",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
-    "oh-vue-icons": "^1.0.0-rc2",
     "vue": "^3.2.25",
     "vue-router": "^4.0.12",
     "vuex": "^4.0.2"
@@ -34,6 +34,7 @@
     "autoprefixer": "^10.4.2",
     "lodash.camelcase": "^4.3.0",
     "lodash.upperfirst": "^4.3.1",
+    "rollup-plugin-copy": "^3.4.0",
     "tailwindcss": "^3.0.18",
     "unplugin-icons": "^0.13.0",
     "unplugin-vue-components": "^0.17.15",
