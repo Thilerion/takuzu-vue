@@ -43,8 +43,9 @@ import PuzzleCellColored from '@/components/gameboard/PuzzleCellColored.vue';
 import PuzzleGridHighlights from '@/components/gameboard/PuzzleGridHighlights.vue';
 import debounce from 'lodash.debounce';
 import { EMPTY } from '@/lib/constants.js';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
+import { useTapVibrate } from '@/composables/use-tap-vibrate.js';
 
 export default {
 	components: {
@@ -74,7 +75,20 @@ export default {
 
 		let { cellData, nRows, nCols, nCells, lockedCells, coords } = useGridData(props.columns, props.rows, initialGrid);
 
-		const { debouncedVibrate, vibrationEnabled, vibrate } = useTapVibrate(store, 20);
+		const shouldEnableVibration = computed(() => store.state.settings.enableVibration);
+		const vibrationStrengthSetting = computed(() => store.state.settings?.vibrationStrength ?? 25);
+
+		const delay = ref(0);
+		if (nCells > (12 * 11)) {
+			delay.value = 15;
+		} else if (nCells > (9 * 8)) {
+			delay.value = 5;
+		}
+
+		const {
+			isEnabled: vibrationEnabled,
+			vibrate,
+		} = useTapVibrate({ pattern: vibrationStrengthSetting, delay: delay.value, enable: shouldEnableVibration });
 
 		return {
 			cellData,
@@ -83,7 +97,7 @@ export default {
 			nCols,
 			lockedCells,
 			numCells: nCells,
-			debouncedVibrate,
+			debouncedVibrate: vibrate,
 			vibrationEnabled,
 			vibrate
 		}
@@ -132,7 +146,7 @@ export default {
 	},
 };
 
-function useTapVibrate(store, duration) {
+/* function useTapVibrate(store, duration) {
 	const vibrationSupported = window.navigator && ('vibrate' in window.navigator);
 	const vibrationEnabled = computed(() => {
 		return store.state.settings.enableVibration;
@@ -155,7 +169,7 @@ function useTapVibrate(store, duration) {
 		vibrationEnabled
 	}
 }
-
+ */
 
 function useGridData(width, height, initialGrid) {
 	const staticCellData = [];
