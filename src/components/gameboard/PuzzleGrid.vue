@@ -3,36 +3,14 @@
 		class="puzzle-grid"
 		:class="[`cell-theme-${cellTheme}`, `cell-theme-type-${cellThemeType}`]"
 	>
-	<div
-		class="puzzle-cell-wrapper overflow-hidden"
-		v-for="cell in cellData"
-		:key="cell.key"
-		:data-x="cell.x"
-		:data-y="cell.y"
-		:style="{ 'grid-row': `calc(${cell.y} + 1) / span 1`,
-		'grid-column': `calc(${cell.x} + 1) / span 1` }"
-	>
-		<component
-			:is="cellComponent"
-			class="cell overflow-hidden"
-			@pointerdown="cellClick(cell.x, cell.y, cell.key)"
-			:value="gridValues[cell.key]"
-			:theme="cellTheme"
-			:theme-type="cellThemeType"
-			:locked="lockedCells[cell.key]"
-			:hidden="false"
-			:incorrect="incorrectCellKeys[cell.key]"
+		<FastPuzzleCellWrapper
+			v-for="cell in cellData"
+			:key="cell.key"
+			@toggle="cellClick"
+			v-bind="{...cell, locked: lockedCells[cell.key], initialValue: cell.initialValue, value: grid[cell.y][cell.x]}"
 		>
-		<template #incorrect v-if="cellThemeType === 'colored'">
-			<transition name="mark-fade">
-				<div class="incorrect-mark" v-if="incorrectCellKeys[cell.key]">
-					<div></div>
-					<div></div>
-				</div>
-			</transition>
-		</template>
-		</component>
-	</div>
+			
+		</FastPuzzleCellWrapper>
 		<PuzzleGridHighlights />
 	</div>
 </template>
@@ -43,16 +21,18 @@ import PuzzleCellColored from '@/components/gameboard/PuzzleCellColored.vue';
 import PuzzleGridHighlights from '@/components/gameboard/PuzzleGridHighlights.vue';
 import debounce from 'lodash.debounce';
 import { EMPTY } from '@/lib/constants.js';
-import { computed, ref } from 'vue';
+import { computed, ref, unref } from 'vue';
 import { useStore } from 'vuex';
 import { useTapVibrate } from '@/composables/use-tap-vibrate.js';
+import FastPuzzleCellWrapper from './cell/FastPuzzleCellWrapper.vue';
 
 export default {
 	components: {
-		PuzzleCellSymbols,
-		PuzzleCellColored,
-		PuzzleGridHighlights,
-	},
+    PuzzleCellSymbols,
+    PuzzleCellColored,
+    PuzzleGridHighlights,
+    FastPuzzleCellWrapper
+},
 	props: {
 		board: {
 			type: Object,
@@ -136,45 +116,18 @@ export default {
 		},
 	},
 	methods: {
-		cellClick(x, y, key) {
-			const isLocked = this.lockedCells[key];
-			if (isLocked) return;
-			const value = this.gridValues[key];
-			this.debouncedVibrate();
+		cellClick({ x, y, value }) {
+			this.vibrate();
 			this.$emit('toggle-cell', { x, y, value });
 		},
 	},
 };
 
-/* function useTapVibrate(store, duration) {
-	const vibrationSupported = window.navigator && ('vibrate' in window.navigator);
-	const vibrationEnabled = computed(() => {
-		return store.state.settings.enableVibration;
-	});
-
-	const vibrate = () => {
-		if (!vibrationSupported || !vibrationEnabled.value) return;
-		window.navigator.vibrate(duration);
-	}
-
-	const debouncedVibrate = debounce(vibrate, duration, {
-		leading: true,
-		trailing: true,
-		maxWait: duration * 2
-	});
-
-	return {
-		debouncedVibrate: vibrationSupported ? debouncedVibrate : () => {},
-		vibrate: vibrationSupported ? vibrate : () => {},
-		vibrationEnabled
-	}
-}
- */
-
 function useGridData(width, height, initialGrid) {
 	const staticCellData = [];
 	const lockedCells = {};
 	const coords = [];
+
 
 	for (let y = 0; y < height; y++) {
 		for (let x = 0; x < width; x++) {
