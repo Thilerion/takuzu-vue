@@ -1,7 +1,6 @@
 <template>
 	<div
 		class="board new-board relative"
-		:style="{ '--cell-size': cellSizePx }"
 	>
 		<div class="ruler-wrapper-columns"><slot name="ruler-columns" /></div>
 		<div class="ruler-wrapper-rows"><slot name="ruler-rows" /></div>
@@ -90,6 +89,8 @@ export default {
 	grid-template-areas: "none info"
 		"none ruler-cols"
 		"ruler-rows puzzle-grid";
+	--cell-size-num: v-bind(cellSize);
+	--cell-size: calc(var(--cell-size-num) * 1px);
 }
 
 .pause-overlay {

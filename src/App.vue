@@ -1,10 +1,6 @@
 <template>
 	<div
 		class="root"
-		:style="{
-			'min-height': viewportHeight,
-			'--vh-total': viewportHeight,
-		}"
 	>
 		<!-- TODO: transition for MainPage <-> OverlayPage -->
 		<router-view v-slot="{ Component, route }">
@@ -68,6 +64,8 @@ body {
 }
 .root {
 	@apply relative flex flex-col z-0;
+	--vh-total: v-bind(viewportHeight);
+	min-height: var(--vh-total);
 }
 
 

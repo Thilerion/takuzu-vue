@@ -4,13 +4,6 @@
 	<div
 		class="puzzle-wrapper"
 		:class="[`cell-size-${gridGapSizing}`]"
-		:style="{
-			'--unavail-height': heightUnavailable,
-			'--unavail-width': widthUnavailable,
-			'--aspect-ratio': columns / rows,
-			'--rows': rows,
-			'--columns': columns,
-		}"
 	>
 		<slot v-bind="puzzleGridDimensions" />
 	</div>
@@ -169,6 +162,12 @@ export default {
 .main {
 	@apply flex-1 flex flex-col;
 	overflow: hidden;
+
+	--unavail-height: v-bind(heightUnavailable);
+	--unavail-width: v-bind(widthUnavailable);
+	--rows: v-bind(rows);
+	--columns: v-bind(columns);
+	--aspect-ratio: calc(var(--columns) / var(--rows));
 }
 
 .puzzle-wrapper {

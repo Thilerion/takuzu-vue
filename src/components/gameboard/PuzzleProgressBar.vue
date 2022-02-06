@@ -7,7 +7,6 @@
 		}"
 	>
 		<div
-			:style="{'--progress': progressValueCapped}"
 			class="progress-value"
 		></div>
 	</div>
@@ -35,6 +34,8 @@ export default {
 .progress-wrapper {
 	@apply w-full absolute inset-x-0 top-0 bg-gray-400 bg-opacity-20 pointer-events-none;
 	height: 3px;
+
+	--progress: v-bind(progressValueCapped);
 }
 .progress-value {
 	@apply h-full w-full bg-teal-600 opacity-50;

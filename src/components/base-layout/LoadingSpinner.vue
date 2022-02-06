@@ -1,7 +1,6 @@
 <template>
 	<div
 		class="loading-spinner"
-		:style="cssVars"
 	></div>
 </template>
 
@@ -25,17 +24,9 @@ export default {
 		},
 		borderSize() {
 			if (this.marginSize >= 8) return 6;
-			if (this.marginSize >= 6) return 4;
-			if (this.marginSize >= 4) return 3;
+			else if (this.marginSize >= 6) return 4;
+			else if (this.marginSize >= 4) return 3;
 			return 2;
-		},
-		cssVars() {
-			return {
-				'--size': this.baseSize + 'px',
-				'--after-size': this.afterSize + 'px',
-				'--margin': this.marginSize + 'px',
-				'--border': this.borderSize + 'px'
-			}
 		}
 	}
 };
@@ -45,6 +36,11 @@ export default {
 /* from: https://loading.io/css/ */
 .loading-spinner {
   display: inline-block;
+  --size: calc(v-bind(baseSize) * 1px);
+  --margin: calc(v-bind(marginSize) * 1px);
+  --after-size: calc(v-bind(afterSize) * 1px);
+  --border: calc(v-bind(borderSize) * 1px);
+  
   width: var(--size);
   height: var(--size);
 }
