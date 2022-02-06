@@ -14,6 +14,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/hammersmith-one": "^4.5.1",
+    "@fontsource/roboto": "^4.5.3",
     "@vueuse/core": "^7.5.5",
     "chart.js": "^3.7.0",
     "chartjs-adapter-date-fns": "^2.0.0",

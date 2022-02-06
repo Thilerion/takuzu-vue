@@ -6,7 +6,7 @@ export const createVitePwaConfig = ({
 	 * @type {import('vite-plugin-pwa').VitePWAOptions}
 	 */
 	const config = {
-		includeAssets: ['favicon.ico', 'robots.txt', 'safari-pinned-tab.svg', 'apple-touch-icon.png'],
+		includeAssets: ['favicon.ico', 'robots.txt', 'safari-pinned-tab.svg', 'apple-touch-icon.png', '**/*.{woff,woff2}'],
 		manifest: {
 			name,
 			short_name,
@@ -38,7 +38,7 @@ export const createVitePwaConfig = ({
 					"purpose": "maskable"
 				}
 			]
-		}
+		},
 	}
 	return config;
 }
