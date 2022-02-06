@@ -9,7 +9,7 @@
 		<!-- TODO: transition for MainPage <-> OverlayPage -->
 		<router-view v-slot="{ Component, route }">
 			<overlay-page-transition>
-				<component :key="route.meta.puzzleKey && puzzleKey" :is="Component" />
+				<component :is="Component" :key="route.meta.usePuzzleKey && puzzleKey" />
 			</overlay-page-transition>
 		</router-view>
 
@@ -25,31 +25,32 @@ import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue
 import { initPregenWorker } from '@/workers/pregen-puzzles.js';
 import { initDarkLightAutoTheme } from '@/services/dark-light-auto-theme.js';
 import { computed, onMounted } from 'vue';
-import { useStore } from 'vuex';
 import { useWindowSize } from '@vueuse/core';
 import { provideGlobalBuildData } from './app.globals.js';
+import { useStore } from 'vuex';
 
 export default {
 	components: {
 		OverlayPageTransition
 	},
 	setup() {
+		const store = useStore();
+		const puzzleKey = computed(() => store.state.puzzleKey);
+
 		initDarkLightAutoTheme();
 		provideGlobalBuildData();
 
 		const { height } = useWindowSize();
 		const viewportHeight = computed(() => height.value ? `${height.value}px` : '100%');
 
-		const store = useStore();
-		const puzzleKey = store.state.puzzleKey;
 
 		onMounted(() => {
 			initPregenWorker();
 		})
 
 		return { 
-			puzzleKey,
 			viewportHeight,
+			puzzleKey
 		}
 	}
 };
