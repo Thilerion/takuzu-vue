@@ -16,7 +16,6 @@
 				<FastPuzzleCellSymbol v-else-if="cellThemeType === 'symbols'" v-bind="cellProps"/>
 				<div v-else>{{cellProps.value}}</div>
 			</template>
-			<template v-slot:tap="{locked}"><FastPuzzleCellTapShadow v-if="!locked" /></template>
 		</FastPuzzleCellWrapper>
 		<PuzzleGridHighlights />
 	</div>
@@ -33,7 +32,6 @@ import { useTapVibrate } from '@/composables/use-tap-vibrate.js';
 import FastPuzzleCellWrapper from './cell/FastPuzzleCellWrapper.vue';
 import FastPuzzleCellColored from './cell/FastPuzzleCellColored.vue';
 import FastPuzzleCellSymbol from './cell/FastPuzzleCellSymbol.vue';
-import FastPuzzleCellTapShadow from './cell/FastPuzzleCellTapShadow.vue';
 
 export default {
 	components: {
@@ -43,7 +41,6 @@ export default {
     FastPuzzleCellWrapper,
     FastPuzzleCellColored,
     FastPuzzleCellSymbol,
-    FastPuzzleCellTapShadow
 },
 	props: {
 		board: {

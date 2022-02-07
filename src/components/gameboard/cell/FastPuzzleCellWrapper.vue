@@ -10,7 +10,6 @@
 			:value="value"
 			:locked="locked"
 		><div class="flex items-center justify-center">{{value}}</div></slot>
-		<slot name="tap" :locked="locked" />
 		<slot name="incorrect-mark" />
 	</component>
 </template>
@@ -60,13 +59,50 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .cell-wrapper {
 	aspect-ratio: 1;
 	width: 100%;
-	background-color: yellow;
-	transition: border .2s ease;
 	contain: strict;
+}
+
+button.cell-wrapper::after {
+	content: '';
+	@apply w-full h-full absolute z-20 pointer-events-none inset-0 ring ring-gray-800 ring-inset opacity-0;
+	border-radius: calc(var(--cell-rounding) + 0.5px);
+	will-change: opacity;
+	transition: opacity 0.5s cubic-bezier(.97,.25,.16,.71) .6s;
+}
+@media (hover:hover) {
+	button.cell-wrapper::before {
+		content: '';
+		@apply w-full h-full absolute z-10 pointer-events-none inset-0 border-2 opacity-0 box-border border-black;
+		will-change: opacity;
+		transition: opacity 0.2s ease;
+	}
+	button.cell-wrapper:hover::before {
+		@apply opacity-30;
+		transition: opacity 0.2s ease;
+	}
+	button.cell-wrapper:active::before {
+		@apply opacity-70;
+		transition: opacity 1s ease;
+	}
+}
+button.cell-wrapper:active::after {
+	opacity: 0.7;
+	transition: opacity .05s cubic-bezier(0, 0.55, 0.45, 1);
+}
+.cell-size-xs button.cell-wrapper::after,
+.cell-size-s button.cell-wrapper::after,
+.cell-size-m button.cell-wrapper::after {
+	@apply ring-2;
+}
+.cell-size-l button.cell-wrapper::after {
+	@apply ring;
+}
+.cell-size-xl button.cell-wrapper::after {
+	@apply ring-4;
 }
 
 .cell-wrapper::slotted(*) {
