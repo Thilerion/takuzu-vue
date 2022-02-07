@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="cell"
-		:class="[{ locked }]"
+		:class="[{ locked, incorrect }]"
 	>
 		<transition name="cell-symbol">
 			<div v-if="symbolValue != ''" class="cell-symbol-value">{{symbolValue}}</div>
@@ -25,12 +25,12 @@ const BinarySymbols = {
 }
 
 export default {
-	props: ['value', 'locked'],
+	props: ['value', 'locked', 'incorrect'],
 	components: {
 		Transition
 	},
 	setup(props) {
-		const { value, locked } = toRefs(props);
+		const { value, locked, incorrect } = toRefs(props);
 		
 		const cellTheme = inject('cellTheme');
 		const symbolType = toRef(cellTheme, 'value');
@@ -43,7 +43,7 @@ export default {
 
 		const symbolValue = computed(() => symbolMap.value[value.value]);
 
-		return { locked, value, symbolValue };
+		return { locked, value, symbolValue, incorrect };
 	}
 };
 </script>
@@ -59,7 +59,10 @@ export default {
 .cell.locked {
 	@apply bg-gray-200;
 }
-.cell > * {
+.cell.incorrect {
+	@apply bg-red-400 bg-opacity-20 ring-1 ring-inset ring-red-900 ring-opacity-40;
+}
+.cell > *, .cell {
 	border-radius: var(--cell-rounding);
 }
 

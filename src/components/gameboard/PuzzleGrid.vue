@@ -10,8 +10,9 @@
 			v-bind="cell"
 			:value="grid[cell.y][cell.x]"
 			:locked="lockedCells[cell.key]"
+			:incorrect="incorrectCellKeys[cell.key]"
 		>
-			<template v-slot:inner="cellProps">
+			<template v-slot="cellProps">
 				<FastPuzzleCellColored v-if="cellThemeType === 'colored'" v-bind="cellProps"/>
 				<FastPuzzleCellSymbol v-else-if="cellThemeType === 'symbols'" v-bind="cellProps"/>
 				<div v-else>{{cellProps.value}}</div>

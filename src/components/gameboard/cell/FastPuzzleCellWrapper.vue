@@ -6,11 +6,10 @@
 		:style="gridStyles"
 	>
 		<slot
-			name="inner"
 			:value="value"
 			:locked="locked"
+			:incorrect="incorrect"
 		><div class="flex items-center justify-center">{{value}}</div></slot>
-		<slot name="incorrect-mark" />
 	</component>
 </template>
 
@@ -20,7 +19,7 @@ import { computed, toRefs } from "vue";
 export default {
 	props: [
 		'x', 'y', 'locked',
-		'initialValue', 'value',
+		'initialValue', 'value', 'incorrect'
 	],
 	emits: ['toggle'],
 	setup(props, { emit }) {
@@ -29,7 +28,8 @@ export default {
 			x,
 			y,
 			locked,
-			initialValue
+			initialValue,
+			incorrect
 		} = toRefs(props);
 
 		const gridStyles = {
@@ -54,7 +54,7 @@ export default {
 		}
 		const eventName = isLocked.value ? undefined : 'pointerdown';
 
-		return { elementType, handleCellToggle, eventName, value: cellValue, gridStyles, locked: isLocked };
+		return { elementType, handleCellToggle, eventName, value: cellValue, gridStyles, locked: isLocked, incorrect };
 	}
 };
 </script>

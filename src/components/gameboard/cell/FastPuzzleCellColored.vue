@@ -7,6 +7,7 @@
 			<div v-if="value === '0'" key="0" class="color-0"></div>
 			<div v-else-if="value === '1'" key="1" class="color-1"></div>
 		</transition>
+		<div class="incorrect-mark" v-if="incorrect"></div>
 	</div>
 </template>
 
@@ -14,17 +15,17 @@
 import { computed, toRefs, Transition } from "vue";
 
 export default {
-	props: ['value', 'locked'],
+	props: ['value', 'locked', 'incorrect'],
 	components: {
 		Transition
 	},
 	setup(props) {
-		const { value, locked } = toRefs(props);
+		const { value, locked, incorrect } = toRefs(props);
 
 		const valueStr = computed(() => value.value === EMPTY ? 'none' : value.value);
 		const valueClass = computed(() => `value-${valueStr.value}`);
 
-		return { valueClass, locked, value };
+		return { valueClass, locked, value, incorrect };
 	}
 };
 </script>
@@ -41,7 +42,7 @@ export default {
 }
 
 .cell-color-enter-active, .cell-color-leave-active {
-	transition: opacity 0.5s ease;
+	transition: opacity 0.25s ease;
 }
 .cell-color-enter-from, .cell-color-leave-to {
 	opacity: 0;
@@ -61,5 +62,23 @@ export default {
 }
 .color-1 {
 	@apply bg-cell-red-primary;
+}
+
+.incorrect-mark {
+	pointer-events: none;
+	@apply absolute inset-0 z-10;
+     background: 
+         linear-gradient(to top left,
+             rgba(0,0,0,0) 0%,
+             rgba(0,0,0,0) calc(50% - 0.8px),
+             rgba(0,0,0,1) 50%,
+             rgba(0,0,0,0) calc(50% + 0.8px),
+             rgba(0,0,0,0) 100%),
+         linear-gradient(to top right,
+             rgba(0,0,0,0) 0%,
+             rgba(0,0,0,0) calc(50% - 0.8px),
+             rgba(0,0,0,1) 50%,
+             rgba(0,0,0,0) calc(50% + 0.8px),
+             rgba(0,0,0,0) 100%);
 }
 </style>
