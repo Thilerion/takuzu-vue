@@ -30,7 +30,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .cell {
 	@apply overflow-hidden relative pointer-events-none text-center;
 	@apply w-full h-full;

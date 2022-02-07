@@ -12,7 +12,9 @@
 			:locked="lockedCells[cell.key]"
 		>
 			<template v-slot:default="cellProps">
-				<FastPuzzleCellColored v-bind="cellProps" />
+				<FastPuzzleCellColored v-if="cellThemeType === 'colored'" v-bind="cellProps" />
+				<FastPuzzleCellSymbol v-else-if="cellThemeType === 'symbols'" v-bind="cellProps" />
+				<div v-else>{{cellProps.value}}</div>
 			</template>
 		</FastPuzzleCellWrapper>
 		<PuzzleGridHighlights />
@@ -24,11 +26,12 @@ import PuzzleCellSymbols from '@/components/gameboard/PuzzleCellSymbols.vue';
 import PuzzleCellColored from '@/components/gameboard/PuzzleCellColored.vue';
 import PuzzleGridHighlights from '@/components/gameboard/PuzzleGridHighlights.vue';
 import { EMPTY } from '@/lib/constants.js';
-import { computed, ref } from 'vue';
+import { computed, provide, reactive, ref } from 'vue';
 import { useStore } from 'vuex';
 import { useTapVibrate } from '@/composables/use-tap-vibrate.js';
 import FastPuzzleCellWrapper from './cell/FastPuzzleCellWrapper.vue';
 import FastPuzzleCellColored from './cell/FastPuzzleCellColored.vue';
+import FastPuzzleCellSymbol from './cell/FastPuzzleCellSymbol.vue';
 
 export default {
 	components: {
@@ -36,7 +39,8 @@ export default {
     PuzzleCellColored,
     PuzzleGridHighlights,
     FastPuzzleCellWrapper,
-	FastPuzzleCellColored
+    FastPuzzleCellColored,
+    FastPuzzleCellSymbol
 },
 	props: {
 		board: {
@@ -75,6 +79,8 @@ export default {
 			vibrate,
 		} = useTapVibrate({ pattern: vibrationStrengthSetting, delay: delay.value, enable: shouldEnableVibration });
 
+		const { cellTheme, cellThemeType } = provideCellTheme();
+
 		return {
 			cellData,
 			coords,
@@ -84,7 +90,9 @@ export default {
 			numCells: nCells,
 			debouncedVibrate: vibrate,
 			vibrationEnabled,
-			vibrate
+			vibrate,
+			cellTheme,
+			cellThemeType
 		}
 	},
 	computed: {
@@ -104,12 +112,6 @@ export default {
 			})
 			return result;
 		},
-		cellTheme() {
-			return this.$store.state.settings.cellTheme;
-		},
-		cellThemeType() {
-			return this.$store.getters['settings/cellThemeType'];
-		},
 		cellComponent() {
 			return this.cellThemeType === 'colored' ? 'PuzzleCellColored' : 'PuzzleCellSymbols';
 		},
@@ -127,6 +129,22 @@ export default {
 		},
 	},
 };
+
+function provideCellTheme() {
+	const store = useStore();
+
+	const cellThemeValue = computed(() => store.state.settings.cellTheme);
+	const cellThemeType = computed(() => store.getters['settings/cellThemeType']);
+
+	const cellTheme = reactive({
+		value: cellThemeValue,
+		type: cellThemeType
+	})
+
+	provide('cellTheme', cellTheme);
+
+	return { cellTheme: cellThemeValue, cellThemeType };
+}
 
 function useGridData(width, height, initialGrid) {
 	const staticCellData = [];
