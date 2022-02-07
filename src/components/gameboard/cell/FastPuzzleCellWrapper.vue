@@ -4,10 +4,15 @@
 		@[eventName]="handleCellToggle"
 		class="cell-wrapper relative cell-btn"
 		:style="gridStyles"
-	><slot
-		:value="value"
-		:locked="locked"
-	><div class="flex items-center justify-center">{{value}}</div></slot></component>
+	>
+		<slot
+			name="inner"
+			:value="value"
+			:locked="locked"
+		><div class="flex items-center justify-center">{{value}}</div></slot>
+		<slot name="tap" :locked="locked" />
+		<slot name="incorrect-mark" />
+	</component>
 </template>
 
 <script>
@@ -61,5 +66,12 @@ export default {
 	width: 100%;
 	background-color: yellow;
 	transition: border .2s ease;
+	contain: strict;
+}
+
+.cell-wrapper::slotted(*) {
+	pointer-events: none;
+	touch-action: none;
+	user-select: none;
 }
 </style>

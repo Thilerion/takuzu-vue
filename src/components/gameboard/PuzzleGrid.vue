@@ -11,11 +11,12 @@
 			:value="grid[cell.y][cell.x]"
 			:locked="lockedCells[cell.key]"
 		>
-			<template v-slot:default="cellProps">
-				<FastPuzzleCellColored v-if="cellThemeType === 'colored'" v-bind="cellProps" />
-				<FastPuzzleCellSymbol v-else-if="cellThemeType === 'symbols'" v-bind="cellProps" />
+			<template v-slot:inner="cellProps">
+				<FastPuzzleCellColored v-if="cellThemeType === 'colored'" v-bind="cellProps"/>
+				<FastPuzzleCellSymbol v-else-if="cellThemeType === 'symbols'" v-bind="cellProps"/>
 				<div v-else>{{cellProps.value}}</div>
 			</template>
+			<template v-slot:tap="{locked}"><FastPuzzleCellTapShadow v-if="!locked" /></template>
 		</FastPuzzleCellWrapper>
 		<PuzzleGridHighlights />
 	</div>
@@ -32,6 +33,7 @@ import { useTapVibrate } from '@/composables/use-tap-vibrate.js';
 import FastPuzzleCellWrapper from './cell/FastPuzzleCellWrapper.vue';
 import FastPuzzleCellColored from './cell/FastPuzzleCellColored.vue';
 import FastPuzzleCellSymbol from './cell/FastPuzzleCellSymbol.vue';
+import FastPuzzleCellTapShadow from './cell/FastPuzzleCellTapShadow.vue';
 
 export default {
 	components: {
@@ -40,7 +42,8 @@ export default {
     PuzzleGridHighlights,
     FastPuzzleCellWrapper,
     FastPuzzleCellColored,
-    FastPuzzleCellSymbol
+    FastPuzzleCellSymbol,
+    FastPuzzleCellTapShadow
 },
 	props: {
 		board: {
