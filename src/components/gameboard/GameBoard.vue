@@ -70,7 +70,9 @@ export default {
 	methods: {
 		toggleCell({x, y, value}) {
 			// TODO: 1 or 0 first? from settings
-			const values = ['0', '1', '.'];
+			const valuesZFirst = ['0', '1', '.'];
+			const valuesOFirst = ['1', '0', '.'];
+			const values = valuesZFirst;
 			const idx = values.indexOf(value);
 			const nextIdx = (idx + 1) % 3;
 			const nextValue = values[nextIdx];

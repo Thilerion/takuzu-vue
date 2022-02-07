@@ -2,8 +2,12 @@
 	<component
 		:is="elementType"
 		@[eventName]="handleCellToggle"
-		class="cell-wrapper relative overflow-hidden"
-	><slot><div class="flex items-center justify-center">{{value}}</div></slot></component>
+		class="cell-wrapper relative cell-btn"
+		:style="gridStyles"
+	><slot
+		:value="value"
+		:locked="locked"
+	><div class="flex items-center justify-center">{{value}}</div></slot></component>
 </template>
 
 <script>
@@ -24,6 +28,11 @@ export default {
 			initialValue
 		} = toRefs(props);
 
+		const gridStyles = {
+			'grid-row': `${y.value + 1} / span 1`,
+			'grid-column': `${x.value + 1} / span 1`
+		};
+
 		const cellValue = computed(() => {
 			if (value.value == null) {
 				return initialValue.value;
@@ -41,25 +50,16 @@ export default {
 		}
 		const eventName = isLocked.value ? undefined : 'pointerdown';
 
-		return { elementType, handleCellToggle, eventName, value: cellValue, x, y, locked: isLocked };
+		return { elementType, handleCellToggle, eventName, value: cellValue, gridStyles, locked: isLocked };
 	}
 };
 </script>
 
 <style scoped>
 .cell-wrapper {
-	--x: v-bind(x);
-	--y: v-bind(y);
-
-	grid-row: calc(var(--y) + 1) / span 1;
-	grid-column: calc(var(--x) + 1) / span 1;
 	aspect-ratio: 1;
 	width: 100%;
 	background-color: yellow;
-}
-
-:slotted(*) {
-	width: 100%;
-	height: 100%;
+	transition: border .2s ease;
 }
 </style>

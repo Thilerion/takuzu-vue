@@ -7,9 +7,13 @@
 			v-for="cell in cellData"
 			:key="cell.key"
 			@toggle="cellClick"
-			v-bind="{...cell, locked: lockedCells[cell.key], initialValue: cell.initialValue, value: grid[cell.y][cell.x]}"
+			v-bind="cell"
+			:value="grid[cell.y][cell.x]"
+			:locked="lockedCells[cell.key]"
 		>
-			
+			<template v-slot:default="cellProps">
+				<FastPuzzleCellColored v-bind="cellProps" />
+			</template>
 		</FastPuzzleCellWrapper>
 		<PuzzleGridHighlights />
 	</div>
@@ -19,19 +23,20 @@
 import PuzzleCellSymbols from '@/components/gameboard/PuzzleCellSymbols.vue';
 import PuzzleCellColored from '@/components/gameboard/PuzzleCellColored.vue';
 import PuzzleGridHighlights from '@/components/gameboard/PuzzleGridHighlights.vue';
-import debounce from 'lodash.debounce';
 import { EMPTY } from '@/lib/constants.js';
-import { computed, ref, unref } from 'vue';
+import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
 import { useTapVibrate } from '@/composables/use-tap-vibrate.js';
 import FastPuzzleCellWrapper from './cell/FastPuzzleCellWrapper.vue';
+import FastPuzzleCellColored from './cell/FastPuzzleCellColored.vue';
 
 export default {
 	components: {
     PuzzleCellSymbols,
     PuzzleCellColored,
     PuzzleGridHighlights,
-    FastPuzzleCellWrapper
+    FastPuzzleCellWrapper,
+	FastPuzzleCellColored
 },
 	props: {
 		board: {
