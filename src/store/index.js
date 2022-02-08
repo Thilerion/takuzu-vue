@@ -45,6 +45,6 @@ const store = createStore({
 
 })
 
-const unwatchSettings = initSettingsWatcher(store);
+// const unwatchSettings = initSettingsWatcher(store);
 
 export default store;

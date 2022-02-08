@@ -61,6 +61,8 @@
 
 <script>
 import IconBtnText from '@/components/base-layout/IconBtnText.vue';
+import { useSettingsStore } from '@/stores/settings.js';
+import { computed } from 'vue';
 
 export default {
 	components: {
@@ -75,11 +77,10 @@ export default {
 		},
 		paused: Boolean,
 	},
-	computed: {
-		// settings
-		checkButtonEnabled() {
-			return this.$store.state.settings.checkButton !== 'disabled';
-		},
+	setup() {
+		const settingsStore = useSettingsStore();
+		const checkButtonEnabled = computed(() => settingsStore.checkButton !== 'disabled');
+		return { checkButtonEnabled };
 	},
 };
 </script>

@@ -7,6 +7,10 @@ import { registerGlobalComponents } from './global-components.js';
 
 import { registerSW } from 'virtual:pwa-register';
 
+import router from './router';
+import store from './store';
+import { createPinia } from 'pinia';
+
 const SW_UPDATE_INTERVAL_MS = 60 * 60 * 1000;
 const updateSW = registerSW({
 	immediate: true,
@@ -21,14 +25,10 @@ const updateSW = registerSW({
 const buildDate = __BUILD_DATE__;
 const pkgVersion = __PKG_VERSION__;
 
-console.log({ buildDate, pkgVersion });
-
-import router from './router';
-import store from './store';
-
 const app = createApp(App)
 	.use(store)
-	.use(router);
+	.use(router)
+	.use(createPinia())
 
 registerGlobalComponents(app);
 	

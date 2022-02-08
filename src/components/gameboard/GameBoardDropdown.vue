@@ -50,10 +50,17 @@
 </template>
 
 <script>
+import { useSettingsStore } from '@/stores/settings.js';
 import { rafPromise, timeoutPromise } from '@/utils/delay.utils.js';
+import { toRef } from 'vue';
 
 export default {
 	emits: ['open-settings', 'dropdown-toggled'],
+	setup() {
+		const settingsStore = useSettingsStore();
+		const showTimer = toRef(settingsStore, 'showTimer');
+		return { showTimer };
+	},
 	data() {
 		return {
 			copyError: null
@@ -62,17 +69,6 @@ export default {
 	computed: {
 		debugModeEnabled() {
 			return this.$store.state.debugMode;
-		},
-		showTimer: {
-			get() {
-				return this.$store.state.settings.showTimer;
-			},
-			set(value) {
-				this.$store.commit('settings/setSetting', {
-					key: 'showTimer',
-					value
-				});
-			}
 		},
 		board() {
 			return this.$store.state.puzzle.board;

@@ -24,6 +24,7 @@ import { computed, onMounted } from 'vue';
 import { useWindowSize } from '@vueuse/core';
 import { provideGlobalBuildData } from './app.globals.js';
 import { useStore } from 'vuex';
+import { useSettingsStore, initSettingsWatcher } from './stores/settings.js';
 
 export default {
 	components: {
@@ -33,6 +34,12 @@ export default {
 		const store = useStore();
 		const puzzleKey = computed(() => store.state.puzzleKey);
 
+		// init settings store
+		const settingsStore = useSettingsStore();
+		initSettingsWatcher(settingsStore);
+
+
+		// TODO: dark mode not enabled when app loads if enabled in settings
 		initDarkLightAutoTheme();
 		provideGlobalBuildData();
 

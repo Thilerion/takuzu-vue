@@ -100,8 +100,8 @@ import CellThemeSetting from '@/components/settings/CellThemeSetting.vue';
 import DarkModeSetting from '../components/settings/DarkModeSetting.vue';
 import BaseButton from '@/components/global/BaseButton.vue';
 import { useTapVibrate } from '@/composables/use-tap-vibrate.js';
-import { useStore } from 'vuex';
-import { computed } from 'vue';
+import { toRef, toRefs } from 'vue';
+import { useSettingsStore } from '@/stores/settings.js';
 
 export default {
 	components: {
@@ -110,16 +110,26 @@ export default {
 		BaseButton
 	},
 	setup() {
-		const store = useStore();
-		const pattern = computed(() => {
-			return store.state.settings.vibrationStrength;
-		})
+		const settingsStore = useSettingsStore();
+		const pattern = toRef(settingsStore, 'vibrationStrength');
 		const { vibrate } = useTapVibrate({
 			pattern,
 			delay: null,
 			enable: true
 		})
-		return { vibrate };
+
+		const {
+			cellTheme,
+			toggleMode,
+			showLineInfo,
+			enableWakeLock,
+			enableVibration,
+			vibrationStrength,
+			showTimer,
+			checkButton
+		} = toRefs(settingsStore);
+
+		return { vibrate, cellTheme, toggleMode, showLineInfo, enableWakeLock, enableVibration, vibrationStrength, showTimer, checkButton };
 	},
 	data() {
 		return {
@@ -131,93 +141,7 @@ export default {
 			],			
 		}
 	},
-	computed: {
-		settings() {
-			return this.$store.state.settings;
-		},
-		cellTheme: {
-			get() {
-				return this.settings.cellTheme;
-			},
-			set(value) {
-				this.updateSetting('cellTheme', String(value));
-			}
-		},
-		toggleMode: {
-			get() {
-				return this.settings.toggleMode;
-			},
-			set(value) {
-				this.updateSetting('toggleMode', String(value));
-			}
-		},
-		showLineInfo: {
-			get() {
-				return this.settings.showLineInfo;
-			},
-			set(value) {
-				this.updateSetting('showLineInfo', value);
-			}
-		},
-		showBoardCoordinates: {
-			get() {
-				return !!this.settings.showBoardCoordinates;
-			},
-			set(value) {
-				this.$store.commit('settings/setSetting', {
-					key: 'showBoardCoordinates',
-					value: value
-				})
-			}
-		},
-		enableWakeLock: {
-			get() {
-				return this.settings.enableWakeLock;
-			},
-			set(value) {
-				this.updateSetting('enableWakeLock', value);
-			}
-		},
-		enableVibration: {
-			get() {
-				return this.settings.enableVibration;
-			},
-			set(value) {
-				this.updateSetting('enableVibration', value);
-			}
-		},
-		vibrationStrength: {
-			get() {
-				return this.settings.vibrationStrength;
-			},
-			set(valueStr) {
-				this.updateSetting('vibrationStrength', +valueStr);
-			} 
-		},
-		showTimer: {
-			get() {
-				return this.settings.showTimer;
-			},
-			set(value) {
-				this.updateSetting('showTimer', value);
-			}
-		},
-		checkButton: {
-			get() {
-				return this.settings.checkButton;
-			},
-			set(value) {
-				this.updateSetting('checkButton', value);
-			}
-		},
-	},
 	methods: {
-		updateSetting(key, value) {
-			this.$store.commit('settings/setSetting', {
-				key,
-				value
-			});
-		},
 		closeSettings() {
 			const prev = this.$route.meta.prev;
 			if (this.$route.name === 'PlayPuzzle.settings') {

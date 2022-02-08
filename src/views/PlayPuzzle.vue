@@ -94,6 +94,8 @@ const wakeLock = new WakeLock();
 import { COLUMN, ROW } from '@/lib/constants.js';
 
 import debounce from 'lodash.debounce';
+import { useSettingsStore } from '@/stores/settings.js';
+import { toRefs } from 'vue';
 
 export default {
 	components: {
@@ -110,7 +112,16 @@ export default {
 	},
 	setup() {
 		const { hidden } = usePageVisibility();
-		return { windowHidden: hidden };
+
+		const settingsStore = useSettingsStore();
+
+		const { showLineInfo, enableWakeLock, showBoardCoordinates, showBoardLineCounts, showRulers, showTimer } = toRefs(settingsStore);
+
+		return { 
+			windowHidden: hidden,
+			showLineInfo, showBoardCoordinates, showBoardLineCounts, showRulers,
+			shouldEnableWakeLock: enableWakeLock, showTimer
+		};
 	},
 	data() {
 		return {
@@ -142,16 +153,6 @@ export default {
 			rowCounts: state => state.rowCounts,
 			columnCounts: state => state.colCounts,
 		}),
-		...mapState('settings', [
-			'showLineInfo'
-		]),
-		shouldEnableWakeLock() {
-			return this.$store.state.settings.enableWakeLock;
-		},
-		...mapGetters('settings', [
-			'showBoardCoordinates', 'showBoardLineCounts',
-			'showRulers',
-		]),
 		puzzleKey() {
 			return this.$store.state.puzzleKey;
 		},
@@ -188,9 +189,6 @@ export default {
 		},
 		finishedWithMistakes() {
 			return this.$store.getters['puzzle/finishedWithMistakes'];
-		},
-		showTimer() {
-			return this.$store.state.settings.showTimer;
 		},
 		boardGrid() {
 			return this.board?.grid;
