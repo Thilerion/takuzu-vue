@@ -60,14 +60,10 @@
 </template>
 
 <script>
-import IconBtnText from '@/components/base-layout/IconBtnText.vue';
 import { useSettingsStore } from '@/stores/settings.js';
 import { computed, watchEffect } from 'vue';
 
 export default {
-	components: {
-		IconBtnText,
-	},
 	emits: ['undo', 'restart', 'check', 'get-hint'],
 	props: {
 		canUndo: Boolean,

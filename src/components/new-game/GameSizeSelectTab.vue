@@ -12,12 +12,7 @@
 </template>
 
 <script>
-import BaseSelectButton from '@/components/base-layout/BaseSelectButton.vue';
-
 export default {
-	components: {
-		BaseSelectButton,
-	},
 	props: {
 		sizes: {
 			type: Object,

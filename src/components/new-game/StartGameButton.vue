@@ -21,12 +21,7 @@
 </template>
 
 <script>
-import LoadingSpinner from '../base-layout/LoadingSpinner.vue';
-
 export default {
-	components: {
-		LoadingSpinner
-	},
 	props: {
 		gameLoading: Boolean,
 		disable: Boolean,
