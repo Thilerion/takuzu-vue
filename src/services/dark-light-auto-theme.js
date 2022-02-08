@@ -1,5 +1,5 @@
 import { usePreferredDark, useStorage } from "@vueuse/core";
-import { computed, inject, provide, readonly, watch } from "vue";
+import { computed, inject, provide, readonly, watchEffect } from "vue";
 
 const defaultOptions = {
 	valueDark: 'dark',
@@ -31,7 +31,9 @@ export function initDarkLightAutoTheme(opts = {}) {
 		el.classList.toggle(valueLight, !value);
 	}
 
-	watch(isDark, onChanged, { flush: 'post' });
+	watchEffect(() => {
+		onChanged(isDark.value);
+	}, { flush: 'post' });
 
 	const setDarkLightTheme = (value) => state.value = value;
 

@@ -38,8 +38,6 @@ export default {
 		const settingsStore = useSettingsStore();
 		initSettingsWatcher(settingsStore);
 
-
-		// TODO: dark mode not enabled when app loads if enabled in settings
 		initDarkLightAutoTheme();
 		provideGlobalBuildData();
 
