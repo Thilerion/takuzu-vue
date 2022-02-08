@@ -3,15 +3,25 @@
 		class="cell"
 		:class="[{ locked, incorrect }]"
 	>
-		<transition name="cell-symbol">
-			<div v-if="symbolValue != ''" class="cell-symbol-value">{{symbolValue}}</div>
-		</transition>
+			<template v-if="symbolType === 'tictactoe'">
+				<transition name="cell-symbol">
+				<div v-if="symbolValue != ''" class="cell-symbol-value">{{symbolValue}}</div>
+				</transition>
+			</template>
+			<template v-else-if="symbolType === 'binary'">
+				<transition name="cell-symbol">
+					<div v-if="symbolValue !== '.'" class="number-icon-wrapper">
+						<icon-tabler-number-0 class="number-icon" v-if="symbolValue === '0'" />
+						<icon-tabler-number-1 class="number-icon" v-else-if="symbolValue === '1'" />
+					</div>
+				</transition>
+			</template>
 	</div>
 </template>
 
 <script>
 import { EMPTY, ONE, ZERO } from "@/lib/constants.js";
-import { computed, toRefs, Transition, inject, toRef } from "vue";
+import { computed, toRefs, Transition, inject, toRef, onMounted, onBeforeUnmount, onBeforeUpdate } from "vue";
 
 const TicTacToeSymbols = {
 	[EMPTY]: '',
@@ -43,7 +53,7 @@ export default {
 
 		const symbolValue = computed(() => symbolMap.value[value.value]);
 
-		return { locked, value, symbolValue, incorrect };
+		return { locked, value, symbolValue, incorrect, symbolType };
 	}
 };
 </script>
@@ -81,6 +91,23 @@ export default {
 	font-size: var(--font-size);
 	line-height: var(--line-height);
 }
+.number-icon {
+	@apply pointer-events-none w-full h-full m-auto;
+	font-size: var(--font-size);
+	max-height: 4rem;
+	max-width: 4rem;
+}
+
+.cell-size-l, .cell-size-xl {
+	--icon-pad: 8px;
+}
+.cell-size-xs {
+	--icon-pad: 4px;
+}
+.number-icon-wrapper {
+	@apply relative box-border w-full h-full flex;
+	padding: 2px;
+}
 </style>
 
 <style>
@@ -93,5 +120,13 @@ export default {
 	@apply font-sans font-medium;
 	--base-size: calc(var(--base-cell-size) - 6px);
 	--line-height: calc(var(--base-size) * 1.01);
+}
+.cell-theme-tictactoe .cell {
+	@apply flex items-center justify-center overflow-hidden;
+	--font-size: 48px;
+	--base-pad: calc(var(--base-cell-size) / 10);
+	padding: clamp(1px, var(--base-pad), 7px);
+	width: 100%;
+	height: 100%;
 }
 </style>
