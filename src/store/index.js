@@ -1,7 +1,6 @@
 import { isDebugModeEnabledInLocalStorage, persistDebugMode } from "@/services/debug-mode.js";
 import { createStore } from "vuex";
 import puzzleModule from './puzzle/index.js';
-import { settingsModule, initSettingsWatcher } from './settings.js';
 import { statsModule } from './stats.js';
 import { statsDataModule } from './stats-data.js';
 
@@ -14,7 +13,6 @@ const store = createStore({
 
 	modules: {
 		puzzle: puzzleModule,
-		settings: settingsModule,
 		stats: statsModule,
 		statsData: statsDataModule,
 	},
@@ -44,7 +42,5 @@ const store = createStore({
 	}
 
 })
-
-// const unwatchSettings = initSettingsWatcher(store);
 
 export default store;

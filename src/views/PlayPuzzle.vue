@@ -95,7 +95,7 @@ import { COLUMN, ROW } from '@/lib/constants.js';
 
 import debounce from 'lodash.debounce';
 import { useSettingsStore } from '@/stores/settings.js';
-import { toRefs } from 'vue';
+import { storeToRefs } from 'pinia';
 
 export default {
 	components: {
@@ -115,7 +115,7 @@ export default {
 
 		const settingsStore = useSettingsStore();
 
-		const { showLineInfo, enableWakeLock, showBoardCoordinates, showBoardLineCounts, showRulers, showTimer } = toRefs(settingsStore);
+		const { showLineInfo, enableWakeLock, showBoardCoordinates, showBoardLineCounts, showRulers, showTimer } = storeToRefs(settingsStore);
 
 		return { 
 			windowHidden: hidden,

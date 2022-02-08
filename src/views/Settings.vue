@@ -100,8 +100,9 @@ import CellThemeSetting from '@/components/settings/CellThemeSetting.vue';
 import DarkModeSetting from '../components/settings/DarkModeSetting.vue';
 import BaseButton from '@/components/global/BaseButton.vue';
 import { useTapVibrate } from '@/composables/use-tap-vibrate.js';
-import { toRef, toRefs } from 'vue';
+import { toRef } from 'vue';
 import { useSettingsStore } from '@/stores/settings.js';
+import { storeToRefs } from 'pinia';
 
 export default {
 	components: {
@@ -127,7 +128,7 @@ export default {
 			vibrationStrength,
 			showTimer,
 			checkButton
-		} = toRefs(settingsStore);
+		} = storeToRefs(settingsStore);
 
 		return { vibrate, cellTheme, toggleMode, showLineInfo, enableWakeLock, enableVibration, vibrationStrength, showTimer, checkButton };
 	},

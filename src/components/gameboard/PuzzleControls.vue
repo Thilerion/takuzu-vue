@@ -62,7 +62,7 @@
 <script>
 import IconBtnText from '@/components/base-layout/IconBtnText.vue';
 import { useSettingsStore } from '@/stores/settings.js';
-import { computed } from 'vue';
+import { computed, watchEffect } from 'vue';
 
 export default {
 	components: {

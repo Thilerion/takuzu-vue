@@ -27,13 +27,14 @@ import PuzzleCellSymbols from '@/components/gameboard/PuzzleCellSymbols.vue';
 import PuzzleCellColored from '@/components/gameboard/PuzzleCellColored.vue';
 import PuzzleGridHighlights from '@/components/gameboard/PuzzleGridHighlights.vue';
 import { EMPTY } from '@/lib/constants.js';
-import { computed, provide, reactive, ref, toRef, toRefs } from 'vue';
+import { provide, reactive, ref } from 'vue';
 import { useStore } from 'vuex';
 import { useTapVibrate } from '@/composables/use-tap-vibrate.js';
 import FastPuzzleCellWrapper from './cell/FastPuzzleCellWrapper.vue';
 import FastPuzzleCellColored from './cell/FastPuzzleCellColored.vue';
 import FastPuzzleCellSymbol from './cell/FastPuzzleCellSymbol.vue';
 import { useSettingsStore } from '@/stores/settings.js';
+import { storeToRefs } from 'pinia';
 
 export default {
 	components: {
@@ -67,7 +68,7 @@ export default {
 
 		let { cellData, nRows, nCols, nCells, lockedCells, coords } = useGridData(props.columns, props.rows, initialGrid);
 
-		const { vibrationEnabled: shouldEnableVibration, vibrationStrength: vibrationStrengthSetting } = toRefs(settingsStore);
+		const { vibrationEnabled: shouldEnableVibration, vibrationStrength: vibrationStrengthSetting } = storeToRefs(settingsStore);
 
 		const delay = ref(0);
 		if (nCells > (12 * 11)) {
@@ -135,7 +136,7 @@ export default {
 function provideCellTheme() {
 	const store = useSettingsStore();
 
-	const { cellTheme, cellThemeType } = toRefs(store);
+	const { cellTheme, cellThemeType } = storeToRefs(store);
 
 	const cellThemeData = reactive({
 		value: cellTheme,
