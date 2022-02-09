@@ -1,67 +1,64 @@
 import { EMPTY } from "@/lib/constants.js";
+import { defineStore } from "pinia";
 
-const puzzleHistoryModule = {
-	namespaced: true,
+export const usePuzzleHistoryStore = defineStore('puzzleHistory', {
 
 	state: () => ({
-		moveList: [],
+		moveList: []
 	}),
 
 	getters: {
 		lastMove: state => state.moveList.length > 0 ? state.moveList[state.moveList.length - 1] : null,
-		canUndo: state => state.moveList.length > 0,
+		canUndo: state => state.moveList.length > 0
 	},
-
-	mutations: {
-		reset: state => state.moveList = [],
-		setMoveList: (state, moveList) => state.moveList = moveList,
-
-		editLastMove: (state, move) => state.moveList.splice(-1, 1, move),
-		popLastMove: state => state.moveList.pop(),
-		addMove: (state, move) => state.moveList.push(move),
-	},
-
+	
 	actions: {
-		addMove({ getters, commit }, { x, y, value, nextValue }) {
-			if (value == null) value = EMPTY;
+		reset() {
+			this.$reset();
+		},
+		popLastMove() {
+			return this.moveList.pop();
+		},
+		editLastMove(move) {
+			this.moveList.splice(-1, 1, move);
+		},
+		addMove({ x, y, value = EMPTY, nextValue }) {
+			const lastMove = this.lastMove;
 
-			const lastMove = getters.lastMove;
-			
+			// TODO: add timestamps, and don't combine moves if time difference is higher than a second or so
 			if (moveIsSameCell(lastMove, x, y)) {
 				if (moveShouldBePopped(lastMove, nextValue)) {
-					// cell is toggled back to original state
-					commit('popLastMove');
+					// cell is back to original state
+					this.popLastMove();
 					return;
 				} else {
-					// edit move
 					const newMove = combineMove(lastMove, nextValue);
-					commit('editLastMove', newMove);
-					return;
+					return this.editLastMove(newMove);
 				}
 			} else {
-				// push new move
 				const newMove = PuzzleMove(x, y, nextValue, value);
-				commit('addMove', newMove);
-				return;
+				this.moveList.push(newMove);
 			}
 		},
-		undoMove({ getters, commit }) {
-			const lastMove = { ...getters.lastMove };
-			commit('popLastMove');
+		undoMove() {
+			const lastMove = { ...this.popLastMove() };
 			return lastMove;
 		},
 
-		exportMoveHistory({ state }) {
-			return state.moveList.map(move => moveToString(move));
+		exportMoveHistory() {
+			return this.moveList.map(moveToString);
 		},
-		importMoveHistory({ commit }, moveStrings = []) {
-			commit('reset');
-			const moveList = moveStrings.map(moveStr => moveFromString(moveStr));
-			commit('setMoveList', moveList);
+		importMoveHistory(moveStrings = []) {
+			console.log(this.moveList);
+			this.reset();
+			const moveList = moveStrings.map(moveFromString);
+			this.moveList = moveList;
+			console.log(this.moveList);
 		}
 	}
 
-}
+})
+
 
 const PuzzleMove = (x, y, value, prevValue) => ({ x, y, value, prevValue });
 
@@ -88,5 +85,3 @@ function combineMove(prevMove, value) {
 	const { x, y, prevValue } = prevMove;
 	return PuzzleMove(x, y, value, prevValue);
 }
-
-export default puzzleHistoryModule;

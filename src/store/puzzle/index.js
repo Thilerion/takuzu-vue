@@ -1,7 +1,6 @@
 import { SimpleBoard } from '../../lib/board/Board.js';
 import { sendWorkerMessage, initPuzzleWorkerReceiver } from '@/workers/generate-puzzle.js';
 
-import puzzleHistoryModule from './history.js';
 import puzzleAssistanceModule from './assistance.js';
 
 import { SaveGameData } from '@/services/save-game.js';
@@ -13,6 +12,7 @@ import { useSettingsStore } from '../../stores/settings.js';
 import { unref } from 'vue';
 import { useBasicStatsStore } from '@/stores/basic-stats.js';
 import { usePuzzleTimer } from '@/stores/puzzle-timer.js';
+import { usePuzzleHistoryStore } from '@/stores/puzzle-history.js';
 
 const defaultState = () => ({
 	// game config
@@ -47,7 +47,6 @@ const puzzleModule = {
 	namespaced: true,
 
 	modules: {
-		history: puzzleHistoryModule,
 		assistance: puzzleAssistanceModule,
 		// gameCheck
 		// markedCells
@@ -160,11 +159,13 @@ const puzzleModule = {
 				}
 			}
 			dispatch('setValue', { x, y, value, prevValue });
-			dispatch('history/addMove', { x, y, value: prevValue, nextValue: value });
+			const puzzleHistory = usePuzzleHistoryStore();
+			puzzleHistory.addMove({ x, y, value: prevValue, nextValue: value });
 		},
-		undoLastMove({ getters, dispatch }) {
-			const move = {...getters['history/lastMove']};
-			dispatch('history/undoMove');
+		undoLastMove({ dispatch }) {
+			const puzzleHistory = usePuzzleHistoryStore();
+			const move = { ...puzzleHistory.lastMove };
+			puzzleHistory.undoMove();
 			const { x, y, prevValue: value, value: prevValue } = move;
 			dispatch('setValue', { x, y, value, prevValue });
 		},
@@ -261,8 +262,8 @@ const puzzleModule = {
 			const timer = usePuzzleTimer();
 			commit('reset');
 			timer.reset();
-			// commit('timer/reset');
-			commit('history/reset');
+			const puzzleHistory = usePuzzleHistoryStore();
+			puzzleHistory.reset();
 			commit('assistance/reset');
 		},
 		restartPuzzle({ state, commit }) {
@@ -270,7 +271,8 @@ const puzzleModule = {
 			const { initialBoard, solution } = state;
 			const board = initialBoard.copy();
 			commit('setAllBoards', { board, solution, initialBoard });
-			commit('history/reset');
+			const puzzleHistory = usePuzzleHistoryStore();
+			puzzleHistory.reset();
 			commit('assistance/reset');
 			// TODO: reset timer as well?
 		},
@@ -292,7 +294,8 @@ const puzzleModule = {
 				timeElapsed += (Date.now() - timer.startTime);
 			}
 			const { initialBoard, board, solution, width, height, difficulty } = state;
-			const moveList = await dispatch('history/exportMoveHistory');			
+			const puzzleHistory = usePuzzleHistoryStore();
+			const moveList = await puzzleHistory.exportMoveHistory();
 			
 			const saveGameData = new SaveGameData({
 				moveList, timeElapsed, initialBoard, board, solution, width, height, difficulty
@@ -320,7 +323,8 @@ const puzzleModule = {
 			const solution = SimpleBoard.fromString(saveData.solution);
 			commit('setAllBoards', { initialBoard, board, solution });
 
-			dispatch('history/importMoveHistory', moveList);
+			const puzzleHistory = usePuzzleHistoryStore();
+			puzzleHistory.importMoveHistory(moveList)
 			
 			
 			commit('setInitialized', true);

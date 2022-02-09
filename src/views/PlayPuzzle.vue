@@ -97,6 +97,7 @@ import debounce from 'lodash.debounce';
 import { useSettingsStore } from '@/stores/settings.js';
 import { storeToRefs } from 'pinia';
 import { useBasicStatsStore } from '@/stores/basic-stats.js';
+import { usePuzzleHistoryStore } from '@/stores/puzzle-history.js';
 
 export default {
 	components: {
@@ -119,12 +120,13 @@ export default {
 		const { showLineInfo, enableWakeLock, showBoardCoordinates, showBoardLineCounts, showRulers, showTimer } = storeToRefs(settingsStore);
 
 		const basicStatsStore = useBasicStatsStore();
+		const puzzleHistoryStore = usePuzzleHistoryStore();
 
 		return { 
 			windowHidden: hidden,
 			showLineInfo, showBoardCoordinates, showBoardLineCounts, showRulers,
 			shouldEnableWakeLock: enableWakeLock, showTimer,
-			basicStatsStore
+			basicStatsStore, puzzleHistoryStore
 		};
 	},
 	data() {
@@ -186,7 +188,7 @@ export default {
 			return rounded;
 		},
 		canUndo() {
-			return this.$store.getters['puzzle/history/canUndo'];
+			return this.puzzleHistoryStore.canUndo;
 		},
 		finishedAndSolved() {
 			return this.$store.getters['puzzle/finishedAndSolved'];
