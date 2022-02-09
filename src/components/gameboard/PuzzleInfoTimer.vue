@@ -7,9 +7,14 @@
 </template>
 
 <script>
+import { usePuzzleTimer } from '@/stores/puzzle-timer.js';
 import { timeFormatter } from '@/utils/date.utils.js';
 
 export default {
+	setup() {
+		const puzzleTimer = usePuzzleTimer();
+		return { puzzleTimer };
+	},
 	data() {
 		return {
 			totalTime: 0,
@@ -18,7 +23,7 @@ export default {
 	},
 	computed: {
 		timeElapsed() {
-			return this.$store.state.puzzle.timer.timeElapsed;
+			return this.puzzleTimer.timeElapsed;
 		},
 		formattedTime() {
 			return this.formatTime(this.totalTime).split(':');
@@ -35,16 +40,18 @@ export default {
 		getTotalTime() {
 			const elapsed = this.timeElapsed;
 			let current = 0;
-			if (this.$store.state.puzzle.timer.running) {
-				current = Date.now() - this.$store.state.puzzle.timer.startTime;
+			if (this.puzzleTimer.running) {
+				current = Date.now() - this.puzzleTimer.startTime;
 			}
 			this.totalTime = elapsed + current;
 		},
 		pauseTimer() {
-			if (this.$store.state.puzzle.timer.running) {
-				this.$store.commit('puzzle/timer/pause');
+			if (this.puzzleTimer.running) {
+				this.puzzleTimer.pause();
+				// this.$store.commit('puzzle/timer/pause');
 			} else {
-				this.$store.commit('puzzle/timer/resume');
+				this.puzzleTimer.resume();
+				// this.$store.commit('puzzle/timer/resume');
 			}
 		}
 	},

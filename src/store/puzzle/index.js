@@ -1,7 +1,6 @@
 import { SimpleBoard } from '../../lib/board/Board.js';
 import { sendWorkerMessage, initPuzzleWorkerReceiver } from '@/workers/generate-puzzle.js';
 
-import puzzleTimerModule from './timer.js';
 import puzzleHistoryModule from './history.js';
 import puzzleAssistanceModule from './assistance.js';
 
@@ -13,6 +12,7 @@ import { initPregenWorker } from '@/workers/pregen-puzzles.js';
 import { useSettingsStore } from '../../stores/settings.js';
 import { unref } from 'vue';
 import { useBasicStatsStore } from '@/stores/basic-stats.js';
+import { usePuzzleTimer } from '@/stores/puzzle-timer.js';
 
 const defaultState = () => ({
 	// game config
@@ -47,7 +47,6 @@ const puzzleModule = {
 	namespaced: true,
 
 	modules: {
-		timer: puzzleTimerModule,
 		history: puzzleHistoryModule,
 		assistance: puzzleAssistanceModule,
 		// gameCheck
@@ -126,10 +125,13 @@ const puzzleModule = {
 	actions: {
 		pauseGame({ commit }, value) {
 			commit('setPaused', value);
+			const timer = usePuzzleTimer();
 			if (value) {
-				commit('timer/pause');
+				timer.pause();
+				// commit('timer/pause');
 			} else {
-				commit('timer/resume');
+				timer.resume();
+				// commit('timer/resume');
 			}
 		},
 		setValue({ state, commit }, { x, y, value, prevValue }) {
@@ -227,9 +229,11 @@ const puzzleModule = {
 		},
 		finishPuzzle({ state, getters, commit, dispatch }) {
 			commit('setFinished');
-			commit('timer/pause');
+			const timer = usePuzzleTimer();
+			timer.pause();
+			// commit('timer/pause');
 
-			let timeElapsed = state.timer.timeElapsed;
+			let timeElapsed = timer.timeElapsed;
 			const checkAssistanceData = getters['assistance/checkAssistanceData'];
 			const hintAssistanceData = getters['assistance/hintAssistanceData']
 			const finishedPuzzleState = {
@@ -254,8 +258,10 @@ const puzzleModule = {
 				console.log('puzzle not initialized. cannot reset');
 				return;
 			}
+			const timer = usePuzzleTimer();
 			commit('reset');
-			commit('timer/reset');
+			timer.reset();
+			// commit('timer/reset');
 			commit('history/reset');
 			commit('assistance/reset');
 		},
@@ -274,13 +280,16 @@ const puzzleModule = {
 			if (state.started) throw new Error('Cannot start a game that already has started !');
 
 			commit('setStarted', true);
-			commit('timer/start');
+			const timer = usePuzzleTimer();
+			timer.start();
+			// commit('timer/start');
 		},
 
 		async savePuzzle({ state, dispatch }) {
-			let timeElapsed = state.timer.timeElapsed;
-			if (state.timer.running && !!state.timer.startTime) {
-				timeElapsed += (Date.now() - state.timer.startTime);
+			const timer = usePuzzleTimer();
+			let timeElapsed = timer.timeElapsed;
+			if (timer.running && !!timer.startTime) {
+				timeElapsed += (Date.now() - timer.startTime);
 			}
 			const { initialBoard, board, solution, width, height, difficulty } = state;
 			const moveList = await dispatch('history/exportMoveHistory');			
@@ -301,7 +310,9 @@ const puzzleModule = {
 			
 			// set time elapsed
 			const { timeElapsed } = saveData;
-			commit('timer/setInitialTimeElapsed', timeElapsed);
+			const timer = usePuzzleTimer();
+			timer.setInitialTimeElapsed(timeElapsed);
+			// commit('timer/setInitialTimeElapsed', timeElapsed);
 			// start timer?
 
 			const initialBoard = SimpleBoard.fromString(saveData.initialBoard);
