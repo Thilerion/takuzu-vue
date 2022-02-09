@@ -10,6 +10,8 @@ import { calculateGridCounts, calculateLineCounts } from './line-counts.js';
 import { COLUMN, EMPTY, ONE, ROW, ZERO } from '@/lib/constants.js';
 import { getPuzzle } from '@/services/puzzles-db/db.js';
 import { initPregenWorker } from '@/workers/pregen-puzzles.js';
+import { useSettingsStore } from '../../stores/settings.js';
+import { unref } from 'vue';
 
 const defaultState = () => ({
 	// game config
@@ -142,7 +144,17 @@ const puzzleModule = {
 		toggle({ state, dispatch }, { x, y, value, prevValue }) {
 			if (!prevValue) {
 				prevValue = state.board.grid[y][x];
-				console.log({ prevValue });
+			}
+			if (!value) {
+				const settingsStore = useSettingsStore();
+				const toggleFirst = settingsStore.toggleMode;
+				if (prevValue === EMPTY) {
+					value = unref(toggleFirst);
+				} else if (prevValue === ZERO) {
+					value = toggleFirst === ZERO ? ONE : EMPTY;
+				} else if (prevValue === ONE) {
+					value = toggleFirst === ZERO ? EMPTY : ZERO;
+				}
 			}
 			dispatch('setValue', { x, y, value, prevValue });
 			dispatch('history/addMove', { x, y, value: prevValue, nextValue: value });
