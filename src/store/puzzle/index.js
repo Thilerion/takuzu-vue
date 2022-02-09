@@ -12,6 +12,7 @@ import { getPuzzle } from '@/services/puzzles-db/db.js';
 import { initPregenWorker } from '@/workers/pregen-puzzles.js';
 import { useSettingsStore } from '../../stores/settings.js';
 import { unref } from 'vue';
+import { useBasicStatsStore } from '@/stores/basic-stats.js';
 
 const defaultState = () => ({
 	// game config
@@ -237,17 +238,15 @@ const puzzleModule = {
 					hintData: hintAssistanceData
 				}
 			};
-			console.log({...finishedPuzzleState});
+			console.log({ ...finishedPuzzleState });
+			
+			const basicStatsStore = useBasicStatsStore();
 
-			return dispatch(
-				'stats/addFinishedPuzzleToHistory',
-				finishedPuzzleState,
-				{ root: true }
-			).then(historyEntry => {
+			return basicStatsStore.addFinishedPuzzleToHistory(finishedPuzzleState).then(historyEntry => {
 				console.log('Puzzle saved to history.');
 				SaveGameData.deleteSavedGame();
 				return historyEntry;
-			})			
+			})	
 		},
 
 		reset({ state, commit }) {

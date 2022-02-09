@@ -25,6 +25,8 @@
 </template>
 
 <script>
+import { useBasicStatsStore } from '@/stores/basic-stats.js';
+import { storeToRefs } from 'pinia';
 import PuzzleRecap from './PuzzleRecap.vue';
 
 const GOOD_JOB_STRINGS = [
@@ -54,6 +56,14 @@ export default {
 	components: {
 		PuzzleRecap,
 	},
+	setup() {
+		const basicStatsStore = useBasicStatsStore();
+
+		const hideModal = () => basicStatsStore.toggleFinishedModal(false);
+		const { gameEndStats, lastPuzzleEntry, modalHidden } = storeToRefs(basicStatsStore);
+
+		return { hideModal, gameEndStats, lastPuzzleEntry, modalHidden };
+	},
 	data() {
 		return {
 			transitionInner: false,
@@ -73,13 +83,7 @@ export default {
 	},
 	computed: {
 		shouldShow() {
-			return this.finished && !this.$store.state.stats.modalHidden;
-		},
-		gameEndStats() {
-			return this.$store.state.stats.gameEndStats;
-		},
-		lastPuzzleEntry() {
-			return this.$store.state.stats.lastPuzzleEntry;
+			return this.finished && !this.modalHidden;
 		},
 	},
 	methods: {
@@ -121,7 +125,7 @@ export default {
 			}
 		},
 		emitClose() {
-			this.$store.commit('stats/setFinishedModalHidden', true);
+			this.hideModal();
 		},
 		afterEnterOuter() {
 			this.afterEnterOuterTimeout = setTimeout(() => {

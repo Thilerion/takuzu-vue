@@ -96,6 +96,7 @@ import { COLUMN, ROW } from '@/lib/constants.js';
 import debounce from 'lodash.debounce';
 import { useSettingsStore } from '@/stores/settings.js';
 import { storeToRefs } from 'pinia';
+import { useBasicStatsStore } from '@/stores/basic-stats.js';
 
 export default {
 	components: {
@@ -117,10 +118,13 @@ export default {
 
 		const { showLineInfo, enableWakeLock, showBoardCoordinates, showBoardLineCounts, showRulers, showTimer } = storeToRefs(settingsStore);
 
+		const basicStatsStore = useBasicStatsStore();
+
 		return { 
 			windowHidden: hidden,
 			showLineInfo, showBoardCoordinates, showBoardLineCounts, showRulers,
-			shouldEnableWakeLock: enableWakeLock, showTimer
+			shouldEnableWakeLock: enableWakeLock, showTimer,
+			basicStatsStore
 		};
 	},
 	data() {
@@ -237,7 +241,7 @@ export default {
 		async finishGame() {
 			// window.alert('Good job! You finished this puzzle.');
 			const historyEntry = await this.$store.dispatch('puzzle/finishPuzzle');
-			await this.$store.dispatch('stats/getGameEndStats', historyEntry);
+			await this.basicStatsStore.getGameEndStats(historyEntry);
 		},
 		undo() {
 			this.$store.dispatch('puzzle/undoLastMove');
