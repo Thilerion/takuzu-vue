@@ -1,9 +1,11 @@
 import { getAllPresetSizeDifficultyCombinations } from "@/config.js";
-import { SimpleBoard } from "@/lib/board/Board.js";
-import { addPuzzle, addPuzzles, puzzleTable } from "@/services/puzzles-db/db.js";
+import { addPuzzle, puzzleTable } from "@/services/puzzles-db/db.js";
 
 import GeneratePuzzleWorker from './generate-puzzle.worker.js?worker';
+import { createWorkerResult } from "./WorkerResult.js";
 const puzzleWorker = new GeneratePuzzleWorker();
+
+const createPregenMessage = createWorkerResult('pregen-puzzles');
 
 export function sendWorkerMessage(message) {
 	puzzleWorker.postMessage({ message });
@@ -12,7 +14,7 @@ export function initPuzzleWorkerReceiver() {
 	return new Promise((resolve, reject) => {
 		puzzleWorker.onmessage = event => {
 			const { data } = event;
-			if (data.error) reject(data.error);
+			if (!data.success) reject(data);
 			else resolve(data);
 		}
 	})
@@ -57,9 +59,11 @@ async function findPresetsWithoutPuzzles() {
 			const receivedDataPromise = initPuzzleWorkerReceiver();
 			sendWorkerMessage({ width, height, difficulty });
 			const data = await receivedDataPromise;
+			if (!data.success) throw new Error(data.error);
+
 			const {
-				board: boardStr, solution: solutionStr
-			} = data;
+				boardStr, solutionStr
+			} = data.value;
 
 			await addPuzzle({ boardStr, solutionStr, width, height, difficulty });
 			numGenerated += 1;
@@ -77,9 +81,9 @@ async function initPuzzlePregen() {
 	
 	try {
 		const result = await findPresetsWithoutPuzzles();
-		postMessage({ success: true, value: result });
+		postMessage(createPregenMessage(true, result));
 	} catch (e) {
-		postMessage({ error: e });
+		postMessage(createPregenMessage(false, e?.message ?? e));
 	}
 }
 
@@ -93,6 +97,6 @@ addEventListener('message', event => {
 	} else {
 		console.warn('Could not recognize task for PregenPuzzle worker.');
 		console.warn(event.data);
-		postMessage({ error: 'unrecognized task' });
+		postMessage(createPregenMessage(false, `Unrecognized task: "${task}"`));
 	}
 })

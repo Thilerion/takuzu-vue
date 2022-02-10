@@ -4,11 +4,15 @@ const pregenWorker = new PregenWorker();
 export function sendPregenWorkerMessage(message) {
 	pregenWorker.postMessage({ message });
 }
+
+// 
 export function initPregenWorkerReceiver() {
 	return new Promise((resolve, reject) => {
 		pregenWorker.onmessage = event => {
 			const { data } = event;
-			if (data.error) reject(data.error);
+			console.log('PREGEN WORKER RESULT:');
+			console.log({ data });
+			if (!data.success) reject(data);
 			else resolve(data);
 		}
 	})

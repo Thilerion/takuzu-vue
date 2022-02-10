@@ -1,18 +1,17 @@
 import { SimpleBoard } from '../../lib/board/Board.js';
-import { sendWorkerMessage, initPuzzleWorkerReceiver } from '@/workers/generate-puzzle.js';
 
 import puzzleAssistanceModule from './assistance.js';
 
 import { SaveGameData } from '@/services/save-game.js';
 import { calculateGridCounts, calculateLineCounts } from './line-counts.js';
-import { COLUMN, EMPTY, ONE, ROW, ZERO } from '@/lib/constants.js';
-import { getPuzzle } from '@/services/puzzles-db/db.js';
+import { EMPTY, ONE, ZERO } from '@/lib/constants.js';
 import { initPregenWorker } from '@/workers/pregen-puzzles.js';
 import { useSettingsStore } from '../../stores/settings.js';
 import { unref } from 'vue';
 import { useBasicStatsStore } from '@/stores/basic-stats.js';
 import { usePuzzleTimer } from '@/stores/puzzle-timer.js';
 import { usePuzzleHistoryStore } from '@/stores/puzzle-history.js';
+import { requestPuzzle } from '@/services/create-puzzle.js';
 
 const defaultState = () => ({
 	// game config
@@ -173,49 +172,25 @@ const puzzleModule = {
 			commit('setLoading', true);
 
 			try {
-				const result = await getPuzzle({ width, height, difficulty });
-				if (!result) throw new Error('No correct puzzle found');
-				const board = SimpleBoard.import(result.boardStr);
-				const solution = SimpleBoard.import(result.solutionStr);
-				commit('setAllBoards', {
-					board, solution,
-					initialBoard: board.copy()
-				});
+				const { success, data, reason } = await requestPuzzle({ width, height, difficulty });
+				if (success) {
+					const { boardStr, solutionStr } = data;
+					const board = SimpleBoard.import(boardStr);
+					const solution = SimpleBoard.import(solutionStr);
+					const initialBoard = board.copy();
+					commit('setAllBoards', { board, solution, initialBoard });
+					commit('setLoading', false);
+
+					setTimeout(() => {
+						initPregenWorker();
+					}, 1000);
+				} else {
+					throw new Error(reason);
+				}
+			} catch (e) {
 				commit('setLoading', false);
-
-				setTimeout(() => {
-					initPregenWorker();
-				}, 500);
-
-				return;
-			} catch (e) {
-				console.warn(e);
-				console.log('Error in getting puzzle from database. Proceeding the old-fashioned way.');
-			}
-			
-			try {
-				// setup worker message receiving and sending
-				const receivedDataPromise = initPuzzleWorkerReceiver();
-				sendWorkerMessage({ width, height, difficulty });
-				const data = await receivedDataPromise;
-				const {
-					board: boardStr, solution: solutionStr
-				} = data;
-
-				const board = SimpleBoard.fromString(boardStr);
-				const solution = SimpleBoard.fromString(solutionStr);
-
-				commit('setAllBoards', {
-					board, solution,
-					initialBoard: board.copy()
-				});
-			} catch (e) {
-				console.error('Failed creating board');
-				console.warn(e);
 				throw new Error(e);
-			} finally {
-				commit('setLoading', false);
-			}		
+			}
 		},
 		async initPuzzle({ commit, dispatch }, puzzleConfig = {}) {
 			try {
