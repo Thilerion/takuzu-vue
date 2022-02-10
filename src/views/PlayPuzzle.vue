@@ -98,6 +98,7 @@ import { useSettingsStore } from '@/stores/settings.js';
 import { storeToRefs } from 'pinia';
 import { useBasicStatsStore } from '@/stores/basic-stats.js';
 import { usePuzzleHistoryStore } from '@/stores/puzzle-history.js';
+import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
 
 export default {
 	components: {
@@ -121,12 +122,14 @@ export default {
 
 		const basicStatsStore = useBasicStatsStore();
 		const puzzleHistoryStore = usePuzzleHistoryStore();
+		const puzzleHintsStore = usePuzzleHintsStore();
+		const getHint = () => puzzleHintsStore.getHint();
 
 		return { 
 			windowHidden: hidden,
 			showLineInfo, showBoardCoordinates, showBoardLineCounts, showRulers,
 			shouldEnableWakeLock: enableWakeLock, showTimer,
-			basicStatsStore, puzzleHistoryStore
+			basicStatsStore, puzzleHistoryStore, getHint
 		};
 	},
 	data() {
@@ -273,9 +276,6 @@ export default {
 		checkErrors() {
 			const boardStr = this.$store.getters['puzzle/boardStr'];
 			this.$store.dispatch('puzzle/assistance/userCheckErrors', boardStr);
-		},
-		getHint() {
-			this.$store.dispatch('puzzle/assistance/getHint');
 		},
 		checkEnableWakeLock() {
 			const setting = this.shouldEnableWakeLock;

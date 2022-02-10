@@ -11,6 +11,7 @@ import { unref } from 'vue';
 import { useBasicStatsStore } from '@/stores/basic-stats.js';
 import { usePuzzleTimer } from '@/stores/puzzle-timer.js';
 import { usePuzzleHistoryStore } from '@/stores/puzzle-history.js';
+import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
 import { requestPuzzle } from '@/services/create-puzzle.js';
 
 const defaultState = () => ({
@@ -140,7 +141,7 @@ const puzzleModule = {
 			commit('setValue', { x, y, value, prevValue });
 
 			commit('assistance/removeFromCurrentMarkedIncorrect', `${x},${y}`);
-			commit('assistance/setHintVisible', false);
+			usePuzzleHintsStore().showHint = false;
 		},
 		toggle({ state, dispatch }, { x, y, value, prevValue }) {
 			if (!prevValue) {
@@ -211,7 +212,7 @@ const puzzleModule = {
 
 			let timeElapsed = timer.timeElapsed;
 			const checkAssistanceData = getters['assistance/checkAssistanceData'];
-			const hintAssistanceData = getters['assistance/hintAssistanceData']
+			const hintAssistanceData = usePuzzleHintsStore().hintAssistanceData;
 			const finishedPuzzleState = {
 				...state, timeElapsed, assistance: {
 					checkData: checkAssistanceData,
@@ -239,6 +240,7 @@ const puzzleModule = {
 			timer.reset();
 			const puzzleHistory = usePuzzleHistoryStore();
 			puzzleHistory.reset();
+			usePuzzleHintsStore().reset();
 			commit('assistance/reset');
 		},
 		restartPuzzle({ state, commit }) {
@@ -248,6 +250,7 @@ const puzzleModule = {
 			commit('setAllBoards', { board, solution, initialBoard });
 			const puzzleHistory = usePuzzleHistoryStore();
 			puzzleHistory.reset();
+			usePuzzleHintsStore().reset();
 			commit('assistance/reset');
 			// TODO: reset timer as well?
 		},

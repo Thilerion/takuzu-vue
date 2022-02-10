@@ -1,5 +1,5 @@
 import incorrectCheck from './assistance-incorrect.js';
-import hints from './assistance-hint.js';
+// import hints from './assistance-hint.js';
 
 const puzzleAssistanceModule = {
 
@@ -7,7 +7,7 @@ const puzzleAssistanceModule = {
 
 	modules: {
 		incorrectCheck,
-		hints,
+		// hints,
 	},
 
 	state: {},

@@ -13,19 +13,28 @@
 </template>
 
 <script>
+import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
+import { storeToRefs } from 'pinia';
 import PuzzleHint from './PuzzleHint.vue';
 
 export default {
 	components: {
 		PuzzleHint
 	},
+	setup() {
+		const puzzleHintsStore = usePuzzleHintsStore();
+
+		const { showHint, currentHint } = storeToRefs(puzzleHintsStore);
+		const hideHint = () => puzzleHintsStore.showHint = false;
+		const removeHint = () => {
+			// TODO: remove hint from store
+			console.log('Todo: remove hint from store after execution?');
+			hideHint();
+		}
+
+		return { showHint, currentHint, removeHint, hideHint };
+	},
 	computed: {
-		showHint() {
-			return this.$store.state.puzzle.assistance.hints.showHint;
-		},
-		currentHint() {
-			return this.$store.state.puzzle.assistance.hints.currentHint;
-		},
 		hint() {
 			if (this.showHint && !this.currentHint) {
 				console.error('Should show hint but none available. Hiding hint now.');
@@ -35,16 +44,6 @@ export default {
 			return this.currentHint;
 		}
 	},
-	methods: {
-		hideHint() {
-			this.$store.commit('puzzle/assistance/setHintVisible', false);
-		},
-		removeHint() {
-			// TODO: remove hint from store
-			console.log('Todo: remove hint from store after execution?');
-			this.hideHint();
-		}
-	}
 };
 </script>
 

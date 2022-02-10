@@ -2,75 +2,63 @@ import { humanSolveBalance } from "@/lib/human-solver/balance.js";
 import { humanSolveDuplicateLine } from "@/lib/human-solver/duplicate.js";
 import { humanSolveElimination } from "@/lib/human-solver/elimination.js";
 import { humanSolveTriples } from "@/lib/human-solver/triples.js";
-import { createHint, validateHint } from "../hints/index.js";
-import hintTypes from "../hints/hint-types.js";
+import hintTypes from "@/store/hints/hint-types.js";
+import { createHint, validateHint } from "@/store/hints/index.js";
+import { defineStore } from "pinia";
+import vuexStore from '../store/index.js';
 
-const defaultState = () => ({
-	showHint: false,
-	currentHint: null,
+export const usePuzzleHintsStore = defineStore('puzzleHints', {
 
-	cache: new Map(),
-});
+	state: () => ({
+		showHint: false,
+		currentHint: null,
 
-const assistanceHintModule = {
-	state: defaultState(),
+		cache: new Map()
+	}),
 
 	getters: {
 		baseHintsRequested: state => state.cache.size,
-		hintAssistanceData: (state, getters) => {
-			const amountRequested = getters.baseHintsRequested;
+		hintAssistanceData() {
+			const amountRequested = this.baseHintsRequested;
 			return { amountRequested };
 		},
 	},
-
-	mutations: {
-		reset: state => {
-			Object.assign(state, defaultState());
-		},
-		setHintVisible(state, value) {
-			state.showHint = !!value;
-		},
-		setCurrentHint(state, hint = null) {
-			state.currentHint = hint;
-		},
-		removeHints(state) {
-			state.currentHint = null;
-			state.showHint = false;
-		},
-		addHintToCache(state, { boardStr, hint }) {
-			state.cache.set(boardStr, hint);
-		}
-	},
-
+	
 	actions: {
-		getHint({ state, rootState, rootGetters, commit, dispatch }) {
-			const boardStr = rootGetters['puzzle/boardStr'];
-			let result = state.cache.get(boardStr);
-			if (result) {
+		// original mutations
+		reset() {
+			this.$reset();
+		},
+		
+		// original actions
+		getHint() {
+
+			const boardStr = vuexStore.getters['puzzle/boardStr'];
+			const cacheResult = this.cache.get(boardStr);
+			if (cacheResult) {
 				console.log('using cached hint result');
-				commit('setCurrentHint', result);
-				commit('setHintVisible', true);
+				this.$patch({
+					showHint: true,
+					currentHint: cacheResult
+				});
 				return;
 			}
-
-			const { board, solution } = rootState.puzzle;
-			// FIRST: check if current hint and if so, if it is still valid
-			// because in that case, it should be shown without "using up a new generated hint"
-			const currentHint = state.currentHint;
+			const { board, solution } = vuexStore.state.puzzle;
+			console.log({ p: vuexStore.state.puzzle, board, solution });
+			const currentHint = this.currentHint;
 			if (currentHint) {
 				const isValid = validateHint(currentHint, { board, solution });
 				if (isValid) {
 					console.log('Hint is still valid. Showing it now.');
-					commit('setHintVisible', true);
+					this.showHint = true;
 					return;
 				} else {
 					console.log('Hint is no longer valid. Will remove it and generate a new hint.');
-					commit('setCurrentHint', null);
+					this.currentHint = null;
 				}
 			}
-			
 
-			// 1: check if there are incorrect values
+				// 1: check if there are incorrect values
 			// 1a: if yes, check if there are rule violations
 			// 1b: is all incorrect values are due to rule violations, show ruleViolation hint
 			// 1c: if not all incorrect due to RV, are no RV at all, show IncorrectValue hint
@@ -84,8 +72,8 @@ const assistanceHintModule = {
 			if (hasMistakes) {
 				const hint = createHint(hintTypes.MISTAKE, incorrectValues);
 				console.log({ hint });
-				dispatch('setHints', [hint]);
-				commit('addHintToCache', { boardStr, hint});
+				this.setHints([hint]);
+				this.addHintToCache({ boardStr, hint });
 				return;
 			}
 
@@ -109,8 +97,8 @@ const assistanceHintModule = {
 				})
 				const hint = sortedHints[0];
 				console.log({ hint });
-				dispatch('setHints', [hint]);
-				commit('addHintToCache', { boardStr, hint});
+				this.setHints([hint]);
+				this.addHintToCache({ boardStr, hint });
 				return;
 			}
 
@@ -119,8 +107,8 @@ const assistanceHintModule = {
 			if (balanceHintResult && balanceHintResult.length) {
 				const hint = createHint(hintTypes.BALANCE, balanceHintResult[0]);
 				console.log({ hint });
-				dispatch('setHints', [hint]);
-				commit('addHintToCache', { boardStr, hint});
+				this.setHints([hint]);
+				this.addHintToCache({ boardStr, hint });
 				return;
 			}
 
@@ -136,8 +124,8 @@ const assistanceHintModule = {
 				})
 				const hint = createHint(hintTypes.ELIMINATION, sorted[0]);
 				console.log({ eliminationHintResult, sorted, hint });
-				dispatch('setHints', [hint]);
-				commit('addHintToCache', { boardStr, hint});
+				this.setHints([hint]);
+				this.addHintToCache({ boardStr, hint });
 				return;
 			}
 
@@ -155,8 +143,8 @@ const assistanceHintModule = {
 				console.log('DUPE HINTS!')
 				const hint = createHint(hintTypes.ELIM_DUPE, sorted[0]);
 				console.log({ dupeHintResult, sorted, hint });
-				dispatch('setHints', [hint]);
-				commit('addHintToCache', { boardStr, hint});
+				this.setHints([hint]);
+				this.addHintToCache({ boardStr, hint });
 				return;
 			}
 
@@ -164,23 +152,34 @@ const assistanceHintModule = {
 
 
 			// TODO: not yet implemented hinting system
-			dispatch('setHints');
-			commit('addHintToCache', { boardStr, hint});
+			this.setHints();
+			this.addHintToCache({ boardStr, hint: null });
 		},
-		setHints({ commit }, hints = []) {
+
+		setHints(hints = []) {
 			if (hints.length === 0) {
 				console.warn('No hint in hints array?');
-				commit('setCurrentHint', null);
+				this.$patch({
+					currentHint: null,
+					showHint: true
+				})
 			} else if (hints.length === 1) {
-				commit('setCurrentHint', hints[0]);
+				this.$patch({
+					currentHint: hints[0],
+					showHint: true
+				})
 			} else {
 				console.warn('No functionality yet for picking a single hint from the list of hints...');
-				commit('setCurrentHint', hints[0]);
+				this.$patch({
+					currentHint: hints[0],
+					showHint: true
+				})
 			}
-			commit('setHintVisible', true);
+		},
+
+		addHintToCache({ boardStr, hint }) {
+			this.cache.set(boardStr, hint);
 		}
 	}
 
-}
-
-export default assistanceHintModule;
+})

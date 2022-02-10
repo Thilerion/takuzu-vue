@@ -26,6 +26,8 @@
 import hintTypes from '@/store/hints/hint-types.js';
 import { lineTypeFromLineId } from '@/lib/utils.js';
 import { COLUMN, ROW } from '@/lib/constants.js';
+import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
+import { storeToRefs } from 'pinia';
 function determineHintHighlightType(hint) {
 	const { type } = hint;
 	if (type === hintTypes.TRIPLES) {
@@ -46,13 +48,14 @@ function determineHintHighlightType(hint) {
 
 
 export default {
+	setup() {
+		const puzzleHintsStore = usePuzzleHintsStore();
+
+		const { showHint, currentHint } = storeToRefs(puzzleHintsStore);
+
+		return { hintShown: showHint, currentHint };
+	},
 	computed: {
-		hintShown() {
-			return this.$store.state.puzzle.assistance.hints.showHint;
-		},
-		currentHint() {
-			return this.$store.state.puzzle.assistance.hints?.currentHint;
-		},
 		hintSource() {
 			if (!this.hintShown) return [];
 			const hintSource = this.currentHint?.source ?? [];
