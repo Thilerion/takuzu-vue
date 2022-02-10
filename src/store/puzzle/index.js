@@ -1,7 +1,5 @@
 import { SimpleBoard } from '../../lib/board/Board.js';
 
-import puzzleAssistanceModule from './assistance.js';
-
 import { SaveGameData } from '@/services/save-game.js';
 import { calculateGridCounts, calculateLineCounts } from './line-counts.js';
 import { EMPTY, ONE, ZERO } from '@/lib/constants.js';
@@ -13,6 +11,7 @@ import { usePuzzleTimer } from '@/stores/puzzle-timer.js';
 import { usePuzzleHistoryStore } from '@/stores/puzzle-history.js';
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
 import { requestPuzzle } from '@/services/create-puzzle.js';
+import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
 
 const defaultState = () => ({
 	// game config
@@ -47,7 +46,7 @@ const puzzleModule = {
 	namespaced: true,
 
 	modules: {
-		assistance: puzzleAssistanceModule,
+		// assistance: puzzleAssistanceModule,
 		// gameCheck
 		// markedCells
 	},
@@ -140,7 +139,7 @@ const puzzleModule = {
 			}
 			commit('setValue', { x, y, value, prevValue });
 
-			commit('assistance/removeFromCurrentMarkedIncorrect', `${x},${y}`);
+			usePuzzleMistakesStore().removeFromCurrentMarkedCells(`${x},${y}`);
 			usePuzzleHintsStore().showHint = false;
 		},
 		toggle({ state, dispatch }, { x, y, value, prevValue }) {
@@ -211,7 +210,7 @@ const puzzleModule = {
 			// commit('timer/pause');
 
 			let timeElapsed = timer.timeElapsed;
-			const checkAssistanceData = getters['assistance/checkAssistanceData'];
+			const checkAssistanceData = usePuzzleMistakesStore().checkAssistanceData;
 			const hintAssistanceData = usePuzzleHintsStore().hintAssistanceData;
 			const finishedPuzzleState = {
 				...state, timeElapsed, assistance: {
@@ -241,7 +240,7 @@ const puzzleModule = {
 			const puzzleHistory = usePuzzleHistoryStore();
 			puzzleHistory.reset();
 			usePuzzleHintsStore().reset();
-			commit('assistance/reset');
+			usePuzzleMistakesStore().reset();
 		},
 		restartPuzzle({ state, commit }) {
 			SaveGameData.deleteSavedGame();
@@ -251,7 +250,7 @@ const puzzleModule = {
 			const puzzleHistory = usePuzzleHistoryStore();
 			puzzleHistory.reset();
 			usePuzzleHintsStore().reset();
-			commit('assistance/reset');
+			usePuzzleMistakesStore().reset();
 			// TODO: reset timer as well?
 		},
 

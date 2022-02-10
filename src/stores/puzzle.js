@@ -2,7 +2,9 @@ import { EMPTY } from "@/lib/constants.js";
 import { SaveGameData } from "@/services/save-game.js";
 import { defineStore } from "pinia";
 import { useBasicStatsStore } from "./basic-stats.js";
+import { usePuzzleHintsStore } from "./puzzle-hinter.js";
 import { usePuzzleHistoryStore } from "./puzzle-history.js";
+import { usePuzzleMistakesStore } from "./puzzle-mistakes.js";
 import { usePuzzleTimer } from "./puzzle-timer.js";
 import { useSettingsStore } from "./settings.js";
 
@@ -83,8 +85,8 @@ export const usePuzzleStore = defineStore('puzzle', {
 			if (!value) throw new Error('Value required in setValue');
 			this.setBoardAndCountValue({ x, y, value, prevValue });
 
-			// assistance/removeFromCurrentMarkedIncorrect
-			// assistance/setHintVisible
+			usePuzzleMistakesStore().removeFromCurrentMarkedCells(`${x},${y}`);
+			usePuzzleHintsStore().showHint = false;
 		},
 		toggle({ x, y, value, prevValue }) {
 			if (!prevValue) {
@@ -119,12 +121,12 @@ export const usePuzzleStore = defineStore('puzzle', {
 			timer.pause();
 
 			let timeElapsed = timer.timeElapsed;
-			// const checkAssistanceData = getters['assistance/checkAssistanceData'];
-			// const hintAssistanceData = getters['assistance/hintAssistanceData']
+			const checkAssistanceData = usePuzzleMistakesStore().checkAssistanceData;
+			const hintAssistanceData = usePuzzleHintsStore().hintAssistanceData;
 			const finishedPuzzleState = {
 				...state, timeElapsed, assistance: {
-					checkData: { todo: "TODO"},
-					hintData: { todo: "TODO"}
+					checkData: checkAssistanceData,
+					hintData: hintAssistanceData
 				}
 			};
 			console.log({ ...finishedPuzzleState });

@@ -15,8 +15,19 @@
 	</div>
 </template>
 
-<script>
+<script>import { usePuzzleMistakesStore } from "@/stores/puzzle-mistakes.js";
+import { storeToRefs } from "pinia";
+import { computed } from "vue";
+
 export default {
+	setup() {
+		const puzzleMistakesStore = usePuzzleMistakesStore();
+		const { currentMarked, checkId, lastCheckType } = storeToRefs(puzzleMistakesStore);
+
+		const lastCheckedByUser = computed(() => lastCheckType.value === 'user');
+
+		return { currentMarked, checkId, lastCheckedByUser };
+	},
 	data() {
 		return {
 			show: false,
@@ -25,21 +36,18 @@ export default {
 	},
 	computed: {
 		errorCheckValue() {
-			return this.$store.state.puzzle.assistance.incorrectCheck.currentMarked;
+			return this.currentMarked;
 		},
 		errorFound() {
 			return Array.isArray(this.errorCheckValue) && this.errorCheckValue.length > 0;
 		},
 		errorCheckId() {
 			// from store
-			return this.$store.state.puzzle.assistance.incorrectCheck.checkId;
+			return this.checkId;
 		},
 		errorCheckKey() {
 			return `${this.errorCheckId}`;
 		},
-		lastCheckedByUser() {
-			return this.$store.state.puzzle.assistance.incorrectCheck.lastCheckType === 'user';
-		}
 	},
 	watch: {
 		errorCheckId(newValue, prevValue) {

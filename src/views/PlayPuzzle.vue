@@ -99,6 +99,7 @@ import { storeToRefs } from 'pinia';
 import { useBasicStatsStore } from '@/stores/basic-stats.js';
 import { usePuzzleHistoryStore } from '@/stores/puzzle-history.js';
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
+import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
 
 export default {
 	components: {
@@ -124,12 +125,15 @@ export default {
 		const puzzleHistoryStore = usePuzzleHistoryStore();
 		const puzzleHintsStore = usePuzzleHintsStore();
 		const getHint = () => puzzleHintsStore.getHint();
+		const puzzleMistakesStore = usePuzzleMistakesStore();
 
 		return { 
 			windowHidden: hidden,
 			showLineInfo, showBoardCoordinates, showBoardLineCounts, showRulers,
 			shouldEnableWakeLock: enableWakeLock, showTimer,
-			basicStatsStore, puzzleHistoryStore, getHint
+			basicStatsStore, puzzleHistoryStore, getHint,
+			userCheckErrors: (boardStr) => puzzleMistakesStore.userCheckErrors(boardStr),
+			autoCheckErrors: () => puzzleMistakesStore.autoCheckFinishedWithMistakes()
 		};
 	},
 	data() {
@@ -275,7 +279,7 @@ export default {
 		},
 		checkErrors() {
 			const boardStr = this.$store.getters['puzzle/boardStr'];
-			this.$store.dispatch('puzzle/assistance/userCheckErrors', boardStr);
+			this.userCheckErrors(boardStr);
 		},
 		checkEnableWakeLock() {
 			const setting = this.shouldEnableWakeLock;
@@ -369,7 +373,7 @@ export default {
 						if (!this.finishedWithMistakes) {
 							return;
 						}
-						this.$store.dispatch('puzzle/assistance/autoCheckFinishedWithMistakes');
+						this.autoCheckErrors();
 					}, 2000);
 				} else {
 					clearTimeout(this.mistakeCheckTimeout);

@@ -27,7 +27,7 @@ import PuzzleCellSymbols from '@/components/gameboard/PuzzleCellSymbols.vue';
 import PuzzleCellColored from '@/components/gameboard/PuzzleCellColored.vue';
 import PuzzleGridHighlights from '@/components/gameboard/PuzzleGridHighlights.vue';
 import { EMPTY } from '@/lib/constants.js';
-import { provide, reactive, ref } from 'vue';
+import { computed, provide, reactive, ref, toRef } from 'vue';
 import { useStore } from 'vuex';
 import { useTapVibrate } from '@/composables/use-tap-vibrate.js';
 import FastPuzzleCellWrapper from './cell/FastPuzzleCellWrapper.vue';
@@ -35,6 +35,7 @@ import FastPuzzleCellColored from './cell/FastPuzzleCellColored.vue';
 import FastPuzzleCellSymbol from './cell/FastPuzzleCellSymbol.vue';
 import { useSettingsStore } from '@/stores/settings.js';
 import { storeToRefs } from 'pinia';
+import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
 
 export default {
 	components: {
@@ -84,6 +85,9 @@ export default {
 
 		const { cellTheme, cellThemeType } = provideCellTheme();
 
+		const puzzleMistakesStore = usePuzzleMistakesStore();
+		const incorrectMarkedCells = toRef(puzzleMistakesStore, 'currentMarked');
+
 		return {
 			cellData,
 			coords,
@@ -95,7 +99,8 @@ export default {
 			vibrationEnabled,
 			vibrate,
 			cellTheme,
-			cellThemeType
+			cellThemeType,
+			incorrectMarkedCells
 		}
 	},
 	computed: {
@@ -120,9 +125,6 @@ export default {
 		},
 		vibrateOnTap() {
 			return this.$store.state.settings.enableVibration;
-		},
-		incorrectMarkedCells() {
-			return this.$store.state.puzzle.assistance.incorrectCheck.currentMarked;
 		},
 	},
 	methods: {
