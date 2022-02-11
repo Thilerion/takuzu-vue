@@ -8,7 +8,7 @@ module.exports = {
 		fontFamily: {
 			'sans': [
 				'Roboto',
-				...defaultTheme.fontFamily.sans,
+				'sans-serif',
 			],
 			'number': [
 				'Hammersmith One',
