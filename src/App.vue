@@ -19,7 +19,7 @@
 <script>
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
 import { initPregenWorker } from '@/workers/pregen-puzzles.js';
-import { initDarkLightAutoTheme } from '@/services/dark-light-auto-theme.js';
+import { useColorSchemeProvider } from './composables/use-dark-mode-preference.js';
 import { computed, onMounted } from 'vue';
 import { useWindowSize } from '@vueuse/core';
 import { provideGlobalBuildData } from './app.globals.js';
@@ -38,7 +38,8 @@ export default {
 		const settingsStore = useSettingsStore();
 		initSettingsWatcher(settingsStore);
 
-		initDarkLightAutoTheme();
+		// initDarkLightAutoTheme();
+		useColorSchemeProvider();
 		provideGlobalBuildData();
 
 		const { height } = useWindowSize();

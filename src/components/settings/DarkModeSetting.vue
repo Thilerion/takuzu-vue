@@ -24,10 +24,10 @@
 
 <script>
 import { computed, ref } from 'vue';
-import { useDarkLightAutoTheme } from '../../services/dark-light-auto-theme';
+import { useColorSchemePreference } from '@/composables/use-dark-mode-preference.js';
 export default {
 	setup() {
-		const { value: themeValue, setTheme } = useDarkLightAutoTheme();
+		const { mode: themeValue, setColorTheme: setTheme, isDark, isLight, isAuto } = useColorSchemePreference();
 
 		const _selectedValue = ref('auto');
 
@@ -50,7 +50,7 @@ export default {
 			}
 		})
 
-		return { themePref };
+		return { themePref, isDark, isLight, isAuto };
 	},
 };
 </script>
