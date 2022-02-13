@@ -62,12 +62,12 @@ export default {
 .cell {
 	@apply overflow-hidden relative pointer-events-none flex;
 	@apply w-full h-full;
-	@apply bg-gray-150 text-gray-700;
+	@apply bg-gray-150 text-gray-700 dark:bg-slate-700 dark:text-gray-150;
 	/* contain: strict; */
 	--base-cell-size: calc(var(--cell-size) - var(--grid-gap));
 }
 .cell.locked {
-	@apply bg-gray-200;
+	@apply bg-gray-200 dark:bg-slate-800;
 }
 .cell.incorrect {
 	@apply bg-red-400 bg-opacity-20 ring-1 ring-inset ring-red-900 ring-opacity-40;

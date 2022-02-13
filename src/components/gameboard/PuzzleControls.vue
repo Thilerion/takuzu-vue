@@ -86,7 +86,7 @@ export default {
 	@apply flex-none flex text-sm text-center h-full overflow-hidden;
 	
 	@apply bg-none dark:bg-gray-800 dark:bg-opacity-30;
-	@apply text-gray-900 text-opacity-80 dark:text-white dark:text-opacity-80;
+	@apply text-gray-900/80 dark:text-white/90;
 }
 .puzzle-paused .puzzle-controls, .puzzle-finished .puzzle-controls {
 	@apply pointer-events-none;

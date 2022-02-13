@@ -59,7 +59,7 @@
 
 		<router-view v-slot="{ Component }">
 			<OverlayPageTransition>
-				<div v-if="Component" class="fixed inset-0 bg-gray-50 overflow-y-auto pb-8 z-40">
+				<div v-if="Component" class="fixed inset-0 text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-white overflow-y-auto pb-8 z-40">
 					<component :is="Component" />
 				</div>
 			</OverlayPageTransition>
@@ -398,12 +398,6 @@ export default {
 </script>
 
 <style scoped>
-.play-puzzle {
-	--bg-a: theme(colors.slate.50);
-	--bg-b: theme(colors.white);
-	background: linear-gradient(180deg, var(--bg-a) 0%, var(--bg-a) 15%, var(--bg-b) 90%, var(--bg-b) 100%);
-}
-
 .inset-0 {
 	max-height: var(--vh-total);
 }

@@ -68,7 +68,7 @@ export default {
 
 button.cell-wrapper::after {
 	content: '';
-	@apply w-full h-full absolute z-20 pointer-events-none inset-0 ring ring-gray-800 ring-inset opacity-0;
+	@apply w-full h-full absolute z-20 pointer-events-none inset-0 ring ring-gray-800 ring-inset opacity-0 dark:ring-slate-300 dark:ring-2;
 	border-radius: calc(var(--cell-rounding) + 0.5px);
 	will-change: opacity;
 	transition: opacity 0.5s cubic-bezier(.97,.25,.16,.71) .6s;
@@ -96,13 +96,13 @@ button.cell-wrapper:active::after {
 .cell-size-xs button.cell-wrapper::after,
 .cell-size-s button.cell-wrapper::after,
 .cell-size-m button.cell-wrapper::after {
-	@apply ring-2;
+	@apply ring-2 dark:ring-1;
 }
 .cell-size-l button.cell-wrapper::after {
-	@apply ring;
+	@apply ring dark:ring-2;
 }
 .cell-size-xl button.cell-wrapper::after {
-	@apply ring-4;
+	@apply ring-4 dark:ring;
 }
 
 .cell-wrapper::slotted(*) {

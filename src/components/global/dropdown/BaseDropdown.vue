@@ -69,7 +69,7 @@ export default {
 
 <style scoped>
 .dropdown {
-	@apply inline-flex relative;
+	@apply inline-flex relative dark:text-gray-200;
 }
 .dropdown-menu {
 	min-width: 12rem;
@@ -83,7 +83,7 @@ export default {
 }
 .dropdown-content {
 	min-height: 6rem;
-	@apply bg-white rounded shadow-lg py-2;
+	@apply bg-white rounded shadow-lg py-2 dark:bg-slate-800 dark:outline-slate-600 dark:outline dark:outline-1;
 }
 
 .dropdown-menu {

@@ -93,6 +93,7 @@ export default {
 	grid-area: puzzle-grid;
 	@apply relative z-10 pointer-events-none bg-gray-100 text-gray-400 grid place-items-center text-4xl;
 	border-radius: var(--cell-rounding);
+	@apply dark:bg-slate-700 dark:text-gray-100/80;
 }
 .fade-pause-enter-active,
 .fade-pause-leave-active {
