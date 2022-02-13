@@ -1,5 +1,5 @@
 <template>
-	<nav class="bg-white h-16 w-full bg-opacity-90">
+	<nav class="bg-white h-16 w-full bg-opacity-90 dark:bg-slate-800 dark:border-t dark:border-slate-700">
 		<div class="flex justify-between h-full">
 			<router-link
 				class="nav-link"
@@ -42,6 +42,7 @@ export default {
 <style scoped>
 .nav-link {
 	@apply w-full h-full justify-center text-center py-2 flex flex-col items-center text-xs text-gray-700 font-medium;
+	@apply dark:text-gray-100;
 }
 
 @media (hover:hover) {
@@ -51,6 +52,7 @@ export default {
 }
 .nav-link.router-link-exact-active {
 	@apply text-teal-700 font-semibold opacity-100;
+	@apply dark:text-teal-300;
 }
 .nav-link > .nav-icon {
 	@apply mb-1 text-current opacity-70;

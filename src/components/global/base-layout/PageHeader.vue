@@ -1,5 +1,5 @@
 <template>
-	<header class="flex justify-center items-stretch h-24 text-gray-700">
+	<header class="flex justify-center items-stretch h-24 text-gray-700 dark:text-gray-100">
 		<div class="header-group side left">
 			<IconBtn v-if="hasBackButton" @click="close" name="md-arrowback">
 				<icon-mdi-arrow-left style="{ 'font-size': '16px' }" />

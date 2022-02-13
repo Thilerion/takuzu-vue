@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<h2 class="text-gray-700">Theme</h2>
+		<h2 class="setting-heading">Theme</h2>
 		<div class="mt-2">
 			<label class="flex items-center">
 				<input type="radio" name="radio-theme" v-model="themePref" value="light">

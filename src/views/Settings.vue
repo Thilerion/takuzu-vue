@@ -6,13 +6,13 @@
 		</div>
 
 		<div class="setting-block mt-6">
-			<h2 class="text-gray-700">Cell theme</h2>
+			<h2 class="setting-heading">Cell theme</h2>
 			
 			<CellThemeSetting v-model="cellTheme" />
 		</div>
 
 		<div class="setting-block mt-6">
-			<h2 class="text-gray-700">Input mode</h2>
+			<h2 class="setting-heading">Input mode</h2>
 			
 			<div class="mt-2">
 				<label class="flex items-center">
@@ -29,7 +29,7 @@
 		</div>
 
 		<div class="setting-block mt-6">
-			<h2 class="text-gray-700">Assistance</h2>
+			<h2 class="setting-heading">Assistance</h2>
 			<div class="mt-2">
 				<label>
 					<span>Check button function</span>
@@ -42,7 +42,7 @@
 			</div>
 		</div>
 		<div class="setting-block mt-6">
-			<h2 class="text-gray-700">Line side information</h2>
+			<h2 class="setting-heading">Line side information</h2>
 			<div class="mt-2">
 				<select class="block w-full mt-1" v-model="showLineInfo">
 					<option
@@ -54,13 +54,13 @@
 			</div>
 		</div>
 		<div class="setting-block mt-6">
-			<h2 class="text-gray-700">Other</h2>
+			<h2 class="setting-heading">Other</h2>
 			<label class="flex items-center mt-4">
 				<input type="checkbox" v-model="enableVibration">
 				<span class="ml-2">Enable vibration</span>
 			</label>
-			<div class="setting-block mt-4">
-				<div>Vibration strength</div>
+			<div class="mt-4 pl-6">
+				<div class="setting-subheading">Vibration strength</div>
 				<div class="mt-2">
 					<label class="flex items-center">
 						<input type="radio" name="radio-vib-strength" v-model="vibrationStrength" value="15">
@@ -79,7 +79,7 @@
 						<span class="ml-2">High</span>
 					</label>
 				</div>
-				<div>
+				<div class="mt-2">
 					<BaseButton @click="vibrate">Tap to test</BaseButton>
 				</div>
 			</div>
@@ -157,8 +157,19 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .setting-block {
 	@apply block text-gray-900 text-left px-8;
+}
+
+.setting-heading {
+	@apply text-gray-700 dark:text-gray-200;
+}
+.setting-subheading, .setting-block label > span {
+	@apply text-gray-600 dark:text-gray-300;
+}
+
+.setting-block select {
+	@apply dark:bg-slate-700 dark:border-slate-600 dark:text-gray-100;
 }
 </style>
