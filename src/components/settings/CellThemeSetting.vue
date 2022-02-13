@@ -85,11 +85,12 @@ export default {
 <style scoped>
 .cell-theme-box {
 	grid-template-areas: "cell cell"
-						"radio label";
-	grid-template-rows: auto 2rem;
-	grid-template-columns: 2rem auto;
+						"label label"
+						"radio radio";
+	grid-template-rows: auto 1.5rem 2rem;
+	grid-template-columns: auto auto;
 	@apply rounded bg-white ring-1 ring-gray-400 ring-opacity-40 grid items-center justify-items-stretch mr-2 px-0 pt-2 flex-1;
-	row-gap: 0.25rem;
+	/* row-gap: 0.25rem; */
 }
 .cell-theme-box.selected {
 	@apply ring-2 ring-blue-800 ring-opacity-60;
@@ -119,7 +120,7 @@ export default {
 }
 .cell-theme-box > .label {
 	grid-area: label;
-	@apply text-xs text-gray-800 mr-2;
+	@apply text-xs text-gray-800 mt-1 mx-2 text-center truncate;
 }
 
 .cell-theme-01 {
