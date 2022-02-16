@@ -73,7 +73,7 @@ button.cell-wrapper::after {
 	will-change: opacity;
 	transition: opacity 0.5s cubic-bezier(.97,.25,.16,.71) .6s;
 }
-@media (hover:hover) {
+@media (hover:hover) and (pointer: fine) {
 	button.cell-wrapper::before {
 		content: '';
 		@apply w-full h-full absolute z-10 pointer-events-none inset-0 border-2 opacity-0 box-border border-black;

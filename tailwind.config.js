@@ -19,8 +19,8 @@ module.exports = {
 			'sm': '640px',
 			'md': '810px',
 			'lg': '1024px',
-			'hover-hover': { 'raw': '(hover: hover)' },
-			'hover-none': { 'raw': '(hover: none)' },
+			'hover-hover': { 'raw': '(hover: hover) and (pointer: fine)' },
+			'hover-none': { 'raw': '(pointer: coarse)' },
 		},
 		extend: {
 			fontSize: {

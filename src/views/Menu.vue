@@ -22,6 +22,10 @@
 			<BaseButton @click="clearPuzzleDb" v-if="isDebugModeEnabled">Clear pregen puzzle db</BaseButton>
 			<BaseButton @click="pregenPuzzles" v-if="isDebugModeEnabled">Pregen puzzles</BaseButton>
 			<p v-if="clearPuzzlesResult != null">{{clearPuzzlesResult}}</p>
+
+			<div class="hhover">Hover:hover</div>
+			<div class="hnone">Hover:none</div>
+			<div class="pcoarse">Pointer:coarse</div>
 		</div>
 	</div>
 </template>
@@ -104,5 +108,21 @@ export default {
 </script>
 
 <style scoped>
-	
+@media (hover: hover) {
+	.hhover {
+		background: red;
+	}
+}
+
+@media (hover: none) {
+	.hnone {
+		background: red;
+	}
+}
+
+@media (pointer: coarse) {
+	.pcoarse {
+		background: red;
+	}
+}
 </style>
