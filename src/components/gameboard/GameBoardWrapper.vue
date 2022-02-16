@@ -94,7 +94,7 @@ export default {
 			const { cellSize } = this.puzzleGridDimensions;
 			if (cellSize <= 26) {
 				return 'xs';
-			} else if (cellSize <= 32) {
+			} else if (cellSize <= 38) {
 				return 's';
 			} else if (cellSize <= 52) {
 				return 'm';
@@ -173,7 +173,7 @@ export default {
 .puzzle-wrapper {
 	/* default grid gap for puzzle-grid and rulers */
 	--grid-gap: 2px;
-	--cell-rounding: theme(borderRadius.sm);
+	--cell-rounding: 2px;
 }
 .puzzle-wrapper.cell-size-xs {
 	--grid-gap: 1px;
@@ -181,11 +181,11 @@ export default {
 }
 .puzzle-wrapper.cell-size-s {
 	--grid-gap: 1px;
-	--cell-rounding: theme(borderRadius.sm);
+	--cell-rounding: 2px;
 }
 .puzzle-wrapper.cell-size-m {
 	--grid-gap: 2px;
-	--cell-rounding: theme(borderRadius.sm);
+	--cell-rounding: 2px;
 }
 .puzzle-wrapper.cell-size-l {
 	--grid-gap: 3px;
