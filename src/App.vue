@@ -24,7 +24,7 @@ import { computed, onMounted } from 'vue';
 import { useWindowSize } from '@vueuse/core';
 import { provideGlobalBuildData } from './app.globals.js';
 import { useStore } from 'vuex';
-import { useSettingsStore, initSettingsWatcher } from './stores/settings.js';
+import { initSettingsPersistence } from './stores/settings.js';
 
 export default {
 	components: {
@@ -35,8 +35,7 @@ export default {
 		const puzzleKey = computed(() => store.state.puzzleKey);
 
 		// init settings store
-		const settingsStore = useSettingsStore();
-		initSettingsWatcher(settingsStore);
+		initSettingsPersistence();
 
 		// initDarkLightAutoTheme();
 		useColorSchemeProvider();

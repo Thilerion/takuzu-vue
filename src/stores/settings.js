@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import { watch } from 'vue';
 
 const getDefaultSettings = () => ({
 	showLineInfo: '', // '' for disabled, 'coords', 'remainingCount', 'currentCount'
@@ -67,10 +66,17 @@ function saveSettings(data) {
 	window.localStorage.setItem('takuzu-settings', json);
 }
 
-export function initSettingsWatcher(storeInstance) {
-	watch(storeInstance, (value) => {
-		console.log('saving settings state');
-		saveSettings(value);
+export function initSettingsPersistence() {
+	const store = useSettingsStore();
+	store.$subscribe((mutation, state) => {
+		console.log({ mutation, state });
+		try {
+			saveSettings(state);
+		} catch (e) {
+			console.warn('Error while trying to persist settings to localstorage');
+			console.error(e);
+		}
 	})
-	console.log('watcher initiated');
+	console.log('Subscribed to settings state.');
+	return store;
 }
