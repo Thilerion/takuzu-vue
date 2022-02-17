@@ -53,36 +53,11 @@
 				</select>
 			</div>
 		</div>
+		<VibrationSetting
+			class="setting-block mt-6"
+		/>
 		<div class="setting-block mt-6">
 			<h2 class="setting-heading">Other</h2>
-			<label class="flex items-center mt-4">
-				<input type="checkbox" v-model="enableVibration">
-				<span class="ml-2">Enable vibration</span>
-			</label>
-			<div class="mt-4 pl-6">
-				<div class="setting-subheading">Vibration strength</div>
-				<div class="mt-2">
-					<label class="flex items-center">
-						<input type="radio" name="radio-vib-strength" v-model="vibrationStrength" value="15">
-						<span class="ml-2">Low</span>
-					</label>
-				</div>
-				<div class="mt-2">
-					<label class="flex items-center">
-						<input type="radio" name="radio-vib-strength" v-model="vibrationStrength" value="25">
-						<span class="ml-2">Medium</span>
-					</label>
-				</div>
-				<div class="mt-2">
-					<label class="flex items-center">
-						<input type="radio" name="radio-vib-strength" v-model="vibrationStrength" value="40">
-						<span class="ml-2">High</span>
-					</label>
-				</div>
-				<div class="mt-2">
-					<BaseButton @click="vibrate">Tap to test</BaseButton>
-				</div>
-			</div>
 			<label class="flex items-center mt-4">
 				<input type="checkbox" v-model="enableWakeLock">
 				<span class="ml-2">Keep screen active while playing</span>
@@ -103,13 +78,15 @@ import { useTapVibrate } from '@/composables/use-tap-vibrate.js';
 import { toRef } from 'vue';
 import { useSettingsStore } from '@/stores/settings.js';
 import { storeToRefs } from 'pinia';
+import VibrationSetting from '@/components/settings/VibrationSetting.vue';
 
 export default {
 	components: {
-		DarkModeSetting,
-		CellThemeSetting,
-		BaseButton
-	},
+    DarkModeSetting,
+    CellThemeSetting,
+    BaseButton,
+    VibrationSetting
+},
 	setup() {
 		const settingsStore = useSettingsStore();
 		const pattern = toRef(settingsStore, 'vibrationStrength');
