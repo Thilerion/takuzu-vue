@@ -38,7 +38,7 @@ export default {
 	--progress: v-bind(progressValueCapped);
 }
 .progress-value {
-	@apply h-full w-full bg-teal-600 opacity-50 dark:opacity-100 dark:bg-teal-500;
+	@apply h-full w-full bg-teal-500 dark:bg-teal-600;
 	@apply transform origin-left;
 	transform: scaleX(var(--progress, 0.1));
 	transition: transform .25s ease, opacity .15s ease;
