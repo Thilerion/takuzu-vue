@@ -24,7 +24,6 @@
 				:grid-height="height"
 				:grid-width="width"
 				:cell-size="cellSize"			
-				@pointerdown.once="checkEnableWakeLock"
 			>
 				<template v-slot:puzzle-info>
 					<PuzzleInfo
@@ -88,8 +87,7 @@ import PuzzleHintWrapper from '@/components/gameboard/PuzzleHintWrapper.vue';
 
 import { hasCurrentSavedGame } from '@/services/save-game.js';
 import { usePageVisibility } from '@/composables/use-page-visibility.js';
-import WakeLock from '../services/wake-lock.js';
-const wakeLock = new WakeLock();
+import { usePuzzleWakeLock } from '@/composables/use-wake-lock.js';
 
 import { COLUMN, ROW } from '@/lib/constants.js';
 
@@ -100,6 +98,7 @@ import { useBasicStatsStore } from '@/stores/basic-stats.js';
 import { usePuzzleHistoryStore } from '@/stores/puzzle-history.js';
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
 import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
+import { computed } from 'vue';
 
 export default {
 	components: {
@@ -127,13 +126,17 @@ export default {
 		const getHint = () => puzzleHintsStore.getHint();
 		const puzzleMistakesStore = usePuzzleMistakesStore();
 
+		const wakeLock = usePuzzleWakeLock();
+
 		return { 
 			windowHidden: hidden,
 			showLineInfo, showBoardCoordinates, showBoardLineCounts, showRulers,
+			isWakeLockEnabled: computed(() => wakeLock.isActive.value),
 			shouldEnableWakeLock: enableWakeLock, showTimer,
 			basicStatsStore, puzzleHistoryStore, getHint,
 			userCheckErrors: (boardStr) => puzzleMistakesStore.userCheckErrors(boardStr),
-			autoCheckErrors: () => puzzleMistakesStore.autoCheckFinishedWithMistakes()
+			autoCheckErrors: () => puzzleMistakesStore.autoCheckFinishedWithMistakes(),
+			wakeLock
 		};
 	},
 	data() {
@@ -147,9 +150,6 @@ export default {
 
 			dropdownOpen: false,
 			settingsOpen: false,
-
-			wakeLock: wakeLock,
-			isWakeLockEnabled: false,
 
 			selectedLine: null
 		}
@@ -282,14 +282,14 @@ export default {
 			this.userCheckErrors(boardStr);
 		},
 		checkEnableWakeLock() {
+			console.log(this.wakeLock.isActive.value);
+			if (this.wakeLock.isActive.value) {
+				return;
+			}
 			const setting = this.shouldEnableWakeLock;
 
 			if (setting) {
-				this.wakeLock.enable();
-				this.isWakeLockEnabled = this.wakeLock.enabled;
-				this.wakeLock.onChange = (isEnabled) => {
-					this.isWakeLockEnabled = !!isEnabled;
-				}
+				this.wakeLock.request();
 			}
 		}
 	},
@@ -348,7 +348,8 @@ export default {
 	},
 	unmounted() {
 		// TODO: also stop wake lock when game is paused, settings is open, etc, and enable it again when resuming
-		this.wakeLock.destroy();
+		this.wakeLock.release();
+		// this.wakeLock.destroy();
 	},
 	watch: {
 		finishedAndSolved: {
