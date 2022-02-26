@@ -3,16 +3,12 @@
 		<GameBoardHeader
 			class="flex-shrink-0"
 			@close="exitGame"
-			@dropdown-toggled="dropdownToggled"
-			:rows="rows"
-			:columns="columns"	
+			@dropdown-toggled="dropdownToggled"	
 		/>
 		<GameBoardWrapper
 			:ruler-height="rulerSize"
 			:ruler-width="rulerSize"
 			:info-height="'21px'"
-			:rows="rows"
-			:columns="columns"
 			v-slot="{width, height, cellSize}"
 		>
 			<GameBoard

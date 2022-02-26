@@ -16,9 +16,11 @@ import GameBoardDropdown from './GameBoardDropdown.vue';
 export default {
 	components: { GameBoardDropdown },
 	emits: ['close', 'dropdown-toggled'],
-	props: {
-		rows: Number,
-		columns: Number
+	data() {
+		return {
+			rows: null,
+			columns: null
+		}
 	},
 	methods: {
 		openSettings() {
@@ -27,6 +29,32 @@ export default {
 		},
 		dropdownToggled(value) {
 			this.$emit('dropdown-toggled', value);
+		}
+	},
+	computed: {
+		storeRows() {
+			return this.$store.state.puzzle.height;
+		},
+		storeColumns() {
+			return this.$store.state.puzzle.width;
+		},
+		storeDims() {
+			return [this.storeRows, this.storeColumns];
+		}
+	},
+	watch: {
+		storeDims: {
+			handler() {
+				const r = this.storeRows;
+				const c = this.storeColumns;
+				if (r != null) {
+					this.rows = r;
+				}
+				if (c != null) {
+					this.columns = c;
+				}
+			},
+			immediate: true
 		}
 	}
 };

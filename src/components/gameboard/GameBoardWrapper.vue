@@ -13,14 +13,19 @@
 <script>
 import throttle from 'lodash.throttle';
 import ProgressBar from '@/components/gameboard/PuzzleProgressBar.vue';
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
+import { useStore } from 'vuex';
 
 const FPS = 1000 / 30;
 
 export default {
 	setup() {
 		const container = ref(null);
+
+		const store = useStore();
+		const rows = computed(() => store.state.puzzle.height);
+		const columns = computed(() => store.state.puzzle.width);
 
 		// use sensible defaults for width and height:
 		const width = ref(window.clientWidth * 0.95);
@@ -66,6 +71,9 @@ export default {
 			width,
 			height,
 
+			rows,
+			columns,
+
 			setWrapperSizes,
 			setContainerSize,
 		};
@@ -85,9 +93,6 @@ export default {
 			type: String,
 			default: '6px'
 		},
-
-		rows: Number,
-		columns: Number,
 	},
 	computed: {
 		gridGapSizing() {
