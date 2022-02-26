@@ -7,7 +7,7 @@
 			v-slot="{ navigate }"
 		><BaseButton
 			@click="navigate"
-			class="btn-primary text-base uppercase shadow-md route-btn route-primary ok"
+			class="btn-primary text-base uppercase shadow-md route-btn route-primary"
 		>Continue</BaseButton></router-link>
 
 		<router-link

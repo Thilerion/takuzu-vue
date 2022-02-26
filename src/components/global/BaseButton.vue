@@ -31,15 +31,20 @@ export default {
 .btn {
 	@apply font-medium rounded bg-white text-gray-800 border border-gray-200 cursor-pointer justify-center px-4 py-2 text-center whitespace-nowrap select-none ring-teal-500 tracking-wide;
 
+	@apply dark:bg-slate-800 dark:text-gray-100 dark:border-gray-200/70;
+
 	@apply focus:outline-none;
 	@apply hover-none:active:ring hover-none:active:ring-opacity-50 hover-hover:focus:ring hover-hover:focus:ring-opacity-50;
 	@apply focus-visible:ring focus-visible:ring-opacity-90;
 	@apply hover-hover:hover:bg-gray-50 hover-hover:hover:border-gray-400 hover-none:active:bg-gray-50 hover-none:active:border-gray-400;
+	@apply dark:hover-hover:hover:bg-slate-700 dark:hover-none:active:bg-slate-700;
+
 }
 
 .btn-primary {
-	@apply bg-teal-600 text-white border-0;
+	@apply bg-teal-600 dark:bg-teal-600 text-white dark:text-white border-0;
 	@apply hover-hover:hover:bg-teal-800 hover-none:active:bg-teal-800;
+	@apply dark:hover-hover:hover:bg-teal-500 dark:hover-none:active:bg-teal-500;
 }
 
 .btn-elevated {
