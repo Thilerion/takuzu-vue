@@ -32,7 +32,7 @@ export default {
 
 <style scoped>
 .progress-wrapper {
-	@apply w-full absolute inset-x-0 top-0 bg-gray-400 bg-opacity-20 pointer-events-none;
+	@apply w-full bg-gray-400 bg-opacity-20 pointer-events-none;
 	height: 3px;
 
 	--progress: v-bind(progressValueCapped);

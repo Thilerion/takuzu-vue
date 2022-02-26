@@ -1,6 +1,5 @@
 <template>
 <div class="main justify-center items-center relative" ref="container">
-	<progress-bar v-if="$store.state.puzzle.started" />
 	<div
 		class="puzzle-wrapper"
 		:class="[`cell-size-${gridGapSizing}`]"
@@ -12,7 +11,6 @@
 
 <script>
 import throttle from 'lodash.throttle';
-import ProgressBar from '@/components/gameboard/PuzzleProgressBar.vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
 import { useStore } from 'vuex';
@@ -77,9 +75,6 @@ export default {
 			setWrapperSizes,
 			setContainerSize,
 		};
-	},
-	components: {
-		ProgressBar
 	},
 	props: {
 		rulerHeight: String,

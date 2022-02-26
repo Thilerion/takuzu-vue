@@ -9,12 +9,14 @@
 			@dropdown-toggled="dropdownToggled"
 		/>
 	</header>
+	<PuzzleProgressBar v-show="$store.state.puzzle.started" />
 </template>
 
 <script>
 import GameBoardDropdown from './GameBoardDropdown.vue';
+import PuzzleProgressBar from './PuzzleProgressBar.vue';
 export default {
-	components: { GameBoardDropdown },
+	components: { GameBoardDropdown, PuzzleProgressBar },
 	emits: ['close', 'dropdown-toggled'],
 	data() {
 		return {
