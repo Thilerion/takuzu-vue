@@ -1,5 +1,5 @@
 <template>
-	<header>
+	<header class="flex-shrink-0">
 		<IconBtn @click="$emit('close')" name="md-close">
 			<icon-ic-baseline-close />
 		</IconBtn>
