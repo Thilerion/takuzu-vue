@@ -127,6 +127,8 @@ import ActivityStats from './ActivityStats.vue';
 import { mapGetters, mapState } from 'vuex';
 import { differenceInCalendarDays, isToday, isYesterday } from 'date-fns';
 import MostRecentPuzzles from './MostRecentPuzzles.vue';
+import { useStatisticsStore } from '@/stores/statistics.js';
+import { storeToRefs } from 'pinia';
 
 export default {
 	components: {
@@ -140,22 +142,40 @@ export default {
 		return {
 		}
 	},
+	setup() {
+		const statsStore = useStatisticsStore();
+
+		const {
+			historyItems: allItems,
+			puzzlesSolved: totalPlayed,
+			groupedBySize,
+			groupedByDifficulty,
+			groupedBySizeDifficultyCombination,
+			totalTime,
+			sizeSummaries,
+			difficultySummaries,
+			difficultySizeSummaries,
+			dateSummaries,
+			allDatesWithPuzzlesSolved,
+		} = storeToRefs(statsStore);
+
+		return {
+			groupedBySize,
+			groupedByDifficulty,
+			groupedBySizeDifficultyCombination,
+			totalTime,
+			sizeSummaries,
+			difficultySummaries,
+			difficultySizeSummaries,
+			dateSummaries,
+			allDatesWithPuzzlesSolved,
+			allItems,
+			totalPlayed,
+
+			statsStore
+		}
+	},
 	computed: {
-		...mapState('statsData', {
-			allItems: state => state.historyItems,
-			totalPlayed: state => state.puzzlesSolved,
-		}),
-		...mapGetters('statsData', [
-			'groupedBySize',
-			'groupedByDifficulty',
-			'groupedBySizeDifficultyCombination',
-			'totalTime',
-			'sizeSummaries',
-			'difficultySummaries',
-			'difficultySizeSummaries',
-			'dateSummaries',
-			'allDatesWithPuzzlesSolved',
-		]),
 
 		dateStreaks() {
 			const dates = this.allDatesWithPuzzlesSolved;
@@ -366,7 +386,7 @@ export default {
 			}
 		},
 		difficultyCounts() {
-			const byDiff = this.$store.getters['statsData/groupedByDifficulty'];
+			const byDiff = this.statsStore.groupedByDifficulty;
 			const num = Object.keys(byDiff).length;
 			let result = Array(num).fill(0);
 			for (const [diff, values] of Object.entries(byDiff)) {
@@ -375,7 +395,7 @@ export default {
 			return result;
 		},
 		boardTypeCounts() {
-			const byType = this.$store.getters['statsData/groupedByBoardType'];
+			const byType = this.statsStore.groupedByBoardType;
 			const result = {};
 			for (const [type, values] of Object.entries(byType)) {
 				result[type] = values.length;

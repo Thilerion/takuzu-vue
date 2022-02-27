@@ -51,8 +51,17 @@ import PieChart from './PieChart.vue'
 import { parse } from 'date-fns';
 import { boardTypes, DIFFICULTY_LABELS } from '@/config.js';
 import { getDateRange } from '@/utils/date.utils.js';
+import { useStatisticsStore } from '@/stores/statistics.js';
+import { toRef } from 'vue';
 
 export default {
+	setup() {
+		const statsStore = useStatisticsStore();
+
+		const dateSummaries = toRef(statsStore, 'dateSummaries');
+
+		return { dateSummaries };
+	},
 	components: {
 		TimeLineChart,
 		PieChart,
@@ -80,9 +89,6 @@ export default {
 		}
 	},
 	computed: {
-		dateSummaries() {
-			return this.$store.getters['statsData/dateSummaries'];
-		},
 		dateSummariesFilledFromRange() {
 			const firstDate = this.dateSummaries[0].groupData.date;
 			const lastDate = new Date();

@@ -23,24 +23,36 @@
 import { clearPuzzleHistory, exportPuzzleHistory, importPuzzleHistory } from '@/services/stats/index.js';
 import AdvancedStats from '@/components/statistics/AdvancedStats.vue';
 import { importPeak } from '@/services/stats/db.js';
+import { useStatisticsStore } from '@/stores/statistics.js';
+import { storeToRefs } from 'pinia';
 
 export default {
 	components: { AdvancedStats },
+	setup() {
+		const statsStore = useStatisticsStore();
+
+		const {
+			puzzlesSolved,
+			finishedLoading,
+			showData
+		} = storeToRefs(statsStore);
+
+		const reset = () => statsStore.reset();
+		const initialize = () => statsStore.initialize();
+
+		return {
+			puzzlesSolved,
+			statsDataLoaded: finishedLoading,
+			showStats: showData,
+
+			reset,
+			initialize
+		}
+	},
 	data() {
 		return {
 			exportInProgress: false,
 			lastStatChange: Date.now(),
-		}
-	},
-	computed: {
-		puzzlesSolved() {
-			return this.$store.state.statsData.puzzlesSolved;
-		},
-		statsDataLoaded() {
-			return this.$store.getters['statsData/finishedLoading'];
-		},
-		showStats() {
-			return this.$store.getters['statsData/showData'];
 		}
 	},
 	methods: {
@@ -113,8 +125,11 @@ export default {
 			}
 		},
 		updateStats(withReset = true) {
-			if (withReset) this.$store.dispatch('statsData/reset');
-			this.$store.dispatch('statsData/initialize');
+			if (withReset) {
+				this.reset();
+			}
+
+			this.initialize();
 		}
 	},
 	beforeMount() {
@@ -122,7 +137,7 @@ export default {
 
 	},
 	unmounted() {
-		this.$store.dispatch('statsData/reset');
+		this.reset();
 	},
 	watch: {
 		puzzlesSolved(newValue, oldValue) {

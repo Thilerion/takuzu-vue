@@ -13,17 +13,15 @@
 </template>
 
 <script setup>
+import { useStatisticsStore } from '@/stores/statistics.js';
 import { timeFormatter } from '@/utils/date.utils.js';
-import { computed, ref } from 'vue';
-import { useStore } from 'vuex';
+import { computed, ref, toRef } from 'vue';
 
 const msToMinSec = timeFormatter({ padMinutes: false });
 
-const store = useStore();
+const statsStore = useStatisticsStore();
 
-const historyItems = computed(() => {
-	return store.state.statsData.historyItems;
-})
+const historyItems = toRef(statsStore, 'historyItems');
 
 const showAmount = ref(10);
 
