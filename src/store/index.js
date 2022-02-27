@@ -1,7 +1,6 @@
 import { isDebugModeEnabledInLocalStorage, persistDebugMode } from "@/services/debug-mode.js";
 import { createStore } from "vuex";
 import puzzleModule from './puzzle/index.js';
-import { statsDataModule } from './stats-data.js';
 
 const debugModeEnabled = isDebugModeEnabledInLocalStorage({
 	defaultValue: import.meta.env.DEV
@@ -12,7 +11,6 @@ const store = createStore({
 
 	modules: {
 		puzzle: puzzleModule,
-		statsData: statsDataModule,
 	},
 
 	state: {
