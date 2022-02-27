@@ -14,6 +14,9 @@
 			:current-streak="currentStreak"
 		/>
 	</section>
+	<section class="section-block mb-8">
+		<MostRecentPuzzles />
+	</section>
 	<StatsCharts
 		:difficulty-counts="difficultyCounts"
 		:board-type-counts="boardTypeCounts"
@@ -123,13 +126,15 @@ import StatsSummaryCard from './StatsSummaryCard.vue';
 import ActivityStats from './ActivityStats.vue';
 import { mapGetters, mapState } from 'vuex';
 import { differenceInCalendarDays, isToday, isYesterday } from 'date-fns';
+import MostRecentPuzzles from './MostRecentPuzzles.vue';
 
 export default {
-	components: { 
-		StatsCharts,
-		StatsSummaryCard,
-		ActivityStats,
-	},
+	components: {
+    StatsCharts,
+    StatsSummaryCard,
+    ActivityStats,
+    MostRecentPuzzles
+},
 	inheritAttrs: false,
 	data() {
 		return {
