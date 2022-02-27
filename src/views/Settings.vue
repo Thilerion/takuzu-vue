@@ -42,7 +42,7 @@
 			</div>
 		</div>
 		<div class="setting-block mt-6">
-			<h2 class="setting-heading">Line side information</h2>
+			<h2 class="setting-heading">Puzzle board ruler</h2>
 			<div class="mt-2">
 				<select class="block w-full mt-1" v-model="showLineInfo">
 					<option
