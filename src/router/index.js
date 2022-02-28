@@ -10,7 +10,7 @@ import Settings from '../views/Settings.vue';
 import Menu from '../views/Menu.vue';
 
 // NESTED PAGES / OVERLAY PAGES
-import FreePlay from '../views/FreePlay.vue';
+import FreePlay2 from '../views/FreePlay2.vue';
 
 import PlayPuzzle from '../views/PlayPuzzle.vue';
 
@@ -67,7 +67,7 @@ const routes = [
 	},
 	{
 		path: '/play',
-		component: FreePlay,
+		component: FreePlay2,
 		name: 'FreePlay',
 		children: [
 			{

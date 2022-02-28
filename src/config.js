@@ -5,6 +5,13 @@ class BoardPreset {
 		this.type = dimensionsToBoardType(w, h);
 		this.maxDifficulty = maxDifficulty;
 	}
+
+	get isRect() {
+		return this.type === boardTypes.RECT;
+	}
+	get isOdd() {
+		return this.type === boardTypes.ODD;
+	}
 }
 
 export const boardTypes = {

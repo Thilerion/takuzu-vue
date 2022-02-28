@@ -1,5 +1,5 @@
 <template>
-	<header class="flex justify-center items-stretch h-24 text-gray-700 dark:text-gray-100">
+	<header class="flex justify-center items-stretch h-24 text-gray-700 dark:text-gray-100 flex-shrink-0" :class="[small ? 'h-16' : 'h-24']">
 		<div class="header-group side left">
 			<IconBtn v-if="hasBackButton" @click="close" name="md-arrowback">
 				<icon-mdi-arrow-left style="{ 'font-size': '16px' }" />
@@ -21,6 +21,7 @@ export default {
 	props: {
 		closeBtn: Boolean,
 		hideBack: Boolean,
+		small: Boolean
 	},
 	methods: {
 		close() {
