@@ -136,9 +136,6 @@ export default {
 		this.updateStats(false);
 
 	},
-	unmounted() {
-		this.reset();
-	},
 	watch: {
 		puzzlesSolved(newValue, oldValue) {
 			console.log({newValue, oldValue});

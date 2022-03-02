@@ -20,9 +20,9 @@ export const useStatisticsStore = defineStore('statistics', {
 			return this.finishedLoading && this.puzzlesSolved > 0;
 		},
 
-		groupedBySize: state => groupBy(state.historyItems, 'dimensions', initialSizeMap),
-		groupedByDifficulty: state => groupBy(state.historyItems, 'difficulty', initialDifficultyMap),
-		groupedBySizeDifficultyCombination: state => groupBy(state.historyItems, 'dimensionDifficultyStr', initialSizeDifficultyMap),
+		groupedBySize: state => groupBy(state.historyItems, 'dimensions', getSizeMap()),
+		groupedByDifficulty: state => groupBy(state.historyItems, 'difficulty', getDiffMap()),
+		groupedBySizeDifficultyCombination: state => groupBy(state.historyItems, 'dimensionDifficultyStr', getSizeDiffMap()),
 		groupedByDate: state => groupBy(state.historyItems, 'dateStr'),
 		groupedByBoardType: state => groupBy(state.historyItems, 'boardType'),
 
@@ -87,6 +87,9 @@ export const useStatisticsStore = defineStore('statistics', {
 		dateSummaries() {
 			const groupsObj = this.groupedByDate;
 			const result = [];
+			if (!this.historyItems.length) {
+				return result;
+			}
 			const sortedItems = Object.entries(groupsObj).map(([dateStr, items]) => {
 				const date = parse(dateStr + ' 12:00', 'yyyy-MM-dd HH:mm', new Date());
 				return { dateStr, date, items };
@@ -148,15 +151,12 @@ export const useStatisticsStore = defineStore('statistics', {
 			}
 			if (this.finishedLoading) {
 				// check for change in puzzlesSolved
-				console.warn('Cannot init stats if already initialized. Checking if there are changes in puzzlesSolved');
 				const puzzlesSolved = await getPuzzlesSolved();
 				if (puzzlesSolved !== this.puzzlesSolved) {
-					console.log('Changes detected in puzzles solved. Should continue with initializing.');
 					this.setInitialized(false);
 					this.setHistoryItems([]);
 					this.setLoading();
 				} else {
-					console.log('No changes in puzzles solved. Returning.');
 					return;
 				}
 			} else {
@@ -167,9 +167,7 @@ export const useStatisticsStore = defineStore('statistics', {
 			if (puzzlesSolved > 0) {
 				const items = await getAllHistoryItems();
 				this.setHistoryItems(items);
-			} else {
-				console.log('No puzzles solved yet; finished loading stats.');
-			}
+			} // else no puzzles solved: dont have to retrieve history items
 
 			this.setLoadingFinished();
 			this.setInitialized(true);
@@ -200,17 +198,12 @@ const sizeDiffCombiGroupsData = sizeDifficultyCombinations.map(({ width, height,
 	const boardType = dimensionsToBoardType(width, height);
 	return { width, height, difficulty, dimensions, sizeDifficultyStr, numCells, boardType };
 })
-const initialSizeMap = presetSizes.reduce((acc, val) => {
-	acc[val] = [];
-	return acc;
+
+const objectWithKeys = (keysArr) => keysArr.reduce((result, key) => {
+	result[key] = [];
+	return result;
 }, {});
-const initialDifficultyMap = difficulties.reduce((acc, val) => {
-	acc[val] = [];
-	return acc;
-}, {});
-const initialSizeDifficultyMap = sizeDifficultyCombinations.reduce((acc, val) => {
-	const { width, height, difficulty } = val;
-	const key = `${width}x${height}-${difficulty}`;
-	acc[key] = [];
-	return acc;
-}, {});
+
+const getSizeMap = () => objectWithKeys(presetSizes);
+const getDiffMap = () => objectWithKeys(difficulties);
+const getSizeDiffMap = () => objectWithKeys(sizeDifficultyCombinations);

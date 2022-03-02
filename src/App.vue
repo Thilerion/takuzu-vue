@@ -20,11 +20,12 @@
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
 import { initPregenWorker } from '@/workers/pregen-puzzles.js';
 import { useColorSchemeProvider } from './composables/use-dark-mode-preference.js';
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, toRef, watchEffect } from 'vue';
 import { useWindowSize } from '@vueuse/core';
 import { provideGlobalBuildData } from './app.globals.js';
 import { useStore } from 'vuex';
 import { initSettingsPersistence } from './stores/settings.js';
+import { useStatisticsStore } from './stores/statistics.js';
 
 export default {
 	components: {
@@ -40,6 +41,15 @@ export default {
 		// initDarkLightAutoTheme();
 		useColorSchemeProvider();
 		provideGlobalBuildData();
+
+		// load statistics store; to prevent store data from being reset each time statistics page gets unloaded
+		const statsStore = useStatisticsStore();
+
+		const numPuzzlesSolved = toRef(statsStore, 'puzzlesSolved');
+
+		watchEffect(() => {
+			console.log({ puzzlesSolved: numPuzzlesSolved.value});
+		})
 
 		const { height } = useWindowSize();
 		const viewportHeight = computed(() => height.value ? `${height.value}px` : '100%');
