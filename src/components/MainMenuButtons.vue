@@ -5,10 +5,11 @@
 			:to="{ name: 'PlayPuzzle' }"
 			custom
 			v-slot="{ navigate }"
-		><BaseButton
+		><ContinueButton
 			@click="navigate"
-			class="btn-primary text-base uppercase shadow-md route-btn route-primary"
-		>Continue</BaseButton></router-link>
+			class="btn-primary shadow-md route-btn route-primary continue-btn relative"
+			v-bind="saveData"
+		></ContinueButton></router-link>
 
 		<router-link
 			:to="{ name: 'FreePlay' }"
@@ -43,8 +44,10 @@
 </template>
 
 <script setup>
+import { DIFFICULTY_LABELS } from "@/config.js";
 import { timeFormatter } from "@/utils/date.utils.js";
 import { computed, toRefs } from "vue";
+import ContinueButton from "./ContinueButton.vue";
 
 const props = defineProps({
 	canContinue: Boolean,
@@ -54,15 +57,18 @@ const props = defineProps({
 const { canContinue, saveData } = toRefs(props);
 
 const msToTime = timeFormatter({
-
+	padMinutes: true
 });
 
-const continueButtonData = computed(() => {
+const continueData = computed(() => {
 	if (saveData.value == null) return {};
 	const { width, height, difficulty, timeElapsed} = saveData.value;
 	const formattedTime = msToTime(timeElapsed);
+	const diffLabel = DIFFICULTY_LABELS[difficulty];
 
-	return { width, height, difficulty, time: formattedTime };
+	const dimensions = `${width}x${height}`;
+
+	return { dimensions, difficulty: diffLabel, time: formattedTime };
 })
 </script>
 
@@ -72,17 +78,17 @@ const continueButtonData = computed(() => {
 }
 
 .route-btn {
-	@apply block w-full font-normal;
+	@apply w-full font-normal;
 	@apply transition-colors;
 }
 .route-btn.btn-primary {
 	--shadow-color: 12, 148, 136;
 	--tw-shadow: 0 6px 14px 1px rgba(var(--shadow-color), 0.3), 0 4px 6px -2px rgba(var(--shadow-color), 0.35);
 }
-.route-btn.route-primary {
-	@apply tracking-wider py-3;
+.route-primary {
+	@apply tracking-wider h-14;
 }
-.route-btn.route-secondary {
-	@apply tracking-wide;
+.route-secondary {
+	@apply tracking-wide h-12;
 }
 </style>
