@@ -1,6 +1,5 @@
 import { SimpleBoard } from '../../lib/board/Board.js';
 
-import { SaveGameData } from '@/services/save-game.js';
 import { calculateGridCounts, calculateLineCounts } from './line-counts.js';
 import { EMPTY, ONE, ZERO } from '@/lib/constants.js';
 import { initPregenWorker } from '@/workers/pregen-puzzles.js';
@@ -12,6 +11,7 @@ import { usePuzzleHistoryStore } from '@/stores/puzzle-history.js';
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
 import { requestPuzzle } from '@/services/create-puzzle.js';
 import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
+import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
 
 const defaultState = () => ({
 	// game config
@@ -224,7 +224,8 @@ const puzzleModule = {
 
 			return basicStatsStore.addFinishedPuzzleToHistory(finishedPuzzleState).then(historyEntry => {
 				console.log('Puzzle saved to history.');
-				SaveGameData.deleteSavedGame();
+				const { deleteSavedPuzzle } = useSavedPuzzle();
+				deleteSavedPuzzle();
 				return historyEntry;
 			})	
 		},
@@ -243,7 +244,8 @@ const puzzleModule = {
 			usePuzzleMistakesStore().reset();
 		},
 		restartPuzzle({ state, commit }) {
-			SaveGameData.deleteSavedGame();
+			const { deleteSavedPuzzle } = useSavedPuzzle();
+			deleteSavedPuzzle();
 			const { initialBoard, solution } = state;
 			const board = initialBoard.copy();
 			commit('setAllBoards', { board, solution, initialBoard });
@@ -273,15 +275,16 @@ const puzzleModule = {
 			const { initialBoard, board, solution, width, height, difficulty } = state;
 			const puzzleHistory = usePuzzleHistoryStore();
 			const moveList = await puzzleHistory.exportMoveHistory();
-			
-			const saveGameData = new SaveGameData({
+
+			const { savePuzzle } = useSavedPuzzle();
+			savePuzzle({
 				moveList, timeElapsed, initialBoard, board, solution, width, height, difficulty
 			});
-			saveGameData.saveToLocalStorage();
 		},
 		loadSavedPuzzle({ commit, dispatch }) {
 			dispatch('reset');
-			const saveData = SaveGameData.loadFromLocalStorage();
+			const { savedPuzzle: currentSaved } = useSavedPuzzle();
+			const saveData = currentSaved.value;
 
 			// import moveLi.jsst
 			const { moveList } = saveData;
@@ -295,10 +298,12 @@ const puzzleModule = {
 			// commit('timer/setInitialTimeElapsed', timeElapsed);
 			// start timer?
 
-			const initialBoard = SimpleBoard.fromString(saveData.initialBoard);
-			const board = SimpleBoard.fromString(saveData.board);
-			const solution = SimpleBoard.fromString(saveData.solution);
-			commit('setAllBoards', { initialBoard, board, solution });
+			const { initialBoard, solution, board } = saveData;
+
+			const initialBoard2 = SimpleBoard.fromString(initialBoard);
+			const board2 = SimpleBoard.fromString(board);
+			const solution2 = SimpleBoard.fromString(solution);
+			commit('setAllBoards', { initialBoard: initialBoard2, board: board2, solution: solution2 });
 
 			const puzzleHistory = usePuzzleHistoryStore();
 			puzzleHistory.importMoveHistory(moveList)

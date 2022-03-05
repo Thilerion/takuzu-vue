@@ -42,12 +42,28 @@
 	</div>
 </template>
 
-<script>
-export default {
-	props: {
-		canContinue: Boolean,
-	}
-};
+<script setup>
+import { timeFormatter } from "@/utils/date.utils.js";
+import { computed, toRefs } from "vue";
+
+const props = defineProps({
+	canContinue: Boolean,
+	saveData: Object
+});
+
+const { canContinue, saveData } = toRefs(props);
+
+const msToTime = timeFormatter({
+
+});
+
+const continueButtonData = computed(() => {
+	if (saveData.value == null) return {};
+	const { width, height, difficulty, timeElapsed} = saveData.value;
+	const formattedTime = msToTime(timeElapsed);
+
+	return { width, height, difficulty, time: formattedTime };
+})
 </script>
 
 <style scoped>
