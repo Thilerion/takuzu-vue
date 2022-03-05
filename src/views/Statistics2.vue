@@ -4,7 +4,7 @@
 		<div class="content flex-1">
 			<div v-if="isLoading">Loading statistics...</div>
 			<div v-else-if="!numSolved">You haven't solved any puzzles yet! Go play some!</div>
-			<div v-else>Woohoo!</div>
+			<StatisticsContent v-else />
 		</div>
 		<StatsDbUtils
 			@update-stats="updateStats"
@@ -18,6 +18,7 @@ import { getPuzzlesSolved } from '@/services/stats/data-handling.js';
 import { onBeforeMount, ref } from 'vue';
 import PageHeader from '../components/global/base-layout/PageHeader.vue';
 import StatsDbUtils from '../components/statistics2/StatsDbUtils.vue';
+import StatisticsContent from '../components/statistics2/StatisticsContent.vue';
 
 const numSolved = ref(0);
 const isLoading = ref(true);
