@@ -17,6 +17,12 @@ const savePuzzle = ({
 	initialBoard,
 	solution,
 	board }) => {
+	
+	if (!moveList.length || !timeElapsed || timeElapsed < 5000) {
+		// console.log('Puzzle has not enough progress: not saving.');
+		return false;
+	}
+	
 	const exportedBoards = {
 		board: board.export(),
 		solution: solution.export(),
