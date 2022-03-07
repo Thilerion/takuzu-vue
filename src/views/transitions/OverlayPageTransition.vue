@@ -37,6 +37,7 @@ export default {
 		hideRootOverflow(newValue) {
 			const el = document.querySelector('.root');
 			el.classList.toggle('overflow-hidden', newValue);
+			el.classList.toggle('hide-overflow', newValue);
 		}
 	}
 };

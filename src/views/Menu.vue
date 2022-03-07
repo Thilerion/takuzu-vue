@@ -1,31 +1,34 @@
 <template>
 	<div class="flex flex-col flex-1">
 		<PageHeader>Takuzu</PageHeader>
-		<div class="flex-1 px-8 text-center space-y-4">
+		<div class="flex-1 text-center space-y-4">
 			<button
 				@click="increaseDebugModeClickCounter"
 				:disabled="isDebugModeEnabled"
-				class="block mx-auto"
+				class="block mx-auto max-w-xs"
 			>
 				<div
 					class="text-center p-2 text-sm text-gray-600"
-				>App version: {{ pkgVersion }}_<small>{{buildDate}}</small></div>
+				>
+					App version: {{ pkgVersion }}_<small>{{buildDate}}</small>
+				</div>
 			</button>
-			<div class="p-2">Offline ready: {{offlineReady}}; Need refresh: {{needRefresh}}</div>
-			<div class="p-2">
-				<BaseButton @click="updateSW(true)">Update now and reload</BaseButton>
+			<div class="text-center pt-2 text-sm text-gray-600" v-if="needRefresh">
+				<p class="my-2">Update ready. Refresh to load update.</p>
+				<BaseButton @click="updateSW(true)">Click here to load update</BaseButton>
 			</div>
-			<router-link v-if="isDebugModeEnabled" custom to="/showcase" v-slot="{ navigate }">
-				<BaseButton @click="navigate">Open component showcase</BaseButton>
-			</router-link>
-			<BaseButton @click="disableDebugMode" v-if="isDebugModeEnabled">Disable debug mode</BaseButton>
-			<BaseButton @click="clearPuzzleDb" v-if="isDebugModeEnabled">Clear pregen puzzle db</BaseButton>
-			<BaseButton @click="pregenPuzzles" v-if="isDebugModeEnabled">Pregen puzzles</BaseButton>
-			<p v-if="clearPuzzlesResult != null">{{clearPuzzlesResult}}</p>
-
-			<div class="hhover">Hover:hover</div>
-			<div class="hnone">Hover:none</div>
-			<div class="pcoarse">Pointer:coarse</div>
+			<div class="debug-opts text-left" v-if="isDebugModeEnabled">
+				<h2 class="font-medium mb-1 text-gray-700/90 tracking-wide px-6">Debug menu</h2>
+				<div class="debug-list">
+					<router-link to="/showcase">Open component showcase</router-link>
+					<button @click="disableDebugMode">Disable debug mode</button>
+					<button @click="clearPuzzleDb">Clear pregen puzzle db</button>
+					<button @click="pregenPuzzles">Pregen puzzles</button>
+				</div>
+			</div>
+			<transition name="gen-result">
+				<p class="text-sm text-left mt-4 px-6 font-bold tracking-wider text-gray-600" v-if="clearPuzzlesResult != null">{{clearPuzzlesResult}}</p>
+			</transition>
 		</div>
 	</div>
 </template>
@@ -36,7 +39,7 @@ import { clearPuzzleDb } from '@/services/puzzles-db/db.js';
 import { initPregenWorker } from '@/workers/pregen-puzzles.js';
 
 import { useRegisterSW } from 'virtual:pwa-register/vue';
-import { watchEffect } from 'vue';
+import { ref, watch, watchEffect } from 'vue';
 
 export default {
 	setup() {
@@ -50,12 +53,24 @@ export default {
 			console.log({ needRefresh: needRefresh.value, offlineReady: offlineReady.value});
 		})
 
-		return { offlineReady, needRefresh, updateSW: updateServiceWorker, pkgVersion, buildDate };
+		const clearPuzzlesResult = ref(null);
+
+		let timeout = null;
+
+		watch(clearPuzzlesResult, (cur, prev) => {
+			if (cur != null) {
+				clearTimeout(timeout);
+				timeout = setTimeout(() => {
+					clearPuzzlesResult.value = null;
+				}, 1000);
+			}
+		})
+
+		return { offlineReady, needRefresh, updateSW: updateServiceWorker, pkgVersion, buildDate, clearPuzzlesResult };
 	},
 	data() {
 		return {
 			debugModeClickCounter: 0,
-			clearPuzzlesResult: null,
 			appVersion: import.meta.env.PACKAGE_VERSION
 		}
 	},
@@ -108,21 +123,22 @@ export default {
 </script>
 
 <style scoped>
-@media (hover: hover) {
-	.hhover {
-		background: red;
-	}
+.debug-list {
+	@apply divide-y divide-gray-150 bg-white px-4 rounded-xl;
+	box-shadow: rgba(100, 100, 111, 0.15) 0px 2px 12px 0px;
+}
+.debug-list > * {
+	@apply w-full flex items-center justify-start text-left min-h-[28px] px-2 py-4 bg-white;
 }
 
-@media (hover: none) {
-	.hnone {
-		background: red;
-	}
+.gen-result-enter-active {
+	transition: opacity .1s ease;
+}
+.gen-result-leave-active {
+	transition: opacity 1s ease 2s;
 }
 
-@media (pointer: coarse) {
-	.pcoarse {
-		background: red;
-	}
+.gen-result-enter-from, .gen-result-leave-to {
+	opacity: 0;
 }
 </style>
