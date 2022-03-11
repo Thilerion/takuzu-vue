@@ -1,5 +1,5 @@
 <template>
-	<div class="h-vh overflow-y-hidden flex flex-col">
+	<div class="freeplay h-vh overflow-y-hidden flex flex-col">
 		<div class="flex-1 overflow-y-auto pb-4 flex flex-col">
 			<PageHeader class="flex-shrink-0" small>
 				<template #default>New Game</template>
@@ -196,14 +196,6 @@ async function createGame() {
 </script>
 
 <style scoped>
-.freeplay {
-	padding-bottom: calc(var(--footer-size) * 1px + 1rem);
-	z-index: 100;
-	width: 100vw;
-	position: fixed;
-	top: 0;
-	@apply text-gray-900 bg-gray-100 dark:bg-gray-900 dark:text-gray-50;
-}
 
 .main {
 	@apply px-4 flex flex-col;

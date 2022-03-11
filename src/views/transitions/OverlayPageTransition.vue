@@ -3,6 +3,8 @@
 		:name="transitionName"
 		@before-enter="beforeEnter"
 		@after-enter="afterEnter"
+		@before-leave="beforeLeave"
+		@after-leave="afterLeave"
 		mode="out-in"
 	>
 		<slot />
@@ -29,7 +31,15 @@ export default {
 		beforeEnter() {
 			this.hideRootOverflow = true;
 		},
-		afterEnter() {
+		afterEnter(el) {
+			if (el.classList.contains('wrapper')) return;
+			this.hideRootOverflow = false;
+		},
+		beforeLeave() {
+			this.hideRootOverflow = true;
+		},
+		afterLeave(el) {
+			if (el.classList.contains('wrapper')) return;
 			this.hideRootOverflow = false;
 		}
 	},
@@ -45,21 +55,26 @@ export default {
 
 <style scoped>
 .overlay-fade-enter-active {
-	transition: all .4s ease;
+	transition: all .3s ease;
 }
 .overlay-fade-leave-active {
-	transition: all .2s ease-in-out;
+	transition: all .15s ease-in-out;
+}
+
+.overlay-fade-enter-active:not(.wrapper), .overlay-fade-leave-active:not(.wrapper) {
+	overflow: clip;
+	@apply h-vh w-screen;
 }
 
 .overlay-fade-enter-from,
 .overlay-fade-leave-to {
 	opacity: 0;
-	transform: scale(1.05) translateY(2rem);
+	transform: scale(1.035) translateY(1.5rem);
 }
 
 /* Disable scale transition for root wrapper page */
 .overlay-fade-enter-active.wrapper, .overlay-fade-leave-active.wrapper {
-	transition: opacity .1s ease;
+	transition: opacity .05s ease;
 }
 .overlay-fade-enter-from.wrapper,
 .overlay-fade-leave-to.wrapper {
