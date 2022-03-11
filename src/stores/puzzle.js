@@ -27,6 +27,9 @@ export const usePuzzleStore = defineStore('puzzle', {
 		colCounts: [],
 		gridCounts: {},
 
+		// state relevant for recap/puzzleHistory/stats
+		cheatsUsed: false,
+
 		// play/ui state
 		initialized: false,
 		started: false,

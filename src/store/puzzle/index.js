@@ -31,6 +31,9 @@ const defaultState = () => ({
 	colCounts: [],
 	gridCounts: {},
 
+	// state relevant for recap/puzzleHistory/stats
+	cheatsUsed: false,
+
 	// play/ui state
 	initialized: false,
 	started: false,
@@ -107,6 +110,8 @@ const puzzleModule = {
 		setStarted: (state, val) => state.started = val,
 		setFinished: state => state.finished = true,
 		setPaused: (state, val) => state.paused = val,
+
+		setCheatUsed: state => state.cheatsUsed = true,
 
 		// puzzle actions
 		setValue: (state, { x, y, value, prevValue }) => {
@@ -203,7 +208,7 @@ const puzzleModule = {
 				throw new Error(e);
 			}
 		},
-		finishPuzzle({ state, getters, commit, dispatch }) {
+		async finishPuzzle({ state, getters, commit, dispatch }) {
 			commit('setFinished');
 			const timer = usePuzzleTimer();
 			timer.pause();
@@ -215,19 +220,26 @@ const puzzleModule = {
 			const finishedPuzzleState = {
 				...state, timeElapsed, assistance: {
 					checkData: checkAssistanceData,
-					hintData: hintAssistanceData
+					hintData: hintAssistanceData,
+					cheatsUsed: state.cheatsUsed
 				}
 			};
 			console.log({ ...finishedPuzzleState });
 			
 			const basicStatsStore = useBasicStatsStore();
 
-			return basicStatsStore.addFinishedPuzzleToHistory(finishedPuzzleState).then(historyEntry => {
-				console.log('Puzzle saved to history.');
+			try {
+				const historyEntry = await basicStatsStore.addFinishedPuzzleToHistory(finishedPuzzleState);
+				return historyEntry;
+			} catch (e) {
+				console.warn('Could not add finished puzzle to history...');
+				console.warn(e);
+				return null;
+			} finally {
+				console.log('deleting saved puzzle');
 				const { deleteSavedPuzzle } = useSavedPuzzle();
 				deleteSavedPuzzle();
-				return historyEntry;
-			})	
+			}
 		},
 
 		reset({ state, commit }) {

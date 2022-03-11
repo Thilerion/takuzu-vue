@@ -96,6 +96,9 @@ export default {
 
 			const emptyCells = [...this.$store.state.puzzle.board.cells({ skipFilled: true})];
 			if (emptyCells.length <= 1) return;
+
+			this.$store.commit('puzzle/setCheatUsed');
+
 			const cells = emptyCells.slice(0, -1);
 
 			await timeoutPromise(500);

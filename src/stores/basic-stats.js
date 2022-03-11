@@ -16,11 +16,18 @@ export const useBasicStatsStore = defineStore('basicStats', {
 	actions: {
 		async addFinishedPuzzleToHistory(puzzleState) {
 			const historyEntry = PuzzleData.fromPuzzleState(puzzleState);
-			this.addFinishedPuzzleToDb(historyEntry);
+
+			if (puzzleState.assistance.cheatsUsed) {
+				console.log('Cheats used; will not save entry to history.');
+				return historyEntry;
+			}
+
+			await this.addFinishedPuzzleToDb(historyEntry);
+			console.log('Puzzle saved to history');
 			return historyEntry;
 		},
 		addFinishedPuzzleToDb(historyEntry) {
-			puzzleHistoryTable.add(historyEntry);
+			return puzzleHistoryTable.add(historyEntry);
 		},
 		async getGameEndStats(historyEntry) {
 			const { width, height, difficulty } = historyEntry;
