@@ -37,6 +37,9 @@
 				<BaseDropdownItem @click="solvePuzzle">
 					<span class="ml-7 mt-px">Solve puzzle</span>
 				</BaseDropdownItem>
+				<BaseDropdownItem @click="solveTrios">
+					<span class="ml-7 mt-px">Solve all trios</span>
+				</BaseDropdownItem>
 				<BaseDropdownDivider/>
 			</template>
 
@@ -50,6 +53,9 @@
 </template>
 
 <script>
+import { EMPTY } from '@/lib/constants.js';
+import { humanSolveTriples } from '@/lib/human-solver/triples.js';
+import { shuffle } from '@/lib/utils.js';
 import { useSettingsStore } from '@/stores/settings.js';
 import { rafPromise, timeoutPromise } from '@/utils/delay.utils.js';
 import { toRef } from 'vue';
@@ -94,23 +100,65 @@ export default {
 		async solvePuzzle() {
 			this.$refs.dropdown.closeDropdownMenu();
 
-			const emptyCells = [...this.$store.state.puzzle.board.cells({ skipFilled: true})];
+			const emptyCells = [...this.$store.state.puzzle.board.cells({ skipFilled: true} )];
 			if (emptyCells.length <= 1) return;
 
 			this.$store.commit('puzzle/setCheatUsed');
 
-			const cells = emptyCells.slice(0, -1);
+
+			const cells = shuffle(emptyCells.slice(0, -1));
 
 			await timeoutPromise(500);
+
+			let count = 0;
 
 			for (const cell of cells) {
 				const { x, y, value: prevValue } = cell;
 				const solutionValue = this.$store.state.puzzle.solution.get(x, y);
-				await rafPromise();
-				this.$store.dispatch('puzzle/toggle', {
+				this.$store.dispatch('puzzle/makeMove', {
 					x, y, prevValue, value: solutionValue
 				});
+				count += 1;
+
+				if (count % 4 === 0) {
+					await rafPromise();
+				}
 			}			
+		},
+		async solveTrios() {
+			this.$refs.dropdown.closeDropdownMenu();
+			this.$store.commit('puzzle/setCheatUsed');
+
+			const board = this.$store.state.puzzle.board;
+
+			let movesFound = true;
+			let count = 0;
+
+			await timeoutPromise(400);
+
+			while (movesFound) {
+				const triplesHumanResult = humanSolveTriples({ board });
+				if (!triplesHumanResult || !triplesHumanResult.length) {
+					movesFound = false;
+					break;
+				}
+				
+				for (const move of triplesHumanResult) {
+					for (const target of move.targets) {
+						const { x, y, value } = target;
+						const prevValue = this.$store.state.puzzle.board.grid[y][x];
+						if (prevValue !== EMPTY) continue;
+						this.$store.dispatch('puzzle/makeMove', {
+							x, y, value, prevValue
+						})
+						count += 1;
+						if (count % 4 === 0) {
+							await rafPromise();
+						}
+					}
+				}
+			}
+			console.log(`${count} values found with trios strategy.`);
 		},
 		dropdownToggled(value) {
 			this.$emit('dropdown-toggled', value);

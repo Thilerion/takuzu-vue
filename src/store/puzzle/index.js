@@ -147,24 +147,35 @@ const puzzleModule = {
 			usePuzzleMistakesStore().removeFromCurrentMarkedCells(`${x},${y}`);
 			usePuzzleHintsStore().showHint = false;
 		},
-		toggle({ state, dispatch }, { x, y, value, prevValue }) {
+		makeMove({ state, dispatch }, { x, y, value, prevValue }) {
 			if (!prevValue) {
 				prevValue = state.board.grid[y][x];
 			}
-			if (!value) {
-				const settingsStore = useSettingsStore();
-				const toggleFirst = settingsStore.toggleMode;
-				if (prevValue === EMPTY) {
-					value = unref(toggleFirst);
-				} else if (prevValue === ZERO) {
-					value = toggleFirst === ZERO ? ONE : EMPTY;
-				} else if (prevValue === ONE) {
-					value = toggleFirst === ZERO ? EMPTY : ZERO;
-				}
+			if (prevValue === value) {
+				console.log('Previous value is equal to current value. This move will not be committed.');
+				return;
 			}
 			dispatch('setValue', { x, y, value, prevValue });
 			const puzzleHistory = usePuzzleHistoryStore();
 			puzzleHistory.addMove({ x, y, value: prevValue, nextValue: value });
+		},
+		toggle({ state, dispatch }, { x, y, value, prevValue }) {
+			if (!value) {
+				const previous = prevValue ?? state.board.grid[y][x];
+				const settingsStore = useSettingsStore();
+				const toggleFirst = settingsStore.toggleMode;
+				if (previous === EMPTY) {
+					value = unref(toggleFirst);
+				} else if (previous === ZERO) {
+					value = toggleFirst === ZERO ? ONE : EMPTY;
+				} else if (previous === ONE) {
+					value = toggleFirst === ZERO ? EMPTY : ZERO;
+				}
+				dispatch('makeMove', {
+					x, y, value, prevValue
+				});
+			}
+			
 		},
 		undoLastMove({ dispatch }) {
 			const puzzleHistory = usePuzzleHistoryStore();
