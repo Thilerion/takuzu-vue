@@ -23,13 +23,13 @@
 import { clearPuzzleHistory, exportPuzzleHistory, importPuzzleHistory } from '@/services/stats/index.js';
 import AdvancedStats from '@/components/statistics/AdvancedStats.vue';
 import { importPeak } from '@/services/stats/db.js';
-import { useStatisticsStore } from '@/stores/statistics.js';
+import { useStatisticsStore2 } from '@/stores/statistics2.js';
 import { storeToRefs } from 'pinia';
 
 export default {
 	components: { AdvancedStats },
 	setup() {
-		const statsStore = useStatisticsStore();
+		const statsStore = useStatisticsStore2();
 
 		const {
 			puzzlesSolved,

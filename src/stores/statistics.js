@@ -1,6 +1,7 @@
 import { dimensionsToBoardType, getAllBoardPresetSizes, getAllDifficultyValues, getAllSizeDifficultyCombinations } from "@/config.js";
 import { getAllHistoryItems, getPuzzlesSolved, summarizeStatGroup } from "@/services/stats/data-handling.js";
 import { groupBy } from "@/utils/array.utils.js";
+import { formatBasicSortableDateKey } from "@/utils/date.utils.js";
 import { parse, startOfDay, compareAsc, differenceInCalendarDays, addHours } from 'date-fns';
 import { defineStore } from "pinia";
 import { shallowReactive } from "vue";
@@ -8,6 +9,7 @@ import { shallowReactive } from "vue";
 export const useStatisticsStore = defineStore('statistics', {
 	state: () => ({
 		initialized: false,
+		initializedDate: null,
 		isLoading: false,
 
 		historyItems: shallowReactive([])
@@ -136,6 +138,7 @@ export const useStatisticsStore = defineStore('statistics', {
 		// TODO: leftover mutations from vuex, convert to simple mutations at source
 		setInitialized(value) {
 			this.initialized = value;
+			this.initializedDate = formatBasicSortableDateKey(new Date());
 		},
 		setLoading() {
 			this.isLoading = true;
