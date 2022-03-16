@@ -9,3 +9,37 @@ export function getUniqueDatesFromItems(historyItems = []) {
 		return { dateStr, date: new Date(dateStr) };
 	})
 }
+
+export function getItemsByDate(historyItems = []) {
+	if (!historyItems.length) return {};
+
+	// TODO: maybe, not as efficient as can be
+	const uniqueDates = getUniqueDatesFromItems(historyItems).map(d => d.dateStr);
+
+	const map = Object.fromEntries(
+		uniqueDates.map(dStr => [dStr, []])
+	);
+
+	for (const item of historyItems) {
+		const { dateStr } = item;
+		map[dateStr].push(item);
+	}
+	return map;
+}
+
+export function getDateRange(historyItems = []) {
+	if (!historyItems.length) return {
+		from: null,
+		to: null
+	}
+
+	const a = historyItems[0];
+	const b = historyItems[historyItems.length - 1];
+
+	const from = a.date < b.date ? a : b;
+	const to = from === a ? b : a;
+	return {
+		from: from.dateStr,
+		to: to.dateStr
+	}
+}
