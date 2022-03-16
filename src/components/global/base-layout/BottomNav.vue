@@ -42,7 +42,7 @@ export default {
 <style scoped>
 .nav-link {
 	@apply w-full h-full justify-center text-center py-2 flex flex-col items-center text-xs text-gray-700 font-medium;
-	@apply dark:text-gray-100;
+	@apply dark:text-gray-100 transition-all duration-100;
 }
 
 @media (hover:hover) {
@@ -51,18 +51,21 @@ export default {
 	}
 }
 .nav-link.router-link-exact-active {
-	@apply text-teal-700 font-semibold opacity-100;
+	@apply text-teal-600 font-semibold opacity-100 scale-110;
 	@apply dark:text-teal-300;
 }
+.nav-link:not(.router-link-exact-active) {
+	@apply opacity-90;
+}
 .nav-link > .nav-icon {
-	@apply mb-1 text-current opacity-70;
+	@apply mb-1 text-current opacity-60;
 	font-size: 24px;
 }
 .nav-link.router-link-exact-active > .nav-icon {
-	@apply opacity-90;
+	@apply opacity-80;
 }
 .nav-link {
-	transition: color .1s ease;
+	/* transition: color .1s ease; */
 }
 
 nav {
