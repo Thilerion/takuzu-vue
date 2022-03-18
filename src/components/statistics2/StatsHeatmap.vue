@@ -14,7 +14,8 @@
 				>{{month.name}}</div>
 			</div>
 			<div class="column-1 flex">
-				<div class="weekday" v-for="day in weekdays" :class="{ visible: day.show }">{{day?.text}}</div>
+				<div class="weekday" v-for="day in weekdays">
+				<span v-if="day.show">{{day.name}}</span></div>
 			</div>
 			<div class="squares grid grid-flow-col">
 				<div
@@ -36,7 +37,7 @@
 
 <script setup>
 import { subYears, startOfDay, addDays, differenceInCalendarISOWeeks, eachDayOfInterval, isAfter, endOfToday, startOfISOWeek, subDays, getMonth } from 'date-fns/esm';
-import { formatBasicSortableDateKey, getWeekdayFromDate, getMonthNameShort } from '@/utils/date.utils.js';
+import { formatBasicSortableDateKey, getWeekdayFromDate, getMonthNameShort, getWeekDaysShort } from '@/utils/date.utils.js';
 import { computed, ref } from 'vue';
 import { getItemsByDate } from '@/services/stats2/dates.js';
 
@@ -89,9 +90,7 @@ const squares = computed(() => {
 	})
 })
 
-const weekdays = [
-	{}, { text: 'Di', show: true }, {}, { text: 'Do', show: true }, {}, { text: 'Za', show: true }, {}
-];
+const weekdays = useWeekdays();
 
 const months = computed(() => {
 	const res = [];
@@ -117,6 +116,21 @@ const months = computed(() => {
 	}
 	return res;
 })
+
+</script>
+
+<script>
+
+const useWeekdays = () => {
+	const weekdays = getWeekDaysShort();
+	const shown = [1, 3, 5];
+	return weekdays.map((name, i) => {
+		return {
+			name,
+			show: shown.includes(i)
+		}
+	})
+}
 
 </script>
 
@@ -165,10 +179,6 @@ const months = computed(() => {
 	width: fit-content;
 	min-width: var(--square-size);
 	max-width: calc(var(--square-size) * 2.5);
-}
-.weekday.visible {
-	/* @apply bg-red-500/10; */
-	
 }
 
 .squares {
