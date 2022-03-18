@@ -1,4 +1,5 @@
 import { addDays, isSameDay } from 'date-fns';
+import { eachDayOfInterval, endOfWeek, format, getISODay, startOfWeek } from 'date-fns/esm';
 
 export { isSameDay };
 
@@ -56,4 +57,31 @@ export const timeFormatter = (formatOptions) => {
 		}
 		return str;
 	}
+}
+
+export const getWeekDaysShort = ({
+	weekStartsOn = 1, // 1 for monday
+} = {}) => {
+	const now = new Date();
+	const weekdays = [];
+
+	const start = startOfWeek(now, { weekStartsOn });
+	const end = endOfWeek(now, { weekStartsOn });
+
+	const intl = new Intl.DateTimeFormat(undefined, { weekday: 'short' });
+	eachDayOfInterval({ start, end }).forEach(day => {
+		weekdays.push(
+			intl.format(day)
+		)
+	})
+	return weekdays;
+}
+
+export const getMonthNameShort = (date) => {
+	const intl = new Intl.DateTimeFormat(undefined, { month: 'short' });
+	return intl.format(date).replace('.', '');
+}
+
+export const getWeekdayFromDate = (date) => {
+	return getISODay(date);
 }

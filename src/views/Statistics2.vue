@@ -49,7 +49,6 @@ async function initAndUpdate(forceUpdate = false) {
 	const dates = getUniqueDatesFromItems(items);
 
 	const streaks = processDateStreaks(dates.map(d => d.date))
-	console.log(streaks);
 }
 </script>
 
