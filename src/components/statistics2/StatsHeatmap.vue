@@ -1,21 +1,20 @@
 <template>
-		<div class="hmwrapper2 overflow-x-auto overflow-y-visible w-full mx-auto h-fit snap-both snap-proximity bg-white">
+		<div class="heatmap-scroll-wrapper overflow-x-auto overflow-y-visible w-full mx-auto h-fit snap-both snap-proximity bg-white">
 
-		<div class="hmwrapper grid w-fit snap-end mx-auto">
-			<div class="row-1 relative">
-				<!-- <div class="month" :style="month.styles" v-for="month in months">{{month.name}}</div> -->
+		<div class="heatmap-wrapper grid w-fit snap-end mx-auto">
+			<div class="months relative">
 				<div class="month"
 					v-for="month in months"
 					:style="{
 						'grid-column': `${month.colStart} / span 3`,
-						'grid-row': '1 / span 1',
-						'z-index': month.colStart
+						'grid-row': '1 / span 1'
 					}"
 				>{{month.name}}</div>
 			</div>
-			<div class="column-1 flex">
+			<div class="weekdays flex">
 				<div class="weekday" v-for="day in weekdays">
-				<span v-if="day.show">{{day.name}}</span></div>
+					<span v-if="day.show">{{day.name}}</span>
+				</div>
 			</div>
 			<div class="squares grid grid-flow-col">
 				<div
@@ -24,10 +23,7 @@
 						'grid-row-start': square.index === 0 ? startAtWeekday + 1 : 'auto',
 						'--bg-opacity': square.value
 					}"
-					:class="{ 
-						'snap-start': square.index % 7 === 0,
-						'last-week': square.lastWeek
-					}"
+					:class="{ 'snap-start': square.index % 7 === 0 }"
 					v-for="(square) in squares"
 				><div class="w-full h-full pointer-events-none"></div></div>
 			</div>
@@ -36,9 +32,9 @@
 </template>
 
 <script setup>
-import { subYears, startOfDay, addDays, differenceInCalendarISOWeeks, eachDayOfInterval, isAfter, endOfToday, startOfISOWeek, subDays, getMonth } from 'date-fns/esm';
+import { subYears, startOfDay, addDays, differenceInCalendarISOWeeks, eachDayOfInterval } from 'date-fns/esm';
 import { formatBasicSortableDateKey, getWeekdayFromDate, getMonthNameShort, getWeekDaysShort } from '@/utils/date.utils.js';
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { getItemsByDate } from '@/services/stats2/dates.js';
 
 const props = defineProps({
@@ -47,75 +43,19 @@ const props = defineProps({
 		default: () => ([])
 	}
 });
-
-const today = startOfDay(new Date());
-const previousYear = addDays(subYears(today, 1), 1);
-const _numWeeks = differenceInCalendarISOWeeks(today, previousYear);
-const numWeeks = ref(_numWeeks);
-const startAtWeekday = getWeekdayFromDate(previousYear) - 1;
-console.log({ today, previousYear, weeks: numWeeks.value, startAtWeekday });
-
-const interval = { start: previousYear, end: today };
-
 const itemsByDate = computed(() => {
 	return getItemsByDate(props.items);
 })
 
-const maxPlayed = computed(() => {
-	const played = Object.values(itemsByDate.value).map(arr => arr.length);
-	return Math.max(...played);
-})
+// heatmap data
+const { interval, numWeeks } = createHeatmapRange();
+const squares = computed(() => createHeatmapSquares(itemsByDate, { interval }));
+const startAtWeekday = getWeekdayStart(interval);
 
-const squares = computed(() => {
-	const days = eachDayOfInterval(interval);
-	let weekI = 0;
-	return days.map((d, i) => {
-		const weekday = getWeekdayFromDate(d) - 1;
-		if (i > 0 && weekday === 0) {
-			weekI += 1;
-		}
-		const dateStr = formatBasicSortableDateKey(d);
-		const numPlayed = itemsByDate.value?.[dateStr]?.length ?? 0;
-		const value = numPlayed === 0 ? 0 : 0.2 + (numPlayed / maxPlayed.value * 0.8);
 
-		return {
-			date: d,
-			dateStr,
-			weekday,
-			value,
-			index: i,
-			month: getMonthNameShort(d),
-			weekColumn: weekI
-		}
-	})
-})
-
+// grid weekday column and months row
 const weekdays = useWeekdays();
-
-const months = computed(() => {
-	const res = [];
-	let foundDates = new Set();
-	squares.value.forEach((sq, idx) => {
-		const { weekColumn, month, weekday, dateStr } = sq;
-		const key = dateStr.slice(0, 8);
-		if (foundDates.has(key)) return;
-		if (idx !== 0 && weekday !== 0) return;
-		foundDates.add(key);
-		res.push({
-			colStart: weekColumn + 1,
-			colEnd: weekColumn + 3,
-			name: month
-		})
-	});
-	const lastWeekColumn = squares.value[squares.value.length - 1].weekColumn;
-	const last = res[res.length - 1];
-	if (last.colEnd > lastWeekColumn + 1) {
-		const diff = last.colEnd - (lastWeekColumn + 1);
-		last.colStart = (lastWeekColumn + 2) - 2;
-		last.colEnd -= diff;
-	}
-	return res;
-})
+const months = computed(() => useMonthsList(squares));
 
 </script>
 
@@ -132,13 +72,86 @@ const useWeekdays = () => {
 	})
 }
 
+const useMonthsList = (squares) => {
+	const res = [];
+	const foundMonths = new Set();
+
+	squares.value.forEach((sq, idx) => {
+		const { weekColumn, month, weekday, dateStr } = sq;
+		const key = dateStr.slice(0, 8);
+		if (foundMonths.has(key)) return;
+		if (idx !== 0 && weekday !== 0) return;
+		foundMonths.add(key);
+
+		res.push({
+			colStart: weekColumn + 1,
+			colEnd: weekColumn + 3,
+			name: month
+		})
+	})
+
+	const lastWeekColumn = squares.value[squares.value.length - 1].weekColumn;
+	const last = res[res.length - 1];
+	if (last.colEnd > lastWeekColumn + 1) {
+		const diff = last.colEnd - (lastWeekColumn + 1);
+		last.colStart = (lastWeekColumn + 2) - 2;
+		last.colEnd -= diff;
+	}
+	return res;
+}
+
+const createHeatmapRange = () => {
+	const today = startOfDay(new Date());
+	const previousYear = addDays(subYears(today, 1), 1);
+	const numWeeks = differenceInCalendarISOWeeks(today, previousYear);
+
+	const interval = {
+		start: previousYear,
+		end: today
+	};
+
+	return {
+		numWeeks,
+		interval
+	}
+}
+
+const getWeekdayStart = (interval) => getWeekdayFromDate(interval.start) - 1;
+
+const createHeatmapSquares = (itemsByDate, { interval }) => {
+	const played = Object.values(itemsByDate.value).map(arr => arr.length);
+	const maxPlayed = Math.max(...played);
+
+	const days = eachDayOfInterval(interval);
+	const squares = [];
+
+	for (let i = 0, week = 0; i < days.length; i++) {
+		const d = days[i];
+		const weekday = getWeekdayFromDate(d) - 1;
+		if (i > 0 && weekday === 0) week += 1;
+
+		const dateStr = formatBasicSortableDateKey(d);
+		const numPlayed = itemsByDate.value?.[dateStr]?.length ?? 0;
+		const scaleValue = numPlayed === 0 ? 0 : 0.2 + (numPlayed / maxPlayed * 0.8);
+
+		squares.push({
+			date: d,
+			dateStr,
+			weekday,
+			value: scaleValue,
+			index: i,
+			month: getMonthNameShort(d),
+			weekColumn: week
+		})
+	}
+
+	return squares;
+}
+
 </script>
 
 <style scoped>
-.selected-day {
-	direction: ltr;
-}
-.hmwrapper2 {
+.heatmap-scroll-wrapper {
 	direction: rtl;
 	@apply pt-2 mb-2 pb-4;
 
@@ -148,10 +161,10 @@ const useWeekdays = () => {
 
 	--num-weeks: v-bind('numWeeks');
 }
-.hmwrapper {
+.heatmap-wrapper {
 	grid-template-areas: 
-		"col1 row1"
-		"col1 squares";
+		"weekdays months"
+		"weekdays squares";
 	grid-template-rows: auto auto;
 	grid-template-columns: auto min-content;
 	direction: ltr;
@@ -159,16 +172,16 @@ const useWeekdays = () => {
 	gap: var(--grid-gap);
 }
 
-.row-1 {
-	grid-area: row1;
+.months {
+	grid-area: months;
 	@apply h-fit text-xs leading-relaxed align-middle box-content grid pt-2 text-gray-700;
 	grid-template-rows: auto;
 	grid-template-columns: repeat(var(--num-weeks, 52), var(--square-size));
 	gap: var(--square-gap);
 }
 
-.column-1 {
-	grid-area: col1;
+.weekdays {
+	grid-area: weekdays;
 	width: max-content;
 	@apply bg-white sticky left-0 flex flex-col justify-end text-xs text-right px-2 mr-1 z-50 text-gray-600;
 	gap: var(--square-gap);
