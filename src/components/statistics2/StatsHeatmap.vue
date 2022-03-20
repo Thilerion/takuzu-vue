@@ -176,11 +176,11 @@ const createHeatmapSquares = (itemsByDate, { interval, timeRange, playedRange })
 <style scoped>
 .heatmap-scroll-wrapper {
 	direction: rtl;
-	@apply pt-2 mb-2 pb-4;
+	@apply pt-2 mb-2 pb-6;
 
 	--grid-gap: 6px;
-	--square-gap: 3px;
-	--square-size: 1.125rem;
+	--square-gap: 2px;
+	--square-size: 1.5rem;
 
 	--num-weeks: v-bind('numWeeks');
 }
@@ -211,7 +211,7 @@ const createHeatmapSquares = (itemsByDate, { interval, timeRange, playedRange })
 }
 .weekday {
 	height: var(--square-size);
-	@apply text-xs inline-block;
+	@apply text-xs flex items-center justify-end;
 	width: fit-content;
 	min-width: var(--square-size);
 	max-width: calc(var(--square-size) * 2.5);
@@ -226,44 +226,44 @@ const createHeatmapSquares = (itemsByDate, { interval, timeRange, playedRange })
 	grid-template-columns: repeat(v-bind(numWeeks), auto);
 
 	gap: var(--square-gap);
+
+	--shadow-blur: clamp(
+		2px,
+		calc(var(--square-size) * 0.2),
+		0.4rem
+	);
 }
 
 [data-level] {
 	--bg-opacity: 1;
+	--shadow-opacity: 0.1;
 }
 [data-level="0"] {
-	--bg: theme('colors.gray.200');
+	--bg: hsl(193, 44%, 96%);
+	--shadow-opacity: 0.05;
 }
 [data-level="1"] {
-	--bg: theme('colors.purple.400');
-	--bg-opacity: 0.9;
+	--bg: #9ebcda;
 }
 [data-level="2"] {
-	--bg: theme('colors.purple.600');
-	--bg-opacity: 0.9;
+	--bg: #8c96c6;
 }
 [data-level="3"] {
-	--bg: theme('colors.purple.600');
-	--bg-opacity: 0.95;
+	--bg: #8c6bb1;
 }
 [data-level="4"] {
-	--bg: theme('colors.purple.700');
-	--bg-opacity: 0.95;
+	--bg: #88419d;
 }
 [data-level="5"] {
-	--bg: theme('colors.purple.800');
-	--bg-opacity: 0.92;
+	--bg: #6e016b;
 }
 
 .square {
 	width: var(--square-size);
 	height: var(--square-size);
-	@apply bg-gray-200 rounded-sm relative;
+	@apply rounded-[1px] relative;
 	scroll-margin: var(--square-gap);
-}
-
-.square > * {
 	background-color: var(--bg);
-	opacity: var(--bg-opacity);
+	box-shadow: inset 0 0 var(--shadow-blur) 0 rgb(0 0 0 / var(--shadow-opacity));
 }
 </style>
