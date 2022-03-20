@@ -20,7 +20,8 @@
 				<div
 					class="square bg-white"
 					:style="{
-						'grid-row-start': square.index === 0 ? startAtWeekday + 1 : 'auto',
+						'grid-row': `${square.weekday + 1} / span 1`,
+						'grid-column': `${square.weekColumn + 1} / span 1`,
 						'--bg-opacity': square.value
 					}"
 					:class="{ 'snap-start': square.index % 7 === 0 }"
@@ -50,8 +51,6 @@ const itemsByDate = computed(() => {
 // heatmap data
 const { interval, numWeeks } = createHeatmapRange();
 const squares = computed(() => createHeatmapSquares(itemsByDate, { interval }));
-const startAtWeekday = getWeekdayStart(interval);
-
 
 // grid weekday column and months row
 const weekdays = useWeekdays();
@@ -115,8 +114,6 @@ const createHeatmapRange = () => {
 		interval
 	}
 }
-
-const getWeekdayStart = (interval) => getWeekdayFromDate(interval.start) - 1;
 
 const createHeatmapSquares = (itemsByDate, { interval }) => {
 	const played = Object.values(itemsByDate.value).map(arr => arr.length);
