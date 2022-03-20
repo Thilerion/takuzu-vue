@@ -31,7 +31,11 @@ export const calculateScoresByDate = (itemsByDate, {
 	for (const [dateStr, { played, time }] of Object.entries(dateStatsByDate)) {
 		const playScore = getValueWithinRange(playedRange.min, played, playedRange.max);
 		const timeScore = getValueWithinRange(timeRange.min, time, timeRange.max);
-		const combinedScore = (0.3 * timeScore) + (0.7 * playScore);
+		let combinedScore = (0.3 * timeScore) + (0.7 * playScore);
+
+		if ((played > 0 || time > 0) && combinedScore === 0) {
+			combinedScore = 0.001;
+		}
 
 		result[dateStr] = {
 			played,
