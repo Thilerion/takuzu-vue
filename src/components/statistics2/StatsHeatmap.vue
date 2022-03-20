@@ -19,10 +19,10 @@
 			<div class="squares grid grid-flow-col">
 				<div
 					class="square bg-white"
+					:data-level="dateToScaleLevelMap.get(square.dateStr) ?? 0"
 					:style="{
 						'grid-row': `${square.weekday + 1} / span 1`,
 						'grid-column': `${square.weekColumn + 1} / span 1`,
-						'--bg-opacity': square.value
 					}"
 					:class="{ 'snap-start': square.index % 7 === 0 }"
 					v-for="(square) in squares"
@@ -33,10 +33,12 @@
 </template>
 
 <script setup>
-import { subYears, startOfDay, addDays, differenceInCalendarISOWeeks, eachDayOfInterval } from 'date-fns/esm';
+import { subYears, startOfDay, addDays, differenceInCalendarISOWeeks, eachDayOfInterval, isWithinInterval } from 'date-fns/esm';
 import { formatBasicSortableDateKey, getWeekdayFromDate, getMonthNameShort, getWeekDaysShort } from '@/utils/date.utils.js';
 import { computed } from 'vue';
 import { getItemsByDate } from '@/services/stats2/dates.js';
+import { endOfDay } from 'date-fns';
+import { calculateScoresByDate, mapScoreToArray } from './heatmap-data.js';
 
 const props = defineProps({
 	items: {
@@ -44,13 +46,38 @@ const props = defineProps({
 		default: () => ([])
 	}
 });
-const itemsByDate = computed(() => {
-	return getItemsByDate(props.items);
-})
 
 // heatmap data
 const { interval, numWeeks } = createHeatmapRange();
-const squares = computed(() => createHeatmapSquares(itemsByDate, { interval }));
+
+const itemsByDate = computed(() => {
+	// cutoff items so none before heatmap interval are processed
+	const heatmapInclusiveInterval = {
+		start: startOfDay(interval.start),
+		end: endOfDay(interval.end)
+	};
+	const items = props.items.filter(item => isWithinInterval(item.date, heatmapInclusiveInterval));
+	return getItemsByDate(items);
+})
+
+const scoresByDate = computed(() => {
+	const items = itemsByDate.value;
+	return calculateScoresByDate(items);
+})
+const dateToScaleLevelMap = computed(() => {
+	const map = new Map();
+	const levelArr = [1, 2, 3, 4, 5];
+	for (const [dateStr, scoreObj] of Object.entries(scoresByDate.value)) {
+		const { combinedScore } = scoreObj;
+		const level = mapScoreToArray(combinedScore, levelArr);
+		map.set(dateStr, level);
+	}
+	return map;
+})
+
+const squares = computed(() => {
+	return createHeatmapSquares(itemsByDate, { interval });
+})
 
 // grid weekday column and months row
 const weekdays = useWeekdays();
@@ -115,34 +142,33 @@ const createHeatmapRange = () => {
 	}
 }
 
-const createHeatmapSquares = (itemsByDate, { interval }) => {
+const createHeatmapCells = interval => {
+	let weekIndex = 0;
+	return eachDayOfInterval(interval).map((date, index) => {
+		const weekday = getWeekdayFromDate(date) - 1;
+		// index 0 is always first week in range; else if monday it is the next week
+		if (index > 0 && weekday === 0) weekIndex += 1;
+		const dateStr = formatBasicSortableDateKey(date);
+
+		return {
+			index,
+			weekday,
+			weekColumn: weekIndex,
+			month: getMonthNameShort(date),
+
+			date,
+			dateStr,
+		}
+	})
+}
+
+const createHeatmapSquares = (itemsByDate, { interval, timeRange, playedRange }) => {
 	const played = Object.values(itemsByDate.value).map(arr => arr.length);
 	const maxPlayed = Math.max(...played);
 
-	const days = eachDayOfInterval(interval);
-	const squares = [];
+	const cells = createHeatmapCells(interval);
 
-	for (let i = 0, week = 0; i < days.length; i++) {
-		const d = days[i];
-		const weekday = getWeekdayFromDate(d) - 1;
-		if (i > 0 && weekday === 0) week += 1;
-
-		const dateStr = formatBasicSortableDateKey(d);
-		const numPlayed = itemsByDate.value?.[dateStr]?.length ?? 0;
-		const scaleValue = numPlayed === 0 ? 0 : 0.2 + (numPlayed / maxPlayed * 0.8);
-
-		squares.push({
-			date: d,
-			dateStr,
-			weekday,
-			value: scaleValue,
-			index: i,
-			month: getMonthNameShort(d),
-			weekColumn: week
-		})
-	}
-
-	return squares;
+	return cells;
 }
 
 </script>
@@ -202,6 +228,33 @@ const createHeatmapSquares = (itemsByDate, { interval }) => {
 	gap: var(--square-gap);
 }
 
+[data-level] {
+	--bg-opacity: 1;
+}
+[data-level="0"] {
+	--bg: theme('colors.gray.200');
+}
+[data-level="1"] {
+	--bg: theme('colors.purple.400');
+	--bg-opacity: 0.9;
+}
+[data-level="2"] {
+	--bg: theme('colors.purple.600');
+	--bg-opacity: 0.9;
+}
+[data-level="3"] {
+	--bg: theme('colors.purple.600');
+	--bg-opacity: 0.95;
+}
+[data-level="4"] {
+	--bg: theme('colors.purple.700');
+	--bg-opacity: 0.95;
+}
+[data-level="5"] {
+	--bg: theme('colors.purple.800');
+	--bg-opacity: 0.92;
+}
+
 .square {
 	width: var(--square-size);
 	height: var(--square-size);
@@ -210,7 +263,7 @@ const createHeatmapSquares = (itemsByDate, { interval }) => {
 }
 
 .square > * {
-	@apply bg-purple-600;
-	opacity: var(--bg-opacity, 1);
+	background-color: var(--bg);
+	opacity: var(--bg-opacity);
 }
 </style>
