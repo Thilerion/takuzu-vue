@@ -35,17 +35,12 @@
 <script setup>
 import { subYears, startOfDay, addDays, differenceInCalendarISOWeeks, eachDayOfInterval, isWithinInterval } from 'date-fns/esm';
 import { formatBasicSortableDateKey, getWeekdayFromDate, getMonthNameShort, getWeekDaysShort } from '@/utils/date.utils.js';
-import { computed } from 'vue';
+import { computed, inject } from 'vue';
 import { getItemsByDate } from '@/services/stats2/dates.js';
 import { endOfDay } from 'date-fns';
 import { calculateScoresByDate, mapScoreToArray } from './heatmap-data.js';
 
-const props = defineProps({
-	items: {
-		type: Array,
-		default: () => ([])
-	}
-});
+const historyItems = inject('historyItems', () => [], true);
 
 // heatmap data
 const { interval, numWeeks } = createHeatmapRange();
@@ -56,7 +51,7 @@ const itemsByDate = computed(() => {
 		start: startOfDay(interval.start),
 		end: endOfDay(interval.end)
 	};
-	const items = props.items.filter(item => isWithinInterval(item.date, heatmapInclusiveInterval));
+	const items = historyItems.value.filter(item => isWithinInterval(item.date, heatmapInclusiveInterval));
 	return getItemsByDate(items);
 })
 
@@ -176,7 +171,7 @@ const createHeatmapSquares = (itemsByDate, { interval, timeRange, playedRange })
 <style scoped>
 .heatmap-scroll-wrapper {
 	direction: rtl;
-	@apply pt-2 mb-2 pb-6;
+	@apply pt-2 pb-6;
 
 	--grid-gap: 6px;
 	--square-gap: 2px;
@@ -206,15 +201,15 @@ const createHeatmapSquares = (itemsByDate, { interval, timeRange, playedRange })
 .weekdays {
 	grid-area: weekdays;
 	width: max-content;
-	@apply bg-white sticky left-0 flex flex-col justify-end text-xs text-right px-2 mr-1 z-50 text-gray-600;
+	@apply bg-white sticky left-0 flex flex-col justify-end text-xs text-right w-6 z-50 text-gray-600/80;
 	gap: var(--square-gap);
 }
 .weekday {
 	height: var(--square-size);
-	@apply text-xs flex items-center justify-end;
+	@apply text-xs flex items-center justify-end pr-1;
 	width: fit-content;
 	min-width: var(--square-size);
-	max-width: calc(var(--square-size) * 2.5);
+	max-width: calc(var(--square-size) * 2.5); 
 }
 
 .squares {
