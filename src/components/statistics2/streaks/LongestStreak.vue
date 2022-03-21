@@ -1,9 +1,10 @@
 <template>
 	<section>
 		<h2>Longest streak</h2>
-		<div class="streak-length bg-gradient-to-br to-yellow-600 from-amber-400">
-			<span>{{length}}</span>
-		</div>
+		<div class="streak-length border-4" :class="[streakLengthClasses]"
+		><span :class="{
+			'text-2xl': length >= 100
+		}">{{length}}</span></div>
 		<div class="text">
 			<div v-if="fromStr && toStr">
 				<span class="whitespace-nowrap">{{fromStr}}</span> - <span class="whitespace-nowrap">{{toStr}}</span>
@@ -27,6 +28,16 @@ const props = defineProps({
 	to: {
 		type: Date
 	}
+})
+
+const streakLengthClasses = computed(() => {
+	if (props.length >= 28) {
+		return ["border-purple-500", "text-purple-700/90", "bg-purple-400/20"];
+	} else if (props.length > 7) {
+		return ["border-green-500", "text-green-700/90", "bg-green-400/20"];
+	} else if (props.length > 1) {
+		return ["border-gray-500/50", "text-gray-500", "bg-gray-300/10"];
+	} else if (props.length <= 1) return ["border-gray-500/50", "text-gray-500", "bg-gray-300/10", "opacity-60"]
 })
 
 function formatDate(d) {
