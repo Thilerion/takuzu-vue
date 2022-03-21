@@ -2,7 +2,7 @@
 	<div>
 		<StatsActivity />
 		<div>
-			<StatsOverview />
+			<StatsOverview v-if="false" />
 		</div>
 	</div>
 </template>
