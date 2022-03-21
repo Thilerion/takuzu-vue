@@ -1,7 +1,12 @@
 <template>
 	<section>
 		<h2>Current streak</h2>
-		<div class="streak-length" :class="[active ? 'bg-green-600' : 'bg-gray-700']">{{length}}</div>
+		<div
+			class="streak-length border-4"
+			:class="[streakLengthClasses]"
+		>
+			<span>{{length}}</span>
+		</div>
 		<div class="text">{{currentStateText}}</div>
 	</section>
 </template>
@@ -20,6 +25,10 @@ const STREAK_STATE_TEXT = {
 	[NEW_ACTIVE_STREAK]: "You've started a new streak today, keep it up!",
 	[ACTIVE_STREAK]: "You've maintained your daily streak for today. Good job!"
 };
+
+const activeClasses = ["border-green-500", "text-green-700/90", "bg-green-400/20"];
+const inactiveClasses = ["border-gray-500/50", "text-gray-500", "bg-gray-300/10"];
+const warningClasses = ["border-orange-500", "text-orange-700/90", "bg-orange-300/10"];
 
 const props = defineProps({
 	active: {
@@ -51,6 +60,12 @@ const currentState = computed(() => {
 
 const currentStateText = computed(() => {
 	return STREAK_STATE_TEXT[currentState.value];
+})
+
+const streakLengthClasses = computed(() => {
+	if (currentState.value === NO_STREAK) return inactiveClasses;
+	else if (currentState.value === INACTIVE_STREAK) return warningClasses;
+	else return activeClasses;
 })
 </script>
 

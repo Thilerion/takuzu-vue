@@ -1,7 +1,9 @@
 <template>
 	<section>
 		<h2>Longest streak</h2>
-		<div class="streak-length bg-gradient-to-br to-yellow-600 from-amber-400">{{length}}</div>
+		<div class="streak-length bg-gradient-to-br to-yellow-600 from-amber-400">
+			<span>{{length}}</span>
+		</div>
 		<div class="text">
 			<div v-if="fromStr && toStr">
 				<span class="whitespace-nowrap">{{fromStr}}</span> - <span class="whitespace-nowrap">{{toStr}}</span>

@@ -51,7 +51,7 @@ const streaks = computed(() => {
 }
 
 .streak-container :deep(.streak-length) {
-	@apply aspect-square w-16 rounded-full text-white flex items-center justify-center;
+	@apply aspect-square w-16 rounded-full flex items-center justify-center text-3xl leading-none font-extrabold;
 }
 
 .streak-container :deep(.text) {
