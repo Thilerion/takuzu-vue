@@ -37,7 +37,6 @@ const props = defineProps({
 	},
 	from: {
 		type: Date,
-		required: true,
 	},
 	length: {
 		type: Number,
