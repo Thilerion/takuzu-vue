@@ -21,6 +21,8 @@ export class PuzzleData {
 		// if newly created, id is undefined and won't be added to database
 		// if retrieved from database however, id has a value
 		this.id = data.id ?? undefined;
+
+		this.flags = data.flags ?? {};
 	}
 
 	get isSaved() {

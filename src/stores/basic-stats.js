@@ -1,4 +1,4 @@
-import { puzzleHistoryTable } from "@/services/stats/db.js";
+import { puzzleHistoryTable, puzzleHistoryDb } from "@/services/stats/db.js";
 import { PuzzleData } from "@/services/stats/models.js";
 import { getGameEndStats } from "@/services/stats/process-stats.js";
 import { defineStore } from "pinia";
@@ -11,9 +11,32 @@ export const useBasicStatsStore = defineStore('basicStats', {
 		modalHidden: true
 	}),
 
-	getters: {},
+	getters: {
+		isSavedToDb: state => state.lastPuzzleEntry?.id != null,
+	},
 
 	actions: {
+		async markFavorite(value = true) {
+			if (!this.isSavedToDb) {
+				console.error('Cannot mark as favorite; not saved to database.');
+				return;
+			}
+			const { id } = this.lastPuzzleEntry;
+			const success = await puzzleHistoryDb.update(
+				id,
+				{
+					'flags.favorite': value ? 1 : 0
+				}
+			);
+			if (success) {
+				const currentFlags = this.lastPuzzleEntry.flags ?? {};
+				this.lastPuzzleEntry.flags = {
+					...currentFlags,
+					favorite: value ? 1 : 0
+				}
+			}
+			return success;
+		},
 		async addFinishedPuzzleToHistory(puzzleState) {
 			const historyEntry = PuzzleData.fromPuzzleState(puzzleState);
 
@@ -30,9 +53,9 @@ export const useBasicStatsStore = defineStore('basicStats', {
 			try {
 				const id = await puzzleHistoryTable.add(historyEntry);
 				historyEntry.id = id;
+				return historyEntry;
 			} catch {
 				console.warn('Could not save history entry!');
-			} finally {
 				return historyEntry;
 			}
 		},
