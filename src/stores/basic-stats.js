@@ -22,12 +22,19 @@ export const useBasicStatsStore = defineStore('basicStats', {
 				return historyEntry;
 			}
 
-			await this.addFinishedPuzzleToDb(historyEntry);
+			const historyEntryUpdated = await this.addFinishedPuzzleToDb(historyEntry);
 			console.log('Puzzle saved to history');
-			return historyEntry;
+			return historyEntryUpdated;
 		},
-		addFinishedPuzzleToDb(historyEntry) {
-			return puzzleHistoryTable.add(historyEntry);
+		async addFinishedPuzzleToDb(historyEntry) {
+			try {
+				const id = await puzzleHistoryTable.add(historyEntry);
+				historyEntry.id = id;
+			} catch {
+				console.warn('Could not save history entry!');
+			} finally {
+				return historyEntry;
+			}
 		},
 		async getGameEndStats(historyEntry) {
 			const { width, height, difficulty } = historyEntry;

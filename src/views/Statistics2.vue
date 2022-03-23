@@ -31,7 +31,7 @@ import { processDateStreaks } from '../services/stats2/streaks.js';
 import { storeToRefs } from 'pinia';
 
 const statsStore = useStatisticsStore2();
-const { isLoading, initialized } = storeToRefs(statsStore);
+const { isLoading } = storeToRefs(statsStore);
 const updateStats = () => initAndUpdate(true);
 
 onBeforeMount(() => {
@@ -48,7 +48,7 @@ async function initAndUpdate(forceUpdate = false) {
 	items[items.length - 3].dateStr = '2022-3-14'; */
 	const dates = getUniqueDatesFromItems(items);
 
-	const streaks = processDateStreaks(dates.map(d => d.date))
+	const streaks = processDateStreaks(dates.map(d => d.date));
 }
 </script>
 

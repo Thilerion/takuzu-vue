@@ -6,7 +6,8 @@ export class PuzzleData {
 		if (data == null) throw new Error('No data in PuzzleData constructor.');
 		if (typeof data.initialBoard !== 'string') {
 			throw new Error('InitialBoard and SolutionBoard must both be strings. Convert them first before creating puzzleData. Should probably use PuzzleData.fromGameState');
-		}
+		}	
+		
 		this.width = data.width;
 		this.height = data.height;
 
@@ -16,6 +17,14 @@ export class PuzzleData {
 
 		this.date = data.date;
 		this.timeElapsed = data.timeElapsed;
+
+		// if newly created, id is undefined and won't be added to database
+		// if retrieved from database however, id has a value
+		this.id = data.id ?? undefined;
+	}
+
+	get isSaved() {
+		return this.id != null;
 	}
 
 	static fromGameState(gameState) {
