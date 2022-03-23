@@ -26,6 +26,15 @@ module.exports = {
 			fontSize: {
 				'xxs': ['0.625rem', '0.875rem'],
 			},
+			height: {
+				'vh': 'var(--vh-total)'
+			},
+			maxHeight: {
+				'vh': 'var(--vh-total)'
+			},
+			minHeight: {
+				'vh': 'var(--vh-total)'
+			},
 			colors: {
 				gray: {
 					150: 'rgb(242, 242, 243)'

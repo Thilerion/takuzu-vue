@@ -1,6 +1,5 @@
 import { SimpleBoard } from '../../lib/board/Board.js';
 
-import { SaveGameData } from '@/services/save-game.js';
 import { calculateGridCounts, calculateLineCounts } from './line-counts.js';
 import { EMPTY, ONE, ZERO } from '@/lib/constants.js';
 import { initPregenWorker } from '@/workers/pregen-puzzles.js';
@@ -12,6 +11,7 @@ import { usePuzzleHistoryStore } from '@/stores/puzzle-history.js';
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
 import { requestPuzzle } from '@/services/create-puzzle.js';
 import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
+import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
 
 const defaultState = () => ({
 	// game config
@@ -30,6 +30,9 @@ const defaultState = () => ({
 	rowCounts: [],
 	colCounts: [],
 	gridCounts: {},
+
+	// state relevant for recap/puzzleHistory/stats
+	cheatsUsed: false,
 
 	// play/ui state
 	initialized: false,
@@ -108,6 +111,8 @@ const puzzleModule = {
 		setFinished: state => state.finished = true,
 		setPaused: (state, val) => state.paused = val,
 
+		setCheatUsed: state => state.cheatsUsed = true,
+
 		// puzzle actions
 		setValue: (state, { x, y, value, prevValue }) => {
 			state.board.assign(x, y, value);
@@ -142,24 +147,35 @@ const puzzleModule = {
 			usePuzzleMistakesStore().removeFromCurrentMarkedCells(`${x},${y}`);
 			usePuzzleHintsStore().showHint = false;
 		},
-		toggle({ state, dispatch }, { x, y, value, prevValue }) {
+		makeMove({ state, dispatch }, { x, y, value, prevValue }) {
 			if (!prevValue) {
 				prevValue = state.board.grid[y][x];
 			}
-			if (!value) {
-				const settingsStore = useSettingsStore();
-				const toggleFirst = settingsStore.toggleMode;
-				if (prevValue === EMPTY) {
-					value = unref(toggleFirst);
-				} else if (prevValue === ZERO) {
-					value = toggleFirst === ZERO ? ONE : EMPTY;
-				} else if (prevValue === ONE) {
-					value = toggleFirst === ZERO ? EMPTY : ZERO;
-				}
+			if (prevValue === value) {
+				console.log('Previous value is equal to current value. This move will not be committed.');
+				return;
 			}
 			dispatch('setValue', { x, y, value, prevValue });
 			const puzzleHistory = usePuzzleHistoryStore();
 			puzzleHistory.addMove({ x, y, value: prevValue, nextValue: value });
+		},
+		toggle({ state, dispatch }, { x, y, value, prevValue }) {
+			if (!value) {
+				const previous = prevValue ?? state.board.grid[y][x];
+				const settingsStore = useSettingsStore();
+				const toggleFirst = settingsStore.toggleMode;
+				if (previous === EMPTY) {
+					value = unref(toggleFirst);
+				} else if (previous === ZERO) {
+					value = toggleFirst === ZERO ? ONE : EMPTY;
+				} else if (previous === ONE) {
+					value = toggleFirst === ZERO ? EMPTY : ZERO;
+				}
+				dispatch('makeMove', {
+					x, y, value, prevValue
+				});
+			}
+			
 		},
 		undoLastMove({ dispatch }) {
 			const puzzleHistory = usePuzzleHistoryStore();
@@ -203,7 +219,7 @@ const puzzleModule = {
 				throw new Error(e);
 			}
 		},
-		finishPuzzle({ state, getters, commit, dispatch }) {
+		async finishPuzzle({ state, getters, commit, dispatch }) {
 			commit('setFinished');
 			const timer = usePuzzleTimer();
 			timer.pause();
@@ -215,18 +231,26 @@ const puzzleModule = {
 			const finishedPuzzleState = {
 				...state, timeElapsed, assistance: {
 					checkData: checkAssistanceData,
-					hintData: hintAssistanceData
+					hintData: hintAssistanceData,
+					cheatsUsed: state.cheatsUsed
 				}
 			};
 			console.log({ ...finishedPuzzleState });
 			
 			const basicStatsStore = useBasicStatsStore();
 
-			return basicStatsStore.addFinishedPuzzleToHistory(finishedPuzzleState).then(historyEntry => {
-				console.log('Puzzle saved to history.');
-				SaveGameData.deleteSavedGame();
+			try {
+				const historyEntry = await basicStatsStore.addFinishedPuzzleToHistory(finishedPuzzleState);
 				return historyEntry;
-			})	
+			} catch (e) {
+				console.warn('Could not add finished puzzle to history...');
+				console.warn(e);
+				return null;
+			} finally {
+				console.log('deleting saved puzzle');
+				const { deleteSavedPuzzle } = useSavedPuzzle();
+				deleteSavedPuzzle();
+			}
 		},
 
 		reset({ state, commit }) {
@@ -243,7 +267,8 @@ const puzzleModule = {
 			usePuzzleMistakesStore().reset();
 		},
 		restartPuzzle({ state, commit }) {
-			SaveGameData.deleteSavedGame();
+			const { deleteSavedPuzzle } = useSavedPuzzle();
+			deleteSavedPuzzle();
 			const { initialBoard, solution } = state;
 			const board = initialBoard.copy();
 			commit('setAllBoards', { board, solution, initialBoard });
@@ -273,15 +298,16 @@ const puzzleModule = {
 			const { initialBoard, board, solution, width, height, difficulty } = state;
 			const puzzleHistory = usePuzzleHistoryStore();
 			const moveList = await puzzleHistory.exportMoveHistory();
-			
-			const saveGameData = new SaveGameData({
+
+			const { savePuzzle } = useSavedPuzzle();
+			savePuzzle({
 				moveList, timeElapsed, initialBoard, board, solution, width, height, difficulty
 			});
-			saveGameData.saveToLocalStorage();
 		},
 		loadSavedPuzzle({ commit, dispatch }) {
 			dispatch('reset');
-			const saveData = SaveGameData.loadFromLocalStorage();
+			const { savedPuzzle: currentSaved } = useSavedPuzzle();
+			const saveData = currentSaved.value;
 
 			// import moveLi.jsst
 			const { moveList } = saveData;
@@ -295,10 +321,12 @@ const puzzleModule = {
 			// commit('timer/setInitialTimeElapsed', timeElapsed);
 			// start timer?
 
-			const initialBoard = SimpleBoard.fromString(saveData.initialBoard);
-			const board = SimpleBoard.fromString(saveData.board);
-			const solution = SimpleBoard.fromString(saveData.solution);
-			commit('setAllBoards', { initialBoard, board, solution });
+			const { initialBoard, solution, board } = saveData;
+
+			const initialBoard2 = SimpleBoard.fromString(initialBoard);
+			const board2 = SimpleBoard.fromString(board);
+			const solution2 = SimpleBoard.fromString(solution);
+			commit('setAllBoards', { initialBoard: initialBoard2, board: board2, solution: solution2 });
 
 			const puzzleHistory = usePuzzleHistoryStore();
 			puzzleHistory.importMoveHistory(moveList)

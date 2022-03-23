@@ -79,6 +79,12 @@ body {
 	min-height: var(--vh-total);
 }
 
+.root.hide-overflow {
+	max-height: var(--vh-total);
+	max-width: 100vw;
+	overflow: hidden;
+}
+
 
 #overlay-wrapper {
 	height: var(--vh-total);

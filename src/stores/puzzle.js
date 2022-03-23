@@ -1,5 +1,5 @@
 import { EMPTY } from "@/lib/constants.js";
-import { SaveGameData } from "@/services/save-game.js";
+import { useSavedPuzzle } from "@/services/useSavedPuzzle.js";
 import { defineStore } from "pinia";
 import { useBasicStatsStore } from "./basic-stats.js";
 import { usePuzzleHintsStore } from "./puzzle-hinter.js";
@@ -26,6 +26,9 @@ export const usePuzzleStore = defineStore('puzzle', {
 		rowCounts: [],
 		colCounts: [],
 		gridCounts: {},
+
+		// state relevant for recap/puzzleHistory/stats
+		cheatsUsed: false,
 
 		// play/ui state
 		initialized: false,
@@ -134,7 +137,8 @@ export const usePuzzleStore = defineStore('puzzle', {
 
 			return basicStatsStore.addFinishedPuzzleToHistory(finishedPuzzleState).then(historyEntry => {
 				console.log('Puzzle saved to history.');
-				SaveGameData.deleteSavedGame();
+				const { deleteSavedPuzzle } = useSavedPuzzle();
+				deleteSavedPuzzle();
 				return historyEntry;
 			})
 		}

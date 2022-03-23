@@ -80,7 +80,6 @@ import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue
 import PuzzleFinishedModal from '@/components/gameboard/PuzzleRecapTransition.vue';
 import PuzzleHintWrapper from '@/components/gameboard/PuzzleHintWrapper.vue';
 
-import { hasCurrentSavedGame } from '@/services/save-game.js';
 import { usePageVisibility } from '@/composables/use-page-visibility.js';
 import { usePuzzleWakeLock } from '@/composables/use-wake-lock.js';
 
@@ -94,6 +93,7 @@ import { usePuzzleHistoryStore } from '@/stores/puzzle-history.js';
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
 import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
 import { computed } from 'vue';
+import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
 
 export default {
 	components: {
@@ -123,6 +123,8 @@ export default {
 
 		const wakeLock = usePuzzleWakeLock();
 
+		const { hasCurrentSavedGame } = useSavedPuzzle();
+
 		return { 
 			windowHidden: hidden,
 			showLineInfo, showBoardCoordinates, showBoardLineCounts, showRulers,
@@ -131,7 +133,8 @@ export default {
 			basicStatsStore, puzzleHistoryStore, getHint,
 			userCheckErrors: (boardStr) => puzzleMistakesStore.userCheckErrors(boardStr),
 			autoCheckErrors: () => puzzleMistakesStore.autoCheckFinishedWithMistakes(),
-			wakeLock
+			wakeLock,
+			hasCurrentSavedGame
 		};
 	},
 	data() {
@@ -299,7 +302,7 @@ export default {
 	},
 	beforeMount() {
 		if (!this.$store.state.puzzle.initialized) {
-			if (hasCurrentSavedGame()) {
+			if (this.hasCurrentSavedGame.value) {
 				this.$store.dispatch('puzzle/loadSavedPuzzle');
 				return;
 			}
@@ -309,7 +312,9 @@ export default {
 	},
 	beforeRouteEnter(to, from, next) {
 		if (!store.state.puzzle.initialized) {
-			if (hasCurrentSavedGame()) {
+			const { hasCurrentSavedGame } = useSavedPuzzle();
+			console.log({ hasCurrentSavedGame });
+			if (hasCurrentSavedGame.value) {
 				store.dispatch('puzzle/loadSavedPuzzle');
 				return next();
 			}

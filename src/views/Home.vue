@@ -5,25 +5,27 @@
 		<div class="flex flex-col title-wrapper justify-center bg-opacity-20 pt-12">
 			<app-title/>
 		</div>
-		<MainMenuButtons class="menu-wrapper relative" :can-continue="canContinue" />
+		<MainMenuButtons class="menu-wrapper relative" :can-continue="canContinue" :save-data="currentSaved" />
 	</div>
 </template>
 
 <script>
-import { hasCurrentSavedGame } from '@/services/save-game.js';
 import AppTitle from '@/components/AppTitle.vue';
 import MainMenuButtons from '@/components/MainMenuButtons.vue';
+import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
 
 export default {
-	components: { AppTitle, MainMenuButtons },
-	data() {
+	setup() {
+		const { savedPuzzle,
+		hasCurrentSavedGame } = useSavedPuzzle();
+		console.log({ hasCurrentSaved: hasCurrentSavedGame.value});
+
 		return {
-			canContinue: null,
+			canContinue: hasCurrentSavedGame,
+			currentSaved: savedPuzzle
 		}
 	},
-	beforeMount() {
-		this.canContinue = hasCurrentSavedGame();
-	}
+	components: { AppTitle, MainMenuButtons },
 };
 </script>
 
