@@ -1,4 +1,5 @@
 import { getAllHistoryItems, getPuzzlesSolved } from "@/services/stats/data-handling.js";
+import { puzzleHistoryDb } from "@/services/stats/db.js";
 import { formatBasicSortableDateKey } from "@/utils/date.utils.js";
 import { defineStore } from "pinia";
 import { shallowReactive } from "vue";
@@ -20,6 +21,20 @@ export const useStatisticsStore2 = defineStore('statistics2', {
 	actions: {
 		setHistoryItems(items) {
 			this.historyItems = shallowReactive(items);
+		},
+		async markFavorite(id, value) {
+			const dbVal = value ? 1 : 0;
+			const success = await puzzleHistoryDb.update(id, {
+				'flags.favorite': dbVal
+			});
+			if (success) {
+				const item = this.historyItems.find(i => i.id === id);
+				item.flags = {
+					...item.flags,
+					favorite: value
+				}
+			}
+			return success;
 		},
 		setInitialized(value) {
 			if (!value) {

@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="bg-white p-4 py-3 text-sm flex flex-col"
+		class="bg-white p-4 py-3 text-sm flex flex-col w-full"
 	>
 		<div class="flex flex-row items-center justify-between pb-2">
 			<div class="text-gray-500">{{dateFormatted}}</div>
@@ -63,18 +63,21 @@ const props = defineProps({
 	timeElapsed: Number
 })
 
+const emit = defineEmits(['favorite']);
+
 const {difficulty, dimensions, flags, date, timeElapsed} = toRefs(props);
 
 const forcedFavorite = ref(null);
 const isFavorite = computed(() => {
 	if (forcedFavorite.value != null) return forcedFavorite.value;
-	return flags?.favorite ?? false;
+	const favFlag = flags.value?.favorite;
+	return !!favFlag;
 })
 const toggleFavorite = () => {
-	if (isFavorite.value) {
-		forcedFavorite.value = false;
-	} else forcedFavorite.value = true;
-	console.warn('TODO: mark favorite in store and in database.');
+	const value = isFavorite.value ? !isFavorite.value : !forcedFavorite.value;
+	forcedFavorite.value = value;
+
+	emit('favorite', value);
 }
 
 const dateFormatted = computed(() => {

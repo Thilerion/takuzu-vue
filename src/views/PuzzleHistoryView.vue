@@ -13,20 +13,22 @@
 			<div class="flex flex-row">
 				<button @click="sortBy = 'newest'">Newest</button>
 				<button @click="sortBy = 'oldest'">Oldest</button>
+				<label>Only favorites <input type="checkbox" v-model="filters.onlyFavorites"></label>
 			</div>
 			<div ref="anchorEl"></div>
-			<BasePagination v-model="page" :length="clonedItems.length" :page-size="perPage" />
-				<div class="list divide-y border-y">
+			<BasePagination v-model="page" :length="filteredItems.length" :page-size="perPage" />
+				<div class="list divide-y border-y relative">
 					<transition-group name="list-change">
 					<HistoryListItem
 						v-for="item in shownItems"
 						:key="item.id"
 						v-bind="item"
+						@favorite="(val) => markFavorite(item.id, val)"
 					></HistoryListItem>
 					</transition-group>
 				</div>
 		</div>
-		<BasePagination v-model="page" :length="clonedItems.length" :page-size="perPage" />
+		<BasePagination v-model="page" :length="filteredItems.length" :page-size="perPage" />
 	</div>
 </template>
 
@@ -58,7 +60,7 @@ function sortItems(items, sortBy = 'newest') {
 import PageHeader from '../components/global/base-layout/PageHeader.vue';
 import { useStatisticsStore2 } from '@/stores/statistics2.js';
 import { storeToRefs } from 'pinia';
-import { ref, computed, watchEffect, watch, onBeforeMount } from 'vue';
+import { ref, computed, watchEffect, watch, onBeforeMount, reactive } from 'vue';
 import HistoryListItem from '@/components/statistics2/HistoryListItem.vue';
 import BasePagination from '@/components/global/BasePagination.vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -72,10 +74,15 @@ const { historyItems } = storeToRefs(statsStore);
 
 const clonedItems = ref([...historyItems.value]);
 
+
 const sortBy = ref('newest');
 
+const filters = reactive({
+	onlyFavorites: false
+})
+
 watch([historyItems, sortBy], ([value, sortBy]) => {
-	clonedItems.value = sortItems([...value], sortBy);
+	clonedItems.value = sortItems(value, sortBy);
 })
 
 const page = ref(0);
@@ -121,11 +128,28 @@ watch(page, () => {
 		})
 	}
 })
+const filteredItems = computed(() => {
+	return clonedItems.value.filter(item => {
+		if (filters.onlyFavorites) {
+			const isFav = !!(item?.flags?.favorite);
+			if (!isFav) return false;
+		}
+		return true;
+	})
+})
+
+watch(filters, () => {
+	page.value = 0;
+}, { deep: true });
 
 const shownItems = computed(() => {
 	const idx = page.value * perPage.value;
-	return clonedItems.value.slice(idx, idx + perPage.value);
+	return filteredItems.value.slice(idx, idx + perPage.value);
 })
+
+const markFavorite = async (id, value) => {
+	statsStore.markFavorite(id, value);
+}
 </script>
 
 <style scoped>
