@@ -1,6 +1,9 @@
 <template>
 	<div>
 		<StatsActivity />
+		<router-link
+			to="/history"
+		>View puzzle history</router-link>
 		<div>
 			<StatsOverview v-if="false" />
 		</div>
