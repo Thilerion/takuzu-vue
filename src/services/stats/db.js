@@ -5,7 +5,29 @@ const db = new Dexie('StatsDB');
 db.version(2).stores({
 	puzzleHistory: "++id,[width+height],difficulty,date,timeElapsed,[width+height+difficulty]"
 });
+db.version(3).stores({
+	puzzleHistory: "++id,[width+height],difficulty,timestamp,localDateStr,timeElapsed,[width+height+difficulty],flags.favorite"
+}).upgrade(tx => {
+	return tx.puzzleHistory.toCollection().modify(item => {
+		statsDbV3UpgradeItem(item);
+	})
+})
 db.open();
+
+function statsDbV3UpgradeItem(item) {
+	const timestamp = item.date;
+	const asDate = new Date(timestamp);
+	const localDateStr = [
+		`${asDate.getFullYear()}`,
+		`00${asDate.getMonth() + 1}`.slice(-2),
+		`00${asDate.getDate()}`.slice(-2),
+	].join('-');
+
+	item.timestamp = timestamp;
+	item.localDateStr = localDateStr;
+
+	item.flags ??= {};
+}
 
 function clear() {
 	return db.puzzleHistory.clear();
@@ -17,7 +39,9 @@ function dbExport(progressCb) {
 		progressCallback: progressCb
 	});
 }
-function dbImport(blob, progressCb) {
+
+// import into an existing db, as opposed to importing and then opening the db
+function dbImportInto(blob, progressCb) {
 	return importInto(db, blob, {
 		clearTablesBeforeImport: true,
 		filter: table => table === 'puzzleHistory',
@@ -28,7 +52,7 @@ function dbImport(blob, progressCb) {
 		chunkSizeBytes: 1024 * 1024 * 128,
 	})
 }
-function itemsImport(blob) {
+function itemsImportInto(blob) {
 	// import items from blob instead of entire db
 	// better when database version has changed since the export
 	throw new Error('TODO: not yet implemented');
@@ -109,9 +133,9 @@ export default db;
 
 export const puzzleHistoryDb = {
 	dbExport,
-	dbImport,
+	dbImportInto,
 	dbImportPeek,
-	itemsImport,
+	itemsImportInto,
 	
 	clear,
 	add,

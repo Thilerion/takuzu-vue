@@ -1,6 +1,35 @@
 import { formatBasicSortableDateKey } from "@/utils/date.utils.js";
 import { dimensionsToBoardType } from "@/config.js";
 
+// TODO: use this class instead of puzzleData
+export class HistoryDbEntry {
+	constructor({
+		width, height, difficulty,
+		initialBoard, solution,
+
+		timeElapsed, timestamp, localDateStr,
+		flags = {},
+
+		id,
+	}) {
+
+		this.width = width;
+		this.height = height;
+		this.difficulty = difficulty;
+
+		this.initialBoard = initialBoard;
+		this.solution = solution;
+		this.timeElapsed = timeElapsed;
+
+		this.timestamp = timestamp;
+		this.localDateStr = localDateStr;
+
+		this.flags = { ...flags };
+
+		this.id = id;
+	}
+}
+
 export class PuzzleData {
 	constructor(data) {
 		if (data == null) throw new Error('No data in PuzzleData constructor.');
