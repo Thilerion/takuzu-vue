@@ -58,7 +58,8 @@
 				</label>
 			</div>
 			<BasePagination :modelValue="page" @update:modelValue="setActivePage" :length="currentItems.length" :page-size="pageSize" />
-				<div class="list divide-y border-y relative" v-if="shownItems.length">
+			<transition name="fade" mode="out-in">
+				<div class="list divide-y border-y relative" v-if="shownItems.length" :key="JSON.stringify({ dataOptions })">
 					<HistoryListItem
 						v-for="item in shownItems"
 						:key="item.id"
@@ -66,8 +67,9 @@
 						@favorite="(val) => markFavorite(item.id, val)"
 					></HistoryListItem>
 				</div>
-				<div class="py-4 text-lg px-8 text-center" v-else-if="historyItems.length">No puzzles found with current filters!</div>
-				<div class="py-4 text-lg px-8 text-center" v-else>You haven't played any puzzles yet!</div>
+				<div class="py-4 text-lg px-8 text-center" v-else-if="historyItems.length" key="none-filtered">No puzzles found with current filters!</div>
+				<div class="py-4 text-lg px-8 text-center" key="none" v-else>You haven't played any puzzles yet!</div>
+			</transition>
 		</div>
 		<BasePagination :modelValue="page" @update:modelValue="setActivePage" :length="currentItems.length" :page-size="pageSize" />
 	</div>
@@ -251,6 +253,15 @@ const markFavorite = async (id, value) => {
 </script>
 
 <style scoped>
+.fade-enter-active {
+	transition: opacity .15s ease;
+}
+.fade-leave-active {
+	transition: opacity .05s;
+}
+.fade-enter-from, .fade-leave-to {
+	opacity: 0;
+}
 .sort-btn {
 	@apply text-sm px-3 py-2 bg-white border rounded;
 }
