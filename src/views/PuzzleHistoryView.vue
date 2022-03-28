@@ -58,7 +58,7 @@
 				</label>
 			</div>
 			<BasePagination :modelValue="page" @update:modelValue="setActivePage" :length="currentItems.length" :page-size="pageSize" />
-				<div class="list divide-y border-y relative">
+				<div class="list divide-y border-y relative" v-if="shownItems.length">
 					<HistoryListItem
 						v-for="item in shownItems"
 						:key="item.id"
@@ -66,6 +66,8 @@
 						@favorite="(val) => markFavorite(item.id, val)"
 					></HistoryListItem>
 				</div>
+				<div class="py-4 text-lg px-8 text-center" v-else-if="historyItems.length">No puzzles found with current filters!</div>
+				<div class="py-4 text-lg px-8 text-center" v-else>You haven't played any puzzles yet!</div>
 		</div>
 		<BasePagination :modelValue="page" @update:modelValue="setActivePage" :length="currentItems.length" :page-size="pageSize" />
 	</div>

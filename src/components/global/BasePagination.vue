@@ -11,7 +11,7 @@
 
 		<div
 			class="flex-1 text-center"
-		>Page {{modelValue + 1}} of {{maxPage + 1}}</div>
+		>Page {{modelValue + 1}} of {{displayMaxPage}}</div>
 
 		<div class="w-10"
 		><button
@@ -44,6 +44,10 @@ const emit = defineEmits(['update:modelValue']);
 
 const maxPage = computed(() => {
 	return Math.ceil(props.length / props.pageSize) - 1;
+})
+const displayMaxPage = computed(() => {
+	if (maxPage.value < 1) return 1;
+	return maxPage.value;
 })
 
 const goToPage = (value) => {
