@@ -56,6 +56,10 @@
 						>{{value}}</option>
 					</select>
 				</label>
+				<label
+					class="text-sm flex flex-row items-center gap-3"
+				><input type="checkbox" v-model="dataOptions.filters.favoritesOnly"><span>Only favorites</span>
+				</label>
 			</div>
 			<BasePagination :modelValue="page" @update:modelValue="setActivePage" :length="currentItems.length" :page-size="pageSize" />
 			<transition name="fade" mode="out-in">
@@ -129,6 +133,9 @@ function resetCurrentItems(items, { sortBy, filters }) {
 	const sortFn = sortFns[sortBy];
 	
 	const filterFns = [];
+	if (filters.favoritesOnly) {
+		filterFns.push((item) => !!(item?.flags?.favorite));
+	}
 	if (filters.boardSize && (filters.boardSize in boardSizeFilterFns)) {
 		filterFns.push(boardSizeFilterFns[filters.boardSize]);
 	}
@@ -160,7 +167,8 @@ const dataOptions = reactive({
 	sortBy: 'newest',
 	filters: {
 		boardSize: 'All',
-		difficulty: 'All'
+		difficulty: 'All',
+		favoritesOnly: false
 	},
 	page: 0,
 	pageSize: 15
@@ -229,6 +237,12 @@ const setDifficultyFilter = (value) => {
 	currentItems.value = resetCurrentItems(historyItems.value, dataOptions);
 }
 
+watch(() => dataOptions.filters.favoritesOnly, (val, prev) => {
+	if (val === prev) return;
+	setActivePage(0);
+	currentItems.value = resetCurrentItems(historyItems.value, dataOptions);
+})
+
 // TODO: set router query on dataOptions change
 
 const anchorEl = ref(null);
@@ -269,7 +283,7 @@ const markFavorite = async (id, value) => {
 	@apply font-bold;
 }
 
-.select-inputs label > span {
+.select-inputs label > span:first-child {
 	@apply w-20;
 }
 </style>
