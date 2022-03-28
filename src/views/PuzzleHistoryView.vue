@@ -41,6 +41,21 @@
 						>{{value}}</option>
 					</select>
 				</label>
+				<label
+					class="text-sm flex flex-row items-center gap-3"
+				><span>Difficulty:</span>
+					<select
+						:value="dataOptions.filters.difficulty"
+						@change="(ev) => setDifficultyFilter(ev.target.value)"
+						class="form-select text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-1 text-sm"
+					>
+						<option
+							v-for="value in difficultyFilterValues"
+							:key="value"
+							:value="value"
+						>{{value}}</option>
+					</select>
+				</label>
 			</div>
 			<BasePagination :modelValue="page" @update:modelValue="setActivePage" :length="currentItems.length" :page-size="pageSize" />
 				<div class="list divide-y border-y relative">
@@ -84,17 +99,6 @@ function sortItems(items, sortBy = 'newest') {
 	return items;
 }
 
-function resetCurrentItems(items, { sortBy, filters }) {
-	const sortFn = sortFns[sortBy];
-	
-	// TODO: create filter functions
-	const filterFns = [];
-
-	return items.filter(item => {
-		return filterFns.every(filterFn => filterFn(item));
-	}).sort(sortFn);
-}
-
 const boardSizeFilterValues = [
 	['All'],
 	[6, 6], [8, 8], [10, 10], [12, 12], [14, 14],
@@ -104,6 +108,34 @@ const boardSizeFilterValues = [
 const difficultyFilterValues = [
 	'All', 1, 2, 3, 4, 5
 ];
+
+const boardSizeFilterFns = boardSizeFilterValues.reduce((acc, val) => {
+	const fn = val === 'All' ? () => true : (item) => item.dimensions === val;
+	acc[val] = fn;
+	return acc;
+}, {});
+
+const difficultyFilterFns = difficultyFilterValues.reduce((acc, val) => {
+	const fn = val === 'All' ? () => true : (item) => item.difficulty === val;
+	acc[val] = fn;
+	return acc;
+}, {})
+
+function resetCurrentItems(items, { sortBy, filters }) {
+	const sortFn = sortFns[sortBy];
+	
+	const filterFns = [];
+	if (filters.boardSize && (filters.boardSize in boardSizeFilterFns)) {
+		filterFns.push(boardSizeFilterFns[filters.boardSize]);
+	}
+	if (filters.difficulty && (filters.difficulty in difficultyFilterFns)) {
+		filterFns.push(difficultyFilterFns[filters.difficulty]);
+	}
+
+	return items.filter(item => {
+		return filterFns.every(filterFn => filterFn(item));
+	}).sort(sortFn);
+}
 
 </script>
 
@@ -123,7 +155,8 @@ const { historyItems } = storeToRefs(statsStore);
 const dataOptions = reactive({
 	sortBy: 'newest',
 	filters: {
-		boardSize: 'All'
+		boardSize: 'All',
+		difficulty: 'All'
 	},
 	page: 0,
 	pageSize: 15
@@ -181,7 +214,15 @@ const setBoardSizeFilter = (value) => {
 
 	setActivePage(0);
 	dataOptions.filters.boardSize = value;
-	console.log('TODO: filter here');
+	currentItems.value = resetCurrentItems(historyItems.value, dataOptions);
+}
+const setDifficultyFilter = (value) => {
+	const current = dataOptions.filters.difficulty;
+	if (value === current) return;
+
+	setActivePage(0);
+	dataOptions.filters.difficulty = value;
+	currentItems.value = resetCurrentItems(historyItems.value, dataOptions);
 }
 
 // TODO: set router query on dataOptions change
