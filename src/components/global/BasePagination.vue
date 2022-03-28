@@ -1,5 +1,5 @@
 <template>
-	<div class="flex flex-row text-sm py-3 gap-4 justify-center items-center px-2 mt-2">
+	<div class="flex flex-row text-sm py-2 gap-4 justify-center items-center px-2">
 
 		<div class="w-10"><button class="bg-white border rounded h-8 px-2" @click="goToPage(-Infinity)" v-if="modelValue > 0">First</button></div>
 
