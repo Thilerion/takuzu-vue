@@ -49,10 +49,11 @@ export default {
 		})
 
 		const elementType = isLocked.value ? 'div' : 'button';
+		const eventName = isLocked.value ? undefined : 'pointerdown';
+
 		const handleCellToggle = () => {
 			emit('toggle', { x: x.value, y: y.value, value: cellValue.value });
 		}
-		const eventName = isLocked.value ? undefined : 'pointerdown';
 
 		return { elementType, handleCellToggle, eventName, value: cellValue, gridStyles, locked: isLocked, incorrect };
 	}
