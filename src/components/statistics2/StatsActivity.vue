@@ -41,11 +41,11 @@ const streaks = computed(() => {
 
 <style scoped>
 .streak {
-	@apply flex flex-col justify-center items-center flex-1 px-2 pt-3 pb-4 gap-2;
+	@apply flex flex-col justify-center items-center flex-1 px-2 pt-2 pb-2 gap-2;
 }
 
 .streak-container {
-	@apply flex-1 flex flex-col items-center gap-4 pt-4 pb-2;
+	@apply flex-1 flex flex-col items-center gap-2 pt-3 pb-1;
 }
 
 .streak-container :deep(h2) {
@@ -53,7 +53,7 @@ const streaks = computed(() => {
 }
 
 .streak-container :deep(.streak-length) {
-	@apply aspect-square w-16 rounded-full flex items-center justify-center text-3xl leading-none font-extrabold;
+	@apply aspect-square w-14 rounded-full flex items-center justify-center text-2xl leading-none font-extrabold;
 }
 
 .streak-container :deep(.text) {

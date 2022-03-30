@@ -5,7 +5,7 @@
 			class="streak-length border-4"
 			:class="[streakLengthClasses]"
 		><span :class="{
-			'text-2xl': length >= 100
+			'text-xl': length >= 100
 		}">{{length}}</span></div>
 		<div class="text">{{currentStateText}}</div>
 	</section>
