@@ -13,6 +13,7 @@
 					class="streak-container"
 				></LongestStreak>
 			</div>
+			<MostRecentHistory />
 		</div>
 	</div>
 </template>
@@ -24,6 +25,7 @@ import { computed, inject } from 'vue';
 import StatsHeatmap from './StatsHeatmap.vue';
 import CurrentStreak from './streaks/CurrentStreak.vue';
 import LongestStreak from './streaks/LongestStreak.vue';
+import MostRecentHistory from './recent-puzzles/MostRecentHistory.vue';
 
 const items = inject('historyItems', () => [], true);
 

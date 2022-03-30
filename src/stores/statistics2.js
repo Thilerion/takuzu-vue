@@ -15,7 +15,9 @@ export const useStatisticsStore2 = defineStore('statistics2', {
 
 	getters: {
 		puzzlesSolved: state => state.historyItems.length,
-		noPuzzlesSolved: state => state.initialized && state.historyItems.length === 0
+		noPuzzlesSolved: state => state.initialized && state.historyItems.length === 0,
+
+		sortedByDate: state => [...state.historyItems].sort((a, b) => b.dateMs - a.dateMs)
 	},
 
 	actions: {
