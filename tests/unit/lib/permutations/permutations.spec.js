@@ -1,3 +1,4 @@
+import { expect, it, beforeEach, test, describe } from 'vitest';
 import { EMPTY, ONE, ZERO } from '../../../../src/lib/constants';
 import { getEmptyLinePermutations, getLinePermutations, getArrayPermutations, getValidLinePermutations } from '../../../../src/lib/permutations';
 
