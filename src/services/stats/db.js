@@ -1,3 +1,4 @@
+import { formatYYYYMMDD } from '@/utils/date.utils.js';
 import Dexie from 'dexie';
 import { exportDB, importInto, peakImportFile } from 'dexie-export-import';
 
@@ -16,12 +17,7 @@ db.open();
 
 function statsDbV3UpgradeItem(item) {
 	const timestamp = item.date;
-	const asDate = new Date(timestamp);
-	const localDateStr = [
-		`${asDate.getFullYear()}`,
-		`00${asDate.getMonth() + 1}`.slice(-2),
-		`00${asDate.getDate()}`.slice(-2),
-	].join('-');
+	const localDateStr = formatYYYYMMDD(timestamp);
 
 	item.timestamp = timestamp;
 	item.localDateStr = localDateStr;

@@ -23,6 +23,14 @@ export const formatBasicSortableDateKey = (date) => {
 		`00${d.getDate()}`.slice(-2),
 	].join('-');
 }
+export const formatYYYYMMDD = dateOrTimestamp => {
+	const date = new Date(dateOrTimestamp);
+	return [
+		`${date.getFullYear()}`,
+		`00${date.getMonth() + 1}`.slice(-2),
+		`00${date.getDate()}`.slice(-2),
+	].join('-');
+}
 
 export const getDateRange = (startDate, endDate = new Date()) => {
 	const arr = [];

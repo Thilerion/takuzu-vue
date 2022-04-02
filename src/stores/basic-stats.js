@@ -1,5 +1,5 @@
 import { puzzleHistoryTable, puzzleHistoryDb } from "@/services/stats/db.js";
-import { PuzzleData } from "@/services/stats/models.js";
+import { HistoryDbEntry } from "@/services/stats/models.js";
 import { getGameEndStats } from "@/services/stats/process-stats.js";
 import { defineStore } from "pinia";
 
@@ -38,9 +38,9 @@ export const useBasicStatsStore = defineStore('basicStats', {
 			return success;
 		},
 		async addFinishedPuzzleToHistory(puzzleState) {
-			const historyEntry = PuzzleData.fromPuzzleState(puzzleState);
+			const historyEntry = HistoryDbEntry.fromPuzzleState(puzzleState);
 
-			if (puzzleState.assistance.cheatsUsed) {
+			if (puzzleState.assistance.cheatsUsed && false) {
 				console.log('Cheats used; will not save entry to history.');
 				return historyEntry;
 			}

@@ -1,12 +1,12 @@
 import { puzzleHistoryTable, default as db } from './db.js';
-import { PuzzleData } from './models.js';
+import { HistoryDbEntry } from './models.js';
 import { getDailyStats, getDailyStreaks } from './process-stats.js';
 
 export * from './process-stats.js';
-export { PuzzleData, puzzleHistoryTable, db };
+export { HistoryDbEntry, puzzleHistoryTable, db };
 export { clearPuzzleHistory, exportPuzzleHistory, importPuzzleHistory } from './db.js';
 
-puzzleHistoryTable.mapToClass(PuzzleData);
+puzzleHistoryTable.mapToClass(HistoryDbEntry);
 
 // TODO: persistent storage (https://web.dev/persistent-storage/) to make sure data doesn't get deleted
 // even better would be to sync data somewhere (firebase?) but that is something for the future
