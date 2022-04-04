@@ -6,6 +6,7 @@ export { HistoryDbEntry };
 
 export class PuzzleStatisticData extends HistoryDbEntry {
 	constructor(data) {
+		console.warn('This class is deprecated; use the new version in stats2/db/models');
 		super(data);
 
 		this.boardType = dimensionsToBoardType(this.width, this.height);
@@ -22,14 +23,14 @@ export class PuzzleStatisticData extends HistoryDbEntry {
 	}
 
 	get dateStr() {
-		console.trace('DateStr is deprecated. Use localDateStr instead.');
+		// console.log('DateStr is deprecated. Use localDateStr instead.');
 		return this._dateStr;
 	}
 	set dateStr(val) {
 		this._dateStr = val;
 	}
 	get dateMs() {
-		console.trace('dateMs is deprecated. Use timestamp instead.');
+		// console.log('dateMs is deprecated. Use timestamp instead.');
 		return this._dateMs;
 	}
 	set dateMs(val) {

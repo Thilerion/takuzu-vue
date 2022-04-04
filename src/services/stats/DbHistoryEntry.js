@@ -2,6 +2,7 @@ import { formatYYYYMMDD } from "@/utils/date.utils.js";
 
 export class DbHistoryEntry {
 	constructor(data) {
+		console.log('db history entry used');
 
 		validateKeys(data);
 

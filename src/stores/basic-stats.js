@@ -54,7 +54,8 @@ export const useBasicStatsStore = defineStore('basicStats', {
 				const id = await StatsDB.add(historyEntry, true);
 				historyEntry.id = id;
 				return historyEntry;
-			} catch {
+			} catch (e) {
+				console.error(e);
 				console.warn('Could not save history entry!');
 				return historyEntry;
 			}

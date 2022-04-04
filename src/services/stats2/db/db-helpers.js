@@ -3,12 +3,12 @@ import { db } from "./initDb.js";
 const clearTableFromDb = (db, table) => db[table].clear();
 const addItemToDb = (db, table) => async (item, updateItemId = true) => {
 	const primaryKey = await db[table].add(item);
-	if (updateItemId) item.id = id;
+	if (updateItemId) item.id = primaryKey;
 	return primaryKey;
 }
 const updateItemInDb = (db, table) => async (primaryKey, modifiedKeys = {}) => {
 	const success = await db[table].update(primaryKey, modifiedKeys);
-	if (!updateSuccess) {
+	if (!success) {
 		console.warn(`Updating item with primary key "${primaryKey}" failed; probably because no item could be found with this key.`);
 	}
 	return !!success;
@@ -27,3 +27,8 @@ export const clearTable = (table = 'puzzleHistory') => clearTableFromDb(db, tabl
 export const add = addItemToDb(db, 'puzzleHistory');
 export const update = updateItemInDb(db, 'puzzleHistory');
 export const put = putItemInDb(db, 'puzzleHistory');
+
+export const getCount = (table = 'puzzleHistory') => db[table].count();
+export const getAll = async (table = 'puzzleHistory') => {
+	return await db[table].toArray();
+}

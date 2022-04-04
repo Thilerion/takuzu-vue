@@ -1,6 +1,7 @@
 import { puzzleHistoryTable } from "../stats2/db/index.js";
 import { PuzzleStatisticData } from "./models.js";
 
+// TODO: getSummaryKeys, getPuzzlesSolved, getAllHistoryItems are only used in old statistics store, can be deleted
 export const getPuzzlesSolved = () => puzzleHistoryTable.count();
 
 export const getAllHistoryItems = async () => {
