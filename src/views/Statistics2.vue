@@ -1,7 +1,7 @@
 <template>
 	<div class="flex flex-col">
-		<PageHeader hide-back>Statistics</PageHeader>
-		<div class="content flex-1">
+		<PageHeader hide-back small>Statistics</PageHeader>
+		<div class="content flex-1 pb-3">
 			<div
 				class="empty-content bg-white text-center mx-6 px-2 py-4 rounded-md shadow-md relative leading-loose mt-[8vh]"
 				v-if="isLoading || statsStore.noPuzzlesSolved"
@@ -22,13 +22,13 @@
 
 <script setup>
 import { onBeforeMount } from 'vue';
-import PageHeader from '../components/global/base-layout/PageHeader.vue';
 import StatsDbUtils from '../components/statistics2/StatsDbUtils.vue';
 import StatisticsContent from '../components/statistics2/StatisticsContent.vue';
 import { useStatisticsStore2 } from '@/stores/statistics2.js';
 import { getUniqueDatesFromItems } from '../services/stats2/dates.js';
 import { processDateStreaks } from '../services/stats2/streaks.js';
 import { storeToRefs } from 'pinia';
+import PageHeader from '@/components/global/base-layout/PageHeader.vue';
 
 const statsStore = useStatisticsStore2();
 const { isLoading } = storeToRefs(statsStore);

@@ -32,14 +32,12 @@ export default {
 			this.hideRootOverflow = true;
 		},
 		afterEnter(el) {
-			if (el.classList.contains('wrapper')) return;
 			this.hideRootOverflow = false;
 		},
 		beforeLeave() {
 			this.hideRootOverflow = true;
 		},
 		afterLeave(el) {
-			if (el.classList.contains('wrapper')) return;
 			this.hideRootOverflow = false;
 		}
 	},

@@ -175,7 +175,7 @@ const createHeatmapSquares = (itemsByDate, { interval, timeRange, playedRange })
 
 	--grid-gap: 6px;
 	--square-gap: 2px;
-	--square-size: 1.5rem;
+	--square-size: 1.25rem;
 
 	--num-weeks: v-bind('numWeeks');
 }
@@ -192,7 +192,7 @@ const createHeatmapSquares = (itemsByDate, { interval, timeRange, playedRange })
 
 .months {
 	grid-area: months;
-	@apply h-fit text-xs leading-relaxed align-middle box-content grid pt-2 text-gray-700;
+	@apply h-fit text-xxs leading-relaxed align-middle box-content grid pt-2 text-gray-700;
 	grid-template-rows: auto;
 	grid-template-columns: repeat(var(--num-weeks, 52), var(--square-size));
 	gap: var(--square-gap);
@@ -201,12 +201,12 @@ const createHeatmapSquares = (itemsByDate, { interval, timeRange, playedRange })
 .weekdays {
 	grid-area: weekdays;
 	width: max-content;
-	@apply bg-white sticky left-0 flex flex-col justify-end text-xs text-right w-6 z-50 text-gray-600/80;
+	@apply bg-white sticky left-0 flex flex-col justify-end text-xxs text-right w-6 z-50 text-gray-600/80;
 	gap: var(--square-gap);
 }
 .weekday {
 	height: var(--square-size);
-	@apply text-xs flex items-center justify-end pr-1;
+	@apply text-xxs flex items-center justify-end pr-1;
 	width: fit-content;
 	min-width: var(--square-size);
 	max-width: calc(var(--square-size) * 2.5); 
