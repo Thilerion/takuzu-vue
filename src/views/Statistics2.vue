@@ -11,7 +11,8 @@
 					<div>You haven't solved any puzzles yet! Go play some!</div>
 				</div>
 			</div>
-			<StatisticsContent v-else />
+			<StatisticsContent v-else-if="!statsStore.noPuzzlesSolved" />
+			<div v-else>Woops...</div>
 		</div>
 		<StatsDbUtils
 			@update-stats="updateStats"
@@ -25,8 +26,6 @@ import { onBeforeMount } from 'vue';
 import StatsDbUtils from '../components/statistics2/StatsDbUtils.vue';
 import StatisticsContent from '../components/statistics2/StatisticsContent.vue';
 import { useStatisticsStore2 } from '@/stores/statistics2.js';
-import { getUniqueDatesFromItems } from '../services/stats2/dates.js';
-import { processDateStreaks } from '../services/stats2/streaks.js';
 import { storeToRefs } from 'pinia';
 import PageHeader from '@/components/global/base-layout/PageHeader.vue';
 
@@ -41,14 +40,6 @@ onBeforeMount(() => {
 async function initAndUpdate(forceUpdate = false) {
 	// initialize, or reload if data might have changed
 	await statsStore.initialize({ forceUpdate });
-
-	const items = statsStore.historyItems;
-/* 	items[items.length - 1].dateStr = '2022-3-16';
-	items[items.length - 2].dateStr = '2022-3-15';
-	items[items.length - 3].dateStr = '2022-3-14'; */
-	const dates = getUniqueDatesFromItems(items);
-
-	const streaks = processDateStreaks(dates.map(d => d.date));
 }
 </script>
 

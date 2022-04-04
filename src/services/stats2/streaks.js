@@ -14,6 +14,14 @@ const createLongestStreak = (streaks = []) => {
 }
 
 const createCurrentStreak = (streaks = []) => {
+	if (!streaks.length) {
+		return {
+			length: 0,
+			from: null,
+			active: false
+		}
+	}
+
 	const mostRecent = streaks[streaks.length - 1];
 	const mostRecentDate = mostRecent[0];
 	const diff = Math.abs(differenceInCalendarDays(
