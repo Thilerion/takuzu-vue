@@ -5,7 +5,7 @@
 	>
 		<FastPuzzleCellWrapper
 			v-for="cell in cellData"
-			:key="cell.key"
+			:key="cell.listKey"
 			@toggle="cellClick"
 			v-bind="cell"
 			:value="grid[cell.y][cell.x]"
@@ -27,7 +27,7 @@ import PuzzleCellSymbols from '@/components/gameboard/PuzzleCellSymbols.vue';
 import PuzzleCellColored from '@/components/gameboard/PuzzleCellColored.vue';
 import PuzzleGridHighlights from '@/components/gameboard/PuzzleGridHighlights.vue';
 import { EMPTY } from '@/lib/constants.js';
-import { computed, provide, reactive, ref, toRef } from 'vue';
+import { computed, provide, reactive, ref, toRef, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useTapVibrate } from '@/composables/use-tap-vibrate.js';
 import FastPuzzleCellWrapper from './cell/FastPuzzleCellWrapper.vue';
@@ -67,7 +67,21 @@ export default {
 		const settingsStore = useSettingsStore();
 		const initialGrid = store.state.puzzle.initialBoard.grid;
 
+		const initialGridComp = computed(() => store.state.puzzle?.initialBoard?.grid);
+
 		let { cellData, nRows, nCols, nCells, lockedCells, coords } = useGridData(props.columns, props.rows, initialGrid);
+
+		const lockedCellsRef = ref(lockedCells);
+		const cellDataRef = ref(cellData);
+
+		watch(initialGridComp, (value) => {
+			// watch changes in case of restart: transformation is applied
+			if (value) {
+				const res = useGridData(props.columns, props.rows, value);
+				lockedCellsRef.value = res.lockedCells;
+				cellDataRef.value = res.cellData;
+			}
+		})
 
 		const { vibrationEnabled: shouldEnableVibration, vibrationStrength: vibrationStrengthSetting } = storeToRefs(settingsStore);
 
@@ -89,11 +103,11 @@ export default {
 		const incorrectMarkedCells = toRef(puzzleMistakesStore, 'currentMarked');
 
 		return {
-			cellData,
+			cellData: cellDataRef,
 			coords,
 			nRows,
 			nCols,
-			lockedCells,
+			lockedCells: lockedCellsRef,
 			numCells: nCells,
 			debouncedVibrate: vibrate,
 			vibrationEnabled,
@@ -115,8 +129,8 @@ export default {
 		},
 		incorrectCellKeys() {
 			const result = {};
-			this.incorrectMarkedCells.forEach(key => {
-				result[key] = true;
+			this.incorrectMarkedCells.forEach(xykey => {
+				result[xykey] = true;
 			})
 			return result;
 		},
@@ -158,10 +172,11 @@ function useGridData(width, height, initialGrid) {
 
 	for (let y = 0; y < height; y++) {
 		for (let x = 0; x < width; x++) {
-			const key =  `${x},${y}`;
 			const initialValue = initialGrid[y][x];
 			const locked = initialValue !== EMPTY;
-			staticCellData.push({ x, y, key, locked, initialValue });
+			const listKey = [x, y, locked ? 1 : 0, initialValue].join(',');
+			const key = `${x},${y}`;
+			staticCellData.push({ x, y, listKey, locked, initialValue, key });
 			coords.push({ x, y, key });
 			lockedCells[key] = locked;
 		}

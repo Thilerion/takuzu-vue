@@ -1,3 +1,4 @@
+import { expect, it, beforeEach, test, describe } from 'vitest';
 import { EMPTY, ONE, ZERO } from '../../../src/lib/constants';
 import { getCoordsForBoardSize, isValidCellDigit, areLinesEqual, deducePuzzleDimensionsFromLength, isExportString } from '../../../src/lib/utils';
 

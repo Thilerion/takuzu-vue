@@ -1,4 +1,6 @@
-const { sum, mean, percentile, minMax, median, iqr, stdDev, zScores } = require("@/utils/array.utils")
+import { expect, it, beforeEach, test, describe } from 'vitest';
+
+import { sum, mean, percentile, minMax, median, iqr, stdDev, zScores } from '@/utils/array.utils.js';
 
 describe('array statistics', () => {
 	test('sum array', () => {

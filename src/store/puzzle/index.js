@@ -12,6 +12,7 @@ import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
 import { requestPuzzle } from '@/services/create-puzzle.js';
 import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
 import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
+import { getRandomTransformation } from '@/lib/helpers/grid-transformations.js';
 
 const defaultState = () => ({
 	// game config
@@ -269,14 +270,24 @@ const puzzleModule = {
 		restartPuzzle({ state, commit }) {
 			const { deleteSavedPuzzle } = useSavedPuzzle();
 			deleteSavedPuzzle();
-			const { initialBoard, solution } = state;
-			const board = initialBoard.copy();
+
+			// get random board transformation
+			const {
+				board,
+				solution
+			} = getRandomTransformation({
+				board: state.initialBoard.copy(),
+				solution: state.solution.copy()
+			})
+			const initialBoard = board.copy();
 			commit('setAllBoards', { board, solution, initialBoard });
 			const puzzleHistory = usePuzzleHistoryStore();
 			puzzleHistory.reset();
 			usePuzzleHintsStore().reset();
 			usePuzzleMistakesStore().reset();
-			// TODO: reset timer as well?
+			const timer = usePuzzleTimer();
+			timer.reset();
+			timer.start();
 		},
 
 		startPuzzle({ state, commit }) {

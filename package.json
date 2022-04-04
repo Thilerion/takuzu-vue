@@ -11,7 +11,8 @@
     "deploy": "vite build && surge dist --domain https://takuzu-vue.surge.sh",
     "deploy:test": "vite build --mode beta && surge dist --domain https://takuzu-vue-test.surge.sh",
     "deploy:test2": "vite build --mode alpha && surge dist --domain https://takuzu-vue-test2.surge.sh",
-    "preview": "vite preview"
+    "preview": "vite preview",
+	"test": "vitest"
   },
   "dependencies": {
     "@fontsource/hammersmith-one": "^4.5.1",
@@ -42,6 +43,7 @@
     "unplugin-icons": "^0.13.0",
     "unplugin-vue-components": "^0.17.15",
     "vite": "^2.7.2",
-    "vite-plugin-pwa": "^0.11.13"
+    "vite-plugin-pwa": "^0.11.13",
+    "vitest": "^0.8.1"
   }
 }

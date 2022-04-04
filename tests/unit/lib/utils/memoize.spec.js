@@ -1,9 +1,10 @@
+import { expect, it, beforeEach, test, describe, vi } from 'vitest';
 import { memoize } from '../../../../src/lib/utils';
 
 describe('memoize function', () => {
 	it('correctly memoizes results with a single argument', () => {
-		const fn = jest.fn(x => x * 2);
-		const argsToKeyFn = jest.fn((argA) => String(argA));
+		const fn = vi.fn(x => x * 2);
+		const argsToKeyFn = vi.fn((argA) => String(argA));
 		const memoized = memoize(
 			fn,
 			{ argsToKey: argsToKeyFn }
@@ -19,10 +20,10 @@ describe('memoize function', () => {
 	})
 
 	it('correctly memoized results with multiple arguments', () => {
-		const fn = jest.fn((argA = [], argB = 1, argC = 1) => {
+		const fn = vi.fn((argA = [], argB = 1, argC = 1) => {
 			return (argA.length + argB + argC) * 2;
 		});
-		const argsToKeyFn = jest.fn((argA, argB, argC) => {
+		const argsToKeyFn = vi.fn((argA, argB, argC) => {
 			return [argA, argB, argC].flat(2).join('');
 		});
 		const memoized = memoize(
@@ -43,8 +44,8 @@ describe('memoize function', () => {
 	})
 
 	it('correctly exposes cache', () => {
-		const fn = jest.fn(x => x * 2);
-		const argsToKeyFn = jest.fn((argA) => String(argA));
+		const fn = vi.fn(x => x * 2);
+		const argsToKeyFn = vi.fn((argA) => String(argA));
 		const memoized = memoize(
 			fn,
 			{ argsToKey: argsToKeyFn }
@@ -63,8 +64,8 @@ describe('memoize function', () => {
 	})
 
 	it('has a cache that can be reset', () => {
-		const fn = jest.fn(x => x * 2);
-		const argsToKeyFn = jest.fn((argA) => String(argA));
+		const fn = vi.fn(x => x * 2);
+		const argsToKeyFn = vi.fn((argA) => String(argA));
 		const memoized = memoize(
 			fn,
 			{ argsToKey: argsToKeyFn }
