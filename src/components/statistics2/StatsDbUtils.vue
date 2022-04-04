@@ -15,6 +15,7 @@
 			ref="fileInput"
 			class="absolute"
 			@change="processStatsFile"
+			multiple
 			accept=".json"
 			hidden>
 		<button
@@ -28,7 +29,7 @@
 <script setup>
 import { formatYYYYMMDD } from '@/utils/date.utils.js';
 import { computed, ref, toRef } from 'vue';
-import { importPeek, exportPuzzleHistoryDb, cleanImportPuzzleHistoryDb } from '@/services/stats2/db/import-export.js';
+import { importPeek, exportPuzzleHistoryDb, cleanImportPuzzleHistoryDb, importPuzzleHistoryItemsWithVersionUpgrade } from '@/services/stats2/db/import-export.js';
 import * as StatsDB from '@/services/stats2/db/index.js';
 
 const props = defineProps({
@@ -79,17 +80,49 @@ const exportStats = async () => {
 
 const fileInput = ref(null);
 const processStatsFile = async (ev) => {
+	console.log(ev.target.files);
+	if (ev.target.files.length > 1) {
+		return processMultipleStatsFiles(ev);
+	}
 	try {
 		isImporting.value = true;
 		const file = ev.target.files[0];
-		await importPeek(file);
-		await importIntoDatabase(file);
+		const r = await importPeek(file);
+		if (r.databaseVersion < StatsDB.db.verno) {
+			await importIntoDatabaseMergeAndUpgrade(file);
+		} else {
+			await importIntoDatabase(file);
+		}
 	} catch(e) {
 		window.alert(`An error occurred importing stats...\n${e.message}`);
 		console.warn(e);
 	} finally {
 		isImporting.value = false;
 		ev.target.value = '';
+	}
+}
+
+const processMultipleStatsFiles = async ev => {
+	try {
+		isImporting.value = true;
+		for (const file of ev.target.files) {
+			await processSingleStatFile(file);
+		}
+	} catch(e) {
+		window.alert(`An error occurred importing stats...\n${e.message}`);
+		console.warn(e);
+	} finally {
+		isImporting.value = false;
+		ev.target.value = '';
+	}
+}
+
+const processSingleStatFile = async file => {
+	const r = await importPeek(file);
+	if (r.databaseVersion < StatsDB.db.verno) {
+		await importIntoDatabaseMergeAndUpgrade(file);
+	} else {
+		await importIntoDatabase(file);
 	}
 }
 
@@ -102,7 +135,10 @@ const confirmBeforeCleanImport = () => {
 }
 
 const importIntoDatabase = async (blob) => {
-	if (numSolved.value > 0 && !confirmBeforeCleanImport()) return;
+	if (numSolved.value > 0) {
+		return importIntoDatabaseMergeAndUpgrade(blob);
+	}
+	if (!confirmBeforeCleanImport()) return;
 	
 	try {
 		const result = await cleanImportPuzzleHistoryDb(StatsDB.db, blob);
@@ -113,7 +149,19 @@ const importIntoDatabase = async (blob) => {
 	} catch(e) {
 		window.alert(`An error occurred importing stats...\n${e.message}`);
 	} finally {
-		// TODO: update stats?
+		console.log('running update num solved');
+		updateNumSolved();
+	}
+}
+
+const importIntoDatabaseMergeAndUpgrade = async blob => {
+	try {
+		const result = await importPuzzleHistoryItemsWithVersionUpgrade(StatsDB.db, blob);
+		console.log(result);
+	} catch(e) {
+		console.error(e);
+	} finally {
+		console.log('running update num solved');
 		updateNumSolved();
 	}
 }

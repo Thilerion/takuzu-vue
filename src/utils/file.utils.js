@@ -2,7 +2,7 @@ export function readJsonFile(file) {
 	return new Promise((resolve, reject) => {
 		try {
 			const tempReader = new FileReader();
-			reader.onload = (event) => {
+			tempReader.onload = (event) => {
 				const result = event.target.result;
 				const obj = JSON.parse(result);
 				resolve(obj);
