@@ -20,9 +20,9 @@
 </template>
 
 <script>
-import { clearPuzzleHistory, exportPuzzleHistory, importPuzzleHistory } from '@/services/stats/index.js';
 import AdvancedStats from '@/components/statistics/AdvancedStats.vue';
-import { importPeak } from '@/services/stats/db.js';
+import { importPeek, exportPuzzleHistoryDb, cleanImportPuzzleHistoryDb } from '@/services/stats2/db/import-export.js';
+import * as StatsDB from '@/services/stats2/db/index.js';
 import { useStatisticsStore2 } from '@/stores/statistics2.js';
 import { storeToRefs } from 'pinia';
 
@@ -64,7 +64,7 @@ export default {
 				const result2 = window.confirm('Are you REALLY SURE???');
 				if (!result2) return;
 				
-				clearPuzzleHistory().then(() => {
+				StatsDB.clearTable('puzzleHistory').then(() => {
 					window.alert('Puzzle statistics and puzzle history have succesfully been reset.');
 					this.updateStats();
 				}).catch(e => {
@@ -77,7 +77,7 @@ export default {
 		async exportStats() {
 			try {
 				this.exportInProgress = true;
-				const blob = await exportPuzzleHistory();
+				const blob = await exportPuzzleHistoryDb(StatsDB.db);
 				this.downloadBlob(blob);
 			} catch(e) {
 				console.error(e);
@@ -105,7 +105,7 @@ export default {
 		async handleStatsImport(ev) {
 			try {
 				const file = ev.target.files[0];
-				await importPeak(file);
+				await importPeek(file);
 				await this.importStatsIntoDb(file);
 			} catch(e) {
 				window.alert('An error occurred importing stats...');
@@ -114,7 +114,7 @@ export default {
 		},
 		async importStatsIntoDb(blob) {
 			try {
-				await importPuzzleHistory(blob);
+				await cleanImportPuzzleHistoryDb(StatsDB.db, blob);
 				console.log('successful import!');
 				// TODO: better message (modal?) that shows umport was successful
 				window.alert('Succesfully imported stats!');

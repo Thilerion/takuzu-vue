@@ -1,6 +1,6 @@
-import { puzzleHistoryTable, puzzleHistoryDb } from "@/services/stats/db.js";
 import { HistoryDbEntry } from "@/services/stats/models.js";
 import { getGameEndStats } from "@/services/stats/process-stats.js";
+import * as StatsDB from "@/services/stats2/db/index.js";
 import { defineStore } from "pinia";
 
 export const useBasicStatsStore = defineStore('basicStats', {
@@ -22,12 +22,12 @@ export const useBasicStatsStore = defineStore('basicStats', {
 				return;
 			}
 			const { id } = this.lastPuzzleEntry;
-			const success = await puzzleHistoryDb.update(
+			const success = StatsDB.update(
 				id,
 				{
 					'flags.favorite': value ? 1 : 0
 				}
-			);
+			)
 			if (success) {
 				const currentFlags = this.lastPuzzleEntry.flags ?? {};
 				this.lastPuzzleEntry.flags = {
@@ -51,7 +51,7 @@ export const useBasicStatsStore = defineStore('basicStats', {
 		},
 		async addFinishedPuzzleToDb(historyEntry) {
 			try {
-				const id = await puzzleHistoryTable.add(historyEntry);
+				const id = await StatsDB.add(historyEntry, true);
 				historyEntry.id = id;
 				return historyEntry;
 			} catch {

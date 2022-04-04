@@ -1,4 +1,4 @@
-import { puzzleHistoryTable } from "./db.js";
+import { puzzleHistoryTable } from "../stats2/db/index.js";
 import { PuzzleStatisticData } from "./models.js";
 
 export const getPuzzlesSolved = () => puzzleHistoryTable.count();

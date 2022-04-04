@@ -1,5 +1,6 @@
 import { formatBasicSortableDateKey, getNextDay, isNextDay, isSameDay } from "@/utils/date.utils.js";
-import { puzzleHistoryTable } from "./db.js";
+import * as StatsDB from '@/services/stats2/db/index.js';
+const puzzleHistoryTable = StatsDB.db.puzzleHistory;
 
 export async function getGameEndStats({ width, height, difficulty }) {
 	let items;

@@ -6,8 +6,6 @@ export * from './process-stats.js';
 export { HistoryDbEntry, puzzleHistoryTable, db };
 export { clearPuzzleHistory, exportPuzzleHistory, importPuzzleHistory } from './db.js';
 
-puzzleHistoryTable.mapToClass(HistoryDbEntry);
-
 // TODO: persistent storage (https://web.dev/persistent-storage/) to make sure data doesn't get deleted
 // even better would be to sync data somewhere (firebase?) but that is something for the future
 

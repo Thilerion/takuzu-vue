@@ -26,9 +26,10 @@
 </template>
 
 <script setup>
-import { getPuzzlesSolved } from '@/services/stats/data-handling.js';
-import { clearPuzzleHistory, exportPuzzleHistory, importPeak, importPuzzleHistory } from '@/services/stats/db.js';
+import { formatYYYYMMDD } from '@/utils/date.utils.js';
 import { computed, ref, toRef } from 'vue';
+import { importPeek, exportPuzzleHistoryDb, cleanImportPuzzleHistoryDb } from '@/services/stats2/db/import-export.js';
+import * as StatsDB from '@/services/stats2/db/index.js';
 
 const props = defineProps({
 	numSolved: {
@@ -48,9 +49,10 @@ const isImporting = ref(false);
 const isBusy = computed(() => isExporting.value || isImporting.value);
 
 const downloadBlobAsFile = (blob, baseName = 'puzzle-history') => {
-	const dateStr = new Date().toLocaleDateString();
+	const dateStr = formatYYYYMMDD(Date.now()).replaceAll('-', '');
 	const count = numSolved.value;
-	const filename = `${baseName}-${count}-${dateStr}.json`;
+	const verno = StatsDB.db.verno;
+	const filename = `${baseName}-${dateStr}-solved_${count}-v${verno}.json`;
 	const url = URL.createObjectURL(blob);
 	const a = document.createElement('a');
 
@@ -63,7 +65,7 @@ const exportStats = async () => {
 	isExporting.value = true;
 	
 	try {
-		const blob = await exportPuzzleHistory();
+		const blob = await exportPuzzleHistoryDb(StatsDB.db);
 		downloadBlobAsFile(blob);
 	} catch(e) {
 		console.error(e);
@@ -80,19 +82,31 @@ const processStatsFile = async (ev) => {
 	try {
 		isImporting.value = true;
 		const file = ev.target.files[0];
-		await importPeak(file);
+		await importPeek(file);
 		await importIntoDatabase(file);
 	} catch(e) {
 		window.alert(`An error occurred importing stats...\n${e.message}`);
 		console.warn(e);
 	} finally {
 		isImporting.value = false;
+		ev.target.value = '';
 	}
 }
 
+const confirmBeforeCleanImport = () => {
+	// TODO: use modal
+	const confirm1 = window.confirm('Importing this file will delete all your current progress. Are you sure you want to continue? This can NOT be undone.');
+	if (!confirm1) return false;
+	const confirm2 = window.confirm('Last warning. All previous progress will be deleted. Are you really sure?');
+	return !!confirm2;
+}
+
 const importIntoDatabase = async (blob) => {
+	if (numSolved.value > 0 && !confirmBeforeCleanImport()) return;
+	
 	try {
-		await importPuzzleHistory(blob);
+		const result = await cleanImportPuzzleHistoryDb(StatsDB.db, blob);
+		console.log({ importResult: result });
 		console.log('successful import!');
 		// TODO: better message (modal?) that shows umport was successful
 		window.alert('Succesfully imported stats!');
@@ -116,7 +130,7 @@ const resetStats = async () => {
 	if (!confirm2) return;
 
 	try {
-		await clearPuzzleHistory();
+		await StatsDB.clearTable();
 		window.alert('Puzzle statistics and puzzle history have succesfully been reset.');
 	} catch(e) {
 		const str = `[ERROR]: Puzzle statistics and history could not be reset due to error, or something else went wrong: ${e.message}`;

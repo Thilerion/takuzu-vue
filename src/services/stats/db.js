@@ -1,29 +1,8 @@
-import { formatYYYYMMDD } from '@/utils/date.utils.js';
 import Dexie from 'dexie';
 import { exportDB, importInto, peakImportFile } from 'dexie-export-import';
+import { db as dbInstance } from '../stats2/db/index.js';
 
-const db = new Dexie('StatsDB');
-db.version(2).stores({
-	puzzleHistory: "++id,[width+height],difficulty,date,timeElapsed,[width+height+difficulty]"
-});
-db.version(3).stores({
-	puzzleHistory: "++id,[width+height],difficulty,timestamp,localDateStr,timeElapsed,[width+height+difficulty],flags.favorite"
-}).upgrade(tx => {
-	return tx.puzzleHistory.toCollection().modify(item => {
-		statsDbV3UpgradeItem(item);
-	})
-})
-db.open();
-
-function statsDbV3UpgradeItem(item) {
-	const timestamp = item.date;
-	const localDateStr = formatYYYYMMDD(timestamp);
-
-	item.timestamp = timestamp;
-	item.localDateStr = localDateStr;
-
-	item.flags ??= {};
-}
+const db = dbInstance;
 
 function clear() {
 	return db.puzzleHistory.clear();
