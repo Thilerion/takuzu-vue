@@ -69,6 +69,7 @@
 						:key="item.id"
 						v-bind="item"
 						@favorite="(val) => markFavorite(item.id, val)"
+						@delete="() => deleteItem(item.id)"
 					></HistoryListItem>
 				</div>
 				<div class="py-4 text-lg px-8 text-center" v-else-if="historyItems.length" key="none-filtered">No puzzles found with current filters!</div>
@@ -263,6 +264,10 @@ const shownItems = computed(() => {
 
 const markFavorite = async (id, value) => {
 	statsStore.markFavorite(id, value);
+}
+const deleteItem = async (id) => {
+	await statsStore.deleteItem(id);
+	currentItems.value = resetCurrentItems(historyItems.value, dataOptions);
 }
 </script>
 

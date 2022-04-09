@@ -43,6 +43,15 @@ export const useStatisticsStore2 = defineStore('statistics2', {
 			}
 			return success;
 		},
+		async deleteItem(id) {
+			const idx = this.historyItems.findIndex(val => val.id === id);
+			if (idx < 0) {
+				console.warn('No item found with this id. Cannot delete it.');
+				return;
+			}
+			await StatsDB.deleteItem(id);
+			this.historyItems.splice(idx, 1);
+		},
 		setInitialized(value) {
 			if (!value) {
 				this.initialized = false;

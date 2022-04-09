@@ -4,11 +4,19 @@
 	>
 		<div class="flex flex-row items-center justify-between pb-2">
 			<div class="text-gray-500">{{dateFormatted}}</div>
-			<IconBtn
-				@click="toggleFavorite"
-				class="text-xs"
-				scale="1"
-			><StarIcon :class="{ 'text-gray-400': !isFavorite }" :filled="isFavorite" :gray="!isFavorite" /></IconBtn>
+			<div class="flex flex-row">
+				<IconBtn
+					v-if="canDelete"
+					class="text-xs"
+					@click="initDeleteItem"
+					scale="1"
+				><icon-ic-outline-delete-forever class="text-gray-500" /></IconBtn>
+				<IconBtn
+					@click="toggleFavorite"
+					class="text-xs"
+					scale="1"
+				><StarIcon :class="{ 'text-gray-400': !isFavorite }" :filled="isFavorite" :gray="!isFavorite" /></IconBtn>
+			</div>
 		</div>
 		<div class="flex flex-row gap-6 justify-start">
 			<div class="flex flex-col w-1/4">
@@ -51,6 +59,7 @@ export default {
 <script setup>
 import StarIcon from '../global/StarIcon.vue';
 import IconBtn from '../global/base-layout/IconBtn.vue';
+import { useStore } from 'vuex';
 
 const props = defineProps({
 	difficulty: [Number, String],
@@ -63,7 +72,7 @@ const props = defineProps({
 	timeElapsed: Number
 })
 
-const emit = defineEmits(['favorite']);
+const emit = defineEmits(['favorite', 'delete']);
 
 const {difficulty, dimensions, flags, date, timeElapsed} = toRefs(props);
 
@@ -86,6 +95,18 @@ const dateFormatted = computed(() => {
 const timeElapsedFormatted = computed(() => {
 	return formatTime(timeElapsed.value);
 })
+
+const store = useStore();
+const canDelete = computed(() => {
+	return store.state.debugMode;
+})
+
+const initDeleteItem = () => {
+	const confirmed = window.confirm('Are you sure? Deleting this history entry can not be undone!');
+	if (!confirmed) return;
+
+	emit('delete');
+}
 </script>
 
 <style scoped>

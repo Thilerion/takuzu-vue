@@ -22,11 +22,16 @@ const putItemInDb = (db, table) => async (item) => {
 	}
 	return await db[table].put(item);
 }
+const deleteItemFromDb = (db, table) => async (primaryKey) => {
+	return await db[table].delete(primaryKey);
+}
+
 
 export const clearTable = (table = 'puzzleHistory') => clearTableFromDb(db, table);
 export const add = addItemToDb(db, 'puzzleHistory');
 export const update = updateItemInDb(db, 'puzzleHistory');
 export const put = putItemInDb(db, 'puzzleHistory');
+export const deleteItem = deleteItemFromDb(db, 'puzzleHistory');
 
 export const getCount = (table = 'puzzleHistory') => db[table].count();
 export const getAll = async (table = 'puzzleHistory') => {
