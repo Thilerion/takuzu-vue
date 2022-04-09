@@ -73,6 +73,7 @@ export class PuzzleStatisticData extends DbHistoryEntry {
 
 		this.dimensions = `${this.width}x${this.height}`;
 		this.dimensionDifficultyStr = `${this.dimensions}-${this.difficulty}`;
+		this.numCells = this.width * this.height;
 		
 		this.timeElapsedAdjusted = this.calculateAdjustedTimeElapsed();
 	}

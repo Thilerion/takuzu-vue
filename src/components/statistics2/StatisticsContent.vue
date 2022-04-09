@@ -1,9 +1,7 @@
 <template>
-	<div>
+	<div class="space-y-4">
+		<StatsOverview />
 		<StatsActivity />
-		<div>
-			<StatsOverview v-if="false" />
-		</div>
 	</div>
 </template>
 

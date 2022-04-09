@@ -3,6 +3,8 @@ import * as StatsDB from "@/services/stats2/db/index.js";
 import { formatBasicSortableDateKey } from "@/utils/date.utils.js";
 import { defineStore } from "pinia";
 import { shallowReactive } from "vue";
+import { isToday } from "date-fns/esm";
+import { getUniqueDatesFromItems } from "@/services/stats2/dates.js";
 
 const getPuzzlesSolved = StatsDB.getCount;
 const getAllHistoryItems = () => StatsDB.getAll().then(list => list.map(item => {
@@ -22,7 +24,19 @@ export const useStatisticsStore2 = defineStore('statistics2', {
 		puzzlesSolved: state => state.historyItems.length,
 		noPuzzlesSolved: state => state.initialized && state.historyItems.length === 0,
 
-		sortedByDate: state => [...state.historyItems].sort((a, b) => b.dateMs - a.dateMs)
+		sortedByDate: state => [...state.historyItems].sort((a, b) => b.dateMs - a.dateMs),
+
+		itemsSolvedToday: state => state.historyItems.filter(item => {
+			const date = item.date ?? new Date(item.timestamp);
+			return isToday(date);
+		}),
+		cellsFilled: state => state.historyItems.reduce((acc, val) => {
+			return acc + (val.numCells);
+		}, 0),
+
+		uniqueDatesPlayed: state => getUniqueDatesFromItems(state.historyItems),
+
+		timePlayed: state => state.historyItems.reduce((acc, val) => acc + val.timeElapsed, 0)
 	},
 
 	actions: {

@@ -21,18 +21,20 @@
 <script setup>
 import { getUniqueDatesFromItems } from '@/services/stats2/dates.js';
 import { processDateStreaks } from '@/services/stats2/streaks.js';
-import { computed, inject } from 'vue';
+import { computed, inject, toRef } from 'vue';
 import StatsHeatmap from './StatsHeatmap.vue';
 import CurrentStreak from './streaks/CurrentStreak.vue';
 import LongestStreak from './streaks/LongestStreak.vue';
 import MostRecentHistory from './recent-puzzles/MostRecentHistory.vue';
+import { useStatisticsStore2 } from '@/stores/statistics2.js';
 
 const items = inject('historyItems', () => [], true);
+const statsStore = useStatisticsStore2();
+const uniqueDates = toRef(statsStore, 'uniqueDatesPlayed');
 
 const streaks = computed(() => {
 	if (!items.value?.length) return null;
-	const uniqueDates = getUniqueDatesFromItems(items.value);
-	const streaks = processDateStreaks(uniqueDates.map(d => d.date))
+	const streaks = processDateStreaks(uniqueDates.value.map(d => d.date))
 
 	return streaks;
 })
