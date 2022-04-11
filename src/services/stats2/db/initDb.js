@@ -1,3 +1,4 @@
+import { estimateStorage, persistStorage } from '@/services/storage-manager.js';
 import Dexie from 'dexie';
 import { DbHistoryEntry } from './models.js';
 import { initVersions } from './versions.js';
@@ -9,5 +10,7 @@ initVersions(db);
 db.open();
 
 db.puzzleHistory.mapToClass(DbHistoryEntry);
+
+persistStorage({ preventPermissionPrompt: true });
 
 export { db };
