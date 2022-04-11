@@ -66,37 +66,24 @@ export class PuzzleStatisticData extends DbHistoryEntry {
 
 		this.boardType = dimensionsToBoardType(this.width, this.height);
 		
-		this._dateMs = this.timestamp;
 		this.date = new Date(this.timestamp);
 		
-		this._dateStr = this.localDateStr ?? formatYYYYMMDD(this.timestamp);
-
 		this.dimensions = `${this.width}x${this.height}`;
-		this.dimensionDifficultyStr = `${this.dimensions}-${this.difficulty}`;
+		this.puzzleConfigKey = `${this.dimensions}-${this.difficulty}`;
 		this.numCells = this.width * this.height;
 		
-		this.timeElapsedAdjusted = this.calculateAdjustedTimeElapsed();
-	}
-
-	get dateStr() {
-		// console.log('DateStr is deprecated. Use localDateStr instead.');
-		return this._dateStr;
-	}
-	set dateStr(val) {
-		this._dateStr = val;
-	}
-	get dateMs() {
-		// console.log('dateMs is deprecated. Use timestamp instead.');
-		return this._dateMs;
-	}
-	set dateMs(val) {
-		this._dateMs = val;
+		this.timePer100 = this.calculateAdjustedTimeElapsed(100);
 	}
 
 	calculateAdjustedTimeElapsed(fromBase = 100) {
 		const numCells = this.width * this.height;
 		const ratio = numCells / fromBase;
 		return Math.round(this.timeElapsed / ratio);
+	}
+
+	get timeElapsedAdjusted() {
+		console.warn('GET: TimeElapsedAdjusted is deprecated. Use timePer100 instead.');
+		return this.timePer100;
 	}
 }
 

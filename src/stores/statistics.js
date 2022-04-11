@@ -24,7 +24,7 @@ export const useStatisticsStore = defineStore('statistics', {
 
 		groupedBySize: state => groupBy(state.historyItems, 'dimensions', getSizeMap()),
 		groupedByDifficulty: state => groupBy(state.historyItems, 'difficulty', getDiffMap()),
-		groupedBySizeDifficultyCombination: state => groupBy(state.historyItems, 'dimensionDifficultyStr', getSizeDiffMap()),
+		groupedBySizeDifficultyCombination: state => groupBy(state.historyItems, 'puzzleConfigKey', getSizeDiffMap()),
 		groupedByDate: state => groupBy(state.historyItems, 'dateStr'),
 		groupedByBoardType: state => groupBy(state.historyItems, 'boardType'),
 

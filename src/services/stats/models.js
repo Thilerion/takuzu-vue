@@ -17,20 +17,20 @@ export class PuzzleStatisticData extends HistoryDbEntry {
 		this._dateStr = this.localDateStr ?? formatBasicSortableDateKey(this.date);
 
 		this.dimensions = `${this.width}x${this.height}`;
-		this.dimensionDifficultyStr = `${this.dimensions}-${this.difficulty}`;
-		
-		this.timeElapsedAdjusted = this.calculateAdjustedTimeElapsed();
+		this.puzzleConfigKey = `${this.dimensions}-${this.difficulty}`;
+
+		this.timePer100 = this.calculateAdjustedTimeElapsed(100);
 	}
 
 	get dateStr() {
-		// console.log('DateStr is deprecated. Use localDateStr instead.');
+		console.log('DateStr is deprecated. Use localDateStr instead.');
 		return this._dateStr;
 	}
 	set dateStr(val) {
 		this._dateStr = val;
 	}
 	get dateMs() {
-		// console.log('dateMs is deprecated. Use timestamp instead.');
+		console.log('dateMs is deprecated. Use timestamp instead.');
 		return this._dateMs;
 	}
 	set dateMs(val) {

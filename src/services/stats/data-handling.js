@@ -35,8 +35,8 @@ export const summarizeStatGroup = (items = []) => {
 	let worst = -1;
 
 	for (let item of items) {
-		const { timeElapsedAdjusted, timeElapsed } = item;
-		adjustedTime += timeElapsedAdjusted;
+		const { timePer100, timeElapsed } = item;
+		adjustedTime += timePer100;
 		totalTime += timeElapsed;
 
 		best = Math.min(timeElapsed, best);

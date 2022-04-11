@@ -5,7 +5,7 @@
 			v-for="puzzle in mostRecent"
 			class="px-4 py-2 flex items-center justify-between"
 		>
-			<div class="w-16">{{puzzle.dimensionDifficultyStr}}</div>
+			<div class="w-16">{{puzzle.puzzleConfigKey}}</div>
 			<div class="flex-1 text-center">{{puzzle.dateStr}}</div>
 			<div class="w-12 ml-auto text-right">{{puzzle.timeElapsed}}</div>
 		</div>
