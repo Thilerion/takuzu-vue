@@ -34,7 +34,7 @@ const presets = getAllPresetSizeDifficultyCombinations()
 		return { key, width, height, difficulty, numCells: width * height };
 	});
 
-async function findPresetsWithoutPuzzles({ lazy = true, verbose = true } = {}) {
+async function findPresetsWithoutPuzzles({ lazy = true, verbose = true, maxDifficulty = 3 } = {}) {
 	const presetsInDb = await puzzleTable
 		.orderBy('[width+height+difficulty]')
 		.uniqueKeys();
@@ -44,8 +44,8 @@ async function findPresetsWithoutPuzzles({ lazy = true, verbose = true } = {}) {
 		return { key, width, height, difficulty };
 	});
 	
-	const missingPresets = presets.filter(({ key }) => {
-		return mappedPresetsInDb.every(presetInDb => {
+	const missingPresets = presets.filter(({ key, difficulty }) => {
+		return difficulty <= maxDifficulty && mappedPresetsInDb.every(presetInDb => {
 			return presetInDb.key !== key;
 		})
 	}).sort((a, b) => {
@@ -121,7 +121,7 @@ async function findPresetsWithoutPuzzles({ lazy = true, verbose = true } = {}) {
 	return numGenerated;
 }
 
-async function generatePuzzleForPreset(preset) {
+export async function generatePuzzleForPreset(preset) {
 	const { width, height, difficulty } = preset;
 	try {
 		const resultPromise = initPuzzleWorkerReceiver();

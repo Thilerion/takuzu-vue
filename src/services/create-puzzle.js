@@ -36,6 +36,7 @@ export async function retrievePuzzleFromDatabase(puzzleConfig) {
 			throw new Error('No puzzle found in database for this puzzle config.');
 		}
 	} catch (e) {
+		console.error(e);
 		return { success: false, error: e };
 	}
 }

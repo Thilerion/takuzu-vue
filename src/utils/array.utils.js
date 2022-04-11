@@ -46,3 +46,8 @@ export const zScores = (arr, m = mean(arr), stddev = stdDev(arr)) => {
 		return (val - m) / stddev;
 	})
 }
+
+export const getRandomItem = arr => {
+	const rnd = Math.floor(Math.random() * arr.length);
+	return arr[rnd];
+}

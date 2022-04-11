@@ -1,3 +1,4 @@
+import { getRandomItem } from '@/utils/array.utils.js';
 import Dexie from 'dexie';
 
 const puzzleDb = new Dexie('PuzzleDB');
@@ -7,7 +8,7 @@ puzzleDb.version(1).stores({
 puzzleDb.open();
 
 class GeneratedPuzzle {
-	constructor({ boardStr, solutionStr, difficulty, width, height }) {
+	constructor({ boardStr, solutionStr, difficulty, width, height, populated }) {
 		this.boardStr = boardStr;
 		this.solutionStr = solutionStr;
 
@@ -42,17 +43,19 @@ function addPuzzle(puzzle) {
 }
 
 async function getPuzzle({ width, height, difficulty }) {
-	const puzzle = await puzzleDb.transaction('rw', puzzleDb.puzzles, async () => {
-		const result = await puzzleDb.puzzles.where({ width, height, difficulty }).first();
-
-		if (result) {
-			const deleteCount = await puzzleDb.puzzles.where('boardStr').equals(result.boardStr).delete();
-			console.log('deleted!');
-			console.log({ deleteCount });
+	return await puzzleDb.transaction('rw', puzzleDb.puzzles, async () => {
+		const amount = await puzzleDb.puzzles.where({ width, height, difficulty }).count();
+		if (amount === 0) {
+			return null;
 		}
-		return result;
+
+		const matchingPuzzles = await puzzleDb.puzzles.where({ width, height, difficulty }).toArray();
+		const puzzle = matchingPuzzles.length > 1 ? getRandomItem(matchingPuzzles) : matchingPuzzles[0];
+
+		await puzzleDb.puzzles.delete(puzzle.boardStr);
+
+		return puzzle;
 	})
-	return puzzle;
 }
 
 function clearPuzzleDb() {

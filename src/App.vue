@@ -18,8 +18,8 @@
 
 <script>
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
-import { initPregenWorker } from '@/workers/pregen-puzzles.js';
 import { useColorSchemeProvider } from './composables/use-dark-mode-preference.js';
+import { initPregeneratedPuzzles } from '@/services/puzzles-db/init-pregen-puzzles.js';
 import { computed, onMounted, toRef, watchEffect } from 'vue';
 import { useWindowSize } from '@vueuse/core';
 import { provideGlobalBuildData } from './app.globals.js';
@@ -50,11 +50,10 @@ export default {
 		const { height } = useWindowSize();
 		const viewportHeight = computed(() => height.value ? `${height.value}px` : '100%');
 
-
 		onMounted(() => {
-			setTimeout(() => {
-				initPregenWorker();
-			}, 500);
+			initPregeneratedPuzzles({
+				pregenTimeout: 2000
+			});
 		})
 
 		return { 
