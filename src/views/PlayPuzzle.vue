@@ -327,7 +327,7 @@ export default {
 		const toName = to.name;
 		const prevName = from.meta?.prev?.name;
 		this.$store.dispatch('puzzle/reset');
-		if (toName === prevName && toName === 'MainMenu') {
+		if (toName === prevName && toName === 'Home') {
 			return next({ name: 'FreePlay' });
 		}
 		next();

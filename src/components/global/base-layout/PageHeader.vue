@@ -32,8 +32,8 @@ export default {
 				if (this.$route.meta.prev) {
 					this.$router.go(-1);
 				} else {
-					// console.log('No prev found, going to MainMenu instead');
-					this.$router.replace({ name: 'MainMenu' });
+					// console.log('No prev found, going to Home instead');
+					this.$router.replace({ name: 'Home' });
 				}
 			}
 		}

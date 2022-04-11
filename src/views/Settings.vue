@@ -127,7 +127,7 @@ export default {
 				else this.$router.go(-1);
 			} else {
 				if (prev) this.$router.go(-1);
-				else this.$router.replace({ name: 'MainMenu' });
+				else this.$router.replace({ name: 'Home' });
 			}
 		}
 	}

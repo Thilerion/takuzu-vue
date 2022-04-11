@@ -21,12 +21,13 @@ import NotFound from '../views/NotFound.vue';
 
 const routes = [
 	{
-		path: '/',
+		path: '',
+		name: 'TopLevelMain',
 		component: MainPage,
 		children: [
 			{
 				path: '',
-				name: 'MainMenu',
+				name: 'Home',
 				component: Home,
 			},
 			{
@@ -46,7 +47,7 @@ const routes = [
 				}
 			},
 			{
-				path: '/history',
+				path: '/stats/history',
 				name: 'PuzzleHistory',
 				component: PuzzleHistoryView,
 				meta: {

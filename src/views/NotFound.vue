@@ -15,7 +15,7 @@ export default {
 	mounted() {
 		this.timeout = setTimeout(() => {
 			this.timeout = null;
-			this.$router.replace('/');
+			this.$router.replace({ name: 'Home' });
 		}, 2000);
 	},
 	unmounted() {

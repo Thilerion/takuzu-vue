@@ -4,7 +4,7 @@
 			<h3 class="text-gray-500 text-sm font-medium uppercase tracking-wider">Recent puzzles</h3>
 			<router-link
 				class="text-teal-700 hover-hover:hover:text-teal-500 active:text-teal-500 flex flex-row items-center"
-				to="/history"
+				to="/stats/history"
 			><div class="text-xs font-medium uppercase tracking-wider">View all</div><icon-ic-baseline-chevron-right class="text-xs w-5 h-5" /></router-link>
 		</header>
 		<ol class="flex flex-col divide-y divide-gray-100 w-full pb-1">

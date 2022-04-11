@@ -92,7 +92,7 @@ export default {
 				this.afterLeaveAction = () => this.$router.go(-1);
 				this.emitClose();
 			} else if (destination === 'home') {
-				this.afterLeaveAction = () => this.$router.replace({ name: 'MainMenu' });
+				this.afterLeaveAction = () => this.$router.replace({ name: 'Home' });
 				this.emitClose();
 			} else if (destination === 'statistics') {
 				this.afterLeaveAction = () => this.$router.replace({ name: 'Statistics' });
