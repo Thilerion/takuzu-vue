@@ -44,7 +44,7 @@ export function createPuzzle(puzzleConfig, opts = {}) {
 			const { solution, board, quality } = genResult;
 			return { solution, board, quality };
 		} else if (error) {
-			console.warn(`Puzzle generation, try [${i}/${maxTries}]: ${error}`);
+			// console.warn(`Puzzle generation, try [${i}/${maxTries}]: ${error}`);
 		}
 	}
 	console.warn('Timeout reached generating puzzle.');
@@ -88,8 +88,8 @@ function createBoardAndMaskOnce(opts, maxTime = 1000) {
 			data.board = maskResult;
 			data.quality = quality;
 		} else if (maskResult) {
-			console.warn('Generated mask quality was not good enough.');
-			console.log({ board: maskResult, quality, minMaskedRatioQuality, minSymbolDistributionQuality });
+			// console.warn('Generated mask quality was not good enough.');
+			// console.log({ board: maskResult, quality, minMaskedRatioQuality, minSymbolDistributionQuality });
 		}
 	}
 

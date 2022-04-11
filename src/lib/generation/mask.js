@@ -27,6 +27,6 @@ export function createMaskWithDifficulty(board, difficulty = 1) {
 			return bestMask;
 		}
 	}
-	console.warn('Mask could not be generated with requested difficulty...');
+	// console.warn('Mask could not be generated with requested difficulty...');
 	return null;
 }

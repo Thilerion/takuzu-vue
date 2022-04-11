@@ -52,12 +52,16 @@ export default {
 
 
 		onMounted(() => {
-			initPregenWorker();
+			setTimeout(() => {
+				initPregenWorker();
+			}, 500);
 		})
 
 		return { 
 			viewportHeight,
-			puzzleKey
+			puzzleKey,
+			statsStore,
+			statsStore2
 		}
 	}
 };
