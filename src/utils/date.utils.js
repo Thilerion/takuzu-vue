@@ -60,8 +60,10 @@ export const timeFormatter = (formatOptions) => {
 		if (msPrecision) {
 			const precisionDivider = 1000 / msPrecision;
 			let remainingMs = timestampMS - (fullSeconds * 1000);
+			const digits = msPrecision <= 10 ? 1 : msPrecision <= 100 ? 2 : 3;
 			let msToPrecision = Math.floor(remainingMs / precisionDivider);
-			str += `.${msToPrecision}`;
+			let msToPrecisionDigits = `${msToPrecision}000`.slice(0, digits);
+			str += `.${msToPrecisionDigits}`;
 		}
 		return str;
 	}

@@ -29,7 +29,9 @@
 			</div>
 			<div class="flex flex-col w-1/3">
 				<div class="text-sm text-gray-600">Time</div>
-				<div class="text-lg text-black">{{timeElapsedFormatted}}</div>
+				<div class="text-lg text-black">{{timeElapsedFormatted.minsec}}<small
+					class="opacity-80"
+				>.{{timeElapsedFormatted.ms}}</small></div>
 			</div>
 		</div>
 	</div>
@@ -39,7 +41,10 @@
 import { timeFormatter } from '@/utils/date.utils.js';
 import { computed, ref, toRef, toRefs } from 'vue';
 
-const formatTime = timeFormatter({});
+const formatTime = timeFormatter({
+	padMinutes: false,
+	msPrecision: 100
+});
 const dateTimeOpts = {
 	weekday: 'short',
 	year: 'numeric',
@@ -93,7 +98,9 @@ const dateFormatted = computed(() => {
 	return formatDate(date.value);
 })
 const timeElapsedFormatted = computed(() => {
-	return formatTime(timeElapsed.value);
+	const timeStr = formatTime(timeElapsed.value);
+	const [minsec, ms] = timeStr.split('.');
+	return {minsec, ms};
 })
 
 const store = useStore();
