@@ -19,29 +19,42 @@
 			<div class="squares grid grid-flow-col">
 				<div
 					class="square bg-white"
+					@click="toggleSelectedSquare(square.dateStr, square)"
 					:data-level="dateToScaleLevelMap.get(square.dateStr) ?? 0"
 					:style="{
 						'grid-row': `${square.weekday + 1} / span 1`,
 						'grid-column': `${square.weekColumn + 1} / span 1`,
 					}"
-					:class="{ 'snap-start': square.index % 7 === 0 }"
+					:class="{ 
+						'snap-start': square.index % 7 === 0,
+						'selected': square.dateStr === selectedSquare?.dateStr
+					}"
 					v-for="(square) in squares"
 				><div class="w-full h-full pointer-events-none"></div></div>
 			</div>
+		</div>
+	</div>
+	<div class="w-full" v-if="selectedDateValues != null">
+		<div class="flex flex-row gap-4 items-center justify-between text-xs max-w-md mx-auto px-3 py-1">
+			<div>{{selectedDateValues.date}}</div>
+			<div>{{selectedDateValues.played}} puzzles</div>
+			<div>playtime: {{formatTime(selectedDateValues.time)}}</div>
 		</div>
 	</div>
 </template>
 
 <script setup>
 import { subYears, startOfDay, addDays, differenceInCalendarISOWeeks, eachDayOfInterval, isWithinInterval } from 'date-fns/esm';
-import { formatBasicSortableDateKey, getWeekdayFromDate, getMonthNameShort, getWeekDaysShort } from '@/utils/date.utils.js';
-import { computed, inject } from 'vue';
+import { formatBasicSortableDateKey, getWeekdayFromDate, getMonthNameShort, getWeekDaysShort, timeFormatter } from '@/utils/date.utils.js';
+import { computed, inject, ref } from 'vue';
 import { getItemsByDate } from '@/services/stats2/dates.js';
 import { endOfDay } from 'date-fns';
 import { calculateScoresByDate, mapScoreToArray, getValueWithinRange } from './heatmap-data.js';
 
 const historyItems = inject('historyItems', () => [], true);
-
+const formatTime = timeFormatter({
+	padMinutes: false
+});
 // heatmap data
 const { interval, numWeeks } = createHeatmapRange();
 
@@ -126,6 +139,25 @@ const squares = computed(() => {
 // grid weekday column and months row
 const weekdays = useWeekdays();
 const months = computed(() => useMonthsList(squares));
+
+const selectedSquare = ref(null);
+const toggleSelectedSquare = (dateStr, square) => {
+	if (selectedSquare.value?.dateStr === dateStr) {
+		selectedSquare.value = null;
+	} else {
+		selectedSquare.value = square;
+	}
+}
+const selectedDateValues = computed(() => {
+	if (selectedSquare.value == null) return null;
+	const data = scoresByDate.value[selectedSquare.value.dateStr];
+	const { played, time } = data;
+	return {
+		played,
+		time,
+		date: selectedSquare.value.dateStr
+	}
+})
 
 </script>
 
@@ -276,6 +308,9 @@ const createHeatmapSquares = (itemsByDate, { interval, timeRange, playedRange })
 		calc(var(--square-size) * 0.2),
 		0.4rem
 	);
+}
+.square.selected {
+	@apply ring-2 ring-black ring-inset;
 }
 
 [data-level] {
