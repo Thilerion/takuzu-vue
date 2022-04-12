@@ -1,12 +1,12 @@
 <template>
-	<div class="dim-block flex flex-wrap gap-2 mb-6 last:mb-0 relative">
+	<div class="dim-block flex flex-wrap gap-2 mb-4 last:mb-0 relative">
 		<transition-group name="list">
 			<GameModeDimensionsButton
 				v-for="preset in presets"
 				:width="preset.width"
 				:height="preset.height"
 				:selected="preset.width === selectedDimensions.width && preset.height === selectedDimensions.height"
-				:tall="preset.width !== preset.height"
+				:tall="false"
 				:key="preset.width + preset.height"
 				@click="() => $emit('select', preset)"
 			></GameModeDimensionsButton>
@@ -35,10 +35,10 @@ defineEmits(['select']);
 	@apply flex-initial;
 	max-width: 5rem;
 	width: calc((100% - 2.5rem) / 5);
-	min-width: 6ch;
+	min-width: 6.5ch;
 }
 
-@media screen and (max-width: 330px) {
+@media screen and (max-width: 365px) {
 	.dim-block {
 		@apply gap-1 mb-4;
 	}

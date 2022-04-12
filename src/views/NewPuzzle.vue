@@ -1,13 +1,18 @@
 <template>
-	<div class="freeplay h-vh overflow-y-hidden flex flex-col">
-		<div class="flex-1 overflow-y-auto pb-4 flex flex-col">
-			<PageHeader class="flex-shrink-0" small>
-				<template #default>New Game</template>
-			</PageHeader>
-			<div class="main flex-1 w-full sm:w-[500px] mx-auto flex-shrink-0 my-auto justify-around">
-			<div class="pb-2">
+	<div
+		class="fixed top-0 h-vh w-screen overflow-y-auto overflow-x-hidden"
+		id="new-puzzle-page"
+	>
+		<PageHeader class="bg-white shadow-sm" small>
+			<template #default>New Puzzle</template>
+		</PageHeader>
+
+		<div
+			class="w-full px-4 pb-2 pt-3 space-y-4 puzzle-options"
+		>
+			<div>
 				<h2 class="text-base font-medium mb-1 text-gray-700/90 ml-4 tracking-wide">Difficulty</h2>
-				<div class="content-block difficulty-select">
+				<div class="content-block px-4 difficulty-select">
 					<DifficultySelect
 						@decrease="decreaseDifficulty"
 						@increase="increaseDifficulty"
@@ -15,11 +20,11 @@
 						:difficulty="selectedDifficulty"
 					/>
 				</div>
-				</div>
-				<div>
-				<h2 class="text-base font-medium mb-1 text-gray-700/90 ml-4 tracking-wide">Puzzle size</h2>
+			</div>
+			<div>
+				<h2 class="text-base font-medium mb-1 text-gray-700/90 ml-4 tracking-wide">Board size</h2>
 				<div
-					class="content-block flex-shrink-0 rounded shadow-sm"
+					class="content-block flex-shrink-0 rounded shadow-sm px-4"
 				>
 					<div class="mb-1 font-medium text-sm text-gray-500">Normal</div>
 					<PuzzleDimensionsBlock
@@ -40,16 +45,17 @@
 						@select="selectPreset"
 					/>
 				</div>
-				</div>
 			</div>
 		</div>
-		<div class="w-full bg-gray-50 border-t border-gray-200 px-4 pb-4 pt-2 footer-wrapper space-y-2">
+
+		<div class="w-full bg-gray-50 border-t border-gray-200 px-4 pb-4 pt-2 space-y-2 footer-wrapper sticky bottom-0">
 			<div v-if="hasCurrentSavedGame" class="text-xs text-orange-700">
 				<p>Starting a new puzzle will overwrite your current puzzle in progress.</p>
 			</div>
 			<StartGameButton
 				class="first:mt-4"
 				@click="createGame"
+
 				:size="selectedDimensions"
 				:difficulty-label="selectedDifficultyLabel"
 				:difficulty-stars="selectedDifficulty"
@@ -64,12 +70,12 @@
 import { DIFFICULTY_LABELS, PRESET_BOARD_SIZES } from '@/config.js';
 import { computed, onBeforeUpdate, onMounted, ref, watch, watchEffect } from 'vue';
 import PageHeader from '../components/global/base-layout/PageHeader.vue';
-import StartGameButton from '../components/new-game2/StartGameButton.vue';
-import PuzzleDimensionsBlock from '../components/new-game2/PuzzleDimensionsBlock.vue';
+import StartGameButton from '../components/new-puzzle/StartGameButton.vue';
+import PuzzleDimensionsBlock from '../components/new-puzzle/PuzzleDimensionsBlock.vue';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
-import { usePreviousSelection } from '../components/new-game2/usePreviousSelection.js';
-import DifficultySelect from '../components/new-game2/DifficultySelect.vue';
+import { usePreviousSelection } from '../components/new-puzzle/usePreviousSelection.js';
+import DifficultySelect from '../components/new-puzzle/DifficultySelect.vue';
 
 import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
 const { hasCurrentSavedGame } = useSavedPuzzle();
@@ -192,23 +198,34 @@ async function createGame() {
 		console.warn(e);
 	}			
 }
-
 </script>
 
 <style scoped>
-
-.main {
-	@apply px-4 flex flex-col;
-}
-
 .content-block {
-	@apply bg-white px-4 py-4 shadow rounded;
+	@apply bg-white py-4 shadow rounded;
 }
 .difficulty-select {
 	@apply py-0;
 }
-
 .footer-wrapper {
 	box-shadow: 0 -12px 14px -16px rgba(0,0,0,.2);
+}
+
+.puzzle-options {
+	/* @apply flex flex-col justify-center; */
+	@apply grid grid-cols-1;
+	grid-template-rows: 12fr [difficulty] auto 4fr [boardsize] auto 8fr;
+}
+.puzzle-options > *:first-child {
+	grid-row: difficulty / span 1;
+}
+.puzzle-options > *:nth-child(2) {
+	grid-row: boardsize / span 1;
+}
+
+#new-puzzle-page {
+	@apply grid grid-cols-1;
+	grid-template-rows: [header] auto [content] 1fr [footer] auto;
+	@apply overflow-y-auto overflow-x-hidden;
 }
 </style>

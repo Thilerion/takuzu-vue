@@ -234,7 +234,7 @@ export default {
 			}
 			const metaFrom = this.$route.meta.prev;
 			if (metaFrom == null) {
-				this.$router.replace({ name: 'FreePlay' });
+				this.$router.replace({ name: 'NewPuzzleFreePlay' });
 			} else {
 				this.$router.go(-1);
 			}
@@ -307,7 +307,7 @@ export default {
 				return;
 			}
 			console.warn('No puzzle in store. Redirecting from PlayPuzzle to Create game route');
-			this.$router.replace({ name: 'FreePlay' });
+			this.$router.replace({ name: 'NewPuzzleFreePlay' });
 		}
 	},
 	beforeRouteEnter(to, from, next) {
@@ -319,7 +319,7 @@ export default {
 				return next();
 			}
 			console.warn('No puzzle in store. Redirecting from PlayPuzzle to Create game route');
-			return next({ name: 'FreePlay', replace: true });
+			return next({ name: 'NewPuzzleFreePlay', replace: true });
 		}
 		next();
 	},
@@ -328,7 +328,7 @@ export default {
 		const prevName = from.meta?.prev?.name;
 		this.$store.dispatch('puzzle/reset');
 		if (toName === prevName && toName === 'Home') {
-			return next({ name: 'FreePlay' });
+			return next({ name: 'NewPuzzleFreePlay' });
 		}
 		next();
 	},

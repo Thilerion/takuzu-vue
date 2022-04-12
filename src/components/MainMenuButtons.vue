@@ -12,7 +12,7 @@
 		></ContinueButton></router-link>
 
 		<router-link
-			:to="{ name: 'FreePlay' }"
+			:to="{ name: 'NewPuzzleFreePlay' }"
 			custom
 			v-slot="{ navigate }"
 		><BaseButton

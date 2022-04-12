@@ -24,7 +24,7 @@
 
 <script setup>
 import { computed, ref, toRef, watch, watchEffect } from 'vue';
-import DifficultyLabel from '../new-game2/DifficultyLabel.vue';
+import DifficultyLabel from '../new-puzzle/DifficultyLabel.vue';
 
 const props = defineProps({
 	labels: {
