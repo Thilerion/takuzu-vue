@@ -92,7 +92,7 @@ const getPlayedAndTimeRanges = (dateStats, {
 }
 
 const clamp = (min, value, max) => Math.min(Math.max(value, min), max);
-const getValueWithinRange = (min, value, max) => {
+export const getValueWithinRange = (min, value, max) => {
 	return clamp(
 		0,
 		(value - min) / (max - min),

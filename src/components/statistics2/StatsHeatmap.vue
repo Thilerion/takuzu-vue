@@ -38,7 +38,7 @@ import { formatBasicSortableDateKey, getWeekdayFromDate, getMonthNameShort, getW
 import { computed, inject } from 'vue';
 import { getItemsByDate } from '@/services/stats2/dates.js';
 import { endOfDay } from 'date-fns';
-import { calculateScoresByDate, mapScoreToArray } from './heatmap-data.js';
+import { calculateScoresByDate, mapScoreToArray, getValueWithinRange } from './heatmap-data.js';
 
 const historyItems = inject('historyItems', () => [], true);
 
@@ -59,11 +59,60 @@ const scoresByDate = computed(() => {
 	const items = itemsByDate.value;
 	return calculateScoresByDate(items);
 })
+
+const allSortedScores = computed(() => {
+	// top 2 percent is set as max and remove from equation, to prevent very high outliers from making all other cells light
+	// then dataset split in half, with lower half getting 
+	const byDate = Object.entries(scoresByDate.value).map((val) => {
+		const [dateStr, obj] = val;
+		return { ...obj, dateStr };
+	}).sort((a, b) => a.combinedScore - b.combinedScore);
+
+	if (byDate.length < 60) {
+		return byDate;
+	}
+
+	const upTo97Idx = Math.round(0.97 * byDate.length);
+	console.log({upTo97Idx});
+	const upTo97 = byDate.slice(0, upTo97Idx);
+
+	const midPoint = Math.round(upTo97.length / 2);
+	const lowerHalf = upTo97.slice(0, midPoint);
+	const upperHalf = upTo97.slice(midPoint);
+
+	const minLower = lowerHalf[0].combinedScore;
+	const maxLower = lowerHalf.at(-1).combinedScore;
+
+	const minUpper = upperHalf[0].combinedScore;
+	const maxUpper = upperHalf.at(-1).combinedScore;
+
+	const a = (score) => score * 0.35;
+	const b = (score) => score * 0.65 + 0.35;
+
+	const rescaledLower = lowerHalf.map(obj => {
+		const score2 = getValueWithinRange(minLower, obj.combinedScore, maxLower);
+		return {...obj, combinedScore: a(score2) };
+	})
+	const rescaledUpper = upperHalf.map(obj => {
+		const score2 = getValueWithinRange(minUpper, obj.combinedScore, maxUpper);
+		return {...obj, combinedScore: Math.min(b(score2), 1) };
+	})
+	
+	const from97 = byDate.slice(upTo97Idx).map(val => {
+		return {...val, combinedScore: 1 };
+	})
+	const resultArr = [
+		...rescaledLower,
+		...rescaledUpper,
+		...from97
+	];
+	return resultArr;
+})
+
 const dateToScaleLevelMap = computed(() => {
 	const map = new Map();
 	const levelArr = [1, 2, 3, 4, 5];
-	for (const [dateStr, scoreObj] of Object.entries(scoresByDate.value)) {
-		const { combinedScore } = scoreObj;
+	for (const { dateStr, combinedScore } of allSortedScores.value) {
 		const level = mapScoreToArray(combinedScore, levelArr);
 		map.set(dateStr, level);
 	}
