@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { computed, toRefs } from "vue";
+import { computed, ref, toRefs, watch } from "vue";
 
 export default {
 	props: [
@@ -48,8 +48,14 @@ export default {
 			} else return locked.value;
 		})
 
-		const elementType = isLocked.value ? 'div' : 'button';
-		const eventName = isLocked.value ? undefined : 'pointerdown';
+		const elementType = ref(isLocked.value ? 'div' : 'button');
+		const eventName = ref(isLocked.value ? undefined : 'pointerdown');
+
+		watch(isLocked, (v, prev) => {
+			if (v === prev) return;
+			elementType.value = v ? 'div' : 'button';
+			eventName.value = v ? undefined : 'pointerdown';
+		})
 
 		const handleCellToggle = () => {
 			emit('toggle', { x: x.value, y: y.value, value: cellValue.value });

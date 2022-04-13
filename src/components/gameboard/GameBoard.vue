@@ -38,6 +38,7 @@
 </template>
 
 <script>
+import { usePuzzleStore } from '@/stores/puzzle-old';
 import PuzzleCheckIndicator from './PuzzleCheckIndicator.vue';
 import PuzzleGrid from './PuzzleGrid.vue';
 
@@ -61,18 +62,15 @@ export default {
 		},
 		paused: Boolean,
 	},
+	setup() {
+		const puzzleStore = usePuzzleStore();
+		const toggleCell = ({ x, y, value }) => puzzleStore.toggle({ x, y, prevValue: value });
+		return { toggleCell };
+	},
 	computed: {
 		// computed properties for styling
 		cellSizePx() {
 			return (this.cellSize ?? 16) + 'px';
-		}
-	},
-	methods: {
-		toggleCell({x, y, value}) {
-			this.$store.dispatch(
-				'puzzle/toggle',
-				{ x, y, prevValue: value }
-			);
 		}
 	},
 };

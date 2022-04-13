@@ -22,6 +22,8 @@
 <script>
 import debounce from 'lodash.debounce';
 import { COLUMN, ONE, ROW, ZERO } from '@/lib/constants.js';
+import { computed, ref, watch } from 'vue';
+import { usePuzzleStore } from '@/stores/puzzle-old';
 export default {
 	props: {
 		lineType: {
@@ -40,6 +42,19 @@ export default {
 		}
 	},
 	emits: ['select-line'],
+	setup() {
+		const numRequired = ref(null);
+		const puzzleStore = usePuzzleStore();
+		const board = computed(() => puzzleStore?.board);
+
+		watch(board, (value) => {
+			if (value != null) {
+				numRequired.value = value.numRequired;
+			}
+		}, { immediate: true });
+
+		return { numRequired };
+	},
 	data() {
 		return {
 			debouncedCounts: [],
@@ -69,7 +84,7 @@ export default {
 				this.debouncedCounts = counts;
 			} else {
 				const lineType = this.lineType === 'rows' ? ROW : COLUMN;
-				const req = this.$store.state.puzzle.board.numRequired[lineType];
+				const req = this.numRequired[lineType];
 				this.debouncedCounts = counts.map(val => {
 					const zero = req[ZERO] - val[0];
 					const one = req[ONE] - val[1];

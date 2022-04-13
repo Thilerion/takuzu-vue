@@ -11,7 +11,7 @@
 <script>
 import { computed, ref, toRefs } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
-import { useStore } from 'vuex';
+import { usePuzzleStore } from '@/stores/puzzle-old.js';
 
 export default {
 	props: {
@@ -31,9 +31,9 @@ export default {
 		const { rulerHeight, rulerWidth, infoHeight, paddingX, paddingY } = toRefs(props);
 
         const container = ref(null);
-        const store = useStore();
-        const rows = computed(() => store.state.puzzle.height);
-        const columns = computed(() => store.state.puzzle.width);
+		const pStore = usePuzzleStore();
+        const rows = computed(() => pStore.height);
+        const columns = computed(() => pStore.width);
 
       	// use sensible defaults
 		const width = ref(window.clientWidth * 0.98);

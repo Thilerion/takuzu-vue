@@ -28,6 +28,8 @@ import { lineTypeFromLineId } from '@/lib/utils.js';
 import { COLUMN, ROW } from '@/lib/constants.js';
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
 import { storeToRefs } from 'pinia';
+import { usePuzzleStore } from '@/stores/puzzle-old';
+import { computed } from 'vue';
 function determineHintHighlightType(hint) {
 	const { type } = hint;
 	if (type === hintTypes.TRIPLES) {
@@ -50,10 +52,14 @@ function determineHintHighlightType(hint) {
 export default {
 	setup() {
 		const puzzleHintsStore = usePuzzleHintsStore();
+		const puzzleStore = usePuzzleStore();
+		
+		const rowIds = computed(() => puzzleStore?.board?.rowIds);
+		const columnIds = computed(() => puzzleStore?.board?.columnIds);
 
 		const { showHint, currentHint } = storeToRefs(puzzleHintsStore);
 
-		return { hintShown: showHint, currentHint };
+		return { hintShown: showHint, currentHint, rowIds, columnIds };
 	},
 	computed: {
 		hintSource() {
@@ -114,13 +120,13 @@ export default {
 		lineIdToGridArea(lineId) {
 			const line = lineTypeFromLineId(lineId);
 			if (line === ROW) {
-				const lineIdx = this.$store.state.puzzle.board.rowIds.indexOf(lineId);
+				const lineIdx = this.rowIds.indexOf(lineId);
 				return {
 					'grid-column': `1 / span var(--columns)`,
 					'grid-row': `${lineIdx + 1} / span 1`
 				}
 			} else if (line === COLUMN) {
-				const lineIdx = this.$store.state.puzzle.board.columnIds.indexOf(lineId);
+				const lineIdx = this.columnIds.indexOf(lineId);
 				return {
 					'grid-row': `1 / span var(--rows)`,
 					'grid-column': `${lineIdx + 1} / span 1`

@@ -124,7 +124,6 @@ import { timeFormatter } from '@/utils/date.utils.js';
 import StatsCharts from './StatsCharts.vue';
 import StatsSummaryCard from './StatsSummaryCard.vue';
 import ActivityStats from './ActivityStats.vue';
-import { mapGetters, mapState } from 'vuex';
 import { differenceInCalendarDays, isToday, isYesterday } from 'date-fns';
 import MostRecentPuzzles from './MostRecentPuzzles.vue';
 import { useStatisticsStore } from '@/stores/statistics.js';

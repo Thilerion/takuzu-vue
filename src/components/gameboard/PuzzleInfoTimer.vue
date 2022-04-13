@@ -48,10 +48,8 @@ export default {
 		pauseTimer() {
 			if (this.puzzleTimer.running) {
 				this.puzzleTimer.pause();
-				// this.$store.commit('puzzle/timer/pause');
 			} else {
 				this.puzzleTimer.resume();
-				// this.$store.commit('puzzle/timer/resume');
 			}
 		}
 	},

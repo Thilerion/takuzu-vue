@@ -38,7 +38,7 @@ export default {
 	methods: {
 		executeAction(idx) {
 			const onClick = this.actions[idx].onClick.bind(this);
-			onClick(this, this.$store, this.hint);
+			onClick(this, {}, this.hint);
 			this.$emit('done');
 		},
 		enableClickOutside() {

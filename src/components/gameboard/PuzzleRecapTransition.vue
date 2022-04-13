@@ -26,6 +26,7 @@
 
 <script>
 import { useBasicStatsStore } from '@/stores/basic-stats.js';
+import { usePuzzleStore } from '@/stores/puzzle-old';
 import { storeToRefs } from 'pinia';
 import PuzzleRecap from './PuzzleRecap.vue';
 
@@ -62,7 +63,9 @@ export default {
 		const hideModal = () => basicStatsStore.toggleFinishedModal(false);
 		const { gameEndStats, lastPuzzleEntry, modalHidden } = storeToRefs(basicStatsStore);
 
-		return { hideModal, gameEndStats, lastPuzzleEntry, modalHidden };
+		const puzzleStore = usePuzzleStore();
+
+		return { hideModal, gameEndStats, lastPuzzleEntry, modalHidden, puzzleStore };
 	},
 	data() {
 		return {
@@ -115,8 +118,10 @@ export default {
 		async playAgainAction() {
 			const { width, height, difficulty } = this.lastPuzzleEntry;
 			try {
-				this.$store.dispatch('puzzle/reset');
-				await this.$store.dispatch('puzzle/initPuzzle', { width, height, difficulty });
+				this.puzzleStore.reset();
+				await this.puzzleStore.initPuzzle({
+					width, height, difficulty
+				})
 				this.$store.commit('incrementPuzzleKey');
 			} catch(e) {
 				console.warn(e);

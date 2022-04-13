@@ -9,10 +9,11 @@
 			@dropdown-toggled="dropdownToggled"
 		/>
 	</header>
-	<PuzzleProgressBar v-show="$store.state.puzzle.started" />
+	<PuzzleProgressBar v-show="puzzleStore.started" />
 </template>
 
 <script>
+import { usePuzzleStore } from '@/stores/puzzle-old';
 import GameBoardDropdown from './GameBoardDropdown.vue';
 import PuzzleProgressBar from './PuzzleProgressBar.vue';
 export default {
@@ -23,6 +24,10 @@ export default {
 			rows: null,
 			columns: null
 		}
+	},
+	setup() {
+		const puzzleStore = usePuzzleStore();
+		return { puzzleStore };
 	},
 	methods: {
 		openSettings() {
@@ -35,10 +40,10 @@ export default {
 	},
 	computed: {
 		storeRows() {
-			return this.$store.state.puzzle.height;
+			return this.puzzleStore.height;
 		},
 		storeColumns() {
-			return this.$store.state.puzzle.width;
+			return this.puzzleStore.width;
 		},
 		storeDims() {
 			return [this.storeRows, this.storeColumns];

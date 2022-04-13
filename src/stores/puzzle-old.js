@@ -6,6 +6,7 @@ import { useSavedPuzzle } from "@/services/useSavedPuzzle";
 import { calculateGridCounts, calculateLineCounts } from "@/store/puzzle/line-counts";
 import { initPregenWorker } from "@/workers/pregen-puzzles";
 import { defineStore } from "pinia";
+import { unref } from "vue";
 import { useBasicStatsStore } from "./basic-stats";
 import { usePuzzleHintsStore } from "./puzzle-hinter";
 import { usePuzzleHistoryStore } from "./puzzle-history";
@@ -117,7 +118,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 		setFinished(val = true) {
 			this.finished = val;
 		},
-		setPaused() {
+		setPaused(val) {
 			this.paused = val;
 		},
 		setCheatUsed() {
@@ -233,7 +234,8 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 		},
 		async finishPuzzle() {
 			this.setFinished(true);
-			usePuzzleTimer().pause();
+			const timer = usePuzzleTimer();
+			timer.pause();
 
 			let timeElapsed = timer.timeElapsed;
 			const checkAssistanceData = usePuzzleMistakesStore().checkAssistanceData;

@@ -13,19 +13,21 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { usePuzzleStore } from '@/stores/puzzle-old';
+import { storeToRefs } from 'pinia';
+import { computed } from 'vue';
 export default {
-	computed: {
-		...mapGetters('puzzle', [
-			'finishedWithMistakes',
-		]),
-		...mapGetters('puzzle', {
-			finished: 'boardFilled',
-			progressValue: 'progress',
-		}),
-		progressValueCapped() {
-			return Math.max(this.progressValue, 0.005);
-		},
+	setup() {
+		const puzzleStore = usePuzzleStore();
+		const {
+			finishedWithMistakes,
+			boardFilled: finished,
+			progress
+		} = storeToRefs(puzzleStore);
+
+		const cappedProgress = computed(() => Math.max(progress.value, 0.005));
+
+		return { finishedWithMistakes, finished, progress: cappedProgress }
 	}
 };
 </script>
@@ -35,7 +37,7 @@ export default {
 	@apply w-full bg-gray-400 bg-opacity-20 pointer-events-none;
 	height: 3px;
 
-	--progress: v-bind(progressValueCapped);
+	--progress: v-bind(progress);
 }
 .progress-value {
 	@apply h-full w-full bg-teal-500 dark:bg-teal-600;

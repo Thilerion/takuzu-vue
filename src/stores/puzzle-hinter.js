@@ -5,7 +5,7 @@ import { humanSolveTriples } from "@/lib/human-solver/triples.js";
 import hintTypes from "@/store/hints/hint-types.js";
 import { createHint, validateHint } from "@/store/hints/index.js";
 import { defineStore } from "pinia";
-import vuexStore from '../store/index.js';
+import { usePuzzleStore } from "./puzzle-old.js";
 
 export const usePuzzleHintsStore = defineStore('puzzleHints', {
 
@@ -32,8 +32,8 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 		
 		// original actions
 		getHint() {
-
-			const boardStr = vuexStore.getters['puzzle/boardStr'];
+			const puzzleStore = usePuzzleStore();
+			const boardStr = puzzleStore.boardStr;
 			const cacheResult = this.cache.get(boardStr);
 			if (cacheResult) {
 				console.log('using cached hint result');
@@ -43,8 +43,8 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 				});
 				return;
 			}
-			const { board, solution } = vuexStore.state.puzzle;
-			console.log({ p: vuexStore.state.puzzle, board, solution });
+			const board = puzzleStore.board;
+			const solution = puzzleStore.solution;
 			const currentHint = this.currentHint;
 			if (currentHint) {
 				const isValid = validateHint(currentHint, { board, solution });

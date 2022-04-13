@@ -1,5 +1,6 @@
 import { EMPTY } from '@/lib/constants.js';
 import { lineTypeFromLineId } from '@/lib/utils.js';
+import { usePuzzleStore } from '@/stores/puzzle-old.js';
 import hintTypes from './hint-types.js';
 
 let lastHintId = -1;
@@ -33,9 +34,10 @@ export const hintGenerators = {
 			label: 'Fix',
 			onClick: (vm, store, hint) => {
 				console.log('Executing mistake hint now, fixing all mistakes.');
+				const puzzleStore = usePuzzleStore();
 				hint.targets.forEach(target => {
 					const { x, y } = target;
-					store.dispatch('puzzle/toggle', { x, y, value: EMPTY });
+					puzzleStore.toggle({ x, y, value: EMPTY });
 				})
 			}
 		}
@@ -53,13 +55,13 @@ export const hintGenerators = {
 			label: 'Execute',
 			onClick: (vm, store, hint) => {
 				console.log('Executing triples hint now.');
-				console.log(store.state.game);
-				const board = store.state.puzzle.board;
+				const puzzleStore = usePuzzleStore();
+				const board = puzzleStore.board;
 				hint.targets.forEach(target => {
 					const { x, y, value } = target;
 					const boardValue = board.get(x, y);
 					if (boardValue !== EMPTY) return;
-					store.dispatch('puzzle/toggle', { x, y, value });
+					puzzleStore.toggle({ x, y, value });
 				})
 			}
 		}
@@ -74,13 +76,13 @@ export const hintGenerators = {
 			label: 'Execute',
 			onClick: (vm, store, hint) => {
 				console.log('Executing balance hint now.');
-				console.log(store.state.game);
-				const board = store.state.puzzle.board;
+				const puzzleStore = usePuzzleStore();
+				const board = puzzleStore.board;
 				hint.targets.forEach(target => {
 					const { x, y, value } = target;
 					const boardValue = board.get(x, y);
 					if (boardValue !== EMPTY) return;
-					store.dispatch('puzzle/toggle', { x, y, value });
+					puzzleStore.toggle({ x, y, value });
 				})
 			}
 		}
@@ -101,13 +103,13 @@ export const hintGenerators = {
 			label: 'Execute',
 			onClick: (vm, store, hint) => {
 				console.log('Executing elim hint now.');
-				console.log(store.state.game);
-				const board = store.state.puzzle.board;
+				const puzzleStore = usePuzzleStore();
+				const board = puzzleStore.board;
 				hint.targets.forEach(target => {
 					const { x, y, value } = target;
 					const boardValue = board.get(x, y);
 					if (boardValue !== EMPTY) return;
-					store.dispatch('puzzle/toggle', { x, y, value });
+					puzzleStore.toggle({ x, y, value });
 				})
 			}
 		}
@@ -124,14 +126,14 @@ export const hintGenerators = {
 		const action = {
 			label: 'Execute',
 			onClick: (vm, store, hint) => {
+				const puzzleStore = usePuzzleStore();
 				console.log('Executing elim/dupe hint now.');
-				console.log(store.state.game);
-				const board = store.state.puzzle.board;
+				const board = puzzleStore.board;
 				hint.targets.forEach(target => {
 					const { x, y, value } = target;
 					const boardValue = board.get(x, y);
 					if (boardValue !== EMPTY) return;
-					store.dispatch('puzzle/toggle', { x, y, value });
+					puzzleStore.toggle({ x, y, value });
 				})
 			}
 		}

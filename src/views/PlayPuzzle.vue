@@ -66,9 +66,6 @@
 </template>
 
 <script>
-import store from '@/store/index.js';
-import { mapGetters, mapState } from 'vuex';
-
 import GameBoard from '@/components/gameboard/GameBoard.vue';
 import GameBoardHeader from '@/components/gameboard/GameBoardHeader.vue';
 import GameBoardWrapper from '@/components/gameboard/GameBoardWrapper.vue';
@@ -87,13 +84,14 @@ import { COLUMN, ROW } from '@/lib/constants.js';
 
 import debounce from 'lodash.debounce';
 import { useSettingsStore } from '@/stores/settings.js';
-import { storeToRefs } from 'pinia';
+import { storeToRefs, mapState } from 'pinia';
 import { useBasicStatsStore } from '@/stores/basic-stats.js';
 import { usePuzzleHistoryStore } from '@/stores/puzzle-history.js';
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
 import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
 import { computed } from 'vue';
 import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
+import { usePuzzleStore } from '@/stores/puzzle-old';
 
 export default {
 	components: {
@@ -125,6 +123,8 @@ export default {
 
 		const { hasCurrentSavedGame } = useSavedPuzzle();
 
+		const puzzleStore = usePuzzleStore();
+
 		return { 
 			windowHidden: hidden,
 			showLineInfo, showBoardCoordinates, showBoardLineCounts, showRulers,
@@ -134,7 +134,8 @@ export default {
 			userCheckErrors: (boardStr) => puzzleMistakesStore.userCheckErrors(boardStr),
 			autoCheckErrors: () => puzzleMistakesStore.autoCheckFinishedWithMistakes(),
 			wakeLock,
-			hasCurrentSavedGame
+			hasCurrentSavedGame,
+			puzzleStore
 		};
 	},
 	data() {
@@ -153,16 +154,16 @@ export default {
 		}
 	},
 	computed: {
-		...mapState('puzzle', [
+		...mapState(usePuzzleStore, [
 			'board', 'initialBoard',
 			'difficulty',
 			'initialized', 'started', 'paused', 'finished',
 		]),
-		...mapState('puzzle', {
-			rows: state => state.height,
-			columns: state => state.width,
-			rowCounts: state => state.rowCounts,
-			columnCounts: state => state.colCounts,
+		...mapState(usePuzzleStore, {
+			rows: 'height',
+			columns: 'width',
+			rowCounts: 'rowCounts',
+			columnCounts: 'colCounts',
 		}),
 		puzzleKey() {
 			return this.$store.state.puzzleKey;
@@ -186,7 +187,7 @@ export default {
 			return null;
 		},
 		progress() {
-			const base = this.$store.getters['puzzle/progress'];
+			const base = this.puzzleStore.progress;
 			const rounded = Math.ceil(base * 100);
 			// prevent progress from being 100 when not every cell is filled
 			if (rounded == 100 && base < 1) return 99;
@@ -196,10 +197,10 @@ export default {
 			return this.puzzleHistoryStore.canUndo;
 		},
 		finishedAndSolved() {
-			return this.$store.getters['puzzle/finishedAndSolved'];
-		},
+			return this.puzzleStore.finishedAndSolved;
+					},
 		finishedWithMistakes() {
-			return this.$store.getters['puzzle/finishedWithMistakes'];
+			return this.puzzleStore.finishedWithMistakes;
 		},
 		boardGrid() {
 			return this.board?.grid;
@@ -226,7 +227,7 @@ export default {
 				console.warn('Cannot start puzzle that is already started!');
 				return;
 			}
-			this.$store.dispatch('puzzle/startPuzzle');
+			this.puzzleStore.startPuzzle();
 		},
 		exitGame() {
 			if (this.canSaveGame()) {
@@ -247,21 +248,21 @@ export default {
 		},
 		async finishGame() {
 			// window.alert('Good job! You finished this puzzle.');
-			const historyEntry = await this.$store.dispatch('puzzle/finishPuzzle');
+			const historyEntry = await this.puzzleStore.finishPuzzle();
 			await this.basicStatsStore.getGameEndStats(historyEntry);
 		},
 		undo() {
-			this.$store.dispatch('puzzle/undoLastMove');
+			this.puzzleStore.undoLastMove();
 		},
 		restart() {
-			this.$store.dispatch('puzzle/restartPuzzle');
+			this.puzzleStore.restartPuzzle();
 		},
 		canSaveGame() {
 			return this.initialized && this.started && !this.finished && !!this.boardGrid;
 		},
 		saveGame() {
 			if (this.canSaveGame()) {
-				this.$store.dispatch('puzzle/savePuzzle');
+				this.puzzleStore.savePuzzle();
 			}
 		},
 		initAutoSave() {
@@ -276,7 +277,7 @@ export default {
 			this.autoSaveInterval = null;
 		},
 		checkErrors() {
-			const boardStr = this.$store.getters['puzzle/boardStr'];
+			const boardStr = this.puzzleStore.boardStr;
 			this.userCheckErrors(boardStr);
 		},
 		checkEnableWakeLock() {
@@ -293,7 +294,7 @@ export default {
 	},
 	created() {
 		this.debouncedPause = debounce((value) => {
-			this.$store.dispatch('puzzle/pauseGame', value);
+			this.puzzleStore.pauseGame(value);
 		}, 150);
 	},
 	mounted() {
@@ -301,9 +302,10 @@ export default {
 		this.initAutoSave();
 	},
 	beforeMount() {
-		if (!this.$store.state.puzzle.initialized) {
+		const puzzleStore = usePuzzleStore();
+		if (!puzzleStore.initialized) {
 			if (this.hasCurrentSavedGame.value) {
-				this.$store.dispatch('puzzle/loadSavedPuzzle');
+				this.puzzleStore.loadSavedPuzzle();
 				return;
 			}
 			console.warn('No puzzle in store. Redirecting from PlayPuzzle to Create game route');
@@ -311,11 +313,11 @@ export default {
 		}
 	},
 	beforeRouteEnter(to, from, next) {
-		if (!store.state.puzzle.initialized) {
+		const puzzleStore = usePuzzleStore();
+		if (!puzzleStore.initialized) {
 			const { hasCurrentSavedGame } = useSavedPuzzle();
-			console.log({ hasCurrentSavedGame });
 			if (hasCurrentSavedGame.value) {
-				store.dispatch('puzzle/loadSavedPuzzle');
+				puzzleStore.loadSavedPuzzle();
 				return next();
 			}
 			console.warn('No puzzle in store. Redirecting from PlayPuzzle to Create game route');
@@ -326,7 +328,7 @@ export default {
 	beforeRouteLeave(to, from, next) {
 		const toName = to.name;
 		const prevName = from.meta?.prev?.name;
-		this.$store.dispatch('puzzle/reset');
+		this.puzzleStore.reset();
 		if (toName === prevName && toName === 'Home') {
 			return next({ name: 'NewPuzzleFreePlay' });
 		}

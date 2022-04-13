@@ -56,8 +56,10 @@
 import { EMPTY } from '@/lib/constants.js';
 import { humanSolveTriples } from '@/lib/human-solver/triples.js';
 import { shuffle } from '@/lib/utils.js';
+import { usePuzzleStore } from '@/stores/puzzle-old';
 import { useSettingsStore } from '@/stores/settings.js';
 import { rafPromise, timeoutPromise } from '@/utils/delay.utils.js';
+import { storeToRefs } from 'pinia';
 import { toRef } from 'vue';
 
 export default {
@@ -65,7 +67,21 @@ export default {
 	setup() {
 		const settingsStore = useSettingsStore();
 		const showTimer = toRef(settingsStore, 'showTimer');
-		return { showTimer };
+
+		const puzzleStore = usePuzzleStore();
+		const {
+			board,
+		} = storeToRefs(puzzleStore);
+		const setCheatUsed = () => puzzleStore.setCheatUsed();
+
+		return {
+			showTimer,
+
+			puzzleStore,
+			board,
+
+			setCheatUsed
+		};
 	},
 	data() {
 		return {
@@ -76,9 +92,6 @@ export default {
 		debugModeEnabled() {
 			return this.$store.state.debugMode;
 		},
-		board() {
-			return this.$store.state.puzzle.board;
-		}
 	},
 	methods: {
 		goToSettings() {
@@ -87,7 +100,7 @@ export default {
 		},
 		async copyPuzzleString() {
 			try {
-				const boardStr = this.$store.state.puzzle.board.export();
+				const boardStr = this.board.export();
 				await navigator.clipboard.writeText(boardStr);
 				console.log('copied to clipboard!');
 				console.log(boardStr);		
@@ -100,10 +113,10 @@ export default {
 		async solvePuzzle() {
 			this.$refs.dropdown.closeDropdownMenu();
 
-			const emptyCells = [...this.$store.state.puzzle.board.cells({ skipFilled: true} )];
+			const emptyCells = [...this.board.cells({ skipFilled: true} )];
 			if (emptyCells.length <= 1) return;
 
-			this.$store.commit('puzzle/setCheatUsed');
+			this.setCheatUsed();
 
 
 			const cells = shuffle(emptyCells.slice(0, -1));
@@ -114,10 +127,10 @@ export default {
 
 			for (const cell of cells) {
 				const { x, y, value: prevValue } = cell;
-				const solutionValue = this.$store.state.puzzle.solution.get(x, y);
-				this.$store.dispatch('puzzle/makeMove', {
+				const solutionValue = this.puzzleStore.solution.get(x, y);
+				this.puzzleStore.makeMove({
 					x, y, prevValue, value: solutionValue
-				});
+				})
 				count += 1;
 
 				if (count % 4 === 0) {
@@ -127,9 +140,9 @@ export default {
 		},
 		async solveTrios() {
 			this.$refs.dropdown.closeDropdownMenu();
-			this.$store.commit('puzzle/setCheatUsed');
+			this.setCheatUsed();
 
-			const board = this.$store.state.puzzle.board;
+			const board = this.board;
 
 			let movesFound = true;
 			let count = 0;
@@ -146,9 +159,9 @@ export default {
 				for (const move of triplesHumanResult) {
 					for (const target of move.targets) {
 						const { x, y, value } = target;
-						const prevValue = this.$store.state.puzzle.board.grid[y][x];
+						const prevValue = this.puzzleStore.board.grid[y][x];
 						if (prevValue !== EMPTY) continue;
-						this.$store.dispatch('puzzle/makeMove', {
+						this.puzzleStore.makeMove({
 							x, y, value, prevValue
 						})
 						count += 1;

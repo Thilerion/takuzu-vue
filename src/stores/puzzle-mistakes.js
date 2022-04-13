@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import vuexStore from '../store/index.js';
+import { usePuzzleStore } from "./puzzle-old.js";
 
 export const usePuzzleMistakesStore = defineStore('puzzleMistakes', {
 	state: () => ({
@@ -43,15 +43,15 @@ export const usePuzzleMistakesStore = defineStore('puzzleMistakes', {
 			this.currentMarked = [...result];
 		},
 		checkErrors(boardStr) {
-			const { board, solution } = vuexStore.state.puzzle;
-			this.checkIncorrectCells({ boardStr, board, solution });
+			const puzzleStore = usePuzzleStore();
+			this.checkIncorrectCells({ boardStr, board: puzzleStore.board, solution: puzzleStore.solution });
 		},
 		userCheckErrors(boardStr) {
 			this.lastCheckType = 'user';
 			this.checkErrors(boardStr);
 		},
 		autoCheckFinishedWithMistakes() {
-			const boardStr = vuexStore.getters['puzzle/boardStr'];
+			const boardStr = usePuzzleStore().boardStr;
 			this.lastCheckType = 'auto';
 			this.checkErrors(boardStr);
 		},

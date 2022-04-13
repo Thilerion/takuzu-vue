@@ -73,11 +73,11 @@ import PageHeader from '../components/global/base-layout/PageHeader.vue';
 import StartGameButton from '../components/new-puzzle/StartGameButton.vue';
 import PuzzleDimensionsBlock from '../components/new-puzzle/PuzzleDimensionsBlock.vue';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
-import { useStore } from 'vuex';
 import { usePreviousSelection } from '../components/new-puzzle/usePreviousSelection.js';
 import DifficultySelect from '../components/new-puzzle/DifficultySelect.vue';
 
 import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
+import { usePuzzleStore } from '@/stores/puzzle-old';
 const { hasCurrentSavedGame } = useSavedPuzzle();
 // display warning message if creating a new game will overwrite the currently saved puzzle
 
@@ -168,12 +168,12 @@ watch([selectedDimensions, selectedDifficulty], (value) => {
 	previousSelection.value = obj;
 })
 
-const store = useStore();
-const puzzleIsLoading = computed(() => store.state.puzzle.loading);
-const resetGame = () => store.dispatch('puzzle/reset');
+const puzzleStore = usePuzzleStore();
+const puzzleIsLoading = computed(() => puzzleStore.loading);
+const resetGame = () => puzzleStore.reset();
 
 onBeforeRouteLeave((to, from) => {
-	if (!to.name === 'PlayPuzzle' || !store.state.puzzle.initialized) {
+	if (!to.name === 'PlayPuzzle' || !puzzleStore.initialized) {
 		console.warn('Leaving FreePlay route without a puzzle being set! Probably good to reset the puzzle in the store.');
 		resetGame();
 	}
@@ -183,16 +183,14 @@ onBeforeRouteLeave((to, from) => {
 const router = useRouter();
 
 async function createGame() {
-	store.dispatch('puzzle/reset');
+	resetGame();
 	const { width, height } = selectedDimensions.value;
 	const difficulty = selectedDifficulty.value;
 
 	console.log({ width, height, difficulty });
 
 	try {
-		await store.dispatch('puzzle/initPuzzle', { width, height, difficulty });
-		console.log('game created?');
-		console.log(store.state.puzzle);
+		await puzzleStore.initPuzzle({ width, height, difficulty });
 		router.push({ name: 'PlayPuzzle' });
 	} catch(e) {
 		console.warn(e);

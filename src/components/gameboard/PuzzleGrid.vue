@@ -28,7 +28,7 @@ import PuzzleCellColored from '@/components/gameboard/PuzzleCellColored.vue';
 import PuzzleGridHighlights from '@/components/gameboard/PuzzleGridHighlights.vue';
 import { EMPTY } from '@/lib/constants.js';
 import { computed, provide, reactive, ref, toRef, watch } from 'vue';
-import { useStore } from 'vuex';
+import { usePuzzleStore } from '@/stores/puzzle-old.js';
 import { useTapVibrate } from '@/composables/use-tap-vibrate.js';
 import FastPuzzleCellWrapper from './cell/FastPuzzleCellWrapper.vue';
 import FastPuzzleCellColored from './cell/FastPuzzleCellColored.vue';
@@ -63,13 +63,13 @@ export default {
 	},
 	emits: ['toggle-cell'],
 	setup(props) {
-		const store = useStore();
+		const puzzleStore = usePuzzleStore();
 		const settingsStore = useSettingsStore();
-		const initialGrid = store.state.puzzle.initialBoard.grid;
+		const initialGrid = computed(() => puzzleStore.initialBoard?.grid);
 
-		const initialGridComp = computed(() => store.state.puzzle?.initialBoard?.grid);
+		const initialGridComp = computed(() => initialGrid.value);
 
-		let { cellData, nRows, nCols, nCells, lockedCells, coords } = useGridData(props.columns, props.rows, initialGrid);
+		let { cellData, nRows, nCols, nCells, lockedCells, coords } = useGridData(props.columns, props.rows, initialGrid.value);
 
 		const lockedCellsRef = ref(lockedCells);
 		const cellDataRef = ref(cellData);
