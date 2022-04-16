@@ -91,7 +91,7 @@ import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
 import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
 import { computed } from 'vue';
 import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
-import { usePuzzleStore } from '@/stores/puzzle-old';
+import { usePuzzleStore } from '@/stores/puzzle.js';
 
 export default {
 	components: {

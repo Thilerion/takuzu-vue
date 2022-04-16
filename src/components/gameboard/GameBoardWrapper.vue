@@ -11,7 +11,7 @@
 <script>
 import { computed, ref, toRefs } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
-import { usePuzzleStore } from '@/stores/puzzle-old.js';
+import { usePuzzleStore } from '@/stores/puzzle.js';
 
 export default {
 	props: {

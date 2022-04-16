@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { usePuzzleStore } from '@/stores/puzzle-old';
+import { usePuzzleStore } from '@/stores/puzzle.js';
 import PuzzleCheckIndicator from './PuzzleCheckIndicator.vue';
 import PuzzleGrid from './PuzzleGrid.vue';
 

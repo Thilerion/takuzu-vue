@@ -28,7 +28,7 @@ import PuzzleCellColored from '@/components/gameboard/PuzzleCellColored.vue';
 import PuzzleGridHighlights from '@/components/gameboard/PuzzleGridHighlights.vue';
 import { EMPTY } from '@/lib/constants.js';
 import { computed, provide, reactive, ref, toRef, watch } from 'vue';
-import { usePuzzleStore } from '@/stores/puzzle-old.js';
+import { usePuzzleStore } from '@/stores/puzzle.js';
 import { useTapVibrate } from '@/composables/use-tap-vibrate.js';
 import FastPuzzleCellWrapper from './cell/FastPuzzleCellWrapper.vue';
 import FastPuzzleCellColored from './cell/FastPuzzleCellColored.vue';

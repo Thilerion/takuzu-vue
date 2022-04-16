@@ -28,7 +28,7 @@ import { lineTypeFromLineId } from '@/lib/utils.js';
 import { COLUMN, ROW } from '@/lib/constants.js';
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
 import { storeToRefs } from 'pinia';
-import { usePuzzleStore } from '@/stores/puzzle-old';
+import { usePuzzleStore } from '@/stores/puzzle.js';
 import { computed } from 'vue';
 function determineHintHighlightType(hint) {
 	const { type } = hint;

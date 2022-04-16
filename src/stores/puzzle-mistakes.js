@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { usePuzzleStore } from "./puzzle-old.js";
+import { usePuzzleStore } from "./puzzle.js";
 
 export const usePuzzleMistakesStore = defineStore('puzzleMistakes', {
 	state: () => ({

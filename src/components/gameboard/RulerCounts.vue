@@ -23,7 +23,7 @@
 import debounce from 'lodash.debounce';
 import { COLUMN, ONE, ROW, ZERO } from '@/lib/constants.js';
 import { computed, ref, watch } from 'vue';
-import { usePuzzleStore } from '@/stores/puzzle-old';
+import { usePuzzleStore } from '@/stores/puzzle.js';
 export default {
 	props: {
 		lineType: {

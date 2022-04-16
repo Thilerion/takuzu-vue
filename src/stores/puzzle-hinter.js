@@ -5,7 +5,7 @@ import { humanSolveTriples } from "@/lib/human-solver/triples.js";
 import hintTypes from "@/store/hints/hint-types.js";
 import { createHint, validateHint } from "@/store/hints/index.js";
 import { defineStore } from "pinia";
-import { usePuzzleStore } from "./puzzle-old.js";
+import { usePuzzleStore } from "./puzzle.js";
 
 export const usePuzzleHintsStore = defineStore('puzzleHints', {
 

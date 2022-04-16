@@ -77,7 +77,7 @@ import { usePreviousSelection } from '../components/new-puzzle/usePreviousSelect
 import DifficultySelect from '../components/new-puzzle/DifficultySelect.vue';
 
 import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
-import { usePuzzleStore } from '@/stores/puzzle-old';
+import { usePuzzleStore } from '@/stores/puzzle.js';
 const { hasCurrentSavedGame } = useSavedPuzzle();
 // display warning message if creating a new game will overwrite the currently saved puzzle
 

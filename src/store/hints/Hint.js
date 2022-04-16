@@ -1,6 +1,6 @@
 import { EMPTY } from '@/lib/constants.js';
 import { lineTypeFromLineId } from '@/lib/utils.js';
-import { usePuzzleStore } from '@/stores/puzzle-old.js';
+import { usePuzzleStore } from '@/stores/puzzle.js';
 import hintTypes from './hint-types.js';
 
 let lastHintId = -1;

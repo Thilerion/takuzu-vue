@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { usePuzzleStore } from '@/stores/puzzle-old';
+import { usePuzzleStore } from '@/stores/puzzle.js';
 import GameBoardDropdown from './GameBoardDropdown.vue';
 import PuzzleProgressBar from './PuzzleProgressBar.vue';
 export default {

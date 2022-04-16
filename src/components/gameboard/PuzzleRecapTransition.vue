@@ -26,7 +26,7 @@
 
 <script>
 import { useBasicStatsStore } from '@/stores/basic-stats.js';
-import { usePuzzleStore } from '@/stores/puzzle-old';
+import { usePuzzleStore } from '@/stores/puzzle.js';
 import { storeToRefs } from 'pinia';
 import PuzzleRecap from './PuzzleRecap.vue';
 
