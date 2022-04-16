@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import { useAppStore } from '@/stores/app';
 import { useBasicStatsStore } from '@/stores/basic-stats.js';
 import { usePuzzleStore } from '@/stores/puzzle.js';
 import { storeToRefs } from 'pinia';
@@ -122,7 +123,9 @@ export default {
 				await this.puzzleStore.initPuzzle({
 					width, height, difficulty
 				})
-				this.$store.commit('incrementPuzzleKey');
+				const appStore = useAppStore();
+				appStore.puzzleKey += 1;
+
 			} catch(e) {
 				console.warn(e);
 				console.warn('Error while trying to create new puzzle in PlayAgain');

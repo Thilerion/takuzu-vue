@@ -165,9 +165,6 @@ export default {
 			rowCounts: 'rowCounts',
 			columnCounts: 'colCounts',
 		}),
-		puzzleKey() {
-			return this.$store.state.puzzleKey;
-		},
 		displayCounts() {
 			if (this.rulerType === 'count-remaining') return this.remainingCounts;
 			if (this.rulerType === 'count-current') return this.currentCounts;

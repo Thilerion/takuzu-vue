@@ -64,7 +64,7 @@ export default {
 <script setup>
 import StarIcon from '../global/StarIcon.vue';
 import IconBtn from '../global/base-layout/IconBtn.vue';
-import { useStore } from 'vuex';
+import { useAppStore } from '@/stores/app.js';
 
 const props = defineProps({
 	difficulty: [Number, String],
@@ -103,9 +103,9 @@ const timeElapsedFormatted = computed(() => {
 	return {minsec, ms};
 })
 
-const store = useStore();
+const appStore = useAppStore();
 const canDelete = computed(() => {
-	return store.state.debugMode;
+	return appStore.debugMode;
 })
 
 const initDeleteItem = () => {

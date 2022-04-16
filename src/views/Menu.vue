@@ -36,10 +36,11 @@
 <script>
 import { useGlobalBuildData } from '@/app.globals.js';
 import { clearPuzzleDb } from '@/services/puzzles-db/db.js';
+import { useAppStore } from '@/stores/app';
 import { initPregenWorker } from '@/workers/pregen-puzzles.js';
 
 import { useRegisterSW } from 'virtual:pwa-register/vue';
-import { ref, watch, watchEffect } from 'vue';
+import { computed, ref, watch, watchEffect } from 'vue';
 
 export default {
 	setup() {
@@ -66,17 +67,23 @@ export default {
 			}
 		})
 
-		return { offlineReady, needRefresh, updateSW: updateServiceWorker, pkgVersion, buildDate, clearPuzzlesResult };
+		const debugModeClickCounter = ref(0);
+		const appStore = useAppStore();
+		const isDebugModeEnabled = computed(() => appStore.debugMode);
+		const enableDebugMode = () => {
+			appStore.setDebugMode(true);
+			debugModeClickCounter.value = 0;
+		}
+		const disableDebugMode = () => {
+			appStore.setDebugMode(false);
+			debugModeClickCounter.value = 0;
+		}
+
+		return { offlineReady, needRefresh, updateSW: updateServiceWorker, pkgVersion, buildDate, clearPuzzlesResult, debugModeClickCounter, isDebugModeEnabled, enableDebugMode, disableDebugMode };
 	},
 	data() {
 		return {
-			debugModeClickCounter: 0,
 			appVersion: import.meta.env.PACKAGE_VERSION
-		}
-	},
-	computed: {
-		isDebugModeEnabled() {
-			return this.$store.state.debugMode;
 		}
 	},
 	methods: {
@@ -85,14 +92,6 @@ export default {
 			if (this.debugModeClickCounter >= 5) {
 				this.enableDebugMode();
 			}
-		},
-		enableDebugMode() {
-			this.$store.dispatch('setDebugMode', true);
-			this.debugModeClickCounter = 0;
-		},
-		disableDebugMode() {
-			this.$store.dispatch('setDebugMode', false);
-			this.debugModeClickCounter = 0;
 		},
 		async clearPuzzleDb() {
 			try {

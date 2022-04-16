@@ -137,9 +137,6 @@ export default {
 		cellComponent() {
 			return this.cellThemeType === 'colored' ? 'PuzzleCellColored' : 'PuzzleCellSymbols';
 		},
-		vibrateOnTap() {
-			return this.$store.state.settings.enableVibration;
-		},
 	},
 	methods: {
 		cellClick({ x, y, value }) {

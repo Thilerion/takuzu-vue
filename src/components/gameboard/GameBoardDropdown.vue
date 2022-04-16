@@ -56,11 +56,12 @@
 import { EMPTY } from '@/lib/constants.js';
 import { humanSolveTriples } from '@/lib/human-solver/triples.js';
 import { shuffle } from '@/lib/utils.js';
+import { useAppStore } from '@/stores/app';
 import { usePuzzleStore } from '@/stores/puzzle.js';
 import { useSettingsStore } from '@/stores/settings.js';
 import { rafPromise, timeoutPromise } from '@/utils/delay.utils.js';
 import { storeToRefs } from 'pinia';
-import { toRef } from 'vue';
+import { readonly, toRef } from 'vue';
 
 export default {
 	emits: ['open-settings', 'dropdown-toggled'],
@@ -74,24 +75,24 @@ export default {
 		} = storeToRefs(puzzleStore);
 		const setCheatUsed = () => puzzleStore.setCheatUsed();
 
+		const appStore = useAppStore();
+		const debugMode = toRef(appStore, 'debugMode');
+
 		return {
 			showTimer,
 
 			puzzleStore,
 			board,
 
-			setCheatUsed
+			setCheatUsed,
+
+			debugModeEnabled: readonly(debugMode)
 		};
 	},
 	data() {
 		return {
 			copyError: null
 		}
-	},
-	computed: {
-		debugModeEnabled() {
-			return this.$store.state.debugMode;
-		},
 	},
 	methods: {
 		goToSettings() {

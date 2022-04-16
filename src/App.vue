@@ -20,21 +20,21 @@
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
 import { useColorSchemeProvider } from './composables/use-dark-mode-preference.js';
 import { initPregeneratedPuzzles } from '@/services/puzzles-db/init-pregen-puzzles.js';
-import { computed, onMounted, toRef, watchEffect } from 'vue';
+import { computed, onMounted, toRef } from 'vue';
 import { useWindowSize } from '@vueuse/core';
 import { provideGlobalBuildData } from './app.globals.js';
-import { useStore } from 'vuex';
 import { initSettingsPersistence } from './stores/settings.js';
 import { useStatisticsStore } from './stores/statistics.js';
 import { useStatisticsStore2 } from './stores/statistics2.js';
+import { useAppStore } from './stores/app.js';
 
 export default {
 	components: {
 		OverlayPageTransition
 	},
 	setup() {
-		const store = useStore();
-		const puzzleKey = computed(() => store.state.puzzleKey);
+		const store = useAppStore();
+		const puzzleKey = toRef(store, 'puzzleKey');
 
 		// init settings store
 		initSettingsPersistence();
@@ -60,7 +60,8 @@ export default {
 			viewportHeight,
 			puzzleKey,
 			statsStore,
-			statsStore2
+			statsStore2,
+			store
 		}
 	}
 };
