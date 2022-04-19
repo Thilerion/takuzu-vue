@@ -38,13 +38,10 @@
 </template>
 
 <script>
-import { timeFormatter } from '@/utils/date.utils.js';
+import { formatTimeMMSSss } from '@/utils/date.utils.js';
 import { computed, ref, toRef, toRefs } from 'vue';
 
-const formatTime = timeFormatter({
-	padMinutes: false,
-	msPrecision: 100
-});
+const formatTime = timestampMS => formatTimeMMSSss(timestampMS, { padMinutes: true });
 const dateTimeOpts = {
 	weekday: 'short',
 	year: 'numeric',

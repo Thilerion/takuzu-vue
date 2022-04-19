@@ -40,13 +40,13 @@ export const getDateRange = (startDate, endDate = new Date()) => {
 	return arr;
 }
 
+const padLeft = (num) => `0${num}`.slice(-2);
+
 export const timeFormatter = (formatOptions) => {
 	const {
 		padMinutes = true,
 		msPrecision = null,
 	} = formatOptions;
-
-	const padLeft = (num) => `0${num}`.slice(-2);
 
 	return (timestampMS = 0) => {
 		const fullSeconds = Math.floor(timestampMS / 1000);
@@ -67,6 +67,21 @@ export const timeFormatter = (formatOptions) => {
 		}
 		return str;
 	}
+}
+
+export const formatTimeMMSSss = (timestampMS, { padMinutes = true } = {}) => {
+	const timestampToPrecision = Math.round(timestampMS / 10) * 10;
+	const date = new Date(timestampToPrecision);
+	let minutes = date.getMinutes();
+	let seconds = date.getSeconds();
+	let hundredths = Math.round(date.getMilliseconds() / 10);
+	
+	if (padMinutes) {
+		minutes = padLeft(minutes);
+	}
+	seconds = padLeft(seconds);
+	hundredths = `00${hundredths}`.slice(-2);
+	return `${minutes}:${seconds}.${hundredths}`;
 }
 
 export const getWeekDaysShort = ({
