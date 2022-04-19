@@ -15,7 +15,7 @@
 <script>
 import { timeFormatter } from '@/utils/date.utils.js';
 import { differenceInCalendarDays } from 'date-fns/esm';
-import { computed } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 const formatTime = timeFormatter({});
 const dateTimeOpts = {
@@ -43,7 +43,6 @@ const formatRelative = (date, diffDays) => {
 	const time = formatDateTime(date);
 	return d + ' ' + time;
 }
-const today = new Date();
 </script>
 
 <script setup>
@@ -54,7 +53,13 @@ const props = defineProps({
 	time: Number
 });
 
-const diffDays = computed(() => differenceInCalendarDays(today, props.date));
+const today = ref(new Date());
+
+onMounted(() => {
+	today.value = new Date();
+})
+
+const diffDays = computed(() => differenceInCalendarDays(today.value, props.date));
 
 const d = computed(() => {
 	const date = new Date(props.date * 1);
