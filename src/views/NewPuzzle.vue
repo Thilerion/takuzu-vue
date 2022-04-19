@@ -82,7 +82,6 @@ const { hasCurrentSavedGame } = useSavedPuzzle();
 // display warning message if creating a new game will overwrite the currently saved puzzle
 
 const previousSelection = usePreviousSelection();
-
 const selectedDifficulty = ref(previousSelection.value.difficulty);
 const selectedDifficultyLabel = computed(() => {
 	return DIFFICULTY_LABELS[selectedDifficulty.value];
