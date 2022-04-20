@@ -22,6 +22,18 @@
 	}
 }
 
+@layer utilities {
+	.color-scheme-dark {
+		color-scheme: dark;
+	}
+	.color-scheme-normal {
+		color-scheme: normal;
+	}
+	.color-scheme-light {
+		color-scheme: light;
+	}
+}
+
 
 html, body, #app {
 	/* height: 100%; */
@@ -33,4 +45,14 @@ body {
 	@apply font-sans;
 	@apply slashed-zero;
 	@apply tabular-nums;
+}
+
+html {
+	@apply color-scheme-normal;
+}
+html.light {
+	@apply color-scheme-light;
+}
+html.dark {
+	@apply color-scheme-dark;
 }
