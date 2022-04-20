@@ -21,7 +21,6 @@ import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue
 import { useColorSchemeProvider } from './composables/use-dark-mode-preference.js';
 import { initPregeneratedPuzzles } from '@/services/puzzles-db/init-pregen-puzzles.js';
 import { computed, onMounted, toRef } from 'vue';
-import { useWindowSize } from '@vueuse/core';
 import { provideGlobalBuildData } from './app.globals.js';
 import { initSettingsPersistence } from './stores/settings.js';
 import { useStatisticsStore } from './stores/statistics.js';
@@ -47,8 +46,9 @@ export default {
 		const statsStore = useStatisticsStore();
 		const statsStore2 = useStatisticsStore2();
 
-		const { height } = useWindowSize();
-		const viewportHeight = computed(() => height.value ? `${height.value}px` : '100%');
+		const viewportHeight = toRef(store, 'viewportHeight');
+
+		const viewportHeightPx = computed(() => viewportHeight.value ? `${viewportHeight.value}px` : '100%');
 
 		onMounted(() => {
 			initPregeneratedPuzzles({
@@ -57,7 +57,7 @@ export default {
 		})
 
 		return { 
-			viewportHeight,
+			viewportHeightPx,
 			puzzleKey,
 			statsStore,
 			statsStore2,
@@ -79,7 +79,7 @@ body {
 }
 .root {
 	@apply relative flex flex-col z-0;
-	--vh-total: v-bind(viewportHeight);
+	--vh-total: v-bind(viewportHeightPx);
 	min-height: var(--vh-total);
 }
 
