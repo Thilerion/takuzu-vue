@@ -1,23 +1,15 @@
-import { ref } from 'vue';
-
-let visibility;
-let hidden;
+import { useDocumentVisibility } from '@vueuse/core';
+import { computed } from 'vue';
 
 export function usePageVisibility() {
-	if (!hidden) {
-		hidden = ref(document.hidden);
-	}
+	const visibility = useDocumentVisibility();
 
-	if (!visibility) {
-		visibility = ref(document.visibilityState);
-		document.addEventListener('visibilitychange', () => {
-			visibility.value = document.visibilityState;
-			hidden.value = document.hidden;
-		}, true);
-	}
+	const hidden = computed(() => visibility.value !== 'visible');
+	const visible = computed(() => visibility.value === 'visible');
 
 	return {
 		visibility,
-		hidden
-	};
+		hidden,
+		visible
+	}
 }
