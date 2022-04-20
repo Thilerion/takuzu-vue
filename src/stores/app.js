@@ -1,3 +1,4 @@
+import { usePageVisibility } from "@/composables/use-page-visibility";
 import { isDebugModeEnabledInLocalStorage, persistDebugMode } from "@/services/debug-mode.js";
 import { useMediaQuery, useWindowSize } from "@vueuse/core";
 import { defineStore } from "pinia";
@@ -16,13 +17,17 @@ export const useAppStore = defineStore('app', {
 			isMobile: checkUserAgentIsMobile(),
 			touch: hasTouchscreen(),
 			orientation: useDeviceOrientation(),
-			viewportSize: useWindowSize()
+			viewportSize: useWindowSize(),
+			visibility: usePageVisibility().visibility,
 		}
 	}),
 
 	getters: {
 		viewportHeight: (state) => state.context.viewportSize.height,
 		viewportWidth: state => state.context.viewportSize.width,
+
+		windowVisible: state => state.context.visibility === 'visible',
+		windowHidden: state => state.context.visibility !== 'visible',
 	},
 
 	actions: {

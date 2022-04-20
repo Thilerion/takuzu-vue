@@ -77,7 +77,6 @@ import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue
 import PuzzleFinishedModal from '@/components/gameboard/PuzzleRecapTransition.vue';
 import PuzzleHintWrapper from '@/components/gameboard/PuzzleHintWrapper.vue';
 
-import { usePageVisibility } from '@/composables/use-page-visibility.js';
 import { usePuzzleWakeLock } from '@/composables/use-wake-lock.js';
 
 import { COLUMN, ROW } from '@/lib/constants.js';
@@ -89,9 +88,10 @@ import { useBasicStatsStore } from '@/stores/basic-stats.js';
 import { usePuzzleHistoryStore } from '@/stores/puzzle-history.js';
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
 import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
-import { computed } from 'vue';
+import { computed, toRef } from 'vue';
 import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
 import { usePuzzleStore } from '@/stores/puzzle.js';
+import { useAppStore } from '@/stores/app.js';
 
 export default {
 	components: {
@@ -107,8 +107,6 @@ export default {
 		PuzzleHintWrapper,
 	},
 	setup() {
-		const { hidden } = usePageVisibility();
-
 		const settingsStore = useSettingsStore();
 
 		const { showLineInfo, enableWakeLock, showBoardCoordinates, showBoardLineCounts, showRulers, showTimer } = storeToRefs(settingsStore);
@@ -125,8 +123,11 @@ export default {
 
 		const puzzleStore = usePuzzleStore();
 
+		const mainStore = useAppStore();
+		const windowHidden = toRef(mainStore, 'windowHidden');
+
 		return { 
-			windowHidden: hidden,
+			windowHidden,
 			showLineInfo, showBoardCoordinates, showBoardLineCounts, showRulers,
 			isWakeLockEnabled: computed(() => wakeLock.isActive.value),
 			shouldEnableWakeLock: enableWakeLock, showTimer,
