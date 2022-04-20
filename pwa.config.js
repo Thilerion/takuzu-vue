@@ -10,7 +10,7 @@ export const createVitePwaConfig = ({
 		manifest: {
 			name,
 			short_name,
-			description: 'Binary puzzle, also called takuzu or binairo.',
+			description: 'Binary logic puzzle, also called takuzu or binairo.',
 			theme_color: "#4DBA87",
 			orientation: 'portrait-primary',
 			background_color: '#f8fafc',

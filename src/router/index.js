@@ -19,6 +19,7 @@ import PlayPuzzle from '../views/PlayPuzzle.vue';
 // 404 Page
 import NotFound from '../views/NotFound.vue';
 import { useRouteDocumentTitle } from './useDocumentTitle';
+import { useMetaThemeColor } from './useMetaThemeColor';
 
 const routes = [
 	{
@@ -26,16 +27,16 @@ const routes = [
 		name: 'TopLevelMain',
 		component: MainPage,
 		meta: {
-			metaThemeColors: {
-				light: 'white',
-				dark: 'black'
-			}
+			metaThemeColor: 'white',
 		},
 		children: [
 			{
 				path: '',
 				name: 'Home',
 				component: Home,
+				meta: {
+					metaThemeColor: '#4DBA87'
+				}
 			},
 			{
 				path: '/stats-old',
@@ -131,13 +132,14 @@ const { updateTitleWithRouteMeta } = useRouteDocumentTitle({
 	defaultTitle: 'Takuzu',
 	titlePrefix: 'Takuzu - '
 });
-
-router.beforeEach((to, from) => {
-	// set document title based on route
-	updateTitleWithRouteMeta(to, from);
-})
+const { updateThemeColorWithRouteMeta } = useMetaThemeColor();
 
 router.afterEach((to, from) => {
+	// set document title based on route
+	updateTitleWithRouteMeta(to, from);
+	updateThemeColorWithRouteMeta(to, from);
+
+	// set previous route, for better back-button navigation
 	if (from && from.matched && from.matched.length) {
 		to.meta.prev = from;
 	} else {
