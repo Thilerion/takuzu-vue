@@ -18,12 +18,19 @@ import PlayPuzzle from '../views/PlayPuzzle.vue';
 
 // 404 Page
 import NotFound from '../views/NotFound.vue';
+import { useRouteDocumentTitle } from './useDocumentTitle';
 
 const routes = [
 	{
 		path: '',
 		name: 'TopLevelMain',
 		component: MainPage,
+		meta: {
+			metaThemeColors: {
+				light: 'white',
+				dark: 'black'
+			}
+		},
 		children: [
 			{
 				path: '',
@@ -120,13 +127,14 @@ const router = createRouter({
 	routes
 });
 
+const { updateTitleWithRouteMeta } = useRouteDocumentTitle({
+	defaultTitle: 'Takuzu',
+	titlePrefix: 'Takuzu - '
+});
+
 router.beforeEach((to, from) => {
 	// set document title based on route
-	let title = 'Takuzu';
-	if (to.meta.title) {
-		title += ' - ' + to.meta.title;
-	}
-	document.title = title;
+	updateTitleWithRouteMeta(to, from);
 })
 
 router.afterEach((to, from) => {
