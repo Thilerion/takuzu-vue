@@ -37,8 +37,14 @@
 	<div class="w-full" v-if="selectedDateValues != null">
 		<div class="flex flex-row gap-4 items-center justify-between text-xs max-w-md mx-auto px-3 py-1">
 			<div>{{selectedDateValues.date}}</div>
-			<div>{{selectedDateValues.played}} puzzles</div>
-			<div>playtime: {{formatTime(selectedDateValues.time)}}</div>
+			<template v-if="selectedDateValues.played > 0">
+				<div>{{selectedDateValues.played}} puzzles</div>
+				<div>playtime: {{formatTime(selectedDateValues.time)}}</div>
+			</template>
+			<template v-else>
+				<div>No puzzles played</div>
+				<div></div>
+			</template>
 		</div>
 	</div>
 </template>
@@ -150,8 +156,8 @@ const toggleSelectedSquare = (dateStr, square) => {
 }
 const selectedDateValues = computed(() => {
 	if (selectedSquare.value == null) return null;
-	const data = scoresByDate.value[selectedSquare.value.dateStr];
-	const { played, time } = data;
+	const data = scoresByDate.value[selectedSquare.value.dateStr] ?? {};
+	const { played = 0, time = 0 } = data;
 	return {
 		played,
 		time,
