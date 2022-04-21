@@ -23,7 +23,8 @@
 	</section>
 </template>
 
-<script setup>import { onMounted, useSlots } from 'vue';
+<script setup>
+import { useSlots } from 'vue';
 
 const props = defineProps({
 	value: {
@@ -33,10 +34,6 @@ const props = defineProps({
 })
 
 const slots = useSlots();
-
-onMounted(() => {
-	console.log(slots);
-})
 
 
 </script>

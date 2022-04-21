@@ -3,6 +3,8 @@ import Dexie from "dexie";
 import { exportDB, importInto, peakImportFile } from "dexie-export-import";
 import { initVersions } from "./versions.js";
 
+const TEMP_STATS_DB_NAME = 'tempStatsDb';
+
 export async function importPeek(blob) {
 	const importMeta = await peakImportFile(blob);
 	const { data } = importMeta;
@@ -52,16 +54,35 @@ export async function cleanImportPuzzleHistoryDb(db, blob, options = {}) {
 	}
 }
 
+async function deleteDatabaseContents(dbName = TEMP_STATS_DB_NAME) {
+	let db = new Dexie(dbName);
+	try {
+		await db.delete();
+		console.log('succesfully deleted database');
+		db = undefined;
+		return true;
+	} catch (e) {
+		console.warn('could not delete database.')
+		console.error(e);
+		db = undefined;
+		return false;
+	}
+}
+
 export async function importPuzzleHistoryItemsWithVersionUpgrade(db, blob) {
 	let tempStatsDb;
+
 	try {
+		// just to make sure it doesn't exist
+		await deleteDatabaseContents(TEMP_STATS_DB_NAME);
+
 		const obj = await readJsonFile(blob);
+		// set database name so it doesn't get imported into the original database
+		obj.data.databaseName = TEMP_STATS_DB_NAME;
 
-		obj.data.databaseName = 'tempStatsDb';
+		const modifiedDbBlob = writeObjToBlob(obj);
 
-		const blob2 = writeObjToBlob(obj);
-
-		tempStatsDb = await Dexie.import(blob2, {
+		tempStatsDb = await Dexie.import(modifiedDbBlob, {
 			chunkSizeBytes: 1024 * 1024 * 128
 		});
 		await tempStatsDb.close();
@@ -71,7 +92,6 @@ export async function importPuzzleHistoryItemsWithVersionUpgrade(db, blob) {
 		await tempStatsDb.open();
 
 		const allItems = await tempStatsDb.puzzleHistory.toArray();
-		console.log({ allItems });
 
 		await addImportedItemsToDatabase(db, allItems);
 
@@ -90,48 +110,61 @@ export async function importPuzzleHistoryItemsWithVersionUpgrade(db, blob) {
 }
 
 async function addImportedItemsToDatabase(db, allItems) {
-	const currentKeys = new Set(
-		await db.puzzleHistory.toCollection().primaryKeys()
-	);
+	return db.transaction('rw', db.puzzleHistory, async () => {
+		const currentKeys = new Set(
+			await db.puzzleHistory.toCollection().primaryKeys()
+		);
+		const currentTimestamps = new Set(
+			await db.puzzleHistory.orderBy('timestamp').keys()
+		);
 
-	const itemsWithDuplicateId = [];
-	const itemsWithUniqueId = [];
+		// never import items with an already existing timestamp
+		const itemsWithUniqueTimestamp = allItems.filter(item => {
+			return !currentTimestamps.has(item.timestamp);
+		});
 
-	for (const item of allItems) {
-		if (currentKeys.has(item.id)) {
-			const copy = { ...item };
-			delete copy.id;
-			itemsWithDuplicateId.push(copy);
-		} else {
-			itemsWithUniqueId.push(item);
+		const duplicateTimestampCount = allItems.length - itemsWithUniqueTimestamp.length;
+
+		const itemsToAdd = [];
+		const itemsToAddWithoutId = [];
+
+		// if timestamp does not exist, but id is duplicate, remove id and add it anyway
+		for (const item of itemsWithUniqueTimestamp) {
+			if (currentKeys.has(item.id)) {
+				const copy = { ...item };
+				delete copy.id;
+				itemsToAddWithoutId.push(copy);
+			} else {
+				itemsToAdd.push(item);
+			}
 		}
-	}
+		console.log('Begin adding items to puzzleHistory database.');
 
-	console.log('now adding items with unique id: ' + itemsWithUniqueId.length);
-	await db.puzzleHistory.bulkAdd(itemsWithUniqueId);
-	console.log('done');
+		// first add items that have id
+		const uniqueAddedIds = await db.puzzleHistory.bulkAdd(itemsToAdd, undefined, {
+			allKeys: true
+		});
+		// only now add items without id. This is to prevent id-less items from getting an id assigned, that is already present later in the list
+		const newAddedIds = await db.puzzleHistory.bulkAdd(itemsToAddWithoutId, undefined, {
+			allKeys: true
+		});
+		
+		console.log('done adding items');
 
-	console.log('now parsing items with duplicate ids: ' + itemsWithDuplicateId.length);
-	const currentTimestamps = new Set(
-		await db.puzzleHistory.orderBy('timestamp').keys()
-	);
-	
-	const duplicateTimestamps = [];
-	const uniqueTimestamps = [];
+		const result = {
+			addedTotal: uniqueAddedIds.length + newAddedIds.length,
+			skipped: duplicateTimestampCount,
+			addedUnchanged: uniqueAddedIds.length,
+			addedNewId: newAddedIds.length
+		};
+		return result;
 
-	for (const item of itemsWithDuplicateId) {
-		const timestamp = item.timestamp;
-		if (currentTimestamps.has(timestamp)) {
-			duplicateTimestamps.push(item);
-		} else {
-			uniqueTimestamps.push(item);
-		}
-	}
-
-	console.log(`Found ${duplicateTimestamps.length} items with duplicate timestamps, and ${uniqueTimestamps.length} items with unique timestamps.`);
-	console.log('nog adding items with unique timestamps');
-	await db.puzzleHistory.bulkAdd(uniqueTimestamps);
-	console.log('done');
-
-	return true;
+	}).then((results) => {
+		console.log('Transaction complete and committed.');
+		return results;
+	}).catch(err => {
+		console.warn('Transaction failed.');
+		console.error(err);
+		return null;
+	})
 }
