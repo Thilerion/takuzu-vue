@@ -1,11 +1,11 @@
 <template>
 	<transition name="finished-modal3" :duration="{enter: 500, leave: 200}" @after-enter="afterEnterOuter" @after-leave="afterLeaveOuter">
-		<div class="modal-wrapper w-full h-full flex" v-show="show">
+		<div class="modal-wrapper w-full h-full flex" v-show="transitionData.show">
 			<transition name="finished-modal-inner" @after-enter="afterEnterInner">
-				<div class="flex modal-expander backdrop" v-show="transitionInner">
-					<div class="inner-content" :class="{'animate-modal-content': showContent}">
+				<div class="flex modal-expander backdrop" v-show="transitionData.transitionInner">
+					<div class="inner-content" :class="{'animate-modal-content': transitionData.showContent}">
 						<PuzzleRecap
-							v-if="gameEndStats.width && lastPuzzleEntry.width && transitionInner"
+							v-if="showPuzzleRecapInner"
 							:stats="gameEndStats"
 							:last-puzzle="lastPuzzleEntry"
 							@exit-to="exitTo"
@@ -14,7 +14,7 @@
 				</div>
 			</transition>
 			<transition name="fade-base">
-			<div class="banner-container" v-show="!fadeOutBase">
+			<div class="banner-container" v-show="!transitionData.fadeOutBase">
 				<div class="banner" @click="emitClose">
 					<div class="banner-text">{{goodJobString}}</div>
 				</div>
@@ -24,13 +24,142 @@
 	</transition>
 </template>
 
-<script>
+<script setup>
 import { useAppStore } from '@/stores/app';
-import { useBasicStatsStore } from '@/stores/basic-stats.js';
 import { usePuzzleStore } from '@/stores/puzzle.js';
+import { useRecapStatsStore } from '@/stores/recap-stats';
 import { storeToRefs } from 'pinia';
+import { computed, nextTick, ref, toRef, watch, reactive } from 'vue';
+import { useRouter } from 'vue-router';
 import PuzzleRecap from './PuzzleRecap.vue';
 
+
+const props = defineProps({
+	finished: Boolean
+});
+
+const recapStatsStore = useRecapStatsStore();
+const { hideModal } = recapStatsStore;
+const { lastPuzzleEntry, modalShown } = storeToRefs(recapStatsStore);
+// TODO: delete this, was used by previous store version
+const gameEndStats = ref({});
+
+const puzzleStore = usePuzzleStore();
+const playAgainAction = async () => {
+	try {
+		const { width, height, difficulty } = recapStatsStore.lastPuzzleEntry;
+		puzzleStore.reset();
+		await puzzleStore.initPuzzle({
+			width, height, difficulty
+		});
+		const mainStore = useAppStore();
+		mainStore.puzzleKey += 1;
+	} catch(e) {
+		console.warn('Error while trying to create new puzzle in PlayAgain');
+		throw e;
+	}
+}
+
+// transition variables
+const EXPAND_DURATION = 550;
+const transitionData = reactive({
+	fadeOutBase: false,
+	showContent: false,
+	afterEnterOuterTimeout: null,
+	show: false,
+	transitionInner: false,
+	afterLeaveAction: null,
+});
+const shouldShow = computed(() => props.finished && modalShown.value);
+
+const afterEnterOuter = () => {
+	transitionData.afterEnterOuterTimeout = setTimeout(() => {
+		transitionData.transitionInner = true;
+		transitionData.fadeOutBase = true;
+		transitionData.afterEnterOuterTimeout = null;
+	}, EXPAND_DURATION);
+}
+const reset = () => {
+	clearTimeout(transitionData.afterEnterOuterTimeout);
+	transitionData.afterEnterOuterTimeout = null;
+	transitionData.transitionInner = false;
+	transitionData.fadeOutBase = false;
+	transitionData.showContent = false;
+	transitionData.show = false;
+}
+const afterEnterInner = () => transitionData.showContent = true;
+const afterLeaveOuter = () => {
+	setTimeout(() => {
+		try {
+			reset();
+			transitionData.afterLeaveAction?.();
+		} catch {}
+	}, 100);
+}
+
+const goodJobString = ref('PLACEHOLDER_GOOD_JOB_STRING');
+const openModal = () => {
+	reset();
+	nextTick(() => {
+		const idx = Math.floor(Math.random() * GOOD_JOB_STRINGS.length);
+		goodJobString.value = GOOD_JOB_STRINGS[idx];
+		transitionData.show = true;
+	})
+}
+watch(shouldShow, (value, prev) => {
+	if (value && !prev) {
+		openModal();
+	} else {
+		transitionData.show = false;
+	}
+})
+
+const router = useRouter();
+function exitTo(destination) {
+	switch(destination) {
+		case 'new-game': {
+			transitionData.afterLeaveAction = () => router.go(-1);
+			break;
+		}
+		case 'home': {
+			transitionData.afterLeaveAction = () => router.replace({ name: 'Home'});
+			break;
+		}
+		case 'statistics': {
+			transitionData.afterLeaveAction = () => router.replace({ name: 'Statistics'});
+			break;
+		}
+		case 'play-again': {
+			transitionData.afterLeaveAction = () => {};
+			playAgainAction().catch(err => {
+				console.log('Routing to new game screen because PlayAgain create-new-board failed');
+				console.error(err);
+				router.go(-1);
+			}).finally(() => {
+				hideModal();
+			})
+			return;
+		}
+		default: {
+			console.log('No destination after leaving puzzleFinishedModal');
+			transitionData.afterLeaveAction = () => {};
+			break;
+		}
+	}
+
+	hideModal();
+}
+
+const showPuzzleRecapInner = computed(() => {
+	return modalShown.value && transitionData.transitionInner && recapStatsStore.initialized;
+})
+const showPuzzleRecapModal = computed(() => {
+	return props.finished && modalShown.value;
+})
+
+</script>
+
+<script>
 const GOOD_JOB_STRINGS = [
 	'Good job!',
 	'Sensational!',
@@ -50,142 +179,6 @@ const GOOD_JOB_STRINGS = [
 	"Amazing!",
 ];
 
-export default {
-	emits: ['exit-game'],
-	props: {
-		finished: Boolean,
-	},
-	components: {
-		PuzzleRecap,
-	},
-	setup() {
-		const basicStatsStore = useBasicStatsStore();
-
-		const hideModal = () => basicStatsStore.toggleFinishedModal(false);
-		const { gameEndStats, lastPuzzleEntry, modalHidden } = storeToRefs(basicStatsStore);
-
-		const puzzleStore = usePuzzleStore();
-
-		return { hideModal, gameEndStats, lastPuzzleEntry, modalHidden, puzzleStore };
-	},
-	data() {
-		return {
-			transitionInner: false,
-			backdropEntered: false,
-			fadeOutBase: false,
-			showContent: false,
-
-			afterEnterOuterTimeout: null,
-
-			show: false,
-			goodJobString: 'Good job!',
-
-			afterLeaveAction: null,
-
-			expandFromEncouragementDuration: 550,
-		}
-	},
-	computed: {
-		shouldShow() {
-			return this.finished && !this.modalHidden;
-		},
-	},
-	methods: {
-		exitTo(destination) {
-			if (destination === 'new-game') {
-				this.afterLeaveAction = () => this.$router.go(-1);
-				this.emitClose();
-			} else if (destination === 'home') {
-				this.afterLeaveAction = () => this.$router.replace({ name: 'Home' });
-				this.emitClose();
-			} else if (destination === 'statistics') {
-				this.afterLeaveAction = () => this.$router.replace({ name: 'Statistics' });
-				this.emitClose();
-			} else if (destination === 'play-again') {
-				this.afterLeaveAction = () => {};
-				this.playAgainAction().catch((err) => {
-					// route to New Game screen if failed, where the message is also displayed
-					console.log('Routing to new game screen because PlayAgain create-new-board failed');
-					this.$router.go(-1);
-				}).finally(() => {
-					this.emitClose();
-				})
-			} else {
-				console.log('No destination after leaving puzzleFinishedModal');
-				this.afterLeaveAction = () => {};
-				this.emitClose();
-			}
-		},
-		async playAgainAction() {
-			const { width, height, difficulty } = this.lastPuzzleEntry;
-			try {
-				this.puzzleStore.reset();
-				await this.puzzleStore.initPuzzle({
-					width, height, difficulty
-				})
-				const appStore = useAppStore();
-				appStore.puzzleKey += 1;
-
-			} catch(e) {
-				console.warn(e);
-				console.warn('Error while trying to create new puzzle in PlayAgain');
-				return Promise.reject();
-			}
-		},
-		emitClose() {
-			this.hideModal();
-		},
-		afterEnterOuter() {
-			this.afterEnterOuterTimeout = setTimeout(() => {
-				this.transitionInner = true;
-				this.fadeOutBase = true;
-				this.afterEnterOuterTimeout = null;
-			}, this.expandFromEncouragementDuration);
-		},
-		afterEnterInner() {
-			this.showContent = true;
-		},
-		afterLeaveOuter() {
-			setTimeout(() => {
-				try {
-					this.reset();
-					this.afterLeaveAction();
-				} catch(e) {
-					console.warn(e);
-					console.warn('Element was probably destroyed before timeout was finished');
-				}
-			}, 100);
-		},
-		afterEnterBackdrop() {
-			this.backdropEntered = true;
-		},
-		reset() {
-			clearTimeout(this.afterEnterOuterTimeout);
-			this.afterEnterOuterTimeout = null;
-			this.transitionInner = false;
-			this.fadeOutBase = false;
-			this.showContent = false;
-			this.show = false;
-		},
-		openModal() {
-			this.reset();
-			this.$nextTick(() => {
-				const idx = Math.floor(Math.random() * GOOD_JOB_STRINGS.length);
-				this.goodJobString = GOOD_JOB_STRINGS[idx];
-				this.show = true;
-			})
-		}
-	},
-	watch: {
-		shouldShow(value, prev) {
-			if (value && !prev) {
-				this.openModal();
-			} else {
-				this.show = false;
-			}
-		}
-	}
-};
 </script>
 
 <style scoped>

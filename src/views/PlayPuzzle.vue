@@ -62,7 +62,7 @@
 		</router-view>
 
 		<teleport to="#overlay-container">
-			<PuzzleFinishedModal @exit-game="exitGame" :finished="finished" />
+			<PuzzleRecapTransition :finished="finished" />
 		</teleport>
 	</div>
 </template>
@@ -76,7 +76,7 @@ import PuzzleInfo from '@/components/gameboard/PuzzleInfo.vue';
 import RulerCoords from '@/components/gameboard/RulerCoords.vue';
 import RulerCounts from '@/components/gameboard/RulerCounts.vue';
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
-import PuzzleFinishedModal from '@/components/gameboard/PuzzleRecapTransition.vue';
+import PuzzleRecapTransition from '@/components/gameboard/PuzzleRecapTransition.vue';
 import PuzzleHintWrapper from '@/components/gameboard/PuzzleHintWrapper.vue';
 
 import { usePuzzleWakeLock } from '@/composables/use-wake-lock.js';
@@ -105,7 +105,7 @@ export default {
 		RulerCoords,
 		RulerCounts,
 		OverlayPageTransition,
-		PuzzleFinishedModal,
+		PuzzleRecapTransition,
 		PuzzleHintWrapper,
 	},
 	setup() {
