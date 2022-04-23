@@ -296,7 +296,6 @@ export default {
 			this.userCheckErrors(boardStr);
 		},
 		checkEnableWakeLock() {
-			console.log(this.wakeLock.isActive.value);
 			if (this.wakeLock.isActive.value) {
 				return;
 			}
@@ -362,11 +361,6 @@ export default {
 
 		clearTimeout(this.finishedTimeout);
 		clearTimeout(this.mistakeCheckTimeout);
-	},
-	unmounted() {
-		// TODO: also stop wake lock when game is paused, settings is open, etc, and enable it again when resuming
-		this.wakeLock.release();
-		// this.wakeLock.destroy();
 	},
 	watch: {
 		finishedAndSolved: {
