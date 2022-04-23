@@ -53,7 +53,6 @@ const { enableVibration, vibrationStrength } = storeToRefs(settingsStore);
 
 const vStrengthValue = vibrationStrength.value;
 const vStrengthAsInput = durationInputValueMap.get(vStrengthValue);
-console.log({vStrengthValue, vStrengthAsInput });
 const vibrationSliderValue = ref(durationInputValueMap.get(vibrationStrength.value) ?? 0);
 
 const vibrationStrengthPercentage = computed(() => {

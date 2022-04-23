@@ -18,8 +18,6 @@ export default {
 	setup() {
 		const { savedPuzzle,
 		hasCurrentSavedGame } = useSavedPuzzle();
-		console.log({ hasCurrentSaved: hasCurrentSavedGame.value});
-
 		return {
 			canContinue: hasCurrentSavedGame,
 			currentSaved: savedPuzzle

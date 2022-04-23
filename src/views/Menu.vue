@@ -48,12 +48,6 @@ export default {
 
 		const { offlineReady, needRefresh, updateServiceWorker } = useRegisterSW();
 
-		console.log({ needRefresh: needRefresh.value, offlineReady: offlineReady.value});
-
-		watchEffect(() => {
-			console.log({ needRefresh: needRefresh.value, offlineReady: offlineReady.value});
-		})
-
 		const clearPuzzlesResult = ref(null);
 
 		let timeout = null;

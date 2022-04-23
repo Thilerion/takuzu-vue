@@ -49,11 +49,9 @@ export const usePuzzleHistoryStore = defineStore('puzzleHistory', {
 			return this.moveList.map(moveToString);
 		},
 		importMoveHistory(moveStrings = []) {
-			console.log(this.moveList);
 			this.reset();
 			const moveList = moveStrings.map(moveFromString);
 			this.moveList = moveList;
-			console.log(this.moveList);
 		}
 	}
 
