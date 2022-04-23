@@ -1,5 +1,5 @@
 <template>
-	<div class="puzzle-controls">
+	<div class="puzzle-controls" :class="{'paused': puzzleStore.paused}">
 		<div class="control-btns">
 
 			<IconBtnText
@@ -60,6 +60,7 @@
 </template>
 
 <script>
+import { usePuzzleStore } from '@/stores/puzzle';
 import { useSettingsStore } from '@/stores/settings.js';
 import { computed, watchEffect } from 'vue';
 
@@ -76,7 +77,8 @@ export default {
 	setup() {
 		const settingsStore = useSettingsStore();
 		const checkButtonEnabled = computed(() => settingsStore.checkButton !== 'disabled');
-		return { checkButtonEnabled };
+		const puzzleStore = usePuzzleStore();
+		return { checkButtonEnabled, puzzleStore };
 	},
 };
 </script>
@@ -89,7 +91,7 @@ export default {
 	@apply text-gray-900/80 dark:text-white/90;
 }
 .puzzle-paused .puzzle-controls, .puzzle-finished .puzzle-controls {
-	@apply pointer-events-none;
+	@apply pointer-events-none text-gray-700/60 dark:text-white/50;
 }
 
 .control-btns {

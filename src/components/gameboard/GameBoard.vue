@@ -25,9 +25,10 @@
 		<transition name="fade-pause">
 			<div class="pause-overlay text-center" v-show="paused">
 				<div class="flex flex-col h-full px-2 pt-8 pb-6">
-					<div class="h-5/6 flex-auto mx-auto flex justify-center pause-icon-wrapper place-items-center py-2">
-						<icon-grommet-icons-pause-fill />
-					</div>
+					<button
+						class="h-5/6 flex-auto mx-auto flex justify-center pause-icon-wrapper place-items-center py-2 pointer-events-auto"
+						@click="resumeByUser"
+					><icon-grommet-icons-pause-fill /></button>
 					<div class="flex-auto pause-label-wrapper uppercase mb-2 py-2">Paused</div>
 					<!-- <div class="flex-auto restart-label">Click to continue</div> -->
 				</div>
@@ -41,12 +42,14 @@
 import { usePuzzleStore } from '@/stores/puzzle.js';
 import PuzzleCheckIndicator from './PuzzleCheckIndicator.vue';
 import PuzzleGrid from './PuzzleGrid.vue';
+import BaseButton from '../global/BaseButton.vue';
 
 export default {
 	components: {
-		PuzzleGrid,
-		PuzzleCheckIndicator,
-	},
+    PuzzleGrid,
+    PuzzleCheckIndicator,
+    BaseButton
+},
 	props: {
 		rows: Number,
 		columns: Number,
@@ -65,7 +68,12 @@ export default {
 	setup() {
 		const puzzleStore = usePuzzleStore();
 		const toggleCell = ({ x, y, value }) => puzzleStore.toggle({ x, y, prevValue: value });
-		return { toggleCell };
+		const resumeByUser = () => {
+			if (puzzleStore.pausedByUser) {
+				puzzleStore.setPaused(false, { userAction: true });
+			}
+		}
+		return { toggleCell, resumeByUser };
 	},
 	computed: {
 		// computed properties for styling

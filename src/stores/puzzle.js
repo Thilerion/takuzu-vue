@@ -39,6 +39,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 		initialized: false,
 		started: false,
 		paused: false,
+		pausedByUser: false,
 		finished: false,
 
 		// game creation state/errors
@@ -118,8 +119,17 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 		setFinished(val = true) {
 			this.finished = val;
 		},
-		setPaused(val) {
-			this.paused = val;
+		setPaused(val, { userAction = false } = {}) {
+			if (userAction) {
+				this.paused = val;
+				this.pausedByUser = val;
+			} else {
+				this.paused = val;
+				if (!val) {
+					this.pausedByUser = false;
+				}
+			}
+
 		},
 		setCheatUsed() {
 			this.cheatsUsed = true;

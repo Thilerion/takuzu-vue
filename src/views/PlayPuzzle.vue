@@ -3,6 +3,8 @@
 		<GameBoardHeader
 			@close="exitGame"
 			@dropdown-toggled="dropdownToggled"	
+			@pause="pause"
+			@resume="resume"
 		/>
 		<GameBoardWrapper
 			:ruler-height="rulerSize"
@@ -88,7 +90,7 @@ import { useBasicStatsStore } from '@/stores/basic-stats.js';
 import { usePuzzleHistoryStore } from '@/stores/puzzle-history.js';
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
 import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
-import { computed, toRef } from 'vue';
+import { computed, readonly, ref, toRef } from 'vue';
 import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
 import { usePuzzleStore } from '@/stores/puzzle.js';
 import { useAppStore } from '@/stores/app.js';
@@ -123,6 +125,14 @@ export default {
 
 		const puzzleStore = usePuzzleStore();
 
+		const pausedByUser = readonly(toRef(puzzleStore, 'pausedByUser'));
+		const pause = () => {
+			puzzleStore.setPaused(true, { userAction: true });
+		}
+		const resume = () => {
+			puzzleStore.setPaused(false, { userAction: true });
+		}
+
 		const mainStore = useAppStore();
 		const windowHidden = toRef(mainStore, 'windowHidden');
 
@@ -136,7 +146,7 @@ export default {
 			autoCheckErrors: () => puzzleMistakesStore.autoCheckFinishedWithMistakes(),
 			wakeLock,
 			hasCurrentSavedGame,
-			puzzleStore
+			puzzleStore, pause, resume, pausedByUser
 		};
 	},
 	data() {
@@ -204,7 +214,7 @@ export default {
 			return this.board?.grid;
 		},
 		puzzleShouldBePaused() {
-			return this.settingsOpen || this.dropdownOpen || this.windowHidden;
+			return this.pausedByUser || this.settingsOpen || this.dropdownOpen || this.windowHidden;
 		}
 	},
 	methods: {

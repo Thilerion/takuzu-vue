@@ -1,19 +1,23 @@
 <template>
 	<div
-		@click="pauseTimer"
 		class="timer text-center"
+		:class="{'animate-flicker': paused}"
 	><span class="minutes">{{minutes}}</span>:<span class="seconds">{{seconds}}</span>
 	</div>
 </template>
 
 <script>
+import { usePuzzleStore } from '@/stores/puzzle';
 import { usePuzzleTimer } from '@/stores/puzzle-timer.js';
 import { timeFormatter } from '@/utils/date.utils.js';
+import { toRef } from 'vue';
 
 export default {
 	setup() {
 		const puzzleTimer = usePuzzleTimer();
-		return { puzzleTimer };
+		const puzzleStore = usePuzzleStore();
+		const paused = toRef(puzzleStore, 'paused');
+		return { puzzleTimer, paused };
 	},
 	data() {
 		return {
@@ -45,13 +49,6 @@ export default {
 			}
 			this.totalTime = elapsed + current;
 		},
-		pauseTimer() {
-			if (this.puzzleTimer.running) {
-				this.puzzleTimer.pause();
-			} else {
-				this.puzzleTimer.resume();
-			}
-		}
 	},
 	mounted() {
 		this.interval = setInterval(() => {
@@ -73,5 +70,26 @@ export default {
 .seconds {
 	width: 2ch;
 	@apply inline-block text-left;
+}
+
+@keyframes flickering {
+	0% {
+		opacity: 0.9;
+	}
+	15% {
+		opacity: 0.9;
+	}
+	50% {
+		opacity: 0.6;
+	}
+	85% {
+		opacity: 0.9;
+	}
+	100% {
+		opacity: 0.9;
+	}
+}
+.animate-flicker {
+	animation: flickering 2s infinite ease-in-out;
 }
 </style>
