@@ -90,7 +90,7 @@ import { useBasicStatsStore } from '@/stores/basic-stats.js';
 import { usePuzzleHistoryStore } from '@/stores/puzzle-history.js';
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
 import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
-import { computed, readonly, ref, toRef } from 'vue';
+import { computed, readonly, ref, toRef, watch } from 'vue';
 import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
 import { usePuzzleStore } from '@/stores/puzzle.js';
 import { useAppStore } from '@/stores/app.js';
@@ -120,6 +120,7 @@ export default {
 		const puzzleMistakesStore = usePuzzleMistakesStore();
 
 		const wakeLock = usePuzzleWakeLock();
+		const userIdle = wakeLock.idle;
 
 		const { hasCurrentSavedGame } = useSavedPuzzle();
 
@@ -132,6 +133,12 @@ export default {
 		const resume = () => {
 			puzzleStore.setPaused(false, { userAction: true });
 		}
+
+		watch(userIdle, (isIdle) => {
+			if (isIdle && !puzzleStore.paused) {
+				pause();
+			}
+		})
 
 		const mainStore = useAppStore();
 		const windowHidden = toRef(mainStore, 'windowHidden');
@@ -146,7 +153,7 @@ export default {
 			autoCheckErrors: () => puzzleMistakesStore.autoCheckFinishedWithMistakes(),
 			wakeLock,
 			hasCurrentSavedGame,
-			puzzleStore, pause, resume, pausedByUser
+			puzzleStore, pause, resume, pausedByUser, userIdle
 		};
 	},
 	data() {

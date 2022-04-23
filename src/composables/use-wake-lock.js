@@ -2,7 +2,7 @@ import { useSettingsStore } from "@/stores/settings.js";
 import { useWakeLock, useIdle } from "@vueuse/core";
 import { onMounted, provide, ref, toRef, watch, watchEffect } from "vue";
 
-const IDLE_DURATION = 2 * 60 * 1000; // 1 minute
+const IDLE_DURATION = 2 * 60 * 1000; // 2 minutes
 
 export const usePuzzleWakeLock = () => {
 	const { isSupported, isActive, request, release } = useWakeLock();
@@ -23,7 +23,6 @@ export const usePuzzleWakeLock = () => {
 	}
 
 	watch(idle, (isIdle, previousIdle) => {
-		console.log({ isIdle, previousIdle });
 		if (isIdle) {
 			releaseWakeLock();
 		} else {
@@ -48,6 +47,7 @@ export const usePuzzleWakeLock = () => {
 		isSupported,
 		isActive,
 		request: requestWakeLock,
-		release: releaseWakeLock
+		release: releaseWakeLock,
+		idle
 	}
 }
