@@ -3,7 +3,7 @@
 		<header class="modal-header">
 			<div>
 				<div class="time-container">
-					<span class="time">{{time}}</span>
+					<span class="time">{{formattedTimes.time}}</span>
 				</div>
 			</div>
 			<div
@@ -27,12 +27,12 @@
 
 					<div class="overview-item average left">
 						<div class="overview-label">Average time</div>
-						<div class="overview-value">{{average}}</div>
+						<div class="overview-value">{{formattedTimes.average}}</div>
 					</div>
 
 					<div class="overview-item best right">
 						<div class="overview-label">Best time</div>
-						<div class="overview-value"><span class="strikethrough" v-if="isTimeRecord && !isFirstPuzzleSolved">{{prevBestFormatted}}</span> {{best}}</div>
+						<div class="overview-value"><span class="strikethrough" v-if="isTimeRecord && !isFirstPuzzleSolved">{{formattedTimes.prevBest}}&nbsp;</span>{{formattedTimes.best}}</div>
 					</div>
 
 					<div
@@ -60,51 +60,126 @@
 </template>
 
 <script>
+import { useRecapStatsStore } from '@/stores/recap-stats';
 import { timeFormatter } from '@/utils/date.utils.js';
+import { storeToRefs } from 'pinia';
+import { computed, ref, toRefs } from 'vue';
+import { getRecapMessageType } from '@/services/recap-message/index.js';
+const msToMinSec = timeFormatter({ padMinutes: true });
+const msToSec = (ms) => {
+	if (ms <= 100) {
+		return Math.round(ms) / 1000;
+	} else if (ms < 1020) {
+		return (Math.round(ms / 10) / 100).toFixed(2);
+	} else if (ms < 9500) {
+		return (Math.round(ms / 100) / 10).toFixed(1);
+	} else {
+		return Math.round(ms / 1000);
+	}
+}
 
 const recapMsgTypes = {
 	FIRST: 'first puzzle solved',
 	TIME_RECORD: 'time record',
+	NEARLY_TIME_RECORD: 'nearly time record',
+	FIRST_OF_DIFFICULTY: 'first time playing difficulty with this size',
+	FIRST_OF_SIZE: 'first time playing board size with this difficulty',
 	AVERAGE_IMPROVED: 'better than average',
 	DEFAULT: 'none'
 };
 
-export default {
-	props: {
-		stats: {
-			type: Object,
-			required: true,
-		},
-		lastPuzzle: {
-			type: Object,
-			required: true,
-		}
-	},
-	emits: ['exit-to'],
-	data() {
-		return {
-			showHighscoreAnim: true
-		}
-	},
-	methods: {
-		msToMinSec: timeFormatter({ padMinutes: true }),
-		msToSec(ms) {
-			if (ms <= 100) {
-				return Math.round(ms) / 1000;
-			} else if (ms < 1020) {
-				return (Math.round(ms / 10) / 100).toFixed(2);
-			} else if (ms < 9500) {
-				return (Math.round(ms / 100) / 10).toFixed(1);
-			} else {
-				return Math.round(ms / 1000);
-			}
-		}
-	},
-	computed: {
+function selectRecapMessage(data) {
+	// first time size (not difficulty) OR first time difficulty (not size)
+	// first puzzle solved
+	// time record
+	// nearly time record
+	// much better than average OR better than average
+	// amount played today
+	// default: none
+
+	const newRecapMsg = getRecapMessageType(data);
+	console.log({ newRecapMsg});
+
+	
+
+	if (data.isFirstSolvedWithDifficulty && !data.isFirstSolvedWithSize) {
+		return recapMsgTypes.FIRST_OF_DIFFICULTY;
+	}
+	if (!data.isFirstSolvedWithDifficulty && data.isFirstSolvedWithSize) {
+		return recapMsgTypes.FIRST_OF_SIZE;
+	}
+
+	if (data.isFirstSolvedWithPuzzleConfig) {
+		return recapMsgTypes.FIRST;
+	} 
+	if (data.isTimeRecord) {
+		return recapMsgTypes.TIME_RECORD;
+	}
+
+	// check if nearly time record
+	if (isNearlyTimeRecord(data)) {
+		return recapMsgTypes.NEARLY_TIME_RECORD;
+	}
+
+	if (data.differencePreviousAverage < 0) {
+		return recapMsgTypes.AVERAGE_IMPROVED;
+	}
+	return recapMsgTypes.DEFAULT;
+}
+
+function isNearlyTimeRecord({
+	count, best, timeElapsed, previousAverage
+}) {
+	if (count < 10) return false;
+	if (timeElapsed <= previousAverage) return false;
+	// only if time difference is less than 1s
+	return timeElapsed - best <= 1000;
+}
+</script>
+
+<script setup>
+const recapStatsStore = useRecapStatsStore();
+const {
+	isTimeRecord,
+	count,
+} = storeToRefs(recapStatsStore);
+const {
+	difficulty, width, height
+} = toRefs(recapStatsStore.lastPuzzleEntry);
+
+
+const dimensions = computed(() => `${width.value}x${height.value}`);
+
+const times = computed(() => ({
+	time: recapStatsStore.currentTimeElapsed,
+	best: recapStatsStore.best,
+	prevBest: recapStatsStore.previousBest,
+	average: recapStatsStore.average,
+	prevAverage: recapStatsStore.previousAverage
+}))
+const formattedTimes = computed(() => {
+	const result = {};
+	for (const [key, value] of Object.entries(times.value)) {
+		if (value != null) result[key] = msToMinSec(value);
+		else result[key] = 'none';
+	}
+	return result;
+})
+
+const recordTypeMsg = ref('Record type msg');
+const highScoreMessage = ref('Highscore msg');
+// const recapMessage = ref('Recap msg');
+const recapMessage = computed(() => {
+	if (!recapStatsStore.initialized) return 'not initialized';
+	return selectRecapMessage(recapStatsStore);
+})
+
+const isFirstPuzzleSolved = computed(() => false);
+
+
+/*
+computed: {
 		// records/ messages/ high score checks
-		isTimeRecord() {
-			return this.lastPuzzle.timeElapsed <= this.stats.best;
-		},
 		isFirstPuzzleSolved() {
 			return this.stats.count === 1;
 		},
@@ -156,10 +231,10 @@ export default {
 		},
 
 		// other
-		time() {
+		time() { // ok
 			return this.msToMinSec(this.lastPuzzle.timeElapsed);
 		},
-		average() {
+		average() { // ok
 			return this.msToMinSec(this.stats.average);
 		},
 		previousAverage() {
@@ -190,7 +265,7 @@ export default {
 			return this.lastPuzzle.difficulty;
 		}
 	}
-};
+*/
 </script>
 
 <style scoped>

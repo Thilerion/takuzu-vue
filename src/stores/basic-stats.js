@@ -2,6 +2,7 @@ import { HistoryDbEntry } from "@/services/stats/models.js";
 import { getGameEndStats } from "@/services/stats/process-stats.js";
 import * as StatsDB from "@/services/stats2/db/index.js";
 import { defineStore } from "pinia";
+import { useRecapStatsStore } from "./recap-stats";
 
 export const useBasicStatsStore = defineStore('basicStats', {
 
@@ -61,13 +62,9 @@ export const useBasicStatsStore = defineStore('basicStats', {
 			}
 		},
 		async getGameEndStats(historyEntry) {
-			const { width, height, difficulty } = historyEntry;
-			const result = await getGameEndStats({ width, height, difficulty });
-			const gameEndStats = {
-				...result,
-				width, height, difficulty,
-				previousAverage: (result.count > 1) ? (result.totalTime - historyEntry.timeElapsed) / (result.count - 1) : 0
-			}
+			const recapStore = useRecapStatsStore();
+			recapStore.initializeGameEndStats(historyEntry);
+			const gameEndStats = await createGameEndStats(historyEntry);
 			this.$patch({
 				gameEndStats,
 				lastPuzzleEntry: historyEntry,
@@ -88,3 +85,25 @@ export const useBasicStatsStore = defineStore('basicStats', {
 	}
 
 });
+
+const createGameEndStats = async (historyEntry) => {
+	const { width, height, difficulty, timeElapsed } = historyEntry;
+	const gameEndData = await getGameEndStats({ width, height, difficulty });
+	const { count, best, secondBest, totalTime, average } = gameEndData;
+
+	const previousAverage = count > 1 ? (totalTime - timeElapsed) / (count - 1) : 0;
+
+	return {
+		width, height, difficulty,
+		timeElapsed,
+
+		count,
+		best, secondBest,
+		totalTime,
+		average, previousAverage,
+	}
+}
+
+const getPuzzleRecapMessage = () => {
+
+}

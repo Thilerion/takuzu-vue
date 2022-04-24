@@ -1,6 +1,7 @@
 import { HistoryDbEntry } from "@/services/stats";
 import { defineStore } from "pinia";
 import * as StatsDB from "@/services/stats2/db/index.js";
+import { startOfDay } from "date-fns/esm";
 
 const SHOULD_SAVE_PUZZLE_CHEATED = import.meta.env.DEV;
 
@@ -28,10 +29,17 @@ export const useRecapStatsStore = defineStore('recapStats', {
 		previousAverage: 0,
 		count: 0,
 		previousCount: 0,
+		countToday: 0,
 		isTimeRecord: false,
 
 		itemsPlayedWithSize: 0,
 		itemsPlayedWithDifficulty: 0,
+
+		totalSolved: 0,
+		totalSolvedToday: 0,
+		sizesPlayed: [],
+		difficultiesPlayed: [],
+		puzzleConfigsPlayed: [],
 
 		initialized: false,
 	}),
@@ -77,21 +85,34 @@ export const useRecapStatsStore = defineStore('recapStats', {
 			const {
 				best, previousBest,
 				average, previousAverage,
-				count, previousCount,
+				count, previousCount, countToday,
 				isTimeRecord,
 
 				sizeCount,
 				difficultyCount,
+
+				totalSolved,
+				totalSolvedToday,
+				sizesPlayed,
+				difficultiesPlayed,
+				puzzleConfigsPlayed,
 			} = await createGameEndStats(historyEntry);
 			
 			this.$patch({
 				best, previousBest, average, previousAverage,
-				count, previousCount, isTimeRecord,
+				count, previousCount, countToday,
+				isTimeRecord,
 				modalShown: true, initialized: true,
 				currentTimeElapsed: timeElapsed,
 
 				itemsPlayedWithDifficulty: difficultyCount,
-				itemsPlayedWithSize: sizeCount
+				itemsPlayedWithSize: sizeCount,
+
+				totalSolved,
+				totalSolvedToday,
+				sizesPlayed,
+				difficultiesPlayed,
+				puzzleConfigsPlayed,
 			})
 		},
 
@@ -159,19 +180,28 @@ async function createGameEndStats({ width, height, difficulty, timeElapsed, id }
 
 	const [
 		puzzleConfigResult,
-		sizeDifficultyResult
+		sizeDifficultyResult,
+		totalsResult
 	] = await Promise.all([
 		getPuzzlesPlayedWithPuzzleConfig({
 			width, height, difficulty, id
 		}),
 		getPuzzleCountWithSizeOrDifficulty({
 			width, height, difficulty
-		})
+		}),
+		getTotalSolved()
 	])
 
 
 	const { items, previousItems } = puzzleConfigResult;
 	const { sizeCount, difficultyCount } = sizeDifficultyResult;
+	const { totalSolved, totalSolvedToday, sizesPlayed, difficultiesPlayed, puzzleConfigsPlayed } = totalsResult;
+
+	const startOfToday = startOfDay(Date.now());
+	const startOfTodayTimestamp = startOfToday.getTime();
+	const countToday = items.filter(item => {
+		return item.timestamp >= startOfTodayTimestamp;
+	}).length;
 
 	const count = items.length;
 	const previousCount = previousItems.length;
@@ -185,12 +215,67 @@ async function createGameEndStats({ width, height, difficulty, timeElapsed, id }
 	return {
 		best, previousBest,
 		average, previousAverage,
-		count, previousCount,
+		count, previousCount, countToday,
 		isTimeRecord,
 
 		sizeCount,
 		difficultyCount,
+		
+		totalSolved,
+		totalSolvedToday,
+		sizesPlayed,
+		difficultiesPlayed,
+		puzzleConfigsPlayed
 	};
+}
+
+async function getTotalSolved() {
+	try {
+		const totalSolved = await StatsDB.getCount();
+		const sizes = await StatsDB.puzzleHistoryTable.orderBy('[width+height]').uniqueKeys();
+		const difficulties = await StatsDB.puzzleHistoryTable.orderBy('difficulty').uniqueKeys();
+		const sizeAndDifficulties = await StatsDB.puzzleHistoryTable.orderBy('[width+height+difficulty]').uniqueKeys();
+
+		const startOfToday = startOfDay(Date.now());
+		const startOfTodayTimestamp = startOfToday.getTime();
+
+		const totalSolvedToday = await StatsDB.puzzleHistoryTable.where('timestamp').above(startOfTodayTimestamp).count();
+
+		const sizesPlayed = sizes.map(([width, height]) => {
+			const cells = width * height;
+			return { width, height, cells };
+		}).sort((a, b) => {
+			return a.cells - b.cells;
+		});
+		const difficultiesPlayed = [...difficulties].sort((a, b) => {
+			return a - b;
+		})
+		const puzzleConfigsPlayed = sizeAndDifficulties.map(([width, height, difficulty]) => {
+			const cells = width * height;
+			return { width, height, difficulty, cells };
+		}).sort((a, b) => {
+			const byDiff = a.difficulty - b.difficulty;
+			if (byDiff !== 0) return byDiff;
+			return a.cells - b.cells;
+		})
+		
+		return {
+			totalSolved,
+			totalSolvedToday,
+			sizesPlayed,
+			difficultiesPlayed,
+			puzzleConfigsPlayed
+		}
+	} catch (e) {
+		console.error(e);
+		return {
+			totalSolved: null,
+			totalSolvedToday: 0,
+			sizesPlayed: [],
+			difficultiesPlayed: [],
+			puzzleConfigsPlayed: []
+		}
+	}
 }
 
 async function getPuzzlesPlayedWithPuzzleConfig({ width, height, difficulty, id }) {
