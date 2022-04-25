@@ -36,7 +36,7 @@
 <script>
 import { useGlobalBuildData } from '@/app.globals.js';
 import { clearPuzzleDb } from '@/services/puzzles-db/db.js';
-import { useAppStore } from '@/stores/app';
+import { useMainStore } from '@/stores/main.js';
 import { initPregenWorker } from '@/workers/pregen-puzzles.js';
 
 import { useRegisterSW } from 'virtual:pwa-register/vue';
@@ -62,14 +62,14 @@ export default {
 		})
 
 		const debugModeClickCounter = ref(0);
-		const appStore = useAppStore();
-		const isDebugModeEnabled = computed(() => appStore.debugMode);
+		const mainStore = useMainStore();
+		const isDebugModeEnabled = computed(() => mainStore.debugMode);
 		const enableDebugMode = () => {
-			appStore.setDebugMode(true);
+			mainStore.setDebugMode(true);
 			debugModeClickCounter.value = 0;
 		}
 		const disableDebugMode = () => {
-			appStore.setDebugMode(false);
+			mainStore.setDebugMode(false);
 			debugModeClickCounter.value = 0;
 		}
 

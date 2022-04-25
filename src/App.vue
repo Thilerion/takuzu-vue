@@ -25,14 +25,14 @@ import { provideGlobalBuildData } from './app.globals.js';
 import { initSettingsPersistence } from './stores/settings.js';
 import { useStatisticsStore } from './stores/statistics.js';
 import { useStatisticsStore2 } from './stores/statistics2.js';
-import { useAppStore } from './stores/app.js';
+import { useMainStore } from './stores/main.js';
 
 export default {
 	components: {
 		OverlayPageTransition
 	},
 	setup() {
-		const store = useAppStore();
+		const store = useMainStore();
 		const puzzleKey = toRef(store, 'puzzleKey');
 
 		// init settings store

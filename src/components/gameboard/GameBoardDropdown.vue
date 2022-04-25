@@ -62,7 +62,7 @@
 import { EMPTY } from '@/lib/constants.js';
 import { humanSolveTriples } from '@/lib/human-solver/triples.js';
 import { shuffle } from '@/lib/utils.js';
-import { useAppStore } from '@/stores/app';
+import { useMainStore } from '@/stores/main.js';
 import { usePuzzleTimer } from '@/stores/puzzle-timer';
 import { usePuzzleStore } from '@/stores/puzzle.js';
 import { useSettingsStore } from '@/stores/settings.js';
@@ -82,8 +82,8 @@ export default {
 		} = storeToRefs(puzzleStore);
 		const setCheatUsed = () => puzzleStore.setCheatUsed();
 
-		const appStore = useAppStore();
-		const debugMode = toRef(appStore, 'debugMode');
+		const mainStore = useMainStore();
+		const debugMode = toRef(mainStore, 'debugMode');
 
 		return {
 			showTimer,

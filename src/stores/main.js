@@ -4,7 +4,7 @@ import { useMediaQuery, useWindowSize } from "@vueuse/core";
 import { defineStore } from "pinia";
 import { computed, readonly } from "vue";
 
-export const useAppStore = defineStore('app', {
+export const useMainStore = defineStore('main', {
 
 	state: () => ({
 		debugMode: isDebugModeEnabledInLocalStorage({

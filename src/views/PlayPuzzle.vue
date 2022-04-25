@@ -93,7 +93,7 @@ import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
 import { computed, readonly, ref, toRef, watch } from 'vue';
 import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
 import { usePuzzleStore } from '@/stores/puzzle.js';
-import { useAppStore } from '@/stores/app.js';
+import { useMainStore } from '@/stores/main.js';
 
 export default {
 	components: {
@@ -140,7 +140,7 @@ export default {
 			}
 		})
 
-		const mainStore = useAppStore();
+		const mainStore = useMainStore();
 		const windowHidden = toRef(mainStore, 'windowHidden');
 
 		return { 
