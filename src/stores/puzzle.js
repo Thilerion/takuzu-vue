@@ -95,6 +95,13 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			this.gridCounts = calculateGridCounts(board);
 			this.initialEmpty = [...initialBoard.cells({ skipFilled: true })].length;
 		},
+		refreshLineCounts() {
+			const { rowCounts, colCounts } = calculateLineCounts(this.board);
+			this.$patch({ rowCounts, colCounts });
+		},
+		refreshGridCounts() {
+			this.gridCounts = calculateGridCounts(this.board);
+		},
 		reset() {
 			if (this.board != null && !this.initialized && !!this.board && !this.creationError) {
 				console.log('puzzle not initialized. cannot reset');
@@ -146,10 +153,12 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			this.colCounts[x][prev] -= 1;
 		},
 
-		_setValue({ x, y, value, prevValue }) {
+		_setValue({ x, y, value, prevValue }, updateCounts = true) {
 			this.board.assign(x, y, value);
-			this._updateGridCount(value, prevValue);
-			this._updateLineCount(x, y, value, prevValue);
+			if (updateCounts) {
+				this._updateGridCount(value, prevValue);
+				this._updateLineCount(x, y, value, prevValue);
+			}
 		},
 
 		// original actions
@@ -159,6 +168,23 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			if (value) {
 				timer.pause();
 			} else timer.resume();
+		},
+		setMultipleValues(changeList = []) {
+			const moves = changeList.map(move => {
+				const {
+					x, y,
+					value,
+					prevValue = this.board.grid[y][x]
+				} = move;
+				return { x, y, value, prevValue };
+			})
+			for (const move of moves) {
+				this._setValue(move, false);
+			}
+			this.refreshLineCounts();
+			this.refreshGridCounts();
+			usePuzzleMistakesStore().resetMarkedCells();
+			usePuzzleHintsStore().showHint = false;
 		},
 		setValue({ x, y, value, prevValue }) {
 			if (!prevValue) {

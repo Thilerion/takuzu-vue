@@ -37,6 +37,12 @@
 				<BaseDropdownItem @click="solvePuzzle">
 					<span class="ml-7 mt-px">Solve puzzle</span>
 				</BaseDropdownItem>
+				<BaseDropdownItem @click="solveInstantly">
+					<span class="ml-7 mt-px">Solve instantly</span>
+				</BaseDropdownItem>
+				<BaseDropdownItem @click="increasePuzzleTime">
+					<span class="ml-7 mt-px">Increase time by 10s</span>
+				</BaseDropdownItem>
 				<BaseDropdownItem @click="solveTrios">
 					<span class="ml-7 mt-px">Solve all trios</span>
 				</BaseDropdownItem>
@@ -57,6 +63,7 @@ import { EMPTY } from '@/lib/constants.js';
 import { humanSolveTriples } from '@/lib/human-solver/triples.js';
 import { shuffle } from '@/lib/utils.js';
 import { useAppStore } from '@/stores/app';
+import { usePuzzleTimer } from '@/stores/puzzle-timer';
 import { usePuzzleStore } from '@/stores/puzzle.js';
 import { useSettingsStore } from '@/stores/settings.js';
 import { rafPromise, timeoutPromise } from '@/utils/delay.utils.js';
@@ -138,6 +145,25 @@ export default {
 					await rafPromise();
 				}
 			}			
+		},
+		increasePuzzleTime() {
+			this.setCheatUsed();
+			const puzzleTimer = usePuzzleTimer();
+			puzzleTimer.timeElapsed += 10000;
+		},
+		async solveInstantly() {
+			this.$refs.dropdown.closeDropdownMenu();
+			const emptyCells = [...this.board.cells({ skipFilled: true} )];
+			if (emptyCells.length <= 1) return;
+
+			this.setCheatUsed();
+
+			const moves = emptyCells.slice(0, -1).map(cell => {
+				const { x, y, value: prevValue } = cell;
+				const value = this.puzzleStore.solution.get(x, y);
+				return { x,y, value,prevValue};
+			})
+			this.puzzleStore.setMultipleValues(moves);
 		},
 		async solveTrios() {
 			this.$refs.dropdown.closeDropdownMenu();

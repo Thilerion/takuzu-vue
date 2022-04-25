@@ -55,6 +55,9 @@ export const usePuzzleMistakesStore = defineStore('puzzleMistakes', {
 			this.lastCheckType = 'auto';
 			this.checkErrors(boardStr);
 		},
+		resetMarkedCells() {
+			this.currentMarked = [];
+		},
 		removeFromCurrentMarkedCells(cellId) {
 			this.currentMarked = this.currentMarked.filter(val => val !== cellId);
 		}
