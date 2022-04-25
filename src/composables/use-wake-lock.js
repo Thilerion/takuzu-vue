@@ -11,6 +11,11 @@ export const usePuzzleWakeLock = () => {
 	const settingsStore = useSettingsStore();
 	const puzzleStore = usePuzzleStore();
 
+	const hasActivated = ref(isActive.value);
+	watch(isActive, (value) => {
+		hasActivated.value = value;
+	})
+
 	const shouldEnableWakeLock = computed(() => {
 		return settingsStore.enableWakeLock && !puzzleStore.paused;
 	})
@@ -22,8 +27,13 @@ export const usePuzzleWakeLock = () => {
 	}
 
 	const releaseWakeLock = () => {
-		console.log('Releasing wake lock.');
-		release?.();
+		if (!isActive.value || !hasActivated.value) {
+			return;
+		}
+		// needed because release is not instantly shown in "isActive"
+		hasActivated.value = false;
+		release()
+			.catch(() => {});
 	}
 
 	watch(idle, (isIdle, previousIdle) => {
