@@ -63,7 +63,7 @@ export default {
 
 		const debugModeClickCounter = ref(0);
 		const mainStore = useMainStore();
-		const isDebugModeEnabled = computed(() => mainStore.debugMode);
+		const isDebugModeEnabled = computed(() => mainStore.flags.debugMode);
 		const enableDebugMode = () => {
 			mainStore.setDebugMode(true);
 			debugModeClickCounter.value = 0;

@@ -2,40 +2,63 @@ import { usePageVisibility } from "@/composables/use-page-visibility";
 import { isDebugModeEnabledInLocalStorage, persistDebugMode } from "@/services/debug-mode.js";
 import { useMediaQuery, useWindowSize } from "@vueuse/core";
 import { defineStore } from "pinia";
-import { computed, readonly } from "vue";
+import { computed, markRaw, reactive, readonly, ref, toRef } from "vue";
 
-export const useMainStore = defineStore('main', {
+export const useMainStore = defineStore('main', () => {
+	const puzzleKey = ref(0);
 
-	state: () => ({
-		debugMode: isDebugModeEnabledInLocalStorage({
+	const context = reactive({
+		isMobile: checkUserAgentIsMobile(),
+		touch: hasTouchscreen(),
+		orientation: useDeviceOrientation(),
+		viewportSize: useWindowSize(),
+		pageVisibility: usePageVisibility(),
+	});
+
+	const viewportHeight = computed(() => context.viewportSize.height);
+	const viewportWidth = computed(() => context.viewportSize.width);
+	const windowVisible = computed(() => context.pageVisibility.visibility === 'visible');
+	const windowHidden = computed(() => context.pageVisibility.visibility !== 'visible');
+
+	const buildModeFlags = markRaw({
+		devMode: import.meta.env.DEV,
+		productionMode: import.meta.env.PROD,
+		appMode: import.meta.env.MODE,
+	});
+
+	const debugModeData = reactive({
+		enabled: isDebugModeEnabledInLocalStorage({
 			defaultValue: import.meta.env.DEV
 		}),
-		// to force rerender after starting a new game when previous one has finished
-		puzzleKey: 0,
 
-		context: {
-			isMobile: checkUserAgentIsMobile(),
-			touch: hasTouchscreen(),
-			orientation: useDeviceOrientation(),
-			viewportSize: useWindowSize(),
-			visibility: usePageVisibility().visibility,
+		// feature flags
+		addPuzzleToHistoryWithCheats: false
+	});
+
+	const setDebugMode = (enable) => {
+		const value = !!enable;
+		persistDebugMode(value);
+		debugModeData.enabled = value;
+	}
+
+	const flags = computed(() => {
+		return {
+			...buildModeFlags,
+			debugMode: debugModeData.enabled
 		}
-	}),
+	})
 
-	getters: {
-		viewportHeight: (state) => state.context.viewportSize.height,
-		viewportWidth: state => state.context.viewportSize.width,
-
-		windowVisible: state => state.context.visibility === 'visible',
-		windowHidden: state => state.context.visibility !== 'visible',
-	},
-
-	actions: {
-		setDebugMode(enable) {
-			const value = !!enable;
-			persistDebugMode(value);
-			this.debugMode = value;
-		}
+	return {
+		puzzleKey,
+		context,
+		viewportHeight,
+		viewportWidth,
+		windowVisible,
+		windowHidden,
+		buildModeFlags,
+		debugModeData,
+		flags,
+		setDebugMode
 	}
 })
 

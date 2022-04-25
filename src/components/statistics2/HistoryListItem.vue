@@ -102,7 +102,7 @@ const timeElapsedFormatted = computed(() => {
 
 const mainStore = useMainStore();
 const canDelete = computed(() => {
-	return mainStore.debugMode;
+	return mainStore.flags.debugMode;
 })
 
 const initDeleteItem = () => {
