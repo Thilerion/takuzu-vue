@@ -33,4 +33,28 @@ describe('recap generator functions', () => {
 		test.todo('true when first playing the highest difficulty on a larger board');
 		test.todo('false when playing the highest difficulty on a smaller board');
 	})
+
+	describe('firstOfDifficulty', () => {
+		test('is true when first of difficulty and NOT first of size', () => {
+			expect(recapFn.firstOfDifficulty({
+				itemsPlayedWithDifficulty: 1,
+				itemsPlayedWithSize: 2,
+				lastPuzzleEntry: { difficulty: 1 }
+			})).toEqual(expect.objectContaining({ result: true }))
+		})
+		test('is not true when size also has not been played yet', () => {
+			expect(recapFn.firstOfDifficulty({
+				itemsPlayedWithDifficulty: 1,
+				itemsPlayedWithSize: 1,
+				lastPuzzleEntry: { difficulty: 1 }
+			})).toEqual(expect.objectContaining({ result: false }))
+		})
+		test('is not true when difficulty has been played before', () => {
+			expect(recapFn.firstOfDifficulty({
+				itemsPlayedWithDifficulty: 2,
+				itemsPlayedWithSize: 1,
+				lastPuzzleEntry: { difficulty: 1 }
+			})).toEqual(expect.objectContaining({ result: false }))
+		})
+	})
 })

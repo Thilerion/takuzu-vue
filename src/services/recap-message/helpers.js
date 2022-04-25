@@ -36,3 +36,22 @@ export function pickRandomly(arr) {
 	const rnd = Math.floor(Math.random() * length);
 	return arr[rnd];
 }
+
+export function dimensionsString(width, height) {
+	return `${width}x${height}`;
+}
+
+export function checkImprovementOverPreviousBest({
+	time, best, previousBest
+}) {
+	if (time !== best) {
+		throw new Error('Not a time record. Check if this is a time record first.');
+	}
+	return previousBest - time;
+}
+
+export function checkIsTimeRecord({
+	time, best, previousBest
+}) {
+	return time === best && time < previousBest;
+}

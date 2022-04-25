@@ -1,4 +1,4 @@
-import { createResult, falseResult, oneOfOrMultipleOf, relativeGrowth, trueResult } from "./helpers";
+import { checkImprovementOverPreviousBest, checkIsTimeRecord, createResult, dimensionsString, falseResult, oneOfOrMultipleOf, relativeGrowth, trueResult } from "./helpers";
 
 export const firstSolvedTotal = data => {
 	const { totalSolved } = data;
@@ -22,43 +22,95 @@ export const hardestPuzzleSolved = (data) => {
 	return createResult(result);
 }
 
-export const firstOfDifficulty = (data) => createResult(data.itemsPlayedWithDifficulty === 1 && data.itemsPlayedWithSize > 1);
-export const firstOfSize = data => createResult(data.itemsPlayedWithSize === 1 && data.itemsPlayedWithDifficulty > 1);
-export const firstWithSizeDifficulty = data => createResult(data.count === 1 && data.previousCount === 0);
-
-export const isTimeRecord = data => {
-	if (!data.isTimeRecord) return falseResult();
-
+export const firstOfDifficulty = ({
+	itemsPlayedWithDifficulty, itemsPlayedWithSize, lastPuzzleEntry
+}) => {
+	return createResult(
+		itemsPlayedWithDifficulty === 1 && itemsPlayedWithSize > 1,
+		{ difficulty: lastPuzzleEntry.difficulty }
+	)
+}
+export const firstOfSize = ({
+	lastPuzzleEntry,
+	itemsPlayedWithSize,
+	itemsPlayedWithDifficulty
+}) => {
+	const result = itemsPlayedWithSize === 1 && itemsPlayedWithDifficulty > 1;
+	if (!result) return falseResult();
+	const { width, height, difficulty } = lastPuzzleEntry;
 	const context = {
-		time: data.currentTimeElapsed,
-		previousBest: data.previousBest
+		width, height, difficulty,
+		dimensions: dimensionsString(width, height)
 	}
 	return trueResult(context);
 }
-export const isLargeTimeRecord = data => {
-	if (!data.isTimeRecord || data.count < 5) return falseResult();
+export const firstWithSizeDifficulty = ({
+	lastPuzzleEntry,
+	count,
+	previousCount
+}) => {
+	const result = count === 1 && previousCount === 0;
+	if (!result) return falseResult();
+	const { width, height, difficulty } = lastPuzzleEntry;
+	const context = {
+		width, height, difficulty,
+		dimensions: dimensionsString(width, height)
+	}
+	return trueResult(context);
+}
 
-	const difference = data.best - data.previousBest;
-	const changePercentage = relativeGrowth(data.previousBest, data.best);
+export const isTimeRecord = ({
+	currentTimeElapsed: time,
+	previousBest,
+	best
+}) => {
+	const isTimeRecord = checkIsTimeRecord({ time, best, previousBest });
+	if (!isTimeRecord) return falseResult();
+	const difference = checkImprovementOverPreviousBest({
+		time, best, previousBest
+	});
+	return trueResult({
+		time,
+		previousBest,
+		difference,
+		improvement: difference
+	})
+}
+export const isLargeTimeRecord = ({
+	count, currentTimeElapsed: time,
+	previousBest, best
+}) => {
+	if (count < 5 || !checkIsTimeRecord({
+		time, best, previousBest
+	})) return falseResult();
+
+	const difference = checkImprovementOverPreviousBest({
+		time, best, previousBest
+	});
+	const changePercentage = relativeGrowth(previousBest, best);
 	const improvementPercentage = changePercentage * -1;
 	const result = difference > 10000 && improvementPercentage >= 0.25;
 
-	if (!result) return falseResult();
-	
-	const context = {
-		timeDifference: difference,
-		improvementPercentage,
-		time: data.best,
-		previousBest: data.previousBest,
-	}
-
-	return trueResult(context);
+	return createResult(
+		result,
+		{
+			timeDifference: difference,
+			improvementPercentage,
+			time,
+			previousBest
+		}
+	)
 }
 
-export const isAlmostTimeRecordAbsolute = data => {
-	if (data.count < 5) return falseResult();
-	const difference = data.currentTimeElapsed - data.best;
-	return createResult(difference > 800, { difference, time: data.currentTimeElapsed, best: data.best });
+export const isAlmostTimeRecordAbsolute = ({
+	count,
+	currentTimeElapsed: time,
+	best
+}) => {
+	if (count < 10) return falseResult();
+	const difference = time - best;
+	const differencePercentage = 1 - relativeGrowth(best, time);
+	return createResult(difference < 800 && differencePercentage > 0.75, { difference, differencePercentage, time, best });
 }
 export const isAlmostTimeRecordPercentage = data => {
 	if (data.count < 10) return falseResult();
@@ -66,8 +118,8 @@ export const isAlmostTimeRecordPercentage = data => {
 	const difference = time - best;
 	if (difference > 6000) return falseResult();
 
-	const differencePercentage = relativeGrowth(best, time);
-	return createResult(differencePercentage > -0.1, {
+	const differencePercentage = 1 - relativeGrowth(best, time);
+	return createResult(differencePercentage > 0.95, {
 		time, best, difference, differencePercentage
 	});
 }
@@ -87,7 +139,7 @@ export const isMuchBetterThanAverageAbsolute = data => {
 	const { currentTimeElapsed: time, previousAverage } = data;
 	const difference = previousAverage - time;
 	return createResult(
-		difference > 30000,
+		difference > 45000,
 		{ time, previousAverage, difference }
 	);
 }
@@ -116,17 +168,23 @@ export const playsTotal = (data) => {
 		{ totalSolved: count }
 	)
 }
-export const playsTotalWithConfig = (data) => {
-	const count = data.count;
+export const playsTotalWithConfig = ({
+	count, lastPuzzleEntry
+}) => {
 	const result = oneOfOrMultipleOf(count, {
 		oneOf: [10, 20, 30, 40, 50],
 		multipleOf: 25
 	});
-	return createResult(
-		result,
-		{ solvedWithConfig: count }
-	)
+	if (!result) return falseResult();
+	const { width, height, difficulty } = lastPuzzleEntry;
+	return trueResult({
+		count,
+		width, height,
+		difficulty,
+		dimensions: dimensionsString(width, height)
+	})
 }
+
 export const playsToday = (data) => {
 	const count = data.totalSolvedToday;
 	const result = oneOfOrMultipleOf(count, {
@@ -137,14 +195,19 @@ export const playsToday = (data) => {
 		{ totalSolvedToday: count }
 	)
 }
-export const playsTodayWithConfig = (data) => {
-	const count = data.countToday;
+export const playsTodayWithConfig = ({
+	countToday: count, lastPuzzleEntry
+}) => {
 	const result = oneOfOrMultipleOf(count, {
 		multipleOf: 5
 	})
-	return createResult(
-		result,
-		{ solvedTodayWithConfig: count }
-	)
+	if (!result) return falseResult();
+	const { width, height, difficulty } = lastPuzzleEntry;
+	return trueResult({
+		count,
+		width, height,
+		difficulty,
+		dimensions: dimensionsString(width, height)
+	})
 }
 

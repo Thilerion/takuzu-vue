@@ -1,34 +1,6 @@
-import { createResult, pickRandomly } from "./helpers";
+import { createResult, falseResult, pickRandomly } from "./helpers";
 import { firstOfDifficulty, firstOfSize, firstSolvedTotal, firstWithSizeDifficulty, hardestPuzzleSolved, isAlmostTimeRecordAbsolute, isAlmostTimeRecordPercentage, isBetterThanAverage, isLargeTimeRecord, isMuchBetterThanAverageAbsolute, isMuchBetterThanAveragePercentage, isTimeRecord, playsToday, playsTodayWithConfig, playsTotal, playsTotalWithConfig } from "./recap-message-types"
-
-export const RECAP_MSG_TYPES = {
-	"FIRST_TOTAL": "FIRST_TOTAL",
-	
-    "HARDEST_EVER": "HARDEST_EVER",
-    "FIRST_OF_DIFFICULTY": "FIRST_OF_DIFFICULTY",
-    "FIRST_OF_SIZE": "FIRST_OF_SIZE",
-	"FIRST_OF_SIZE_DIFFICULTY": "FIRST_OF_SIZE_DIFFICULTY",
-	
-    "TIME_RECORD_LARGE": "TIME_RECORD_LARGE",
-	"TIME_RECORD": "TIME_RECORD",
-	
-    "ALMOST_TIME_RECORD_ABSOLUTE": "ALMOST_TIME_RECORD_ABSOLUTE",
-	"ALMOST_TIME_RECORD_PERCENTAGE": "ALMOST_TIME_RECORD_PERCENTAGE",
-	
-    "MUCH_BETTER_THAN_AVERAGE_ABSOLUTE": "MUCH_BETTER_THAN_AVERAGE_ABSOLUTE",
-    "MUCH_BETTER_THAN_AVERAGE_PERCENTAGE": "MUCH_BETTER_THAN_AVERAGE_PERCENTAGE",
-	"BETTER_THAN_AVERAGE": "BETTER_THAN_AVERAGE",
-	
-    "WORST_EVER": "WORST_EVER", // TODO
-	"NEARLY_WORST_EVER": "NEARLY_WORST_EVER", // TODO
-	
-    "PLAYS_TOTAL": "PLAYS_TOTAL",
-    "PLAYS_TODAY": "PLAYS_TODAY",
-    "PLAYS_CONFIG_TOTAL": "PLAYS_CONFIG_TOTAL",
-	"PLAYS_CONFIG_TODAY": "PLAYS_CONFIG_TODAY",
-	
-    "DEFAULT": "DEFAULT"
-}
+import { RECAP_MSG_TYPES } from "./types";
 
 const recapFnsOrdered = [
 	{ type: RECAP_MSG_TYPES.FIRST_TOTAL, fn: firstSolvedTotal },
@@ -48,6 +20,9 @@ const recapFnsOrdered = [
 	{ type: RECAP_MSG_TYPES.MUCH_BETTER_THAN_AVERAGE_PERCENTAGE, fn: isMuchBetterThanAveragePercentage },
 	{ type: RECAP_MSG_TYPES.BETTER_THAN_AVERAGE, fn: isBetterThanAverage },
 
+	{ type: RECAP_MSG_TYPES.WORST_EVER, fn: () => falseResult() }, // TODO
+	{ type: RECAP_MSG_TYPES.NEARLY_WORST_EVER, fn: () => falseResult() }, // TODO
+
 	[
 		{ type: RECAP_MSG_TYPES.PLAYS_TOTAL, fn: playsTotal },
 		{ type: RECAP_MSG_TYPES.PLAYS_TODAY, fn: playsToday },
@@ -55,6 +30,47 @@ const recapFnsOrdered = [
 		{ type: RECAP_MSG_TYPES.PLAYS_CONFIG_TODAY, fn: playsTodayWithConfig },
 	],
 ];
+
+export function getRecordMessageData(recapMessageData, recapStats) {
+	const { type = RECAP_MSG_TYPES.DEFAULT } = recapMessageData;
+	if (type === RECAP_MSG_TYPES.FIRST_TOTAL) {
+		return {
+			show: true,
+			message: 'First puzzle solved!'
+		};
+	} else if ([
+		RECAP_MSG_TYPES.TIME_RECORD,
+		RECAP_MSG_TYPES.TIME_RECORD_LARGE
+	].includes(type)) {
+		return {
+			show: true,
+			message: 'New time record!'
+		}
+	}
+
+	if (recapStats.count === 1) {
+		return {
+			show: true,
+			message: 'First puzzle solved!'
+		}
+	}
+	return { show: false };
+}
+
+export function getRecapMessage(recapMessageData) {
+	switch (recapMessageData.type) {
+		case RECAP_MSG_TYPES.FIRST_TOTAL: {
+			return "You've solved your first ever puzzle!"
+		}
+		case RECAP_MSG_TYPES.HARDEST_EVER: {
+			return "This was the hardest puzzle you've ever solved, well done!";
+		}
+		case RECAP_MSG_TYPES.FIRST_OF_DIFFICULTY: {
+
+		}
+		
+	}
+}
 
 export function getRecapMessageType(recapStats) {
 	for (const item of recapFnsOrdered) {

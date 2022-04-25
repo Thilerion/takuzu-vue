@@ -4,7 +4,7 @@
 			<transition name="finished-modal-inner" @after-enter="afterEnterInner">
 				<div class="flex modal-expander backdrop" v-show="transitionData.transitionInner">
 					<div class="inner-content" :class="{'animate-modal-content': transitionData.showContent}">
-						<PuzzleRecap
+						<PuzzleRecap2
 							v-if="showPuzzleRecapInner"
 							:stats="gameEndStats"
 							:last-puzzle="lastPuzzleEntry"
@@ -32,6 +32,7 @@ import { storeToRefs } from 'pinia';
 import { computed, nextTick, ref, toRef, watch, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import PuzzleRecap from './PuzzleRecap.vue';
+import PuzzleRecap2 from './PuzzleRecap2.vue';
 
 
 const props = defineProps({
