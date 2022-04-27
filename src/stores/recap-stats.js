@@ -185,7 +185,7 @@ export const useRecapStatsStore = defineStore('recapStats', {
 
 });
 
-async function createGameEndStats({ width, height, difficulty, timeElapsed, id }) {
+async function createGameEndStats({ width, height, difficulty, timeElapsed, id, initialBoard }) {
 
 	const [
 		puzzleConfigResult,
@@ -200,7 +200,7 @@ async function createGameEndStats({ width, height, difficulty, timeElapsed, id }
 			width, height, difficulty
 		}),
 		getTotalSolved(),
-		getItemsWithSameInitialBoard(id)
+		getItemsWithSameInitialBoard({initialBoard, id})
 	])
 
 
@@ -245,13 +245,10 @@ async function createGameEndStats({ width, height, difficulty, timeElapsed, id }
 	};
 }
 
-async function getItemsWithSameInitialBoard(id) {
-	const item = await StatsDB.puzzleHistoryTable.get(id);
-	const initialBoard = item.initialBoard;
-
+async function getItemsWithSameInitialBoard({initialBoard, id}) {
 	const previousPlays = await StatsDB.puzzleHistoryTable.where({
 		initialBoard
-	}).filter(item => item.id !== id).toArray();
+	}).filter(item => id == null || item.id !== id).toArray();
 
 	const isReplay = previousPlays.length > 0;
 	return { isReplay, previousPlays };
