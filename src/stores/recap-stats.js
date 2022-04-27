@@ -41,6 +41,9 @@ export const useRecapStatsStore = defineStore('recapStats', {
 		difficultiesPlayed: [],
 		puzzleConfigsPlayed: [],
 
+		isReplay: null,
+		previousPlays: [],
+
 		initialized: false,
 	}),
 
@@ -96,6 +99,9 @@ export const useRecapStatsStore = defineStore('recapStats', {
 				sizesPlayed,
 				difficultiesPlayed,
 				puzzleConfigsPlayed,
+
+				isReplay,
+				previousPlays
 			} = await createGameEndStats(historyEntry);
 			
 			this.$patch({
@@ -113,6 +119,9 @@ export const useRecapStatsStore = defineStore('recapStats', {
 				sizesPlayed,
 				difficultiesPlayed,
 				puzzleConfigsPlayed,
+
+				isReplay,
+				previousPlays
 			})
 		},
 
@@ -181,7 +190,8 @@ async function createGameEndStats({ width, height, difficulty, timeElapsed, id }
 	const [
 		puzzleConfigResult,
 		sizeDifficultyResult,
-		totalsResult
+		totalsResult,
+		itemsWithSameInitialBoardResult
 	] = await Promise.all([
 		getPuzzlesPlayedWithPuzzleConfig({
 			width, height, difficulty, id
@@ -189,7 +199,8 @@ async function createGameEndStats({ width, height, difficulty, timeElapsed, id }
 		getPuzzleCountWithSizeOrDifficulty({
 			width, height, difficulty
 		}),
-		getTotalSolved()
+		getTotalSolved(),
+		getItemsWithSameInitialBoard(id)
 	])
 
 
@@ -212,6 +223,8 @@ async function createGameEndStats({ width, height, difficulty, timeElapsed, id }
 
 	const isTimeRecord = best < previousBest && best === timeElapsed;
 
+	const { isReplay, previousPlays } = itemsWithSameInitialBoardResult;
+
 	return {
 		best, previousBest,
 		average, previousAverage,
@@ -225,8 +238,23 @@ async function createGameEndStats({ width, height, difficulty, timeElapsed, id }
 		totalSolvedToday,
 		sizesPlayed,
 		difficultiesPlayed,
-		puzzleConfigsPlayed
+		puzzleConfigsPlayed,
+
+		isReplay,
+		previousPlays
 	};
+}
+
+async function getItemsWithSameInitialBoard(id) {
+	const item = await StatsDB.puzzleHistoryTable.get(id);
+	const initialBoard = item.initialBoard;
+
+	const previousPlays = await StatsDB.puzzleHistoryTable.where({
+		initialBoard
+	}).filter(item => item.id !== id).toArray();
+
+	const isReplay = previousPlays.length > 0;
+	return { isReplay, previousPlays };
 }
 
 async function getTotalSolved() {

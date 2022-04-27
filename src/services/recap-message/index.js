@@ -1,5 +1,5 @@
 import { createResult, falseResult, pickRandomly } from "./helpers";
-import { firstOfDifficulty, firstOfSize, firstSolvedTotal, firstWithSizeDifficulty, hardestPuzzleSolved, isAlmostTimeRecordAbsolute, isAlmostTimeRecordPercentage, isBetterThanAverage, isLargeTimeRecord, isMuchBetterThanAverageAbsolute, isMuchBetterThanAveragePercentage, isTimeRecord, playsToday, playsTodayWithConfig, playsTotal, playsTotalWithConfig } from "./recap-message-types"
+import { firstOfDifficulty, firstOfSize, firstSolvedTotal, firstWithSizeDifficulty, hardestPuzzleSolved, isAlmostTimeRecordAbsolute, isAlmostTimeRecordPercentage, isBetterThanAverage, isLargeTimeRecord, isMuchBetterThanAverageAbsolute, isMuchBetterThanAveragePercentage, isReplayTimeRecord, isTimeRecord, playsToday, playsTodayWithConfig, playsTotal, playsTotalWithConfig, replayPlaysTotal } from "./recap-message-types"
 import { RECAP_MSG_TYPES } from "./types";
 
 const recapFnsOrdered = [
@@ -14,6 +14,9 @@ const recapFnsOrdered = [
 
 	{ type: RECAP_MSG_TYPES.TIME_RECORD_LARGE, fn: isLargeTimeRecord },
 	{ type: RECAP_MSG_TYPES.TIME_RECORD, fn: isTimeRecord },
+
+	{ type: RECAP_MSG_TYPES.REPLAY_TIME_RECORD, fn: isReplayTimeRecord },
+
 	{ type: RECAP_MSG_TYPES.ALMOST_TIME_RECORD_ABSOLUTE, fn: isAlmostTimeRecordAbsolute },
 	{ type: RECAP_MSG_TYPES.ALMOST_TIME_RECORD_PERCENTAGE, fn: isAlmostTimeRecordPercentage },
 	{ type: RECAP_MSG_TYPES.MUCH_BETTER_THAN_AVERAGE_ABSOLUTE, fn: isMuchBetterThanAverageAbsolute },
@@ -22,6 +25,8 @@ const recapFnsOrdered = [
 
 	{ type: RECAP_MSG_TYPES.WORST_EVER, fn: () => falseResult() }, // TODO
 	{ type: RECAP_MSG_TYPES.NEARLY_WORST_EVER, fn: () => falseResult() }, // TODO
+
+	{ type: RECAP_MSG_TYPES.REPLAY_PLAYS_TOTAL, fn: replayPlaysTotal },
 
 	[
 		{ type: RECAP_MSG_TYPES.PLAYS_TOTAL, fn: playsTotal },
@@ -55,21 +60,6 @@ export function getRecordMessageData(recapMessageData, recapStats) {
 		}
 	}
 	return { show: false };
-}
-
-export function getRecapMessage(recapMessageData) {
-	switch (recapMessageData.type) {
-		case RECAP_MSG_TYPES.FIRST_TOTAL: {
-			return "You've solved your first ever puzzle!"
-		}
-		case RECAP_MSG_TYPES.HARDEST_EVER: {
-			return "This was the hardest puzzle you've ever solved, well done!";
-		}
-		case RECAP_MSG_TYPES.FIRST_OF_DIFFICULTY: {
-
-		}
-		
-	}
 }
 
 export function getRecapMessageType(recapStats) {

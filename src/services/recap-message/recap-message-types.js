@@ -101,6 +101,24 @@ export const isLargeTimeRecord = ({
 	)
 }
 
+export const isReplayTimeRecord = ({
+	isReplay,
+	previousPlays,
+	currentTimeElapsed: time
+}) => {
+	if (!isReplay) return falseResult();
+	const bestPreviousTime = Math.min(...previousPlays.map(val => val.timeElapsed));
+	const difference = bestPreviousTime - time;
+	if (difference <= 0) return falseResult();
+	const numPlays = previousPlays.length;
+	return trueResult({
+		numPlays,
+		difference,
+		time,
+		bestPreviousTime
+	});
+}
+
 export const isAlmostTimeRecordAbsolute = ({
 	count,
 	currentTimeElapsed: time,
@@ -153,6 +171,21 @@ export const isMuchBetterThanAveragePercentage = data => {
 		percentageFaster >= 0.25,
 		{ previousAverage, time, improvementPercentage: percentageFaster }
 	)
+}
+
+export const replayPlaysTotal = ({
+	isReplay,
+	previousPlays,
+}) => {
+	if (!isReplay) return falseResult();
+	const bestPreviousTime = Math.min(
+		...previousPlays.map(item => item.timeElapsed)
+	);
+	const numPlays = previousPlays.length;
+	return trueResult({
+		bestPreviousTime,
+		numPlays
+	})
 }
 
 

@@ -16,6 +16,13 @@ const dbVersions = [
 		upgrade: tx => {
 			return tx.puzzleHistory.toCollection().modify(upgradeItemFrom2to3);
 		}
+	},
+	{
+		version: 4,
+		stores: {
+			puzzleHistory: "++id,[width+height],difficulty,timestamp,localDateStr,timeElapsed,[width+height+difficulty],flags.favorite,initialBoard"
+		},
+		upgrade: null
 	}
 ].sort((a, b) => a.version - b.version);
 
