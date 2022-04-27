@@ -56,7 +56,7 @@ export const recapMessageMap = {
     [RECAP_MSG_TYPES.TIME_RECORD_LARGE]: ({ improvementPercentage }) => `Incredible! You were ${formatPercentage(improvementPercentage)} faster than your previous best time!`,
 	[RECAP_MSG_TYPES.TIME_RECORD]: ({ difference }) => `New time record! You've improved your best time by ${msToSec(difference)}s!`,
 
-	[RECAP_MSG_TYPES.REPLAY_TIME_RECORD]: ({ numPlays, difference }) => `This is the ${formatOrdinal(numPlays)} time you solved this exact puzzle. You were ${msToSec(difference)}s faster than your fastest time.`,
+	[RECAP_MSG_TYPES.REPLAY_TIME_RECORD]: ({ numPlays, difference }) => `This is the ${formatOrdinal(numPlays + 1)} time you solved this exact puzzle. You were ${msToSec(difference)}s faster than your fastest time.`,
 	
 	[RECAP_MSG_TYPES.ALMOST_TIME_RECORD_ABSOLUTE]: ({ difference }) => `Ooph, so close to setting a new time record. The difference is just ${msToSec(difference)}s.`,
     [RECAP_MSG_TYPES.ALMOST_TIME_RECORD_PERCENTAGE]: ({ differencePercentage }) => `You almost set a new time record! You were only ${formatPercentage(differencePercentage)} slower.`,
@@ -68,7 +68,7 @@ export const recapMessageMap = {
     [RECAP_MSG_TYPES.WORST_EVER]: () => '', // TODO
 	[RECAP_MSG_TYPES.NEARLY_WORST_EVER]: () => '', // TODO
 
-	[RECAP_MSG_TYPES.REPLAY_PLAYS_TOTAL]: ({ bestPreviousTime, numPlays }) => `This is the ${formatOrdinal(numPlays)} time you've solved this exact same puzzle, with your best time being ${msToMinSec(bestPreviousTime)}.`,
+	[RECAP_MSG_TYPES.REPLAY_PLAYS_TOTAL]: ({ bestPreviousTime, numPlays }) => `This is the ${formatOrdinal(numPlays + 1)} time you've solved this exact same puzzle, with your best time being ${msToMinSec(bestPreviousTime)}.`,
 	
     [RECAP_MSG_TYPES.PLAYS_TOTAL]: ({ totalSolved }) => `You've solved a total of ${totalSolved} puzzles now.`,
     [RECAP_MSG_TYPES.PLAYS_TODAY]: ({ totalSolvedToday }) => `Today, you've solved ${totalSolvedToday} puzzles.`,

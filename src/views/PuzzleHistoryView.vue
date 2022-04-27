@@ -149,6 +149,41 @@ function resetCurrentItems(items, { sortBy, filters }) {
 	}).sort(sortFn);
 }
 
+const getDefaultOptions = () => ({
+	sortBy: 'newest',
+	filters: {
+		boardSize: 'All',
+		difficulty: 'All',
+		favoritesOnly: false
+	},
+	page: 0,
+	pageSize: 15
+});
+
+function getFilterQueryFromOptions({
+	boardSize, difficulty, favoritesOnly
+}) {
+	const defaults = getDefaultOptions().filters;
+	return {
+		boardSize: boardSize === defaults.boardSize ? undefined : boardSize,
+		difficulty: difficulty === defaults.difficulty ? undefined : difficulty,
+		favorites: favoritesOnly === defaults.favoritesOnly ? undefined : favoritesOnly
+	}
+}
+
+function getQueryFromFilterAndSortOptions({
+	sortBy, filters, pageSize
+}) {
+	const defaults = getDefaultOptions();
+
+	const query = {
+		sortBy: sortBy === defaults.sortBy ? undefined : sortBy,
+		pageSize: pageSize === defaults.pageSize ? undefined : pageSize,
+		...getFilterQueryFromOptions(filters)
+	}
+	return query;
+}
+
 </script>
 
 <script setup>
@@ -164,16 +199,7 @@ const statsStore = useStatisticsStore2();
 
 const { historyItems } = storeToRefs(statsStore);
 
-const dataOptions = reactive({
-	sortBy: 'newest',
-	filters: {
-		boardSize: 'All',
-		difficulty: 'All',
-		favoritesOnly: false
-	},
-	page: 0,
-	pageSize: 15
-})
+const dataOptions = reactive(getDefaultOptions())
 
 const { page, pageSize } = toRefs(dataOptions);
 
@@ -197,6 +223,9 @@ onBeforeMount(() => {
 	dataOptions.pageSize = queryPageSize * 1;
 
 	// TODO: set filters from query
+	dataOptions.filters.favoritesOnly = maybeQueryFilters.favorites ?? dataOptions.filters.favoritesOnly;
+	dataOptions.filters.boardSize = maybeQueryFilters.boardSize ?? dataOptions.filters.boardSize;
+	dataOptions.filters.difficulty = maybeQueryFilters.difficulty ?? dataOptions.filters.difficulty;
 
 	currentItems.value = resetCurrentItems(historyItems.value, dataOptions);
 })
@@ -256,6 +285,13 @@ watch(() => dataOptions.page, (value, prev) => {
 		})
 	}
 })
+const route = useRoute();
+const router = useRouter();
+watch(dataOptions, (value) => {
+	const query = getQueryFromFilterAndSortOptions(value);
+	const routePath = route.path;
+	router.replace({ path: routePath, query });
+}, { deep: true });
 
 const shownItems = computed(() => {
 	const idx = dataOptions.page * dataOptions.pageSize;
