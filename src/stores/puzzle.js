@@ -266,6 +266,27 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				throw new Error(e);
 			}
 		},
+		async replayPuzzle({
+			puzzleConfig,
+			boardStrings
+		}) {
+			const board = SimpleBoard.import(boardStrings.board);
+			const initialBoard = board.copy();
+			const solution = SimpleBoard.import(boardStrings.solution);
+			return this.loadPuzzle({
+				...puzzleConfig,
+				board, solution, initialBoard
+			})
+		},
+		loadPuzzle({
+			width, height, difficulty,
+			board, solution, initialBoard = board.copy()
+		}) {
+			this.reset();
+			this.setPuzzleConfig({ width, height, difficulty });
+			this.setAllBoards({ board, solution, initialBoard });
+			this.setInitialized(true);
+		},
 		async finishPuzzle() {
 			this.setFinished(true);
 			const timer = usePuzzleTimer();

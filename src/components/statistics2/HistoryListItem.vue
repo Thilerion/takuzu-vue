@@ -6,6 +6,11 @@
 			<div class="text-gray-500">{{dateFormatted}}</div>
 			<div class="flex flex-row">
 				<IconBtn
+					class="text-xs"
+					scale="1"
+					@click="replayPuzzle"
+				><icon-icon-park-replay-music class="text-gray-500 icon-stroke-current" /></IconBtn>
+				<IconBtn
 					v-if="canDelete"
 					class="text-xs"
 					@click="initDeleteItem"
@@ -62,6 +67,8 @@ export default {
 import StarIcon from '../global/StarIcon.vue';
 import IconBtn from '../global/base-layout/IconBtn.vue';
 import { useMainStore } from '@/stores/main.js';
+import { usePuzzleStore } from '@/stores/puzzle';
+import { useRouter } from 'vue-router';
 
 const props = defineProps({
 	difficulty: [Number, String],
@@ -71,12 +78,18 @@ const props = defineProps({
 		default: () => ({})
 	},
 	date: Date,
-	timeElapsed: Number
+	timeElapsed: Number,
+
+	id: [Number, String],
+	width: Number,
+	height: Number,
+	initialBoard: String,
+	solution: String
 })
 
 const emit = defineEmits(['favorite', 'delete']);
 
-const {difficulty, dimensions, flags, date, timeElapsed} = toRefs(props);
+const {difficulty, dimensions, flags, date, timeElapsed, width, height} = toRefs(props);
 
 const forcedFavorite = ref(null);
 const isFavorite = computed(() => {
@@ -111,8 +124,34 @@ const initDeleteItem = () => {
 
 	emit('delete');
 }
+
+const puzzleConfig = computed(() => {
+	return { width: width.value, height: height.value, difficulty: difficulty.value };
+})
+const router = useRouter();
+const goToPlayPuzzleRoute = () => router.push({ name: 'PlayPuzzle'});
+
+async function awaitTimeout(length = 300) {
+	return new Promise((resolve) => {
+		setTimeout(() => {
+			resolve();
+		}, length);
+	})
+}
+async function replayPuzzle() {
+	const boardStrings = {
+		board: props.initialBoard,
+		solution: props.solution
+	};
+	const puzzleStore = usePuzzleStore();
+	await puzzleStore.replayPuzzle({ puzzleConfig: puzzleConfig.value, boardStrings });
+	await awaitTimeout(1000 / 60 * 2);
+	goToPlayPuzzleRoute();
+}
 </script>
 
 <style scoped>
-
+::v-deep(.icon-stroke-current > *) {
+	stroke: currentColor;
+}
 </style>
