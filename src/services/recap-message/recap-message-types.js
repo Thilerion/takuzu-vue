@@ -1,4 +1,4 @@
-import { checkImprovementOverPreviousBest, checkIsTimeRecord, createResult, dimensionsString, falseResult, oneOfOrMultipleOf, relativeGrowth, trueResult } from "./helpers";
+import { checkImprovementOverPreviousBest, checkIsTimeRecord, createResult, dimensionsString, falseResult, getPercentageFaster, getPercentageSlower, oneOfOrMultipleOf, trueResult } from "./helpers";
 
 export const firstSolvedTotal = data => {
 	const { totalSolved } = data;
@@ -87,15 +87,14 @@ export const isLargeTimeRecord = ({
 	const difference = checkImprovementOverPreviousBest({
 		time, best, previousBest
 	});
-	const changePercentage = relativeGrowth(previousBest, best);
-	const improvementPercentage = changePercentage * -1;
-	const result = difference > 10000 && improvementPercentage >= 0.25;
+	const percentageFaster = getPercentageFaster(previousBest, time);
+	const result = difference > 10000 && percentageFaster >= 0.35;
 
 	return createResult(
 		result,
 		{
 			timeDifference: difference,
-			improvementPercentage,
+			improvementPercentage: percentageFaster,
 			time,
 			previousBest
 		}
@@ -109,8 +108,8 @@ export const isAlmostTimeRecordAbsolute = ({
 }) => {
 	if (count < 10) return falseResult();
 	const difference = time - best;
-	const differencePercentage = 1 - relativeGrowth(best, time);
-	return createResult(difference < 800 && differencePercentage > 0.75, { difference, differencePercentage, time, best });
+	const percentageSlower = getPercentageSlower(best, time);
+	return createResult(difference < 800 && percentageSlower < 0.17, { difference, differencePercentage: percentageSlower, time, best });
 }
 export const isAlmostTimeRecordPercentage = data => {
 	if (data.count < 10) return falseResult();
@@ -118,9 +117,10 @@ export const isAlmostTimeRecordPercentage = data => {
 	const difference = time - best;
 	if (difference > 6000) return falseResult();
 
-	const differencePercentage = 1 - relativeGrowth(best, time);
-	return createResult(differencePercentage > 0.95, {
-		time, best, difference, differencePercentage
+	const percentageSlower = getPercentageSlower(best, time);
+
+	return createResult(percentageSlower < 0.05, {
+		time, best, difference, differencePercentage: percentageSlower
 	});
 }
 
@@ -148,11 +148,10 @@ export const isMuchBetterThanAveragePercentage = data => {
 	if (data.count < 5) return falseResult();
 	const { previousAverage, currentTimeElapsed: time } = data;
 
-	const changePercentage = relativeGrowth(previousAverage, time);
-	const improvementPercentage = changePercentage * -1;
+	const percentageFaster = getPercentageFaster(previousAverage, time);
 	return createResult(
-		improvementPercentage >= 0.25,
-		{ previousAverage, time, improvementPercentage }
+		percentageFaster >= 0.25,
+		{ previousAverage, time, improvementPercentage: percentageFaster }
 	)
 }
 

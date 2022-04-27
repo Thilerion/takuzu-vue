@@ -1,5 +1,10 @@
-export function relativeGrowth(from, to) {
-	return (to - from) / Math.abs(from);
+export function getPercentageSlower(faster, slower) {
+	const slowerSpeed = 1 / slower;
+	const fasterSpeed = 1 / faster;
+	return (fasterSpeed - slowerSpeed) / slowerSpeed;
+}
+export function getPercentageFaster(from, to) {
+	return getPercentageSlower(to, from);
 }
 
 export function isMultipleOf(value = 0, multipleOf = 5) {
