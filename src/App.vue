@@ -24,7 +24,6 @@ import { computed, onMounted, toRef } from 'vue';
 import { provideGlobalBuildData } from './app.globals.js';
 import { initSettingsPersistence } from './stores/settings.js';
 import { useStatisticsStore } from './stores/statistics.js';
-import { useStatisticsStore2 } from './stores/statistics2.js';
 import { useMainStore } from './stores/main.js';
 
 export default {
@@ -44,7 +43,6 @@ export default {
 
 		// load statistics store; to prevent store data from being reset each time statistics page gets unloaded
 		const statsStore = useStatisticsStore();
-		const statsStore2 = useStatisticsStore2();
 
 		const viewportHeight = toRef(store, 'viewportHeight');
 
@@ -60,7 +58,6 @@ export default {
 			viewportHeightPx,
 			puzzleKey,
 			statsStore,
-			statsStore2,
 			store
 		}
 	}

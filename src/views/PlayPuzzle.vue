@@ -86,7 +86,6 @@ import { COLUMN, ROW } from '@/lib/constants.js';
 import debounce from 'lodash.debounce';
 import { useSettingsStore } from '@/stores/settings.js';
 import { storeToRefs, mapState } from 'pinia';
-import { useBasicStatsStore } from '@/stores/basic-stats.js';
 import { usePuzzleHistoryStore } from '@/stores/puzzle-history.js';
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
 import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
@@ -94,6 +93,7 @@ import { computed, readonly, ref, toRef, watch } from 'vue';
 import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
 import { usePuzzleStore } from '@/stores/puzzle.js';
 import { useMainStore } from '@/stores/main.js';
+import { useRecapStatsStore } from '@/stores/recap-stats';
 
 export default {
 	components: {
@@ -113,7 +113,8 @@ export default {
 
 		const { showLineInfo, enableWakeLock, showBoardCoordinates, showBoardLineCounts, showRulers, showTimer } = storeToRefs(settingsStore);
 
-		const basicStatsStore = useBasicStatsStore();
+		const recapStatsStore = useRecapStatsStore();
+		const initGameEndStats = async (entry) => recapStatsStore.initializeGameEndStats(entry);
 		const puzzleHistoryStore = usePuzzleHistoryStore();
 		const puzzleHintsStore = usePuzzleHintsStore();
 		const getHint = () => puzzleHintsStore.getHint();
@@ -148,7 +149,7 @@ export default {
 			showLineInfo, showBoardCoordinates, showBoardLineCounts, showRulers,
 			isWakeLockEnabled: computed(() => wakeLock.isActive.value),
 			shouldEnableWakeLock: enableWakeLock, showTimer,
-			basicStatsStore, puzzleHistoryStore, getHint,
+			initGameEndStats, puzzleHistoryStore, getHint,
 			userCheckErrors: (boardStr) => puzzleMistakesStore.userCheckErrors(boardStr),
 			autoCheckErrors: () => puzzleMistakesStore.autoCheckFinishedWithMistakes(),
 			wakeLock,
@@ -264,7 +265,7 @@ export default {
 		async finishGame() {
 			// window.alert('Good job! You finished this puzzle.');
 			const historyEntry = await this.puzzleStore.finishPuzzle();
-			await this.basicStatsStore.getGameEndStats(historyEntry);
+			await this.initGameEndStats(historyEntry);
 		},
 		undo() {
 			this.puzzleStore.undoLastMove();

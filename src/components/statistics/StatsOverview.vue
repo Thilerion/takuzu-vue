@@ -31,11 +31,11 @@
 </template>
 
 <script setup>
-import { useStatisticsStore2 } from '@/stores/statistics2.js';
+import { useStatisticsStore } from '@/stores/statistics.js';
 import { computed, toRef } from 'vue';
 import StatsOverviewCard from './overview/StatsOverviewCard.vue';
 
-const statsStore = useStatisticsStore2();
+const statsStore = useStatisticsStore();
 
 const totalPlayed = toRef(statsStore, 'puzzlesSolved');
 const totalPlayedToday = computed(() => {

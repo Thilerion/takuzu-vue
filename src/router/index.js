@@ -6,7 +6,6 @@ import Home from '../views/Home.vue';
 import HowToPlay from '../views/HowToPlay.vue';
 import Tutorial from '../views/Tutorial.vue';
 import Statistics from '../views/Statistics.vue';
-import Statistics2 from '../views/Statistics2.vue';
 import PuzzleHistoryView from '../views/PuzzleHistoryView.vue';
 import Settings from '../views/Settings.vue';
 import Menu from '../views/Menu.vue';
@@ -39,17 +38,9 @@ const routes = [
 				}
 			},
 			{
-				path: '/stats-old',
-				name: 'StatisticsOld',
-				component: Statistics,
-				meta: {
-					title: 'Statistics [old]'
-				}
-			},
-			{
 				path: '/stats',
 				name: 'Statistics',
-				component: Statistics2,
+				component: Statistics,
 				meta: {
 					title: 'Statistics'
 				}

@@ -19,17 +19,17 @@
 </template>
 
 <script setup>
-import { getUniqueDatesFromItems } from '@/services/stats2/dates.js';
-import { processDateStreaks } from '@/services/stats2/streaks.js';
+import { getUniqueDatesFromItems } from '@/services/stats/dates.js';
+import { processDateStreaks } from '@/services/stats/streaks.js';
 import { computed, inject, toRef } from 'vue';
 import StatsHeatmap from './StatsHeatmap.vue';
 import CurrentStreak from './streaks/CurrentStreak.vue';
 import LongestStreak from './streaks/LongestStreak.vue';
 import MostRecentHistory from './recent-puzzles/MostRecentHistory.vue';
-import { useStatisticsStore2 } from '@/stores/statistics2.js';
+import { useStatisticsStore } from '@/stores/statistics.js';
 
 const items = inject('historyItems', () => [], true);
-const statsStore = useStatisticsStore2();
+const statsStore = useStatisticsStore();
 const uniqueDates = toRef(statsStore, 'uniqueDatesPlayed');
 
 const streaks = computed(() => {

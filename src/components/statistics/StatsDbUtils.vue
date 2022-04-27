@@ -29,8 +29,8 @@
 <script setup>
 import { formatYYYYMMDD } from '@/utils/date.utils.js';
 import { computed, ref, toRef } from 'vue';
-import { importPeek, exportPuzzleHistoryDb, cleanImportPuzzleHistoryDb, importPuzzleHistoryItemsWithVersionUpgrade } from '@/services/stats2/db/import-export.js';
-import * as StatsDB from '@/services/stats2/db/index.js';
+import { importPeek, exportPuzzleHistoryDb, cleanImportPuzzleHistoryDb, importPuzzleHistoryItemsWithVersionUpgrade } from '@/services/stats/db/import-export.js';
+import * as StatsDB from '@/services/stats/db/index.js';
 
 const props = defineProps({
 	numSolved: {

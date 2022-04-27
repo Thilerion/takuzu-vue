@@ -188,14 +188,14 @@ function getQueryFromFilterAndSortOptions({
 
 <script setup>
 import PageHeader from '../components/global/base-layout/PageHeader.vue';
-import { useStatisticsStore2 } from '@/stores/statistics2.js';
+import { useStatisticsStore } from '@/stores/statistics.js';
 import { storeToRefs } from 'pinia';
 import { ref, computed, watchEffect, watch, onBeforeMount, reactive, toRefs } from 'vue';
-import HistoryListItem from '@/components/statistics2/HistoryListItem.vue';
+import HistoryListItem from '@/components/statistics/HistoryListItem.vue';
 import BasePagination from '@/components/global/BasePagination.vue';
 import { useRoute, useRouter } from 'vue-router';
 
-const statsStore = useStatisticsStore2();
+const statsStore = useStatisticsStore();
 
 const { historyItems } = storeToRefs(statsStore);
 

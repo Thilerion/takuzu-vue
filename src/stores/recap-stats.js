@@ -1,6 +1,6 @@
-import { HistoryDbEntry } from "@/services/stats";
+import { DbHistoryEntry as HistoryDbEntry } from "@/services/stats/db/models";
 import { defineStore } from "pinia";
-import * as StatsDB from "@/services/stats2/db/index.js";
+import * as StatsDB from "@/services/stats/db/index.js";
 import { startOfDay } from "date-fns/esm";
 
 const SHOULD_SAVE_PUZZLE_CHEATED = import.meta.env.DEV;

@@ -22,11 +22,11 @@
 </template>
 
 <script setup>
-import { useStatisticsStore2 } from '@/stores/statistics2.js';
+import { useStatisticsStore } from '@/stores/statistics.js';
 
 import { computed, toRef } from 'vue';
 import RecentPuzzleItem from './RecentPuzzleItem.vue';
-const store = useStatisticsStore2();
+const store = useStatisticsStore();
 
 const sortedByDate = toRef(store, 'sortedByDate');
 const mostRecentItems = computed(() => sortedByDate.value?.slice(0, 6) ?? []);

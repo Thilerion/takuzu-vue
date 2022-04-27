@@ -3,16 +3,16 @@ import { EMPTY, ONE, ZERO } from "@/lib/constants";
 import { getRandomTransformation } from "@/lib/helpers/grid-transformations";
 import { countLineValues, pickRandom } from "@/lib/utils";
 import { requestPuzzle } from "@/services/create-puzzle";
-import { puzzleHistoryTable } from "@/services/stats2/db";
+import { puzzleHistoryTable } from "@/services/stats/db";
 import { useSavedPuzzle } from "@/services/useSavedPuzzle";
 import { initPregenWorker } from "@/workers/pregen-puzzles";
 import { defineStore } from "pinia";
 import { unref } from "vue";
-import { useBasicStatsStore } from "./basic-stats";
 import { usePuzzleHintsStore } from "./puzzle-hinter";
 import { usePuzzleHistoryStore } from "./puzzle-history";
 import { usePuzzleMistakesStore } from "./puzzle-mistakes";
 import { usePuzzleTimer } from "./puzzle-timer";
+import { useRecapStatsStore } from "./recap-stats";
 import { useSettingsStore } from "./settings";
 
 export const usePuzzleStore = defineStore('puzzleOld', {
@@ -352,10 +352,10 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 
 			// console.log({ ...finishedPuzzleState });
 			
-			const basicStatsStore = useBasicStatsStore();
+			const recapStatsStore = useRecapStatsStore();
 
 			try {
-				const historyEntry = await basicStatsStore.addFinishedPuzzleToHistory(finishedPuzzleState);
+				const historyEntry = await recapStatsStore.addFinishedPuzzleToHistory(finishedPuzzleState);
 				return historyEntry;
 			} catch (e) {
 				console.warn('Could not add finished puzzle to history...');
