@@ -5,6 +5,20 @@
 	>
 		<PageHeader class="bg-white shadow-sm" small>
 			<template #default>New Puzzle</template>
+			<template #right v-if="debugModeEnabled">
+				<BaseDropdown
+					align-right
+					align-below
+				>
+					<template #trigger="{toggle}">
+						<IconBtn @click="toggle"><icon-ic-baseline-more-vert /></IconBtn>
+					</template>
+					<template #content>
+						<BaseDropdownItem @click="replayRandom">Replay random with selected settings
+						</BaseDropdownItem>
+					</template>
+				</BaseDropdown>
+			</template>
 		</PageHeader>
 
 		<div
@@ -68,7 +82,7 @@
 
 <script setup>
 import { DIFFICULTY_LABELS, PRESET_BOARD_SIZES } from '@/config.js';
-import { computed, onBeforeUpdate, onMounted, ref, watch, watchEffect } from 'vue';
+import { computed, onBeforeUpdate, onMounted, ref, toRef, watch, watchEffect } from 'vue';
 import PageHeader from '../components/global/base-layout/PageHeader.vue';
 import StartGameButton from '../components/new-puzzle/StartGameButton.vue';
 import PuzzleDimensionsBlock from '../components/new-puzzle/PuzzleDimensionsBlock.vue';
@@ -78,8 +92,15 @@ import DifficultySelect from '../components/new-puzzle/DifficultySelect.vue';
 
 import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
 import { usePuzzleStore } from '@/stores/puzzle.js';
+import BaseDropdown from '@/components/global/dropdown/BaseDropdown.vue';
+import IconBtn from '@/components/global/base-layout/IconBtn.vue';
+import BaseDropdownItem from '@/components/global/dropdown/BaseDropdownItem.vue';
+import { useMainStore } from '@/stores/main';
 const { hasCurrentSavedGame } = useSavedPuzzle();
 // display warning message if creating a new game will overwrite the currently saved puzzle
+
+const mainStore = useMainStore();
+const debugModeEnabled = toRef(mainStore.flags, 'debugMode');
 
 const previousSelection = usePreviousSelection();
 const selectedDifficulty = ref(previousSelection.value.difficulty);
@@ -186,14 +207,24 @@ async function createGame() {
 	const { width, height } = selectedDimensions.value;
 	const difficulty = selectedDifficulty.value;
 
-	console.log({ width, height, difficulty });
-
 	try {
 		await puzzleStore.initPuzzle({ width, height, difficulty });
 		router.push({ name: 'PlayPuzzle' });
 	} catch(e) {
 		console.warn(e);
 	}			
+}
+
+async function replayRandom() {
+	resetGame();
+	const { width, height } = selectedDimensions.value;
+	const difficulty = selectedDifficulty.value;
+
+	const found = await puzzleStore.replayRandomPuzzle({ width, height, difficulty });
+	if (found) {
+		console.log('found');
+		router.push({ name: 'PlayPuzzle', query: { mode: 'replay' } });
+	}
 }
 </script>
 

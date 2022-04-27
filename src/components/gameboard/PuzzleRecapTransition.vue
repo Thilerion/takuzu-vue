@@ -34,6 +34,8 @@ import { useRoute, useRouter } from 'vue-router';
 import PuzzleRecap from './PuzzleRecap.vue';
 import PuzzleRecap2 from './PuzzleRecap2.vue';
 
+const route = useRoute();
+const router = useRouter();
 
 const props = defineProps({
 	finished: Boolean
@@ -58,6 +60,38 @@ const playAgainAction = async () => {
 	} catch(e) {
 		console.warn('Error while trying to create new puzzle in PlayAgain');
 		throw e;
+	}
+}
+const stripReplayModeFromRoute = () => {
+	try {
+		const name = route.name;
+		const query = route.query;
+		const { mode, ...otherQueries } = query;
+		router.replace({
+			name,
+			query: otherQueries
+		});
+	} catch(e) {
+		console.warn(e);
+	}
+	
+}
+const replayAction = async () => {
+	try {
+		const { width, height, difficulty } = recapStatsStore.lastPuzzleEntry;
+		puzzleStore.reset();
+		const found = await puzzleStore.replayRandomPuzzle({ width, height, difficulty });
+		if (!found) {
+			throw new Error('No puzzle found for replay.');
+		}
+		console.log('Replaying a different puzzle now.');
+		const mainStore = useMainStore();
+		mainStore.puzzleKey += 1;
+	} catch(e) {
+		console.warn(e);
+		window.alert('Could not find another puzzle for replay. Will generate a new puzzle instead.');
+		stripReplayModeFromRoute();
+		return playAgainAction();
 	}
 }
 
@@ -115,8 +149,6 @@ watch(shouldShow, (value, prev) => {
 	}
 })
 
-const router = useRouter();
-const route = useRoute();
 function exitTo(destination) {
 	const routeMetaPrev = route.meta.prev ?? {};
 	switch(destination) {
@@ -138,7 +170,14 @@ function exitTo(destination) {
 		}
 		case 'play-again': {
 			transitionData.afterLeaveAction = () => {};
-			playAgainAction().catch(err => {
+			const mode = route?.query?.mode;
+			let action;
+			if (mode === 'replay') {
+				action = replayAction;
+			} else {
+				action = playAgainAction;
+			}
+			action().catch(err => {
 				console.log('Routing to new game screen because PlayAgain create-new-board failed');
 				console.error(err);
 				router.go(-1);

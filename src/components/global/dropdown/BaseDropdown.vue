@@ -82,7 +82,7 @@ export default {
 	@apply left-auto right-0 origin-top-right;
 }
 .dropdown-content {
-	min-height: 6rem;
+	min-height: 2rem;
 	@apply bg-white rounded shadow-lg py-2 dark:bg-slate-800 dark:outline-slate-600 dark:outline dark:outline-1;
 }
 

@@ -1,8 +1,9 @@
 import { SimpleBoard } from "@/lib";
 import { EMPTY, ONE, ZERO } from "@/lib/constants";
 import { getRandomTransformation } from "@/lib/helpers/grid-transformations";
-import { countLineValues } from "@/lib/utils";
+import { countLineValues, pickRandom } from "@/lib/utils";
 import { requestPuzzle } from "@/services/create-puzzle";
+import { puzzleHistoryTable } from "@/services/stats2/db";
 import { useSavedPuzzle } from "@/services/useSavedPuzzle";
 import { initPregenWorker } from "@/workers/pregen-puzzles";
 import { defineStore } from "pinia";
@@ -277,6 +278,51 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				...puzzleConfig,
 				board, solution, initialBoard
 			})
+		},
+		async replayRandomPuzzle({
+			width, height, difficulty
+		}) {
+			const previousPlays = await puzzleHistoryTable.where('[width+height+difficulty]').equals([width, height, difficulty]).toArray();
+			if (!previousPlays.length) return false;
+
+			const timestamp = Date.now();
+			const second = 1000;
+			const minute = 60 * second;
+			const hour = 60 * minute;
+			const fourHours = hour * 4;
+
+			const recentlyPlayedBoards = previousPlays.filter(val => {
+				const timeDiff = timestamp - val.timestamp;
+				if (timeDiff < fourHours) return true;
+				return false;
+			}).map(val => val.initialBoard);
+
+			const initialBoards = previousPlays.map(val => val.initialBoard);
+			const uniquePreviousBoards = [
+				...new Set(initialBoards)
+			].filter(initialBoardStr => {
+				// filter out all recently played boards
+				return !recentlyPlayedBoards.includes(initialBoardStr)
+			});
+
+			if (!uniquePreviousBoards.length) {
+				console.log('Found boards, but none that were not recently played.');
+				return false;
+			}
+
+			const randomBoard = pickRandom(uniquePreviousBoards);
+
+			const randomPuzzle = previousPlays.find(val => val.initialBoard === randomBoard);
+			const boardStrings = {
+				board: randomPuzzle.initialBoard,
+				solution: randomPuzzle.solution
+			}
+			const puzzleConfig = { width, height, difficulty };
+			await this.replayPuzzle({
+				puzzleConfig,
+				boardStrings
+			})
+			return true;
 		},
 		loadPuzzle({
 			width, height, difficulty,
