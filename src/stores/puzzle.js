@@ -1,9 +1,9 @@
 import { SimpleBoard } from "@/lib";
 import { EMPTY, ONE, ZERO } from "@/lib/constants";
 import { getRandomTransformation } from "@/lib/helpers/grid-transformations";
+import { countLineValues } from "@/lib/utils";
 import { requestPuzzle } from "@/services/create-puzzle";
 import { useSavedPuzzle } from "@/services/useSavedPuzzle";
-import { calculateGridCounts, calculateLineCounts } from "@/store/puzzle/line-counts";
 import { initPregenWorker } from "@/workers/pregen-puzzles";
 import { defineStore } from "pinia";
 import { unref } from "vue";
@@ -108,10 +108,8 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				return;
 			}
 
-			const timer = usePuzzleTimer();
-			timer.reset();
-			const puzzleHistory = usePuzzleHistoryStore();
-			puzzleHistory.reset();
+			usePuzzleTimer().reset();
+			usePuzzleHistoryStore().reset();
 			usePuzzleHintsStore().reset();
 			usePuzzleMistakesStore().reset();
 
@@ -388,3 +386,25 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 		},
 	}
 })
+
+// whenever the board object changes, recheck line counts
+function calculateLineCounts(board) {
+	const rowCounts = board.grid.map(row => {
+		return countLineValues(row);
+	})
+	const colCounts = [];
+	for (let x = 0; x < board.width; x++) {
+		const col = board.getColumn(x);
+		const count = countLineValues(col);
+		colCounts.push(count);
+	}
+	return { rowCounts, colCounts };
+}
+
+function calculateGridCounts(board) {
+	const counts = { [ONE]: 0, [ZERO]: 0, [EMPTY]: 0 };
+	for (const cell of board.cells({ skipEmpty: false })) {
+		counts[cell.value] += 1;
+	}
+	return counts;
+}

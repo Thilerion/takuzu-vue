@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import hintTypes from '@/store/hints/hint-types.js';
+import { HINT_TYPE } from '@/stores/hints/Hint';
 import { lineTypeFromLineId } from '@/lib/utils.js';
 import { COLUMN, ROW } from '@/lib/constants.js';
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
@@ -32,16 +32,16 @@ import { usePuzzleStore } from '@/stores/puzzle.js';
 import { computed } from 'vue';
 function determineHintHighlightType(hint) {
 	const { type } = hint;
-	if (type === hintTypes.TRIPLES) {
+	if (type === HINT_TYPE.TRIPLES) {
 		return 'line';
 		return 'cells';
-	} else if (type === hintTypes.MISTAKE) {
+	} else if (type === HINT_TYPE.MISTAKE) {
 		return 'cells';
-	} else if (type === hintTypes.BALANCE) {
+	} else if (type === HINT_TYPE.BALANCE) {
 		return 'line';
-	} else if (type === hintTypes.ELIMINATION) {
+	} else if (type === HINT_TYPE.ELIMINATION) {
 		return 'line';
-	} else if (type === hintTypes.ELIM_DUPE) {
+	} else if (type === HINT_TYPE.ELIM_DUPE) {
 		return 'line';
 	} else {
 		return null;

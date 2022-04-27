@@ -12,7 +12,7 @@
     "deploy:test": "vite build --mode beta && surge dist --domain https://takuzu-vue-test.surge.sh",
     "deploy:test2": "vite build --mode alpha && surge dist --domain https://takuzu-vue-test2.surge.sh",
     "preview": "vite preview",
-	"test": "vitest"
+    "test": "vitest"
   },
   "dependencies": {
     "@fontsource/hammersmith-one": "^4.5.1",
@@ -27,8 +27,7 @@
     "lodash.throttle": "^4.1.1",
     "pinia": "^2.0.11",
     "vue": "^3.2.25",
-    "vue-router": "^4.0.12",
-    "vuex": "^4.0.2"
+    "vue-router": "^4.0.12"
   },
   "devDependencies": {
     "@iconify/json": "^2.0.32",

@@ -37,8 +37,8 @@ export default {
 	},
 	methods: {
 		executeAction(idx) {
-			const onClick = this.actions[idx].onClick.bind(this);
-			onClick(this, {}, this.hint);
+			const onClick = this.actions[idx].fn.bind(this);
+			onClick(this.hint);
 			this.$emit('done');
 		},
 		enableClickOutside() {

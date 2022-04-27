@@ -2,8 +2,8 @@ import { humanSolveBalance } from "@/lib/human-solver/balance.js";
 import { humanSolveDuplicateLine } from "@/lib/human-solver/duplicate.js";
 import { humanSolveElimination } from "@/lib/human-solver/elimination.js";
 import { humanSolveTriples } from "@/lib/human-solver/triples.js";
-import hintTypes from "@/store/hints/hint-types.js";
-import { createHint, validateHint } from "@/store/hints/index.js";
+import { HINT_TYPE } from "./hints/Hint.js";
+import { createHint, validateHint } from "./hints/index.js";
 import { defineStore } from "pinia";
 import { usePuzzleStore } from "./puzzle.js";
 
@@ -70,7 +70,7 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 				result: incorrectValues
 			} = board.hasIncorrectValues(solution);
 			if (hasMistakes) {
-				const hint = createHint(hintTypes.MISTAKE, incorrectValues);
+				const hint = createHint(HINT_TYPE.MISTAKE, incorrectValues);
 				console.log({ hint });
 				this.setHints([hint]);
 				this.addHintToCache({ boardStr, hint });
@@ -84,7 +84,7 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 			const triplesHumanResult = humanSolveTriples({ board });
 			if (triplesHumanResult && triplesHumanResult.length) {
 				const triplesHints = triplesHumanResult.map(triplesResult => {
-					return createHint(hintTypes.TRIPLES, triplesResult);
+					return createHint(HINT_TYPE.TRIPLES, triplesResult);
 				})
 				console.log({ triplesHints });
 				
@@ -105,7 +105,7 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 			// BALANCE HINT
 			const balanceHintResult = humanSolveBalance({ board });
 			if (balanceHintResult && balanceHintResult.length) {
-				const hint = createHint(hintTypes.BALANCE, balanceHintResult[0]);
+				const hint = createHint(HINT_TYPE.BALANCE, balanceHintResult[0]);
 				console.log({ hint });
 				this.setHints([hint]);
 				this.addHintToCache({ boardStr, hint });
@@ -122,7 +122,7 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 						return 1;
 					} else return -1;
 				})
-				const hint = createHint(hintTypes.ELIMINATION, sorted[0]);
+				const hint = createHint(HINT_TYPE.ELIMINATION, sorted[0]);
 				console.log({ eliminationHintResult, sorted, hint });
 				this.setHints([hint]);
 				this.addHintToCache({ boardStr, hint });
@@ -141,7 +141,7 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 					} else return -1;
 				})
 				console.log('DUPE HINTS!')
-				const hint = createHint(hintTypes.ELIM_DUPE, sorted[0]);
+				const hint = createHint(HINT_TYPE.ELIM_DUPE, sorted[0]);
 				console.log({ dupeHintResult, sorted, hint });
 				this.setHints([hint]);
 				this.addHintToCache({ boardStr, hint });
