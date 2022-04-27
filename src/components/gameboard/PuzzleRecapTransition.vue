@@ -30,7 +30,7 @@ import { usePuzzleStore } from '@/stores/puzzle.js';
 import { useRecapStatsStore } from '@/stores/recap-stats';
 import { storeToRefs } from 'pinia';
 import { computed, nextTick, ref, toRef, watch, reactive } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import PuzzleRecap from './PuzzleRecap.vue';
 import PuzzleRecap2 from './PuzzleRecap2.vue';
 
@@ -116,7 +116,9 @@ watch(shouldShow, (value, prev) => {
 })
 
 const router = useRouter();
+const route = useRoute();
 function exitTo(destination) {
+	const routeMetaPrev = route.meta.prev ?? {};
 	switch(destination) {
 		case 'new-game': {
 			transitionData.afterLeaveAction = () => router.go(-1);
@@ -127,7 +129,11 @@ function exitTo(destination) {
 			break;
 		}
 		case 'statistics': {
-			transitionData.afterLeaveAction = () => router.replace({ name: 'Statistics'});
+			if (routeMetaPrev?.name === 'PuzzleHistory') {
+				transitionData.afterLeaveAction = () => router.go(-1);
+			} else {
+				transitionData.afterLeaveAction = () => router.replace({ name: 'Statistics'});
+			}
 			break;
 		}
 		case 'play-again': {
