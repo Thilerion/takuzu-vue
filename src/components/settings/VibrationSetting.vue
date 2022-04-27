@@ -10,7 +10,7 @@
 			<div class="flex gap-2">
 				<InputRange
 					:min="0"
-					:max="5"
+					:max="vibrationOptsLength - 1"
 					:step="1"
 					id="vibrationStrength"
 					v-model="vibrationStrengthModel"
@@ -24,21 +24,20 @@
 
 <script setup>
 import { useTapVibrate } from '@/composables/use-tap-vibrate.js';
-import { useSettingsStore } from '@/stores/settings.js';
+import { useSettingsStore, validVibrationStrengths } from '@/stores/settings.js';
 import { storeToRefs } from 'pinia';
 import { computed, ref, toRef } from 'vue';
 import InputToggle from '../global/input/InputToggle2.vue';
 import InputRange from '../global/input/InputRange.vue';
 import WarningMsg from '../global/WarningMsg.vue';
 
-const inputDurationMap = new Map([
-	['0', 0],
-	['1', 18],
-	['2', 32],
-	['3', 45],
-	['4', 60],
-	['5', 76],
-])
+const vibrationOptsLength = validVibrationStrengths.length;
+const inputDurationMap = new Map(
+	validVibrationStrengths.map((val, idx) => {
+		return [String(idx), val];
+	})
+)
+
 const durationInputValueMap = new Map([...inputDurationMap].map(val => val.reverse()));
 
 const settingsStore = useSettingsStore();

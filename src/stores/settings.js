@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia';
 
+export const validVibrationStrengths = [0, 18, 32, 45, 60, 76];
+
 const getDefaultSettings = () => ({
 	showLineInfo: '', // '' for disabled, 'coords', 'remainingCount', 'currentCount'
 	enableWakeLock: true,
@@ -8,7 +10,7 @@ const getDefaultSettings = () => ({
 	cellTheme: 'binary', // "blue-red" for colored, or "tictactoe"/"binary" for "symbols"
 	
 	enableVibration: true,
-	vibrationStrength: 25,
+	vibrationStrength: validVibrationStrengths[2],
 
 	// assistance settings
 	// automaticValidation: 'ruleViolations', // TODO: automatic validation, with values: disabled/ ruleViolations/ incorrectValues
