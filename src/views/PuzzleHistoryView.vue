@@ -157,7 +157,7 @@ const getDefaultOptions = () => ({
 		favoritesOnly: false
 	},
 	page: 0,
-	pageSize: 15
+	pageSize: 30
 });
 
 function getFilterQueryFromOptions({
@@ -172,11 +172,12 @@ function getFilterQueryFromOptions({
 }
 
 function getQueryFromFilterAndSortOptions({
-	sortBy, filters, pageSize
+	sortBy, filters, pageSize, page
 }) {
 	const defaults = getDefaultOptions();
 
 	const query = {
+		page: page === defaults.page ? undefined : page,
 		sortBy: sortBy === defaults.sortBy ? undefined : sortBy,
 		pageSize: pageSize === defaults.pageSize ? undefined : pageSize,
 		...getFilterQueryFromOptions(filters)
