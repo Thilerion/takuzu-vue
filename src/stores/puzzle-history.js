@@ -45,9 +45,6 @@ export const usePuzzleHistoryStore = defineStore('puzzleHistory', {
 			return lastMove;
 		},
 
-		exportMoveHistory() {
-			return this.moveList.map(moveToString);
-		},
 		importMoveHistory(moveStrings = []) {
 			this.reset();
 			const moveList = moveStrings.map(moveFromString);
@@ -60,11 +57,11 @@ export const usePuzzleHistoryStore = defineStore('puzzleHistory', {
 
 const PuzzleMove = (x, y, value, prevValue) => ({ x, y, value, prevValue });
 
-function moveToString(move) {
+export function moveToString(move) {
 	const { x, y, value, prevValue } = move;
 	return [x, y, value, prevValue].join(',');
 }
-function moveFromString(str) {
+export function moveFromString(str) {
 	const data = str.split(',');
 	const x = parseInt(data[0]);
 	const y = parseInt(data[1]);

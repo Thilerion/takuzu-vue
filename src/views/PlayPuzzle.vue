@@ -94,6 +94,7 @@ import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
 import { usePuzzleStore } from '@/stores/puzzle.js';
 import { useMainStore } from '@/stores/main.js';
 import { useRecapStatsStore } from '@/stores/recap-stats';
+import { savePuzzleSaveData } from '@/stores/helpers/save-data';
 
 export default {
 	components: {
@@ -278,7 +279,7 @@ export default {
 		},
 		saveGame() {
 			if (this.canSaveGame()) {
-				this.puzzleStore.savePuzzle();
+				savePuzzleSaveData();
 			}
 		},
 		initAutoSave() {

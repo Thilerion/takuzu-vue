@@ -400,22 +400,6 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			timer.start();
 		},
 
-		async savePuzzle() {
-			const timer = usePuzzleTimer();
-			let timeElapsed = timer.timeElapsed;
-			if (timer.running && !!timer.startTime) {
-				timeElapsed += (Date.now() - timer.startTime);
-			}
-			const { initialBoard, board, solution, width, height, difficulty } = this;
-			const puzzleHistory = usePuzzleHistoryStore();
-			const moveList = await puzzleHistory.exportMoveHistory();
-
-			const { savePuzzle } = useSavedPuzzle();
-			savePuzzle({
-				moveList, timeElapsed, initialBoard, board, solution, width, height, difficulty
-			});
-		},
-
 		loadSavedPuzzle() {
 			this.reset();
 			const { savedPuzzle: currentSaved } = useSavedPuzzle();
