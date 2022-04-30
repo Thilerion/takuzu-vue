@@ -1,12 +1,15 @@
 <template>
 	<header class="flex-shrink-0">
-		<div class="w-1/4">
+		<div class="w-1/3">
 			<IconBtn @click="$emit('close')" name="md-close">
 				<icon-ic-baseline-close />
 			</IconBtn>
 		</div>
-		<span class="font-medium tracking-widest text-xl">{{columns}}x{{rows}}</span>
-		<div class="flex flex-row w-1/4 justify-end">
+		<div class="h-full w-full flex flex-col items-center justify-center text-center relative" :class="{ 'pb-2': isReplayMode }">
+			<span class="font-medium tracking-wide text-xl">{{columns}} x {{rows}}</span>
+			<div v-if="isReplayMode" class="absolute inset-x-0 bottom-1 text-xs text-gray-500 tracking-wide">Replay</div>
+		</div>
+		<div class="flex flex-row w-1/3 justify-end">
 			<IconBtn @click="togglePause" class="opacity-80">
 				<icon-ic-baseline-pause v-if="!paused" />
 				<icon-ic-baseline-play-arrow v-else />
@@ -22,7 +25,8 @@
 
 <script>
 import { usePuzzleStore } from '@/stores/puzzle.js';
-import { toRef } from 'vue';
+import { computed, toRef } from 'vue';
+import { useRoute } from 'vue-router';
 import GameBoardDropdown from './GameBoardDropdown.vue';
 import PuzzleProgressBar from './PuzzleProgressBar.vue';
 export default {
@@ -39,7 +43,12 @@ export default {
 
 		const paused = toRef(puzzleStore, 'paused');
 
-		return { puzzleStore, paused };
+		const route = useRoute();
+		const isReplayMode = computed(() => {
+			return route.query.mode === 'replay';
+		})
+
+		return { puzzleStore, paused, isReplayMode };
 	},
 	methods: {
 		openSettings() {
