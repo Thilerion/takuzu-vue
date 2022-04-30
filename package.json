@@ -5,6 +5,7 @@
   "scripts": {
     "serve": "vite",
     "dev": "vite",
+    "dev:host": "vite --host",
     "build": " vite build",
     "build:alpha": "vite build --mode alpha",
     "build:beta": "vite build --mode beta",
@@ -17,7 +18,7 @@
   "dependencies": {
     "@fontsource/hammersmith-one": "^4.5.1",
     "@fontsource/roboto": "^4.5.3",
-    "@vueuse/core": "^7.5.5",
+    "@vueuse/core": "^8.3.1",
     "chart.js": "^3.7.0",
     "chartjs-adapter-date-fns": "^2.0.0",
     "date-fns": "^2.28.0",
@@ -31,18 +32,18 @@
   },
   "devDependencies": {
     "@iconify/json": "^2.0.32",
-    "@tailwindcss/forms": "^0.4.0",
+    "@tailwindcss/forms": "^0.5.0",
     "@types/tailwindcss": "^3.0.4",
     "@vitejs/plugin-vue": "^2.0.0",
     "autoprefixer": "^10.4.2",
     "lodash.camelcase": "^4.3.0",
     "lodash.upperfirst": "^4.3.1",
     "rollup-plugin-copy": "^3.4.0",
-    "tailwindcss": "^3.0.18",
-    "unplugin-icons": "^0.13.0",
-    "unplugin-vue-components": "^0.17.15",
+    "tailwindcss": "^3.0.24",
+    "unplugin-icons": "^0.14.1",
+    "unplugin-vue-components": "^0.19.3",
     "vite": "^2.7.2",
-    "vite-plugin-pwa": "^0.11.13",
-    "vitest": "^0.8.1"
+    "vite-plugin-pwa": "^0.12.0",
+    "vitest": "^0.10.0"
   }
 }
