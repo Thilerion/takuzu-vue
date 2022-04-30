@@ -6,7 +6,12 @@
 			</IconBtn>
 		</div>
 		<div class="h-full w-full flex flex-col items-center justify-center text-center relative" :class="{ 'pb-2': isReplayMode }">
-			<span class="font-medium tracking-wide text-xl">{{columns}} x {{rows}}</span>
+			<div class="font-medium tracking-wide text-xl">
+				{{columns}}<span
+					class="px-1"
+				>x</span>{{rows}}
+			</div>
+			<!-- <span class="font-medium tracking-wide text-xl">{{columns}} x {{rows}}</span> -->
 			<div v-if="isReplayMode" class="absolute inset-x-0 bottom-1 text-xs text-gray-500 tracking-wide">Replay</div>
 		</div>
 		<div class="flex flex-row w-1/3 justify-end">
@@ -23,74 +28,46 @@
 	<PuzzleProgressBar v-show="puzzleStore.started" />
 </template>
 
-<script>
+<script setup>
 import { usePuzzleStore } from '@/stores/puzzle.js';
-import { computed, toRef } from 'vue';
-import { useRoute } from 'vue-router';
+import { computed, toRef, ref, watchEffect } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import GameBoardDropdown from './GameBoardDropdown.vue';
 import PuzzleProgressBar from './PuzzleProgressBar.vue';
-export default {
-	components: { GameBoardDropdown, PuzzleProgressBar },
-	emits: ['close', 'dropdown-toggled', 'pause', 'resume'],
-	data() {
-		return {
-			rows: null,
-			columns: null
-		}
-	},
-	setup() {
-		const puzzleStore = usePuzzleStore();
+import { storeToRefs } from 'pinia';
 
-		const paused = toRef(puzzleStore, 'paused');
+const emit = defineEmits(['close', 'dropdown-toggled', 'pause', 'resume']);
 
-		const route = useRoute();
-		const isReplayMode = computed(() => {
-			return route.query.mode === 'replay';
-		})
+const puzzleStore = usePuzzleStore();
+const { paused, width, height } = storeToRefs(puzzleStore);
 
-		return { puzzleStore, paused, isReplayMode };
-	},
-	methods: {
-		openSettings() {
-			this.$router.push({ name: 'PlayPuzzle.settings'});
-			this.$emit('dropdown-toggled', false);
-		},
-		dropdownToggled(value) {
-			this.$emit('dropdown-toggled', value);
-		},
-		togglePause() {
-			if (this.paused) {
-				this.$emit('resume');
-			} else this.$emit('pause');
-		}
-	},
-	computed: {
-		storeRows() {
-			return this.puzzleStore.height;
-		},
-		storeColumns() {
-			return this.puzzleStore.width;
-		},
-		storeDims() {
-			return [this.storeRows, this.storeColumns];
-		}
-	},
-	watch: {
-		storeDims: {
-			handler() {
-				const r = this.storeRows;
-				const c = this.storeColumns;
-				if (r != null) {
-					this.rows = r;
-				}
-				if (c != null) {
-					this.columns = c;
-				}
-			},
-			immediate: true
-		}
+// update with watcher, to prevent values being removed during playPuzzle exit transition after the puzzleStore was reset
+const rows = ref(null);
+const columns = ref(null);
+watchEffect(() => {
+	if (width.value != null && height.value != null) {
+		rows.value = height.value;
+		columns.value = width.value;
 	}
-};
+})
+
+const route = useRoute();
+const puzzleMode = computed(() => {
+	if (puzzleStore?.puzzleMode != null) return puzzleStore.puzzleMode;
+	return route.query.mode;
+})
+const isReplayMode = computed(() => {
+	return typeof puzzleMode.value === 'string' && puzzleMode.value.toLowerCase() === 'replay';
+})
+
+// dropdown/button actions
+const router = useRouter();
+const dropdownToggled = (value) => emit('dropdown-toggled', value)
+const openSettings = () => {
+	router.push({ name: 'PlayPuzzle.settings' });
+	dropdownToggled(false);
+}
+const togglePause = () => paused.value ? emit('resume') : emit('pause');
 </script>
 
 <style scoped>
