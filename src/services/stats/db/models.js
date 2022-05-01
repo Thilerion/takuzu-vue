@@ -43,6 +43,10 @@ export class DbHistoryEntry {
 		const initialBoard = puzzleState.initialBoard.toBoardString();
 		const solution = puzzleState.solution.toBoardString();
 		const flags = puzzleState.flags ?? {};
+
+		if (puzzleState.assistance.cheatsUsed) {
+			flags.cheatsUsed = true;
+		}
 		
 		const t = puzzleState.timestamp || puzzleState.date;
 		const timestamp = t != null ? new Date(t).valueOf() : Date.now();

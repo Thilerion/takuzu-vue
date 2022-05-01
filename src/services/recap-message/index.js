@@ -1,8 +1,9 @@
 import { createResult, falseResult, pickRandomly } from "./helpers";
-import { firstOfDifficulty, firstOfSize, firstSolvedTotal, firstWithSizeDifficulty, hardestPuzzleSolved, isAlmostTimeRecordAbsolute, isAlmostTimeRecordPercentage, isBetterThanAverage, isLargeTimeRecord, isMuchBetterThanAverageAbsolute, isMuchBetterThanAveragePercentage, isReplayTimeRecord, isTimeRecord, playsToday, playsTodayWithConfig, playsTotal, playsTotalWithConfig, replayPlaysTotal } from "./recap-message-types"
+import { firstOfDifficulty, firstOfSize, firstSolvedTotal, firstWithSizeDifficulty, hardestPuzzleSolved, isAlmostTimeRecordAbsolute, isAlmostTimeRecordPercentage, isBetterThanAverage, isLargeTimeRecord, isMuchBetterThanAverageAbsolute, isMuchBetterThanAveragePercentage, isReplayTimeRecord, isTimeRecord, notAddedToDatabaseCheatsUsed, playsToday, playsTodayWithConfig, playsTotal, playsTotalWithConfig, replayPlaysTotal } from "./recap-message-types"
 import { RECAP_MSG_TYPES } from "./types";
 
 const recapFnsOrdered = [
+	{ type: RECAP_MSG_TYPES.NOT_ADDED_TO_DB_CHEATS, fn: notAddedToDatabaseCheatsUsed },
 	{ type: RECAP_MSG_TYPES.FIRST_TOTAL, fn: firstSolvedTotal },
 
 	[

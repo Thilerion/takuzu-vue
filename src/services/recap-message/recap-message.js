@@ -46,6 +46,7 @@ const formatOrdinal = (value, locale = 'en-US') => {
 }
 
 export const recapMessageMap = {
+	[RECAP_MSG_TYPES.NOT_ADDED_TO_DB_CHEATS]: () => "Puzzle was not saved in your history, because you used cheats.",
 	[RECAP_MSG_TYPES.FIRST_TOTAL]: () => "You've solved your first puzzle ever!",
 	
     [RECAP_MSG_TYPES.HARDEST_EVER]: () => "This was the hardest puzzle you've ever solved, well done!",

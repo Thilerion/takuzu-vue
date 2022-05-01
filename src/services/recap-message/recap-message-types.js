@@ -1,5 +1,12 @@
 import { checkImprovementOverPreviousBest, checkIsTimeRecord, createResult, dimensionsString, falseResult, getPercentageFaster, getPercentageSlower, oneOfOrMultipleOf, trueResult } from "./helpers";
 
+export const notAddedToDatabaseCheatsUsed = data => {
+	return createResult(
+		!data.isSavedToDb && data.lastPuzzleEntry.flags.cheatsUsed,
+		{}
+	)
+}
+
 export const firstSolvedTotal = data => {
 	const { totalSolved } = data;
 	return createResult(

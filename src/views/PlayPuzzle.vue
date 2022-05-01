@@ -115,7 +115,6 @@ export default {
 		const { showLineInfo, enableWakeLock, showBoardCoordinates, showBoardLineCounts, showRulers, showTimer } = storeToRefs(settingsStore);
 
 		const recapStatsStore = useRecapStatsStore();
-		const initGameEndStats = async (entry) => recapStatsStore.initializeGameEndStats(entry);
 		const puzzleHistoryStore = usePuzzleHistoryStore();
 		const puzzleHintsStore = usePuzzleHintsStore();
 		const getHint = () => puzzleHintsStore.getHint();
@@ -151,7 +150,7 @@ export default {
 			showLineInfo, showBoardCoordinates, showBoardLineCounts, showRulers,
 			isWakeLockEnabled: computed(() => wakeLock.isActive.value),
 			shouldEnableWakeLock: enableWakeLock, showTimer,
-			initGameEndStats, puzzleHistoryStore, getHint,
+			puzzleHistoryStore, getHint,
 			userCheckErrors: (boardStr) => puzzleMistakesStore.userCheckErrors(boardStr),
 			autoCheckErrors: () => puzzleMistakesStore.autoCheckFinishedWithMistakes(),
 			wakeLock,
@@ -266,8 +265,7 @@ export default {
 		},
 		async finishGame() {
 			// window.alert('Good job! You finished this puzzle.');
-			const historyEntry = await this.puzzleStore.finishPuzzle();
-			await this.initGameEndStats(historyEntry);
+			return this.puzzleStore.finishPuzzle();
 		},
 		undo() {
 			this.puzzleStore.undoLastMove();

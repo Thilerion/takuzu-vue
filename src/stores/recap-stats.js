@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 import * as StatsDB from "@/services/stats/db/index.js";
 import { startOfDay } from "date-fns/esm";
 
-const SHOULD_SAVE_PUZZLE_CHEATED = import.meta.env.DEV;
+const SHOULD_SAVE_PUZZLE_CHEATED = import.meta.env.DEV && false;
 
 export const useRecapStatsStore = defineStore('recapStats', {
 
@@ -17,7 +17,8 @@ export const useRecapStatsStore = defineStore('recapStats', {
 			id: null,
 			timeElapsed: null,
 			flags: {
-				favorite: null
+				favorite: null,
+				cheatsUsed: null
 			}
 		},
 
@@ -80,9 +81,12 @@ export const useRecapStatsStore = defineStore('recapStats', {
 			}
 		},
 
-		async initializeGameEndStats(historyEntry) {
-			this.lastPuzzleEntry = { ...historyEntry };
+		setPuzzleEntry({historyEntry}) {
+			this.lastPuzzleEntry = historyEntry;
+		},
 
+		async initializeGameEndStats() {
+			const historyEntry = this.lastPuzzleEntry;
 			const { timeElapsed } = historyEntry;
 			
 			const {
@@ -133,10 +137,14 @@ export const useRecapStatsStore = defineStore('recapStats', {
 					console.log('Cheats used, but will save to history anyway.');
 				} else {
 					console.warn('Cheats used; will not save entry to history!');
+					this.setPuzzleEntry({ historyEntry, puzzleState });
+					this.initializeGameEndStats(historyEntry);
 					return historyEntry;
 				}
 			}
 			const historyEntryUpdated = await this.addFinishedPuzzleToDb(historyEntry);
+			this.setPuzzleEntry({ historyEntry: historyEntryUpdated, puzzleState });
+			this.initializeGameEndStats(historyEntryUpdated);
 			console.log('Puzzle saved to history.');
 			return historyEntryUpdated;
 		},
@@ -357,4 +365,8 @@ function getBestAndAverageTimes({ items, previousItems }) {
 		best: bestTimeItem.timeElapsed,
 		previousBest: previousBestTimeItem?.timeElapsed ?? null,
 	}
+}
+
+const isSamePuzzleEntry = (a = {}, b = {}) => {
+	return a.timestamp != null && a.timestamp === b.timestamp && a.initialBoard != null && a.initialBoard === b.initialBoard;
 }
