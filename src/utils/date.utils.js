@@ -69,6 +69,21 @@ export const timeFormatter = (formatOptions) => {
 	}
 }
 
+export const formatTimeMMSS = (timestampMS, {
+	padMinutes = true,
+} = {}) => {
+	let totalSeconds = timestampMS / 1000;
+	const remainingMS = timestampMS % 1000;
+	if (remainingMS <= 200) {
+		totalSeconds = Math.floor(totalSeconds);
+	} else totalSeconds = Math.ceil(totalSeconds);
+
+	const seconds = totalSeconds % 60;
+	const minutes = (totalSeconds - seconds) / 60;
+
+	return `${padMinutes ? padLeft(minutes) : minutes}:${padLeft(seconds)}`;
+}
+
 export const formatTimeMMSSss = (timestampMS, { padMinutes = true } = {}) => {
 	const timestampToPrecision = Math.round(timestampMS / 10) * 10;
 	const date = new Date(timestampToPrecision);
