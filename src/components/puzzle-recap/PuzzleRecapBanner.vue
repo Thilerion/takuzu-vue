@@ -4,6 +4,7 @@
 		@after-enter="afterEnter"
 		@after-leave="afterLeave"
 		:duration="{enter: enterDuration, leave: leaveDuration}"
+		appear
 	>
 	<div
 		class="banner-container bg-black text-white w-full my-auto flex justify-center items-center relative py-1"

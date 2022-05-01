@@ -61,9 +61,9 @@
 			</OverlayPageTransition>
 		</router-view>
 
-		<teleport to="#overlay-container">
-			<PuzzleRecapTransition :finished="finished" />
-		</teleport>
+		<PuzzleRecap
+			:finished="finished"
+		></PuzzleRecap>
 	</div>
 </template>
 
@@ -76,7 +76,6 @@ import PuzzleInfo from '@/components/gameboard/PuzzleInfo.vue';
 import RulerCoords from '@/components/gameboard/RulerCoords.vue';
 import RulerCounts from '@/components/gameboard/RulerCounts.vue';
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
-import PuzzleRecapTransition from '@/components/gameboard/PuzzleRecapTransition.vue';
 import PuzzleHintWrapper from '@/components/gameboard/PuzzleHintWrapper.vue';
 
 import { usePuzzleWakeLock } from '@/composables/use-wake-lock.js';
@@ -95,20 +94,21 @@ import { usePuzzleStore } from '@/stores/puzzle.js';
 import { useMainStore } from '@/stores/main.js';
 import { useRecapStatsStore } from '@/stores/recap-stats';
 import { savePuzzleSaveData } from '@/stores/helpers/save-data';
+import PuzzleRecap from '@/components/puzzle-recap/PuzzleRecap.vue';
 
 export default {
 	components: {
-		GameBoard,
-		GameBoardHeader,
-		GameBoardWrapper,
-		PuzzleControls,
-		PuzzleInfo,
-		RulerCoords,
-		RulerCounts,
-		OverlayPageTransition,
-		PuzzleRecapTransition,
-		PuzzleHintWrapper,
-	},
+    GameBoard,
+    GameBoardHeader,
+    GameBoardWrapper,
+    PuzzleControls,
+    PuzzleInfo,
+    RulerCoords,
+    RulerCounts,
+    OverlayPageTransition,
+    PuzzleHintWrapper,
+    PuzzleRecap
+},
 	setup() {
 		const settingsStore = useSettingsStore();
 
@@ -144,6 +144,7 @@ export default {
 
 		const mainStore = useMainStore();
 		const windowHidden = toRef(mainStore, 'windowHidden');
+
 
 		return { 
 			windowHidden,

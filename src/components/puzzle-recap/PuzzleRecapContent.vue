@@ -1,5 +1,5 @@
 <template>
-	<div class="bg-white text-gray-900 w-full m-auto rounded overflow-hidden">
+	<div class="scale-100 min-w-[300px] min-h-[200px] max-w-xl max-h-[90vh] rounded-t-xl rounded-b-md overflow-hidden flex flex-col m-auto bg-white text-gray-900">
 		<header class="bg-gradient-to-b from-teal-600 to-teal-500 text-white text-center py-3 px-3">
 			<div>
 				<div class="mb-2 mt-1 inline-block mx-auto">
@@ -46,11 +46,11 @@
 					</div>
 				</div>
 			</div>
-			<div class="recap-btns">
+			<div class="recap-btns min-w-fit">
 				<BaseButton class="play-again-btn btn-primary w-full" @click="$emit('exit-to', 'play-again')">Play again</BaseButton>
 				<div class="secondary-btns flex w-full">
 					<BaseButton class="mr-2 text-xs flex-1" @click="$emit('exit-to', 'home')">Home</BaseButton>
-					<BaseButton class="text-xs btn-small flex-1" @click="$emit('exit-to', 'new-game')">Change puzzle type</BaseButton>
+					<BaseButton class="text-xs btn-small flex-1" @click="$emit('exit-to', 'new-puzzle')">Change puzzle type</BaseButton>
 				</div>				
 			</div>
 		</div>

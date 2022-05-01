@@ -1,5 +1,4 @@
 <template>
-	<teleport to="#overlay-container">
 		<transition name="t-wrapper">
 		<div class="fixed inset-0 flex w-full h-full modal-wrapper  items-center justify-center" @click="emit('close')" v-if="show">
 		<transition name="t-blur">
@@ -10,44 +9,41 @@
 				:enter-duration="500"
 				:leave-duration="400"
 				@banner-after-enter="bannerAfterEnter"
-				@banner-after-leave="bannerAfterLeave"
 				@close="emit('close')"
 				class="z-10"
-			/>
+			><slot name="banner"/></PuzzleRecapBanner>
 			<transition name="t-backdrop">
 				<div v-if="showBackdrop" class="backdrop inset-0 w-full h-full absolute z-0 opacity-90">
 				</div>
 
 			</transition>
 			<div class="absolute w-full h-full inset-0 z-20 p-6 flex justify-center items-center">
-				<transition name="t-content">
-					<div
-						v-if="showContent"
-						class="bg-white text-black min-w-[200px] min-h-[200px] z-20"
-					>Content here</div>
-				</transition>
+				<PuzzleRecapModalTransition>
+					<template v-if="showContent">
+						<slot name="content" />
+					</template>
+				</PuzzleRecapModalTransition>
 			</div>
 		</div>
 		</transition>
-	</teleport>
 </template>
 
 <script setup>
-import { nextTick, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, ref, toRef, watch, watchEffect } from 'vue';
 import PuzzleRecapBanner from './PuzzleRecapBanner.vue';
+import PuzzleRecapModalTransition from './PuzzleRecapModalTransition.vue';
 
 const props = defineProps({
 	show: Boolean
 })
 const emit = defineEmits(['close']);
-// const show = ref(false);
 const show = toRef(props, 'show');
 
 const showBanner = ref(false);
 const showBackdrop = ref(false);
 const showContent = ref(false);
 
-watch(show, value => {
+watch(show, (value) => {
 	if (value) {
 		nextTick(() => showBanner.value = true);
 	} else {
@@ -55,7 +51,9 @@ watch(show, value => {
 		showBackdrop.value = false;
 		showContent.value = false;
 	}
-})
+}, { immediate: true });
+
+onMounted(() => showBanner.value = true);
 
 let bannerAfterEnterTimeout = null;
 const bannerAfterEnter = () => {
@@ -101,13 +99,6 @@ onBeforeUnmount(() => {
 }
 .t-backdrop-enter-from {
 	transform: scaleY(0.01) scaleX(1);
-}
-
-.t-content-enter-active {
-	transition: opacity .2s ease .35s;
-}
-.t-content-enter-from {
-	opacity: 0;
 }
 </style>
 
