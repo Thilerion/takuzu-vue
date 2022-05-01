@@ -14,10 +14,13 @@
 			<StatisticsContent v-else-if="!statsStore.noPuzzlesSolved" />
 			<div v-else>Woops...</div>
 		</div>
-		<StatsDbUtils
-			@update-stats="updateStats"
-			:num-solved="statsStore.puzzlesSolved"
-		/>
+		<div class="pt-6">
+			<StatsDbUtils
+				@update-stats="updateStats"
+				:num-solved="statsStore.puzzlesSolved"
+			/>
+		</div>
+			
 	</div>
 </template>
 
