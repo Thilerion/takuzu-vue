@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 import * as StatsDB from "@/services/stats/db/index.js";
 import { startOfDay } from "date-fns/esm";
 
-const SHOULD_SAVE_PUZZLE_CHEATED = import.meta.env.DEV && false;
+const SHOULD_SAVE_PUZZLE_CHEATED = import.meta.env.DEV;
 
 export const useRecapStatsStore = defineStore('recapStats', {
 
@@ -52,6 +52,7 @@ export const useRecapStatsStore = defineStore('recapStats', {
 		modalHidden: state => !state.modalShown,
 		hasPuzzleData: state => state.lastPuzzleEntry?.width != null,
 		isSavedToDb: state => state.lastPuzzleEntry?.id != null,
+		isFavorite: state => !!state.lastPuzzleEntry?.flags?.favorite,
 
 		differencePreviousAverage() {
 			if (!this.initialized) return null;
@@ -163,6 +164,10 @@ export const useRecapStatsStore = defineStore('recapStats', {
 				console.warn('Could not save history entry!');
 				return historyEntry;
 			}
+		},
+
+		async toggleFavorite() {
+			return this.markFavorite(!this.isFavorite);
 		},
 
 		async markFavorite(value = true) {

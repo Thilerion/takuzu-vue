@@ -1,7 +1,14 @@
 <template>
-	<div class="recap-modal scale-100 min-w-[300px] min-h-[200px] max-w-xl max-h-[90vh] rounded-xl overflow-hidden flex flex-col m-auto bg-white text-gray-900 w-full">
+	<div class="recap-modal scale-100 min-w-[300px] min-h-[200px] max-w-xl max-h-[90vh] rounded-xl flex flex-col m-auto bg-white text-gray-900 w-full relative">
+		<div class="absolute right-0 top-0 -translate-y-full text-sm flex items-center z-100">
+			<RecapContent.Favorite
+				v-if="isSavedToDb"
+				:value="isFavorite"
+				@toggle="recapStatsStore.toggleFavorite"
+			/>
+		</div>
 
-		<div class="bg-gradient-to-t from-teal-100/70 via-teal-200/20 to-transparent bg-teal-600 text-white relative mb-2" :class="[hasRecordBanner ? 'pb-6' : 'pb-2']">
+		<div class="bg-gradient-to-t from-teal-100/70 via-teal-200/20 to-transparent bg-teal-600 text-white relative mb-2 rounded-t-xl" :class="[hasRecordBanner ? 'pb-6' : 'pb-2']">
 			<div class="h-full absolute inset-0 flex items-end justify-end z-0">
 				<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="fill-white bottom-0 inset-x-0 h-8 w-full" viewBox="0 0 1440 320"><path fill-opacity="1" d="M0,192L80,213.3C160,235,320,277,480,256C640,235,800,149,960,128C1120,107,1280,149,1360,170.7L1440,192L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z"></path></svg>
 			</div>
@@ -84,7 +91,8 @@ const recapStatsStore = useRecapStatsStore();
 const {
 	isTimeRecord,
 	count,
-	currentTimeElapsed, best, previousBest, average, previousAverage
+	currentTimeElapsed, best, previousBest, average, previousAverage,
+	isFavorite, isSavedToDb
 } = storeToRefs(recapStatsStore);
 
 const {
@@ -152,6 +160,18 @@ const goBackToRoute = ({ name }, navigateFn) => {
 
 .recap-btn {
 	@apply border border-gray-300/80 rounded py-0 h-10 flex items-center justify-center pt-1;
+}
+
+.fav-btn {
+	transition: opacity 1s, color 1s;
+}
+.fav-btn:active {
+	opacity: 0.9;
+	color: white;
+	transition: opacity .2s, color .2s;
+}
+.fav-btn:active.is-fav {
+	@apply opacity-100;
 }
 
 </style>
