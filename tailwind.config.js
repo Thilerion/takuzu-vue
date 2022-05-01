@@ -16,8 +16,8 @@ module.exports = {
 			]
 		},
 		screens: {
-			'sm': '640px',
-			'md': '810px',
+			'sm': '576px',
+			'md': '768px',
 			'lg': '1024px',
 			'hover-hover': { 'raw': '(hover: hover) and (pointer: fine)' },
 			'hover-none': { 'raw': '(pointer: coarse)' },

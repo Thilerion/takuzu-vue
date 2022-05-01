@@ -1,6 +1,6 @@
 <template>
-	<div class="recap-modal scale-100 min-w-[300px] min-h-[200px] max-w-xl max-h-[90vh] rounded-xl flex flex-col m-auto bg-white text-gray-900 w-full relative">
-		<div class="absolute right-0 top-0 -translate-y-full text-sm flex items-center z-100">
+	<div class="recap-modal scale-100 min-h-[200px] min-w-min max-w-sm w-full sm:w-max max-h-[90vh] rounded-xl flex flex-col m-auto bg-white text-gray-900 relative">
+		<div class="absolute right-1 -top-1 -translate-y-full text-sm flex items-center z-100">
 			<RecapContent.Favorite
 				v-if="isSavedToDb"
 				:value="isFavorite"
@@ -45,24 +45,24 @@
 		</RecapContent.MessageStats>
 		
 
-		<div class="recap-btns px-2 mx-auto text-center grid gap-x-2 gap-y-3 mb-4 w-[70vw] min-w-max max-w-md pt-2">
+		<div class="recap-btns px-2 mx-auto text-center grid gap-x-2 gap-y-3 mb-4 w-[70vw] min-w-[300px] pt-2">
 			<router-link
 				custom
 				:to="{ name: 'Home', replace: true }"
 				v-slot="{ navigate, href }"
 			>
-				<BaseButton element="a" :href="href" @click.prevent="goBackToRoute({ name: 'Home' }, navigate)" class="text-gray-600 tracking-wide recap-btn text-sm row-span-1">Home</BaseButton>
+				<BaseButton element="a" :href="href" @click.prevent="goBackToRoute({ name: 'Home' }, navigate)" class="text-gray-600 tracking-wider recap-btn text-xs row-span-1">Home</BaseButton>
 			</router-link>
 			<router-link
 				custom
 				:to="{ name: 'NewPuzzleFreePlay', replace: true }"
 				v-slot="{ navigate, href }"
 			>
-				<BaseButton element="a" :href="href" @click.prevent="goBackToRoute({ name: 'NewPuzzleFreePlay' }, navigate)" class="text-gray-600 tracking-wide recap-btn text-sm row-span-1">Change Level</BaseButton>
+				<BaseButton element="a" :href="href" @click.prevent="goBackToRoute({ name: 'NewPuzzleFreePlay' }, navigate)" class="text-gray-600 tracking-wider recap-btn text-xs row-span-1">Change Level</BaseButton>
 			</router-link>
 
 			
-			<BaseButton class="text-base font-normal h-14 btn-primary row-start-2 col-start-1 col-span-2" @click="$emit('exit-to', 'play-again')">
+			<BaseButton class="text-base font-normal h-12 btn-primary row-start-2 col-start-1 col-span-2" @click="$emit('exit-to', 'play-again')">
 			<div class="w-full px-8 flex items-center justify-center relative">
 				<div>Play again</div>
 				<div class="w-7 h-7 ml-auto absolute right-0 opacity-95"><icon-mdi-arrow-right-thin class="w-full h-full" /></div>
@@ -149,9 +149,10 @@ const goBackToRoute = ({ name }, navigateFn) => {
 
 <style scoped>
 .recap-btns {
+	max-width: min(468px, 100%);
 	grid-template-rows: auto auto;
 	grid-template-columns: 1fr 1fr;
-	@apply text-lg;
+	@apply text-lg w-fit max-w-full;
 }
 
 .recap-btns * {
@@ -159,7 +160,7 @@ const goBackToRoute = ({ name }, navigateFn) => {
 }
 
 .recap-btn {
-	@apply border border-gray-300/80 rounded py-0 h-10 flex items-center justify-center pt-1;
+	@apply border border-gray-300/80 rounded py-0 h-8 flex items-center justify-center pt-1;
 }
 
 .fav-btn {

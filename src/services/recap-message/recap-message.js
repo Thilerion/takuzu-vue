@@ -51,11 +51,11 @@ export const recapMessageMap = {
 	
     [RECAP_MSG_TYPES.HARDEST_EVER]: () => "This was the hardest puzzle you've ever solved, well done!",
     [RECAP_MSG_TYPES.FIRST_OF_DIFFICULTY]: ({ difficulty }) => `You've solved your first ${getDifficultyLabelString(difficulty)} puzzle.`,
-    [RECAP_MSG_TYPES.FIRST_OF_SIZE]: ({ dimensions }) => `First time solving ${dimensions} puzzle solved`,
-	[RECAP_MSG_TYPES.FIRST_OF_SIZE_DIFFICULTY]: ({ dimensions, difficulty}) => `First time solving a ${dimensions} puzzle on ${getDifficultyLabelString(difficulty)} difficulty.`,
+    [RECAP_MSG_TYPES.FIRST_OF_SIZE]: ({ dimensions }) => `First time solving a ${dimensions} puzzle.`,
+	[RECAP_MSG_TYPES.FIRST_OF_SIZE_DIFFICULTY]: ({ dimensions, difficulty}) => `First time solving a [${dimensions}] puzzle on ${getDifficultyLabelString(difficulty)} difficulty.`,
 	
-    [RECAP_MSG_TYPES.TIME_RECORD_LARGE]: ({ improvementPercentage }) => `Incredible! You were ${formatPercentage(improvementPercentage)} faster than your previous best time!`,
-	[RECAP_MSG_TYPES.TIME_RECORD]: ({ difference }) => `New time record! You've improved your best time by ${msToSec(difference)}s!`,
+    [RECAP_MSG_TYPES.TIME_RECORD_LARGE]: ({ improvementPercentage }) => `You were an incredible ${formatPercentage(improvementPercentage)} faster than your previous best time!`,
+	[RECAP_MSG_TYPES.TIME_RECORD]: ({ difference }) => `You've improved your best time by ${msToSec(difference)}s!`,
 
 	[RECAP_MSG_TYPES.REPLAY_TIME_RECORD]: ({ numPlays, difference }) => `This is the ${formatOrdinal(numPlays + 1)} time you solved this exact puzzle. You were ${msToSec(difference)}s faster than your fastest time.`,
 	
@@ -73,8 +73,8 @@ export const recapMessageMap = {
 	
     [RECAP_MSG_TYPES.PLAYS_TOTAL]: ({ totalSolved }) => `You've solved a total of ${totalSolved} puzzles now.`,
     [RECAP_MSG_TYPES.PLAYS_TODAY]: ({ totalSolvedToday }) => `Today, you've solved ${totalSolvedToday} puzzles.`,
-    [RECAP_MSG_TYPES.PLAYS_CONFIG_TOTAL]: ({ count, difficulty, dimensions }) => `You've solved a total of ${count} ${dimensions} puzzles at ${getDifficultyLabelString(difficulty)} difficulty.`,
-	[RECAP_MSG_TYPES.PLAYS_CONFIG_TODAY]: ({ count, difficulty, dimensions }) => `You've played ${count}x ${dimensions} puzzles today at ${getDifficultyLabelString(difficulty)} difficulty.`,
+    [RECAP_MSG_TYPES.PLAYS_CONFIG_TOTAL]: ({ count, difficulty, dimensions }) => `You've solved a total of ${count} puzzles with ${dimensions} dimensions at ${getDifficultyLabelString(difficulty)} difficulty.`,
+	[RECAP_MSG_TYPES.PLAYS_CONFIG_TODAY]: ({ count, difficulty, dimensions }) => `You've played ${count} puzzles with ${dimensions} dimensions today at ${getDifficultyLabelString(difficulty)} difficulty.`,
 	
     [RECAP_MSG_TYPES.DEFAULT]: () => ''
 }
