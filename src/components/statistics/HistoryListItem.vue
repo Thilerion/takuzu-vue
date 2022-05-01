@@ -1,8 +1,8 @@
 <template>
 	<div
-		class="bg-white p-4 py-3 text-sm flex flex-col w-full"
+		class="bg-white px-4 pt-3 text-sm flex flex-col w-full"
 	>
-		<div class="flex flex-row items-center justify-between pb-2">
+		<div class="flex flex-row items-center justify-between">
 			<div class="text-gray-500">{{dateFormatted}}</div>
 			<div class="flex flex-row">
 				<IconBtn
@@ -23,7 +23,7 @@
 				><StarIcon :class="{ 'text-gray-400': !isFavorite }" :filled="isFavorite" :gray="!isFavorite" /></IconBtn>
 			</div>
 		</div>
-		<div class="flex flex-row gap-6 justify-start">
+		<div class="flex flex-row gap-6 justify-start last-of-type:pb-3">
 			<div class="flex flex-col w-1/4">
 				<div class="text-sm text-gray-600">Size</div>
 				<div class="text-lg text-black">{{dimensions}}</div>
@@ -38,6 +38,12 @@
 					class="opacity-80"
 				>.{{timeElapsedFormatted.ms}}</small></div>
 			</div>
+		</div>
+		<div v-if="timeRecord" class="inline-flex flex-row mb-2 text-xs mt-1 items-center bg-gray-100 rounded-full mr-auto px-4 py-2">
+			<icon-fxemoji-trophy class="text-xs" />
+			<div class="ml-1" v-if="currentTimeRecord">Current time record!</div>
+			<div class="ml-1" v-else-if="firstTimeRecord">First time solved</div>
+			<div class="ml-1" v-else-if="previousTimeRecord">Previous time record</div>
 		</div>
 	</div>
 </template>
@@ -84,12 +90,19 @@ const props = defineProps({
 	width: Number,
 	height: Number,
 	initialBoard: String,
-	solution: String
+	solution: String,
+	timeRecord: {
+		type: Object
+	}
 })
 
 const emit = defineEmits(['favorite', 'delete']);
 
 const {difficulty, dimensions, flags, date, timeElapsed, width, height} = toRefs(props);
+
+const currentTimeRecord = computed(() => !!props.timeRecord?.current);
+const firstTimeRecord = computed(() => !!props.timeRecord?.first);
+const previousTimeRecord = computed(() => !!props.timeRecord && !currentTimeRecord.value && !firstTimeRecord.value);
 
 const forcedFavorite = ref(null);
 const isFavorite = computed(() => {

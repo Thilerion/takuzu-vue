@@ -36,7 +36,59 @@ export const useStatisticsStore = defineStore('statistics', {
 
 		uniqueDatesPlayed: state => getUniqueDatesFromItems(state.historyItems),
 
-		timePlayed: state => state.historyItems.reduce((acc, val) => acc + val.timeElapsed, 0)
+		timePlayed: state => state.historyItems.reduce((acc, val) => acc + val.timeElapsed, 0),
+
+		historyItemsWithTimeRecord2() {
+			const items = this.sortedByDate;
+
+			const iterationTimeRecord = new Map();
+			const currentRecords = new Map();
+			const firstTimes = [];
+			const withTimeRecord = [];
+
+			for (let i = items.length - 1; i >= 0; i--) {
+				const item = items[i];
+				const { puzzleConfigKey, timeElapsed } = item;
+
+				if (!iterationTimeRecord.has(puzzleConfigKey)) {
+					iterationTimeRecord.set(puzzleConfigKey, timeElapsed);
+					firstTimes.push(item.id);
+				}
+				const prev = iterationTimeRecord.get(puzzleConfigKey);
+				if (timeElapsed < prev) {
+					withTimeRecord.push(item.id);
+					iterationTimeRecord.set(puzzleConfigKey, timeElapsed);
+					currentRecords.set(puzzleConfigKey, item.id);
+				}
+			}
+
+			return {
+				first: firstTimes,
+				current: [...currentRecords.values()],
+				all: [...new Set([...withTimeRecord, ...firstTimes])]
+			}
+		},
+
+		historyItemsWithTimeRecord() {
+			const historyItems = [...this.sortedByDate].reverse();
+			const iterationTimeRecord = new Map();
+			const itemsWithTimeRecord = [];
+
+			for (const item of historyItems) {
+				const { puzzleConfigKey, timeElapsed } = item;
+				if (!iterationTimeRecord.has(puzzleConfigKey)) {
+					// first time solving doesn't count
+					iterationTimeRecord.set(puzzleConfigKey, timeElapsed);
+					continue;
+				}
+				const prevTimeRecord = iterationTimeRecord.get(puzzleConfigKey);
+				if (timeElapsed < prevTimeRecord) {
+					itemsWithTimeRecord.push(item.id);
+					iterationTimeRecord.set(puzzleConfigKey, timeElapsed);
+				}
+			}
+			return itemsWithTimeRecord;
+		}
 	},
 
 	actions: {

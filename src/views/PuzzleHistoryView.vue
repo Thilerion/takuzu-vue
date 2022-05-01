@@ -68,6 +68,7 @@
 						v-for="item in shownItems"
 						:key="item.id"
 						v-bind="item"
+						:time-record="isTimeRecord(item)"
 						@favorite="(val) => markFavorite(item.id, val)"
 						@delete="() => deleteItem(item.id)"
 					></HistoryListItem>
@@ -198,7 +199,17 @@ import { useRoute, useRouter } from 'vue-router';
 
 const statsStore = useStatisticsStore();
 
-const { historyItems } = storeToRefs(statsStore);
+const { historyItems, historyItemsWithTimeRecord2 } = storeToRefs(statsStore);
+
+const isTimeRecord = (item) => {
+	const id = item.id;
+	if (!historyItemsWithTimeRecord2.value) return null;
+	const value = historyItemsWithTimeRecord2.value.all.includes(id);
+	if (!value) return null;
+	const current = value && historyItemsWithTimeRecord2.value.current.includes(id);
+	const first = value && historyItemsWithTimeRecord2.value.first.includes(id);
+	return { value, current, first };
+}
 
 const dataOptions = reactive(getDefaultOptions())
 
