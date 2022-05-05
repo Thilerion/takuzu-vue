@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="cell"
-		:class="[valueClass, { locked }]"
+		:class="[valueClass, { locked }, shadeClass]"
 	>
 		<transition name="cell-color" mode="in-out">
 			<div v-if="value === '0'" key="0" class="color-0"></div>
@@ -22,10 +22,13 @@ export default {
 	setup(props) {
 		const { value, locked, incorrect } = toRefs(props);
 
+		const shade = Math.floor(Math.random() * 5);
+		const shadeClass = `shade-${shade}`;
+
 		const valueStr = computed(() => value.value === EMPTY ? 'none' : value.value);
 		const valueClass = computed(() => `value-${valueStr.value}`);
 
-		return { valueClass, locked, value, incorrect };
+		return { valueClass, locked, value, incorrect, shadeClass };
 	}
 };
 </script>
@@ -57,11 +60,35 @@ export default {
 .color-0, .color-1 {
 	@apply w-full h-full absolute;
 }
-.color-0 {
-	@apply bg-cell-blue-primary;
+.shade-0 .color-0 {
+	@apply bg-cell-blues;
 }
-.color-1 {
-	@apply bg-cell-red-primary;
+.shade-1 .color-0 {
+	@apply bg-cell-blues-v1;
+}
+.shade-2 .color-0 {
+	@apply bg-cell-blues-v2;
+}
+.shade-3 .color-0 {
+	@apply bg-cell-blues-v3;
+}
+.shade-4 .color-0 {
+	@apply bg-cell-blues-v4;
+}
+.shade-0 .color-1 {
+	@apply bg-cell-reds;
+}
+.shade-1 .color-1 {
+	@apply bg-cell-reds-v1;
+}
+.shade-2 .color-1 {
+	@apply bg-cell-reds-v2;
+}
+.shade-3 .color-1 {
+	@apply bg-cell-reds-v3;
+}
+.shade-4 .color-1 {
+	@apply bg-cell-reds-v4;
 }
 
 .incorrect-mark {
