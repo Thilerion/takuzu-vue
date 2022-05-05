@@ -10,6 +10,15 @@ function groupItemsByPuzzleConfig(items = []) {
 	})
 }
 
+function groupItemsByDimensions(items = []) {
+	const groupedObj = groupBy(items, 'dimensions');
+	return Object.entries(groupedObj).map(([key, items]) => {
+		const { width, height, dimensions, numCells } = items[0];
+		const groupData = { width, height, dimensions, numCells, puzzleConfigKey: dimensions };
+		return { type: 'dimensions', key, items, groupData };
+	})
+}
+
 function summarizeGroup(times = []) {
 	const summary = {
 		count: times.length,
@@ -18,6 +27,31 @@ function summarizeGroup(times = []) {
 	summary.average = dataAnalysis.average(times, summary);
 	summary.median = dataAnalysis.median(times, { sorted: false }, summary);
 	return summary;
+}
+
+export function getMostPlayedPuzzleSizes(items = []) {
+	const groupedArr = groupItemsByDimensions(items).map(g => {
+		const { items } = g;
+		const times = items.map(i => i.timeElapsed);
+		return {
+			...g,
+			times,
+			summary: summarizeGroup(times)
+		};
+	})
+
+	addFavoriteScores(groupedArr);
+
+	const byPlaytime = [...groupedArr].sort((a, z) => z.summary.sum - a.summary.sum);
+	const byPlayed = [...groupedArr].sort((a, z) => z.summary.count - a.summary.count);
+	const byFavorite = [...groupedArr].sort((a, z) => z.summary.favScore - a.summary.favScore);
+
+	return {
+		groupedData: groupedArr,
+		byPlaytime,
+		byPlayed,
+		byFavorite
+	}
 }
 
 export function getMostPlayedPuzzleConfigs(items = []) {
@@ -48,11 +82,9 @@ export function getMostPlayedPuzzleConfigs(items = []) {
 function addFavoriteScores(groups) {
 	for (const group of groups) {
 		const { summary, groupData } = group;
-		const { numCells } = groupData;
 		const { sum, count } = summary;
 
-		const favScore = ((count * 10000) + sum) / Math.pow(numCells, 1 / 32);
-		console.log({ favScore });
+		const favScore = sum + (count * 15000);
 		
 		group.summary.favScore = favScore;
 	}
