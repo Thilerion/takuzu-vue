@@ -42,7 +42,7 @@ export default {
 }
 
 .btn-primary {
-	@apply bg-teal-600 dark:bg-teal-600 text-white dark:text-white border-0;
+	@apply bg-teal-600 dark:bg-teal-600 text-white dark:text-white border-transparent;
 	@apply hover-hover:hover:bg-teal-800 hover-none:active:bg-teal-800;
 	@apply dark:hover-hover:hover:bg-teal-500 dark:hover-none:active:bg-teal-500;
 	@apply tracking-wide;

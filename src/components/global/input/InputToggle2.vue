@@ -1,5 +1,7 @@
 <template>
-	<label :for="id" class="toggle-wrapper">
+	<label :for="id" class="toggle-wrapper mb-4" :class="[inline ? inlineClasses : blockClasses, {
+		'flex-row-reverse': reverse
+	}]">
 		<div class="toggle-text"><slot /></div>
 		<div class="relative">
 			<input class="sr-only" type="checkbox" :id="id" :checked="modelValue" @change="$emit('update:modelValue', $event.target.checked)">
@@ -16,17 +18,29 @@ const props = defineProps({
 	},
 	modelValue: {
 		type: Boolean
+	},
+	inline: {
+		type: Boolean
+	},
+	reverse: {
+		type: Boolean
 	}
 })
+const inlineClasses = [
+	'inline-flex', 'w-auto'
+];
+const blockClasses = [
+	'flex', 'w-full'
+];
 const emit = defineEmits(['update:modelValue']);
 </script>
 
 <style scoped>
 .toggle-wrapper {
-	@apply flex items-center cursor-pointer relative mb-4 w-full h-10;
+	@apply items-center cursor-pointer relative h-10 gap-3;
 }
 .toggle-text {
-	@apply mr-3 flex-1;
+	@apply flex-1;
 }
 
 .toggle-bg {

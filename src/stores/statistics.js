@@ -65,8 +65,12 @@ export const useStatisticsStore = defineStore('statistics', {
 			return {
 				first: firstTimes,
 				current: [...currentRecords.values()],
-				all: [...new Set([...withTimeRecord, ...firstTimes])]
+				all: [...new Set([...firstTimes, ...withTimeRecord])]
 			}
+		},
+
+		boardSizesInHistory() {
+			return [...new Set(this.historyItems.map(i => i.dimensions))];
 		},
 
 		historyItemsWithTimeRecord() {
