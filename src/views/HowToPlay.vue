@@ -58,13 +58,14 @@
 					</ol>
 				</div>
 				<div class="block expansion-wrapper">
-					<button @click="showVariationRules = !showVariationRules" class="flex flex-row items-center w-full py-2" :class="{'border-b': showVariationRules}">
+					<button @click="showVariationRules = !showVariationRules" class="flex flex-row items-center w-full py-2">
 						<h2>Rules for puzzle variations</h2>
 						<icon-ic-outline-keyboard-arrow-down class="ml-auto" :class="{rotated: showVariationRules }" />
 					</button>
+					<ExpandTransition :duration="350" @after-enter="afterEnterVariation">
+					<div v-if="showVariationRules" class="border-t" ref="variationRulesEl">
 					<div
 						class="expansion-block pt-2 bg-gray-50"
-						v-show="showVariationRules"
 					>
 					<div>
 						<h3>Odd puzzles</h3>
@@ -76,6 +77,8 @@
 						<p>These puzzles have a different amount of columns than rows.</p>
 					</div>
 					</div>
+					</div>
+					</ExpandTransition>
 				</div>
 			</div>
 		</div>
@@ -85,8 +88,20 @@
 <script setup>
 import { ref } from 'vue';
 import PuzzleRowExample from '@/components/how-to-play/PuzzleRowExample.vue';
+import ExpandTransition from './transitions/ExpandTransition.vue';
 
 const showVariationRules = ref(false);
+const variationRulesEl = ref(null);
+
+function afterEnterVariation() {
+	scrollVariationRulesIntoView();
+}
+function scrollVariationRulesIntoView() {
+	const el = variationRulesEl.value;
+	el.scrollIntoView({
+		behavior: 'smooth'
+	})
+}
 </script>
 
 <style scoped>
@@ -125,6 +140,13 @@ ol {
 }
 .expansion-wrapper > * {
 	@apply px-2;
+}
+.expansion-block {
+	@apply relative;
+}
+.expansion-block::before {
+	/* @apply absolute w-full h-px bg-red-500 z-10 content-[''] inset-x-0 top-0; */
+	/* @apply border-t; */
 }
 .expansion-wrapper h2 {
 	@apply m-0 text-base;
