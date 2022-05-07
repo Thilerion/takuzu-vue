@@ -39,6 +39,21 @@
 						></RangeSlider>
 					</div>
 				</div>
+
+				<div class="py-2 px-2">
+					<label for="boardSizeSelect" class="font-medium leading-loose">Board size</label>
+					<Multiselect
+						mode="multiple"
+						id="boardSizeSelect"
+						placeholder="Choose dimensions for filter"
+						:closeOnSelect="false"
+						:hide-selected="false"
+						:multiple-label="getMultiLabel"
+						v-model="boardSizeFilterValues"
+						:options="boardSizeOpts"
+						class="h-12"
+					/>
+				</div>
 				
 			</div>
 			</div>
@@ -86,7 +101,9 @@
 import { computed, inject, ref, toRef, watch } from 'vue';
 import ExpandTransition from '@/views/transitions/ExpandTransition.vue';
 import RangeSlider from '@vueform/slider';
+import Multiselect from '@vueform/multiselect';
 import '@vueform/slider/themes/default.css';
+import '@vueform/multiselect/themes/default.css';
 
 const props = defineProps({
 	modelValue: Boolean
@@ -140,6 +157,12 @@ const difficultyValueOpts = [
 	1, 2, 3, 4, 5
 ]
 
+const boardSizeOpts = [
+	'6x6', '8x8', '10x10', '12x12', '14x14',
+	'7x7', '9x9', '11x11', '13x13',
+	'6x10', '8x12', '10x14', '12x16'
+];
+
 const difficultyFilterValues = computed({
 	get() {
 		if (currentFilters.difficulty?.length !== 2) {
@@ -178,6 +201,22 @@ const setSingleDifficultyValue = (value) => {
 		difficultyFilterValues.value = [left, value];
 	}
 }
+
+const boardSizeFilterValues = computed({
+	get() {
+		return currentFilters.boardSize?.length ? currentFilters.boardSize : [];
+	},
+	set(value) {
+		setFilter('boardSize', value);
+	}
+})
+const getMultiLabel = (opts) => {
+	if (opts?.length > 4) return `${opts.length} sizes selected`;
+	const optsSorted = opts.map(o => o.label).sort((a, z) => {
+		return boardSizeOpts.indexOf(a) - boardSizeOpts.indexOf(z);
+	})
+	return 'Selected: ' + optsSorted.join(', ');
+}
 </script>
 
 <style scoped>
@@ -208,4 +247,7 @@ input[type="range"]::-webkit-slider-thumb {
 	@apply translate-x-full translate-y-3;
 }
 
+:deep(.multiselect-multiple-label) {
+	@apply text-sm opacity-70;
+}
 </style>
