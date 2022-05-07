@@ -81,14 +81,18 @@ function afterLeave() {
 }
 
 .t-expand-enter-active > * {
-	transition: opacity calc(v-bind(duration) * 0.7ms) ease-in-out calc(v-bind(duration) * 0.3ms);
+	transition: opacity calc(v-bind(duration) * 0.4ms) ease-in-out calc(v-bind(duration) * 0.1ms);
 }
 .t-expand-leave-active > * {
-	transition: opacity calc(v-bind(duration) * 0.7ms) ease-out calc(v-bind(duration) * 0.1ms);
+	transition: opacity calc(v-bind(duration) * 0.4ms) ease-out calc(v-bind(duration) * 0.1ms);
 }
 .t-expand-enter-from > *,
 .t-expand-leave-to > * {
-	opacity: 0;
+	opacity: 0!important;
+}
+.t-expand-enter > *,
+.t-expand-leave > * {
+	opacity: 1!important;
 }
 
 .t-expand-enter-from,

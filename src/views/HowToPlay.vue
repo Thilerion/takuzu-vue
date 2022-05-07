@@ -8,8 +8,11 @@
 					<p>Each puzzle consists of a grid, initially filled with a small amount of 0s and 1s. </p>
 					<p>The goal of the puzzle is to fill the grid with 0s and 1s according to the following rules:</p>
 					<ol class="list-decimal pl-4">
-						<li class="pl-2 leading-relaxed mb-1">
+						<li class="pl-2 leading-relaxed mb-1 transition-all" :class="{ 'mb-5': showExampleOne }">
 							<div>Each row, and each column, contains an equal amount of 0s and 1s.</div>
+							<BaseButton class="mb-2 text-xs h-min w-[18ch]" @click="showExampleOne = !showExampleOne"><span v-if="!showExampleOne">Show examples</span><span v-else>Hide examples</span></BaseButton>
+							<ExpandTransition :duration-per-100-px="220">
+								<div v-if="showExampleOne">
 							<div class="rule-examples pb-4">
 								<div class="text-sm mt-1 text-gray-700 dark:text-gray-200">Correct:</div>
 								<PuzzleRowExample
@@ -21,10 +24,15 @@
 									:incorrect="[0, 2, 4, 5, 7]"
 								/>
 							</div>
+							</div>
+							</ExpandTransition>
 						</li>
 						<li class="pl-2 leading-relaxed mb-1">
 							<div>There cannot be more than two 0s or 1s next to each other.</div>
-							<div class="rule-examples pb-4">
+							<BaseButton class="mb-2 text-xs h-min w-[18ch]" @click="showExampleTwo = !showExampleTwo"><span v-if="!showExampleTwo">Show examples</span><span v-else>Hide examples</span></BaseButton>
+							<ExpandTransition :duration-per-100-px="220">
+								<div v-if="showExampleTwo">
+									<div class="rule-examples pb-4">
 								<div class="text-sm mt-1 text-gray-700 dark:text-gray-200">Correct:</div>
 								<PuzzleRowExample
 									:values="'11..001.'.split('')"
@@ -35,10 +43,16 @@
 									:incorrect="[0, 1, 2]"
 								/>
 							</div>
+								</div>
+							</ExpandTransition>
+							
 						</li>
 						<li class="pl-2 leading-relaxed mb-1">
 							<div>No two rows, and no two columns can be the same.</div>
-							<div class="rule-examples pb-4">
+							<BaseButton class="mb-2 text-xs h-min w-[18ch]" @click="showExampleThree = !showExampleThree"><span v-if="!showExampleThree">Show examples</span><span v-else>Hide examples</span></BaseButton>
+							<ExpandTransition :duration-per-100-px="220">
+								<div v-if="showExampleThree">
+									<div class="rule-examples pb-4">
 								<div class="text-sm mt-1 text-gray-700 dark:text-gray-200">Correct:</div>
 								<PuzzleRowExample
 									:values="'01011001010110..01011010'.split('')"
@@ -54,6 +68,9 @@
 									:incorrect="[6, 7, 14, 15]"
 								/>
 							</div>
+								</div>
+							</ExpandTransition>
+							
 						</li>
 					</ol>
 				</div>
@@ -89,6 +106,10 @@
 import { ref } from 'vue';
 import PuzzleRowExample from '@/components/how-to-play/PuzzleRowExample.vue';
 import ExpandTransition from './transitions/ExpandTransition.vue';
+
+const showExampleOne = ref(false);
+const showExampleTwo = ref(false);
+const showExampleThree = ref(false);
 
 const showVariationRules = ref(false);
 const variationRulesEl = ref(null);
@@ -165,7 +186,7 @@ li > div:first-child {
 	@apply pb-2;
 }
 .rule-examples {
-	@apply font-normal bg-gray-200/60 px-3 pt-2 pb-4 mb-6 rounded-lg dark:bg-gray-700/60;
+	@apply font-normal bg-gray-200/60 px-3 pt-2 pb-4 rounded-lg dark:bg-gray-700/60;
 	@apply opacity-90;
 }
 </style>
