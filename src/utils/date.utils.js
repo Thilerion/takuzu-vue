@@ -99,6 +99,18 @@ export const formatTimeMMSSss = (timestampMS, { padMinutes = true } = {}) => {
 	return `${minutes}:${seconds}.${hundredths}`;
 }
 
+export const formatTimeHHMMSS = (timestampMS, { padHours = false } = {}) => {
+	let totalSeconds = Math.round(timestampMS / 1000);
+	
+	const time = new Date(totalSeconds * 1000);
+
+	const hours = time.getHours();
+	const minutes = time.getMinutes();
+	const seconds = time.getSeconds();	
+
+	return `${padHours ? padLeft(hours) : hours}:${padLeft(minutes)}:${padLeft(seconds)}`;
+}
+
 export const getWeekDaysShort = ({
 	weekStartsOn = 1, // 1 for monday
 } = {}) => {

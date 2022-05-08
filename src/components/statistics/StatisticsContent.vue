@@ -1,8 +1,8 @@
 <template>
 	<div class="space-y-4">
-		<router-link to="/stats/table" v-if="debugMode">Stats table</router-link>
 		<StatsOverview />
 		<StatsActivity />
+		<StatsFavorites />
 	</div>
 </template>
 
@@ -13,6 +13,7 @@ import { provide, toRef } from 'vue';
 import StatsActivity from './StatsActivity.vue';
 import StatsMostPlayedList from './StatsMostPlayedList.vue';
 import { useMainStore } from '@/stores/main';
+import StatsFavorites from './StatsFavorites.vue';
 
 const mainStore = useMainStore();
 const debugMode = toRef(mainStore.debugModeData, 'enabled');
