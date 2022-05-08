@@ -3,8 +3,9 @@ import * as StatsDB from "@/services/stats/db/index.js";
 import { formatBasicSortableDateKey } from "@/utils/date.utils.js";
 import { defineStore } from "pinia";
 import { shallowReactive } from "vue";
-import { isToday } from "date-fns/esm";
+import { isBefore, isToday, subDays } from "date-fns/esm";
 import { getUniqueDatesFromItems } from "@/services/stats/dates.js";
+import { getMostPlayedPuzzleConfigs, getMostPlayedPuzzleSizes } from "@/services/stats/most-played";
 
 const getPuzzlesSolved = StatsDB.getCount;
 const getAllHistoryItems = () => StatsDB.getAll().then(list => list.map(item => {
@@ -30,6 +31,20 @@ export const useStatisticsStore = defineStore('statistics', {
 			const date = item.date ?? new Date(item.timestamp);
 			return isToday(date);
 		}),
+		itemsSolvedPast30Days() {
+			const now = new Date();
+			const daysAgo = subDays(now, 30);
+			const idx = this.sortedByDate.findIndex(item => isBefore(item.date, daysAgo));
+			if (idx <= 0) return [];
+			return this.sortedByDate.slice(0, idx);
+		},
+		itemsSolvedPast90Days() {
+			const now = new Date();
+			const daysAgo = subDays(now, 90);
+			const idx = this.sortedByDate.findIndex(item => isBefore(item.date, daysAgo));
+			if (idx <= 0) return [];
+			return this.sortedByDate.slice(0, idx);
+		},
 		cellsFilled: state => state.historyItems.reduce((acc, val) => {
 			return acc + (val.numCells);
 		}, 0),
@@ -38,7 +53,7 @@ export const useStatisticsStore = defineStore('statistics', {
 
 		timePlayed: state => state.historyItems.reduce((acc, val) => acc + val.timeElapsed, 0),
 
-		historyItemsWithTimeRecord2() {
+		historyItemsWithTimeRecord() {
 			const items = this.sortedByDate;
 
 			const iterationTimeRecord = new Map();
@@ -73,26 +88,24 @@ export const useStatisticsStore = defineStore('statistics', {
 			return [...new Set(this.historyItems.map(i => i.dimensions))];
 		},
 
-		historyItemsWithTimeRecord() {
-			const historyItems = [...this.sortedByDate].reverse();
-			const iterationTimeRecord = new Map();
-			const itemsWithTimeRecord = [];
-
-			for (const item of historyItems) {
-				const { puzzleConfigKey, timeElapsed } = item;
-				if (!iterationTimeRecord.has(puzzleConfigKey)) {
-					// first time solving doesn't count
-					iterationTimeRecord.set(puzzleConfigKey, timeElapsed);
-					continue;
-				}
-				const prevTimeRecord = iterationTimeRecord.get(puzzleConfigKey);
-				if (timeElapsed < prevTimeRecord) {
-					itemsWithTimeRecord.push(item.id);
-					iterationTimeRecord.set(puzzleConfigKey, timeElapsed);
-				}
-			}
-			return itemsWithTimeRecord;
-		}
+		summariesByDimensionsAllTime() {
+			return getMostPlayedPuzzleSizes(this.sortedByDate);
+		},
+		summariesByPuzzleConfigsAllTime() {
+			return getMostPlayedPuzzleConfigs(this.sortedByDate);
+		},
+		summariesByDimensions30Days() {
+			return getMostPlayedPuzzleSizes(this.itemsSolvedPast30Days);
+		},
+		summariesByPuzzleConfigs30Days() {
+			return getMostPlayedPuzzleConfigs(this.itemsSolvedPast30Days);
+		},
+		summariesByDimensions90Days() {
+			return getMostPlayedPuzzleSizes(this.itemsSolvedPast90Days);
+		},
+		summariesByPuzzleConfigs90Days() {
+			return getMostPlayedPuzzleConfigs(this.itemsSolvedPast90Days);
+		},
 	},
 
 	actions: {

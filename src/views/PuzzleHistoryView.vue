@@ -131,10 +131,10 @@ const toggleShowFilters = () => showFilters.value = !showFilters.value;
 
 const statsStore = useStatisticsStore();
 
-const { historyItems: rawHistoryItems, historyItemsWithTimeRecord2 } = storeToRefs(statsStore);
+const { historyItems: rawHistoryItems, historyItemsWithTimeRecord } = storeToRefs(statsStore);
 
 const getTimeRecordType = (id) => {
-	const { all, current, first } = historyItemsWithTimeRecord2.value;
+	const { all, current, first } = historyItemsWithTimeRecord.value;
 	if (!all.includes(id)) return { record: false };
 	const isCurrent = current.includes(id);
 	const isFirst = first.includes(id);
@@ -154,11 +154,11 @@ const historyItems = computed(() => {
 
 const isTimeRecord = (item) => {
 	const id = item.id;
-	if (!historyItemsWithTimeRecord2.value) return null;
-	const value = historyItemsWithTimeRecord2.value.all.includes(id);
+	if (!historyItemsWithTimeRecord.value) return null;
+	const value = historyItemsWithTimeRecord.value.all.includes(id);
 	if (!value) return null;
-	const current = value && historyItemsWithTimeRecord2.value.current.includes(id);
-	const first = value && historyItemsWithTimeRecord2.value.first.includes(id);
+	const current = value && historyItemsWithTimeRecord.value.current.includes(id);
+	const first = value && historyItemsWithTimeRecord.value.first.includes(id);
 	return { value, current, first };
 }
 

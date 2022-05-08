@@ -57,15 +57,18 @@
 </template>
 
 <script setup>
-import { getMostPlayedPuzzleConfigs, getMostPlayedPuzzleSizes } from '@/services/stats/most-played';
 import { useStatisticsStore } from '@/stores/statistics';
-import { isBefore, subDays } from 'date-fns/esm';
-import { computed, ref, toRef, watch } from 'vue';
+import { computed, onBeforeMount, ref, watch } from 'vue';
 
 import { formatTimeMMSS } from '@/utils/date.utils';
 import { useStorage } from '@vueuse/core';
 
 const statsStore = useStatisticsStore();
+onBeforeMount(() => {
+	if (statsStore.initialized || statsStore.isLoading) return;
+	statsStore.initialize();
+})
+
 
 const listType = useStorage('takuzu_most-played-list-type', 'recent30Days', sessionStorage);
 const itemType = useStorage('takuzu_most-played-item-type', 'puzzleConfig', sessionStorage);
@@ -74,61 +77,17 @@ const mergeDifficulties = computed(() => {
 	return itemType.value === 'size';
 })
 
-const sortedByDate = toRef(statsStore, 'sortedByDate');
-const itemsSorted = computed(() => sortedByDate.value.filter(item => {
-	if (item.difficulty > 3) return false;
-	if (item.difficulty === 3 && item.width <= 7 && item.height <= 7) return false;
-	return true;
-}))
-const recentItems = computed(() => {
-	return itemsSorted.value.slice(0, 1000);
-})
-const recentItems30Days = computed(() => {
-	const timestamp = subDays(new Date(), 30);
-	const idx = itemsSorted.value.findIndex(item => {
-		return isBefore(item.date, timestamp);
-	})
-	if (idx <= 0) {
-		console.error('Not enough recent items, returning one anyway.');
-		return [itemsSorted.value[0]];
-	}
-	return itemsSorted.value.slice(0, idx);
-})
-const recentItems90Days = computed(() => {
-	const timestamp = subDays(new Date(), 90);
-	const idx = itemsSorted.value.findIndex(item => {
-		return isBefore(item.date, timestamp);
-	})
-	if (idx <= 0) {
-		console.error('Not enough recent items, returning one anyway.');
-		return [itemsSorted.value[0]];
-	}
-	return itemsSorted.value.slice(0, idx);
-})
-
-const summaryFn = computed(() => {
-	if (mergeDifficulties.value) return getMostPlayedPuzzleSizes;
-	return getMostPlayedPuzzleConfigs;
-})
-
-const mostPlayedAllTime = computed(() => summaryFn.value(itemsSorted.value));
-const mostPlayedRecent = computed(() => summaryFn.value(recentItems.value));
-const mostPlayedRecent30Days = computed(() => summaryFn.value(recentItems30Days.value));
-const mostPlayedRecent90Days = computed(() => summaryFn.value(recentItems90Days.value));
-
 const shownListData = computed(() => {
 	switch(listType.value) {
 		case 'allTime':
-			return mostPlayedAllTime.value;
-		case 'recent':
-			return mostPlayedRecent.value;
+			return itemType.value === 'size' ? statsStore.summariesByDimensionsAllTime : statsStore.summariesByPuzzleConfigsAllTime;
 		case 'recent30Days':
-			return mostPlayedRecent30Days.value;
+			return itemType.value === 'size' ? statsStore.summariesByDimensions30Days : statsStore.summariesByPuzzleConfigs30Days;
 		case 'recent90Days':
-			return mostPlayedRecent90Days.value;
+			return itemType.value === 'size' ? statsStore.summariesByDimensions90Days : statsStore.summariesByPuzzleConfigs90Days;
 		default:
 			console.warn('Unknown list data type. Showing allTime played.');
-			return mostPlayedAllTime.value;
+			return itemType.value === 'size' ? statsStore.summariesByDimensionsAllTime : statsStore.summariesByPuzzleConfigsAllTime;
 	}
 })
 
