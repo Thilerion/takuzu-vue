@@ -58,7 +58,7 @@
 			</div>
 			</div>
 		</ExpandTransition>
-		<div class="min-h-[2.5rem] text-center flex gap-x-3 gap-y-2 flex-wrap text-xs tracking-wider grayscale-[50%] contrast-150 brightness-90 w-full items-center justify-start border-t"
+		<div class="py-2 min-h-[2.75rem] text-center flex gap-x-3 gap-y-2 flex-wrap text-xs tracking-wider grayscale-[50%] contrast-150 brightness-90 w-full items-center justify-start border-t"
 				:class="hasActiveFilters && showFilterInputs ? ['border-gray-300', 'border-t'] : ['border-transparent']">
 			<transition-group name="t-filterbtns">
 			<button
@@ -91,7 +91,15 @@
 				<span v-else>Time record: {{activeFilters.timeRecord}}</span>
 				<icon-ic-baseline-close class="block opacity-70 ml-2 w-4 h-4" />
 			</button>
-			<div v-if="!hasActiveFilters" class="!duration-[0ms]">No active filters</div>
+			<button
+				v-for="size in activeFilters?.boardSize ?? []"
+				class="tracking-wider w-max py-1 pl-4 pr-2 font-medium bg-emerald-400/30 text-emerald-900 rounded-full flex items-center hover-hover:hover:bg-emerald-400/20"
+				@click="removeSizeFromBoardSizeFilters(size)"
+			>
+				<span>{{size}}</span>
+				<icon-ic-baseline-close class="block opacity-70 ml-2 w-4 h-4" />
+			</button>
+			<div v-if="!hasActiveFilters" class="!duration-[0ms] px-2">No active filters</div>
 			</transition-group>
 		</div>
 	</div>
@@ -210,6 +218,9 @@ const boardSizeFilterValues = computed({
 		setFilter('boardSize', value);
 	}
 })
+const removeSizeFromBoardSizeFilters = (size) => {
+	setFilter('boardSize', boardSizeFilterValues.value.filter(val => val !== size));
+}
 const getMultiLabel = (opts) => {
 	if (opts?.length > 4) return `${opts.length} sizes selected`;
 	const optsSorted = opts.map(o => o.label).sort((a, z) => {
