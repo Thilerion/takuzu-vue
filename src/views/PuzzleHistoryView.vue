@@ -4,35 +4,50 @@
 		<div class="content flex-1 flex flex-col gap-2">
 			<div class="select-inputs text-sm" ref="anchorEl">
 				<div class="flex justify-between items-center pb-4 px-2">
-				<label
-					class="text-sm flex flex-row items-center gap-3"
-				><span>Per page:</span><select :value="pageSize" @change="(ev) => setPageSize(ev.target.value * 1)" class="form-select text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-1 text-sm">
-				<option :value="15">15</option>
-				<option :value="30">30</option>
-				<option :value="50">50</option>
-				<option :value="100">100</option></select>
-				</label>
-				<BaseButton @click="toggleShowFilters" :class="{ 'btn-primary': showFilters }"><span v-if="showFilters">Hide filters</span><span v-else>Show filters</span></BaseButton>
+
+					<label
+						class="text-sm flex flex-row items-center gap-3"
+						><span>Per page:</span>
+						<select
+							:value="pageSize" @change="(ev) => setPageSize(ev.target.value * 1)"
+							class="form-select text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-1 text-sm">
+							<option :value="15">15</option>
+							<option :value="30">30</option>
+							<option :value="50">50</option>
+							<option :value="100">100</option>
+						</select>
+					</label>
+
+					<BaseButton @click="toggleShowFilters" :class="{ 'btn-primary': showFilters }"><span
+							v-if="showFilters">Hide filters</span><span v-else>Show filters</span></BaseButton>
 				</div>
+				<label class="text-sm flex flex-row items-center px-2 pb-4"><span>Sort by:</span>
+						<select :value="dataOptions.sortBy" @change="ev => changeSort(ev.target.value)"
+							class="form-select text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-1 text-sm">
+							<option value="newest">Newest first</option>
+							<option value="oldest">Oldest first</option>
+							<option value="fastestTime">Fastest time solved</option>
+							<option value="slowestTime">Slowest time solved</option>
+						</select>
+					</label>
 				<HistoryListFilters v-model="showFilters" />
 			</div>
-			<BasePagination :modelValue="page" @update:modelValue="setActivePage" :length="currentItems.length" :page-size="pageSize" />
+			<BasePagination :modelValue="page" @update:modelValue="setActivePage" :length="currentItems.length"
+				:page-size="pageSize" />
 			<transition name="fade" mode="out-in">
-				<div class="list divide-y border-y relative" v-if="shownItems.length" :key="JSON.stringify({ dataOptions })">
-					<HistoryListItem
-						v-for="item in shownItems"
-						:key="item.id"
-						v-bind="item"
-						:time-record="isTimeRecord(item)"
-						@favorite="(val) => markFavorite(item.id, val)"
-						@delete="() => deleteItem(item.id)"
-					></HistoryListItem>
+				<div class="list divide-y border-y relative" v-if="shownItems.length"
+					:key="JSON.stringify({ dataOptions })">
+					<HistoryListItem v-for="item in shownItems" :key="item.id" v-bind="item"
+						:time-record="isTimeRecord(item)" @favorite="(val) => markFavorite(item.id, val)"
+						@delete="() => deleteItem(item.id)"></HistoryListItem>
 				</div>
-				<div class="py-4 text-lg px-8 text-center" v-else-if="historyItems.length" key="none-filtered">No puzzles found with current filters!</div>
+				<div class="py-4 text-lg px-8 text-center" v-else-if="historyItems.length" key="none-filtered">No
+					puzzles found with current filters!</div>
 				<div class="py-4 text-lg px-8 text-center" key="none" v-else>You haven't played any puzzles yet!</div>
 			</transition>
 		</div>
-		<BasePagination :modelValue="page" @update:modelValue="setActivePage" :length="currentItems.length" :page-size="pageSize" />
+		<BasePagination :modelValue="page" @update:modelValue="setActivePage" :length="currentItems.length"
+			:page-size="pageSize" />
 	</div>
 </template>
 
@@ -88,7 +103,7 @@ const difficultyFilterFns = difficultyFilterValues.reduce((acc, val) => {
 
 function resetCurrentItems(items, { sortBy, filters }, filterItemsFn) {
 	const sortFn = sortFns[sortBy];
-	
+
 	const filterFns = [];
 	if (filters.timeRecord !== 'Any' && !!filters.timeRecord) {
 		if (filters.timeRecord === 'Current') {
@@ -355,20 +370,25 @@ const deleteItem = async (id) => {
 .fade-enter-active {
 	transition: opacity .15s ease;
 }
+
 .fade-leave-active {
 	transition: opacity .05s;
 }
-.fade-enter-from, .fade-leave-to {
+
+.fade-enter-from,
+.fade-leave-to {
 	opacity: 0;
 }
+
 .sort-btn {
 	@apply text-sm px-3 py-2 bg-white border rounded;
 }
+
 .sort-btn.selected {
 	@apply font-bold;
 }
 
-.select-inputs label > span:first-child {
+.select-inputs label>span:first-child {
 	@apply w-20;
 }
 </style>
