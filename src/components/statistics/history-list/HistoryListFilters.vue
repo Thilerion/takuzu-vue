@@ -65,6 +65,7 @@
 				v-if="activeFilters.difficulty"
 				class="tracking-wider w-max py-1 pl-4 pr-2 font-medium bg-blue-200/90 rounded-full flex items-center hover-hover:hover:bg-blue-200/70 text-sky-900"
 				@click="removeFilter('difficulty')"
+				:key="activeFilters.difficulty.join(',')"
 			>
 				<span v-if="activeFilters.difficulty[0] === activeFilters.difficulty[1]">Difficulty: {{activeFilters.difficulty[0]}}*</span>
 				<span v-else>Difficulty: {{activeFilters.difficulty[0]}}* - {{activeFilters.difficulty[1]}}*</span>
@@ -73,6 +74,7 @@
 
 			<button
 				v-if="activeFilters.favoritesOnly"
+				key="favoritesOnly"
 				class="tracking-wider w-max py-1 pl-4 pr-2 font-medium bg-amber-200/50 rounded-full flex items-center hover-hover:hover:bg-amber-200/40 text-orange-900"
 				@click="removeFilter('favoritesOnly')"
 			>
@@ -84,6 +86,7 @@
 				v-if="activeFilters.timeRecord"
 				class="tracking-wider w-max py-1 pl-4 pr-2 font-medium bg-purple-400/30 text-purple-900 rounded-full flex items-center hover-hover:hover:bg-purple-400/20"
 				@click="removeFilter('timeRecord')"
+				:key="activeFilters.timeRecord"
 			>
 				<span v-if="activeFilters.timeRecord === 'first'">Time record: only first</span>
 				<span v-else-if="activeFilters.timeRecord === 'record'">Time record: all</span>
@@ -95,6 +98,7 @@
 				v-for="size in activeFilters?.boardSize ?? []"
 				class="tracking-wider w-max py-1 pl-4 pr-2 font-medium bg-emerald-400/30 text-emerald-900 rounded-full flex items-center hover-hover:hover:bg-emerald-400/20"
 				@click="removeSizeFromBoardSizeFilters(size)"
+				:key="size"
 			>
 				<span>{{size}}</span>
 				<icon-ic-baseline-close class="block opacity-70 ml-2 w-4 h-4" />

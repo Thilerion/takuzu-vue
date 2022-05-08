@@ -79,81 +79,24 @@ function sortItems(items, sortBy = 'newest') {
 	return items;
 }
 
-const boardSizeFilterValues = [
-	['All'],
-	[6, 6], [8, 8], [10, 10], [12, 12], [14, 14],
-	[6, 10], [8, 12], [10, 14], [12, 16],
-	[7, 7], [9, 9], [11, 11], [13, 13],
-].map(arr => arr.join('x'));
-const difficultyFilterValues = [
-	'All', 1, 2, 3, 4, 5
-];
-
-const boardSizeFilterFns = boardSizeFilterValues.reduce((acc, val) => {
-	const fn = val === 'All' ? () => true : (item) => item.dimensions === val;
-	acc[val] = fn;
-	return acc;
-}, {});
-
-const difficultyFilterFns = difficultyFilterValues.reduce((acc, val) => {
-	const fn = val === 'All' ? () => true : (item) => item.difficulty === val;
-	acc[val] = fn;
-	return acc;
-}, {})
-
-function resetCurrentItems(items, { sortBy, filters }, filterItemsFn) {
+function resetCurrentItems(items, { sortBy }, filterItemsFn) {
 	const sortFn = sortFns[sortBy];
-
-	const filterFns = [];
-	if (filters.timeRecord !== 'Any' && !!filters.timeRecord) {
-		if (filters.timeRecord === 'Current') {
-			filterFns.push((item) => !!(item?.timeRecord?.record) && item.timeRecord.current);
-		} else if (filters.timeRecord === 'First') {
-			filterFns.push((item) => !!(item?.timeRecord?.record) && item.timeRecord.first);
-		} else if (filters.timeRecord) {
-			filterFns.push((item) => !!(item?.timeRecord?.record));
-		}
-	}
-	if (filters.favoritesOnly) {
-		filterFns.push((item) => !!(item?.flags?.favorite));
-	}
-	if (filters.boardSize && (filters.boardSize in boardSizeFilterFns)) {
-		filterFns.push(boardSizeFilterFns[filters.boardSize]);
-	}
-	if (filters.difficulty && (filters.difficulty in difficultyFilterFns)) {
-		filterFns.push(difficultyFilterFns[filters.difficulty]);
-	}
 
 	if (filterItemsFn) {
 		return filterItemsFn(items).sort(sortFn);
+	} else {
+		throw new Error('No filter items function defined?');
 	}
-
-	return items.filter(item => {
-		return filterFns.every(filterFn => filterFn(item));
-	}).sort(sortFn);
 }
 
 const getDefaultOptions = () => ({
 	sortBy: 'newest',
-	filters: {
-		boardSize: 'All',
-		difficulty: 'All',
-		favoritesOnly: false,
-		timeRecord: 'Any'
-	},
 	page: 0,
 	pageSize: 30
 });
 
-function getFilterQueryFromOptions({
-	boardSize, difficulty, favoritesOnly
-}) {
-	const defaults = getDefaultOptions().filters;
-	return {
-		boardSize: boardSize === defaults.boardSize ? undefined : boardSize,
-		difficulty: difficulty === defaults.difficulty ? undefined : difficulty,
-		favorites: favoritesOnly === defaults.favoritesOnly ? undefined : favoritesOnly
-	}
+function getFilterQueryFromOptions({}) {
+	return {}
 }
 
 function getQueryFromFilterAndSortOptions({
@@ -176,13 +119,12 @@ function getQueryFromFilterAndSortOptions({
 import PageHeader from '@/components/global/base-layout/PageHeader.vue';
 import { useStatisticsStore } from '@/stores/statistics.js';
 import { storeToRefs } from 'pinia';
-import { ref, computed, watchEffect, watch, onBeforeMount, reactive, toRefs, onMounted, provide } from 'vue';
+import { ref, computed, watch, onBeforeMount, reactive, toRefs, provide } from 'vue';
 import HistoryListItem from '@/components/statistics/history-list/HistoryListItem.vue';
 import BasePagination from '@/components/global/BasePagination.vue';
 import { useRoute, useRouter } from 'vue-router';
-import ExpandTransition from '@/views/transitions/ExpandTransition.vue';
 import { useListFilters } from '@/components/statistics/history-list/useListFilters';
-import { useDebounceFn, useThrottleFn } from '@vueuse/core';
+import { useDebounceFn } from '@vueuse/core';
 
 const showFilters = ref(false);
 const toggleShowFilters = () => showFilters.value = !showFilters.value;
@@ -241,7 +183,6 @@ onBeforeMount(() => {
 		page: queryPage = dataOptions.page,
 		pageSize: queryPageSize = dataOptions.pageSize,
 		sortBy: querySortBy = dataOptions.sortBy,
-		...maybeQueryFilters
 	} = query;
 
 	dataOptions.sortBy = querySortBy;
@@ -249,10 +190,6 @@ onBeforeMount(() => {
 	dataOptions.pageSize = queryPageSize * 1;
 
 	// TODO: set filters from query
-	dataOptions.filters.favoritesOnly = maybeQueryFilters.favorites ?? dataOptions.filters.favoritesOnly;
-	dataOptions.filters.boardSize = maybeQueryFilters.boardSize ?? dataOptions.filters.boardSize;
-	dataOptions.filters.difficulty = maybeQueryFilters.difficulty ?? dataOptions.filters.difficulty;
-
 	currentItems.value = resetCurrentItems(historyItems.value, dataOptions, filterItems);
 })
 
@@ -275,55 +212,6 @@ const changeSort = (sortType) => {
 	dataOptions.sortBy = sortType;
 	currentItems.value = sortItems(currentItems.value, sortType);
 }
-
-const setBoardSizeFilter = (value) => {
-	const current = dataOptions.filters.boardSize;
-	if (value === current) return;
-
-	setActivePage(0);
-	dataOptions.filters.boardSize = value;
-	if (!value || value === 'All') {
-		setFilter('boardSize', []);
-	} else {
-		setFilter('boardSize', [value]);
-
-	}
-	currentItems.value = resetCurrentItems(historyItems.value, dataOptions, filterItems);
-}
-const setDifficultyFilter = (value) => {
-	const current = dataOptions.filters.difficulty;
-	if (value === current) return;
-
-	setActivePage(0);
-	dataOptions.filters.difficulty = value;
-	if (!value || value === 'All') {
-		setFilter('difficulty', [1, 5]);
-	} else {
-		setFilter('difficulty', [value, value]);
-	}
-	currentItems.value = resetCurrentItems(historyItems.value, dataOptions, filterItems);
-}
-const setTimeRecordFilter = (value) => {
-	const current = dataOptions.filters.timeRecord;
-	if (value === current) return;
-	setActivePage(0);
-	dataOptions.filters.timeRecord = value;
-	if (value === 'Any') {
-		setFilter('timeRecord', null);
-	} else if (value === 'Only') {
-		setFilter('timeRecord', 'record');
-	} else {
-		setFilter('timeRecord', value.toLowerCase());
-	}
-	currentItems.value = resetCurrentItems(historyItems.value, dataOptions, filterItems);
-}
-
-watch(() => dataOptions.filters.favoritesOnly, (val, prev) => {
-	if (val === prev) return;
-	setActivePage(0);
-	setFilter('favoritesOnly', val);
-	currentItems.value = resetCurrentItems(historyItems.value, dataOptions, filterItems);
-})
 
 const updateFilteredItems = () => {
 	setActivePage(0);
