@@ -115,7 +115,15 @@ const routes = [
 
 const router = createRouter({
 	history: createWebHistory(),
-	routes
+	routes,
+	scrollBehavior(to, from, savedPosition) {
+		return new Promise((resolve, reject) => {
+			setTimeout(() => {
+				// resolve(savedPosition ?? { top: 0, behavior: 'smooth' });
+				resolve({ top: 0, left: 0 });
+			}, 200);
+		})
+	}
 });
 
 const { updateTitleWithRouteMeta } = useRouteDocumentTitle({
