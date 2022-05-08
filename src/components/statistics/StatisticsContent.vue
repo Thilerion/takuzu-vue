@@ -1,6 +1,6 @@
 <template>
 	<div class="space-y-4">
-		<StatsMostPlayedList v-if="debugMode" />
+		<router-link to="/stats/table" v-if="debugMode">Stats table</router-link>
 		<StatsOverview />
 		<StatsActivity />
 	</div>

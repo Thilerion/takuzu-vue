@@ -1,23 +1,28 @@
 <template>
 	<div class="mb-4 gap-y-4 grid v-grid-bleed bleed-grid-4">
-		<div class="mb-2 text-sm">
+		<div class="text-sm">
 			<!-- <div class="text-base">Shown items:</div> -->
 
-			<div class="flex flex-row flex-wrap gap-2">
+			<h3>Group by:</h3>
+			<div class="py-2">
+				<div class="pl-1.5 pr-4 py-1.5 inline-flex flex-row items-center gap-2 rounded-full bg-gray-200 radio-wrapper mr-2" :class="{checked: itemType === 'puzzleConfig'}">
+					<input type="radio" id="itemTypeRadioPuzzleConfig" value="puzzleConfig" v-model="itemType" />
+					<label for="itemTypeRadioPuzzleConfig">Size + difficulty</label>
+				</div>
+				<div class="pl-1.5 pr-4 py-1.5 inline-flex flex-row items-center gap-2 rounded-full bg-gray-200 radio-wrapper" :class="{checked: itemType === 'size'}">
+					<input type="radio" id="itemTypeRadioSize" value="size" v-model="itemType" />
+					<label for="itemTypeRadioSize">Size</label>
+				</div>
+			</div>
 
-			<span class="whitespace-nowrap space-x-2 inline-block">
+			<h3 class="mt-2">Show statistics from:</h3>
+			<div class="flex flex-row flex-wrap gap-2 w-fit max-w-sm py-2">
+
 				<div class="pl-1.5 pr-4 py-1.5 inline-flex flex-row items-center gap-2 rounded-full bg-gray-200 radio-wrapper" :class="{checked: listType === 'allTime'}">
 					<input type="radio" id="allTimeRadio" value="allTime" v-model="listType" />
 					<label for="allTimeRadio">All-time</label>
 				</div>
 
-				<div class="pl-1.5 pr-4 py-1.5 inline-flex flex-row items-center gap-2 rounded-full bg-gray-200 radio-wrapper" :class="{checked: listType === 'recent'}">
-					<input type="radio" id="recentRadio" value="recent" v-model="listType" />
-					<label for="recentRadio">Recent 1k</label>
-				</div>
-			</span>
-
-			<span class="whitespace-nowrap space-x-2 inline-block">
 				<div class="pl-1.5 pr-4 py-1.5 inline-flex flex-row items-center gap-2 rounded-full bg-gray-200 radio-wrapper" :class="{checked: listType === 'recent90Days'}">
 					<input type="radio" id="recentRadio90" value="recent90Days" v-model="listType" />
 					<label for="recentRadio90">Last 90 days</label>
@@ -27,14 +32,12 @@
 					<input type="radio" id="recentRadio30" value="recent30Days" v-model="listType" />
 					<label for="recentRadio30">Last 30 days</label>
 				</div>
-			</span>
 
-			<label class="w-full"><input type="checkbox" v-model="mergeDifficulties"> Merge difficulties</label>
 			</div>
 
 		</div>
 		<div class="mb-4 full-bleed" v-if="true">
-			<h3 class="font-medium text-lg px-4 pb-2">List</h3>
+			<!-- <h3 class="font-medium text-lg px-4 pb-2">List</h3> -->
 			<BaseTable
 				:columns="[
 					{ label: 'Size', sortable: !!mergeDifficulties, key: 'size' },
@@ -60,9 +63,16 @@ import { isBefore, subDays } from 'date-fns/esm';
 import { computed, ref, toRef, watch } from 'vue';
 
 import { formatTimeMMSS } from '@/utils/date.utils';
+import { useStorage } from '@vueuse/core';
 
 const statsStore = useStatisticsStore();
-const mergeDifficulties = ref(false);
+
+const listType = useStorage('takuzu_most-played-list-type', 'recent30Days', sessionStorage);
+const itemType = useStorage('takuzu_most-played-item-type', 'puzzleConfig', sessionStorage);
+
+const mergeDifficulties = computed(() => {
+	return itemType.value === 'size';
+})
 
 const sortedByDate = toRef(statsStore, 'sortedByDate');
 const itemsSorted = computed(() => sortedByDate.value.filter(item => {
@@ -95,7 +105,6 @@ const recentItems90Days = computed(() => {
 	}
 	return itemsSorted.value.slice(0, idx);
 })
-const listType = ref('allTime');
 
 const summaryFn = computed(() => {
 	if (mergeDifficulties.value) return getMostPlayedPuzzleSizes;

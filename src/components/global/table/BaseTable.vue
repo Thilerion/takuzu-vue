@@ -36,8 +36,8 @@
 					<template
 						v-for="(value, idx) in row"
 					>
-						<th scope="row" v-if="idx === 0" class="px-4 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap sticky left-0 bg-gray-100 even:bg-gray-200 h-full w-full z-10 after:h-full after:absolute after:z-20 after:bg-gray-500/10 after:w-px after:right-0 after:top-0">{{value}}</th>
-						<td v-else class="px-4 py-4">{{value}}</td>
+						<th scope="row" v-if="idx === 0" class="px-4 py-2 font-medium text-gray-900 dark:text-white whitespace-nowrap sticky left-0 bg-gray-100 even:bg-gray-200 h-full w-full z-10 after:h-full after:absolute after:z-20 after:bg-gray-500/10 after:w-px after:right-0 after:top-0">{{value}}</th>
+						<td v-else class="px-4 py-2">{{value}}</td>
 					</template>
 				</tr>
 			</tbody>

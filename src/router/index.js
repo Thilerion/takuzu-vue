@@ -53,6 +53,14 @@ const routes = [
 				}
 			},
 			{
+				path: '/stats/table',
+				name: 'PuzzleStatisticsTable',
+				component: () => import('../views/PuzzleStatisticsTable.vue'),
+				meta: {
+					title: 'Statistics - Puzzles'
+				}
+			},
+			{
 				path: '/settings',
 				name: 'Settings',
 				component: Settings,
