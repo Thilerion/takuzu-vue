@@ -1,6 +1,6 @@
 <template>
 	<div class="flex flex-col">
-		<PageHeader hide-back small>Statistics</PageHeader>
+		<PageHeader hide-back small elevated :transparent="false" class="mb-4">Statistics</PageHeader>
 		<div class="content flex-1 pb-3">
 			<div
 				class="empty-content bg-white text-center mx-6 px-2 py-4 rounded-md shadow-md relative leading-loose mt-[8vh]"

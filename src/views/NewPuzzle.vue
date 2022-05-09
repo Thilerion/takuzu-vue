@@ -3,7 +3,7 @@
 		class="fixed top-0 h-vh w-screen overflow-y-auto overflow-x-hidden"
 		id="new-puzzle-page"
 	>
-		<PageHeader class="bg-white shadow-sm" small>
+		<PageHeader :transparent="false" elevated small>
 			<template #default>New Puzzle</template>
 			<template #right v-if="debugModeEnabled">
 				<BaseDropdown

@@ -1,55 +1,82 @@
 <template>
-	<header class="flex justify-center items-stretch h-24 text-gray-700 dark:text-gray-100 flex-shrink-0" :class="[small ? 'h-16' : 'h-24']">
+	<header class="flex justify-center items-stretch h-24 text-gray-700 dark:text-gray-100 flex-shrink-0" :class="[
+		small ? 'h-16' : 'h-24',
+		{
+			'shadow-sm': elevated,
+			'bg-white': !transparent
+		}
+	]">
 		<div class="header-group side left">
 			<IconBtn v-if="hasBackButton" @click="close" name="md-arrowback">
-				<icon-mdi-arrow-left style="{ 'font-size': '16px' }" />
+				<icon-mdi-arrow-left v-if="hasBackButton" />
+				<icon-mdi-close v-else-if="hasCloseButton" />
 			</IconBtn>
 		</div>
 		<div class="header-group flex justify-center items-center flex-1">
-			<h1 class="text-2xl font-bold leading-normal">
+			<h1 class="font-medium leading-normal" :class="{
+				'text-xl': small,
+				'text-2xl': !small
+			}">
 				<slot/>
 			</h1>
 		</div>
 		<div class="header-group side right">
-			<slot name="right" />
+			<slot name="right"/>
 		</div>
 	</header>
 </template>
 
-<script>
-export default {
-	props: {
-		closeBtn: Boolean,
-		hideBack: Boolean,
-		small: Boolean
+<script setup>
+import { computed, onMounted, ref, useAttrs } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+
+const props = defineProps({
+	closeBtn: Boolean,
+	hideBack: Boolean,
+	small: Boolean,
+	transparent: {
+		type: Boolean,
+		default: true
 	},
-	methods: {
-		close() {
-			if (this.$attrs.onClose) {
-				this.$emit('close');
-			} else {
-				// TODO: check that previous page is home?
-				if (this.$route.meta.prev) {
-					this.$router.go(-1);
-				} else {
-					// console.log('No prev found, going to Home instead');
-					this.$router.replace({ name: 'Home' });
-				}
-			}
-		}
-	},
-	computed: {
-		hasBackButton() {
-			if (this.hideBack) return false;
-			return !this.$route.meta.noBackButton;
-		},
-		leftButtonType() {
-			if (!this.hasBackButton) return null;
-			if (this.closeBtn) return 'close';
-			return 'arrow_back';
-		}
+	elevated: Boolean
+})
+const emit = defineEmits(['close']);
+
+const route = useRoute();
+const router = useRouter();
+
+const hasBackButton = computed(() => {
+	if (props.hideBack) return false;
+	if (route?.meta?.noBackButton) return false;
+	return true;
+})
+const hasCloseButton = computed(() => {
+	if (props.closeBtn && !hasBackButton.value) return true;
+	return false;
+})
+
+const attrs = useAttrs();
+const hasOnCloseAttr = computed(() => {
+	return typeof attrs?.onClose === 'function';
+})
+
+const close = () => {
+	if (hasOnCloseAttr.value) {
+		emit('close');
+		return;
 	}
-};
+	if (route?.meta?.prev != null) {
+		router.go(-1);
+	} else {
+		router.replace({ name: 'Home' });
+	}
+}
+
+const elevated = computed(() => {
+	if (props.elevated != null) return props.elevated;
+	if (props.transparent != null && !props.transparent) return true;
+	return false;
+})
 </script>
 
 <style scoped>
