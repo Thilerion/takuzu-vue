@@ -19,7 +19,6 @@
     "@fontsource/hammersmith-one": "^4.5.1",
     "@fontsource/roboto": "^4.5.3",
     "@vueform/multiselect": "^2.3.3",
-    "@vueform/slider": "^2.0.9",
     "@vueuse/core": "^8.3.1",
     "chart.js": "^3.7.0",
     "chartjs-adapter-date-fns": "^2.0.0",

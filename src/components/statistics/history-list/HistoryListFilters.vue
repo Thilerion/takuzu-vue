@@ -21,23 +21,13 @@
 				</div>
 
 				<div class="py-2 px-2">
-					<h3 class="font-medium leading-loose">Difficulty</h3>
-					<div class="relative w-full max-w-xs mx-auto pt-2 pb-1">
-						<div class="flex justify-between text-center">
-							<div v-for="n in 5" @click="setSingleDifficultyValue(n)" class="opacity-50 text-center">
-								<div class="text-xs leading-none">{{n}}</div>
-								<div class="text-xxs top-0.5 relative">|</div>
-							</div>
-						</div>
-						<RangeSlider 
-							:min="1"
-							:max="5"
-							:step="1"
-							:lazy="true"
-							:tooltips="false"
-							v-model="difficultyFilterValues"
-						></RangeSlider>
+					<div class="flex flex-row justify-between">
+						<h3 class="font-medium leading-loose">Difficulty</h3>
+						<button @click="difficultyFilterValues = [1, 5]" class="text-xs uppercase tracking-wide font-medium opacity-60" :class="{
+							'text-transparent': (difficultyFilterValues[0] === 1 && difficultyFilterValues[1] === 5) || !difficultyFilterValues
+						}">Clear</button>
 					</div>
+					<HistoryListFilterDifficulty v-model="difficultyFilterValues" />
 				</div>
 
 				<div class="py-2 px-2">
@@ -110,12 +100,11 @@
 </template>
 
 <script setup>
-import { computed, inject, ref, toRef, watch } from 'vue';
+import { computed, inject, toRef, watch } from 'vue';
 import ExpandTransition from '@/views/transitions/ExpandTransition.vue';
-import RangeSlider from '@vueform/slider';
 import Multiselect from '@vueform/multiselect';
-import '@vueform/slider/themes/default.css';
 import '@vueform/multiselect/themes/default.css';
+import HistoryListFilterDifficulty from './HistoryListFilterDifficulty.vue';
 
 const props = defineProps({
 	modelValue: Boolean
