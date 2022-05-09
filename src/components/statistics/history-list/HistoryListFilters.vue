@@ -23,11 +23,11 @@
 				<div class="py-2 px-2">
 					<div class="flex flex-row justify-between">
 						<h3 class="font-medium leading-loose">Difficulty</h3>
-						<button @click="difficultyFilterValues = [1, 5]" class="text-xs uppercase tracking-wide font-medium opacity-60" :class="{
-							'text-transparent': (difficultyFilterValues[0] === 1 && difficultyFilterValues[1] === 5) || !difficultyFilterValues
-						}">Clear</button>
+						<transition name="t-fade">
+							<button @click="removeFilter('difficulty')" v-if="activeFilters.difficulty" class="text-xs uppercase tracking-wide font-medium opacity-60">Clear</button>
+						</transition>
 					</div>
-					<HistoryListFilterDifficulty v-model="difficultyFilterValues" />
+					<HistoryListFilterDifficulty v-model="difficultyFilterValues" :is-active="!!activeFilters.difficulty" />
 				</div>
 
 				<div class="py-2 px-2">
@@ -180,28 +180,6 @@ const difficultyFilterValues = computed({
 		}
 	}
 })
-const setSingleDifficultyValue = (value) => {
-	const [left, right] = difficultyFilterValues.value;
-
-	if (left === right && value !== left) {
-		if (value < left) { 
-			difficultyFilterValues.value = [value, right];
-		} else difficultyFilterValues.value = [left, value];
-		return;
-	}
-	if (value === left || value === right) {
-		difficultyFilterValues.value = [value, value];
-	}
-
-	const distLeft = Math.abs(left - value);
-	const distRight = Math.abs(right - value);
-
-	if (distLeft < distRight) {
-		difficultyFilterValues.value = [value, right];
-	} else {
-		difficultyFilterValues.value = [left, value];
-	}
-}
 
 const boardSizeFilterValues = computed({
 	get() {
@@ -253,5 +231,12 @@ input[type="range"]::-webkit-slider-thumb {
 
 :deep(.multiselect-multiple-label) {
 	@apply text-sm opacity-70;
+}
+
+.t-fade-enter-active, .t-fade-leave-active {
+	@apply transition-opacity duration-150;
+}
+.t-fade-enter-from, .t-fade-leave-to {
+	@apply opacity-0;
 }
 </style>
