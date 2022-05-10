@@ -94,25 +94,6 @@ const getDefaultOptions = () => ({
 	page: 0,
 	pageSize: 30
 });
-
-function getFilterQueryFromOptions({}) {
-	return {}
-}
-
-function getQueryFromFilterAndSortOptions({
-	sortBy, filters, pageSize, page
-}) {
-	const defaults = getDefaultOptions();
-
-	const query = {
-		page: page === defaults.page ? undefined : page,
-		sortBy: sortBy === defaults.sortBy ? undefined : sortBy,
-		pageSize: pageSize === defaults.pageSize ? undefined : pageSize,
-		...getFilterQueryFromOptions(filters)
-	}
-	return query;
-}
-
 </script>
 
 <script setup>
@@ -171,6 +152,20 @@ const currentItems = ref(null);
 const { currentFilters, activeFilters, filterFns, filterItems, setFilter, removeFilter } = useListFilters();
 provide('filterUtils', { currentFilters, activeFilters, filterFns, filterItems, setFilter, removeFilter });
 
+const parseFilterQueryData = (data = {}) => {
+	for (const [key, strVal] of Object.entries(data)) {
+		console.log({key, strVal});
+		try {
+			const val = JSON.parse(strVal);
+			setFilter(key, val);
+
+		} catch(e) {
+			console.warn(e);
+		}
+	}
+	return;
+}
+
 
 
 onBeforeMount(() => {
@@ -183,13 +178,15 @@ onBeforeMount(() => {
 		page: queryPage = dataOptions.page,
 		pageSize: queryPageSize = dataOptions.pageSize,
 		sortBy: querySortBy = dataOptions.sortBy,
+		...activeFilterQueryData
 	} = query;
+
 
 	dataOptions.sortBy = querySortBy;
 	dataOptions.page = queryPage * 1;
 	dataOptions.pageSize = queryPageSize * 1;
 
-	// TODO: set filters from query
+	parseFilterQueryData(activeFilterQueryData);
 	currentItems.value = resetCurrentItems(historyItems.value, dataOptions, filterItems);
 })
 
@@ -234,7 +231,7 @@ watch(() => dataOptions.page, (value, prev) => {
 })
 const route = useRoute();
 const router = useRouter();
-watch(dataOptions, (value) => {
+watch([dataOptions, activeFilters], ([value]) => {
 	const query = getQueryFromFilterAndSortOptions(value);
 	const routePath = route.path;
 	router.replace({ path: routePath, query });
@@ -252,6 +249,29 @@ const deleteItem = async (id) => {
 	await statsStore.deleteItem(id);
 	currentItems.value = resetCurrentItems(historyItems.value, dataOptions, filterItems);
 }
+
+function getFilterQueryFromOptions() {
+	const result = {};
+	for (const [key, val] of Object.entries(activeFilters.value)) {
+		result[key] = JSON.stringify(val);
+	}
+	return result;
+}
+
+function getQueryFromFilterAndSortOptions({
+	sortBy, filters, pageSize, page
+}) {
+	const defaults = getDefaultOptions();
+
+	const query = {
+		page: page === defaults.page ? undefined : page,
+		sortBy: sortBy === defaults.sortBy ? undefined : sortBy,
+		pageSize: pageSize === defaults.pageSize ? undefined : pageSize,
+		...getFilterQueryFromOptions(filters)
+	}
+	return query;
+}
+
 </script>
 
 <style scoped>
