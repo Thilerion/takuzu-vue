@@ -1,118 +1,93 @@
 <template>
-	<div class="check-indicator-wrapper">
-		<transition name="checked">
-			<div
-				class="check-indicator"
-				v-if="errorCheckValue != null && show"
-				:key="errorCheckKey"
-			>
-				<div class="check-icon-wrapper">					
-					<icon-ic-outline-check-circle class="correct check-icon" v-if="!errorFound" />
-					<icon-ic-outline-cancel class="incorrect check-icon" v-else-if="errorFound" />
-				</div>
+	<div class="pointer-events-none fixed inset-0 z-10 grid place-content-center w-screen h-vh">
+		<div class="opacity-0 row-start-1 col-start-1 row-span-1 col-span-1 z-10 relative" ref="correctEl">
+			<div class="check-icon-wrapper">
+				<icon-ic-outline-check-circle class="text-green-600 check-icon" />
 			</div>
-		</transition>
+		</div>
+		<div class="opacity-0 row-start-1 col-start-1 row-span-1 col-span-1 z-10 relative" ref="incorrectEl">
+			<div class="check-icon-wrapper">
+				<icon-ic-outline-cancel class="text-red-700 check-icon" />
+			</div>
+		</div>
 	</div>
 </template>
 
-<script>import { usePuzzleMistakesStore } from "@/stores/puzzle-mistakes.js";
+<script setup>
+import { usePuzzleMistakesStore } from "@/stores/puzzle-mistakes.js";
 import { storeToRefs } from "pinia";
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 
-export default {
-	setup() {
-		const puzzleMistakesStore = usePuzzleMistakesStore();
-		const { currentMarked, checkId, lastCheckType } = storeToRefs(puzzleMistakesStore);
+const mistakesStore = usePuzzleMistakesStore();
+const { currentMarked, checkId, lastCheckType } = storeToRefs(mistakesStore);
 
-		const lastCheckedByUser = computed(() => lastCheckType.value === 'user');
+const lastCheckedByUser = computed(() => lastCheckType.value === 'user');
 
-		return { currentMarked, checkId, lastCheckedByUser };
+const correctEl = ref(null);
+const incorrectEl = ref(null);
+
+const errorFound = computed(() => {
+	return currentMarked.value?.length > 0;
+})
+
+const checkAnim = {
+	options: {
+		duration: 2000,
+		iterations: 1,
+		fill: 'forwards',
+		easing: 'cubic-bezier(0.25, 1, 0.5, 1)'
 	},
-	data() {
-		return {
-			show: false,
-			animName: 'checked',
-		}
-	},
-	computed: {
-		errorCheckValue() {
-			return this.currentMarked;
-		},
-		errorFound() {
-			return Array.isArray(this.errorCheckValue) && this.errorCheckValue.length > 0;
-		},
-		errorCheckId() {
-			// from store
-			return this.checkId;
-		},
-		errorCheckKey() {
-			return `${this.errorCheckId}`;
-		},
-	},
-	watch: {
-		errorCheckId(newValue, prevValue) {
-			if (!this.lastCheckedByUser) {
-				this.show = false;
-				return;
-			}
-			if (newValue < prevValue) {
-				this.show = false;
-				return;
-			}
-			this.show = false;
-			this.$nextTick(() => {
-				this.show = true;
-			})
-		}
+	keyframes: [
+		{ opacity: 0 },
+		{ opacity: 0.8, offset: 0.12 },
+		{ opacity: 0 }
+	]
+}
+
+let correctElAnimation = null;
+let incorrectElAnimation = null;
+
+const animateCorrectEl = () => {
+	const el = correctEl.value;
+	incorrectElAnimation?.cancel?.();
+	if (correctElAnimation == null) {
+		correctElAnimation = el.animate(checkAnim.keyframes, checkAnim.options);
+		correctElAnimation.persist();
+	} else {
+		console.log('play it');
+		correctElAnimation.cancel();
+		correctElAnimation.play();
 	}
-};
+}
+const animateIncorrectEl = () => {
+	const el = incorrectEl.value;
+	correctElAnimation?.cancel?.();
+	if (incorrectElAnimation == null) {
+		incorrectElAnimation = el.animate(checkAnim.keyframes, checkAnim.options);
+		incorrectElAnimation.persist();
+	} else {
+		console.log('play it');
+		incorrectElAnimation.cancel();
+		incorrectElAnimation.play();
+	}
+}
+
+watch(checkId, (value, prev) => {
+	if (!lastCheckedByUser.value || value < prev) {
+		return;
+	}
+	if (!errorFound.value) {
+		animateCorrectEl();
+	} else {
+		animateIncorrectEl();
+	}
+})
 </script>
 
 <style scoped>
-.check-indicator-wrapper {
-	@apply pointer-events-none fixed top-0 left-0 z-10 flex justify-center items-center;
-	height: var(--vh-total);
-	width: 100vw;
-}
-.check-indicator {
-	@apply opacity-0;
-}
-
-.correct {
-	@apply  text-green-600;
-}
-.incorrect {
-	@apply  text-red-700;
-}
 .check-icon {
 	font-size: 50vmin;
 	width: 50vmin;
 	height: 50vmin;
-}
-.check-icon-wrapper {
-	position: absolute inset-0 flex justify-center items-center;
-}
-
-.checked-enter-active {
-	opacity: 0;
-	animation: checkedAnim 2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-}
-@keyframes checkedAnim {
-	0% {
-		opacity: 0;
-	}
-	8% {
-		opacity: 0.8;
-	}
-	12% {
-		opacity: 0.8;
-	}
-	100% {
-		opacity: 0;
-	}
-}
-.checked-leave-active {
-	display: none;
-	position: absolute;
 }
 </style>
