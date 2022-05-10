@@ -1,142 +1,162 @@
-import applyEliminationConstraint from "../solver/constraints/Elimination.js";
-import applyLineBalanceConstraint from "../solver/constraints/LineBalance.js";
-import applyTriplesConstraint from "../solver/constraints/Triples.js";
-import Solver from "../solver/Solver.js";
+import { applyEliminationConstraint, applyLineBalanceConstraint, applyTriplesConstraint } from "@/lib/solver/constraints";
+import Solver from "@/lib/solver/Solver";
 
-const baseSolverConf = {
-	maxSolutions: 2,
-	timeoutDuration: 1000,
-	throwAfterTimeout: false,
-	disableBacktracking: true,
-};
-
-function createConstraintFn({
-	triples = true,
-	balance = true,
-	elimination,
-	duplicate
-}) {
-	const result = [];
-	if (triples) result.push(applyTriplesConstraint);
-	if (balance) result.push(applyLineBalanceConstraint);
-	if (elimination != null) {
-		const { maxLeast = 1, enforceUniqueLines = false } = elimination;
-		const elimOpts = {
-			singleAction: false,
-			maxLeast: maxLeast > 0 ? maxLeast : 1,
-			enforceUniqueLines
-		}
-		const fn = (board, opts = {}) => applyEliminationConstraint(board, {
-			...opts,
-			...elimOpts
-		});
-		result.push(fn);
-	}
-	if (duplicate != null) {
-		const { maxLeast = 1 } = duplicate;
-		const elimOpts = {
-			singleAction: false,
-			maxLeast: maxLeast > 0 ? maxLeast : 1,
-			enforceUniqueLines: true
-		}
-		const fn = (board, opts = {}) => applyEliminationConstraint(board, {
-			...opts,
-			...elimOpts
-		});
-		result.push(fn);
-	}
-	return result;
-}
-
-const difficultyConstraintFns = {
-	0: [],
-	1: createConstraintFn({ triples: true, balance: true }),
-	2: createConstraintFn({
-		triples: true, balance: true,
-		elimination: { enforceUniqueLines: false, maxLeast: 1 }
-	}),
-	3: createConstraintFn({
-		triples: true, balance: true,
-		elimination: { enforceUniqueLines: false, maxLeast: 2 }
-	}),
-	4: createConstraintFn({
-		triples: true, balance: true,
-		elimination: { enforceUniqueLines: false, maxLeast: 2 },
-		duplicate: { maxLeast: 1 },
-	}),
-	5: createConstraintFn({
-		triples: true, balance: true,
-		elimination: { enforceUniqueLines: false, maxLeast: 6 },
-		duplicate: { maxLeast: 2 },
-	}),
-};
-const minDifficultyConstraintFns = {};
-for (const difficultyValue of Object.keys(difficultyConstraintFns)) {
-	const minDiff = difficultyValue - 1;
-	if (minDiff < 1) {
-		minDifficultyConstraintFns[difficultyValue] = null;
-	} else {
-		let minConstraints = difficultyConstraintFns[minDiff];
-		if (!minConstraints || (Array.isArray(minConstraints) && !minConstraints.length)) {
-			minConstraints = null;
-		}
-		minDifficultyConstraintFns[difficultyValue] = difficultyConstraintFns[minDiff];
-	}
-}
-
-const smallPuzzleDifficultyConstraintFns = {
-	3: {
-		min: createConstraintFn({
-			triples: true, balance: true,
-			elimination: { enforceUniqueLines: false, maxLeast: 1 },
-		}),
-		max: createConstraintFn({
-			triples: true, balance: true,
-			elimination: { enforceUniqueLines: false, maxLeast: 1 },
-			duplicate: { maxLeast: 1 }
-		}),
-	}
-};
-
-export function getDifficultyConstraintFns(difficultyRating, width, height) {
-	const numCells = width * height;
-
-	const validKeys = [...Object.keys(smallPuzzleDifficultyConstraintFns), ...Object.keys(smallPuzzleDifficultyConstraintFns).map(str => Number(str))];
-	if (numCells <= 60 && validKeys.includes(difficultyRating)) {
-		return smallPuzzleDifficultyConstraintFns[difficultyRating].max;
-	}
-	return difficultyConstraintFns[difficultyRating];
-}
-
-
-export function getMinimumDifficultyConstraints(difficultyRating, width, height) {
-	const numCells = width * height;
-	const validKeys = [...Object.keys(smallPuzzleDifficultyConstraintFns), ...Object.keys(smallPuzzleDifficultyConstraintFns).map(str => Number(str))];
-	if (numCells <= 60 && validKeys.includes(difficultyRating)) {
-		return smallPuzzleDifficultyConstraintFns[difficultyRating].min;
-	}
-
-	return minDifficultyConstraintFns[difficultyRating];
-}
-
-export function maskHasOneSolution(maskedBoard, difficulty = 1) {
+const baseCanSolveWith = ({constraintFns, disableBacktracking = true} = {}) => (maskedBoard) => {
 	const solutions = Solver.run(maskedBoard, {
-		...baseSolverConf,
-		constraintFns: getDifficultyConstraintFns(difficulty, maskedBoard.width, maskedBoard.height)
-	});
-	return solutions && solutions.length === 1;
+		maxSolutions: 2,
+		timeoutDuration: 2000,
+		throwAfterTimeout: false,
+		disableBacktracking,
+		constraintFns
+	})
+	return solutions?.length === 1;
 }
-export function maskHasNoSolution(maskedBoard, difficulty = 1) {
-	const constraintFns = difficulty;
-	if (!Array.isArray(difficulty)) {
-		console.warn({ difficulty });
+
+const baseCannotSolveWith = ({constraintFns, disableBacktracking = true} = {}) => (maskedBoard) => {
+	if (!Array.isArray(constraintFns)) {
 		return true;
 	}
-
 	const solutions = Solver.run(maskedBoard, {
-		...baseSolverConf,
+		maxSolutions: 2,
+		timeoutDuration: 2000,
+		throwAfterTimeout: false,
+		disableBacktracking,
 		constraintFns
-	});
-	if (!solutions) return true;
-	return solutions.length === 0;
+	})
+	return solutions?.length === 0;
+}
+
+export const baseConstraintFns = {
+	TRIPLES: applyTriplesConstraint,
+	BALANCE: applyLineBalanceConstraint,
+	ELIM_1: (board) => applyEliminationConstraint(board, {
+		singleAction: false,
+		maxLeast: 1,
+		minLeast: 1,
+		enforceUniqueLines: false,
+	}),
+	ELIM_2: (board) => applyEliminationConstraint(board, {
+		singleAction: false,
+		maxLeast: 2,
+		minLeast: 2,
+		enforceUniqueLines: false,
+	}),
+	ELIM_INF: (board) => applyEliminationConstraint(board, {
+		singleAction: false,
+		maxLeast: Infinity,
+		minLeast: 3,
+		enforceUniqueLines: false
+	}),
+	DUPE_ELIM_1: (board) => applyEliminationConstraint(board, {
+		singleAction: false,
+		maxLeast: 1,
+		minLeast: 1,
+		enforceUniqueLines: true
+	}),
+	DUPE_ELIM_2: (board) => applyEliminationConstraint(board, {
+		singleAction: false,
+		maxLeast: 2,
+		minLeast: 2,
+		enforceUniqueLines: true
+	}),
+	BACKTRACKING: 'BACKTRACKING'
+}
+
+const defaultDifficultyConstraintFns = {
+	1: {
+		canNotSolveWithConstraints: null,
+		canSolveWithConstraints: [
+			baseConstraintFns.TRIPLES,
+			baseConstraintFns.BALANCE
+		]
+	},
+	2: {
+		canNotSolveWithConstraints: [
+			baseConstraintFns.TRIPLES,
+			baseConstraintFns.BALANCE
+		],
+		canSolveWithConstraints: [
+			baseConstraintFns.TRIPLES,
+			baseConstraintFns.BALANCE,
+			baseConstraintFns.ELIM_1
+		]
+	},
+	3: {
+		canNotSolveWithConstraints: [
+			baseConstraintFns.TRIPLES,
+			baseConstraintFns.BALANCE,
+			baseConstraintFns.ELIM_1
+		],
+		canSolveWithConstraints: [
+			baseConstraintFns.TRIPLES,
+			baseConstraintFns.BALANCE,
+			baseConstraintFns.ELIM_1,
+			baseConstraintFns.ELIM_2
+		]
+	},
+	4: {
+		canNotSolveWithConstraints: [
+			baseConstraintFns.TRIPLES,
+			baseConstraintFns.BALANCE,
+			baseConstraintFns.ELIM_1,
+			baseConstraintFns.ELIM_2
+		],
+		canSolveWithConstraints: [
+			baseConstraintFns.TRIPLES,
+			baseConstraintFns.BALANCE,
+			baseConstraintFns.ELIM_1,
+			baseConstraintFns.ELIM_2,
+			baseConstraintFns.DUPE_ELIM_1
+		]
+	},
+	5: {
+		canNotSolveWithConstraints: [
+			baseConstraintFns.TRIPLES,
+			baseConstraintFns.BALANCE,
+			baseConstraintFns.ELIM_1,
+			baseConstraintFns.ELIM_2,
+			baseConstraintFns.DUPE_ELIM_1,
+			baseConstraintFns.DUPE_ELIM_2
+		],
+		canSolveWithConstraints: [
+			baseConstraintFns.TRIPLES,
+			baseConstraintFns.BALANCE,
+			baseConstraintFns.ELIM_1,
+			baseConstraintFns.ELIM_2,
+			baseConstraintFns.DUPE_ELIM_1,
+			baseConstraintFns.DUPE_ELIM_2,
+			baseConstraintFns.BACKTRACKING
+		]
+	}
+}
+
+const overrideDifficultyConstraintFns = {
+	'6x6-3': {
+		canSolveWith: baseCanSolveWith({ constraintFns: defaultDifficultyConstraintFns[4].canSolveWithConstraints}),
+		canNotSolveWith: baseCannotSolveWith({ constraintFns: defaultDifficultyConstraintFns[4].canNotSolveWithConstraints})
+	},
+}
+
+export const getMaskValidatorsForPuzzleConfig = ({ width, height, difficulty }) => {
+	const overrideKey = `${width}x${height}-${difficulty}`;
+
+	if (overrideDifficultyConstraintFns[overrideKey] != null) {
+		return overrideDifficultyConstraintFns[overrideKey];
+	}
+
+	let {
+		canNotSolveWithConstraints,
+		canSolveWithConstraints
+	} = defaultDifficultyConstraintFns[difficulty];
+
+	let canSolveWithBacktrackingDisabled = true;
+
+	if (canSolveWithConstraints.includes(baseConstraintFns.BACKTRACKING)) {
+		canSolveWithConstraints = canSolveWithConstraints.filter(val => val !== baseConstraintFns.BACKTRACKING);
+		canSolveWithBacktrackingDisabled = false;
+	}
+
+	const canSolveWith = baseCanSolveWith({ constraintFns: canSolveWithConstraints, disableBacktracking: canSolveWithBacktrackingDisabled });
+	const canNotSolveWith = baseCannotSolveWith({ constraintFns: canNotSolveWithConstraints});
+	return { canSolveWith, canNotSolveWith };
 }

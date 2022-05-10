@@ -8,6 +8,7 @@ export default function applyEliminationConstraint(board, options = {}) {
 		singleAction = true,
 		enforceUniqueLines = true,
 		maxLeast = 3, // reduce for easier game generation
+		minLeast = 1
 	} = options;
 
 	const allLines = [...board.boardLines()];
@@ -18,7 +19,9 @@ export default function applyEliminationConstraint(board, options = {}) {
 	const linesToProcess = [...allLines].filter(boardLine => {
 		if (boardLine.isFilled) return false;
 		if (boardLine.numFilled <= 1) return false;
-		if (maxLeast != null && boardLine.getLeastRemaining() > maxLeast) return false;
+		const leastRem = boardLine.getLeastRemaining();
+		if (maxLeast != null && leastRem > maxLeast) return false;
+		if (minLeast != null && leastRem < minLeast) return false;
 		return true;
 	}).sort((a, b) => {
 		// chance for a result is largest when difference between least and most is largest
