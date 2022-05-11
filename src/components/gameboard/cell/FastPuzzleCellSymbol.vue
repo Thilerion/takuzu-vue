@@ -11,8 +11,8 @@
 			<template v-else-if="symbolType === 'binary'">
 				<transition name="cell-symbol">
 					<div v-if="symbolValue !== '.'" class="number-icon-wrapper">
-						<icon-tabler-number-0 class="number-icon" v-if="symbolValue === '0'" />
-						<icon-tabler-number-1 class="number-icon" v-else-if="symbolValue === '1'" />
+						<icon-tabler-number-0 class="number-icon text-cyan-700" v-if="symbolValue === '0'" />
+						<icon-tabler-number-1 class="number-icon text-gray-600" v-else-if="symbolValue === '1'" />
 					</div>
 				</transition>
 			</template>
@@ -20,9 +20,6 @@
 </template>
 
 <script>
-import { EMPTY, ONE, ZERO } from "@/lib/constants.js";
-import { computed, toRefs, Transition, inject, toRef, onMounted, onBeforeUnmount, onBeforeUpdate } from "vue";
-
 const TicTacToeSymbols = {
 	[EMPTY]: '',
 	[ZERO]: 'O',
@@ -33,41 +30,48 @@ const BinarySymbols = {
 	[ZERO]: '0',
 	[ONE]: '1'
 }
+</script>
 
-export default {
-	props: ['value', 'locked', 'incorrect'],
-	components: {
-		Transition
+<script setup>
+import { EMPTY, ONE, ZERO } from "@/lib/constants.js";
+import { isValidPuzzleSymbol } from "@/lib/utils";
+import { computed, toRefs, Transition, inject, toRef } from "vue";
+
+const props = defineProps({
+	value: {
+		validator(val) {
+			return isValidPuzzleSymbol(val);
+		},
+		required: true
 	},
-	setup(props) {
-		const { value, locked, incorrect } = toRefs(props);
-		
-		const cellTheme = inject('cellTheme');
-		const symbolType = toRef(cellTheme, 'value');
+	locked: Boolean,
+	incorrect: Boolean
+})
 
-		const symbolMap = computed(() => {
-			if (symbolType.value === 'binary') return BinarySymbols;
-			else if (symbolType.value === 'tictactoe') return TicTacToeSymbols;
-			throw new Error(`Unrecognized symbolType (accepts binary and tictactoe): ${symbolType.value}`);
-		})
+const { value, locked, incorrect } = toRefs(props);
 
-		const symbolValue = computed(() => symbolMap.value[value.value]);
+const cellTheme = inject('cellTheme');
+const symbolType = toRef(cellTheme, 'value');
 
-		return { locked, value, symbolValue, incorrect, symbolType };
-	}
-};
+const symbolMap = computed(() => {
+	if (symbolType.value === 'binary') return BinarySymbols;
+	else if (symbolType.value === 'tictactoe') return TicTacToeSymbols;
+	throw new Error(`Unrecognized symbolType (accepts binary and tictactoe): ${symbolType.value}`);
+})
+
+const symbolValue = computed(() => symbolMap.value[value.value]);
 </script>
 
 <style scoped>
 .cell {
 	@apply overflow-hidden relative pointer-events-none flex;
 	@apply w-full h-full;
-	@apply bg-gray-150 text-gray-700 dark:bg-slate-700 dark:text-gray-150;
+	@apply bg-gray-125 text-gray-700 dark:bg-slate-700 dark:text-gray-150;
 	/* contain: strict; */
 	--base-cell-size: calc(var(--cell-size) - var(--grid-gap));
 }
 .cell.locked {
-	@apply bg-gray-200 dark:bg-slate-800;
+	@apply bg-gray-150 dark:bg-slate-800;
 }
 .cell.incorrect {
 	@apply bg-red-400 bg-opacity-20 ring-1 ring-inset ring-red-900 ring-opacity-40;

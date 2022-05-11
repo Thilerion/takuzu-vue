@@ -37,7 +37,8 @@ module.exports = {
 			},
 			colors: {
 				gray: {
-					150: 'rgb(242, 242, 243)'
+					125: 'rgb(242, 242, 243)',
+					150: 'rgb(234, 234, 235)'
 				},
 				cell: {
 					blue: {
