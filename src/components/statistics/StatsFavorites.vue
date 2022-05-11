@@ -43,8 +43,8 @@
 					<div class="text-right">{{longestPlaytimePuzzleSize.key}}</div>
 				</div>
 				<div class="flex-none w-[14ch]">
-					<div class="text-right">{{formatTimeHHMMSS(longestPlaytimePuzzleConfig.summary.sum)}}</div>
-					<div class="text-right">{{formatTimeHHMMSS(longestPlaytimePuzzleSize.summary.sum)}}</div>
+					<div class="text-right">{{formatDurationHHMMSS(longestPlaytimePuzzleConfig.summary.sum)}}</div>
+					<div class="text-right">{{formatDurationHHMMSS(longestPlaytimePuzzleSize.summary.sum)}}</div>
 				</div>
 			</div>
 			</div>
@@ -58,8 +58,7 @@
 import { useStatisticsStore } from '@/stores/statistics';
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
-
-import { formatTimeHHMMSS } from '@/utils/date.utils';
+import { formatDurationHHMMSS } from '@/utils/duration.utils';
 
 const statsStore = useStatisticsStore();
 

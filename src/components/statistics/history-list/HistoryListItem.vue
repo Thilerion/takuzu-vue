@@ -49,10 +49,10 @@
 </template>
 
 <script>
-import { formatTimeMMSSss } from '@/utils/date.utils.js';
 import { computed, ref, toRef, toRefs } from 'vue';
 
-const formatTime = timestampMS => formatTimeMMSSss(timestampMS, { padMinutes: true });
+const formatTime = (ms) => formatDurationMMSSss(ms, { padFirst: true });
+
 const dateTimeOpts = {
 	weekday: 'short',
 	year: 'numeric',
@@ -75,6 +75,7 @@ import IconBtn from '@/components/global/base-layout/IconBtn.vue';
 import { useMainStore } from '@/stores/main.js';
 import { usePuzzleStore } from '@/stores/puzzle';
 import { useRouter } from 'vue-router';
+import { formatDurationMMSSss } from '@/utils/duration.utils';
 
 const props = defineProps({
 	difficulty: [Number, String],
