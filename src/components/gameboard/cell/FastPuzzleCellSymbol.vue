@@ -3,16 +3,19 @@
 		class="cell"
 		:class="[{ locked, incorrect }]"
 	>
-			<template v-if="symbolType === 'tictactoe'">
-				<transition name="cell-symbol">
-				<div v-if="symbolValue != ''" class="cell-symbol-value">{{symbolValue}}</div>
-				</transition>
-			</template>
-			<template v-else-if="symbolType === 'binary'">
+			<template v-if="symbolType === 'binary'">
 				<transition name="cell-symbol">
 					<div v-if="symbolValue !== '.'" class="number-icon-wrapper">
 						<icon-tabler-number-0 class="number-icon text-cyan-700" v-if="symbolValue === '0'" />
 						<icon-tabler-number-1 class="number-icon text-gray-600" v-else-if="symbolValue === '1'" />
+					</div>
+				</transition>
+			</template>
+			<template v-else-if="symbolType === 'tictactoe'">
+				<transition name="cell-symbol">
+					<div v-if="symbolValue !== '.'" class="">
+						<span class="cell-symbol-value text-cyan-700" v-if="symbolValue === 'O'">O</span>
+						<span class="cell-symbol-value text-gray-600" v-else-if="symbolValue === 'X'">X</span>
 					</div>
 				</transition>
 			</template>
@@ -92,8 +95,8 @@ const symbolValue = computed(() => symbolMap.value[value.value]);
 }
 .cell-symbol-value {
 	--font-size: clamp(16px, var(--base-size), 48px);
-	font-size: var(--font-size);
-	line-height: var(--line-height);
+	/* font-size: var(--font-size); */
+	/* line-height: var(--line-height); */
 }
 .number-icon {
 	@apply pointer-events-none w-full h-full m-auto;
@@ -121,15 +124,16 @@ const symbolValue = computed(() => symbolMap.value[value.value]);
 	--line-height: calc(var(--base-size) * 1.25);
 }
 .cell-theme-tictactoe .cell-symbol-value {
-	@apply font-sans font-medium;
+	@apply font-sans;
 	--base-size: calc(var(--base-cell-size) - 6px);
 	--line-height: calc(var(--base-size) * 1.01);
+	font-size: calc(var(--base-size) * 0.9);
 }
 .cell-theme-tictactoe .cell {
 	@apply flex items-center justify-center overflow-hidden;
 	--font-size: 48px;
 	--base-pad: calc(var(--base-cell-size) / 10);
-	padding: clamp(1px, var(--base-pad), 7px);
+	padding: clamp(1px, var(--base-pad), 57px);
 	width: 100%;
 	height: 100%;
 }
