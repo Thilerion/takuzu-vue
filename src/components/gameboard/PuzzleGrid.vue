@@ -24,8 +24,6 @@
 </template>
 
 <script>
-import PuzzleCellSymbols from '@/components/gameboard/PuzzleCellSymbols.vue';
-import PuzzleCellColored from '@/components/gameboard/PuzzleCellColored.vue';
 import PuzzleGridHighlights from '@/components/gameboard/PuzzleGridHighlights.vue';
 import { EMPTY } from '@/lib/constants.js';
 import { computed, provide, reactive, ref, toRef, toRefs, watch } from 'vue';
@@ -41,8 +39,6 @@ import { useCellThemeProvider } from '../puzzleboard/useCellThemeProvider';
 
 export default {
 	components: {
-    PuzzleCellSymbols,
-    PuzzleCellColored,
     PuzzleGridHighlights,
     FastPuzzleCellWrapper,
     FastPuzzleCellColored,
@@ -137,9 +133,6 @@ export default {
 				result[xykey] = true;
 			})
 			return result;
-		},
-		cellComponent() {
-			return this.cellThemeType === 'colored' ? 'PuzzleCellColored' : 'PuzzleCellSymbols';
 		},
 	},
 	methods: {
