@@ -36,6 +36,7 @@ const BinarySymbols = {
 </script>
 
 <script setup>
+import { useCellThemeProvider } from "@/components/puzzleboard/useCellThemeProvider";
 import { EMPTY, ONE, ZERO } from "@/lib/constants.js";
 import { isValidPuzzleSymbol } from "@/lib/utils";
 import { computed, toRefs, Transition, inject, toRef } from "vue";
@@ -53,8 +54,7 @@ const props = defineProps({
 
 const { value, locked, incorrect } = toRefs(props);
 
-const cellTheme = inject('cellTheme');
-const symbolType = toRef(cellTheme, 'value');
+const { cellTheme: symbolType } = useCellThemeProvider();
 
 const symbolMap = computed(() => {
 	if (symbolType.value === 'binary') return BinarySymbols;

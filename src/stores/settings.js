@@ -38,7 +38,7 @@ export const useSettingsStore = defineStore('settings', {
 	}
 })
 
-const cellThemeTypeMap = {
+export const cellThemeTypeMap = {
 	'binary': 'symbols',
 	'tictactoe': 'symbols',
 	'blue-red': 'colored'

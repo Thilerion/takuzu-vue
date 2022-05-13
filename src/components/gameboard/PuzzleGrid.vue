@@ -1,7 +1,8 @@
 <template>
 	<div
 		class="puzzle-grid"
-		:class="[`cell-theme-${cellTheme}`, `cell-theme-type-${cellThemeType}`]"
+		:class="[cellThemeClasses]"
+		v-bind="cellThemeAttrs"
 	>
 		<FastPuzzleCellWrapper
 			v-for="cell in cellData"
@@ -27,7 +28,7 @@ import PuzzleCellSymbols from '@/components/gameboard/PuzzleCellSymbols.vue';
 import PuzzleCellColored from '@/components/gameboard/PuzzleCellColored.vue';
 import PuzzleGridHighlights from '@/components/gameboard/PuzzleGridHighlights.vue';
 import { EMPTY } from '@/lib/constants.js';
-import { computed, provide, reactive, ref, toRef, watch } from 'vue';
+import { computed, provide, reactive, ref, toRef, toRefs, watch } from 'vue';
 import { usePuzzleStore } from '@/stores/puzzle.js';
 import { useTapVibrate } from '@/composables/use-tap-vibrate.js';
 import FastPuzzleCellWrapper from './cell/FastPuzzleCellWrapper.vue';
@@ -36,6 +37,7 @@ import FastPuzzleCellSymbol from './cell/FastPuzzleCellSymbol.vue';
 import { useSettingsStore } from '@/stores/settings.js';
 import { storeToRefs } from 'pinia';
 import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
+import { useCellThemeProvider } from '../puzzleboard/useCellThemeProvider';
 
 export default {
 	components: {
@@ -97,10 +99,11 @@ export default {
 			vibrate,
 		} = useTapVibrate({ pattern: vibrationStrengthSetting, delay: delay.value, enable: shouldEnableVibration });
 
-		const { cellTheme, cellThemeType } = provideCellTheme();
-
 		const puzzleMistakesStore = usePuzzleMistakesStore();
 		const incorrectMarkedCells = toRef(puzzleMistakesStore, 'currentMarked');
+
+		const cellThemeProvidedData = useCellThemeProvider();
+		const { classes: cellThemeClasses, attrs: cellThemeAttrs, cellTheme, cellThemeType } = cellThemeProvidedData;
 
 		return {
 			cellData: cellDataRef,
@@ -114,7 +117,8 @@ export default {
 			vibrate,
 			cellTheme,
 			cellThemeType,
-			incorrectMarkedCells
+			incorrectMarkedCells,
+			cellThemeClasses, cellThemeAttrs
 		}
 	},
 	computed: {
@@ -145,21 +149,6 @@ export default {
 		},
 	},
 };
-
-function provideCellTheme() {
-	const store = useSettingsStore();
-
-	const { cellTheme, cellThemeType } = storeToRefs(store);
-
-	const cellThemeData = reactive({
-		value: cellTheme,
-		type: cellThemeType
-	})
-
-	provide('cellTheme', cellThemeData);
-
-	return { cellTheme, cellThemeType };
-}
 
 function useGridData(width, height, initialGrid) {
 	const staticCellData = [];
