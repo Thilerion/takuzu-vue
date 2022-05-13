@@ -15,6 +15,16 @@ import { usePuzzleTimer } from "./puzzle-timer";
 import { useRecapStatsStore } from "./recap-stats";
 import { useSettingsStore } from "./settings";
 
+export const PUZZLE_STATUS = {
+	'NONE': 'NONE',
+	'LOADING': 'LOADING',
+	'ERROR_LOADING': 'ERROR_LOADING',
+	'INITIALIZED': 'INITIALIZED',
+	'PLAYING': 'PLAYING',
+	'PAUSED': 'PAUSED',
+	'FINISHED': 'FINISHED'
+}
+
 export const usePuzzleStore = defineStore('puzzleOld', {
 	state: () => ({
 		width: null,
@@ -67,6 +77,25 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			const progress = 1 - (currentEmpty / initialEmpty);
 			return progress;
 		},
+
+		status: state => {
+			if (!state.initialized) {
+				if (state.loading) return PUZZLE_STATUS.LOADING;
+				else if (state.creationError) return PUZZLE_STATUS.ERROR_LOADING;
+				else return PUZZLE_STATUS.NONE;
+			}
+			// is initialized
+			if (state.finished) {
+				return PUZZLE_STATUS.FINISHED;
+			} else if (state.paused) {
+				return PUZZLE_STATUS.PAUSED;
+			} else if (state.finished) {
+				return PUZZLE_STATUS.FINISHED;
+			} else if (state.board != null) {
+				return PUZZLE_STATUS.PLAYING;
+			}
+			throw new Error('Unrecognized Puzzle status??!');
+		}
 	},
 
 	actions: {
