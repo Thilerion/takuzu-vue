@@ -7,7 +7,6 @@ import HowToPlay from '../views/HowToPlay.vue';
 import Tutorial from '../views/Tutorial.vue';
 import Statistics from '../views/Statistics.vue';
 import Settings from '../views/Settings.vue';
-import Menu from '../views/Menu.vue';
 
 // NESTED PAGES / OVERLAY PAGES
 import FreePlay from '../views/NewPuzzle.vue';
@@ -71,7 +70,7 @@ const routes = [
 			{
 				path: '/menu',
 				name: 'MoreMenu',
-				component: Menu,
+				component: () => import('../views/MoreMenu.vue'),
 			},
 			{
 				path: '/:pathMatch(.*)*',
@@ -113,6 +112,14 @@ const routes = [
 				component: Settings
 			}
 		]
+	},
+	{
+		path: '/puzzle-input',
+		component: () => import('../views/PuzzleInput.vue'),
+		name: 'PuzzleInput',
+		meta: {
+			title: 'Puzzle Input',
+		}
 	},
 	{
 		path: '/showcase',
