@@ -17,6 +17,7 @@
 				<p class="my-2">Update ready. Refresh to load update.</p>
 				<BaseButton @click="updateServiceWorker(true)">Click here to load update</BaseButton>
 			</div>
+			<router-link to="/puzzle-input">Puzzle Input</router-link>
 			<DebugMenu
 				v-if="isDebugModeEnabled"
 				@reset-debug-counter="debugModeClickCounter = 0"

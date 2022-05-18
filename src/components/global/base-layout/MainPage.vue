@@ -34,10 +34,10 @@ export default {
 	flex: 1;
 }
 
-main {
+.wrapper main {
 	@apply min-h-full flex flex-col flex-1;
 }
-main > *:first-child {
+.wrapper main > *:first-child {
 	@apply flex-1 pb-4;
 }
 
