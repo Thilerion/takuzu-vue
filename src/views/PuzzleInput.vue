@@ -19,33 +19,45 @@
 					<input type="checkbox" name="squareGrid" id="squareGridToggle" @input="setSquareGridToggle($event.target.checked)" :checked="forceSquareGrid">
 					Force square grid
 				</label>
+				<div class="flex flex-row gap-2">
+					<BaseButton @click="updatePuzzleGridBase">Update</BaseButton>
+					<BaseButton @click="resetGridValues">Reset</BaseButton>
+				</div>
 			</div>
 
-			<div class="bg-white rounded px-1 py-4 pt-6 shadow full-bleed">
+			<div class="bg-white rounded px-1 py-4 shadow full-bleed">
+				<div class="mb-2 px-2">
+				<label>
+					<input type="checkbox" v-model="toggleInputMode">
+					Use toggle input mode
+				</label>
+				</div>
+				
 				<PuzzleInputTable
 					v-if="puzzleGridBase && puzzleGridBase?.[0] != null"
 					:grid="puzzleGridBase"
 					@set-value="({ x, y, value}) => puzzleGridBase[y][x] = value"
-				/>
-				<div class="mini-puzzle-grid flex flex-col dynamic-gap text-xxs" v-if="false">
-					<div
-						class="flex flex-row dynamic-gap"
-						v-for="(row, y) in puzzleGridBase"
-						:key="y"
-					>
-						<div
-							class="min-h-[13px] min-w-[13px] flex-1 bg-gray-50 border flex items-center justify-center aspect-square border-gray-400 -m-px"
+				>
+					<template v-slot="{ x, y, index }">
+						<PuzzleInputField
+							v-model="puzzleGridBase[y][x]"
+							inputmode="numeric"
+							enterkeyhint="next"
+							:ref="(el) => setRef(el, { x, y, index })"
+							:index="index"
+							:disabled="toggleInputMode"
 							:class="{
-								'double-border-right': x === doubleBorderRight,
-								'double-border-bottom': y === doubleBorderBottom
+								'bg-blue-100': puzzleGridBase[y][x] === '0',
+								'bg-red-100': puzzleGridBase[y][x] === '1',
 							}"
-							v-for="(cell, x) in row"
-							:key="x"
-						>
-							<input type="text" v-model="puzzleGridBase[y][x]" class="min-h-[13px] min-w-[13px] p-0 m-0 border-0 bg-transparent focus:border-0 focus:ring-0 text-center text-xs text-[11px] h-full w-full aspect-square flex align-middle">
-						</div>
-					</div>
-				</div>
+						/>
+						<button
+							class="absolute top-0 left-0 z-20 w-full h-full touch-manipulation"
+							@click="toggleValue(x, y, index)"
+							v-if="toggleInputMode"
+						></button>
+					</template>
+				</PuzzleInputTable>
 			</div>
 		</main>
 		</div>
@@ -54,8 +66,9 @@
 
 <script setup>
 import { useDebounceFn } from '@vueuse/core';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUpdate, onMounted, ref, watch, watchEffect } from 'vue';
 import PuzzleInputTable from '@/components/puzzle-input/PuzzleInputTable.vue';
+import PuzzleInputField from '@/components/puzzle-input/PuzzleInputField.vue';
 
 const width = ref(10);
 const height = ref(10);
@@ -72,21 +85,24 @@ const gapSize = computed(() => {
 	return '1px';
 })
 
+const toggleInputMode = ref(false);
+
 const puzzleGridBase = ref([]);
-const doubleBorderRight = computed(() => {
-	if (puzzleGridBase.value.length < 6) return null;
-	const width = puzzleGridBase.value[0].length;
-	if (width < 6) return null;
-	if (width % 2 === 1) return null;
-	return (width / 2 - 1);
-})
-const doubleBorderBottom = computed(() => {
-	const height = puzzleGridBase.value.length;
-	if (height < 6) return null;
-	if (height % 2 === 1) return null;
-	return (height / 2 - 1);
-})
-const updatePuzzleGridBase = (w, h) => {
+
+const toggleValue = (x, y, index) => {
+	console.log('toggle');
+	const current = puzzleGridBase.value[y][x];
+	console.log({ current});
+	if (current === '0') {
+		puzzleGridBase.value[y][x] = '1';
+	} else if (current === '1') {
+		puzzleGridBase.value[y][x] = ' ';
+	} else {
+		puzzleGridBase.value[y][x] = '0';
+	}
+}
+
+const updatePuzzleGridBase = (w = width, h = height) => {
 	if (w < 4) {
 		width.value = 4;
 	} else if (w > 16) {
@@ -112,28 +128,42 @@ const updatePuzzleGridBase = (w, h) => {
 	if (diffHeight < 0) {
 		arrCopy.splice(diffHeight, -diffHeight);
 	} else if (diffHeight > 0) {
-		arrCopy.push(...Array(diffHeight).fill(null).map(() => Array(w).fill(null)));
+		arrCopy.push(...Array(diffHeight).fill(' ').map(() => Array(w).fill(' ')));
 	}
 
 	arrCopy = arrCopy.map(row => {
 		if (!Array.isArray(row)) {
-			return Array(w).fill(null);
+			return Array(w).fill(' ');
 		}
 		const rowWidth = row.length;
 		if (rowWidth > w) {
 			return row.slice(0, w);
 		} else if (rowWidth < w) {
-			const r2 = [...row, ...Array(w - rowWidth).fill(null)];
+			const r2 = [...row, ...Array(w - rowWidth).fill(' ')];
 			return r2;
 		} else return [...row];
 	})
 	puzzleGridBase.value = arrCopy;
 }
 onMounted(() => updatePuzzleGridBase(width.value, height.value));
-const debounceUpdatePuzzleGridBase = useDebounceFn(updatePuzzleGridBase, 500);
-watch([width, height], ([w, h]) => {
-	debounceUpdatePuzzleGridBase(w, h);
+
+const resetGridValues = () => {
+	for (let y = 0; y < height.value; y++) {
+		for (let x = 0; x < width.value; x++) {
+			puzzleGridBase[y][x] = ' ';
+		}
+	}
+}
+
+const els = ref([]);
+onBeforeUpdate(() => {
+	els.value = [];
 })
+const setRef = (el, { index }) => {
+	const el2 = el?.el;
+	if (!el2) return;
+	els.value[index] = el2;
+}
 </script>
 
 <style scoped>
