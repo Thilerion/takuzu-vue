@@ -1,3 +1,4 @@
+import { useSharedPuzzleToggle } from "@/composables/use-puzzle-toggle";
 import { SimpleBoard } from "@/lib";
 import { EMPTY, ONE, ZERO } from "@/lib/constants";
 import { getRandomTransformation } from "@/lib/helpers/grid-transformations";
@@ -237,16 +238,10 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 		},
 		toggle({ x, y, value, prevValue }) {
 			const previous = prevValue ?? this.board.grid[y][x];
-
+			
 			if (value == null) {
-				const toggleMode = useSettingsStore().toggleMode;
-				if (previous === EMPTY) {
-					value = unref(toggleMode);
-				} else if (previous === ZERO) {
-					value = toggleMode === ZERO ? ONE : EMPTY;
-				} else if (previous === ONE) {
-					value = toggleMode === ZERO ? EMPTY : ZERO;
-				}
+				const { toggle } = useSharedPuzzleToggle();
+				value = toggle(previous);
 			}
 
 			this.makeMove({ x, y, value, prevValue: previous });

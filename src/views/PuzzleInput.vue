@@ -72,6 +72,7 @@ import { computed, onBeforeUpdate, onMounted, ref, watch, watchEffect } from 'vu
 import PuzzleInputTable from '@/components/puzzle-input/PuzzleInputTable.vue';
 import PuzzleInputField from '@/components/puzzle-input/PuzzleInputField.vue';
 import { EMPTY, ONE, ZERO } from '@/lib/constants';
+import { useSharedPuzzleToggle } from '@/composables/use-puzzle-toggle';
 
 const width = ref(10);
 const height = ref(10);
@@ -101,17 +102,15 @@ const toggleInputMode = ref(false);
 
 const puzzleGridBase = ref([]);
 
+const { toggle } = useSharedPuzzleToggle();
 const toggleValue = (x, y, index) => {
-	console.log('toggle');
-	const current = puzzleGridBase.value[y][x];
-	console.log({ current});
-	if (current === '0') {
-		puzzleGridBase.value[y][x] = '1';
-	} else if (current === '1') {
-		puzzleGridBase.value[y][x] = '';
-	} else {
-		puzzleGridBase.value[y][x] = '0';
+	let current = puzzleGridBase.value[y][x];
+	if (current !== ONE && current !== ZERO) {
+		current = EMPTY;
 	}
+	let value = toggle(current);
+	if (value === EMPTY) value = '';
+	puzzleGridBase.value[y][x] = value;
 }
 
 const updatePuzzleGridBase = (w = width, h = height) => {
