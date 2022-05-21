@@ -13,8 +13,7 @@
 					<input type="checkbox" v-model="toggleInputMode">
 					Use toggle input mode
 				</label>
-				</div>
-				
+				</div>				
 				<PuzzleInputTable
 					v-if="puzzleGridBase && puzzleGridBase?.[0] != null"
 					:grid="puzzleGridBase"
@@ -43,7 +42,13 @@
 					</template>
 				</PuzzleInputTable>
 
-				<div class="py-4 px-0.5">
+				<div class="my-2">
+					<InputValidityDisplay
+						v-bind="inputSolutionsDataRaw"
+					/>
+				</div>
+
+				<div class="my-2 px-0.5">
 				<BaseButton
 					@click="showPuzzleStrings = !showPuzzleStrings"
 					class="w-full -mb-0.5 transition-colors duration-500"
@@ -87,11 +92,12 @@ import PuzzleInputField from '@/components/puzzle-input/PuzzleInputField.vue';
 import { EMPTY, ONE, ZERO } from '@/lib/constants';
 import { useSharedPuzzleToggle } from '@/composables/use-puzzle-toggle';
 import GridControls from '../components/puzzle-input/GridControls.vue';
-import { refAutoReset, useClipboard, useSessionStorage, useStorage } from '@vueuse/core';
+import { refAutoReset, toReactive, useClipboard, useSessionStorage, useStorage } from '@vueuse/core';
 import { puzzleGridToString, puzzleStringToGrid, shortenPuzzleString } from '@/components/puzzle-input/convert';
 import { chunk } from '@/utils/array.utils';
 import ExpandTransition from './transitions/ExpandTransition.vue';
 import { usePuzzleInputSolvable } from '@/components/puzzle-input/usePuzzleInputSolvable';
+import InputValidityDisplay from '@/components/puzzle-input/InputValidityDisplay.vue';
 
 const config = useSessionStorage('takuzu_puzzle-input-config', {
 	width: 10,
@@ -342,7 +348,9 @@ const setMultipleValuesFromString = (values = '', { index }) => {
 	setFocusToCell(index + parsedValues.length, index);
 }
 
-const { solutions } = usePuzzleInputSolvable(puzzleGridBase, isValidPuzzleGrid, gridDimensions);
+const inputSolutionsData = usePuzzleInputSolvable(puzzleGridBase, isValidPuzzleGrid, gridDimensions);
+
+const inputSolutionsDataRaw = toReactive(inputSolutionsData);
 </script>
 
 <style scoped>

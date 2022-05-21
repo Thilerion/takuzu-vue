@@ -2,7 +2,7 @@ import { SimpleBoard } from "@/lib";
 import { EMPTY, ONE, ZERO } from "@/lib/constants";
 import { quickSolve } from "@/lib/solver";
 import { count } from "@/lib/utils";
-import { useDebounceFn } from "@vueuse/core";
+import { and, useDebounceFn } from "@vueuse/core";
 import { computed, reactive, toRaw, toRefs, watch, watchEffect } from "vue";
 
 const MAX_MASK_RATIO = 0.9;
@@ -45,7 +45,7 @@ export const usePuzzleInputSolvable = (gridRef, isValidGridRef, dimensionsRef) =
 		solutions: 0,
 		solvable: false,
 		validPuzzle: false,
-		validInput: isValidGridRef,
+		validInput: shouldRunSolver,
 		maskRatio,
 	})
 
@@ -58,8 +58,15 @@ export const usePuzzleInputSolvable = (gridRef, isValidGridRef, dimensionsRef) =
 		Object.assign(data, { solvable, validPuzzle, solutions: numSolutions });
 	}, 300, { maxWait: 2000 });
 
-	watch(() => shouldRunSolver.value ? parsedGrid.value : null, (grid) => {
-		if (grid == null) return;
+	watch([shouldRunSolver, parsedGrid], ([shouldRun, grid]) => {
+		if (!shouldRun) {			
+			data.solutions = 0;
+			data.solvable = false;
+			data.validPuzzle = false;
+			console.warn('not running');
+			return;
+		};
+		console.log('running');
 		runSolver(grid);
 	}, { deep: true })
 

@@ -1,0 +1,1 @@
+export const asPercentage = (value) => value.toLocaleString(undefined,{style: 'percent', minimumFractionDigits:1, maximumFractionDigits: 1});
