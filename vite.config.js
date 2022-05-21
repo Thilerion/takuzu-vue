@@ -62,6 +62,13 @@ export default defineConfig(({ command, mode }) => {
 				})()
 			),
 			__PKG_VERSION__: JSON.stringify(process.env.npm_package_version),
+		},
+		test: {
+			deps: {
+				inline: [
+					'date-fns/esm', // required by vitest (for now) due to ESM/CJS conflict
+				]
+			}
 		}
 	}
 })

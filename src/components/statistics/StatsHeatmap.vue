@@ -50,11 +50,10 @@
 </template>
 
 <script setup>
-import { subYears, startOfDay, addDays, differenceInCalendarISOWeeks, eachDayOfInterval, isWithinInterval } from 'date-fns/esm';
+import { subYears, startOfDay, addDays, differenceInCalendarISOWeeks, eachDayOfInterval, isWithinInterval, endOfDay } from 'date-fns/esm';
 import { formatBasicSortableDateKey, getWeekdayFromDate, getMonthNameShort, getWeekDaysShort, timeFormatter } from '@/utils/date.utils.js';
 import { computed, inject, ref } from 'vue';
 import { getItemsByDate } from '@/services/stats/dates.js';
-import { endOfDay } from 'date-fns';
 import { calculateScoresByDate, mapScoreToArray, getValueWithinRange } from './heatmap-data.js';
 
 const historyItems = inject('historyItems', () => [], true);
