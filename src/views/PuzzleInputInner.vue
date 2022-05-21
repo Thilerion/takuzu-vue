@@ -4,10 +4,11 @@
 				class="bg-white rounded px-4 pt-4 pb-2 shadow"
 				@reset="resetGridValues"
 				@set-dimensions="(w, h) => updatePuzzleGridBase(w, h)"
+				:grid-exists="puzzleGridBase != null"
 				v-model="config"
 			/>
 
-			<div class="bg-white rounded px-1 py-4 shadow full-bleed">
+			<div class="bg-white rounded px-1 py-4 shadow full-bleed" v-if="puzzleGridBase != null">
 				<div class="mb-2 px-2">
 				<label>
 					<input type="checkbox" v-model="toggleInputMode">
@@ -45,6 +46,7 @@
 
 				<div class="my-2">
 					<InputValidityDisplay
+						v-if="puzzleGridBase != null"
 						v-bind="inputSolutionsDataRaw"
 					/>
 				</div>
@@ -82,6 +84,9 @@
 				</div>
 				</ExpandTransition>
 				</div>
+			</div>
+			<div class="bg-white rounded px-6 text-center text-lg py-4 grid place-items-center h-40 shadow full-bleed" v-else>
+				<div>Select grid dimensions to start</div>
 			</div>
 		</main>
 </template>
@@ -127,7 +132,12 @@ const puzzleGridBase = useSessionStorage('takuzu_puzzle-input-grid', [], {
 			if (!v) return null;
 			try {
 				const parsed = JSON.parse(v);
+				
 				if (!Array.isArray(parsed) || !Array.isArray(parsed?.[0])) {
+					return null;
+				}
+				const flat = parsed.flat().join('');
+				if (!flat.includes('1') && !flat.includes('0')) {
 					return null;
 				}
 				return parsed;
@@ -146,6 +156,7 @@ const puzzleGridBase = useSessionStorage('takuzu_puzzle-input-grid', [], {
 		}
 	}
 })
+
 const isValidPuzzleGrid = computed(() => {
 	const grid = puzzleGridBase.value;
 	if (!Array.isArray(grid)) return false;
@@ -159,6 +170,7 @@ const isValidPuzzleGrid = computed(() => {
 	return true;
 })
 const showPuzzleStrings = ref(false);
+
 const puzzleStringsEl = ref(null);
 const scrollToPuzzleStrings = () => {
 	const el = puzzleStringsEl.value;
@@ -178,6 +190,7 @@ const puzzleGridStrShort = computed(() => {
 	return shortenPuzzleString(puzzleGridStrLong.value, dimensions, { padEnd: false });
 })
 const puzzleGridStrLongFormatted = computed(() => {
+	if (!isValidPuzzleGrid.value) return '';
 	const value = puzzleGridStrLong.value;
 	const chunked = chunk(value.split(''), gridDimensions.value.width).map(row => row.join('')).join(' ');
 	return chunked;

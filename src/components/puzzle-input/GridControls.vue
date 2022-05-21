@@ -16,7 +16,10 @@
 			Force square grid
 		</label>
 		<div class="flex flex-row gap-2">
-			<BaseButton @click="emitSetDimensions">Update</BaseButton>
+			<BaseButton @click="emitSetDimensions">
+				<span v-if="gridExists">Update</span>
+				<span v-else>Create</span>
+			</BaseButton>
 			<BaseButton @click="emitReset">Reset</BaseButton>
 		</div>
 	</div>
@@ -34,6 +37,10 @@ const emit = defineEmits([
 const props = defineProps({
 	modelValue: {
 		type: Object,
+		required: true
+	},
+	gridExists: {
+		type: Boolean,
 		required: true
 	}
 })
