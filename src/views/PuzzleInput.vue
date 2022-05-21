@@ -41,6 +41,8 @@
 					<template v-slot="{ x, y, index }">
 						<PuzzleInputField
 							v-model="puzzleGridBase[y][x]"
+							@skip-focus="(val) => skipFocusFrom(val, { x, y, index })"
+							@set-multiple="(val) => setMultipleValuesFromString(val, { x, y, index })"
 							inputmode="numeric"
 							enterkeyhint="next"
 							:ref="(el) => setRef(el, { x, y, index })"
@@ -69,6 +71,7 @@ import { useDebounceFn } from '@vueuse/core';
 import { computed, onBeforeUpdate, onMounted, ref, watch, watchEffect } from 'vue';
 import PuzzleInputTable from '@/components/puzzle-input/PuzzleInputTable.vue';
 import PuzzleInputField from '@/components/puzzle-input/PuzzleInputField.vue';
+import { EMPTY, ONE, ZERO } from '@/lib/constants';
 
 const width = ref(10);
 const height = ref(10);
@@ -85,6 +88,15 @@ const gapSize = computed(() => {
 	return '1px';
 })
 
+const xyToIndex = (x, y) => {
+	return y * width.value + x;
+}
+const indexToXY = (index) => {
+	const x = index % width.value;
+	const y = Math.floor(index / width.value);
+	return { x, y };
+}
+
 const toggleInputMode = ref(false);
 
 const puzzleGridBase = ref([]);
@@ -96,7 +108,7 @@ const toggleValue = (x, y, index) => {
 	if (current === '0') {
 		puzzleGridBase.value[y][x] = '1';
 	} else if (current === '1') {
-		puzzleGridBase.value[y][x] = ' ';
+		puzzleGridBase.value[y][x] = '';
 	} else {
 		puzzleGridBase.value[y][x] = '0';
 	}
@@ -150,11 +162,10 @@ onMounted(() => updatePuzzleGridBase(width.value, height.value));
 const resetGridValues = () => {
 	for (let y = 0; y < height.value; y++) {
 		for (let x = 0; x < width.value; x++) {
-			puzzleGridBase[y][x] = ' ';
+			puzzleGridBase[y][x] = '';
 		}
 	}
 }
-
 const els = ref([]);
 onBeforeUpdate(() => {
 	els.value = [];
@@ -163,6 +174,75 @@ const setRef = (el, { index }) => {
 	const el2 = el?.el;
 	if (!el2) return;
 	els.value[index] = el2;
+}
+
+const skipFocusFrom = (amount, {x, y, index}) => {
+	const focusTo = index + amount;
+	const emptyAmount = amount - 1;
+	for (let gy = y, i = 0; gy < height.value; gy++) {
+		for (let gx = x; gx < width.value; gx++, i++) {
+			
+			if (i <= emptyAmount) {
+				puzzleGridBase.value[gy][gx] = '';
+				console.log('setting empty');
+
+				
+			};
+			if (i === emptyAmount) {
+				const el = els.value[focusTo];
+				el?.focus?.();
+				return;
+			}
+		}
+	}
+}
+
+const isMultipleEmptyValues = (str) => {
+	if (str.length < 1) return false;
+	const num = parseInt(str, 10);
+	if (Number.isNaN(num) || !num || num <= 1) {
+		return false;
+	}
+	return num;
+}
+
+const setValueWithIndex = (value, index) => {
+	const { x, y } = indexToXY(index);
+	if (x >= width.value || y >= height.value) return;
+	puzzleGridBase.value[y][x] = value;
+}
+
+const setFocusToCell = (idx, currentIdx) => {
+	const el = els.value[idx];
+	if (!el) {
+		if (currentIdx != null) {
+			const curEl = els.value[currentIdx];
+			curEl.blur();
+		}
+		return;
+	}
+	el.focus();
+}
+
+const setMultipleValuesFromString = (values = '', { index }) => {
+	console.log({values})
+	const parsedValues = values.flatMap(v => {
+		if (v === ONE || v === ZERO) {
+			return v;
+		} else if (v === EMPTY || v === ' ') {
+			return '';
+		}
+		const emptyValues = isMultipleEmptyValues(v);
+		if (emptyValues) {
+			return Array(emptyValues).fill(EMPTY);
+		}
+		return [];
+	})
+	for (let i = 0; i < parsedValues.length; i++) {
+		const value = parsedValues[i];
+		setValueWithIndex(value, index + i);
+	}
+	setFocusToCell(index + parsedValues.length, index);
 }
 </script>
 

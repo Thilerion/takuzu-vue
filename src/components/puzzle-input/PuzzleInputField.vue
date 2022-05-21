@@ -1,7 +1,7 @@
 <template>
 	<input
 		type="text"
-		:value="modelValue"
+		:value="inputValue"
 		class="w-full border-0 p-1 m-0 aspect-square h-full text-center"
 
 		@input="handleInputChange"
@@ -9,13 +9,15 @@
 		@keydown.delete="handleCellDelete"
 		@focus="handleFocus"
 		@blur="handleBlur"
+		@paste="handlePaste"
 
 		ref="el"
 	>
 </template>
 
 <script setup>
-import { computed, nextTick, ref, watch } from 'vue';
+import { ONE, ZERO } from '@/lib/constants';
+import { computed, nextTick, ref, toRef, watch } from 'vue';
 
 const props = defineProps({
 	modelValue: [String, Number],
@@ -24,21 +26,51 @@ const props = defineProps({
 		required: true
 	}
 })
-const emit = defineEmits(['update:modelValue']);
+const mv = toRef(props, 'modelValue');
+const emit = defineEmits(['update:modelValue', 'skip-focus', 'set-multiple']);
+const inputValue = computed({
+	get() {
+		const v = mv.value;
+		if (v === ZERO || v === ONE) return v;
+		return '';
+	},
+	set(value) {
+		if (value === ZERO || value === ONE) {
+			emit('update:modelValue', value);
+			el.value.value = value;
+		} else if (value === null || value === ' ' || value === '') {
+			emit('update:modelValue', '');
+			el.value.value = null;
+		} else {
+			emit('update:modelValue', '');
+			el.value.value = null;
+		}
+	}
+})
 
 const el = ref(null);
 defineExpose({ el });
 
-const hasCellValue = computed(() => props.modelValue !== '' && props.modelValue !== null);
+const hasCellValue = computed(() => inputValue.value !== '' && inputValue.value !== null);
 
 const handleInputChange = (ev) => {
-	emit('update:modelValue', ev.data);
-	if (ev.inputType === 'insertText' && (ev.data === '1' || ev.data === '0' || ev.data === ' ' || ev.data === '.')) {
-		emit('update:modelValue', ev.data);
-		const next = document.querySelector(`[data-index="${props.index + 1}"] input[type="text"]`);
-		next?.focus?.();
-	}
-	
+	if (typeof ev.data === 'string') {
+		if (ev.inputType === 'insertText' && (ev.data === '1' || ev.data === '0' || ev.data === ' ' || ev.data === '.')) {
+			inputValue.value = ev.data;
+			const next = document.querySelector(`[data-index="${props.index + 1}"] input[type="text"]`);
+			next?.focus?.();
+			ev.preventDefault();
+			return;
+		} else if (ev.inputType === 'insertText') {
+			const num = parseInt(ev.data, 10);
+			if (!Number.isNaN(num)) {
+				emit('set-multiple', [`${num}`]);
+			}
+		}
+		inputValue.value = '';
+	} else if (ev.inputType?.startsWith?.('delete') && ev.data == null) {
+		inputValue.value = null;
+	}	
 }
 const handleKeydown = (ev) => {
 	
@@ -46,15 +78,25 @@ const handleKeydown = (ev) => {
 const handleFocus = (ev) => {
 
 }
+const handlePaste = (ev) => {
+	const data = (ev.clipboardData ?? window.clipboardData)?.getData('text') ?? '';
+	if (data.length === 0) {
+		return;
+	} else {
+		ev.preventDefault();
+		emit('set-multiple', data.split(''));		
+	}
+}
 const handleBlur = (ev) => {
 	if (ev.target.value?.length > 1) {
 		const value = ev.target.value.at(-1);
-		emit('update:modelValue', value);
+		inputValue.value = value;
 		ev.target.value = value;
 	}
 }
 const handleCellDelete = (ev) => {
-	if (!hasCellValue.value || props.modelValue === ' ') {
+	inputValue.value = '';
+	if (!hasCellValue.value || inputValue.value === ' ') {
 		const prev = document.querySelector(`[data-index="${props.index - 1}"] input[type="text"]`);
 		prev?.focus?.();
 		if (!hasCellValue.value) {
