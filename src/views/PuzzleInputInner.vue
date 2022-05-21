@@ -24,6 +24,7 @@
 							v-model="puzzleGridBase[y][x]"
 							@skip-focus="(val) => skipFocusFrom(val, { x, y, index })"
 							@set-multiple="(val) => setMultipleValuesFromString(val, { x, y, index })"
+							@import-export-string="importExportString"
 							inputmode="numeric"
 							enterkeyhint="next"
 							:ref="(el) => setRef(el, { x, y, index })"
@@ -98,6 +99,7 @@ import { chunk } from '@/utils/array.utils';
 import ExpandTransition from './transitions/ExpandTransition.vue';
 import { usePuzzleInputSolvable } from '@/components/puzzle-input/usePuzzleInputSolvable';
 import InputValidityDisplay from '@/components/puzzle-input/InputValidityDisplay.vue';
+import { parseExportString } from '@/lib/utils';
 
 const config = useSessionStorage('takuzu_puzzle-input-config', {
 	width: 10,
@@ -351,6 +353,18 @@ const setMultipleValuesFromString = (values = '', { index }) => {
 const inputSolutionsData = usePuzzleInputSolvable(puzzleGridBase, isValidPuzzleGrid, gridDimensions);
 
 const inputSolutionsDataRaw = toReactive(inputSolutionsData);
+
+const importExportString = (str) => {
+	try {
+		const { width, height, boardStr } = parseExportString(str);
+		config.value.width = width;
+		config.value.height = height;
+		resetGridValues(width, height);
+		setMultipleValuesFromString(boardStr.split(''), { index: 0 });
+	} catch(e) {
+		console.warn(e);
+	}
+}
 </script>
 
 <style scoped>

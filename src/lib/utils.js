@@ -154,6 +154,11 @@ const exportStrRegex = /^\d{1,2}x\d{1,2};([.01]){4,}$/;
 export const isExportString = (str) => {
 	return exportStrRegex.test(str);
 }
+export const parseExportString = (str) => {
+	const [dimensions, boardStr] = str.split(';');
+	const [width, height] = dimensions.split('x').map(Number);
+	return { width, height, boardStr };
+}
 
 function getValidRectPuzzleDimensions() {
 	const sizes = [4, 6, 8, 10, 12, 14, 16, 18, 20];

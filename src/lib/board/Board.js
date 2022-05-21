@@ -1,5 +1,5 @@
 import { COLUMN, EMPTY, ONE, ROW, ZERO } from "../constants.js";
-import { array2d, cloneArray2d, columnIdToX, count, deducePuzzleDimensionsFromLength, generateColumnIds, generateRowIds, getCoordsForBoardSize, isExportString, isValidCellDigit, rowIdToY, shuffle } from "../utils.js";
+import { array2d, cloneArray2d, columnIdToX, count, deducePuzzleDimensionsFromLength, generateColumnIds, generateRowIds, getCoordsForBoardSize, isExportString, isValidCellDigit, parseExportString, rowIdToY, shuffle } from "../utils.js";
 import { validateBoard } from "../validate/board.js";
 import { BoardLine } from "./BoardLine.js";
 import { ThreesUnit } from "./ThreesUnit.js";
@@ -41,11 +41,8 @@ export class SimpleBoard {
 		const data = { width: null, height: null, boardStr: exportedStr };
 		const isExport = isExportString(exportedStr);
 		if (isExport) {
-			const [dimensions, boardStr] = exportedStr.split(';');
-			const [width, height] = dimensions.split('x').map(Number);
-			data.width = width;
-			data.height = height;
-			data.boardStr = boardStr;
+			const { width, height, boardStr } = parseExportString(exportedStr);
+			Object.assign(data, { width, height, boardStr });
 		} else {
 			const { width, height } = deducePuzzleDimensionsFromLength(exportedStr.length);
 			data.width = width;

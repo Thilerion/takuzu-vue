@@ -15,7 +15,7 @@
 			class="flex flex-row px-4 rounded h-6 items-center leading-none text-xs gap-x-4 w-fit whitespace-nowrap"
 		>
 			<div class="">Mask ratio</div>
-			<div>{{asPercentage(props.maskRatio)}}</div>
+			<div>{{asPercentage(props.maskRatio ?? 1)}}</div>
 		</div>
 	</div>
 </div>

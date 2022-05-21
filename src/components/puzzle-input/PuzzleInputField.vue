@@ -17,6 +17,7 @@
 
 <script setup>
 import { ONE, ZERO } from '@/lib/constants';
+import { isExportString } from '@/lib/utils';
 import { computed, nextTick, ref, toRef, watch } from 'vue';
 
 const props = defineProps({
@@ -27,7 +28,7 @@ const props = defineProps({
 	}
 })
 const mv = toRef(props, 'modelValue');
-const emit = defineEmits(['update:modelValue', 'skip-focus', 'set-multiple']);
+const emit = defineEmits(['update:modelValue', 'skip-focus', 'set-multiple', 'import-export-string']);
 const inputValue = computed({
 	get() {
 		const v = mv.value;
@@ -82,6 +83,9 @@ const handlePaste = (ev) => {
 	const data = (ev.clipboardData ?? window.clipboardData)?.getData('text') ?? '';
 	if (data.length === 0) {
 		return;
+	} else if (isExportString(data)) {
+		ev.preventDefault();
+		emit('import-export-string', data);
 	} else {
 		ev.preventDefault();
 		emit('set-multiple', data.split(''));		
