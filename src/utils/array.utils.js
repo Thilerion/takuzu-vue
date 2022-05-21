@@ -7,6 +7,22 @@ export function groupBy(arr, key, initialMap = {}) {
 	}, initialMap);
 }
 
+export function chunk(arr = [], size) {
+	if (size == null || size < 1) {
+		throw new TypeError(`Invalid value for size of chunks (${size})`);
+	}
+	if (size >= arr.length) {
+		return [[...arr]];
+	}
+	const chunked = [];
+	for (let i = 0; i < arr.length; i += size) {
+		const end = i + size;
+		const values = arr.slice(i, end);
+		chunked.push(values);
+	} 
+	return chunked;
+}
+
 export function sortAsc(arr) {
 	return [...arr].sort((a, b) => a - b);
 }
