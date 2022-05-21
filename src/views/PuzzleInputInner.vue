@@ -42,7 +42,26 @@
 						></button>
 					</template>
 				</PuzzleInputTable>
-				<div class="pt-4 w-full flex flex-col px-2 gap-y-2 box-border">
+
+				<div class="py-4 px-0.5">
+				<BaseButton
+					@click="showPuzzleStrings = !showPuzzleStrings"
+					class="w-full -mb-0.5 transition-colors duration-500"
+					:class="{
+						'!rounded-b-none': showPuzzleStrings,
+						'!bg-gray-100': !showPuzzleStrings
+					}"
+				>
+					<div class="w-full flex justify-between">
+						<span>Puzzle strings</span>
+						<icon-ic-outline-keyboard-arrow-down class="ml-auto transition-transform duration-500" :class="{
+							'rotate-180': showPuzzleStrings
+						}" />
+					</div>
+				</BaseButton>
+				<ExpandTransition @after-enter="scrollToPuzzleStrings" :duration="200">
+					<div v-show="showPuzzleStrings" ref="puzzleStringsEl">
+				<div class="pt-2 w-full flex flex-col px-3 gap-y-2 box-border border border-gray-200 border-t-transparent pb-3 rounded-b">
 					<div>Short</div>
 					<div class="max-w-full text-sm pr-1 pl-2 py-2 bg-gray-100 rounded mb-2">
 						<BaseButton class="float-right ml-2 mb-0.5 px-2 py-2 my-auto rounded border inline-block w-24" @click="copyShortStr">{{copyShortSuccess ? 'Copied!' : 'Copy'}}</BaseButton>
@@ -53,6 +72,9 @@
 						<BaseButton class="float-right ml-2 mb-0.5 px-2 py-2 my-auto rounded border inline-block w-24" @click="copyLongStr">{{copyLongSuccess ? 'Copied!' : 'Copy'}}</BaseButton>
 						<p class="break-words font-mono">{{puzzleGridStrLongFormatted}}</p>
 					</div>
+				</div>
+				</div>
+				</ExpandTransition>
 				</div>
 			</div>
 		</main>
@@ -68,6 +90,7 @@ import GridControls from '../components/puzzle-input/GridControls.vue';
 import { refAutoReset, useClipboard, useSessionStorage, useStorage } from '@vueuse/core';
 import { puzzleGridToString, puzzleStringToGrid, shortenPuzzleString } from '@/components/puzzle-input/convert';
 import { chunk } from '@/utils/array.utils';
+import ExpandTransition from './transitions/ExpandTransition.vue';
 
 const config = useSessionStorage('takuzu_puzzle-input-config', {
 	width: 10,
@@ -126,6 +149,14 @@ const isValidPuzzleGrid = computed(() => {
 	}
 	return true;
 })
+const showPuzzleStrings = ref(false);
+const puzzleStringsEl = ref(null);
+const scrollToPuzzleStrings = () => {
+	const el = puzzleStringsEl.value;
+	el?.scrollIntoView?.({
+		behavior: 'smooth'
+	})
+}
 const puzzleGridStrLong = computed(() => {
 	if (!isValidPuzzleGrid.value) return '';
 	const grid = puzzleGridBase.value;
