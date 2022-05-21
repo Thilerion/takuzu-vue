@@ -13,7 +13,8 @@ module.exports = {
 			'number': [
 				'Hammersmith One',
 				'sans-serif'
-			]
+			],
+			'mono': ['monospace']
 		},
 		screens: {
 			'sm': '576px',

@@ -42,6 +42,18 @@
 						></button>
 					</template>
 				</PuzzleInputTable>
+				<div class="pt-4 w-full flex flex-col px-2 gap-y-2 box-border">
+					<div>Short</div>
+					<div class="max-w-full text-sm pr-1 pl-2 py-2 bg-gray-100 rounded mb-2">
+						<BaseButton class="float-right ml-2 mb-0.5 px-2 py-2 my-auto rounded border inline-block w-24" @click="copyShortStr">{{copyShortSuccess ? 'Copied!' : 'Copy'}}</BaseButton>
+						<p class="break-all font-mono">{{puzzleGridStrShort}}</p>
+					</div>
+					<div>Long</div>
+					<div class="max-w-full text-sm pr-1 pl-2 py-2 bg-gray-100 rounded">
+						<BaseButton class="float-right ml-2 mb-0.5 px-2 py-2 my-auto rounded border inline-block w-24" @click="copyLongStr">{{copyLongSuccess ? 'Copied!' : 'Copy'}}</BaseButton>
+						<p class="break-words font-mono">{{puzzleGridStrLongFormatted}}</p>
+					</div>
+				</div>
 			</div>
 		</main>
 </template>
@@ -53,12 +65,105 @@ import PuzzleInputField from '@/components/puzzle-input/PuzzleInputField.vue';
 import { EMPTY, ONE, ZERO } from '@/lib/constants';
 import { useSharedPuzzleToggle } from '@/composables/use-puzzle-toggle';
 import GridControls from '../components/puzzle-input/GridControls.vue';
-import { useSessionStorage, useStorage } from '@vueuse/core';
-import { puzzleGridToString, puzzleStringToGrid } from '@/components/puzzle-input/convert';
+import { refAutoReset, useClipboard, useSessionStorage, useStorage } from '@vueuse/core';
+import { puzzleGridToString, puzzleStringToGrid, shortenPuzzleString } from '@/components/puzzle-input/convert';
+import { chunk } from '@/utils/array.utils';
 
-const puzzleGridBase = ref();
+const config = useSessionStorage('takuzu_puzzle-input-config', {
+	width: 10,
+	height: 10,
+	forceSquareGrid: false
+}, {
+	deep: true,
+	writeDefaults: true,	
+});
+
 const width = computed(() => puzzleGridBase.value?.[0]?.length ?? 0);
 const height = computed(() => puzzleGridBase.value?.length ?? 0);
+const gridDimensions = computed(() => {
+	return {
+		width: width.value,
+		height: height.value
+	}
+})
+
+const puzzleGridBase = useSessionStorage('takuzu_puzzle-input-grid', [], {
+	deep: true,
+	writeDefaults: false,
+	serializer: {
+		read(v) {
+			if (!v) return null;
+			try {
+				const parsed = JSON.parse(v);
+				if (!Array.isArray(parsed) || !Array.isArray(parsed?.[0])) {
+					return null;
+				}
+				return parsed;
+			} catch(e) {
+				console.warn(e);
+				console.warn('Could not read input grid from storage');
+				return null;
+			}
+		},
+		write(v) {
+			if (!Array.isArray(v)) return "";
+			const height = v?.length
+			const width = v?.[0]?.length;
+			if (!height || !width) return "";
+			return JSON.stringify(v);
+		}
+	}
+})
+const isValidPuzzleGrid = computed(() => {
+	const grid = puzzleGridBase.value;
+	if (!Array.isArray(grid)) return false;
+	if (!Array.isArray(grid[0])) return false;
+	if (config.value) {
+		const { width, height } = config.value;
+		if (width && height) {
+			if (grid.length !== height || grid[0].length !== width) return false;
+		}
+	}
+	return true;
+})
+const puzzleGridStrLong = computed(() => {
+	if (!isValidPuzzleGrid.value) return '';
+	const grid = puzzleGridBase.value;
+	const dimensions = { width: config.value.width, height: config.value.height };
+	return puzzleGridToString(grid, dimensions, { shorten: false });
+})
+const puzzleGridStrShort = computed(() => {
+	if (!isValidPuzzleGrid.value) return '';
+	const dimensions = { width: config.value.width, height: config.value.height };
+	return shortenPuzzleString(puzzleGridStrLong.value, dimensions, { padEnd: false });
+})
+const puzzleGridStrLongFormatted = computed(() => {
+	const value = puzzleGridStrLong.value;
+	const chunked = chunk(value.split(''), gridDimensions.value.width).map(row => row.join('')).join(' ');
+	return chunked;
+})
+const copyValueToClipboard = async (value = '') => {
+	try {
+		await navigator.clipboard.writeText(value);
+		return true;
+	} catch(e) {
+		console.warn(e);
+		return false;
+	}
+	
+}
+const copyShortSuccess = refAutoReset(false, 4000);
+const copyLongSuccess = refAutoReset(false, 4000);
+const copyShortStr = () => {
+	copyValueToClipboard(puzzleGridStrShort.value).then(() => {
+		copyShortSuccess.value = true;
+	}).catch(() => copyShortSuccess.value = false);
+}
+const copyLongStr = () => {
+	copyValueToClipboard(puzzleGridStrLong.value).then(() => {
+		copyLongSuccess.value = true;
+	}).catch(() => copyLongSuccess.value = false);
+}
 
 const gapSize = computed(() => {
 	// if (width.value < 10) return '4px';
@@ -77,29 +182,15 @@ const indexToXY = (index) => {
 
 const toggleInputMode = ref(false);
 
-
-const config = useSessionStorage('takuzu_puzzle-input-config', {
-	width: 10,
-	height: 10,
-	forceSquareGrid: false
-}, {
-	deep: true,
-	writeDefaults: true,	
-});
-
 const createEmptyPuzzleGrid = (width, height) => {
-	try {
-		console.log(config);
-		const w = width ?? config.value.width;
-		const h = height ?? config.value.height;
-		return Array(h).fill(null).map(() => Array(w).fill(''));
-	} catch(e) {
-		console.warn(e);
-	}
-	
+	const w = width ?? config.value.width;
+	const h = height ?? config.value.height;
+	return Array(h).fill(null).map(() => Array(w).fill(''));	
 }
-const resetGridValues = (width = width.value, height) => {
-	const grid = createEmptyPuzzleGrid(width, height);
+const resetGridValues = (width, height) => {
+	const w = width ?? config.value.width;
+	const h = height ?? config.value.height;
+	const grid = createEmptyPuzzleGrid(w, h);
 	puzzleGridBase.value = grid;
 }
 const { toggle } = useSharedPuzzleToggle();
