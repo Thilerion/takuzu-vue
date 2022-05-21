@@ -1,12 +1,16 @@
 <template>
+<div ref="tableWrapperEl" class="flex justify-center">
 <div
-	class="relative border-2 border-slate-800"
+	class="relative border-2 border-slate-800 inline-block"
 	:style="{
 		'font-size': `${approxBoxSize * 0.8}px`
 	}"
 >
 	<table
-		class="table-fixed mx-auto w-full border-0"
+		class="table-fixed mx-auto border-0"
+		:style="{
+			width: tableWidth
+		}"
 		:data-width="width"
 		:data-height="height"
 		:data-odd="isOdd"
@@ -43,6 +47,7 @@
 		<MiddleTriangle class="row-start-1 col-start-2 self-start" :size="`clamp(5px, ${triangleSize}px, 0.6rem)`" dir="down" />
 	</div>
 </div>
+</div>
 </template>
 
 <script setup>
@@ -64,13 +69,29 @@ const width = computed(() => props.grid[0].length);
 const height = computed(() => props.grid.length);
 const aspectRatio = computed(() => height.value / width.value);
 
+const tableWrapperEl = ref(null);
 const tableEl = ref(null);
+const { width: wrapperWidth, height: wrapperHeight } = useElementSize(tableWrapperEl, { width: window.innerWidth - 28, height: (window.innerWidth - 10) * aspectRatio.value }, { box: 'content-box' });
 const { width: elWidth, height: elHeight } = useElementSize(tableEl, { width: window.innerWidth - 28, height: (window.innerWidth - 10) * aspectRatio.value }, { box: 'content-box' });
+
+const approxBoxSizeFromWrapper = computed(() => {
+	return Math.floor(wrapperWidth.value / width.value);
+})
 const approxBoxSize = computed(() => {
 	return Math.floor(elWidth.value / width.value);
 })
 const triangleSize = computed(() => {
 	return approxBoxSize.value * 0.2 - 6;
+})
+const tableWidth = computed(() => {
+	if (approxBoxSizeFromWrapper.value > 50) {
+		const val = 50 * width.value;
+		if (val >= wrapperWidth.value) {
+			return '100%';
+		}
+		return `${50 * width.value}px`;
+	}
+	return '100%';
 })
 
 const isOdd = computed(() => {
