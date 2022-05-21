@@ -91,6 +91,7 @@ import { refAutoReset, useClipboard, useSessionStorage, useStorage } from '@vueu
 import { puzzleGridToString, puzzleStringToGrid, shortenPuzzleString } from '@/components/puzzle-input/convert';
 import { chunk } from '@/utils/array.utils';
 import ExpandTransition from './transitions/ExpandTransition.vue';
+import { usePuzzleInputSolvable } from '@/components/puzzle-input/usePuzzleInputSolvable';
 
 const config = useSessionStorage('takuzu_puzzle-input-config', {
 	width: 10,
@@ -340,6 +341,8 @@ const setMultipleValuesFromString = (values = '', { index }) => {
 	}
 	setFocusToCell(index + parsedValues.length, index);
 }
+
+const { solutions } = usePuzzleInputSolvable(puzzleGridBase, isValidPuzzleGrid, gridDimensions);
 </script>
 
 <style scoped>
