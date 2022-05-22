@@ -1,5 +1,5 @@
 <template>
-	<button class="icon-btn active:hover-none:bg-gray-300 hover:hover-hover:bg-gray-200 active:hover-hover:bg-gray-300">
+	<button class="icon-btn active:hover-none:bg-gray-300 hover:hover-hover:bg-gray-200 active:hover-hover:bg-gray-300 flex items-center justify-center rounded-full outline-none select-none p-2">
 		<slot />
 	</button>
 </template>
@@ -18,7 +18,7 @@ export default {
 		name: {
 			type: String,
 			// required: true
-		}
+		},
 	},
 	computed: {
 		sizePx() {
@@ -33,7 +33,6 @@ export default {
 	font-size: calc(v-bind(scale) * 16px);
 }
 .icon-btn {
-	@apply flex items-center justify-center rounded-full outline-none text-current select-none p-2;
 	-webkit-tap-highlight-color: transparent;
 	transition-property: background color opacity;
 	transition-duration: 0.15s;
