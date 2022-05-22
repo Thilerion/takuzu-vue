@@ -6,11 +6,11 @@ function initWorker() {
 		console.error('Cannot init analyze-puzzle worker; it is already created.');
 		return;
 	}
+	console.log('Initializing analysis worker');
 	const worker = new Worker(
 		new URL('./analyze-puzzle.worker.js', import.meta.url),
 		{ type: 'module' }
 	);
-	console.log({ worker});
 	currentWorker = worker;
 	initReceiver();
 }
@@ -47,5 +47,19 @@ function initReceiver() {
 		}
 	})
 }
+function terminate() {
+	console.log('Terminating analysis worker');
+	try {
+		if (!hasWorker()) {
+			return true;
+		}
+		currentWorker.terminate();
+		currentWorker = null;
+		return true;
+	} catch(e) {
+		console.warn(e);
+		return false;
+	}
+}
 
-export { initWorker, destroyWorker, send };
+export { initWorker, destroyWorker, send, terminate };
