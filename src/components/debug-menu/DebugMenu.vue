@@ -1,12 +1,14 @@
 <template>
 	<div class="text-left">
-		<h2 class="font-medium mb-1 text-gray-700/90 tracking-wide px-6">Debug mode options</h2>
-		<div class="divide-y divide-gray-150 bg-white px-4 rounded-xl shadow-lg">
+		<BasicListHeader>Debug mode options</BasicListHeader>
+		<BasicLinkList>
+			<BasicLinkListItem>
 			<router-link class="list-btn" to="/showcase">Open component showcase</router-link>
-			<button class="list-btn" @click="disableDebugMode">Disable debug mode</button>
-			<button class="list-btn" @click="clearPuzzleDbAction">Clear pregen puzzle db</button>
-			<button class="list-btn" @click="initPregenPuzzles">Pregen puzzles</button>
-		</div>
+			</BasicLinkListItem>
+			<BasicLinkListItem><button class="list-btn" @click="disableDebugMode">Disable debug mode</button></BasicLinkListItem>
+			<BasicLinkListItem><button class="list-btn" @click="clearPuzzleDbAction">Clear pregen puzzle db</button></BasicLinkListItem>
+			<BasicLinkListItem><button class="list-btn" @click="initPregenPuzzles">Pregen puzzles</button></BasicLinkListItem>
+		</BasicLinkList>
 		<div class="db-results relative">
 			<transition-group name="t-note">
 			<p class="text-sm text-left mt-4 px-6 font-bold tracking-wider text-gray-600" v-for="value in clearPuzzlesResult" :key="value.id">{{value.str}}</p>
@@ -82,10 +84,6 @@ const initPregenPuzzles = async () => {
 </script>
 
 <style scoped>
-.list-btn {
-	@apply w-full flex items-center justify-start text-left min-h-[28px] px-2 py-4 bg-white;
-}
-
 .t-note-enter-active {
 	transition: opacity 0.1s;
 }

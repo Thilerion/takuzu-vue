@@ -1,23 +1,28 @@
 <template>
 	<div class="flex flex-col flex-1">
-		<PageHeader>Takuzu</PageHeader>
-		<div class="flex-1 text-center space-y-4">
-			<div class="text-center pt-2 text-sm text-gray-600" v-if="needRefresh">
-				<p class="my-2">Update ready. Refresh to load update.</p>
-				<BaseButton @click="updateServiceWorker(true)">Click here to load update</BaseButton>
-			</div>
-			<div class="text-left">
-				<h2 class="font-medium mb-1 text-gray-700/90 tracking-wide px-6">Tools</h2>
-				<ul class="divide-y divide-gray-150 bg-white px-4 rounded-xl shadow-lg">
-					<li class="flex w-full items-center justify-start px-2 py-4">
-						<router-link to="/puzzle-input">Puzzle Input</router-link>
-					</li>
-					<li class="flex w-full items-center justify-start px-2 py-4">
-						<router-link to="/analysis">Puzzle Analysis</router-link>
-					</li>
-				</ul>
+		<PageHeader
+			small
+			:elevated="true"
+			:transparent="false"
+		>Takuzu</PageHeader>
+		<div class="flex-1 text-center flex flex-col">
+			<button
+				v-if="needRefresh"
+				@click="updateServiceWorker(true)"
+				class="flex flex-col items-center text-center px-2 py-4 text-sm mx-auto"
+			>
+				<span>An update is available!</span>
+				<span>Click here to install it (this will only take a second).</span>
+			</button>
+			<div class="text-left first-of-type:mt-4">
+				<BasicListHeader class="">Tools</BasicListHeader>
+				<BasicLinkList class="divide-y divide-gray-150 bg-white px-4 rounded-xl shadow-lg">
+					<BasicLinkListItem><router-link to="/puzzle-input">Puzzle Input</router-link></BasicLinkListItem>
+					<BasicLinkListItem><router-link to="/analysis">Analysis</router-link></BasicLinkListItem>
+				</BasicLinkList>
 			</div>
 			<DebugMenu
+				class="mt-6"
 				v-if="isDebugModeEnabled"
 				@reset-debug-counter="debugModeClickCounter = 0"
 			/>
@@ -42,6 +47,7 @@ import { useMainStore } from '@/stores/main.js';
 
 import { useRegisterSW } from 'virtual:pwa-register/vue';
 import { computed, ref, defineAsyncComponent } from 'vue';
+import BasicLinkList from '@/components/global/list/BasicLinkList.vue';
 
 const { pkgVersion, buildDate } = useGlobalBuildData();
 

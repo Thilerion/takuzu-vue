@@ -122,6 +122,14 @@ const routes = [
 		}
 	},
 	{
+		path: '/analysis',
+		component: () => import('../views/analysis/PuzzleAnalysis.vue'),
+		name: 'PuzzleAnalysis',
+		meta: {
+			title: 'Puzzle Analysis'
+		}
+	},
+	{
 		path: '/showcase',
 		component: () => import('../views/BaseComponentShowcase.vue'),
 		name: 'BaseComponentShowcase'
