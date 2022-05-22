@@ -81,6 +81,11 @@
 						<BaseButton class="float-right ml-2 mb-0.5 px-2 py-2 my-auto rounded border inline-block w-24" @click="copyLongStr">{{copyLongSuccess ? 'Copied!' : 'Copy'}}</BaseButton>
 						<p class="break-words font-mono">{{puzzleGridStrLongFormatted}}</p>
 					</div>
+					<div>Export string</div>
+					<div class="max-w-full text-sm pr-1 pl-2 py-2 bg-gray-100 rounded">
+						<BaseButton class="float-right ml-2 mb-0.5 px-2 py-2 my-auto rounded border inline-block w-24" @click="copyExportStr">{{copyExportStrSuccess ? 'Copied!' : 'Copy'}}</BaseButton>
+						<p class="break-words font-mono">{{puzzleGridExportStr}}</p>
+					</div>
 				</div>
 				</div>
 				</ExpandTransition>
@@ -93,16 +98,16 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUpdate, onMounted, ref, watchEffect, watch, reactive } from 'vue';
+import { computed, onBeforeUpdate, ref } from 'vue';
 import PuzzleInputTable from '@/components/puzzle-input/PuzzleInputTable.vue';
 import PuzzleInputField from '@/components/puzzle-input/PuzzleInputField.vue';
 import { EMPTY, ONE, ZERO } from '@/lib/constants';
 import { useSharedPuzzleToggle } from '@/composables/use-puzzle-toggle';
-import GridControls from '../components/puzzle-input/GridControls.vue';
+import GridControls from './GridControls.vue';
 import { refAutoReset, toReactive, useLocalStorage } from '@vueuse/core';
 import { puzzleGridToString, shortenPuzzleString } from '@/components/puzzle-input/convert';
 import { chunk } from '@/utils/array.utils';
-import ExpandTransition from './transitions/ExpandTransition.vue';
+import ExpandTransition from '@/views/transitions/ExpandTransition.vue';
 import { usePuzzleInputSolvable } from '@/components/puzzle-input/usePuzzleInputSolvable';
 import InputValidityDisplay from '@/components/puzzle-input/InputValidityDisplay.vue';
 import { parseExportString } from '@/lib/utils';
@@ -196,6 +201,12 @@ const puzzleGridStrLongFormatted = computed(() => {
 	const chunked = chunk(value.split(''), gridDimensions.value.width).map(row => row.join('')).join(' ');
 	return chunked;
 })
+const puzzleGridExportStr = computed(() => {
+	if (!isValidPuzzleGrid.value) return '';
+	const boardString = puzzleGridStrLong.value;
+	const { width, height } = gridDimensions.value;
+	return `${width}x${height};${boardString}`;
+})
 const copyValueToClipboard = async (value = '') => {
 	try {
 		await navigator.clipboard.writeText(value);
@@ -208,6 +219,7 @@ const copyValueToClipboard = async (value = '') => {
 }
 const copyShortSuccess = refAutoReset(false, 4000);
 const copyLongSuccess = refAutoReset(false, 4000);
+const copyExportStrSuccess = refAutoReset(false, 4000);
 const copyShortStr = () => {
 	copyValueToClipboard(puzzleGridStrShort.value).then(() => {
 		copyShortSuccess.value = true;
@@ -217,6 +229,11 @@ const copyLongStr = () => {
 	copyValueToClipboard(puzzleGridStrLong.value).then(() => {
 		copyLongSuccess.value = true;
 	}).catch(() => copyLongSuccess.value = false);
+}
+const copyExportStr = () => {
+	copyValueToClipboard(puzzleGridExportStr.value).then(() => {
+		copyExportStrSuccess.value = true;
+	}).catch(() => copyExportStrSuccess.value = false);
 }
 
 const gapSize = computed(() => {
