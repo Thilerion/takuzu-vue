@@ -1,5 +1,9 @@
 <template>
 	<div>
+		<header>Puzzle dimensions</header>
+		<button @click="expanded = !expanded">Expand</button>
+	<ExpandTransition :duration="300">
+	<div v-if="expanded">
 		<div class="flex flex-row gap-x-4">
 			<div class="flex flex-col">
 				<label for="widthInput">Width</label>
@@ -23,10 +27,13 @@
 			<BaseButton @click="emitReset">Reset</BaseButton>
 		</div>
 	</div>
+	</ExpandTransition>
+	</div>
 </template>
 
 <script setup>
-import { computed, toRef } from 'vue';
+import { computed, onBeforeMount, onMounted, ref, toRef } from 'vue';
+import ExpandTransition from '@/views/transitions/ExpandTransition.vue';
 
 const emit = defineEmits([
 	'reset',
@@ -42,6 +49,13 @@ const props = defineProps({
 	gridExists: {
 		type: Boolean,
 		required: true
+	}
+})
+
+const expanded = ref(true);
+onMounted(() => {
+	if (props.gridExists) {
+		expanded.value = false;
 	}
 })
 
@@ -117,13 +131,21 @@ const setSquareGridToggle = (value) => {
 }
 
 const emitSetDimensions = () => {
+	const exists = props.gridExists;
 	requestAnimationFrame(() => {
 		emit('set-dimensions', width.value, height.value);
-	})
+		if (!exists) {
+			requestAnimationFrame(() => {
+				expanded.value = false;
+			})
+		}
+	});
 }
 const emitReset = () => {
 	emit('reset');
 }
+
+
 </script>
 
 <style scoped>

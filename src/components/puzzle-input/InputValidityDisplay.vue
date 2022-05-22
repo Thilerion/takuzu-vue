@@ -1,6 +1,6 @@
 <template>
 <div class="">
-	<div class="flex flex-row justify-around px-1 transition-opacity duration-300 delay-150 gap-x-2 max-w-md mx-auto" :class="{'opacity-30': !validInput}">
+	<div class="flex flex-row justify-around px-1 transition-opacity duration-300 delay-150 gap-x-2 max-w-md mx-auto" :class="{'opacity-30': !isRunning}">
 		<div
 			class="flex flex-row px-4 rounded h-6 items-center leading-none text-xs transition-colors delay-150 duration-300 gap-x-4 w-fit whitespace-nowrap"
 			:class="{
@@ -9,7 +9,7 @@
 			}"
 		>
 			<div class="">Solutions</div>
-			<div>{{props.solutions}}{{props.solutions > 1 ? '+' : ''}}</div>
+			<div>{{displayNumSolutions}}</div>
 		</div>
 		<div
 			class="flex flex-row px-4 rounded h-6 items-center leading-none text-xs gap-x-4 w-fit whitespace-nowrap"
@@ -23,29 +23,33 @@
 </template>
 
 <script setup>
-import { get } from '@vueuse/core';
 import { computed } from 'vue';
 import { asPercentage } from '@/utils/number.utils';
 
 const props = defineProps({
 	solutions: {
-		type: Number,
-		required: true
+		required: true,
+		validator(value) {
+			return (typeof value === 'number') || value === null;
+		}
 	},
 	validInput: Boolean,
 	validPuzzle: Boolean,
 	maskRatio: Number,
-	solvable: Boolean
+	solvable: Boolean,
+	maxSolutions: Number
 })
 
-const stringifiedProps = computed(() => {
-	const obj = {};
-	for (const [key, value] of Object.entries(props)) {
-		const rawValue = get(value);
-		obj[key] = rawValue;
-	}
-	const str = JSON.stringify(obj, undefined, 4);
-	return str;
+const isRunning = computed(() => {
+	return props.validInput && props.solutions != null;
+})
+
+const displayNumSolutions = computed(() => {
+	if (props.solutions >= props.maxSolutions) {
+		return `${props.solutions}+`;
+	} else if (props.solutions == null || props.solutions == Infinity) {
+		return `${props.maxSolutions}+`;
+	} else return `${props.solutions}`;
 })
 </script>
 

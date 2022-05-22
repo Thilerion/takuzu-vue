@@ -3,11 +3,13 @@ import { EMPTY, ONE, ZERO } from "@/lib/constants";
 import { quickSolve } from "@/lib/solver";
 import { count } from "@/lib/utils";
 import { and, useDebounceFn } from "@vueuse/core";
-import { computed, reactive, toRaw, toRefs, watch, watchEffect } from "vue";
+import { computed, reactive, ref, toRaw, toRefs, watch, watchEffect } from "vue";
 
 const MAX_MASK_RATIO = 0.9;
 
 export const usePuzzleInputSolvable = (gridRef, isValidGridRef, dimensionsRef) => {
+	const maxSolutions = ref(200);
+
 	const numCells = computed(() => (dimensionsRef.value.width ?? 0) * (dimensionsRef.value.height ?? 0));
 
 	const parsedGrid = computed(() => {
@@ -53,24 +55,23 @@ export const usePuzzleInputSolvable = (gridRef, isValidGridRef, dimensionsRef) =
 		const board = new SimpleBoard(grid);
 		const {
 			solvable, validPuzzle, results: solutionsArray
-		} = await quickSolve(board, { backtracking: true, solutions: 2 });
+		} = await quickSolve(board, { backtracking: true, solutions: maxSolutions.value });
 		const numSolutions = solutionsArray.length;
 		Object.assign(data, { solvable, validPuzzle, solutions: numSolutions });
 	}, 300, { maxWait: 2000 });
 
 	watch([shouldRunSolver, parsedGrid], ([shouldRun, grid]) => {
 		if (!shouldRun) {			
-			data.solutions = 0;
+			data.solutions = null;
 			data.solvable = false;
 			data.validPuzzle = false;
-			console.warn('not running');
 			return;
 		};
-		console.log('running');
 		runSolver(grid);
-	}, { deep: true })
+	}, { deep: true, immediate: true })
 
 	return {
-		...toRefs(data)
+		...toRefs(data),
+		maxSolutions
 	}
 }

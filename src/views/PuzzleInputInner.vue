@@ -4,11 +4,11 @@
 				class="bg-white rounded px-4 pt-4 pb-2 shadow"
 				@reset="resetGridValues"
 				@set-dimensions="(w, h) => updatePuzzleGridBase(w, h)"
-				:grid-exists="puzzleGridBase != null"
+				:grid-exists="puzzleGridBase != null && puzzleGridBase?.[0] != null"
 				v-model="config"
 			/>
 
-			<div class="bg-white rounded px-1 py-4 shadow full-bleed" v-if="puzzleGridBase != null">
+			<div class="bg-white rounded px-1 py-4 shadow full-bleed" v-if="isValidPuzzleGrid">
 				<div class="mb-2 px-2">
 				<label>
 					<input type="checkbox" v-model="toggleInputMode">
@@ -16,7 +16,7 @@
 				</label>
 				</div>				
 				<PuzzleInputTable
-					v-if="puzzleGridBase && puzzleGridBase?.[0] != null"
+					v-if="isValidPuzzleGrid"
 					:grid="puzzleGridBase"
 					@set-value="({ x, y, value}) => puzzleGridBase[y][x] = value"
 				>
@@ -48,6 +48,7 @@
 					<InputValidityDisplay
 						v-if="puzzleGridBase != null"
 						v-bind="inputSolutionsDataRaw"
+						:max-solutions="maxSolutions"
 					/>
 				</div>
 
@@ -98,15 +99,15 @@ import PuzzleInputField from '@/components/puzzle-input/PuzzleInputField.vue';
 import { EMPTY, ONE, ZERO } from '@/lib/constants';
 import { useSharedPuzzleToggle } from '@/composables/use-puzzle-toggle';
 import GridControls from '../components/puzzle-input/GridControls.vue';
-import { refAutoReset, toReactive, useClipboard, useSessionStorage, useStorage } from '@vueuse/core';
-import { puzzleGridToString, puzzleStringToGrid, shortenPuzzleString } from '@/components/puzzle-input/convert';
+import { refAutoReset, toReactive, useLocalStorage } from '@vueuse/core';
+import { puzzleGridToString, shortenPuzzleString } from '@/components/puzzle-input/convert';
 import { chunk } from '@/utils/array.utils';
 import ExpandTransition from './transitions/ExpandTransition.vue';
 import { usePuzzleInputSolvable } from '@/components/puzzle-input/usePuzzleInputSolvable';
 import InputValidityDisplay from '@/components/puzzle-input/InputValidityDisplay.vue';
 import { parseExportString } from '@/lib/utils';
 
-const config = useSessionStorage('takuzu_puzzle-input-config', {
+const config = useLocalStorage('takuzu_puzzle-input-config', {
 	width: 10,
 	height: 10,
 	forceSquareGrid: false
@@ -124,7 +125,7 @@ const gridDimensions = computed(() => {
 	}
 })
 
-const puzzleGridBase = useSessionStorage('takuzu_puzzle-input-grid', [], {
+const puzzleGridBase = useLocalStorage('takuzu_puzzle-input-grid', [], {
 	deep: true,
 	writeDefaults: false,
 	serializer: {
@@ -363,7 +364,7 @@ const setMultipleValuesFromString = (values = '', { index }) => {
 	setFocusToCell(index + parsedValues.length, index);
 }
 
-const inputSolutionsData = usePuzzleInputSolvable(puzzleGridBase, isValidPuzzleGrid, gridDimensions);
+const {maxSolutions, ...inputSolutionsData} = usePuzzleInputSolvable(puzzleGridBase, isValidPuzzleGrid, gridDimensions);
 
 const inputSolutionsDataRaw = toReactive(inputSolutionsData);
 
