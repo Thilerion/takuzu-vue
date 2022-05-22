@@ -2,27 +2,37 @@
 	<div class="flex flex-col flex-1">
 		<PageHeader>Takuzu</PageHeader>
 		<div class="flex-1 text-center space-y-4">
-			<button
-				@click="increaseDebugModeClickCounter"
-				:disabled="isDebugModeEnabled"
-				class="block mx-auto max-w-xs"
-			>
-				<div
-					class="text-center p-2 text-sm text-gray-600"
-				>
-					App version: {{ pkgVersion }}_<small>{{buildDate}}</small>
-				</div>
-			</button>
 			<div class="text-center pt-2 text-sm text-gray-600" v-if="needRefresh">
 				<p class="my-2">Update ready. Refresh to load update.</p>
 				<BaseButton @click="updateServiceWorker(true)">Click here to load update</BaseButton>
 			</div>
-			<router-link to="/puzzle-input">Puzzle Input</router-link>
+			<div class="text-left">
+				<h2 class="font-medium mb-1 text-gray-700/90 tracking-wide px-6">Tools</h2>
+				<ul class="divide-y divide-gray-150 bg-white px-4 rounded-xl shadow-lg">
+					<li class="flex w-full items-center justify-start px-2 py-4">
+						<router-link to="/puzzle-input">Puzzle Input</router-link>
+					</li>
+					<li class="flex w-full items-center justify-start px-2 py-4">
+						<router-link to="/analysis">Puzzle Analysis</router-link>
+					</li>
+				</ul>
+			</div>
 			<DebugMenu
 				v-if="isDebugModeEnabled"
 				@reset-debug-counter="debugModeClickCounter = 0"
 			/>
 		</div>
+		<button
+			@click="increaseDebugModeClickCounter"
+			:disabled="isDebugModeEnabled"
+			class="block mx-auto max-w-xs py-2 px-2 mt-4"
+		>
+			<div
+				class="text-center p-2 text-sm text-gray-600"
+			>
+				App version: {{ pkgVersion }}_<small>{{buildDate}}</small>
+			</div>
+		</button>
 	</div>
 </template>
 
