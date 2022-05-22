@@ -382,25 +382,6 @@ const importExportString = (str) => {
 </script>
 
 <style scoped>
-.bleed-grid-2 {
-	--basePadding: theme(padding.2);
-}
-.bleed-grid-4 {
-	--basePadding: theme(padding.4);
-}
-.bleed-grid-6 {
-	--basePadding: theme(padding.6);
-}
-.v-grid-bleed {
-	grid-template-columns: 1fr min(calc(100vw - 2 * var(--basePadding, 1rem)), 44rem) 1fr;
-}
-.v-grid-bleed > * {
-	grid-column: 2 / span 1;
-}
-.v-grid-bleed > .full-bleed {
-	grid-column: 1 / -1;
-}
-
 .dynamic-gap {
 	gap: v-bind(gapSize);
 }

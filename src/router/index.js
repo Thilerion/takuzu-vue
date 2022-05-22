@@ -114,11 +114,11 @@ const routes = [
 		]
 	},
 	{
-		path: '/puzzle-input',
+		path: '/custom-create',
 		component: () => import('../views/PuzzleInput.vue'),
 		name: 'PuzzleInput',
 		meta: {
-			title: 'Puzzle Input',
+			title: 'Custom Puzzle',
 		}
 	},
 	{

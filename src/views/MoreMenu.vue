@@ -17,8 +17,8 @@
 			<div class="text-left first-of-type:mt-4">
 				<BasicListHeader class="">Tools</BasicListHeader>
 				<BasicLinkList class="divide-y divide-gray-150 bg-white px-4 rounded-xl shadow-lg">
-					<BasicLinkListItem><router-link to="/puzzle-input">Puzzle Input</router-link></BasicLinkListItem>
-					<BasicLinkListItem><router-link to="/analysis">Analysis</router-link></BasicLinkListItem>
+					<BasicLinkListItem><router-link to="/custom-create">Create/import custom puzzle</router-link></BasicLinkListItem>
+					<BasicLinkListItem><router-link to="/analysis">Puzzle analysis and solver</router-link></BasicLinkListItem>
 				</BasicLinkList>
 			</div>
 			<DebugMenu
