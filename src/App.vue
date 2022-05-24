@@ -20,7 +20,7 @@
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
 import { useColorSchemeProvider } from './composables/use-dark-mode-preference.js';
 import { initPregeneratedPuzzles } from '@/services/puzzles-db/init-pregen-puzzles.js';
-import { computed, onMounted, toRef } from 'vue';
+import { computed, onMounted, toRef, watch } from 'vue';
 import { provideGlobalBuildData } from './app.globals.js';
 import { initSettingsPersistence } from './stores/settings.js';
 import { useStatisticsStore } from './stores/statistics.js';
@@ -44,7 +44,7 @@ export default {
 		// load statistics store; to prevent store data from being reset each time statistics page gets unloaded
 		const statsStore = useStatisticsStore();
 
-		const viewportHeight = toRef(store, 'viewportHeight');
+		const viewportHeight = toRef(store.context, 'viewportHeight');
 
 		const viewportHeightPx = computed(() => viewportHeight.value ? `${viewportHeight.value}px` : '100%');
 

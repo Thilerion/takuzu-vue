@@ -16,7 +16,7 @@ import { useMainStore } from '@/stores/main';
 import StatsFavorites from './StatsFavorites.vue';
 
 const mainStore = useMainStore();
-const debugMode = toRef(mainStore.debugModeData, 'enabled');
+const debugMode = toRef(mainStore, 'debugMode');
 
 const statsStore = useStatisticsStore();
 const items = toRef(statsStore, 'historyItems');

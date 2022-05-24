@@ -27,6 +27,7 @@ export const usePuzzleWakeLock = () => {
 	}
 
 	const releaseWakeLock = () => {
+		console.log('Releasing wake lock.');
 		if (!isActive.value || !hasActivated.value) {
 			return;
 		}

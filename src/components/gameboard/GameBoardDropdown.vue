@@ -83,7 +83,7 @@ export default {
 		const setCheatUsed = () => puzzleStore.setCheatUsed();
 
 		const mainStore = useMainStore();
-		const debugMode = toRef(mainStore.flags, 'debugMode');
+		const debugMode = toRef(mainStore, 'debugMode');
 
 		return {
 			showTimer,

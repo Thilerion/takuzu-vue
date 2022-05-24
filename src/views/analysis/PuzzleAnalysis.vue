@@ -23,7 +23,7 @@ const DebugAnalysisWorkerTest = defineAsyncComponent(() =>
 )
 const showAnalysisWorkerTest = ref(false);
 const mainStore = useMainStore();
-const debugMode = toRef(mainStore.debugModeData, 'enabled');
+const debugMode = toRef(mainStore, 'debugMode');
 </script>
 
 <style scoped>

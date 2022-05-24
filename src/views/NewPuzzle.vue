@@ -100,7 +100,7 @@ const { hasCurrentSavedGame } = useSavedPuzzle();
 // display warning message if creating a new game will overwrite the currently saved puzzle
 
 const mainStore = useMainStore();
-const debugModeEnabled = toRef(mainStore.flags, 'debugMode');
+const debugModeEnabled = toRef(mainStore, 'debugMode');
 
 const previousSelection = usePreviousSelection();
 const selectedDifficulty = ref(previousSelection.value.difficulty);

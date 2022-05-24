@@ -55,7 +55,7 @@ const { offlineReady, needRefresh, updateServiceWorker } = useRegisterSW();
 
 const debugModeClickCounter = ref(0);
 const mainStore = useMainStore();
-const isDebugModeEnabled = computed(() => mainStore.flags.debugMode);
+const isDebugModeEnabled = computed(() => mainStore.debugMode);
 const enableDebugMode = () => {
 	mainStore.setDebugMode(true);
 	debugModeClickCounter.value = 0;

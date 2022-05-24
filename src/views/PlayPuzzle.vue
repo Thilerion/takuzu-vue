@@ -142,7 +142,7 @@ export default {
 		})
 
 		const mainStore = useMainStore();
-		const windowHidden = toRef(mainStore, 'windowHidden');
+		const windowHidden = toRef(mainStore.context, 'windowHidden');
 
 
 		return { 
