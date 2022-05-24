@@ -18,17 +18,14 @@
 </template>
 
 <script setup>
-import { useMainStore } from '@/stores/main.js';
 import { clearPuzzleDb } from '@/services/puzzles-db/db.js';
 import { initPregenWorker } from '@/workers/pregen-puzzles.js';
 import { ref, computed } from 'vue';
 
-const emit = defineEmits(['reset-debug-counter']);
+const emit = defineEmits(['disable-debug-mode']);
 
-const mainStore = useMainStore();
 const disableDebugMode = () => {
-	mainStore.setDebugMode(false);
-	emit('reset-debug-counter');
+	emit('disable-debug-mode');
 }
 
 const clearPuzzlesResult = ref([]);

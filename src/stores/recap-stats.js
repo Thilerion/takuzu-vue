@@ -2,8 +2,7 @@ import { DbHistoryEntry as HistoryDbEntry } from "@/services/stats/db/models";
 import { defineStore } from "pinia";
 import * as StatsDB from "@/services/stats/db/index.js";
 import { startOfDay } from "date-fns/esm";
-
-const SHOULD_SAVE_PUZZLE_CHEATED = import.meta.env.DEV;
+import { useMainStore } from "./main";
 
 export const useRecapStatsStore = defineStore('recapStats', {
 
@@ -134,7 +133,8 @@ export const useRecapStatsStore = defineStore('recapStats', {
 			const historyEntry = HistoryDbEntry.fromPuzzleState(puzzleState);
 
 			if (puzzleState.assistance.cheatsUsed) {
-				if (SHOULD_SAVE_PUZZLE_CHEATED) {
+				const savePuzzleToHistoryIfCheatedFlag = useMainStore().featureToggles.addPuzzleToHistoryWithCheats.isEnabled;
+				if (savePuzzleToHistoryIfCheatedFlag) {
 					console.log('Cheats used, but will save to history anyway.');
 				} else {
 					console.warn('Cheats used; will not save entry to history!');

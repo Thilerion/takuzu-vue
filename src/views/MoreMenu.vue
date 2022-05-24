@@ -14,21 +14,21 @@
 				<span>An update is available!</span>
 				<span>Click here to install it (this will only take a second).</span>
 			</button>
-			<div class="text-left first-of-type:mt-4">
+			<div class="text-left first-of-type:mt-4" v-if="showToolsMenu">
 				<BasicListHeader class="">Tools</BasicListHeader>
 				<BasicLinkList class="divide-y divide-gray-150 bg-white px-4 rounded-xl shadow-lg">
-					<BasicLinkListItem><router-link to="/custom-create">Create/import custom puzzle</router-link></BasicLinkListItem>
-					<BasicLinkListItem><router-link to="/analysis">Puzzle analysis and solver</router-link></BasicLinkListItem>
+					<BasicLinkListItem v-if="customPuzzleToolEnabled"><router-link to="/custom-create">Create/import custom puzzle</router-link></BasicLinkListItem>
+					<BasicLinkListItem v-if="analysisToolEnabled"><router-link to="/analysis">Puzzle analysis and solver</router-link></BasicLinkListItem>
 				</BasicLinkList>
 			</div>
 			<DebugMenu
 				class="mt-6"
 				v-if="isDebugModeEnabled"
-				@reset-debug-counter="debugModeClickCounter = 0"
+				@disable-debug-mode="toggleDebugMode(false)"
 			/>
 		</div>
 		<button
-			@click="increaseDebugModeClickCounter"
+			@click="toggleDebugMode(true, { immediate: false })"
 			:disabled="isDebugModeEnabled"
 			class="block mx-auto max-w-xs py-2 px-2 mt-4"
 		>
@@ -46,29 +46,24 @@ import { useGlobalBuildData } from '@/app.globals.js';
 import { useMainStore } from '@/stores/main.js';
 
 import { useRegisterSW } from 'virtual:pwa-register/vue';
-import { computed, ref, defineAsyncComponent } from 'vue';
+import { computed, defineAsyncComponent, toRefs } from 'vue';
 import BasicLinkList from '@/components/global/list/BasicLinkList.vue';
+import { useDebugMode } from '@/stores/composables/useDebugMode';
 
 const { pkgVersion, buildDate } = useGlobalBuildData();
 
 const { offlineReady, needRefresh, updateServiceWorker } = useRegisterSW();
 
-const debugModeClickCounter = ref(0);
+const { toggleDebugMode, enabled: isDebugModeEnabled } = useDebugMode();
+
 const mainStore = useMainStore();
-const isDebugModeEnabled = computed(() => mainStore.debugMode);
-const enableDebugMode = () => {
-	mainStore.setDebugMode(true);
-	debugModeClickCounter.value = 0;
-}
+const customPuzzleToolEnabled = computed(() => mainStore.featureToggles.customPuzzleTool.isEnabled);
+const analysisToolEnabled = computed(() => mainStore.featureToggles.analysisTool.isEnabled);
+const showToolsMenu = computed(() => {
+	return customPuzzleToolEnabled.value || analysisToolEnabled.value;
+})
 
 const DebugMenu = defineAsyncComponent(() => import('@/components/debug-menu/DebugMenu.vue'));
-
-function increaseDebugModeClickCounter() {
-	debugModeClickCounter.value += 1;
-	if (debugModeClickCounter.value >= 5) {
-		enableDebugMode();
-	}
-}
 </script>
 
 <style scoped>
