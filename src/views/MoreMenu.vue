@@ -17,7 +17,7 @@
 			<transition-group name="t-fade">
 			<div class="text-left first-of-type:mt-4" v-if="showToolsMenu">
 				<BasicListHeader class="">Tools</BasicListHeader>
-				<BasicLinkList class="divide-y divide-gray-150 bg-white px-4 rounded-xl shadow-lg">
+				<BasicLinkList class="divide-y divide-gray-150 bg-white px-4 rounded-xl shadow-lg transition-all duration-700">
 					<BasicLinkListItem v-if="customPuzzleToolEnabled"><router-link to="/custom-create">Create/import custom puzzle</router-link></BasicLinkListItem>
 					<BasicLinkListItem v-if="analysisToolEnabled"><router-link to="/analysis">Puzzle analysis and solver</router-link></BasicLinkListItem>
 				</BasicLinkList>
@@ -58,6 +58,7 @@ import { useRegisterSW } from 'virtual:pwa-register/vue';
 import { computed, defineAsyncComponent, toRefs } from 'vue';
 import BasicLinkList from '@/components/global/list/BasicLinkList.vue';
 import { useDebugMode } from '@/stores/composables/useDebugMode';
+import ExpandTransition from './transitions/ExpandTransition.vue';
 
 const { pkgVersion, buildDate } = useGlobalBuildData();
 
