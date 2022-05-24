@@ -5,7 +5,13 @@
 @layer base {
 	button {
 		@apply outline-none select-none;		
-	}	
+	}
+	input[type="checkbox"] {
+		@apply border-gray-300 border-2 text-teal-500 rounded-sm ring-teal-500 focus:ring-teal-500 active:ring-teal-500 transition-shadow;
+	}
+	input[type="radio"] {
+		@apply border-gray-300 border-2 text-teal-500 ring-teal-500 focus:ring-teal-500 active:ring-teal-500 transition-shadow;
+	}
 }
 
 @layer components {
