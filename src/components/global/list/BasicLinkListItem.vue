@@ -1,5 +1,5 @@
 <template>
-	<li class="link-list-item flex w-full items-center justify-start px-2 py-4" :class="wrapperClasses">
+	<li class="link-list-item flex w-full items-center justify-start px-2 py-4 h-14" :class="wrapperClasses">
 		<slot>List item</slot>
 	</li>
 </template>

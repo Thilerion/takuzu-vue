@@ -13,15 +13,18 @@ export const useFeatureToggles = () => {
 	const features = reactive({
 		addPuzzleToHistoryWithCheats: useFeatureToggle({ 
 			defaultValue: storageState.value?.addPuzzleToHistoryWithCheats ?? debugModeEnabled.value,
-			requiresDebugMode: true
+			requiresDebugMode: true,
+			label: 'Add puzzle to history if cheats used'
 		}),
 		analysisTool: useFeatureToggle({
 			defaultValue: storageState.value?.analysisTool ?? debugModeEnabled.value,
-			requiresDebugMode: true
+			requiresDebugMode: true,
+			label: 'Analysis tool'
 		}),
 		customPuzzleTool: useFeatureToggle({
 			defaultValue: storageState.value?.customPuzzleTool ?? debugModeEnabled.value,
-			requiresDebugMode: true
+			requiresDebugMode: true,
+			label: 'Custom puzzle tool'
 		}),
 	});
 	const featureNames = computed(() => {
@@ -45,7 +48,7 @@ export const useFeatureToggles = () => {
 }
 
 export const useFeatureToggle = ({
-	defaultValue, requiresDebugMode
+	defaultValue, requiresDebugMode, label
 }) => {
 	const { enabled: debugModeEnabled } = useDebugMode();
 
@@ -57,5 +60,5 @@ export const useFeatureToggle = ({
 		get: () => toggleValue.value ?? true,
 		set: (value) => toggleValue.value = value
 	});
-	return { toggleValue, isEnabled };
+	return { toggleValue, isEnabled, label };
 }
