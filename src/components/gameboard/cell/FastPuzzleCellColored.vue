@@ -37,7 +37,7 @@ export default {
 .cell {
 	@apply overflow-hidden relative pointer-events-none text-center;
 	@apply w-full h-full;
-	@apply bg-gray-150 dark:bg-slate-700;	
+	@apply bg-gray-125 dark:bg-slate-800;	
 	/* contain: strict; */
 }
 .cell > * {

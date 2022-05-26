@@ -189,11 +189,6 @@ function useGridData(width, height, initialGrid) {
 	position: relative;
 }
 
-.cell-bg {
-	@apply z-0 absolute w-full h-full;
-	@apply bg-gray-200 bg-opacity-90 dark:bg-gray-700 dark:bg-opacity-50;
-}
-
 .touch-anim-el {
 	@apply absolute inset-0 pointer-events-none w-full h-full z-30 ring-2 ring-gray-700 opacity-100;
 }
