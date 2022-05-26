@@ -87,7 +87,7 @@ export default {
 .puzzle-controls {
 	@apply flex-none flex text-sm text-center h-full overflow-hidden;
 	
-	@apply bg-none dark:bg-gray-800 dark:bg-opacity-30;
+	@apply bg-transparent;
 	@apply text-gray-900/80 dark:text-white/90;
 }
 .puzzle-paused .puzzle-controls, .puzzle-finished .puzzle-controls {
@@ -98,6 +98,7 @@ export default {
 	@apply h-20;
 	@apply flex flex-row items-center justify-center mt-auto w-full space-x-2 px-6;
 	box-shadow: 0 -12px 14px -16px rgba(0,0,0,.2);
+	@apply dark:bg-gray-800 dark:bg-opacity-30;
 }
 .control-btns > * {
 	@apply text-xs flex-auto;

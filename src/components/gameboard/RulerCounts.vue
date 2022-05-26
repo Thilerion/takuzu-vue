@@ -1,13 +1,28 @@
 <template>
 	<div class="ruler counts" :class="{'ruler-rows': lineType === 'rows', 'ruler-columns': lineType === 'columns'}" @pointerdown="handlePointerdown">
-		<div class="ruler-cell" v-for="(lineCount, lineIdx) in debouncedCounts" :key="lineIdx" @pointerenter="handlePointerover($event, lineIdx)">
+		<div
+			class="ruler-cell"
+			v-for="(lineCount, lineIdx) in debouncedCounts"
+			:key="lineIdx"
+			@pointerenter="handlePointerover($event, lineIdx)"
+			:class="{ 'complete-single': completeCounts[lineIdx][0] || completeCounts[lineIdx][1],  'complete-both': completeCounts[lineIdx][0] && completeCounts[lineIdx][1] }"
+		>
 
-			<div class="count-wrapper zero" :class="{'count-error': checkCountError(lineCount[0]), 'count-complete': checkCountComplete(lineCount[0])}">
+			<div class="count-wrapper zero"
+				:class="{
+						'count-error': errorCounts[lineIdx][0],
+						'count-complete': completeCounts[lineIdx][0]
+					}"
+			>
 				<div class="count zero">
 					{{lineCount[0]}}
 				</div>
 			</div>
-			<div class="count-wrapper one" :class="{'count-error': checkCountError(lineCount[1]), 'count-complete': checkCountComplete(lineCount[1])}">
+			<div class="count-wrapper one" :class="{
+						'count-error': errorCounts[lineIdx][1],
+						'count-complete': completeCounts[lineIdx][1]
+					}"
+				>
 				<div class="count one">
 					{{lineCount[1]}}
 				</div>
@@ -20,10 +35,10 @@
 </template>
 
 <script>
-import debounce from 'lodash.debounce';
 import { COLUMN, ONE, ROW, ZERO } from '@/lib/constants.js';
 import { computed, ref, watch } from 'vue';
 import { usePuzzleStore } from '@/stores/puzzle.js';
+import { useDebounceFn } from '@vueuse/core';
 export default {
 	props: {
 		lineType: {
@@ -101,10 +116,26 @@ export default {
 			return false;
 		}
 	},
+	computed: {
+		completeCounts() {
+			if (this.rulerType !== 'count-remaining') {
+				return Array(this.debouncedCounts.length).fill(null).map(() => [false, false]);
+			}
+			return this.debouncedCounts.map(([a, b]) => {
+				return [a === 0, b === 0];
+			})
+		},
+		errorCounts() {
+			if (this.rulerType !== 'count-remaining') {
+				return Array(this.debouncedCounts.length).fill(null).map(() => [false, false]);
+			}
+			return this.debouncedCounts.map(([a, b]) => {
+				return [a < 0, b < 0];
+			})
+		}
+	},
 	created() {
-		this.updateCounts = debounce(this.setDebouncedCounts, 195, {
-			leading: false,
-		});
+		this.updateCounts = useDebounceFn(this.setDebouncedCounts, 195, { maxWait: 400 });
 	},
 	watch: {
 		counts: {
@@ -162,6 +193,15 @@ export default {
 	pointer-events: none;
 	user-select: none;
 }
+.ruler-cell.complete-both .divider {
+	@apply opacity-60;
+}
+.ruler-cell.complete-both {
+	@apply opacity-60;
+}
+.ruler-cell.complete-single .divider {
+	@apply opacity-80;
+}
 .count {
 	@apply w-full h-full overflow-hidden opacity-80;
 }
@@ -197,26 +237,20 @@ export default {
 	transition: color .15s ease-out 1s;
 	animation: headShake 1s ease-in-out 2s;
 	animation-fill-mode: forwards;
-	@apply text-red-700;
+	@apply text-red-700 dark:text-red-500;
 }
 .count-complete {
 	transition: opacity .15s ease-out .5s;
-	@apply opacity-50;
+	@apply opacity-30;
 }
 
 .divider-wrapper {
-	@apply absolute w-full h-full opacity-50;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding-left: 2px;
+	@apply absolute w-full h-full opacity-50 pl-0.5 flex items-center justify-center;
 }
 .divider {
 	transform-origin: 50% 50%;
 	transform: rotate(50deg);
-	@apply opacity-30 transition-opacity bg-black;
-	width: 1px;
-	height: 50%;
+	@apply opacity-30 transition-opacity bg-black dark:bg-slate-300 dark:opacity-100 w-px h-1/2 dark:h-2/5;
 }
 
 .animate__headShake {

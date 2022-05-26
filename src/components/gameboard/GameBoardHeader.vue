@@ -72,7 +72,7 @@ const togglePause = () => paused.value ? emit('resume') : emit('pause');
 
 <style scoped>
 header {
-	@apply bg-white dark:bg-gray-800 text-gray-900 dark:text-white;
+	@apply bg-white dark:bg-slate-800 text-gray-900 dark:text-white;
 	@apply flex justify-between items-center h-14 shadow-sm px-2;
 }
 </style>

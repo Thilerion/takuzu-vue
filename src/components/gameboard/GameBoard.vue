@@ -28,7 +28,7 @@
 					<button
 						class="h-5/6 flex-auto mx-auto flex justify-center pause-icon-wrapper place-items-center py-2 pointer-events-auto"
 						@click="resumeByUser"
-					><icon-grommet-icons-pause-fill /></button>
+					><icon-grommet-icons-pause-fill class="opacity-80" /></button>
 					<div class="flex-auto pause-label-wrapper uppercase mb-2 py-2">Paused</div>
 					<!-- <div class="flex-auto restart-label">Click to continue</div> -->
 				</div>
@@ -99,7 +99,7 @@ export default {
 	grid-area: puzzle-grid;
 	@apply relative z-10 pointer-events-none bg-gray-100 text-gray-400 grid place-items-center text-4xl;
 	border-radius: var(--cell-rounding);
-	@apply dark:bg-slate-700 dark:text-gray-100/80;
+	@apply dark:bg-slate-800 dark:text-slate-200;
 }
 .fade-pause-enter-active,
 .fade-pause-leave-active {

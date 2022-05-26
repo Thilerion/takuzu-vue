@@ -1,6 +1,6 @@
 <template>
 	<button
-		class="bg-gray-50 border rounded w-1/6 text-sm relative transition-colors"
+		class="bg-gray-50 dark:bg-slate-700 dark:border-slate-600 border rounded w-1/6 text-sm relative transition-colors"
 		:class="[tall ? 'tall' : 'square', { selected }]"
 	>
 	<div class="inner" v-if="true">{{width}}<small class="opacity-70 text-xs px-px">x</small>{{height}}</div>

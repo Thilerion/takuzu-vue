@@ -6,16 +6,16 @@
 			<template v-if="symbolType === 'binary'">
 				<transition name="cell-symbol">
 					<div v-if="symbolValue !== '.'" class="number-icon-wrapper">
-						<icon-tabler-number-0 class="number-icon text-cyan-700" v-if="symbolValue === '0'" />
-						<icon-tabler-number-1 class="number-icon text-gray-600" v-else-if="symbolValue === '1'" />
+						<icon-tabler-number-0 class="number-icon text-cyan-700 dark:text-cyan-500" v-if="symbolValue === '0'" />
+						<icon-tabler-number-1 class="number-icon text-gray-600 dark:text-gray-300" v-else-if="symbolValue === '1'" />
 					</div>
 				</transition>
 			</template>
 			<template v-else-if="symbolType === 'tictactoe'">
 				<transition name="cell-symbol">
 					<div v-if="symbolValue !== '.'" class="">
-						<span class="cell-symbol-value text-cyan-700" v-if="symbolValue === 'O'">O</span>
-						<span class="cell-symbol-value text-gray-600" v-else-if="symbolValue === 'X'">X</span>
+						<span class="cell-symbol-value text-cyan-700 dark:text-cyan-500" v-if="symbolValue === 'O'">O</span>
+						<span class="cell-symbol-value text-gray-600 dark:text-gray-300" v-else-if="symbolValue === 'X'">X</span>
 					</div>
 				</transition>
 			</template>
@@ -69,12 +69,12 @@ const symbolValue = computed(() => symbolMap.value[value.value]);
 .cell {
 	@apply overflow-hidden relative pointer-events-none flex;
 	@apply w-full h-full;
-	@apply bg-gray-125 text-gray-700 dark:bg-slate-700 dark:text-gray-150;
+	@apply bg-gray-125 text-gray-700 dark:bg-slate-800 dark:text-gray-150;
 	/* contain: strict; */
 	--base-cell-size: calc(var(--cell-size) - var(--grid-gap));
 }
 .cell.locked {
-	@apply bg-gray-150 dark:bg-slate-800;
+	@apply bg-gray-150 dark:bg-slate-775;
 }
 .cell.incorrect {
 	@apply bg-red-400 bg-opacity-20 ring-1 ring-inset ring-red-900 ring-opacity-40;

@@ -25,7 +25,7 @@
 			class="w-full px-4 pb-2 pt-3 space-y-4 puzzle-options"
 		>
 			<div>
-				<h2 class="text-base font-medium mb-1 text-gray-700/90 ml-4 tracking-wide">Difficulty</h2>
+				<h2 class="text-base font-medium mb-1 dark:text-slate-100 text-gray-700/90 ml-4 tracking-wide">Difficulty</h2>
 				<div class="content-block px-4 difficulty-select">
 					<DifficultySelect
 						@decrease="decreaseDifficulty"
@@ -36,7 +36,7 @@
 				</div>
 			</div>
 			<div>
-				<h2 class="text-base font-medium mb-1 text-gray-700/90 ml-4 tracking-wide">Board size</h2>
+				<h2 class="text-base font-medium mb-1 text-gray-700/90 dark:text-slate-100 ml-4 tracking-wide">Board size</h2>
 				<div
 					class="content-block flex-shrink-0 rounded shadow-sm px-4"
 				>
@@ -62,8 +62,8 @@
 			</div>
 		</div>
 
-		<div class="w-full bg-gray-50 border-t border-gray-200 px-4 pb-4 pt-2 space-y-2 footer-wrapper sticky bottom-0">
-			<div v-if="hasCurrentSavedGame" class="text-xs text-orange-700">
+		<div class="w-full bg-gray-50 border-t dark:bg-slate-800 dark:border-slate-700 border-gray-200 px-4 pb-4 pt-2 space-y-2 footer-wrapper sticky bottom-0">
+			<div v-if="hasCurrentSavedGame" class="text-xs text-orange-700 dark:text-red-400">
 				<p>Starting a new puzzle will overwrite your current puzzle in progress.</p>
 			</div>
 			<StartGameButton
@@ -230,7 +230,7 @@ async function replayRandom() {
 
 <style scoped>
 .content-block {
-	@apply bg-white py-4 shadow rounded;
+	@apply bg-white py-4 shadow rounded dark:bg-slate-800;
 }
 .difficulty-select {
 	@apply py-0;

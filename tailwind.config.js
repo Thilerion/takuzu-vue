@@ -41,6 +41,9 @@ module.exports = {
 					125: 'rgb(242, 242, 243)',
 					150: 'rgb(234, 234, 235)'
 				},
+				slate: {
+					775: 'rgb(38, 52, 75)'
+				},
 				cell: {
 					blue: {
 						primary: 'hsl(207, 90%, 61%)',

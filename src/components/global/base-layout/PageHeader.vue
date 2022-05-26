@@ -3,7 +3,7 @@
 		small ? 'h-16' : 'h-24',
 		{
 			'shadow-sm': elevated,
-			'bg-white': !transparent
+			'bg-white dark:bg-slate-800': !transparent
 		}
 	]">
 		<div class="header-group side left">
