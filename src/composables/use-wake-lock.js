@@ -1,15 +1,17 @@
-import { usePuzzleStore } from "@/stores/puzzle";
+import { PUZZLE_STATUS, usePuzzleStore } from "@/stores/puzzle";
 import { useSettingsStore } from "@/stores/settings.js";
 import { useWakeLock, useIdle } from "@vueuse/core";
 import { computed, onMounted, onUnmounted, provide, ref, toRef, watch, watchEffect } from "vue";
 
-const IDLE_DURATION = 2 * 60 * 1000; // 2 minutes
+const MINUTE = 60 * 1000;
 
-export const usePuzzleWakeLock = () => {
+export const usePuzzleWakeLock = ({ pauseAfter = 1.5 * MINUTE } = {}) => {
 	const { isSupported, isActive, request, release } = useWakeLock();
-	const { idle, lastActive } = useIdle(IDLE_DURATION);
+	const { idle, lastActive } = useIdle(Math.round(pauseAfter));
+	// console.log(`Idle watcher initialized; user is idle after ${(pauseAfter / MINUTE).toFixed(1)} minutes.`);
 	const settingsStore = useSettingsStore();
 	const puzzleStore = usePuzzleStore();
+	const playStatus = toRef(puzzleStore, 'status');
 
 	const hasActivated = ref(isActive.value);
 	watch(isActive, (value) => {
@@ -17,17 +19,17 @@ export const usePuzzleWakeLock = () => {
 	})
 
 	const shouldEnableWakeLock = computed(() => {
-		return settingsStore.enableWakeLock && !puzzleStore.paused;
+		return settingsStore.enableWakeLock && playStatus.value === PUZZLE_STATUS.PLAYING;
 	})
 	const requestWakeLock = () => {
 		if (shouldEnableWakeLock.value) {
-			console.log('Requesting wake lock.');
+			// console.log('Requesting wake lock.');
 			request?.();
 		}
 	}
 
 	const releaseWakeLock = () => {
-		console.log('Releasing wake lock.');
+		// console.log('Releasing wake lock.');
 		if (!isActive.value || !hasActivated.value) {
 			return;
 		}
