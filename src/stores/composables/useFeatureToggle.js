@@ -12,7 +12,7 @@ export const useFeatureToggles = () => {
 
 	const features = reactive({
 		addPuzzleToHistoryWithCheats: useFeatureToggle({ 
-			defaultValue: storageState.value?.addPuzzleToHistoryWithCheats ?? debugModeEnabled.value,
+			defaultValue: storageState.value?.addPuzzleToHistoryWithCheats ?? false,
 			requiresDebugMode: true,
 			label: 'Add puzzle to history if cheats used'
 		}),
