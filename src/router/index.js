@@ -73,6 +73,11 @@ const routes = [
 				component: () => import('../views/MoreMenu.vue'),
 			},
 			{
+				path: '/debug-options',
+				name: 'DebugOptions',
+				component: () => import('../views/DebugOptions.vue')
+			},
+			{
 				path: '/:pathMatch(.*)*',
 				name: 'NotFound',
 				component: NotFound

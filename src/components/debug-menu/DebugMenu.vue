@@ -5,13 +5,15 @@
 			<BasicLinkListItem>
 			<router-link class="list-btn" to="/showcase">Open component showcase</router-link>
 			</BasicLinkListItem>
-			<BasicLinkListItem><button class="list-btn" @click="disableDebugMode">Disable debug mode</button></BasicLinkListItem>
 			<BasicLinkListItem><button class="list-btn" @click="clearPuzzleDbAction">Clear pregen puzzle db</button></BasicLinkListItem>
 			<BasicLinkListItem><button class="list-btn" @click="initPregenPuzzles">Pregen puzzles</button></BasicLinkListItem>
 		</BasicLinkList>
-		<div class="db-results relative">
+		<div class="db-results relative pt-4">
 			<transition-group name="t-note">
-			<p class="text-sm text-left mt-4 px-6 font-bold tracking-wider text-gray-600" v-for="value in clearPuzzlesResult" :key="value.id">{{value.str}}</p>
+				<div class="h-8 flex items-center justify-start overflow-hidden will-change-[height]" v-for="value in clearPuzzlesResult" :key="value.id">
+					<p class="text-sm text-left px-6 font-bold tracking-wider text-gray-600" >{{value.str}}</p>
+				</div>
+			
 			</transition-group>
 		</div>
 	</div>
@@ -21,12 +23,6 @@
 import { clearPuzzleDb } from '@/services/puzzles-db/db.js';
 import { initPregenWorker } from '@/workers/pregen-puzzles.js';
 import { ref, computed } from 'vue';
-
-const emit = defineEmits(['disable-debug-mode']);
-
-const disableDebugMode = () => {
-	emit('disable-debug-mode');
-}
 
 const clearPuzzlesResult = ref([]);
 let notificationId = -1;
@@ -82,14 +78,14 @@ const initPregenPuzzles = async () => {
 
 <style scoped>
 .t-note-enter-active {
-	transition: opacity 0.1s;
+	transition: opacity 0.1s 0.05s, height 0.2s;
 }
 .t-note-leave-active {
 	transition: opacity 1s ease;
-	position: absolute;
+	@apply transition-all duration-1000 ease-in-out h-5 delay-500;
 }
 .t-note-enter-from, .t-note-leave-to {
-	opacity: 0;
+	@apply opacity-0 h-0;
 }
 .t-note-move {
 	transition: all 0.2s ease 0.6s;

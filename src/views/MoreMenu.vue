@@ -14,8 +14,7 @@
 				<span>An update is available!</span>
 				<span>Click here to install it (this will only take a second).</span>
 			</button>
-			<transition-group name="t-fade">
-			<div class="text-left first-of-type:mt-4" v-if="showToolsMenu">
+			<div class="text-left first:mt-4" v-if="showToolsMenu">
 				<BasicListHeader class="">Tools</BasicListHeader>
 				<BasicLinkList class="divide-y divide-gray-150 bg-white px-4 rounded-xl shadow-lg transition-all duration-700">
 					<BasicLinkListItem v-if="customPuzzleToolEnabled"><router-link to="/custom-create">Create/import custom puzzle</router-link></BasicLinkListItem>
@@ -23,18 +22,13 @@
 				</BasicLinkList>
 			</div>
 			
-			<template
+			<BasicLinkList
 				v-if="isDebugModeEnabled"
+				class="text-left mt-6 first:mt-4"
 			>
-				<DebugMenu
-					class="mt-6"
-					@disable-debug-mode="toggleDebugMode(false)"
-				/>
-				<DebugFeatureTogglesList
-					class="mt-6"
-				/>
-			</template>
-			</transition-group>
+				<BasicLinkListItem><router-link to="/debug-options">Debug options menu</router-link></BasicLinkListItem>
+				<BasicLinkListItem><button @click="toggleDebugMode(false)">Disable debug mode</button></BasicLinkListItem>
+			</BasicLinkList>
 		</div>
 		<button
 			@click="toggleDebugMode(true, { immediate: false })"
