@@ -1,7 +1,6 @@
 {
   "recommendations": [
-      "johnsoncodehk.volar",
-      "wayou.vscode-todo-highlight"
+      "vue.volar",
   ],
   "unwantedRecommendations": [
       "octref.vetur"
