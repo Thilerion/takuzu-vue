@@ -147,6 +147,5 @@ export default {
 }
 
 .setting-block select {
-	@apply dark:bg-slate-700 dark:border-slate-600 dark:text-gray-100;
 }
 </style>

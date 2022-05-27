@@ -2,13 +2,13 @@
 	<div>
 		<h2 class="setting-heading">Vibration</h2>
 		<WarningMsg v-if="!isSupported">Your device does not support vibration for this app.</WarningMsg>
-		<InputToggle v-model="enableVibration" id="vibrationEnabled">
+		<InputToggle2 small v-model="enableVibration" id="vibrationEnabled">
 			<span class="setting-subheading">Vibrate when toggling cells</span>
-		</InputToggle>
+		</InputToggle2>
 		<div class="mt-3" :class="{'disabled': !enableVibration}">
-			<label for="vibrationStrength" class="mb-1">Vibration strength <small>{{vibrationStrengthPercentage}}</small></label>
+			<label for="vibrationStrength" class="mb-1 setting-subheading">Vibration strength <small>{{vibrationStrengthPercentage}}</small></label>
 			<div class="flex gap-2">
-				<InputRange
+				<InputRange2
 					:min="0"
 					:max="vibrationOptsLength - 1"
 					:step="1"
@@ -27,7 +27,6 @@ import { useTapVibrate } from '@/composables/use-tap-vibrate.js';
 import { useSettingsStore, validVibrationStrengths } from '@/stores/settings.js';
 import { storeToRefs } from 'pinia';
 import { computed, ref, toRef } from 'vue';
-import InputToggle from '../global/input/InputToggle2.vue';
 import InputRange from '../global/input/InputRange.vue';
 import WarningMsg from '../global/WarningMsg.vue';
 

@@ -89,11 +89,11 @@ export default {
 						"radio radio";
 	grid-template-rows: auto 1.5rem 2rem;
 	grid-template-columns: auto auto;
-	@apply rounded bg-white ring-1 ring-gray-400 ring-opacity-40 grid items-center justify-items-stretch mr-2 px-0 pt-2 flex-1;
+	@apply rounded bg-white dark:bg-slate-700 dark:text-white ring-1 ring-gray-400 ring-opacity-40 grid items-center justify-items-stretch mr-2 px-0 pt-2 flex-1;
 	/* row-gap: 0.25rem; */
 }
 .cell-theme-box.selected {
-	@apply ring-2 ring-blue-800 ring-opacity-60;
+	@apply ring-2 ring-teal-700 ring-opacity-60 dark:ring-teal-500;
 }
 .cell-theme-box:not(.selected) {
 	@apply bg-opacity-50 text-gray-500;
@@ -104,13 +104,13 @@ export default {
 	@apply flex mx-auto;
 }
 .example > .one, .example > .zero {
-	@apply w-6 h-6 justify-center items-center text-center my-1 rounded bg-gray-50 overflow-hidden;
+	@apply w-6 h-6 justify-center items-center text-center my-1 rounded bg-gray-50 dark:bg-slate-600 overflow-hidden text-gray-800 dark:text-gray-200;
 }
 .zero {
-	@apply border mr-1;
+	@apply border mr-1 border-gray-300 dark:border-slate-400;
 }
 .one {
-	@apply border;
+	@apply border border-gray-300 dark:border-slate-400;
 }
 
 .cell-theme-box > .radio {
@@ -120,7 +120,7 @@ export default {
 }
 .cell-theme-box > .label {
 	grid-area: label;
-	@apply text-xs text-gray-800 mt-1 mx-2 text-center truncate;
+	@apply text-xs text-gray-800 mt-1 mx-2 text-center truncate dark:text-white;
 }
 
 .cell-theme-01 {

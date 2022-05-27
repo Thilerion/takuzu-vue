@@ -18,6 +18,33 @@
 		/* @apply dark:focus:outline-red-800 focus:dark:border-green-900 dark:ring-offset-0; */
 		@apply dark:bg-transparent dark:border-white dark:checked:bg-teal-500 dark:checked:border-teal-500;
 	}
+
+	select {
+		@apply rounded dark:bg-slate-700 dark:border-slate-600 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 focus:ring-2;
+	}
+
+	input[type="range"] {
+		@apply appearance-none w-full p-0 bg-transparent focus:outline-none focus:ring-0 focus:shadow-none disabled:opacity-60;
+	}
+	
+	input[type="range"]::-webkit-slider-runnable-track {
+		@apply rounded-md h-2 bg-teal-900/20 dark:bg-slate-300/40;
+	}
+	input[type="range"]::-moz-range-track {
+		@apply rounded-md h-2 bg-teal-900/20 dark:bg-slate-300/40;
+	}
+	input[type="range"]::-webkit-slider-thumb {
+		@apply appearance-none -mt-[6px] h-5 w-5 rounded-full border-0 bg-teal-500 shadow shadow-black/10 transition-shadow cursor-pointer touch-none;
+	}
+	input[type="range"]::-moz-range-thumb {
+		@apply appearance-none rounded-full h-5 w-5 border-0 bg-teal-500 shadow shadow-black/10 transition-shadow cursor-pointer touch-none;
+	}
+	input[type="range"]:focus::-webkit-slider-thumb {
+		@apply shadow-black/30 shadow;
+	}
+	input[type="range"]:focus::-moz-range-thumb {
+		@apply shadow-black/30 shadow;
+	}
 }
 
 @layer components {

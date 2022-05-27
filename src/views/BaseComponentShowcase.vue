@@ -56,14 +56,33 @@
 		</div>
 		<div class="showcase-block">
 			<h2 class="text-xl mb-6 pb-1 font-medium border-b self-stretch">Form inputs</h2>
-			<InputToggle v-model="input1Value" inline id="input-1-value" />
-			<label for="input-1-value">hi there! value is: {{input1Value}}</label>
+			<div class="flex flex-col gap-y-4">
+				<div>
+					<InputToggle v-model="input1Value" inline id="input-1-value" />
+					<label for="input-1-value" class="ml-2">value is: {{input1Value}}</label>
+				</div>
+				<div>
+					<label for="baseRange" class="w-full flex justify-between items-center">Base range <span class="text-xs">({{baseRangeValue}})</span></label>
+					<input type="range" id="baseRange" v-model="baseRangeValue" min="0" max="100" step="5">
+				</div>
+				<div>
+					<label for="componentRange" class="w-full flex justify-between items-center">Component range <span class="text-xs">({{componentRangeValue}})</span></label>
+					<InputRange2 id="componentRange" v-model="componentRangeValue" min="0" max="100" step="5" />
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
 
 <script>
+import { ref } from 'vue';
+
 export default {
+	setup() {
+		const baseRangeValue = ref(40);
+		const componentRangeValue = ref(60);
+		return { baseRangeValue, componentRangeValue };
+	},
 	data() {
 		return {
 			modal1Active: false,
