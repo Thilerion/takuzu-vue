@@ -65,6 +65,9 @@ const routes = [
 				component: Settings,
 				meta: {
 					title: 'Settings'
+				},
+				props: {
+					hideBack: true
 				}
 			},
 			{

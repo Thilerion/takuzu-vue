@@ -4,6 +4,7 @@
 			small
 			:elevated="true"
 			:transparent="false"
+			hide-back
 		>Takuzu</PageHeader>
 		<div class="flex-1 text-center flex flex-col">
 			<button

@@ -1,7 +1,13 @@
 <template>
 	<div>
-		<PageHeader @close="closeSettings">Settings</PageHeader>
-		<div class="setting-block">
+		<PageHeader
+			@close="closeSettings"
+			small
+			:elevated="true"
+			:transparent="false"
+			:hide-back="hideBack"
+		>Settings</PageHeader>
+		<div class="setting-block mt-4">
 			<DarkModeSetting />
 		</div>
 
@@ -82,11 +88,14 @@ import VibrationSetting from '@/components/settings/VibrationSetting.vue';
 
 export default {
 	components: {
-    DarkModeSetting,
-    CellThemeSetting,
-    BaseButton,
-    VibrationSetting
-},
+		DarkModeSetting,
+		CellThemeSetting,
+		BaseButton,
+		VibrationSetting,
+	},
+	props: {
+		hideBack: Boolean
+	},
 	setup() {
 		const settingsStore = useSettingsStore();
 		const pattern = toRef(settingsStore, 'vibrationStrength');

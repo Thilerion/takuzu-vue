@@ -192,14 +192,6 @@ const puzzleStore = usePuzzleStore();
 const puzzleIsLoading = computed(() => puzzleStore.loading);
 const resetGame = () => puzzleStore.reset();
 
-onBeforeRouteLeave((to, from) => {
-	if (!to.name === 'PlayPuzzle' || !puzzleStore.initialized) {
-		console.warn('Leaving FreePlay route without a puzzle being set! Probably good to reset the puzzle in the store.');
-		resetGame();
-	}
-	return true;
-})
-
 const router = useRouter();
 
 async function createGame() {
