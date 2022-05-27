@@ -2,8 +2,8 @@
 	<div
 		class="board new-board relative"
 	>
-		<div class="ruler-wrapper-columns"><slot name="ruler-columns" /></div>
-		<div class="ruler-wrapper-rows"><slot name="ruler-rows" /></div>
+		<div class="ruler-wrapper-columns" :class="{paused}"><slot name="ruler-columns" /></div>
+		<div class="ruler-wrapper-rows" :class="{paused}"><slot name="ruler-rows" /></div>
 		<div class="puzzle-info-wrapper">
 			<slot name="puzzle-info" />
 		</div>

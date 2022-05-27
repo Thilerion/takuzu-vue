@@ -14,8 +14,7 @@
 						'count-complete': completeCounts[lineIdx][0]
 					}"
 			>
-				<div class="count zero">
-					{{lineCount[0]}}
+				<div class="count zero">{{lineCount[0]}}
 				</div>
 			</div>
 			<div class="count-wrapper one" :class="{
@@ -23,8 +22,7 @@
 						'count-complete': completeCounts[lineIdx][1]
 					}"
 				>
-				<div class="count one">
-					{{lineCount[1]}}
+				<div class="count one">{{lineCount[1]}}
 				</div>
 			</div>
 			<div class="divider-wrapper">
@@ -203,13 +201,13 @@ export default {
 	@apply opacity-80;
 }
 .count {
-	@apply w-full h-full overflow-hidden opacity-80;
+	@apply h-full opacity-80;
 }
 
 .count-wrapper {
 	transform: translateX(0) rotateY(0deg);
 	min-width: 1.5ch;
-	@apply flex;
+	@apply flex items-end justify-end;
 }
 .count-wrapper.zero {
 	@apply text-right;
@@ -221,11 +219,14 @@ export default {
 	grid-row: 2 / span 2;
 	grid-column: 2 / span 2;
 }
+.paused .count {
+	@apply after:absolute after:h-full after:right-0 after:w-[1.2ch] transition-none after:z-20 relative z-10 after:bg-gray-300 text-transparent;
+}
 
-.one {
+.count-wrapper.one {
 	@apply mt-auto ml-auto;
 }
-.zero {
+.count-wrapper.zero {
 	@apply mb-auto mr-auto;
 }
 
@@ -242,6 +243,9 @@ export default {
 .count-complete {
 	transition: opacity .15s ease-out .5s;
 	@apply opacity-30;
+}
+.paused .count-complete {
+	@apply opacity-100 transition-none;
 }
 
 .divider-wrapper {
