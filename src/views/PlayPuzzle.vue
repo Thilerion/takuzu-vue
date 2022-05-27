@@ -32,11 +32,25 @@
 				</template>
 				<template v-slot:ruler-rows>
 					<RulerCoords @select-line="selectLine" v-if="rulerType === 'coords'" line-type="rows" :line-ids="board.rowIds" />
-					<RulerCounts @select-line="selectLine" v-else-if="showRulers" line-type="rows" :ruler-type="rulerType" :counts="rowCounts" />
+					<RulerCounts @select-line="selectLine" v-else-if="showRulers && false" line-type="rows" :ruler-type="rulerType" :counts="rowCounts" />
+					<CountsRuler
+						@select-line="selectLine"
+						v-else-if="showRulers"
+						:count-type="rulerType === 'count-remaining' ? 'remaining' : 'current'"
+						line-type="rows"
+						:counts="rowCounts"
+						:cell-size="cellSize" />
 				</template>
 				<template v-slot:ruler-columns>
 					<RulerCoords @select-line="selectLine" v-if="rulerType === 'coords'" line-type="columns" :line-ids="board.columnIds" />
-					<RulerCounts @select-line="selectLine" v-else-if="showRulers" line-type="columns" :ruler-type="rulerType" :counts="columnCounts" />
+					<CountsRuler @select-line="selectLine" v-else-if="showRulers && false" line-type="columns" :ruler-type="rulerType" :counts="columnCounts" />
+					<CountsRuler
+						@select-line="selectLine"
+						v-else-if="showRulers"
+						:count-type="rulerType === 'count-remaining' ? 'remaining' : 'current'"
+						line-type="columns"
+						:counts="columnCounts"
+						:cell-size="cellSize" />
 				</template>
 			</GameBoard>
 		</GameBoardWrapper>
@@ -95,6 +109,7 @@ import { useMainStore } from '@/stores/main.js';
 import { useRecapStatsStore } from '@/stores/recap-stats';
 import { savePuzzleSaveData } from '@/stores/helpers/save-data';
 import PuzzleRecap from '@/components/puzzle-recap/PuzzleRecap.vue';
+import CountsRuler from '@/components/gameboard/ruler/CountsRuler.vue';
 
 export default {
 	components: {
@@ -107,7 +122,8 @@ export default {
     RulerCounts,
     OverlayPageTransition,
     PuzzleHintWrapper,
-    PuzzleRecap
+    PuzzleRecap,
+    CountsRuler
 },
 	setup() {
 		const settingsStore = useSettingsStore();
