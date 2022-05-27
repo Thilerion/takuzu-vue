@@ -12,6 +12,12 @@
 	input[type="radio"] {
 		@apply border-gray-300 border-2 text-teal-500 ring-teal-500 focus:ring-teal-500 active:ring-teal-500 transition-shadow;
 	}
+	input[type="checkbox"], input[type="radio"] {
+		/* @apply focus:outline-none focus:ring-0 focus:ring-transparent focus:shadow-none focus:border-none focus:outline-offset-0 focus:ring-offset-0; */
+		@apply focus:ring-offset-transparent focus:ring-1 focus:ring-opacity-50 focus:border-teal-500;
+		/* @apply dark:focus:outline-red-800 focus:dark:border-green-900 dark:ring-offset-0; */
+		@apply dark:bg-transparent dark:border-white dark:checked:bg-teal-500 dark:checked:border-teal-500;
+	}
 }
 
 @layer components {
