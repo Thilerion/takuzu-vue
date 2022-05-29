@@ -2,7 +2,7 @@
 	<header class="flex justify-center items-stretch h-24 text-gray-700 dark:text-gray-100 flex-shrink-0" :class="[
 		small ? 'h-16' : 'h-24',
 		{
-			'shadow-sm': elevated,
+			'shadow-sm': mergedElevated,
 			'bg-white dark:bg-slate-800': !transparent
 		}
 	]">
@@ -33,12 +33,20 @@ import { useRoute, useRouter } from 'vue-router';
 const props = defineProps({
 	closeBtn: Boolean,
 	hideBack: Boolean,
-	small: Boolean,
-	transparent: {
+	small: {
 		type: Boolean,
 		default: true
 	},
-	elevated: Boolean
+	transparent: {
+		type: Boolean,
+		default: false
+	},
+	elevated: {
+		validator(value) {
+			return value == null || value === true || value === false;
+		},
+		default: null
+	}
 })
 const emit = defineEmits(['close']);
 
@@ -72,10 +80,10 @@ const close = () => {
 	}
 }
 
-const elevated = computed(() => {
+const mergedElevated = computed(() => {
 	if (props.elevated != null) return props.elevated;
-	if (props.transparent != null && !props.transparent) return true;
-	return false;
+	if (props.transparent) return false;
+	return true;
 })
 </script>
 

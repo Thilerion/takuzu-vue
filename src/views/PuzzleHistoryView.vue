@@ -1,7 +1,7 @@
 <template>
 	<div class="flex flex-col overflow-y-auto">
 		<PageHeader>Puzzle history</PageHeader>
-		<div class="content flex-1 flex flex-col gap-2">
+		<div class="content flex-1 flex flex-col gap-2 pt-4">
 			<div class="select-inputs text-sm" ref="anchorEl">
 				<div class="flex justify-between items-center pb-4 px-2">
 
