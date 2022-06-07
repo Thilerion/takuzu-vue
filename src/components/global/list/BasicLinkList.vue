@@ -1,6 +1,6 @@
 <template>
 	<ul
-		class="divide-y divide-gray-150 bg-white px-4 rounded-xl shadow-lg"
+		class="divide-y divide-gray-150 bg-white px-4 rounded-xl link-list-shadow"
 	>
 		<slot>List goes here</slot>
 	</ul>
@@ -11,5 +11,7 @@
 </script>
 
 <style scoped>
-
+.link-list-shadow {
+	box-shadow: rgba(0, 0, 0, 0.05) 0px 5px 20px, 0 8px 15px -2px rgb(0 0 0 / 0.04);
+}
 </style>
