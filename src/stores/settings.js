@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 export const validVibrationStrengths = [0, 18, 32, 45, 60, 76];
 
 const getDefaultSettings = () => ({
-	showLineInfo: '', // '' for disabled, 'coords', 'remainingCount', 'currentCount'
+	showLineInfo: 'remainingCount', // '' for disabled, 'coords', 'remainingCount', 'currentCount'
 	enableWakeLock: true,
 	showTimer: true,
 
