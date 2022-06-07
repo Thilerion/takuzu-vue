@@ -56,17 +56,17 @@
 							</label>
 						</div>
 					</div>
-					<div class="px-2">
+					<div class="px-2 flex items-center h-14">
 						<InputToggle2
-							class="mb-0 !h-12"
+							class="!m-0"
 							id="wakeLockToggle"
 							small
 							v-model="enableWakeLock"
 						>Keep screen active while playing</InputToggle2>
 					</div>
-					<div class="px-2">
+					<div class="px-2 flex items-center h-14">
 						<InputToggle2
-							class="mb-0 !h-12"
+							class="!m-0"
 							small
 							id="timerToggle"
 							v-model="showTimer"
