@@ -62,7 +62,7 @@
 			</div>
 		</div>
 
-		<div class="w-full bg-gray-50 border-t dark:bg-slate-800 dark:border-slate-700 border-gray-200 px-4 pb-4 pt-2 space-y-2 footer-wrapper sticky bottom-0">
+		<div class="w-full bg-gray-50 border-t dark:bg-slate-800 dark:border-slate-700 border-gray-200 px-4 pt-2 space-y-2 footer-wrapper sticky bottom-0">
 			<div v-if="hasCurrentSavedGame" class="text-xs text-orange-700 dark:text-red-400">
 				<p>Starting a new puzzle will overwrite your current puzzle in progress.</p>
 			</div>
@@ -228,6 +228,7 @@ async function replayRandom() {
 	@apply py-0;
 }
 .footer-wrapper {
+	padding-bottom: max(env(safe-area-inset-bottom) + 0.5rem, 1rem);
 	box-shadow: 0 -12px 14px -16px rgba(0,0,0,.2);
 }
 
