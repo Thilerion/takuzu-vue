@@ -1,4 +1,5 @@
 const defaultTheme = require('tailwindcss/defaultTheme');
+const plugin = require('tailwindcss/plugin');
 
 /** @type {import("@types/tailwindcss/tailwind-config").TailwindConfig } */
 module.exports = {
@@ -73,6 +74,16 @@ module.exports = {
 	},
 	plugins: [
 		require('@tailwindcss/forms'),
+		plugin(function ({ addVariant }) {
+			// notouch data attributes are set by useDetectTouch composable, based on pointerType from last interaction
+			addVariant('hover-notouch', '[data-last-touch="false"] &:hover');
+			addVariant('focus-notouch', '[data-last-touch="false"] &:focus');
+			addVariant('hocus-notouch', [
+				'[data-last-touch="false"] &:focus',
+				'[data-last-touch="false"] &:hover',
+			]);
+			addVariant('hocus', ['&:hover', '&:focus']);
+		})
 	],
 };
 
