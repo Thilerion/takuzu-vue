@@ -1,6 +1,6 @@
 <template>
 	<nav class="bg-white w-full bg-opacity-90 dark:bg-slate-800 dark:border-t dark:border-slate-700 relative bottom-0">
-		<div class="flex justify-between h-full">
+		<div class="flex justify-around h-full">
 			<router-link
 				v-for="item in menuItems"
 				:key="item.to"
@@ -73,7 +73,7 @@ nav {
 	}
 }
 .nav-link {
-	@apply w-full h-full justify-center text-center flex flex-col items-center text-xs text-gray-700 font-medium py-2;
+	@apply h-full max-w-[6rem] flex-1 justify-center text-center flex flex-col items-center text-xs text-gray-700 font-medium py-2;
 	@apply dark:text-gray-100 transition-all duration-100;
 	@apply opacity-90;
 
