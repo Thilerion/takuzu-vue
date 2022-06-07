@@ -1,5 +1,5 @@
 <template>
-	<nav class="bg-white h-16 w-full bg-opacity-90 dark:bg-slate-800 dark:border-t dark:border-slate-700">
+	<nav class="bg-white w-full bg-opacity-90 dark:bg-slate-800 dark:border-t dark:border-slate-700 relative bottom-0">
 		<div class="flex justify-between h-full">
 			<router-link
 				v-for="item in menuItems"
@@ -62,8 +62,18 @@ const currentActive = computed(() => {
 </script>
 
 <style scoped>
+nav {
+	@apply pt-1 bg-opacity-90;
+	box-shadow: 0px 7px 15px rgba(0, 0, 0, 0.2);
+	padding-bottom: max(env(safe-area-inset-bottom), 0.25rem);
+}
+@supports (backdrop-filter: blur(4px)) {
+	nav {
+		@apply bg-opacity-70 backdrop-filter backdrop-blur-sm;
+	}
+}
 .nav-link {
-	@apply w-full h-full justify-center text-center py-2 flex flex-col items-center text-xs text-gray-700 font-medium;
+	@apply w-full h-full justify-center text-center flex flex-col items-center text-xs text-gray-700 font-medium py-2;
 	@apply dark:text-gray-100 transition-all duration-100;
 	@apply opacity-90;
 
@@ -80,18 +90,5 @@ const currentActive = computed(() => {
 }
 .router-link-active > .nav-icon, .router-link-nested-active > .nav-icon {
 	@apply opacity-80;
-}
-.nav-link {
-	/* transition: color .1s ease; */
-}
-
-nav {
-	box-shadow: 0px 7px 15px rgba(0, 0, 0, 0.2);
-	@apply bg-opacity-90;
-}
-@supports (backdrop-filter: blur(4px)) {
-	nav {
-		@apply bg-opacity-70 backdrop-filter backdrop-blur-sm;
-	}
 }
 </style>
