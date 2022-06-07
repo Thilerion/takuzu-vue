@@ -1,12 +1,27 @@
 <template>
-	<div>
+	<div class="relative">
 		<PageHeader
 			@close="closeSettings"
 			small
 			:elevated="true"
 			:transparent="false"
 			:hide-back="hideBack"
-		>Settings</PageHeader>
+		>
+			<template #default>Settings</template>
+			<template #right>
+				<BaseDropdown
+					align-right
+					align-below
+				>
+					<template #trigger="{toggle}">
+						<IconBtn @click="toggle"><icon-ic-baseline-more-vert /></IconBtn>
+					</template>
+					<template #content="{ close }">
+						<BaseDropdownItem @click="resetSettingsToDefaults(close)">Restore default settings</BaseDropdownItem>
+					</template>
+				</BaseDropdown>
+			</template>
+		</PageHeader>
 
 		<div class="pb-6 pt-2 flex flex-col gap-6">
 			<div class="py-2">
@@ -122,6 +137,8 @@ import { useDebugMode } from '@/stores/composables/useDebugMode';
 import { useSettingsStore } from '@/stores/settings';
 import { storeToRefs } from 'pinia';
 import { useGlobalBuildData } from '@/app.globals';
+import { useColorSchemePreference } from '@/composables/use-dark-mode-preference';
+import { onBeforeUnmount } from 'vue';
 
 const props = defineProps({
 	hideBack: Boolean
@@ -131,6 +148,24 @@ const { enabled: isDebugModeEnabled, toggleDebugMode } = useDebugMode();
 
 const settingsStore = useSettingsStore();
 const { cellTheme, checkButton, toggleMode, showLineInfo, enableWakeLock, showTimer } = storeToRefs(settingsStore);
+const { setToDefault: resetColorSchemeToDefault } = useColorSchemePreference();
+let resetToDefaultsTimeout = null;
+
+const resetSettingsToDefaults = (closeCb) => {
+	settingsStore.resetToDefaults();
+	resetToDefaultsTimeout = setTimeout(() => {
+		resetColorSchemeToDefault();
+		resetToDefaultsTimeout = null;
+	}, 500);
+	closeCb();
+}
+onBeforeUnmount(() => {
+	if (resetToDefaultsTimeout != null) {
+		clearTimeout(resetToDefaultsTimeout);
+		resetToDefaultsTimeout = null;
+		resetColorSchemeToDefault();
+	}
+})
 
 const lineInfoOptions = [
 	{ label: 'Disabled', value: '' },

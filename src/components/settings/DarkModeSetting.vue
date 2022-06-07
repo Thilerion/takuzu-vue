@@ -3,56 +3,43 @@
 		<h2 class="setting-heading">Theme</h2>
 		<div class="mt-2">
 			<label class="flex items-center">
-				<input type="radio" name="radio-theme" v-model="themePref" value="light">
+				<input type="radio" name="radio-theme" v-model="selectedValue" value="light">
 				<span class="ml-2">Light</span>
 			</label>
 		</div>
 		<div class="mt-2">
 			<label class="flex items-center">
-				<input type="radio" name="radio-theme" v-model="themePref" value="dark">
+				<input type="radio" name="radio-theme" v-model="selectedValue" value="dark">
 				<span class="ml-2">Dark</span>
 			</label>
 		</div>
 		<div class="mt-2">
 			<label class="flex items-center">
-				<input type="radio" name="radio-theme" v-model="themePref" value="auto">
+				<input type="radio" name="radio-theme" v-model="selectedValue" value="auto">
 				<span class="ml-2">Automatic (OS preference)</span>
 			</label>
 		</div>
 	</div>
 </template>
 
-<script>
-import { computed, ref } from 'vue';
+<script setup>
+import { computed, ref, watch } from 'vue';
 import { useColorSchemePreference } from '@/composables/use-dark-mode-preference.js';
-export default {
-	setup() {
-		const { mode: themeValue, setColorTheme: setTheme, isDark, isLight, isAuto } = useColorSchemePreference();
+import { debouncedWatch } from '@vueuse/core';
 
-		const _selectedValue = ref('auto');
+const { mode: themeValue, setColorTheme: setTheme, isDark, isLight, isAuto } = useColorSchemePreference();
 
-		if (themeValue.value != null && ['auto', 'light', 'dark'].includes(themeValue.value)) {
-			_selectedValue.value = themeValue.value;
-		}
+const selectedValue = ref(themeValue.value);
 
-		let themeTimeout = null;
+debouncedWatch(selectedValue, (value, prev) => {
+	setTheme(value);
+}, { debounce: 600 });
 
-		const themePref = computed({
-			get() {
-				return _selectedValue.value;
-			},
-			set(value) {
-				clearTimeout(themeTimeout);
-				themeTimeout = setTimeout(() => {
-					setTheme(value);
-					themeTimeout = null;
-				}, 600);
-			}
-		})
-
-		return { themePref, isDark, isLight, isAuto };
-	},
-};
+watch(themeValue, (value, prev) => {
+	if (value !== selectedValue.value) {
+		selectedValue.value = value;
+	}
+})
 </script>
 
 <style scoped>

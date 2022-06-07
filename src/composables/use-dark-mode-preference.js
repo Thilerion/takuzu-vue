@@ -40,18 +40,20 @@ export const useColorSchemeProvider = () => {
 	const isLight = computed(() => colorTheme.value === 'light');
 	const isAuto = computed(() => userPreference.value === 'auto');
 
+	const setToDefault = () => setColorTheme(DEFAULT_SCHEME);
+
 	provide(COLOR_MODE_INJECTION_KEY, {
 		mode: readonly(userPreference), setColorTheme,
-		isDark, isLight, isAuto
+		isDark, isLight, isAuto, setToDefault
 	})
 
 	return {
 		mode: readonly(userPreference), setColorTheme,
-		isDark, isLight, isAuto,
+		isDark, isLight, isAuto, setToDefault
 	};
 }
 
 export const useColorSchemePreference = () => {
-	const { isDark, isLight, isAuto, mode, setColorTheme } = inject(COLOR_MODE_INJECTION_KEY);
-	return { isDark, isLight, isAuto, mode, setColorTheme };
+	const { isDark, isLight, isAuto, mode, setColorTheme, setToDefault } = inject(COLOR_MODE_INJECTION_KEY);
+	return { isDark, isLight, isAuto, mode, setColorTheme, setToDefault };
 }

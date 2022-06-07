@@ -34,6 +34,11 @@ export const useSettingsStore = defineStore('settings', {
 	actions: {
 		saveToStorage(settings = this) {
 			saveSettings(settings);
+		},
+		resetToDefaults() {
+			this.$patch({
+				...getDefaultSettings()
+			})
 		}
 	}
 })
