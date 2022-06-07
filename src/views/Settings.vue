@@ -23,10 +23,10 @@
 			</template>
 		</PageHeader>
 
-		<div class="pb-6 pt-2 flex flex-col gap-6">
+		<div class="pb-4 pt-2 flex flex-col gap-6">
 			<div class="py-2">
 				<BasicLinkList
-					class="divide-y divide-gray-150/0 bg-white px-4 rounded-xl shadow-lg pb-2"
+					class="divide-none pb-2"
 				>
 					<div class="py-4 px-2">
 						<DarkModeSetting />
@@ -80,10 +80,10 @@
 
 			<div>
 				<BasicListHeader>Puzzle assistance</BasicListHeader>
-				<BasicLinkList class="bg-white px-4 rounded-xl shadow-lg transition-all duration-700 divide-none pb-6 pt-4 flex flex-col gap-6">
+				<BasicLinkList class="divide-none pb-6 pt-4 flex flex-col gap-6">
 						<div class="px-2">
 							<h3>Check button action</h3>
-							<div class="text-xs text-gray-500">Control whether a "check" button is displayed, and if only rule violations, or all incorrect values are highlighted</div>
+							<div class="text-xs text-gray-500 dark:text-slate-400">Control whether a "check" button is displayed, and if only rule violations, or all incorrect values are highlighted</div>
 							<select class="block w-full mt-2" v-model="checkButton">
 								<option value="disabled">Disabled</option>
 								<option value="ruleViolations">Rule violations</option>
@@ -92,7 +92,7 @@
 						</div>
 						<div class="px-2">
 							<h3>Board rulers</h3>
-							<div class="text-xs text-gray-500">Choose the information displayed within the rulers next to the puzzle board, or disable them completely.</div>
+							<div class="text-xs text-gray-500 dark:text-slate-400">Choose the information displayed within the rulers next to the puzzle board, or disable them completely.</div>
 							<div class="mt-2">
 								<select class="block w-full mt-1" v-model="showLineInfo">
 									<option
@@ -106,9 +106,7 @@
 				</BasicLinkList>
 			</div>
 
-			<BasicLinkList
-				class="divide-y divide-gray-150 bg-white px-4 rounded-xl shadow-lg"
-			>
+			<BasicLinkList>
 				<BasicLinkListItem>
 					<button
 						@click="toggleDebugMode(true, { immediate: false })"
