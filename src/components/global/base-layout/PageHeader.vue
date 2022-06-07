@@ -43,7 +43,7 @@ const props = defineProps({
 	},
 	elevated: {
 		validator(value) {
-			return value == null || value === true || value === false;
+			return value == null || value === '' || value === true || value === false;
 		},
 		default: null
 	}
@@ -81,6 +81,7 @@ const close = () => {
 }
 
 const mergedElevated = computed(() => {
+	if (props.elevated === '') return true;
 	if (props.elevated != null) return props.elevated;
 	if (props.transparent) return false;
 	return true;
