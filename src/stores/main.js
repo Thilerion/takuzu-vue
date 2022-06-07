@@ -5,6 +5,7 @@ import { usePageVisibility } from "./composables/usePageVisibility";
 import { useBuildModeFlags } from "./composables/useBuildModeFlags";
 import { useDebugMode } from "./composables/useDebugMode";
 import { useFeatureToggles } from "./composables/useFeatureToggle";
+import { useTouchDetection } from "./composables/useDetectTouch";
 
 const { enabled: debugModeEnabled } = useDebugMode();
 
@@ -16,15 +17,21 @@ const useAppContext = () => {
 
 	const { visibilityState: visibility, hidden: windowHidden, visible: windowVisible } = usePageVisibility();
 
+	const { hasTouched, lastInteractionType, lastInteractionWasTouch } = useTouchDetection();
+
 	return {
 		isMobile,
-		hasTouchscreen,
 		orientation,
 		viewportWidth,
 		viewportHeight,
 		visibility,
 		windowHidden,
-		windowVisible
+		windowVisible,
+		
+		hasTouchscreen,
+		hasTouched,
+		lastInteractionType,
+		lastInteractionWasTouch
 	}
 }
 
