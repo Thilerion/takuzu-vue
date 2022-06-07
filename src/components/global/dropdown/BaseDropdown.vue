@@ -15,6 +15,7 @@
 			</div>
 		</transition>
 	</div>
+	<div v-if="!isClosed" class="fixed inset-0 pointer-events-auto touch-none z-10"></div>
 </template>
 
 <script>
@@ -27,11 +28,13 @@ export default {
 	data() {
 		return {
 			isOpen: false,
+			isClosed: true,
 		}
 	},
 	methods: {
 		openDropdownMenu() {
 			this.isOpen = true;
+			this.isClosed = false;
 			this.emitState();
 		},
 		closeDropdownMenu() {
@@ -40,13 +43,16 @@ export default {
 		},
 		toggleDropdownMenu() {
 			this.isOpen = !this.isOpen;
+			if (this.isOpen) {
+				this.isClosed = false;
+			}
 			this.emitState();
 		},
 		emitState() {
 			this.$emit('toggled', this.isOpen);
 		},
 		clickOutsideHandler(e) {
-			if (!this.isOpen) return;
+			if (this.isClosed || !this.isOpen) return;
 
 			const menuRef = this.$refs.ddMenu;
 			if (!menuRef || menuRef.contains(e.target)) {
@@ -56,20 +62,33 @@ export default {
 			this.closeDropdownMenu();
 			e.preventDefault();
 			e.stopPropagation();
-		}
+		},
+		removeListeners() {
+			window.removeEventListener('pointerdown', this.clickOutsideHandler, { capture: true });
+		},
 	},
 	beforeMount() {
-		document.addEventListener('pointerdown', this.clickOutsideHandler, { capture: true });
+		window.addEventListener('pointerdown', this.clickOutsideHandler, { capture: true });
 	},
 	beforeUnmount() {
-		document.removeEventListener('pointerdown', this.clickOutsideHandler, { capture: true });
+		this.removeListeners();
+	},
+	watch: {
+		isOpen(value, prev) {
+			if (value || !prev) return;
+			setTimeout(() => {
+				try {
+					this.isClosed = true;
+				} catch { }
+			}, 150);
+		}
 	}
 };
 </script>
 
 <style scoped>
 .dropdown {
-	@apply inline-flex relative dark:text-gray-200;
+	@apply inline-flex relative dark:text-gray-200 z-20;
 }
 .dropdown-menu {
 	min-width: 12rem;
