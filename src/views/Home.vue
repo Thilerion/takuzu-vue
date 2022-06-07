@@ -2,6 +2,7 @@
 	<div class="main-menu h-full min-h-full flex flex-col text-center flex-1 relative z-0">
 		<div class="background-pattern-2"></div>
 		<div class="background-pattern"></div>
+		<NewUpdateNotification />
 		<div class="flex flex-col title-wrapper justify-center bg-opacity-20 pt-12">
 			<app-title/>
 		</div>
@@ -13,6 +14,7 @@
 import AppTitle from '@/components/AppTitle.vue';
 import MainMenuButtons from '@/components/MainMenuButtons.vue';
 import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
+import NewUpdateNotification from '@/components/global/NewUpdateNotification.vue';
 
 export default {
 	setup() {
@@ -23,7 +25,7 @@ export default {
 			currentSaved: savedPuzzle
 		}
 	},
-	components: { AppTitle, MainMenuButtons },
+	components: { AppTitle, MainMenuButtons, NewUpdateNotification },
 };
 </script>
 
@@ -52,8 +54,8 @@ export default {
 
 .title-wrapper {
 	@apply flex-1;
-	flex-grow: 4;
-	min-height: 10rem;
+	flex-grow: 3;
+	min-height: 8rem;
 }
 .menu-wrapper {
 	@apply mt-auto flex-1;

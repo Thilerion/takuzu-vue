@@ -7,14 +7,6 @@
 			hide-back
 		>Takuzu</PageHeader>
 		<div class="flex-1 text-center flex flex-col">
-			<button
-				v-if="needRefresh"
-				@click="updateServiceWorker(true)"
-				class="flex flex-col items-center text-center px-2 py-4 text-sm mx-auto"
-			>
-				<span>An update is available!</span>
-				<span>Click here to install it (this will only take a second).</span>
-			</button>
 			<div class="text-left first:mt-4" v-if="showToolsMenu">
 				<BasicListHeader class="">Tools</BasicListHeader>
 				<BasicLinkList class="divide-y divide-gray-150 bg-white px-4 rounded-xl shadow-lg transition-all duration-700">
@@ -48,16 +40,11 @@
 <script setup>
 import { useGlobalBuildData } from '@/app.globals.js';
 import { useMainStore } from '@/stores/main.js';
-
-import { useRegisterSW } from 'virtual:pwa-register/vue';
 import { computed, defineAsyncComponent, toRefs } from 'vue';
 import BasicLinkList from '@/components/global/list/BasicLinkList.vue';
 import { useDebugMode } from '@/stores/composables/useDebugMode';
-import ExpandTransition from './transitions/ExpandTransition.vue';
 
 const { pkgVersion, buildDate } = useGlobalBuildData();
-
-const { offlineReady, needRefresh, updateServiceWorker } = useRegisterSW();
 
 const { toggleDebugMode, enabled: isDebugModeEnabled } = useDebugMode();
 
