@@ -2,31 +2,39 @@
 	<div class="main-menu h-full min-h-full flex flex-col text-center flex-1 relative z-0">
 		<div class="background-pattern-2"></div>
 		<div class="background-pattern"></div>
-		<NewUpdateNotification />
-		<div class="flex flex-col title-wrapper justify-center bg-opacity-20 pt-12">
+		<div class="home-notifications min-h-[5rem] sticky top-2 inset-x-0 w-full z-10 mx-auto">
+			<NewUpdateNotification @displayed="(val) => newUpdateNotificationShown = val" />
+			<PwaInstallNotification v-if="!newUpdateNotificationShown" />
+		</div>
+		
+		<div class="flex flex-col title-wrapper justify-center bg-opacity-20 pt-2">
 			<app-title/>
 		</div>
-		<MainMenuButtons class="menu-wrapper relative" :can-continue="canContinue" :save-data="currentSaved" />
+		<MainMenuButtons class="menu-wrapper relative" :can-continue="hasCurrentSavedGame" :save-data="savedPuzzle" />
 	</div>
 </template>
 
-<script>
+<script setup>
 import AppTitle from '@/components/AppTitle.vue';
 import MainMenuButtons from '@/components/MainMenuButtons.vue';
 import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
-import NewUpdateNotification from '@/components/global/NewUpdateNotification.vue';
+import NewUpdateNotification from '@/components/home/NewUpdateNotification.vue';
+import PwaInstallNotification from '@/components/home/PwaInstallNotification.vue';
+import { useMainStore } from '@/stores/main';
+import { toRef, ref, watchEffect } from 'vue';
+import { useDeferredInstallPrompt } from '@/composables/use-deferred-install-prompt';
 
-export default {
-	setup() {
-		const { savedPuzzle,
-		hasCurrentSavedGame } = useSavedPuzzle();
-		return {
-			canContinue: hasCurrentSavedGame,
-			currentSaved: savedPuzzle
-		}
-	},
-	components: { AppTitle, MainMenuButtons, NewUpdateNotification },
-};
+const { savedPuzzle, hasCurrentSavedGame } = useSavedPuzzle();
+
+const mainStore = useMainStore();
+const isInstalled = toRef(mainStore.context, 'isInstalled');
+const { canPrompt, showInstallPrompt, promptOutcome, hasPromptOutcome } = useDeferredInstallPrompt();
+const newUpdateNotificationShown = ref(false);
+
+watchEffect(() => {
+	console.log({ newUpdateNotificationShown: newUpdateNotificationShown.value });
+})
+
 </script>
 
 <style scoped>
@@ -64,5 +72,13 @@ export default {
 	min-height: 14rem;
 	height: 34vh;
 	max-height: 20rem;
+}
+
+.home-notifications {
+	width: clamp(
+		theme('width.72'),
+		42ch,
+		theme('maxWidth.md')
+	);
 }
 </style>

@@ -7,6 +7,7 @@ import { useDebugMode } from "./composables/useDebugMode";
 import { useFeatureToggles } from "./composables/useFeatureToggle";
 import { useTouchDetection } from "./composables/useDetectTouch";
 import { useIsPwaInstalled } from "./composables/useIsPwaInstalled";
+import { useIsFirstVisit } from "./composables/useIsFirstVisit";
 
 const { enabled: debugModeEnabled } = useDebugMode();
 
@@ -45,6 +46,7 @@ export const useMainStore = defineStore('main', {
 		context: useAppContext(),
 		buildModeFlags: useBuildModeFlags(),
 		debugMode: debugModeEnabled,
-		featureToggles: useFeatureToggles()
+		featureToggles: useFeatureToggles(),
+		visitData: useIsFirstVisit()
 	})
 })
