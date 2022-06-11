@@ -6,6 +6,7 @@ import { useBuildModeFlags } from "./composables/useBuildModeFlags";
 import { useDebugMode } from "./composables/useDebugMode";
 import { useFeatureToggles } from "./composables/useFeatureToggle";
 import { useTouchDetection } from "./composables/useDetectTouch";
+import { useIsPwaInstalled } from "./composables/useIsPwaInstalled";
 
 const { enabled: debugModeEnabled } = useDebugMode();
 
@@ -19,8 +20,11 @@ const useAppContext = () => {
 
 	const { hasTouched, lastInteractionType, lastInteractionWasTouch } = useTouchDetection();
 
+	const { isInstalled } = useIsPwaInstalled();
+
 	return {
 		isMobile,
+		isInstalled,
 		orientation,
 		viewportWidth,
 		viewportHeight,

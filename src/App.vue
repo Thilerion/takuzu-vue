@@ -25,6 +25,7 @@ import { provideGlobalBuildData } from './app.globals.js';
 import { initSettingsPersistence } from './stores/settings.js';
 import { useStatisticsStore } from './stores/statistics.js';
 import { useMainStore } from './stores/main.js';
+import { initListeners as initPWAInstallListeners } from './composables/use-deferred-install-prompt';
 
 export default {
 	components: {
@@ -40,6 +41,8 @@ export default {
 		// initDarkLightAutoTheme();
 		useColorSchemeProvider();
 		provideGlobalBuildData();
+
+		initPWAInstallListeners();
 
 		// load statistics store; to prevent store data from being reset each time statistics page gets unloaded
 		const statsStore = useStatisticsStore();
