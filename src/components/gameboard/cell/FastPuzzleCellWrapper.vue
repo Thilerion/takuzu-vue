@@ -2,7 +2,7 @@
 	<component
 		:is="elementType"
 		@[eventName]="handleCellToggle"
-		class="cell-wrapper relative cell-btn"
+		class="cell-wrapper relative cell-btn aspect-square w-full touch-none"
 		:style="gridStyles"
 	>
 		<slot
@@ -68,8 +68,6 @@ export default {
 
 <style>
 .cell-wrapper {
-	aspect-ratio: 1;
-	width: 100%;
 	contain: strict;
 }
 
@@ -113,8 +111,6 @@ button.cell-wrapper:active::after {
 }
 
 .cell-wrapper::slotted(*) {
-	pointer-events: none;
-	touch-action: none;
-	user-select: none;
+	@apply pointer-events-none touch-none select-none;
 }
 </style>

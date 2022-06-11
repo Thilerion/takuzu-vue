@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer base {
+	* {
+		/* hopefully fixes/disables ios double-tap zooming */
+		@apply touch-manipulation;
+	}
 	button {
 		@apply outline-none select-none;		
 	}
