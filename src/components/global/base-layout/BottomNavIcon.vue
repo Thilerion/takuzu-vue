@@ -1,8 +1,9 @@
 <template>
 	<icon-ic-baseline-home v-if="icon === 'home'" />
-	<icon-ic-baseline-leaderboard v-if="icon === 'stats'" />
-	<icon-ic-baseline-settings v-if="icon === 'settings'" />
-	<icon-ic-baseline-more-horiz v-if="icon === 'more'" />
+	<icon-ic-baseline-leaderboard v-else-if="icon === 'stats'" />
+	<icon-ic-baseline-settings v-else-if="icon === 'settings'" />
+	<icon-ic-baseline-more-horiz v-else-if="icon === 'more'" />
+	<icon-mdi-tools v-else-if="icon === 'tools'" />
 </template>
 
 <script>

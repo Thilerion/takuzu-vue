@@ -1,6 +1,6 @@
 <template>
 	<nav class="bg-white w-full bg-opacity-90 dark:bg-slate-800 dark:border-t dark:border-slate-700 relative bottom-0">
-		<div class="flex justify-around h-full">
+		<div class="flex justify-evenly h-full">
 			<router-link
 				v-for="item in menuItems"
 				:key="item.to"
@@ -29,11 +29,19 @@
 </template>
 
 <script setup>
+import { useMainStore } from "@/stores/main";
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 import BottomNavIcon from "./BottomNavIcon.vue";
 
-const menuItems = [
+const mainStore = useMainStore();
+const customPuzzleToolEnabled = computed(() => mainStore.featureToggles.customPuzzleTool.isEnabled);
+const analysisToolEnabled = computed(() => mainStore.featureToggles.analysisTool.isEnabled);
+const showToolsMenu = computed(() => {
+	return customPuzzleToolEnabled.value || analysisToolEnabled.value;
+})
+
+const baseMenuItems = [
 	{
 		label: 'Home', to: { name: 'Home' }, icon: 'home',
 		activeWhen: ({ name }) => name === 'Home'
@@ -46,16 +54,23 @@ const menuItems = [
 		label: 'Settings', to: { name: 'Settings' }, icon: 'settings',
 		activeWhen: ({ name }) => name === 'Settings'
 	},
-	{
-		label: 'More', to: '/menu', icon: 'more',
-		activeWhen: ({ path }) => path.startsWith('/menu')
+]
+
+const menuItems = computed(() => {
+	const items = [...baseMenuItems];
+	if (showToolsMenu.value) {
+		items.push({
+			label: 'Tools', to: '/tools', icon: 'tools',
+			activeWhen: ({ path }) => path.startsWith('/tools')
+		});
 	}
-];
+	return items;
+})
 
 const route = useRoute();
 
 const currentActive = computed(() => {
-	return menuItems.find(item => {
+	return menuItems.value.find(item => {
 		return item.activeWhen(route);
 	})
 })

@@ -71,9 +71,12 @@ const routes = [
 				}
 			},
 			{
-				path: '/menu',
-				name: 'MoreMenu',
-				component: () => import('../views/MoreMenu.vue'),
+				path: '/tools',
+				component: () => import('../views/PuzzleTools.vue'),
+				name: 'PuzzleTools',
+				meta: {
+					title: 'Tools'
+				}
 			},
 			{
 				path: '/debug-options',
