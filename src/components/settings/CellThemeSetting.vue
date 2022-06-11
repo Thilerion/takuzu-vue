@@ -14,7 +14,7 @@
 			>
 			<span
 				class="label"
-			>Binary</span>
+			>Classic</span>
 		</label>
 		<label class="flex items-center cell-theme-box" :class="{selected: cellTheme === 'tictactoe'}">
 			<input
@@ -42,7 +42,7 @@
 			>
 			<span
 				class="label"
-			>Colored</span>
+			>Tiles</span>
 			<div class="example cell-theme-blue-red">
 				<div class="zero"></div>
 				<div class="one"></div>
@@ -60,15 +60,6 @@ export default {
 		}
 	},
 	emits: ['update:modelValue'],
-	data() {
-		return {
-			cellThemeOptions: [
-				{ label: 'Binary', value: 'binary' },
-				{ label: 'Tic-tac-toe', value: 'tictactoe' },
-				{ label: 'Colored', value: 'blue-red' },
-			],
-		}
-	},
 	computed: {
 		cellTheme: {
 			get() {
@@ -120,7 +111,7 @@ export default {
 }
 .cell-theme-box > .label {
 	grid-area: label;
-	@apply text-xs text-gray-800 mt-1 mx-2 text-center truncate dark:text-white;
+	@apply text-xs text-gray-800 mt-1 text-center truncate dark:text-white;
 }
 
 .cell-theme-01 {
