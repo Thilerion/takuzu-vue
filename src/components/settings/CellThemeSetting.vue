@@ -1,6 +1,6 @@
 <template>
-	<div class="mt-2 flex items-center">
-		<label class="flex items-center cell-theme-box" :class="{selected: cellTheme === 'binary'}">
+	<div class="mt-2 flex items-center gap-x-2 max-w-md sm:px-0 sm:mx-0 mx-auto">
+		<label class="flex flex-1 items-center cell-theme-box" :class="{selected: cellTheme === 'binary'}">
 			<div class="example cell-theme-01">
 				<div class="zero">0</div>
 				<div class="one">1</div>
@@ -16,7 +16,7 @@
 				class="label"
 			>Classic</span>
 		</label>
-		<label class="flex items-center cell-theme-box" :class="{selected: cellTheme === 'tictactoe'}">
+		<label class="flex flex-1 items-center cell-theme-box" :class="{selected: cellTheme === 'tictactoe'}">
 			<input
 				class="radio"
 				type="radio"
@@ -32,7 +32,7 @@
 				<div class="one">X</div>
 			</div>
 		</label>
-		<label class="flex items-center cell-theme-box" :class="{selected: cellTheme === 'blue-red'}">
+		<label class="flex flex-1 items-center cell-theme-box" :class="{selected: cellTheme === 'blue-red'}">
 			<input
 				class="radio"
 				type="radio"
@@ -80,14 +80,16 @@ export default {
 						"radio radio";
 	grid-template-rows: auto 1.5rem 2rem;
 	grid-template-columns: auto auto;
-	@apply rounded bg-white dark:bg-slate-700 dark:text-white ring-1 ring-gray-400 ring-opacity-40 grid items-center justify-items-stretch mr-2 px-0 pt-2 flex-1;
+	@apply rounded bg-white dark:bg-slate-700 dark:text-white ring-1 ring-gray-400 ring-opacity-40 grid items-center justify-items-stretch px-0 pt-2 flex-1 transition-all duration-200;
 	/* row-gap: 0.25rem; */
 }
 .cell-theme-box.selected {
 	@apply ring-2 ring-teal-700 ring-opacity-60 dark:ring-teal-500;
+	@apply bg-teal-100/20 dark:bg-teal-100/10;
+	@apply shadow-lg shadow-teal-600/20 dark:shadow-teal-600/40;
 }
 .cell-theme-box:not(.selected) {
-	@apply bg-opacity-50 text-gray-500;
+	@apply bg-white dark:bg-slate-700/40 text-gray-500 shadow-transparent shadow-lg;
 }
 
 .cell-theme-box > .example {

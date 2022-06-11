@@ -1,5 +1,5 @@
 <template>
-	<div class="relative">
+	<div class="relative bg-gray-50 dark:bg-slate-900">
 		<PageHeader
 			@close="closeSettings"
 			small
@@ -23,17 +23,19 @@
 			</template>
 		</PageHeader>
 
-		<div class="pb-4 pt-2 flex flex-col gap-6">
+		<div class="pb-4 pt-2 flex flex-col gap-6 text-gray-900 dark:text-slate-100 settings-wrapper">
 			<div class="py-2">
 				<BasicLinkList
-					class="divide-none pb-2"
+					class="divide-none gap-4 px-4 pt-4 pb-6 flex flex-col"
 				>
-					<div class="py-4 px-2">
+					<div class="px-2">
 						<DarkModeSetting />
 					</div>
-					<div class="py-4 px-2">
+					<div class="px-2">
 						<h2>Cell theme</h2>
-						<CellThemeSetting v-model="cellTheme" />
+						<div class="px-0">
+							<CellThemeSetting v-model="cellTheme" />
+						</div>
 					</div>
 				</BasicLinkList>
 			</div>

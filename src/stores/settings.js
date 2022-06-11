@@ -76,7 +76,6 @@ function saveSettings(data) {
 export function initSettingsPersistence() {
 	const store = useSettingsStore();
 	store.$subscribe((mutation, state) => {
-		console.log({ mutation, state });
 		try {
 			saveSettings(state);
 		} catch (e) {

@@ -44,16 +44,18 @@ export const useColorSchemeProvider = () => {
 
 	provide(COLOR_MODE_INJECTION_KEY, {
 		mode: readonly(userPreference), setColorTheme,
-		isDark, isLight, isAuto, setToDefault
+		isDark, isLight, isAuto, setToDefault,
+		currentBrowserPreference: browserPreferred
 	})
 
 	return {
 		mode: readonly(userPreference), setColorTheme,
-		isDark, isLight, isAuto, setToDefault
+		isDark, isLight, isAuto, setToDefault,
+		currentBrowserPreference: browserPreferred
 	};
 }
 
 export const useColorSchemePreference = () => {
-	const { isDark, isLight, isAuto, mode, setColorTheme, setToDefault } = inject(COLOR_MODE_INJECTION_KEY);
-	return { isDark, isLight, isAuto, mode, setColorTheme, setToDefault };
+	const { isDark, isLight, isAuto, mode, setColorTheme, setToDefault, currentBrowserPreference } = inject(COLOR_MODE_INJECTION_KEY);
+	return { isDark, isLight, isAuto, mode, setColorTheme, setToDefault, currentBrowserPreference };
 }
