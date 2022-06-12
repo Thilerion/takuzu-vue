@@ -213,7 +213,10 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			this.refreshLineCounts();
 			this.refreshGridCounts();
 			usePuzzleMistakesStore().resetMarkedCells();
-			usePuzzleHintsStore().hide();
+			const puzzleHintsStore = usePuzzleHintsStore();
+			if (puzzleHintsStore.showHint) {
+				usePuzzleHintsStore().hide();
+			}
 		},
 		setValue({ x, y, value, prevValue }) {
 			if (!prevValue) {
@@ -221,7 +224,10 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			} else this._setValue({ x, y, value, prevValue });
 
 			usePuzzleMistakesStore().removeFromCurrentMarkedCells(`${x},${y}`);
-			usePuzzleHintsStore().hide();
+			const puzzleHintsStore = usePuzzleHintsStore();
+			if (puzzleHintsStore.showHint) {
+				usePuzzleHintsStore().hide();
+			}
 		},
 		makeMove({ x, y, value, prevValue }) {
 			if (!prevValue) {

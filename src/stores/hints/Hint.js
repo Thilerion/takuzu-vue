@@ -28,6 +28,10 @@ export class Hint {
 		this.validator = () => false;
 	}
 
+	get isLegacyHint() {
+		return true;
+	}
+
 	setValidator(fn) {
 		this.validator = fn;
 		return this;

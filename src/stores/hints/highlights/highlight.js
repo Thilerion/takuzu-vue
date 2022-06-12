@@ -21,7 +21,7 @@ const CellHighlight = ({ x, y }, level = defaultLevel) => {
 		cell: { x, y },
 	}
 }
-const LineHighlight = ({ lineId, lineType }, level = defaultLevel, board) => {
+const LineHighlight = ({ lineId }, level = defaultLevel, board) => {
 	const lineType = lineTypeFromLineId(lineId);
 	const { start, end } = lineHighlightEndPoints({
 		lineId, lineType, board
@@ -52,7 +52,7 @@ const AreaHighlight = ({ start, end }, level = defaultLevel) => {
 		end
 	}
 }
-export const hintHighlightFromType = (hlType, data, level, { board }) => {
+export const hintHighlightFromType = (hlType, data, level, { board } = {}) => {
 	switch (hlType) {
 		case HighlightType.CELL:
 			return CellHighlight(data, level, board);

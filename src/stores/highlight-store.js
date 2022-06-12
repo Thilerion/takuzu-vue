@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
+import { createHighlightsFromLegacyHint } from "./hints/highlights/legacy-hint-highlights";
 
 export const useHintHighlightsStore = defineStore('hintHighlights', () => {
 	const visible = ref(false);
@@ -7,7 +8,7 @@ export const useHintHighlightsStore = defineStore('hintHighlights', () => {
 
 	const show = () => {
 		if (visible.value) return;
-		else if (currentHighlights.value?.length) {
+		else if (!currentHighlights.value?.length) {
 			console.warn(`Trying to show highlights, but none are set... Reverting highlight visibility to hidden.`);
 			visible.value = false;
 			return;
@@ -16,8 +17,15 @@ export const useHintHighlightsStore = defineStore('hintHighlights', () => {
 		}
 	}
 	const displayFromHint = (hint) => {
-		console.warn('TODO: transform hint into hint highlight');
+		if (hint.isLegacyHint) {
+			const highlights = createHighlightsFromLegacyHint(hint) ?? [];
+			setHighlights(highlights, { setVisible: true });
+			return;
+		} else {
+			console.warn('This is a new type of hint that should be able to display its own highlights. Therefore, calling displayFromHint is not necessary.');
+		}
 	}
+
 	const hide = () => {
 		if (!visible.value) return;
 		visible.value = false;
