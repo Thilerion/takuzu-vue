@@ -47,7 +47,17 @@ function createLegacyBalanceHintHighlights(hint, board) {
 		const puzzleStore = usePuzzleStore();
 		board = puzzleStore.board;
 	}
+	const targetHighlights = hint.targets.map(move => {
+		const { x, y } = move;
+		return hintHighlightFromType(
+			HighlightType.CELL,
+			{ x, y },
+			HighlightLevel.SECONDARY,
+			{ board }
+		)
+	})
 	return [
+		...targetHighlights,
 		hintHighlightFromType(
 			HighlightType.LINE,
 			{ lineId },
