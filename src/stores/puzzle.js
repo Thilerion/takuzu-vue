@@ -165,6 +165,10 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 					this.pausedByUser = false;
 				}
 			}
+			if (val) {
+				const hintStore = usePuzzleHintsStore();
+				hintStore.hide();
+			}
 
 		},
 		setCheatUsed() {
