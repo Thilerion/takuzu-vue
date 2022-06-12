@@ -25,12 +25,8 @@ export default {
 		const puzzleHintsStore = usePuzzleHintsStore();
 
 		const { showHint, currentHint } = storeToRefs(puzzleHintsStore);
-		const hideHint = () => puzzleHintsStore.showHint = false;
-		const removeHint = () => {
-			// TODO: remove hint from store
-			console.log('Todo: remove hint from store after execution?');
-			hideHint();
-		}
+		const hideHint = () => puzzleHintsStore.hide();
+		const removeHint = () => puzzleHintsStore.removeHint();
 
 		return { showHint, currentHint, removeHint, hideHint };
 	},

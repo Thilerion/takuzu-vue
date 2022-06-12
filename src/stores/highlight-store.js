@@ -15,6 +15,9 @@ export const useHintHighlightsStore = defineStore('hintHighlights', () => {
 			visible.value = true;
 		}
 	}
+	const displayFromHint = (hint) => {
+		console.warn('TODO: transform hint into hint highlight');
+	}
 	const hide = () => {
 		if (!visible.value) return;
 		visible.value = false;
@@ -46,7 +49,9 @@ export const useHintHighlightsStore = defineStore('hintHighlights', () => {
 	return {
 		visible, currentHighlights,
 
-		show, hide, clear,
+		show, hide,
+		clear, reset: clear,
+		displayFromHint,
 		setHighlights
 	}
 });

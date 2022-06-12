@@ -6,12 +6,14 @@ import { HINT_TYPE } from "./hints/Hint.js";
 import { createHint, validateHint } from "./hints/index.js";
 import { defineStore } from "pinia";
 import { usePuzzleStore } from "./puzzle.js";
+import { useHintHighlightsStore } from "./highlight-store.js";
 
 export const usePuzzleHintsStore = defineStore('puzzleHints', {
 
 	state: () => ({
 		showHint: false,
 		currentHint: null,
+		currentHintValidForBoardStr: null,
 
 		cache: new Map()
 	}),
@@ -25,9 +27,46 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 	},
 	
 	actions: {
+		hide() {
+			const hintHighlightsStore = useHintHighlightsStore();
+			hintHighlightsStore.hide();
+
+			if (!this.showHint) {
+				console.warn('Cannot hide hint; it is already hidden.');
+				return;
+			}
+			this.showHint = false;
+		},
+		show() {
+			if (this.currentHint == null) {
+				console.warn('Cannot show hint as there is no current hint set. Will hide hint and highlights instead.');
+				return this.hideHint();
+			}
+
+			const hintHighlightsStore = useHintHighlightsStore();
+			hintHighlightsStore.show();
+			this.showHint = true;
+		},
+		removeHint() {
+			this.currentHint = null;
+			this.currentHintValidForBoardStr = null;
+			this.showHint = false;
+			const hintHighlightsStore = useHintHighlightsStore();
+			hintHighlightsStore.clear();
+		},
+		showNewHint(hint) {
+			this.currentHint = hint;
+			this.currentHintValidForBoardStr = this._getBoardStr();
+			this.showHint = true;
+			const hintHighlightsStore = useHintHighlightsStore();
+			hintHighlightsStore.displayFromHint(hint);
+		},
+
 		// original mutations
 		reset() {
 			this.$reset();
+			const hintHighlightsStore = useHintHighlightsStore();
+			hintHighlightsStore.reset();
 		},
 		
 		// original actions
@@ -35,12 +74,13 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 			const puzzleStore = usePuzzleStore();
 			const boardStr = puzzleStore.boardStr;
 			const cacheResult = this.cache.get(boardStr);
-			if (cacheResult) {
+			if (cacheResult && this.currentHint != null && this.currentHintValidForBoardStr === this._getBoardStr()) {
+				console.log('showing current hint again');
+				this.show();
+				return;
+			} else if (cacheResult) {
 				console.log('using cached hint result');
-				this.$patch({
-					showHint: true,
-					currentHint: cacheResult
-				});
+				this.showNewHint(cacheResult);
 				return;
 			}
 			const board = puzzleStore.board;
@@ -50,11 +90,11 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 				const isValid = validateHint(currentHint, { board, solution });
 				if (isValid) {
 					console.log('Hint is still valid. Showing it now.');
-					this.showHint = true;
+					this.show();
 					return;
 				} else {
 					console.log('Hint is no longer valid. Will remove it and generate a new hint.');
-					this.currentHint = null;
+					this.removeHint();
 				}
 			}
 
@@ -73,7 +113,6 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 				const hint = createHint(HINT_TYPE.MISTAKE, incorrectValues);
 				console.log({ hint });
 				this.setHints([hint]);
-				this.addHintToCache({ boardStr, hint });
 				return;
 			}
 
@@ -98,7 +137,6 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 				const hint = sortedHints[0];
 				console.log({ hint });
 				this.setHints([hint]);
-				this.addHintToCache({ boardStr, hint });
 				return;
 			}
 
@@ -108,7 +146,6 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 				const hint = createHint(HINT_TYPE.BALANCE, balanceHintResult[0]);
 				console.log({ hint });
 				this.setHints([hint]);
-				this.addHintToCache({ boardStr, hint });
 				return;
 			}
 
@@ -125,7 +162,6 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 				const hint = createHint(HINT_TYPE.ELIMINATION, sorted[0]);
 				console.log({ eliminationHintResult, sorted, hint });
 				this.setHints([hint]);
-				this.addHintToCache({ boardStr, hint });
 				return;
 			}
 
@@ -144,7 +180,6 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 				const hint = createHint(HINT_TYPE.ELIM_DUPE, sorted[0]);
 				console.log({ dupeHintResult, sorted, hint });
 				this.setHints([hint]);
-				this.addHintToCache({ boardStr, hint });
 				return;
 			}
 
@@ -153,32 +188,34 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 
 			// TODO: not yet implemented hinting system
 			this.setHints();
-			this.addHintToCache({ boardStr, hint: null });
 		},
 
 		setHints(hints = []) {
+			// TODO: pick one single hint from a list of hints
 			if (hints.length === 0) {
-				console.warn('No hint in hints array?');
-				this.$patch({
-					currentHint: null,
-					showHint: true
-				})
-			} else if (hints.length === 1) {
-				this.$patch({
-					currentHint: hints[0],
-					showHint: true
-				})
+				console.warn('SetHints was called, but there were no hints in the array. Seems like there are no valid hints for this board state.');
+				this.removeHint();
+				// still add to cache, because no hint being available is also worth caching
+				this.addHintToCache()
 			} else {
-				console.warn('No functionality yet for picking a single hint from the list of hints...');
-				this.$patch({
-					currentHint: hints[0],
-					showHint: true
-				})
+				const hint = hints[0];
+				this.showNewHint(hint);
+				this.addHintToCache({ hint });
+				return;
 			}
 		},
 
-		addHintToCache({ boardStr, hint }) {
+		_getBoardStr() {
+			return usePuzzleStore().boardStr;
+		},
+
+		addHintToCache({
+			hint, boardStr = this._getBoardStr()
+		}) {
 			this.cache.set(boardStr, hint);
+		},
+		addNoHintAvailableToCache(boardStr = this._getBoardStr()) {
+			this.cache.set(boardStr, null);
 		}
 	}
 
