@@ -42,7 +42,7 @@ function createLegacyTriplesHintHighlights(hint) {
 
 function createLegacyBalanceHintHighlights(hint, board) {
 	const { targetLine, source } = hint;
-	const lineId = targetLine ?? source;
+	const lineId = targetLine ?? source[0];
 	if (board == null) {
 		const puzzleStore = usePuzzleStore();
 		board = puzzleStore.board;
