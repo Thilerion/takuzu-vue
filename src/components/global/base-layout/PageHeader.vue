@@ -1,5 +1,5 @@
 <template>
-	<header class="flex justify-center items-stretch h-24 text-gray-700 dark:text-gray-100 flex-shrink-0" :class="[
+	<header class="flex justify-center items-stretch text-gray-700 dark:text-gray-100 flex-shrink-0" :class="[
 		small ? 'h-16' : 'h-24',
 		{
 			'shadow-sm': mergedElevated,
