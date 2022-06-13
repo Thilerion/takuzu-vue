@@ -14,8 +14,8 @@
 			:incorrect="incorrectCellKeys[cell.key]"
 		>
 			<template v-slot="cellProps">
-				<FastPuzzleCellColored v-if="cellThemeType === 'colored'" v-bind="cellProps"/>
-				<FastPuzzleCellSymbol v-else-if="cellThemeType === 'symbols'" v-bind="cellProps"/>
+				<FastPuzzleCellColored v-if="cellThemeType === CellThemeTypes.COLORED_TILES" v-bind="cellProps"/>
+				<FastPuzzleCellSymbol v-else-if="cellThemeType === CellThemeTypes.SYMBOLS" v-bind="cellProps"/>
 				<div v-else>{{cellProps.value}}</div>
 			</template>
 		</FastPuzzleCellWrapper>
@@ -36,6 +36,7 @@ import { useSettingsStore } from '@/stores/settings/index.js';
 import { storeToRefs } from 'pinia';
 import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
 import { useCellThemeProvider } from '../puzzleboard/useCellThemeProvider';
+import { CellThemeTypes } from '@/stores/settings/options';
 
 export default {
 	components: {
@@ -101,6 +102,7 @@ export default {
 		const cellThemeProvidedData = useCellThemeProvider();
 		const { classes: cellThemeClasses, attrs: cellThemeAttrs, cellTheme, cellThemeType } = cellThemeProvidedData;
 
+
 		return {
 			cellData: cellDataRef,
 			coords,
@@ -114,7 +116,8 @@ export default {
 			cellTheme,
 			cellThemeType,
 			incorrectMarkedCells,
-			cellThemeClasses, cellThemeAttrs
+			cellThemeClasses, cellThemeAttrs,
+			CellThemeTypes
 		}
 	},
 	computed: {

@@ -1,20 +1,19 @@
 import { defineStore } from 'pinia';
-
-export const validVibrationStrengths = [0, 18, 32, 45, 60, 76];
+import { CellThemes, CellThemeTypeMap, CheckButtonOption, rulerType, validVibrationStrengths } from './options';
 
 const getDefaultSettings = () => ({
-	showLineInfo: 'remainingCount', // '' for disabled, 'coords', 'remainingCount', 'currentCount'
+	showLineInfo: rulerType.COUNT_REMAINING,
 	enableWakeLock: true,
 	showTimer: true,
 
-	cellTheme: 'binary', // "blue-red" for colored, or "tictactoe"/"binary" for "symbols"
+	cellTheme: CellThemes.CLASSIC, // "blue-red" for colored, or "tictactoe"/"classic/binary" for "symbols"
 	
 	enableVibration: true,
 	vibrationStrength: validVibrationStrengths[2],
 
 	// assistance settings
 	// automaticValidation: 'ruleViolations', // TODO: automatic validation, with values: disabled/ ruleViolations/ incorrectValues
-	checkButton: 'incorrectValues',
+	checkButton: CheckButtonOption.INCORRECT_VALUES,
 
 	// input
 	toggleMode: "0",
@@ -25,9 +24,9 @@ export const useSettingsStore = defineStore('settings', {
 
 	getters: {
 		vibrationEnabled: state => state.enableVibration,
-		cellThemeType: state => cellThemeTypeMap[state.cellTheme],
-		showBoardCoordinates: state => state.showLineInfo === 'coords',
-		showBoardLineCounts: state => ['remainingCount', 'currentCount'].includes(state.showLineInfo),
+		cellThemeType: state => CellThemeTypeMap[state.cellTheme],
+		showBoardCoordinates: state => state.showLineInfo === rulerType.COORDS,
+		showBoardLineCounts: state => [rulerType.COUNT_CURRENT, rulerType.COUNT_REMAINING].includes(state.showLineInfo),
 		showRulers: state => !!state.showLineInfo,
 	},
 
@@ -42,12 +41,6 @@ export const useSettingsStore = defineStore('settings', {
 		}
 	}
 })
-
-export const cellThemeTypeMap = {
-	'binary': 'symbols',
-	'tictactoe': 'symbols',
-	'blue-red': 'colored'
-}
 
 function loadSettings() {
 	const settingsObj = getDefaultSettings();

@@ -1,6 +1,6 @@
 <template>
 	<div class="mt-2 flex items-center gap-x-2 max-w-md sm:px-0 sm:mx-0 mx-auto">
-		<label class="flex flex-1 items-center cell-theme-box" :class="{selected: cellTheme === 'binary'}">
+		<label class="flex flex-1 items-center cell-theme-box" :class="{selected: cellTheme === CellThemes.CLASSIC}">
 			<div class="example cell-theme-01">
 				<div class="zero">0</div>
 				<div class="one">1</div>
@@ -10,19 +10,19 @@
 				type="radio"
 				name="radio-cell-theme"
 				v-model="cellTheme"
-				value="binary"
+				:value="CellThemes.CLASSIC"
 			>
 			<span
 				class="label"
 			>Classic</span>
 		</label>
-		<label class="flex flex-1 items-center cell-theme-box" :class="{selected: cellTheme === 'tictactoe'}">
+		<label class="flex flex-1 items-center cell-theme-box" :class="{selected: cellTheme === CellThemes.TICTACTOE}">
 			<input
 				class="radio"
 				type="radio"
 				name="radio-cell-theme"
 				v-model="cellTheme"
-				value="tictactoe"
+				:value="CellThemes.TICTACTOE"
 			>
 			<span
 				class="label"
@@ -32,13 +32,13 @@
 				<div class="one">X</div>
 			</div>
 		</label>
-		<label class="flex flex-1 items-center cell-theme-box" :class="{selected: cellTheme === 'blue-red'}">
+		<label class="flex flex-1 items-center cell-theme-box" :class="{selected: cellTheme === CellThemes.BLUE_RED}">
 			<input
 				class="radio"
 				type="radio"
 				name="radio-cell-theme"
 				v-model="cellTheme"
-				value="blue-red"
+				:value="CellThemes.BLUE_RED"
 			>
 			<span
 				class="label"
@@ -52,7 +52,11 @@
 </template>
 
 <script>
+import { CellThemes } from '@/stores/settings/options';
 export default {
+	setup() {
+		return { CellThemes };
+	},
 	props: {
 		modelValue: {
 			type: String,

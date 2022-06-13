@@ -3,7 +3,7 @@
 		class="cell"
 		:class="[{ locked, incorrect }]"
 	>
-			<template v-if="symbolType === 'binary'">
+			<template v-if="symbolType === CellThemes.CLASSIC">
 				<transition name="cell-symbol">
 					<div v-if="symbolValue !== '.'" class="number-icon-wrapper">
 						<icon-tabler-number-0 class="number-icon text-cyan-700 dark:text-cyan-500" v-if="symbolValue === '0'" />
@@ -11,7 +11,7 @@
 					</div>
 				</transition>
 			</template>
-			<template v-else-if="symbolType === 'tictactoe'">
+			<template v-else-if="symbolType === CellThemes.TICTACTOE">
 				<transition name="cell-symbol">
 					<div v-if="symbolValue !== '.'" class="">
 						<span class="cell-symbol-value text-cyan-700 dark:text-cyan-500" v-if="symbolValue === 'O'">O</span>
@@ -40,6 +40,7 @@ import { useCellThemeProvider } from "@/components/puzzleboard/useCellThemeProvi
 import { EMPTY, ONE, ZERO } from "@/lib/constants.js";
 import { isValidPuzzleSymbol } from "@/lib/utils";
 import { computed, toRefs, Transition, inject, toRef } from "vue";
+import { CellThemes } from "@/stores/settings/options";
 
 const props = defineProps({
 	value: {
@@ -57,8 +58,8 @@ const { value, locked, incorrect } = toRefs(props);
 const { cellTheme: symbolType } = useCellThemeProvider();
 
 const symbolMap = computed(() => {
-	if (symbolType.value === 'binary') return BinarySymbols;
-	else if (symbolType.value === 'tictactoe') return TicTacToeSymbols;
+	if (symbolType.value === CellThemes.CLASSIC) return BinarySymbols;
+	else if (symbolType.value === CellThemes.TICTACTOE) return TicTacToeSymbols;
 	throw new Error(`Unrecognized symbolType (accepts binary and tictactoe): ${symbolType.value}`);
 })
 

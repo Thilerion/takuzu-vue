@@ -110,6 +110,7 @@ import { usePuzzleStore } from '@/stores/puzzle.js';
 import { useMainStore } from '@/stores/main.js';
 import { useRecapStatsStore } from '@/stores/recap-stats';
 import { savePuzzleSaveData } from '@/stores/helpers/save-data';
+import { rulerType } from '@/stores/settings/options';
 
 export default {
 	components: {
@@ -215,8 +216,8 @@ export default {
 		},
 		rulerType() {
 			if (this.showBoardCoordinates) return 'coords';
-			if (this.showLineInfo === 'remainingCount') return 'count-remaining';
-			if (this.showLineInfo === 'currentCount') return 'count-current';
+			if (this.showLineInfo === rulerType.COUNT_REMAINING) return 'count-remaining';
+			if (this.showLineInfo === rulerType.COUNT_CURRENT) return 'count-current';
 			return null;
 		},
 		progress() {

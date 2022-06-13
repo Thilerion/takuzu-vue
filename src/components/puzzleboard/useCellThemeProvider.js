@@ -1,4 +1,5 @@
-import { useSettingsStore, cellThemeTypeMap } from "@/stores/settings/index.js"
+import { useSettingsStore } from "@/stores/settings/index.js"
+import { CellThemeTypeMap, CellThemeTypes } from "@/stores/settings/options";
 import { storeToRefs } from "pinia";
 import { computed, inject, provide, reactive, unref, watchEffect } from "vue";
 import FastPuzzleCellColored from "../gameboard/cell/FastPuzzleCellColored.vue";
@@ -30,14 +31,14 @@ export const useCellThemeProvider = ({
 		return injectedCellThemeData.theme.value;
 	})
 	const cellThemeType = computed(() => {
-		return cellThemeTypeMap[cellTheme.value];
+		return CellThemeTypeMap[cellTheme.value];
 	})
 
 	const cellComponent = computed(() => {
 		switch (cellThemeType.value) {
-			case 'colored':
+			case CellThemeTypes.COLORED_TILES:
 				return FastPuzzleCellColored;
-			case 'symbols':
+			case CellThemeTypes.SYMBOLS:
 				return FastPuzzleCellSymbol;
 			default:
 				throw new Error(`Cell theme type "${cellThemeType.value}" does not have a matching cell component.`);

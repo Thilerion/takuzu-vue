@@ -87,9 +87,9 @@
 							<h3>Check button action</h3>
 							<div class="text-xs text-gray-500 dark:text-slate-400">Control whether a "check" button is displayed, and if only rule violations, or all incorrect values are highlighted</div>
 							<select class="block w-full mt-2" v-model="checkButton">
-								<option value="disabled">Disabled</option>
-								<option value="ruleViolations">Rule violations</option>
-								<option value="incorrectValues">Incorrect values</option>
+								<option :value="CheckButtonOption.DISABLED">Disabled</option>
+								<option :value="CheckButtonOption.RULE_VIOLATIONS">Rule violations</option>
+								<option :value="CheckButtonOption.INCORRECT_VALUES">Incorrect values</option>
 							</select>
 						</div>
 						<div class="px-2">
@@ -139,6 +139,7 @@ import { storeToRefs } from 'pinia';
 import { useGlobalBuildData } from '@/app.globals';
 import { useColorSchemePreference } from '@/composables/use-dark-mode-preference';
 import { onBeforeUnmount } from 'vue';
+import { CheckButtonOption, rulerType } from '@/stores/settings/options';
 
 const props = defineProps({
 	hideBack: Boolean
@@ -168,10 +169,10 @@ onBeforeUnmount(() => {
 })
 
 const lineInfoOptions = [
-	{ label: 'Disabled', value: '' },
-	{ label: 'Line coordinates', value: 'coords'},
-	{ label: 'Remaining values in line', value: 'remainingCount'},
-	{ label: 'Current values in line', value: 'currentCount'}
+	{ label: 'Disabled', value: rulerType.NONE },
+	{ label: 'Line coordinates', value: rulerType.COORDS},
+	{ label: 'Remaining values in line', value: rulerType.COUNT_REMAINING},
+	{ label: 'Current values in line', value: rulerType.COUNT_CURRENT}
 ]
 
 const { pkgVersion, buildDate } = useGlobalBuildData();
