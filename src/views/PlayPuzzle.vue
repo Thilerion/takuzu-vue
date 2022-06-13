@@ -55,7 +55,7 @@
 			</GameBoard>
 		</GameBoardWrapper>
 		
-		<div class="footer2 h-24 w-full relative">
+		<div class="footer2 h-32 w-full relative">
 			<PuzzleControls
 				:can-undo="canUndo"
 				:paused="paused"
@@ -64,7 +64,8 @@
 				@check="checkErrors"
 				@get-hint="getHint"
 			/>
-			<PuzzleHintWrapper />
+			<!-- <PuzzleHintWrapper /> -->
+			<HintWrapper></HintWrapper>
 		</div>
 
 		<router-view v-slot="{ Component }">
@@ -91,6 +92,7 @@ import RulerCoords from '@/components/gameboard/RulerCoords.vue';
 import RulerCounts from '@/components/gameboard/RulerCounts.vue';
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
 import PuzzleHintWrapper from '@/components/gameboard/PuzzleHintWrapper.vue';
+import HintWrapper from '@/components/gameboard/hints/HintWrapper.vue';
 
 import { usePuzzleWakeLock } from '@/composables/use-wake-lock.js';
 
@@ -123,7 +125,8 @@ export default {
     OverlayPageTransition,
     PuzzleHintWrapper,
     PuzzleRecap,
-    CountsRuler
+		CountsRuler,
+	HintWrapper
 },
 	setup() {
 		const settingsStore = useSettingsStore();

@@ -74,14 +74,14 @@ function createLegacyEliminationHintHighlights(hint, board) {
 		const puzzleStore = usePuzzleStore();
 		board = puzzleStore.board;
 	}
-	return [
-		hintHighlightFromType(
-			HighlightType.LINE,
-			{ lineId },
-			HighlightLevel.PRIMARY,
-			{ board }
-		)
-	]
+	debugger;
+	const hl = hintHighlightFromType(
+		HighlightType.LINE,
+		{ lineId },
+		HighlightLevel.PRIMARY,
+		{ board }
+	)
+	return hl;
 }
 
 function createLegacyElimDupleHintHighlights(hint, board) {

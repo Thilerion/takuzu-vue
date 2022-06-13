@@ -2,7 +2,7 @@
 	<div class="absolute top-0 left-0 h-full w-full pointer-events-none flex flex-col overflow-hidden">
 		<transition name="hint-fade">
 			<PuzzleHint
-				v-if="showHint"
+				v-if="showHint && false"
 				v-bind="hint"
 				:hint="hint"
 				@hide="hideHint"

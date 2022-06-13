@@ -10,6 +10,14 @@ export const HINT_TYPE = {
 	ELIM_DUPE: 'ELIM_DUPE'
 };
 
+export const HINT_TITLE = {
+	MISTAKE: 'Mistake',
+	TRIPLES: 'Max consecutive',
+	BALANCE: 'Line balance',
+	ELIMINATION: 'Elimination',
+	ELIM_DUPE: 'Unique lines'
+}
+
 let lastHintId = -1;
 export class Hint {
 	constructor(type, message, targets, source = [], context = {}) {
@@ -24,6 +32,9 @@ export class Hint {
 		this.subType = subType;
 		this.actions = actions ?? [hintActions[this.type]];
 		this.targetLine = targetLine;
+
+		this.title = HINT_TITLE[type] ?? 'Hint';
+		this.subtitle = this.subType;
 
 		this.validator = () => false;
 	}

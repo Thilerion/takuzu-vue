@@ -48,9 +48,16 @@ export default {
 			document.removeEventListener('pointerdown', this.clickOutsideHandler);
 		},
 		clickOutsideHandler(e) {
-			const el = this.$refs.hint;
-			if (!(el.contains(e.target)) && e.target !== el) {
+			const elements = Array.from(document.querySelectorAll('.hint'));
+
+			const noneContain = elements.every(el => {
+				return !(el.contains(e.target)) && e.target !== el;
+			})
+			if (noneContain) {
 				this.$emit('hide');
+			} else {
+				console.log('click target contained within a hint');
+				return;
 			}
 		}
 	},
