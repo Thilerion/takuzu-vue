@@ -61,7 +61,7 @@
 
 <script>
 import { usePuzzleStore } from '@/stores/puzzle';
-import { useSettingsStore } from '@/stores/settings.js';
+import { useSettingsStore } from '@/stores/settings/index.js';
 import { computed, watchEffect } from 'vue';
 
 export default {

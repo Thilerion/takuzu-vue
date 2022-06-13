@@ -1,4 +1,4 @@
-import { useSettingsStore, cellThemeTypeMap } from "@/stores/settings"
+import { useSettingsStore, cellThemeTypeMap } from "@/stores/settings/index.js"
 import { storeToRefs } from "pinia";
 import { computed, inject, provide, reactive, unref, watchEffect } from "vue";
 import FastPuzzleCellColored from "../gameboard/cell/FastPuzzleCellColored.vue";

@@ -14,7 +14,7 @@ import { usePuzzleHistoryStore } from "./puzzle-history";
 import { usePuzzleMistakesStore } from "./puzzle-mistakes";
 import { usePuzzleTimer } from "./puzzle-timer";
 import { useRecapStatsStore } from "./recap-stats";
-import { useSettingsStore } from "./settings";
+import { useSettingsStore } from "./settings/index.js";
 
 export const PUZZLE_STATUS = {
 	'NONE': 'NONE',

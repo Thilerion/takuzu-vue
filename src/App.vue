@@ -22,7 +22,7 @@ import { useColorSchemeProvider } from './composables/use-dark-mode-preference.j
 import { initPregeneratedPuzzles } from '@/services/puzzles-db/init-pregen-puzzles.js';
 import { computed, onMounted, toRef, watch } from 'vue';
 import { provideGlobalBuildData } from './app.globals.js';
-import { initSettingsPersistence } from './stores/settings.js';
+import { initSettingsPersistence } from './stores/settings/index.js';
 import { useStatisticsStore } from './stores/statistics.js';
 import { useMainStore } from './stores/main.js';
 import { initListeners as initPWAInstallListeners } from './composables/use-deferred-install-prompt';
