@@ -64,7 +64,6 @@
 				@check="checkErrors"
 				@get-hint="getHint"
 			/>
-			<!-- <PuzzleHintWrapper /> -->
 			<HintWrapper></HintWrapper>
 		</div>
 
@@ -91,8 +90,9 @@ import PuzzleInfo from '@/components/gameboard/PuzzleInfo.vue';
 import RulerCoords from '@/components/gameboard/RulerCoords.vue';
 import RulerCounts from '@/components/gameboard/RulerCounts.vue';
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
-import PuzzleHintWrapper from '@/components/gameboard/PuzzleHintWrapper.vue';
 import HintWrapper from '@/components/gameboard/hints/HintWrapper.vue';
+import PuzzleRecap from '@/components/puzzle-recap/PuzzleRecap.vue';
+import CountsRuler from '@/components/gameboard/ruler/CountsRuler.vue';
 
 import { usePuzzleWakeLock } from '@/composables/use-wake-lock.js';
 
@@ -110,23 +110,20 @@ import { usePuzzleStore } from '@/stores/puzzle.js';
 import { useMainStore } from '@/stores/main.js';
 import { useRecapStatsStore } from '@/stores/recap-stats';
 import { savePuzzleSaveData } from '@/stores/helpers/save-data';
-import PuzzleRecap from '@/components/puzzle-recap/PuzzleRecap.vue';
-import CountsRuler from '@/components/gameboard/ruler/CountsRuler.vue';
 
 export default {
 	components: {
-    GameBoard,
-    GameBoardHeader,
-    GameBoardWrapper,
-    PuzzleControls,
-    PuzzleInfo,
-    RulerCoords,
-    RulerCounts,
-    OverlayPageTransition,
-    PuzzleHintWrapper,
-    PuzzleRecap,
+		GameBoard,
+		GameBoardHeader,
+		GameBoardWrapper,
+		PuzzleControls,
+		PuzzleInfo,
+		RulerCoords,
+		RulerCounts,
+		OverlayPageTransition,
+		PuzzleRecap,
 		CountsRuler,
-	HintWrapper
+		HintWrapper
 },
 	setup() {
 		const settingsStore = useSettingsStore();
