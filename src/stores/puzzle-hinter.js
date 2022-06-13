@@ -32,7 +32,6 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 			hintHighlightsStore.hide();
 
 			if (!this.showHint) {
-				console.warn('Cannot hide hint; it is already hidden.');
 				return;
 			}
 			this.showHint = false;
@@ -75,11 +74,9 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 			const boardStr = puzzleStore.boardStr;
 			const cacheResult = this.cache.get(boardStr);
 			if (cacheResult && this.currentHint != null && this.currentHintValidForBoardStr === this._getBoardStr()) {
-				console.log('showing current hint again');
 				this.show();
 				return;
 			} else if (cacheResult) {
-				console.log('using cached hint result');
 				this.showNewHint(cacheResult);
 				return;
 			}
@@ -111,7 +108,6 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 			} = board.hasIncorrectValues(solution);
 			if (hasMistakes) {
 				const hint = createHint(HINT_TYPE.MISTAKE, incorrectValues);
-				console.log({ hint });
 				this.setHints([hint]);
 				return;
 			}
@@ -125,7 +121,6 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 				const triplesHints = triplesHumanResult.map(triplesResult => {
 					return createHint(HINT_TYPE.TRIPLES, triplesResult);
 				})
-				console.log({ triplesHints });
 				
 				const sortedHints = triplesHints.sort((a, b) => {
 					const { subType: typeA } = a;
@@ -135,7 +130,6 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 					return b.targets.length - a.targets.length;
 				})
 				const hint = sortedHints[0];
-				console.log({ hint });
 				this.setHints([hint]);
 				return;
 			}
@@ -144,7 +138,6 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 			const balanceHintResult = humanSolveBalance({ board });
 			if (balanceHintResult && balanceHintResult.length) {
 				const hint = createHint(HINT_TYPE.BALANCE, balanceHintResult[0]);
-				console.log({ hint });
 				this.setHints([hint]);
 				return;
 			}
@@ -160,7 +153,6 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 					} else return -1;
 				})
 				const hint = createHint(HINT_TYPE.ELIMINATION, sorted[0]);
-				console.log({ eliminationHintResult, sorted, hint });
 				this.setHints([hint]);
 				return;
 			}
@@ -176,9 +168,7 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 						return 1;
 					} else return -1;
 				})
-				console.log('DUPE HINTS!')
 				const hint = createHint(HINT_TYPE.ELIM_DUPE, sorted[0]);
-				console.log({ dupeHintResult, sorted, hint });
 				this.setHints([hint]);
 				return;
 			}

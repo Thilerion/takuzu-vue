@@ -48,14 +48,6 @@ const {
 	actions, message, type
 } = toRefs(hint.value);
 
-watchEffect(() => {
-	console.log({
-		actions: actions.value,
-		message: message.value,
-		type: type.value
-	})
-})
-
 const action = computed(() => {
 	if (actions.value?.length) {
 		return actions.value[0];

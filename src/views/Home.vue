@@ -21,19 +21,12 @@ import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
 import NewUpdateNotification from '@/components/home/NewUpdateNotification.vue';
 import PwaInstallNotification from '@/components/home/PwaInstallNotification.vue';
 import { useMainStore } from '@/stores/main';
-import { toRef, ref, watchEffect } from 'vue';
-import { useDeferredInstallPrompt } from '@/composables/use-deferred-install-prompt';
+import { ref } from 'vue';
 
 const { savedPuzzle, hasCurrentSavedGame } = useSavedPuzzle();
 
 const mainStore = useMainStore();
-const isInstalled = toRef(mainStore.context, 'isInstalled');
-const { canPrompt, showInstallPrompt, promptOutcome, hasPromptOutcome } = useDeferredInstallPrompt();
 const newUpdateNotificationShown = ref(false);
-
-watchEffect(() => {
-	console.log({ newUpdateNotificationShown: newUpdateNotificationShown.value });
-})
 
 </script>
 

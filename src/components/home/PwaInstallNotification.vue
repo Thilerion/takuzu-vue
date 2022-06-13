@@ -37,7 +37,6 @@ const reverseDismissalAfter = 1000 * 60 * 60 * 24 * 2; // 2 days
 const isDismissed = useStorage('takuzu_install-notification-dismissed', { value: false, enableAt: null }, localStorage, { writeDefaults: true });
 
 const enableInstallNotification = computed(() => {
-	console.log(isDismissed.value);
 	if (!canPrompt.value || isDismissed.value.value) return false;
 	return !isInstalled.value && (
 		handledFirstVisit.value || visits.value >= 4
