@@ -10,6 +10,40 @@
 	<meta name="msapplication-TileColor" content="#00aba9">
 	<meta name="theme-color" content="#4DBA87">
     <title>Takuzu</title>
+	<script>
+		(
+			function () {
+				const STORAGE_KEY = 'takuzu-theme';
+				let themeClass = 'light';
+				const prefSetting = localStorage.getItem(STORAGE_KEY);
+				const prefersDarkMedia = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+				if (prefSetting === 'auto' && prefersDarkMedia) {
+					themeClass = 'dark';
+				} else if (prefSetting === 'dark') {
+					themeClass = 'dark';
+				}
+				const setBaseThemeAttrs = (baseTheme) => {
+					const isDark = baseTheme === 'dark';
+					const isLight = baseTheme === 'light';
+					if (!isDark && !isLight) {
+						console.warn(`Base theme is not dark or light? (value: "${baseTheme}"")`);
+						return;
+					}
+					document.documentElement.classList.toggle('dark', isDark);
+					document.documentElement.classList.toggle('light', isLight);
+					document.documentElement.dataset.baseTheme = baseTheme;
+				}
+
+				setBaseThemeAttrs(themeClass, true);
+
+				window.themePreferences = {
+					initialTheme: themeClass,
+					STORAGE_KEY,
+					setBaseThemeAttrs
+				}
+			}
+		)()
+	</script>
   </head>
   <body>
     <div id="app"></div>
