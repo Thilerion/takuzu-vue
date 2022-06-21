@@ -5,15 +5,22 @@
   "scripts": {
     "serve": "vite",
     "dev": "vite",
+
     "dev:host": "vite --host",
+
     "build": " vite build",
     "build:alpha": "vite build --mode alpha",
     "build:beta": "vite build --mode beta",
+	
     "deploy": "vite build && surge dist --domain https://takuzu-vue.surge.sh",
     "deploy:test": "vite build --mode beta && surge dist --domain https://takuzu-vue-test.surge.sh",
     "deploy:test2": "vite build --mode alpha && surge dist --domain https://takuzu-vue-test2.surge.sh",
-    "preview": "vite preview",
-    "test": "vitest"
+
+	"preview": "vite preview --port 4173",
+    "test:unit": "vitest --environment jsdom",
+	"test": "run-s test:unit",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false"
   },
   "dependencies": {
     "@fontsource/hammersmith-one": "^4.5.1",
@@ -34,15 +41,23 @@
   "devDependencies": {
     "@iconify/json": "^2.1.59",
     "@tailwindcss/forms": "^0.5.2",
+    "@types/jsdom": "^16.2.14",
+    "@types/node": "^18.0.0",
     "@types/tailwindcss": "^3.0.4",
     "@vitejs/plugin-vue": "^2.3.3",
+    "@vue/test-utils": "^2.0.0",
+    "@vue/tsconfig": "^0.1.3",
     "autoprefixer": "^10.4.7",
+    "jsdom": "^20.0.0",
+    "npm-run-all": "^4.1.5",
     "rollup-plugin-copy": "^3.4.0",
     "tailwindcss": "^3.1.2",
+    "typescript": "^4.7.4",
     "unplugin-icons": "^0.14.3",
     "unplugin-vue-components": "^0.19.6",
     "vite": "^2.9.12",
     "vite-plugin-pwa": "^0.12.0",
-    "vitest": "^0.14.2"
+    "vitest": "^0.14.2",
+    "vue-tsc": "^0.38.1"
   }
 }

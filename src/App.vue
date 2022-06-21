@@ -16,55 +16,41 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
-import { useColorSchemeProvider } from './composables/use-dark-mode-preference.js';
 import { initPregeneratedPuzzles } from '@/services/puzzles-db/init-pregen-puzzles.js';
-import { computed, onMounted, toRef, watch } from 'vue';
+import { computed, onMounted, toRef } from 'vue';
 import { provideGlobalBuildData } from './app.globals.js';
 import { initSettingsPersistence } from './stores/settings/index.js';
 import { useStatisticsStore } from './stores/statistics.js';
 import { useMainStore } from './stores/main.js';
 import { initListeners as initPWAInstallListeners } from './composables/use-deferred-install-prompt';
+import { useInitThemePreferenceProvider } from './composables/use-theme-preferences';
 
-export default {
-	components: {
-		OverlayPageTransition
-	},
-	setup() {
-		const store = useMainStore();
-		const puzzleKey = toRef(store, 'puzzleKey');
+const store = useMainStore();
+const puzzleKey = toRef(store, 'puzzleKey');
+// init settings store
+initSettingsPersistence();
 
-		// init settings store
-		initSettingsPersistence();
+// initDarkLightAutoTheme();
+// useColorSchemeProvider();
+useInitThemePreferenceProvider();
+provideGlobalBuildData();
 
-		// initDarkLightAutoTheme();
-		useColorSchemeProvider();
-		provideGlobalBuildData();
+initPWAInstallListeners();
 
-		initPWAInstallListeners();
+// load statistics store; to prevent store data from being reset each time statistics page gets unloaded
+const statsStore = useStatisticsStore();
 
-		// load statistics store; to prevent store data from being reset each time statistics page gets unloaded
-		const statsStore = useStatisticsStore();
+const viewportHeight = toRef(store.context, 'viewportHeight');
 
-		const viewportHeight = toRef(store.context, 'viewportHeight');
+const viewportHeightPx = computed(() => viewportHeight.value ? `${viewportHeight.value}px` : '100%');
 
-		const viewportHeightPx = computed(() => viewportHeight.value ? `${viewportHeight.value}px` : '100%');
-
-		onMounted(() => {
-			initPregeneratedPuzzles({
-				pregenTimeout: 2000
-			});
-		})
-
-		return { 
-			viewportHeightPx,
-			puzzleKey,
-			statsStore,
-			store
-		}
-	}
-};
+onMounted(() => {
+	initPregeneratedPuzzles({
+		pregenTimeout: 2000
+	});
+})
 </script>
 
 <style>

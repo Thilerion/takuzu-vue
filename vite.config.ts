@@ -1,5 +1,6 @@
+import { fileURLToPath, URL } from 'url';
+
 import { defineConfig, loadEnv } from 'vite';
-import { resolve } from 'path'
 
 import vue from '@vitejs/plugin-vue';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -8,7 +9,8 @@ import IconsResolver from 'unplugin-icons/resolver';
 import Components from 'unplugin-vue-components/vite';
 import copy from 'rollup-plugin-copy';
 
-import { createVitePwaConfig } from './pwa.config.js'
+// @ts-ignore
+import { createVitePwaConfig } from './pwa.config.js';
 
 export default defineConfig(({ command, mode }) => {
 	// load env variables from relevant env file to set manifest app name
@@ -48,8 +50,8 @@ export default defineConfig(({ command, mode }) => {
 		],
 		resolve: {
 			alias: {
-				'@': resolve(__dirname, 'src'),
-			},
+				'@': fileURLToPath(new URL('./src', import.meta.url))
+			}
 		},
 		define: {
 			__BUILD_DATE__: JSON.stringify(

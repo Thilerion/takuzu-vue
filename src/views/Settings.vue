@@ -137,7 +137,7 @@ import { useDebugMode } from '@/stores/composables/useDebugMode';
 import { useSettingsStore } from '@/stores/settings/index.js';
 import { storeToRefs } from 'pinia';
 import { useGlobalBuildData } from '@/app.globals';
-import { useColorSchemePreference } from '@/composables/use-dark-mode-preference';
+import { useThemePreferences } from '@/composables/use-theme-preferences';
 import { onBeforeUnmount } from 'vue';
 import { CheckButtonOption, rulerType } from '@/stores/settings/options';
 
@@ -149,13 +149,15 @@ const { enabled: isDebugModeEnabled, toggleDebugMode } = useDebugMode();
 
 const settingsStore = useSettingsStore();
 const { cellTheme, checkButton, toggleMode, showLineInfo, enableWakeLock, showTimer } = storeToRefs(settingsStore);
-const { setToDefault: resetColorSchemeToDefault } = useColorSchemePreference();
+
+const { setBaseThemeDefault: resetBaseThemeToDefault } = useThemePreferences();
+
 let resetToDefaultsTimeout = null;
 
 const resetSettingsToDefaults = (closeCb) => {
 	settingsStore.resetToDefaults();
 	resetToDefaultsTimeout = setTimeout(() => {
-		resetColorSchemeToDefault();
+		resetBaseThemeToDefault();
 		resetToDefaultsTimeout = null;
 	}, 500);
 	closeCb();
@@ -164,7 +166,7 @@ onBeforeUnmount(() => {
 	if (resetToDefaultsTimeout != null) {
 		clearTimeout(resetToDefaultsTimeout);
 		resetToDefaultsTimeout = null;
-		resetColorSchemeToDefault();
+		resetBaseThemeToDefault();
 	}
 })
 

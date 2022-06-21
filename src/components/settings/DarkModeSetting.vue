@@ -23,12 +23,12 @@
 	</div>
 </template>
 
-<script setup>
-import { computed, ref, watch } from 'vue';
-import { useColorSchemePreference } from '@/composables/use-dark-mode-preference.js';
+<script setup lang="ts">
+import { ref, watch } from 'vue';
+import { useThemePreferences } from '@/composables/use-theme-preferences';
 import { debouncedWatch } from '@vueuse/core';
 
-const { mode: themeValue, setColorTheme: setTheme, isDark, isLight, isAuto, currentBrowserPreference } = useColorSchemePreference();
+const { baseThemeUserPref: themeValue, setBaseThemePreference: setTheme, baseThemeBrowserPref: currentBrowserPreference } = useThemePreferences();
 
 const selectedValue = ref(themeValue.value);
 
