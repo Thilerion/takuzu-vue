@@ -1,5 +1,5 @@
 import { COLUMN, EMPTY, ONE, PUZZLE_VALUES, ROW, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "./constants";
-import type { Grid } from "./types";
+import type { ColumnId, Grid, LineId, RowId } from "./types";
 
 // MEMOIZE FUNCTION //
 const defaultArgsToKey = (...args: any[]) => args.join(',');
@@ -125,11 +125,11 @@ export const getCoordsForBoardSize = memoize(
 )
 
 // ROW / COLUMN / LINE UTILS //
-export const generateColumnIds = (width: number) => {
+export const generateColumnIds = (width: number): ColumnId[] => {
 	// row at idx 0 has lineId: 1, then 2, etc
-	return range(width).map(val => String(val + 1));
+	return range(width).map((val) => String(val + 1));
 }
-export const generateRowIds = (height: number) => {
+export const generateRowIds = (height: number): RowId[] => {
 	// column at idx 0 has lineId: A, then B, then C
 	if (height >= 26) {
 		throw new Error('Cannot generate column ids for height higher than "Z"');
@@ -137,11 +137,14 @@ export const generateRowIds = (height: number) => {
 	return range(height).map(i => String.fromCharCode(65 + i)); // 65 = uppercase A
 }
 
-export const rowIdToY = (rowId: string) => rowId.charCodeAt(0) - 65;
-export const columnIdToX = (columnId: string) => (+columnId) - 1;
+export const rowIdToY = (rowId: RowId) => rowId.charCodeAt(0) - 65;
+export const columnIdToX = (columnId: ColumnId) => (+columnId) - 1;
 
-export const isLineIdRow = (lineId: string) => /[A-Z]/.test(lineId);
-export const isLineIdColumn = (lineId: string) => /^\d+$/.test(lineId);
+export const isLineIdRow = (lineId: LineId): lineId is RowId => /[A-Z]/.test(lineId);
+export const isLineIdColumn = (lineId: LineId): lineId is ColumnId => /^\d+$/.test(lineId);
+export const isLineId = (str: unknown): str is LineId => {
+	return typeof str === 'string' && str.length === 1;
+}
 
 export const lineTypeFromLineId = (lineId: string): LineType => {
 	if (isLineIdRow(lineId)) return ROW;
@@ -157,10 +160,11 @@ export const sortLineValues = (values: PuzzleValue[]) => {
 }
 
 const exportStrRegex = /^\d{1,2}x\d{1,2};([.01]){4,}$/;
-export const isExportString = (str: string) => {
+export type PuzzleExportString = string & { _flavor?: 'PuzzleExportString' };
+export const isExportString = (str: string): str is PuzzleExportString => {
 	return exportStrRegex.test(str);
 }
-export const parseExportString = (str: string) => {
+export const parseExportString = (str: PuzzleExportString) => {
 	const [dimensions, boardStr] = str.split(';');
 	const [width, height] = dimensions.split('x').map(Number);
 	return { width, height, boardStr };

@@ -4,7 +4,7 @@ import { validateBoard } from "../validate/board.js";
 import { BoardLine } from "./BoardLine.js";
 import { ThreesUnit } from "./ThreesUnit.js";
 
-export class SimpleBoard {
+export class SimpleBoardOld {
 	constructor(grid) {
 		this.grid = grid;
 		
@@ -32,10 +32,10 @@ export class SimpleBoard {
 	// STATIC CLASS INSTANTIATION METHODS
 	static empty(width, height = width) {
 		const grid = array2d(width, height, EMPTY);
-		return new SimpleBoard(grid);
+		return new SimpleBoardOld(grid);
 	}
 	static import(exportStr) {
-		return SimpleBoard.fromString(exportStr);
+		return SimpleBoardOld.fromString(exportStr);
 	}
 	static fromString(exportedStr) {
 		const data = { width: null, height: null, boardStr: exportedStr };
@@ -66,7 +66,7 @@ export class SimpleBoard {
 			}
 			grid.push(row);
 		}
-		return new SimpleBoard(grid);
+		return new SimpleBoardOld(grid);
 	}
 
 	// RETRIEVE BOARD VALUES;
@@ -247,7 +247,7 @@ export class SimpleBoard {
 	// CLASS UTILTIES
 	copy() {
 		const grid = cloneArray2d(this.grid);
-		return new SimpleBoard(grid);
+		return new SimpleBoardOld(grid);
 	}
 
 	// STRINGIFY UTILITIES
