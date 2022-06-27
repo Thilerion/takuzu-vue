@@ -1,36 +1,42 @@
-import { COLUMN, EMPTY, ONE, PUZZLE_VALUES, ROW, ZERO } from "./constants";
+import { COLUMN, EMPTY, ONE, PUZZLE_VALUES, ROW, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "./constants";
+import type { Grid } from "./types";
 
 // MEMOIZE FUNCTION //
-const defaultArgsToKey = (...args) => args.join(',');
-export function memoize(fn, opts = {}) {
+const defaultArgsToKey = (...args: any[]) => args.join(',');
+type AnyFn = (...args: any[]) => void;
+type MemoizeOpts<T extends AnyFn> = {
+	argsToKey?: (...args: Parameters<T>) => any;
+	initialCache?: Map<any, any>;
+}
+export function memoize<T extends AnyFn>(fn: T, opts: MemoizeOpts<T> = {}) {
 	const {
 		argsToKey = defaultArgsToKey,
 		initialCache = new Map()
 	} = opts;
-
-	let memoized = function (...args) {
-		let cache = memoized.cache;
+	
+	let memoized = function (...args: Parameters<T>) {
+		let cache: typeof initialCache = memoized.cache;
 		const key = argsToKey(...args);
 
 		if (cache.has(key)) {
 			return cache.get(key);
 		}
 		const result = fn(...args);
-		memoized.cache = cache.set(key, result);
+		cache.set(key, result);
 		return result;
-	}
+	} as T & { cache: Map<ReturnType<typeof argsToKey>, ReturnType<T>> };
 	memoized.cache = initialCache;
 	return memoized;
 }
 
 // ARRAY UTILS //
-export const array2d = (width, height = width, value = null) => {
+export const array2d = <T = any>(width: number, height = width, value: T) => {
 	return Array(height).fill(null).map(() => Array(width).fill(value));
 }
-export const cloneArray2d = (arr2) => {
+export const cloneArray2d = <T>(arr2: Grid<T>): Grid<T> => {
 	return arr2.map(row => [...row]);
 }
-export const shuffle = (arrOrig) => {
+export const shuffle = <T>(arrOrig: T[]): T[] => {
 	const arr = [...arrOrig];
 	for (let i = arr.length - 1; i > 0; i--) {
 		const j = Math.floor(Math.random() * (i + 1));
@@ -38,29 +44,29 @@ export const shuffle = (arrOrig) => {
 	}
 	return arr;
 }
-export const range = n => Array(n).fill(null).map((_, idx) => idx);
-export const count = (arr, targetValue) => {
+export const range = (n: number) => Array(n).fill(null).map((_, idx) => idx);
+export const count = <T, K extends T>(arr: T[], targetValue: K) => {
 	return arr.reduce((acc, val) => {
 		if (val === targetValue) acc += 1;
 		return acc;
 	}, 0);
 }
-export const countValuesInMap = (arr) => {
+export const countValuesInMap = <T>(arr: T[]) => {
 	return arr.reduce((acc, val) => {
 		const num = (acc.get(val) || 0) + 1;
 		acc.set(val, num);
 		return acc;
-	}, new Map());
+	}, new Map() as Map<T, number>);
 }
-export const randomIndex = (arr) => Math.floor(Math.random() * arr.length);
-export const pickRandom = (arr) => arr[randomIndex(arr)];
+export const randomIndex = (arr: unknown[]) => Math.floor(Math.random() * arr.length);
+export const pickRandom = <T>(arr: T[]) => arr[randomIndex(arr)];
 
 
 // BOARD / CELL UTILS //
-export const isValidCellDigit = (value) => value === ONE || value === ZERO;
-export const isValidPuzzleValue = value => PUZZLE_VALUES.includes(value);
+export const isValidCellDigit = (value: unknown): value is PuzzleSymbol => value === ONE || value === ZERO;
+export const isValidPuzzleValue = (value: unknown): value is PuzzleValue => PUZZLE_VALUES.includes(value as any);
 
-export const toggleValue = (value, oneFirst = false) => {
+export const toggleValue = (value: PuzzleValue, oneFirst = false) => {
 	const isEmpty = !isValidCellDigit(value);
 
 	const toggleOrder = oneFirst ? [ONE, ZERO, EMPTY] : [ZERO, ONE, EMPTY];
@@ -74,37 +80,37 @@ export const toggleValue = (value, oneFirst = false) => {
 	}
 }
 
-export const countLineValues = (lineArr) => {
+export const countLineValues = (lineArr: PuzzleValue[]) => {
 	return lineArr.reduce((acc, val) => {
 		if (val === ONE) acc[ONE] += 1;
 		else if (val === ZERO) acc[ZERO] += 1;
 		else acc[EMPTY] += 1;
 		return acc;
-	}, { [ONE]: 0, [ZERO]: 0, [EMPTY]: 0 });
+	}, { [ONE]: 0, [ZERO]: 0, [EMPTY]: 0 } as Record<PuzzleValue, number>);
 }
 
 // faster than casting to strings and comparing them
 // IMPORTANT: assumes both lines have the same length; this is always the case in this game type, as rows and columns should never be compared
-export const areLinesEqual = (a, b) => {
+export const areLinesEqual = (a: string | PuzzleValue[], b: string | PuzzleValue[]) => {
 	for (let i = 0; i < a.length; i++) {
 		if (a[i] !== b[i]) return false;
 	}
 	return true;
 }
 
-export const lineSizeToNumRequired = (lineSize) => {
+export const lineSizeToNumRequired = (lineSize: number) => {
 	return {
 		[ONE]: numRequiredOfValue(lineSize, ONE),
 		[ZERO]: numRequiredOfValue(lineSize, ZERO)
 	}
 }
-export const numRequiredOfValue = (lineSize, value) => {
+export const numRequiredOfValue = (lineSize: number, value: PuzzleSymbol) => {
 	const half = lineSize / 2;
 	return value === ONE ? Math.ceil(half) : Math.floor(half);
 }
 
 export const getCoordsForBoardSize = memoize(
-	(width, height) => {
+	(width: number, height: number) => {
 		const cellCoords = [];
 		for (let y = 0; y < height; y++) {
 			for (let x = 0; x < width; x++) {
@@ -114,16 +120,16 @@ export const getCoordsForBoardSize = memoize(
 		return cellCoords;
 	},
 	{
-		argsToKey: (width, height) => `${width},${height}`
+		argsToKey: (width: number, height: number) => `${width},${height}`
 	}
 )
 
 // ROW / COLUMN / LINE UTILS //
-export const generateColumnIds = (width) => {
+export const generateColumnIds = (width: number) => {
 	// row at idx 0 has lineId: 1, then 2, etc
 	return range(width).map(val => String(val + 1));
 }
-export const generateRowIds = (height) => {
+export const generateRowIds = (height: number) => {
 	// column at idx 0 has lineId: A, then B, then C
 	if (height >= 26) {
 		throw new Error('Cannot generate column ids for height higher than "Z"');
@@ -131,30 +137,30 @@ export const generateRowIds = (height) => {
 	return range(height).map(i => String.fromCharCode(65 + i)); // 65 = uppercase A
 }
 
-export const rowIdToY = rowId => rowId.charCodeAt(0) - 65;
-export const columnIdToX = columnId => (columnId * 1) - 1;
+export const rowIdToY = (rowId: string) => rowId.charCodeAt(0) - 65;
+export const columnIdToX = (columnId: string) => (+columnId) - 1;
 
-export const isLineIdRow = lineId => /[A-Z]/.test(lineId);
-export const isLineIdColumn = lineId => /^\d+$/.test(lineId);
+export const isLineIdRow = (lineId: string) => /[A-Z]/.test(lineId);
+export const isLineIdColumn = (lineId: string) => /^\d+$/.test(lineId);
 
-export const lineTypeFromLineId = lineId => {
+export const lineTypeFromLineId = (lineId: string): LineType => {
 	if (isLineIdRow(lineId)) return ROW;
 	if (isLineIdColumn(lineId)) return COLUMN;
 	throw new Error('Unrecognized lineId');
 }
 
-const lineValueOrder = [ZERO, ONE, EMPTY];
-export const sortLineValues = (values) => {
+const lineValueOrder = [ZERO, ONE, EMPTY] as const;
+export const sortLineValues = (values: PuzzleValue[]) => {
 	return [...values].sort((a, b) => {
 		return lineValueOrder.indexOf(a) - lineValueOrder.indexOf(b);
 	})
 }
 
 const exportStrRegex = /^\d{1,2}x\d{1,2};([.01]){4,}$/;
-export const isExportString = (str) => {
+export const isExportString = (str: string) => {
 	return exportStrRegex.test(str);
 }
-export const parseExportString = (str) => {
+export const parseExportString = (str: string) => {
 	const [dimensions, boardStr] = str.split(';');
 	const [width, height] = dimensions.split('x').map(Number);
 	return { width, height, boardStr };
@@ -186,7 +192,7 @@ function getValidRectPuzzleDimensions() {
 	return result;
 }
 const puzzleSizeMap = getValidRectPuzzleDimensions();
-export const deducePuzzleDimensionsFromLength = (length) => {
+export const deducePuzzleDimensionsFromLength = (length: number) => {
 	const sqrt = Math.sqrt(length);
 	if (length % 2 === 1 && sqrt % 1 === 0) {
 		// odd

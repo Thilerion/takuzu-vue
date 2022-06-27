@@ -1,5 +1,5 @@
 import { EMPTY, ONE, ZERO } from "../constants";
-import { countLineValues, lineSizeToNumRequired, memoize, numRequiredOfValue, sortLineValues } from "../utils.js";
+import { countLineValues, lineSizeToNumRequired, memoize, numRequiredOfValue, sortLineValues } from "../utils";
 import { validateLine } from "../validate/line.js";
 import permuteUnique from "./permute.js";
 

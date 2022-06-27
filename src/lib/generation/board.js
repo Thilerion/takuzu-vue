@@ -3,7 +3,7 @@ import { COLUMN, ROW } from "../constants";
 import { getEmptyLinePermutations } from "../permutations/index.js";
 import { selectValue } from "../solver/selection.js";
 import Solver from "../solver/Solver.js";
-import { pickRandom } from "../utils.js";
+import { pickRandom } from "../utils";
 
 export function generateBoard(width, height, maxAttempts = 5) {
 	return new BoardGenerator(width, height, maxAttempts).start();

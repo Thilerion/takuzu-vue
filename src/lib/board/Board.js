@@ -1,5 +1,5 @@
 import { COLUMN, EMPTY, ONE, ROW, ZERO } from "../constants";
-import { array2d, cloneArray2d, columnIdToX, count, deducePuzzleDimensionsFromLength, generateColumnIds, generateRowIds, getCoordsForBoardSize, isExportString, isValidCellDigit, parseExportString, rowIdToY, shuffle } from "../utils.js";
+import { array2d, cloneArray2d, columnIdToX, count, deducePuzzleDimensionsFromLength, generateColumnIds, generateRowIds, getCoordsForBoardSize, isExportString, isValidCellDigit, parseExportString, rowIdToY, shuffle } from "../utils";
 import { validateBoard } from "../validate/board.js";
 import { BoardLine } from "./BoardLine.js";
 import { ThreesUnit } from "./ThreesUnit.js";

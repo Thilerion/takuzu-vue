@@ -1,6 +1,6 @@
 import { SimpleBoard } from "../board/Board.js";
 import { EMPTY, ONE, ZERO } from "../constants";
-import { shuffle } from "../utils.js";
+import { shuffle } from "../utils";
 
 const reversed = arr => [...arr].reverse();
 
