@@ -1,5 +1,5 @@
 
-import { EMPTY } from "../constants.js";
+import { EMPTY } from "../constants";
 import { checkLineBalanceStrategy } from "../strategies/LineBalance.js";
 
 export function humanSolveBalance(data, options = {}) {

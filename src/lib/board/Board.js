@@ -1,4 +1,4 @@
-import { COLUMN, EMPTY, ONE, ROW, ZERO } from "../constants.js";
+import { COLUMN, EMPTY, ONE, ROW, ZERO } from "../constants";
 import { array2d, cloneArray2d, columnIdToX, count, deducePuzzleDimensionsFromLength, generateColumnIds, generateRowIds, getCoordsForBoardSize, isExportString, isValidCellDigit, parseExportString, rowIdToY, shuffle } from "../utils.js";
 import { validateBoard } from "../validate/board.js";
 import { BoardLine } from "./BoardLine.js";

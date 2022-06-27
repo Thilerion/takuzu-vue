@@ -96,7 +96,7 @@ import CountsRuler from '@/components/gameboard/ruler/CountsRuler.vue';
 
 import { usePuzzleWakeLock } from '@/composables/use-wake-lock.js';
 
-import { COLUMN, ROW } from '@/lib/constants.js';
+import { COLUMN, ROW } from '@/lib/constants';
 
 import debounce from 'lodash.debounce';
 import { useSettingsStore } from '@/stores/settings/index.js';

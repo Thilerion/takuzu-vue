@@ -1,4 +1,4 @@
-import { EMPTY, ONE, ZERO } from "../constants.js";
+import { EMPTY, ONE, ZERO } from "../constants";
 import { countLineValues } from "../utils.js";
 
 export function selectCellFirstEmpty(board) {

@@ -1,4 +1,4 @@
-import { EMPTY } from "../../constants.js";
+import { EMPTY } from "../../constants";
 import { checkLineBalanceStrategy } from "../../strategies/LineBalance.js";
 
 export default function applyLineBalanceConstraint(board, options = {}) {

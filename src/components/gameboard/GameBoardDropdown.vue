@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import { EMPTY } from '@/lib/constants.js';
+import { EMPTY } from '@/lib/constants';
 import { humanSolveTriples } from '@/lib/human-solver/triples.js';
 import { shuffle } from '@/lib/utils.js';
 import { useMainStore } from '@/stores/main.js';

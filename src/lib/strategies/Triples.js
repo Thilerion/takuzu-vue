@@ -1,6 +1,6 @@
 // Search for "doubles" (.11 / 00.) or "sandwiches" (1.1 / 0.0) inside every unit of three cells in a board
 
-import { EMPTY, OPPOSITE_VALUE } from "../constants.js";
+import { EMPTY, OPPOSITE_SYMBOL_MAP } from "../constants";
 
 const doublesLeft = ['.11', '.00'];
 const doublesRight = ['11.', '00.'];
@@ -44,7 +44,7 @@ function getBasicResult(coords, values, targetIdx, sourceIdx) {
 		target: {
 			x: targetCoords.x,
 			y: targetCoords.y,
-			value: OPPOSITE_VALUE[values[sourceIdx]]
+			value: OPPOSITE_SYMBOL_MAP[values[sourceIdx]]
 		}
 	}
 }

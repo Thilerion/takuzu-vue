@@ -1,4 +1,4 @@
-import { EMPTY, ONE, ZERO } from "../constants.js"
+import { EMPTY, ONE, ZERO } from "../constants"
 
 export const createFilterLinesByRemainingValues = (leastRange, mostRange) => {
 	if (leastRange.length !== 2 || mostRange.length !== 2) {

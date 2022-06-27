@@ -1,4 +1,4 @@
-import { COLUMN, EMPTY, ONE, ROW, ZERO } from "../constants.js";
+import { COLUMN, EMPTY, ONE, ROW, ZERO } from "../constants";
 import { getValidLinePermutations } from "../permutations/index.js";
 import { columnIdToX, rowIdToY, lineTypeFromLineId, countLineValues, lineSizeToNumRequired } from "../utils.js";
 

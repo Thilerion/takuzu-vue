@@ -3,7 +3,7 @@ import applyLineBalanceConstraint from "./constraints/LineBalance.js";
 import applyEliminationConstraint from "./constraints/Elimination.js";
 
 import { selectCell, selectValue } from "./selection.js";
-import { OPPOSITE_VALUE } from "../constants.js";
+import { OPPOSITE_SYMBOL_MAP } from "../constants";
 
 export default class Solver {
 	constructor(initialBoard, conf = {}) {
@@ -131,7 +131,7 @@ export default class Solver {
 		const value = this.selectValue(board, x, y);
 
 		return this.search(this._assignAndSolve(board.copy(), x, y, value)) ||
-			this.search(this._assignAndSolve(board.copy(), x, y, OPPOSITE_VALUE[value]));
+			this.search(this._assignAndSolve(board.copy(), x, y, OPPOSITE_SYMBOL_MAP[value]));
 	}
 
 	_assignAndSolve(board, x, y, value) {

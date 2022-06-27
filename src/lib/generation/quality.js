@@ -1,4 +1,4 @@
-import { ONE, ZERO } from "../constants.js";
+import { ONE, ZERO } from "../constants";
 import { countValuesInMap } from "../utils.js";
 
 // empirically found mask ratios, puzzles can be generated in a reasonable amount of time with this ratio of masked/unmasked cells

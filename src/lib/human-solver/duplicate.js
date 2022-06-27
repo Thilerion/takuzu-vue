@@ -1,4 +1,4 @@
-import { COLUMN, ROW } from "../constants.js";
+import { COLUMN, ROW } from "../constants";
 import { areLinesEqual } from "../utils.js";
 import { createFilterLinesByRemainingValues, getRecurringValuesFromPermutations } from "./utils.js";
 

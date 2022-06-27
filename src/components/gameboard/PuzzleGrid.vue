@@ -25,7 +25,7 @@
 
 <script>
 import PuzzleGridHighlights from '@/components/gameboard/PuzzleGridHighlights.vue';
-import { EMPTY } from '@/lib/constants.js';
+import { EMPTY } from '@/lib/constants';
 import { computed, provide, reactive, ref, toRef, toRefs, watch } from 'vue';
 import { usePuzzleStore } from '@/stores/puzzle.js';
 import { useTapVibrate } from '@/composables/use-tap-vibrate.js';

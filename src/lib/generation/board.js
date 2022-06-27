@@ -1,5 +1,5 @@
 import { SimpleBoard } from "../board/Board.js";
-import { COLUMN, ROW } from "../constants.js";
+import { COLUMN, ROW } from "../constants";
 import { getEmptyLinePermutations } from "../permutations/index.js";
 import { selectValue } from "../solver/selection.js";
 import Solver from "../solver/Solver.js";

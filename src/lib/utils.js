@@ -1,4 +1,4 @@
-import { COLUMN, EMPTY, ONE, PUZZLE_SYMBOLS, ROW, ZERO } from "./constants.js";
+import { COLUMN, EMPTY, ONE, PUZZLE_VALUES, ROW, ZERO } from "./constants";
 
 // MEMOIZE FUNCTION //
 const defaultArgsToKey = (...args) => args.join(',');
@@ -58,7 +58,7 @@ export const pickRandom = (arr) => arr[randomIndex(arr)];
 
 // BOARD / CELL UTILS //
 export const isValidCellDigit = (value) => value === ONE || value === ZERO;
-export const isValidPuzzleSymbol = value => PUZZLE_SYMBOLS.includes(value);
+export const isValidPuzzleValue = value => PUZZLE_VALUES.includes(value);
 
 export const toggleValue = (value, oneFirst = false) => {
 	const isEmpty = !isValidCellDigit(value);
