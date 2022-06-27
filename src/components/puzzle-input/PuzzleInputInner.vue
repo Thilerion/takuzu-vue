@@ -198,8 +198,8 @@ const puzzleGridStrShort = computed(() => {
 const puzzleGridStrLongFormatted = computed(() => {
 	if (!isValidPuzzleGrid.value) return '';
 	const value = puzzleGridStrLong.value;
-	const chunked = chunk(value.split(''), gridDimensions.value.width).map(row => row.join('')).join(' ');
-	return chunked;
+	const chunked = chunk(value.split(''), gridDimensions.value.width);
+	return chunked.map(row => row.join('')).join(' ');
 })
 const puzzleGridExportStr = computed(() => {
 	if (!isValidPuzzleGrid.value) return '';

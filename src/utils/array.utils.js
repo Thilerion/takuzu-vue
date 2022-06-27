@@ -1,31 +1,5 @@
-export function groupBy(arr, key, initialMap = {}) {
-	return arr.reduce((acc, val) => {
-		const keyVal = val[key];
-		if (acc[keyVal] == null) acc[keyVal] = [];
-		acc[keyVal].push(val);
-		return acc;
-	}, initialMap);
-}
-
-export function chunk(arr = [], size) {
-	if (size == null || size < 1) {
-		throw new TypeError(`Invalid value for size of chunks (${size})`);
-	}
-	if (size >= arr.length) {
-		return [[...arr]];
-	}
-	const chunked = [];
-	for (let i = 0; i < arr.length; i += size) {
-		const end = i + size;
-		const values = arr.slice(i, end);
-		chunked.push(values);
-	} 
-	return chunked;
-}
-
-export function sortAsc(arr) {
-	return [...arr].sort((a, b) => a - b);
-}
+export { chunk, sortDesc, sortAsc, groupBy } from './array.ts.utils';
+import { sortAsc } from './array.ts.utils';
 
 export const sum = arr => arr.reduce((acc, val) => acc + val, 0);
 export const mean = arr => arr.length ? sum(arr) / (arr.length) : undefined;

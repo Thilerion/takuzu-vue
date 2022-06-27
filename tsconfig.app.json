@@ -11,6 +11,12 @@
 	  "allowJs": true,
 	  "types": [
 		"vite-plugin-pwa/client"
+	  ],
+	  "lib": [
+		"ES2016",
+		"ES2018.Intl",
+		"DOM",
+		"DOM.Iterable"
 	  ]
 	}
   }
