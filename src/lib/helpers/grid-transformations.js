@@ -1,4 +1,4 @@
-import { SimpleBoard } from "../board/Board.js";
+import { SimpleBoard } from "../board/Board";
 import { EMPTY, ONE, ZERO } from "../constants";
 import { shuffle } from "../utils";
 
