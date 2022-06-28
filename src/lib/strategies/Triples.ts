@@ -1,7 +1,7 @@
 // Search for "doubles" (.11 / 00.) or "sandwiches" (1.1 / 0.0) inside every unit of three cells in a board
 
-import type { ThreesUnit } from "../board/ThreesUnit";
-import { EMPTY, OPPOSITE_SYMBOL_MAP, type PuzzleSymbol, type PuzzleValue } from "../constants";
+import type { ThreesCoords, ThreesUnit } from "../board/ThreesUnit";
+import { EMPTY, OPPOSITE_SYMBOL_MAP, type PuzzleSymbol } from "../constants";
 import type { Target, Vec } from "../types";
 
 const doublesLeft: ReadonlyArray<string> = ['.11', '.00'];
@@ -21,8 +21,6 @@ type TriplesStrategyDetailedResult = {
 	type: TriplesSubtype;
 	origin: readonly [Vec, Vec];
 }
-type TripleCoords = [Vec, Vec, Vec];
-type TripleValues = [PuzzleValue, PuzzleValue, PuzzleValue];
 type TripleSymbols = [PuzzleSymbol, PuzzleSymbol, PuzzleSymbol];
 
 const isTripleSymbols = (v: unknown[]): v is TripleSymbols => {
@@ -38,8 +36,7 @@ export function checkTriplesStrategy(threesUnit: ThreesUnit, options?: TriplesSt
 	const { detailed = false } = options ?? {};
 
 	// TODO: after threesUnit converted to TS, remove type cast
-	const values = threesUnit.values as TripleValues;
-	const coords = threesUnit.coords as TripleCoords;
+	const { values, coords } = threesUnit;
 	
 	if (!isTripleSymbols(values)) return { found: false } as TriplesStrategyNoResult;
 
@@ -64,7 +61,7 @@ export function checkTriplesStrategy(threesUnit: ThreesUnit, options?: TriplesSt
 	return { found: false };
 }
 
-function getBasicResult(coords: TripleCoords, values: TripleSymbols, targetIdx: number, sourceIdx: number): TriplesStrategyBasicResult {
+function getBasicResult(coords: ThreesCoords, values: TripleSymbols, targetIdx: number, sourceIdx: number): TriplesStrategyBasicResult {
 	const targetCoords = coords[targetIdx];
 	return {
 		found: true,
@@ -76,7 +73,7 @@ function getBasicResult(coords: TripleCoords, values: TripleSymbols, targetIdx: 
 	}
 }
 
-function getDetailedResult(coords: TripleCoords, values: TripleSymbols, targetIdx: number, isSandwich: boolean): TriplesStrategyDetailedResult {
+function getDetailedResult(coords: ThreesCoords, values: TripleSymbols, targetIdx: number, isSandwich: boolean): TriplesStrategyDetailedResult {
 	const sourceIdxA = (targetIdx + 1) % 3;
 	const sourceIdxB = (targetIdx + 2) % 3;
 
