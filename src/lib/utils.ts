@@ -1,33 +1,6 @@
 import { COLUMN, EMPTY, ONE, PUZZLE_VALUES, ROW, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "./constants";
 import type { ColumnId, Grid, LineId, RowId } from "./types";
-
-// MEMOIZE FUNCTION //
-const defaultArgsToKey = (...args: any[]) => args.join(',');
-type AnyFn = (...args: any[]) => void;
-type MemoizeOpts<T extends AnyFn> = {
-	argsToKey?: (...args: Parameters<T>) => any;
-	initialCache?: Map<any, any>;
-}
-export function memoize<T extends AnyFn>(fn: T, opts: MemoizeOpts<T> = {}) {
-	const {
-		argsToKey = defaultArgsToKey,
-		initialCache = new Map()
-	} = opts;
-	
-	let memoized = function (...args: Parameters<T>) {
-		let cache: typeof initialCache = memoized.cache;
-		const key = argsToKey(...args);
-
-		if (cache.has(key)) {
-			return cache.get(key);
-		}
-		const result = fn(...args);
-		cache.set(key, result);
-		return result;
-	} as T & { cache: Map<ReturnType<typeof argsToKey>, ReturnType<T>> };
-	memoized.cache = initialCache;
-	return memoized;
-}
+import { memoize } from "./memoize.utils";
 
 // ARRAY UTILS //
 export const array2d = <T = any>(width: number, height = width, value: T) => {
@@ -119,9 +92,7 @@ export const getCoordsForBoardSize = memoize(
 		}
 		return cellCoords;
 	},
-	{
-		argsToKey: (width: number, height: number) => `${width},${height}`
-	}
+	(width: number, height: number) => `${width},${height}`
 )
 
 // ROW / COLUMN / LINE UTILS //

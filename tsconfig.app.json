@@ -17,7 +17,8 @@
 		"ES2018.Intl",
 		"DOM",
 		"DOM.Iterable",
-		"ES2019.Array"
+		"ES2019.Array",
+		"ES2017.String"
 	  ]
 	}
   }

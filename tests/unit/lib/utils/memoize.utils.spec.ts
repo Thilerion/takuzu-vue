@@ -1,34 +1,32 @@
 import { expect, it, beforeEach, test, describe, vi } from 'vitest';
-import { memoize } from '../../../../src/lib/utils';
+import { memoize } from '../../../../src/lib/memoize.utils';
 
 describe('memoize function', () => {
-	it('correctly memoizes results with a single argument', () => {
+	it('correctly memoized results with a single argument', () => {
 		const fn = vi.fn(x => x * 2);
-		const argsToKeyFn = vi.fn((argA) => String(argA));
+		const serializeArgs = vi.fn((argA) => String(argA));
 		const memoized = memoize(
-			fn,
-			{ argsToKey: argsToKeyFn }
+			fn, serializeArgs
 		);
+		expect(memoized(1)).toBe(2);
+		expect(fn).toHaveBeenCalledTimes(1);
+		expect(serializeArgs).toHaveBeenCalledTimes(1);
 
 		expect(memoized(1)).toBe(2);
 		expect(fn).toHaveBeenCalledTimes(1);
-		expect(argsToKeyFn).toHaveBeenCalledTimes(1);
-
-		expect(memoized(1)).toBe(2);
-		expect(fn).toHaveBeenCalledTimes(1);
-		expect(argsToKeyFn).toHaveBeenCalledTimes(2);
+		expect(serializeArgs).toHaveBeenCalledTimes(2);
 	})
 
 	it('correctly memoized results with multiple arguments', () => {
 		const fn = vi.fn((argA = [], argB = 1, argC = 1) => {
 			return (argA.length + argB + argC) * 2;
 		});
-		const argsToKeyFn = vi.fn((argA, argB, argC) => {
+		const serializeArgs = vi.fn((argA, argB, argC) => {
 			return [argA, argB, argC].flat(2).join('');
 		});
 		const memoized = memoize(
 			fn,
-			{ argsToKey: argsToKeyFn }
+			serializeArgs
 		);
 
 		expect(memoized([], 1, 1)).toBe(4);
@@ -45,10 +43,10 @@ describe('memoize function', () => {
 
 	it('correctly exposes cache', () => {
 		const fn = vi.fn(x => x * 2);
-		const argsToKeyFn = vi.fn((argA) => String(argA));
+		const serializeArgs = vi.fn((argA) => String(argA));
 		const memoized = memoize(
 			fn,
-			{ argsToKey: argsToKeyFn }
+			serializeArgs
 		);
 
 		expect(memoized.cache).toBeInstanceOf(Map);
@@ -65,10 +63,10 @@ describe('memoize function', () => {
 
 	it('has a cache that can be reset', () => {
 		const fn = vi.fn(x => x * 2);
-		const argsToKeyFn = vi.fn((argA) => String(argA));
+		const serializeArgs = vi.fn((argA) => String(argA));
 		const memoized = memoize(
 			fn,
-			{ argsToKey: argsToKeyFn }
+			serializeArgs
 		);
 
 		expect(memoized.cache.size).toBe(0);
