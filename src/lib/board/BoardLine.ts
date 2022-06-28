@@ -1,31 +1,34 @@
-import { COLUMN, EMPTY, ONE, ROW, ZERO } from "../constants";
-import { getValidLinePermutations } from "../permutations/index.js";
-import { columnIdToX, rowIdToY, lineTypeFromLineId, countLineValues, lineSizeToNumRequired } from "../utils";
+import { COLUMN, EMPTY, ONE, ROW, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "../constants";
+import { getValidLinePermutations } from "../permutations";
+import type { LineId, LineValueCount, PuzzleValueLine, ROPuzzleSymbolLine, ROPuzzleValueLine, Vec } from "../types";
+import { columnIdToX, countLineValues, isLineIdRow, lineSizeToNumRequired, lineTypeFromLineId, rowIdToY } from "../utils";
+import type { SimpleBoard } from "./Board";
 
 export class BoardLine {
-	constructor(board, lineId) {
-		this.lineId = lineId;
+	type: LineType;
+	index: number;
+
+	_values: null | PuzzleValueLine = null;
+	_coords: null | Vec[] = null;
+	_counts: null | LineValueCount = null;
+	_numRequired: null | Record<PuzzleSymbol, number> = null;
+	_validPermutations: null | Readonly<ROPuzzleSymbolLine[]> = null;
+	constructor(
+		private _board: SimpleBoard | null,
+		public lineId: LineId
+	) {
 		this.type = lineTypeFromLineId(this.lineId);
-		this.index = this.type === ROW ? rowIdToY(lineId) : columnIdToX(lineId);
-
-		this._board = board;
-
-		// lazy values
-		this._values = null;
-		this._coords = null;
-		this._counts = null;
-		this._numRequired = null;
-		this._validPermutations = null;
+		this.index = isLineIdRow(lineId) ? rowIdToY(lineId) : columnIdToX(lineId);
 	}
 
-	static fromString(lineStr, lineId = 'A') {
+	static fromString(lineStr: string, lineId = 'A') {
 		const line = new BoardLine(null, lineId);
-		line._values = lineStr.split('');
+		line._values = lineStr.split('') as PuzzleValueLine;
 		return line;
 	}
 
 	// reset all lazy values, set new board property if given
-	reset(board) {
+	reset(board: SimpleBoard | null) {
 		if (board != null) {
 			this._board = board;
 		}
@@ -37,20 +40,27 @@ export class BoardLine {
 		return this;
 	}
 
-	getCoords(i) {
+	getCoords(i: number) {
 		const x = this.type === ROW ? i : this.index;
 		const y = this.type === COLUMN ? i : this.index;
 		return { x, y };
 	}
+	get length(): number {
+		if (this._values != null) return this._values.length;
+		if (this._coords != null) return this._coords.length;
+		return this.values.length;
+	}
 
-	// LAZY EVALUATION GETTERS
-	get values() {
+	get values(): ROPuzzleValueLine {
 		if (this._values == null) {
+			if (this._board == null) {
+				throw new Error('Need board for BoardLine values.');
+			}
 			this._values = this._board.getLine.call(this._board, this.lineId);
 		}
 		return this._values;
 	}
-	get coords() {
+	get coords(): Vec[] {
 		if (this._coords == null) {
 			this._coords = this.values.map((_val, i) => {
 				return this.getCoords(i);
@@ -58,15 +68,9 @@ export class BoardLine {
 		}
 		return this._coords;
 	}
-	get counts() {
+	get counts(): LineValueCount {
 		if (this._counts == null) {
-			// if the board has a lineCounts property, use that
-			// else calculate the counts the normal way
-			if (this._board && this._board.lineCounts != null) {
-				this._counts = this._board.lineCounts[this.lineId];
-			} else {
-				this._counts = countLineValues(this.values);
-			}
+			this._counts = countLineValues([...this.values]);
 		}
 		return this._counts;
 	}
@@ -82,12 +86,12 @@ export class BoardLine {
 		}
 		return this._numRequired;
 	}
-	get validPermutations() {
+	get validPermutations(): Readonly<ROPuzzleSymbolLine[]> {
 		if (this._validPermutations == null) {
 			const { values, counts, numRequired } = this;
 			const maxZero = numRequired[ZERO];
 			const maxOne = numRequired[ONE];
-			const validPerms = getValidLinePermutations(values, counts, maxZero, maxOne);
+			const validPerms = getValidLinePermutations([...values], counts, maxZero, maxOne);
 			if (!validPerms) {
 				this._validPermutations = [];
 			} else {
@@ -95,15 +99,6 @@ export class BoardLine {
 			}
 		}
 		return this._validPermutations;
-	}
-
-	// OTHER GETTERS
-	get length() {
-		if (this._board) {
-			return this.type === ROW ? this._board.width : this._board.height;
-		} else {
-			return this.values.length;
-		}
 	}
 	get numEmpty() {
 		return this.counts[EMPTY];
@@ -115,11 +110,11 @@ export class BoardLine {
 		return this.numEmpty === 0;
 	}
 
-	getValueCount(value) {
+	getValueCount(value: PuzzleValue) {
 		return this.counts[value];
 	}
 	// amount of times this value still needs to be placed in this line
-	getValueRemaining(value) {
+	getValueRemaining(value: PuzzleSymbol) {
 		return this.numRequired[value] - this.getValueCount(value);
 	}
 

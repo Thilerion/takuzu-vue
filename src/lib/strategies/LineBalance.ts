@@ -1,6 +1,7 @@
+import type { BoardLine } from "../board/BoardLine";
 import { ONE, ZERO } from "../constants";
 
-export function checkLineBalanceStrategy(boardLine) {
+export function checkLineBalanceStrategy(boardLine: BoardLine) {
 	if (boardLine.isFilled) return { found: false };
 
 	const remainingOne = boardLine.getValueRemaining(ONE);
