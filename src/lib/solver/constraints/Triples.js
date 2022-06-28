@@ -1,4 +1,4 @@
-import { checkTriplesStrategy } from "../../strategies/Triples.js";
+import { checkTriplesStrategy } from "../../strategies/Triples";
 
 export default function applyTriplesConstraint(board) {
 	let changed = false;
