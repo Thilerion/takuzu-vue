@@ -8,7 +8,7 @@ export interface SolverConfig {
 	timeoutDuration?: number,
 	throwAfterTimeout?: boolean,
 	disableBacktracking?: boolean,
-	selectCell?: (board: SimpleBoard) => Vec,
+	selectCell?: (board: SimpleBoard) => Vec | null,
 	selectValue?: (board: SimpleBoard, x: number, y: number) => PuzzleSymbol,
 	constraintFns?: ConstraintFn[]
 }

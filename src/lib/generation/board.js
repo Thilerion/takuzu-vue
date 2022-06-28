@@ -2,7 +2,7 @@ import { SimpleBoard } from "../board/Board";
 import { COLUMN, ROW } from "../constants";
 import { getEmptyLinePermutations } from "../permutations/index";
 import { selectValue } from "../solver/selection";
-import Solver from "../solver/Solver.js";
+import Solver from "../solver/Solver";
 import { pickRandom } from "../utils";
 
 export function generateBoard(width, height, maxAttempts = 5) {

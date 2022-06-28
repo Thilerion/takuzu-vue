@@ -1,7 +1,7 @@
 export { selectCell, selectValue } from './selection';
-export { default as Solver } from './Solver.js';
+export { default as Solver } from './Solver';
 
-import Solver from './Solver.js';
+import Solver from './Solver';
 
 export async function quickSolve(board, {
 	backtracking = false,
