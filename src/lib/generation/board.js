@@ -1,7 +1,7 @@
 import { SimpleBoard } from "../board/Board";
 import { COLUMN, ROW } from "../constants";
 import { getEmptyLinePermutations } from "../permutations/index.js";
-import { selectValue } from "../solver/selection.js";
+import { selectValue } from "../solver/selection";
 import Solver from "../solver/Solver.js";
 import { pickRandom } from "../utils";
 

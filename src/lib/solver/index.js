@@ -1,4 +1,4 @@
-export { selectCell, selectValue } from './selection.js';
+export { selectCell, selectValue } from './selection';
 export { default as Solver } from './Solver.js';
 
 import Solver from './Solver.js';

@@ -1,7 +1,9 @@
-import { EMPTY, ONE, ZERO } from "../constants";
+import type { SimpleBoard } from "../board/Board";
+import { EMPTY, ONE, ZERO, type PuzzleSymbol } from "../constants";
+import type { LineId, Vec } from "../types";
 import { countLineValues } from "../utils";
 
-export function selectCellFirstEmpty(board) {
+export function selectCellFirstEmpty(board: SimpleBoard): Vec | null {
 	for (let y = 0; y < board.height; y++) {
 		const row = board.getRow(y);
 		const firstEmpty = row.indexOf(EMPTY);
@@ -12,7 +14,7 @@ export function selectCellFirstEmpty(board) {
 	return null;
 }
 
-export function selectCellFewestEmptyPeers(board, targetEmptyRatio = 0.7) {
+export function selectCellFewestEmptyPeers(board: SimpleBoard, targetEmptyRatio = 0.7): Vec | null {
 	const numCells = board.width * board.height;
 	const emptyRatio = board.numEmpty / numCells; // percentage of empty cells
 
@@ -30,7 +32,7 @@ export function selectCellFewestEmptyPeers(board, targetEmptyRatio = 0.7) {
 		const count = countLineValues(line);
 		acc[lineId] = count;
 		return acc;
-	}, {});
+	}, {} as Record<LineId, ReturnType<typeof countLineValues>>);
 
 	for (const cell of board.cells({ skipFilled: true })) {
 		const { x, y } = cell;
@@ -50,21 +52,27 @@ export function selectCellFewestEmptyPeers(board, targetEmptyRatio = 0.7) {
 	return bestCell;
 }
 
-export function selectCellRandom(board) {
+export function selectCellRandom(board: SimpleBoard): Vec {
 	const emptyCells = board.cells({ skipFilled: true, shuffled: true });
-	const { x, y } = emptyCells.next().value;
-	return { x, y };
+	const nextVal = emptyCells.next().value;
+	if (nextVal) {
+		const { x, y } = nextVal;
+		return { x, y };
+	}
+	throw new Error('No next value found.');
 }
 
-export const selectValueZeroFirst = (board, x, y) => ZERO;
-export const selectValueRandom = (board, x, y) => Math.random() < 0.5 ? ONE : ZERO;
+type SelectValueFn = (board: SimpleBoard, x: number, y: number) => PuzzleSymbol;
+
+export const selectValueZeroFirst: SelectValueFn = (board, x, y) => ZERO;
+export const selectValueRandom: SelectValueFn = (board, x, y) => Math.random() < 0.5 ? ONE : ZERO;
 
 /* 
 Select value that is used the least among the cells' peers (least constraining value in CSP).
 Greatly decreases search time while generating, or for boards that need a lot of backtracking in general; less useful for boards that require less backtracking, but not really detrimental.
 Using LCV; the algorithm is more likely to go along a correct path, and the fewest returns in the search are required
 */
-export function selectValueLeastConstraining(board, x, y) {
+export const selectValueLeastConstraining: SelectValueFn = (board, x, y) => {
 	const row = board.getRow(y);
 	const col = board.getColumn(x);
 

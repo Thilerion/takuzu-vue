@@ -2,7 +2,7 @@ import applyTriplesConstraint from "./constraints/Triples.js";
 import applyLineBalanceConstraint from "./constraints/LineBalance.js";
 import applyEliminationConstraint from "./constraints/Elimination.js";
 
-import { selectCell, selectValue } from "./selection.js";
+import { selectCell, selectValue } from "./selection";
 import { OPPOSITE_SYMBOL_MAP } from "../constants";
 
 export default class Solver {
