@@ -1,9 +1,12 @@
+import type { SimpleBoard } from "../board/Board";
 import { EMPTY, ONE, ROW, ZERO } from "../constants";
+import type { ColumnId, LineId, RowId, Vec } from "../types";
 import { threeInARowRegex, validateLine, validateMaxDigitsPerLine, validateThreeInARow } from "./line.js";
+import { RuleConflictType } from './types';
 
-export function validateBoard(board, validateUniqueness = true) {
-	const filledRows = new Set();
-	const filledColumns = new Set();
+export function validateBoard(board: SimpleBoard, validateUniqueness = true) {
+	const filledRows: Set<RowId> = new Set();
+	const filledColumns: Set<ColumnId> = new Set();
 
 	const { numRequired } = board;
 
@@ -25,11 +28,11 @@ export function validateBoard(board, validateUniqueness = true) {
 	return true;
 }
 
-export function findRuleConflicts(board, validateUniqueness = true) {
-	const conflicts = [];
+export function findRuleConflicts(board: SimpleBoard, validateUniqueness = true) {
+	const conflicts: RuleConflict[] = [];
 
-	const filledRows = {};
-	const filledColumns = {};
+	const filledRows: Record<string, LineId[]> = {};
+	const filledColumns: Record<string, LineId[]> = {};
 
 	const { numRequired } = board;
 	for (const boardLine of board.boardLines()) {
@@ -39,11 +42,11 @@ export function findRuleConflicts(board, validateUniqueness = true) {
 		for (const group of threeInARowMatches) {
 			const idx = group.index;
 			const length = group[0].length;
-			const cells = [];
+			const cells: Vec[] = [];
 			for (let i = idx; i < idx + length; i++) {
 				cells.push(boardLine.getCoords(i));
 			}
-			conflicts.push(new RuleConflict(RULE_CONFLICT_TYPE.threeInARow, { cells }));
+			conflicts.push(new RuleConflict(RuleConflictType.MAX_CONSECUTIVE, { cells }));
 		}
 		if (threeInARowMatches.length) continue;
 		
@@ -54,7 +57,7 @@ export function findRuleConflicts(board, validateUniqueness = true) {
 		const hasConflict = !validateMaxDigitsPerLine(str, maxZero, maxOne);
 		if (hasConflict) {
 			const lineIds = [boardLine.lineId];
-			conflicts.push(new RuleConflict(RULE_CONFLICT_TYPE.imbalanced, { lineIds }));
+			conflicts.push(new RuleConflict(RuleConflictType.IMBALANCED, { lineIds }));
 		} else if (validateUniqueness && !(str.includes(EMPTY))) {
 			const filledLines = boardLine.type === ROW ? filledRows : filledColumns;
 
@@ -72,21 +75,21 @@ export function findRuleConflicts(board, validateUniqueness = true) {
 	for (const lineStr of Object.keys(filledLines)) {
 		const lineIds = filledLines[lineStr];
 		if (lineIds.length > 1) {
-			conflicts.push(new RuleConflict(RULE_CONFLICT_TYPE.duplicateLine, { lineIds }));
+			conflicts.push(new RuleConflict(RuleConflictType.DUPLICATE_LINE, { lineIds }));
 		}
 	}
 	return conflicts;
 }
 
-const RULE_CONFLICT_TYPE = {
-	threeInARow: 'three in a row',
-	imbalanced: 'imbalanced',
-	duplicateLine: 'duplicate line'
-}
+type RuleConflictData = { cells?: null | Vec[], lineIds?: null | LineId[] };
 class RuleConflict {
-	constructor(type, { cells = null, lineIds = null } = {}) {
-		this.type = type;
+	type: RuleConflictType;
+	cells: null | Vec[];
+	lineIds: null | LineId[];
 
+	constructor(type: RuleConflictType, data: RuleConflictData = {}) {
+		const { cells = null, lineIds = null } = data;
+		this.type = type;
 		this.cells = cells;
 		this.lineIds = lineIds;
 	}

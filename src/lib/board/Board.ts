@@ -1,5 +1,5 @@
 import { COLUMN, EMPTY, ONE, ROW, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "../constants";
-import type { ColumnId, IterableBoardLineString, LineId, PuzzleGrid, RowId } from "../types";
+import type { ColumnId, IterableBoardLineString, LineId, PuzzleGrid, RowId, Vec } from "../types";
 import { array2d, cloneArray2d, columnIdToX, deducePuzzleDimensionsFromLength, generateColumnIds, generateRowIds, getCoordsForBoardSize, isExportString, isLineIdColumn, isLineIdRow, isValidCellDigit, lineSizeToNumRequired, parseExportString, rowIdToY, shuffle, type PuzzleExportString } from "../utils";
 import { validateBoard } from "../validate/board";
 import { BoardLine } from "./BoardLine";
@@ -152,7 +152,7 @@ export class SimpleBoard {
 	}
 
 	cellCoords({ shuffled = false } = {}) {
-		const coords = getCoordsForBoardSize(this.width, this.height);
+		const coords: Vec[] = getCoordsForBoardSize(this.width, this.height);
 		if (shuffled) return shuffle(coords);
 		return [...coords];
 	}
@@ -223,7 +223,7 @@ export class SimpleBoard {
 
 	// compare values to a solutionBoard
 	// does not check for "rule violations", only compares to the solution
-	hasIncorrectValues(solutionBoard: SimpleBoard): { hasMistakes: false, result: null } | { hasMistakes: true, result: Array<{ x: number, y: number}> } {
+	hasIncorrectValues(solutionBoard: SimpleBoard): { hasMistakes: false, result: null } | { hasMistakes: true, result: Vec[] } {
 		const incorrectValueCells = [];
 		for (const cell of this.cells({ skipEmpty: true })) {
 			const { x, y, value } = cell;

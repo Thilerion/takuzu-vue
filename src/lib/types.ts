@@ -1,5 +1,4 @@
-import type { COLUMN, LineType, PuzzleValue, ROW } from "./constants";
-import { isLineIdColumn } from "./utils";
+import type { LineType, PuzzleValue } from "./constants";
 
 export type Flavor<T, Flavor extends string> = T & { _flavor?: Flavor };
 
@@ -16,3 +15,5 @@ export type IterableBoardLineString = {
 	lineType: LineType;
 	lineId: LineId
 };
+
+export type Vec = { x: number, y: number };
