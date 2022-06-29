@@ -8,19 +8,17 @@
 	</div>
 </template>
 
-<script>
-export default {
-	props: {
-		lineType: {
-			type: String,
-			required: true
-		},
-		lineIds: {
-			type: Array,
-			required: true
-		}
+<script setup>
+const props = defineProps({
+	lineType: {
+		type: String,
+		required: true
+	},
+	lineIds: {
+		type: Array,
+		required: true
 	}
-};
+})
 </script>
 
 <style scoped>

@@ -12,24 +12,19 @@
 	</div>
 </template>
 
-<script>
+<script setup lang="ts">
 import { usePuzzleStore } from '@/stores/puzzle.js';
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
-export default {
-	setup() {
-		const puzzleStore = usePuzzleStore();
-		const {
-			finishedWithMistakes,
-			boardFilled: finished,
-			progress
-		} = storeToRefs(puzzleStore);
 
-		const cappedProgress = computed(() => Math.max(progress.value, 0.005));
+const puzzleStore = usePuzzleStore();
+const {
+	finishedWithMistakes,
+	boardFilled: finished,
+	progress
+} = storeToRefs(puzzleStore);
 
-		return { finishedWithMistakes, finished, progress: cappedProgress }
-	}
-};
+const cappedProgress = computed(() => Math.max(progress.value, 0.005));
 </script>
 
 <style scoped>
@@ -37,7 +32,7 @@ export default {
 	@apply w-full bg-gray-400 bg-opacity-20 pointer-events-none;
 	height: 3px;
 
-	--progress: v-bind(progress);
+	--progress: v-bind(cappedProgress);
 }
 .progress-value {
 	@apply h-full w-full bg-teal-500 dark:bg-teal-600;

@@ -6,60 +6,45 @@
 	</div>
 </template>
 
-<script>
+<script setup lang="ts">
 import { usePuzzleStore } from '@/stores/puzzle';
 import { usePuzzleTimer } from '@/stores/puzzle-timer.js';
 import { timeFormatter } from '@/utils/date.utils.js';
-import { toRef } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, toRef } from 'vue';
 
-export default {
-	setup() {
-		const puzzleTimer = usePuzzleTimer();
-		const puzzleStore = usePuzzleStore();
-		const paused = toRef(puzzleStore, 'paused');
-		return { puzzleTimer, paused };
-	},
-	data() {
-		return {
-			totalTime: 0,
-			interval: null,
-		}
-	},
-	computed: {
-		timeElapsed() {
-			return this.puzzleTimer.timeElapsed;
-		},
-		formattedTime() {
-			return this.formatTime(this.totalTime).split(':');
-		},
-		minutes() {
-			return this.formattedTime[0];
-		},
-		seconds() {
-			return this.formattedTime[1];
-		}
-	},
-	methods: {
-		formatTime: timeFormatter({ padMinutes: false }),
-		getTotalTime() {
-			const elapsed = this.timeElapsed;
-			let current = 0;
-			if (this.puzzleTimer.running) {
-				current = Date.now() - this.puzzleTimer.startTime;
-			}
-			this.totalTime = elapsed + current;
-		},
-	},
-	mounted() {
-		this.interval = setInterval(() => {
-			this.getTotalTime();
-		}, 1000 / 15);
-	},
-	beforeUnmount() {
-		clearInterval(this.interval);
-		this.interval = null;
-	},
-};
+const puzzleTimer = usePuzzleTimer();
+const puzzleStore = usePuzzleStore();
+const paused = toRef(puzzleStore, 'paused');
+
+const formatTime = timeFormatter({ padMinutes: false });
+
+const totalTime = ref(0);
+const interval = ref<null | number>(null);
+const timeElapsed = toRef(puzzleTimer, 'timeElapsed');
+const formattedTime = computed(() => formatTime(totalTime.value).split(':'));
+const minutes = computed(() => formattedTime.value[0]);
+const seconds = computed(() => formattedTime.value[1]);
+
+const getTotalTime = () => {
+	const elapsed = timeElapsed.value;
+	let current = 0;
+	if (puzzleTimer.running && puzzleTimer.startTime != null) {
+		current = Date.now() - puzzleTimer.startTime;
+	}
+	totalTime.value = elapsed + current;
+}
+
+onMounted(() => {
+	interval.value = setInterval(() => {
+		getTotalTime();
+	}, 1000 / 15);
+})
+onBeforeUnmount(() => {
+	if (interval.value != null) {
+		clearInterval(interval.value);
+	}
+	interval.value = null;
+})
 </script>
 
 <style scoped>

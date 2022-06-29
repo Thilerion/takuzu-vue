@@ -11,26 +11,25 @@
 	</div>
 </template>
 
-<script>import { EMPTY } from "@/lib/constants.js";
+<script setup>
+import { EMPTY } from "@/lib/constants.js";
 import { computed, toRefs, Transition } from "vue";
 
-export default {
-	props: ['value', 'locked', 'incorrect'],
-	components: {
-		Transition
+const props = defineProps({
+	value: {
+		type: [String, null],
 	},
-	setup(props) {
-		const { value, locked, incorrect } = toRefs(props);
+	locked: Boolean,
+	incorrect: Boolean
+})
 
-		const shade = Math.floor(Math.random() * 5);
-		const shadeClass = `shade-${shade}`;
+const { value, locked, incorrect } = toRefs(props);
 
-		const valueStr = computed(() => value.value === EMPTY ? 'none' : value.value);
-		const valueClass = computed(() => `value-${valueStr.value}`);
+const shade = Math.floor(Math.random() * 5);
+const shadeClass = `shade-${shade}`;
 
-		return { valueClass, locked, value, incorrect, shadeClass };
-	}
-};
+const valueStr = computed(() => value.value === EMPTY ? 'none' : value.value);
+const valueClass = computed(() => `value-${valueStr.value}`);
 </script>
 
 <style scoped>

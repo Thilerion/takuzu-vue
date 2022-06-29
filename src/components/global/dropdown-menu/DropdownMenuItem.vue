@@ -6,29 +6,26 @@
 	><slot /></component>
 </template>
 
-<script>
-export default {
-	props: {
-		interactive: Boolean,
-		asElement: {
-			type: String,
-			default: 'button'
-		}
-	},
-	emits: ['click'],
-	inject: ['closeDropdown'],
-	methods: {
-		handleItemClick() {
-			if (!this.interactive) {
-				setTimeout(() => {
-					this.closeDropdown();
-				}, 67);
-			} else {
-			}
-			this.$emit('click');
-		}
+<script setup lang="ts">
+import { inject } from 'vue';
+
+export type Props = {
+	interactive?: boolean,
+	asElement?: string
+}
+const props = withDefaults(defineProps<Props>(), {
+	asElement: 'button'
+})
+const emit = defineEmits(['click']);
+const closeDropdown = inject('closeDropdown') as () => void;
+const handleItemClick = () => {
+	if (!props.interactive) {
+		setTimeout(() => {
+			closeDropdown();
+		}, 67);
 	}
-};
+	emit('click');
+}
 </script>
 
 <style scoped>

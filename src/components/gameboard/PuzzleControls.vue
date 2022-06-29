@@ -59,28 +59,23 @@
 	</div>
 </template>
 
-<script>
+<script setup lang="ts">
+import type { SimpleBoard } from '@/lib';
 import { usePuzzleStore } from '@/stores/puzzle';
 import { useSettingsStore } from '@/stores/settings/index.js';
 import { computed, watchEffect } from 'vue';
 
-export default {
-	emits: ['undo', 'restart', 'check', 'get-hint'],
-	props: {
-		canUndo: Boolean,
-		board: {
-			type: Object,
-			// required: true,
-		},
-		paused: Boolean,
-	},
-	setup() {
-		const settingsStore = useSettingsStore();
-		const checkButtonEnabled = computed(() => settingsStore.checkButton !== 'disabled');
-		const puzzleStore = usePuzzleStore();
-		return { checkButtonEnabled, puzzleStore };
-	},
-};
+const props = defineProps<{
+	canUndo?: boolean,
+	board?: SimpleBoard,
+	paused?: boolean
+}>();
+
+const emit = defineEmits(['undo', 'restart', 'check', 'get-hint']);
+
+const settingsStore = useSettingsStore();
+const checkButtonEnabled = computed(() => settingsStore.checkButton !== 'disabled');
+const puzzleStore = usePuzzleStore();
 </script>
 
 <style scoped>

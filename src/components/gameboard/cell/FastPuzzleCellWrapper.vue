@@ -6,64 +6,59 @@
 		:style="gridStyles"
 	>
 		<slot
-			:value="value"
-			:locked="locked"
+			:value="cellValue"
+			:locked="isLocked"
 			:incorrect="incorrect"
-		><div class="flex items-center justify-center">{{value}}</div></slot>
+		><div class="flex items-center justify-center">{{cellValue}}</div></slot>
 	</component>
 </template>
 
-<script>
+<script setup>
 import { computed, ref, toRefs, watch } from "vue";
 
-export default {
-	props: [
-		'x', 'y', 'locked',
-		'initialValue', 'value', 'incorrect'
-	],
-	emits: ['toggle'],
-	setup(props, { emit }) {
-		const {
-			value,
-			x,
-			y,
-			locked,
-			initialValue,
-			incorrect
-		} = toRefs(props);
+const props = defineProps([
+	'x', 'y', 'locked',
+	'initialValue', 'value', 'incorrect'
+]);
+const emit = defineEmits('toggle');
 
-		const gridStyles = {
-			'grid-row': `${y.value + 1} / span 1`,
-			'grid-column': `${x.value + 1} / span 1`
-		};
+const {
+	value,
+	x,
+	y,
+	locked,
+	initialValue,
+	incorrect
+} = toRefs(props);
 
-		const cellValue = computed(() => {
-			if (value.value == null) {
-				return initialValue.value;
-			} else return value.value;
-		})
-		const isLocked = computed(() => {
-			if (locked.value == null) {
-				return initialValue.value !== '.';
-			} else return locked.value;
-		})
-
-		const elementType = ref(isLocked.value ? 'div' : 'button');
-		const eventName = ref(isLocked.value ? undefined : 'pointerdown');
-
-		watch(isLocked, (v, prev) => {
-			if (v === prev) return;
-			elementType.value = v ? 'div' : 'button';
-			eventName.value = v ? undefined : 'pointerdown';
-		})
-
-		const handleCellToggle = () => {
-			emit('toggle', { x: x.value, y: y.value, value: cellValue.value });
-		}
-
-		return { elementType, handleCellToggle, eventName, value: cellValue, gridStyles, locked: isLocked, incorrect };
-	}
+const gridStyles = {
+	'grid-row': `${y.value + 1} / span 1`,
+	'grid-column': `${x.value + 1} / span 1`
 };
+
+const cellValue = computed(() => {
+	if (value.value == null) {
+		return initialValue.value;
+	} else return value.value;
+})
+const isLocked = computed(() => {
+	if (locked.value == null) {
+		return initialValue.value !== '.';
+	} else return locked.value;
+})
+
+const elementType = ref(isLocked.value ? 'div' : 'button');
+const eventName = ref(isLocked.value ? undefined : 'pointerdown');
+
+watch(isLocked, (v, prev) => {
+	if (v === prev) return;
+	elementType.value = v ? 'div' : 'button';
+	eventName.value = v ? undefined : 'pointerdown';
+})
+
+const handleCellToggle = () => {
+	emit('toggle', { x: x.value, y: y.value, value: cellValue.value });
+}
 </script>
 
 <style>

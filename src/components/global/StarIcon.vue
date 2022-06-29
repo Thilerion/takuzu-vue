@@ -4,15 +4,14 @@
 	<icon-bx-bx-star v-else class="star-icon bx" :class="{'uncolored': gray }" />
 </template>
 
-<script>
+<script setup lang="ts">
 
-export default {
-	props: {
-		filled: Boolean,
-		half: Boolean,
-		gray: Boolean
-	}
+export interface Props {
+	filled?: boolean,
+	half?: boolean,
+	gray?: boolean
 };
+const props = defineProps<Props>();
 </script>
 
 <style scoped>

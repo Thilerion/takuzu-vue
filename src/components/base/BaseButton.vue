@@ -1,30 +1,27 @@
 <template>
-	<component :is="element" class="btn"><slot /></component>
+	<component
+		:is="element"
+		class="btn"
+		:class="{
+			'btn-primary': primary,
+			'btn-elevated': elevated
+		}"
+	><slot /></component>
 </template>
 
-<script>
-const baseStyles = ['primary', 'elevated'];
-const sizes = ['small', 'medium', 'large'];
-function toProps(arr) {
-	return arr.reduce((acc, val) => {
-		return {
-			...acc,
-			[val]: Boolean
-		}
-	}, {});
+<script setup lang="ts">
+export type Props = {
+	element?: 'button' | 'a',
+	primary?: boolean,
+	elevated?: boolean,
 }
-
-export default {
-	name: 'BaseButton',
-	props: {
-		element: {
-			type: String,
-			default: 'button'
-		},
-		...toProps(baseStyles),
-		...toProps(sizes),	
+const props = withDefaults(
+	defineProps<Props>(), {
+		element: 'button',
+		primary: false,
+		elevated: false,
 	}
-};
+)
 </script>
 
 <style scoped>

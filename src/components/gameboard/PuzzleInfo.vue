@@ -18,30 +18,23 @@
 	</div>
 </template>
 
-<script>
+<script setup lang="ts">
 import { DIFFICULTY_LABELS } from '@/config.js';
-import PuzzleInfoTimer from './PuzzleInfoTimer.vue';
+import { computed } from 'vue';
 
-export default {
-	components: { PuzzleInfoTimer },
-	props: {
-		showTimer: Boolean,
-		difficulty: {
-			type: Number,
-			required: true,
-		},
-		progress: {
-			type: Number,
-			default: -1
-		},
-		hasBorder: Boolean
-	},
-	computed: {
-		difficultyLabel() {
-			return DIFFICULTY_LABELS[this.difficulty];
-		},
-	}
+export interface Props {
+	showTimer?: boolean,
+	difficulty: keyof typeof DIFFICULTY_LABELS,
+	progress?: number,
+	hasBorder?: boolean
 };
+
+const props = withDefaults(defineProps<Props>(), {
+	progress: -1
+})
+
+const difficultyLabel = computed(() => DIFFICULTY_LABELS[props.difficulty]);
+
 </script>
 
 <style scoped>

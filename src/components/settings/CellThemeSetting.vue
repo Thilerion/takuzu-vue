@@ -51,30 +51,25 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import { CellThemes } from '@/stores/settings/options';
-export default {
-	setup() {
-		return { CellThemes };
-	},
-	props: {
-		modelValue: {
-			type: String,
-			required: true
-		}
-	},
-	emits: ['update:modelValue'],
-	computed: {
-		cellTheme: {
-			get() {
-				return this.modelValue;
-			},
-			set(value) {
-				this.$emit('update:modelValue', value);
-			}
-		}
+import { computed } from 'vue';
+
+const props = defineProps({
+	modelValue: {
+		type: String,
+		required: true
 	}
-};
+})
+const emit = defineEmits(['update:modelValue']);
+const cellTheme = computed({
+	get() {
+		return props.modelValue;
+	},
+	set(value) {
+		emit('update:modelValue', value);
+	}
+})
 </script>
 
 <style scoped>
@@ -84,7 +79,7 @@ export default {
 						"radio radio";
 	grid-template-rows: auto 1.5rem 2rem;
 	grid-template-columns: auto auto;
-	@apply rounded bg-white dark:bg-slate-700 dark:text-white ring-1 ring-gray-400 ring-opacity-40 grid items-center justify-items-stretch px-0 pt-2 flex-1 transition-all duration-200;
+	@apply rounded bg-white dark:bg-slate-700 dark:text-white ring-1 ring-gray-400 ring-opacity-40 grid items-center justify-items-stretch px-0 pt-2 flex-1 transition-all duration-200 cursor-pointer;
 	/* row-gap: 0.25rem; */
 }
 .cell-theme-box.selected {

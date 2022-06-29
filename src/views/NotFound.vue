@@ -5,26 +5,24 @@
 	</div>
 </template>
 
-<script>
-export default {
-	data() {
-		return {
-			timeout: null
-		}
-	},
-	mounted() {
-		this.timeout = setTimeout(() => {
-			this.timeout = null;
-			this.$router.replace({ name: 'Home' });
-		}, 2000);
-	},
-	unmounted() {
-		if (!this.timeout) return;
+<script setup lang="ts">
+import { onMounted, onUnmounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-		console.warn('Redirect timeout still running while unmounted... cancelling');
-		clearTimeout(this.timeout);
+const timeout = ref<null | number>(null);
+const router = useRouter();
+onMounted(() => {
+	timeout.value = setTimeout(() => {
+		timeout.value = null;
+		router.replace({ name: 'Home' });
+	}, 2000);
+})
+onUnmounted(() => {
+	if (timeout.value) {
+		clearTimeout(timeout.value);
+		timeout.value = null;
 	}
-};
+})
 </script>
 
 <style scoped>

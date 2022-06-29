@@ -38,50 +38,31 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import { usePuzzleStore } from '@/stores/puzzle.js';
-import PuzzleCheckIndicator from './PuzzleCheckIndicator.vue';
-import PuzzleGrid from './PuzzleGrid.vue';
-import BaseButton from '../base/BaseButton.vue';
 
-export default {
-	components: {
-    PuzzleGrid,
-    PuzzleCheckIndicator,
-    BaseButton
-},
-	props: {
-		rows: Number,
-		columns: Number,
-		gridHeight: String,
-		gridWidth: String,
-		cellSize: {
-			type: Number,
-			required: true
-		},
-		board: {
-			type: Object,
-			required: true
-		},
-		paused: Boolean,
+const props = defineProps({
+	rows: Number,
+	columns: Number,
+	gridHeight: String,
+	gridWidth: String,
+	cellSize: {
+		type: Number,
+		required: true
 	},
-	setup() {
-		const puzzleStore = usePuzzleStore();
-		const toggleCell = ({ x, y, value }) => puzzleStore.toggle({ x, y, prevValue: value });
-		const resumeByUser = () => {
-			if (puzzleStore.pausedByUser) {
-				puzzleStore.setPaused(false, { userAction: true });
-			}
-		}
-		return { toggleCell, resumeByUser };
+	board: {
+		type: Object,
+		required: true
 	},
-	computed: {
-		// computed properties for styling
-		cellSizePx() {
-			return (this.cellSize ?? 16) + 'px';
-		}
-	},
-};
+	paused: Boolean,
+});
+const puzzleStore = usePuzzleStore();
+const toggleCell = ({ x, y, value }) => puzzleStore.toggle({ x, y, prevValue: value });
+const resumeByUser = () => {
+	if (puzzleStore.pausedByUser) {
+		puzzleStore.setPaused(false, { userAction: true });
+	}
+}
 </script>
 
 <style scoped>
