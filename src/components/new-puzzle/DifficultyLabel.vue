@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-import StarIcon from '../global/StarIcon.vue';
+
 import { computed, toRefs } from 'vue';
 
 const props = defineProps({

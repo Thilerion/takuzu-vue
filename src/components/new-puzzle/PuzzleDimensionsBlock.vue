@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import GameModeDimensionsButton from './GameModeDimensionsButton.vue';
+
 const props = defineProps({
 	presets: {
 		type: Object,

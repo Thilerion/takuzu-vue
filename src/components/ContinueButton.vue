@@ -12,7 +12,6 @@
 import { DIFFICULTY_LABELS } from '@/config.js';
 import { timeFormatter } from '@/utils/date.utils.js';
 import { computed } from 'vue';
-import BaseButton from './global/BaseButton.vue';
 
 const props = defineProps({
 	width: {

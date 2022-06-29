@@ -34,6 +34,7 @@ export default defineConfig(({ command, mode }) => {
 			Components({
 				extensions: ['vue'],
 				include: [/\.vue$/, /\.vue\?vue/],
+				dirs: ['src/components', 'src/views'],
 				resolvers: [
 					IconsResolver({
 						prefix: 'icon',

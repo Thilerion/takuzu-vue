@@ -26,11 +26,8 @@
 
 <script setup>
 import { onBeforeMount } from 'vue';
-import StatsDbUtils from '../components/statistics/StatsDbUtils.vue';
-import StatisticsContent from '../components/statistics/StatisticsContent.vue';
 import { useStatisticsStore } from '@/stores/statistics.js';
 import { storeToRefs } from 'pinia';
-import PageHeader from '@/components/global/base-layout/PageHeader.vue';
 
 const statsStore = useStatisticsStore();
 const { isLoading } = storeToRefs(statsStore);

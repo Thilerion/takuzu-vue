@@ -8,7 +8,6 @@
 </template>
 
 <script setup>
-import PuzzleInputInnerVue from '@/components/puzzle-input/PuzzleInputInner.vue';
 
 </script>
 

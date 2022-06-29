@@ -15,11 +15,11 @@
 </template>
 
 <script setup>
-import AppTitle from '@/components/AppTitle.vue';
-import MainMenuButtons from '@/components/MainMenuButtons.vue';
+
+
 import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
-import NewUpdateNotification from '@/components/home/NewUpdateNotification.vue';
-import PwaInstallNotification from '@/components/home/PwaInstallNotification.vue';
+
+
 import { useMainStore } from '@/stores/main';
 import { ref } from 'vue';
 

@@ -33,7 +33,7 @@
 
 <script setup>
 import { computed, onBeforeMount, onMounted, ref, toRef } from 'vue';
-import ExpandTransition from '@/views/transitions/ExpandTransition.vue';
+
 
 const emit = defineEmits([
 	'reset',

@@ -53,7 +53,7 @@
 <script setup>
 import { useElementSize } from '@vueuse/core';
 import { computed, ref, watchEffect } from 'vue';
-import MiddleTriangle from './MiddleTriangle.vue';
+
 
 const props = defineProps({
 	grid: {

@@ -70,8 +70,8 @@ export default {
 </script>
 
 <script setup>
-import StarIcon from '@/components/global/StarIcon.vue';
-import IconBtn from '@/components/global/base-layout/IconBtn.vue';
+
+
 import { useMainStore } from '@/stores/main.js';
 import { usePuzzleStore } from '@/stores/puzzle';
 import { useRouter } from 'vue-router';

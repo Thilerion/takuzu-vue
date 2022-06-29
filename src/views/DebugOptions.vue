@@ -17,8 +17,8 @@
 </template>
 
 <script setup>
-import DebugMenu from '@/components/debug-menu/DebugMenu.vue';
-import DebugFeatureToggles from '@/components/debug-menu/DebugFeatureToggles.vue';
+
+
 </script>
 
 <style scoped>

@@ -25,7 +25,7 @@
 import { useStatisticsStore } from '@/stores/statistics.js';
 
 import { computed, toRef } from 'vue';
-import RecentPuzzleItem from './RecentPuzzleItem.vue';
+
 const store = useStatisticsStore();
 
 const sortedByDate = toRef(store, 'sortedByDate');

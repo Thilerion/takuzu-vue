@@ -27,8 +27,8 @@ import { useSettingsStore } from '@/stores/settings/index.js';
 import { validVibrationStrengths } from '@/stores/settings/options';
 import { storeToRefs } from 'pinia';
 import { computed, ref, toRef } from 'vue';
-import InputRange from '../global/input/InputRange.vue';
-import WarningMsg from '../global/WarningMsg.vue';
+
+
 
 const vibrationOptsLength = validVibrationStrengths.length;
 const inputDurationMap = new Map(

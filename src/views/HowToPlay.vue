@@ -104,8 +104,8 @@
 
 <script setup>
 import { ref } from 'vue';
-import PuzzleRowExample from '@/components/how-to-play/PuzzleRowExample.vue';
-import ExpandTransition from './transitions/ExpandTransition.vue';
+
+
 
 const showExampleOne = ref(false);
 const showExampleTwo = ref(false);

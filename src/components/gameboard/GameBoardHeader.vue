@@ -32,8 +32,8 @@
 import { usePuzzleStore } from '@/stores/puzzle.js';
 import { computed, toRef, ref, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import GameBoardDropdown from './GameBoardDropdown.vue';
-import PuzzleProgressBar from './PuzzleProgressBar.vue';
+
+
 import { storeToRefs } from 'pinia';
 
 const emit = defineEmits(['close', 'dropdown-toggled', 'pause', 'resume']);

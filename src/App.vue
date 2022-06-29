@@ -4,9 +4,9 @@
 	>
 		<!-- TODO: transition for MainPage <-> OverlayPage -->
 		<router-view v-slot="{ Component, route }">
-			<overlay-page-transition>
+			<OverlayPageTransition>
 				<component :is="Component" :key="route.meta.usePuzzleKey ? puzzleKey : undefined" />
-			</overlay-page-transition>
+			</OverlayPageTransition>
 		</router-view>
 
 		<!-- container for overlays, for use with <teleport> component -->
@@ -17,7 +17,6 @@
 </template>
 
 <script setup>
-import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
 import { initPregeneratedPuzzles } from '@/services/puzzles-db/init-pregen-puzzles.js';
 import { computed, onMounted, toRef } from 'vue';
 import { provideGlobalBuildData } from './app.globals.js';

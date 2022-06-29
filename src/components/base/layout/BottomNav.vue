@@ -32,7 +32,7 @@
 import { useMainStore } from "@/stores/main";
 import { computed } from "vue";
 import { useRoute, type RouteLocationNormalizedLoaded } from "vue-router";
-import BottomNavIcon, { type BottomNavIconNames } from "./BottomNavIcon.vue";
+
 
 const mainStore = useMainStore();
 const customPuzzleToolEnabled = computed(() => mainStore.featureToggles.customPuzzleTool.isEnabled);

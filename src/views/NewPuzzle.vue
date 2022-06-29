@@ -83,18 +83,18 @@
 <script setup>
 import { DIFFICULTY_LABELS, PRESET_BOARD_SIZES } from '@/config.js';
 import { computed, onBeforeUpdate, onMounted, ref, toRef, watch, watchEffect } from 'vue';
-import PageHeader from '../components/global/base-layout/PageHeader.vue';
-import StartGameButton from '../components/new-puzzle/StartGameButton.vue';
-import PuzzleDimensionsBlock from '../components/new-puzzle/PuzzleDimensionsBlock.vue';
+
+
+
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import { usePreviousSelection } from '../components/new-puzzle/usePreviousSelection.js';
-import DifficultySelect from '../components/new-puzzle/DifficultySelect.vue';
+
 
 import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
 import { usePuzzleStore } from '@/stores/puzzle.js';
-import BaseDropdown from '@/components/global/dropdown/BaseDropdown.vue';
-import IconBtn from '@/components/global/base-layout/IconBtn.vue';
-import BaseDropdownItem from '@/components/global/dropdown/BaseDropdownItem.vue';
+
+
+
 import { useMainStore } from '@/stores/main';
 const { hasCurrentSavedGame } = useSavedPuzzle();
 // display warning message if creating a new game will overwrite the currently saved puzzle

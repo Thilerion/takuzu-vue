@@ -42,7 +42,7 @@
 import { usePuzzleStore } from '@/stores/puzzle.js';
 import PuzzleCheckIndicator from './PuzzleCheckIndicator.vue';
 import PuzzleGrid from './PuzzleGrid.vue';
-import BaseButton from '../global/BaseButton.vue';
+import BaseButton from '../base/BaseButton.vue';
 
 export default {
 	components: {

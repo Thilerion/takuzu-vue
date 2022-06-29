@@ -101,10 +101,10 @@
 
 <script setup>
 import { computed, inject, toRef, watch } from 'vue';
-import ExpandTransition from '@/views/transitions/ExpandTransition.vue';
+
 import Multiselect from '@vueform/multiselect';
 import '@vueform/multiselect/themes/default.css';
-import HistoryListFilterDifficulty from './HistoryListFilterDifficulty.vue';
+
 
 const props = defineProps({
 	modelValue: Boolean

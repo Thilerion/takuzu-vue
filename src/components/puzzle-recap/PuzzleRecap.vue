@@ -18,14 +18,14 @@
 </template>
 
 <script setup>
-import PuzzleRecapWrapper from './PuzzleRecapWrapper.vue';
+
 import { useRoute, useRouter } from 'vue-router';
 import { computed, onUnmounted, ref, toRef, watch } from 'vue';
 import { useRecapStatsStore } from '@/stores/recap-stats';
 import { usePuzzleStore } from '@/stores/puzzle';
 import { useMainStore } from '@/stores/main';
 import { usePuzzleRecapModalActions } from './usePuzzleRecapModalAction';
-import PuzzleRecapContent from './content/PuzzleRecapContent.vue';
+
 
 const props = defineProps({
 	finished: Boolean

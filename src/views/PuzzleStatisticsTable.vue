@@ -8,8 +8,6 @@
 </template>
 
 <script setup>
-import PageHeader from '@/components/global/base-layout/PageHeader.vue';
-import StatsMostPlayedList from '@/components/statistics/StatsMostPlayedList.vue';
 </script>
 
 <style scoped>

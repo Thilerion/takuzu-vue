@@ -22,10 +22,10 @@
 import { getUniqueDatesFromItems } from '@/services/stats/dates.js';
 import { processDateStreaks } from '@/services/stats/streaks.js';
 import { computed, inject, toRef } from 'vue';
-import StatsHeatmap from './StatsHeatmap.vue';
-import CurrentStreak from './streaks/CurrentStreak.vue';
-import LongestStreak from './streaks/LongestStreak.vue';
-import MostRecentHistory from './recent-puzzles/MostRecentHistory.vue';
+
+
+
+
 import { useStatisticsStore } from '@/stores/statistics.js';
 
 const items = inject('historyItems', () => [], true);

@@ -1,54 +1,36 @@
 <template>
 	<transition
 		:name="transitionName"
-		@before-enter="beforeEnter"
-		@after-enter="afterEnter"
-		@before-leave="beforeLeave"
-		@after-leave="afterLeave"
+		@before-enter="hideOverflow"
+		@after-enter="showOverflow"
+		@before-leave="hideOverflow"
+		@after-leave="showOverflow"
 		mode="out-in"
 	>
 		<slot />
 	</transition>
 </template>
 
-<script>
-export default {
-	props: {
-		disable: Boolean,
-	},
-	data() {
-		return {
-			hideRootOverflow: false
-		}
-	},
-	computed: {
-		transitionName() {
-			if (this.disable) return 'none';
-			return 'overlay-fade';
-		}
-	},
-	methods: {
-		beforeEnter() {
-			this.hideRootOverflow = true;
-		},
-		afterEnter(el) {
-			this.hideRootOverflow = false;
-		},
-		beforeLeave() {
-			this.hideRootOverflow = true;
-		},
-		afterLeave(el) {
-			this.hideRootOverflow = false;
-		}
-	},
-	watch: {
-		hideRootOverflow(newValue) {
-			const el = document.querySelector('.root');
-			el.classList.toggle('overflow-hidden', newValue);
-			el.classList.toggle('hide-overflow', newValue);
-		}
-	}
-};
+<script setup lang="ts">
+import { computed, ref, watchEffect } from 'vue';
+
+const props = defineProps<{
+	disable?: boolean
+}>();
+
+const hideRootOverflow = ref(false);
+const transitionName = computed(() => props.disable ? 'none' : 'overlay-fade');
+
+const hideOverflow = () => hideRootOverflow.value = true;
+const showOverflow = () => hideRootOverflow.value = false;
+
+watchEffect(() => {
+	const val = hideRootOverflow.value;
+	const el = document.querySelector('.root');
+	if (el == null) return;
+	el.classList.toggle('overflow-hidden', val);
+	el.classList.toggle('hide-overflow', val);
+})
 </script>
 
 <style scoped>

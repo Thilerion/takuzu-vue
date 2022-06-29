@@ -131,8 +131,6 @@
 </template>
 
 <script setup>
-import CellThemeSetting from '@/components/settings/CellThemeSetting.vue';
-import DarkModeSetting from '../components/settings/DarkModeSetting.vue';
 import { useDebugMode } from '@/stores/composables/useDebugMode';
 import { useSettingsStore } from '@/stores/settings/index.js';
 import { storeToRefs } from 'pinia';

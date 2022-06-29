@@ -17,7 +17,7 @@
 <script setup>
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter';
 import { storeToRefs } from 'pinia';
-import Hint from './Hint.vue';
+
 import { ref } from 'vue';
 
 const puzzleHintsStore = usePuzzleHintsStore();

@@ -73,7 +73,7 @@
 </template>
 
 <script setup>
-import BaseButton from '@/components/global/BaseButton.vue';
+
 import { DIFFICULTY_LABELS } from '@/config.js';
 import { getRecapMessageType, getRecordMessageData } from '@/services/recap-message/index.js';
 import { recapMessageMap } from '@/services/recap-message/recap-message.js';

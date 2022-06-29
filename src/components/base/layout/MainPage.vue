@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import BottomNav from './BottomNav.vue';
+
 </script>
 
 <style>

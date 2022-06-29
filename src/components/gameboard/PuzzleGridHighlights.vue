@@ -21,7 +21,7 @@ import { useHintHighlightsStore } from '@/stores/highlight-store';
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 import { HighlightType } from '@/stores/hints/highlights/highlight';
-import PuzzleGridHighlightItem from './PuzzleGridHighlightItem.vue';
+
 
 const hintHighlightsStore = useHintHighlightsStore();
 const { visible, currentHighlights } = storeToRefs(hintHighlightsStore);

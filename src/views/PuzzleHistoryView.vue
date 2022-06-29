@@ -97,12 +97,9 @@ const getDefaultOptions = () => ({
 </script>
 
 <script setup>
-import PageHeader from '@/components/global/base-layout/PageHeader.vue';
 import { useStatisticsStore } from '@/stores/statistics.js';
 import { storeToRefs } from 'pinia';
 import { ref, computed, watch, onBeforeMount, reactive, toRefs, provide } from 'vue';
-import HistoryListItem from '@/components/statistics/history-list/HistoryListItem.vue';
-import BasePagination from '@/components/global/BasePagination.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useListFilters } from '@/components/statistics/history-list/useListFilters';
 import { useDebounceFn } from '@vueuse/core';

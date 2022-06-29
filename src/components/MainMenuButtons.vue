@@ -47,7 +47,7 @@
 import { DIFFICULTY_LABELS } from "@/config.js";
 import { timeFormatter } from "@/utils/date.utils.js";
 import { computed, toRefs } from "vue";
-import ContinueButton from "./ContinueButton.vue";
+
 
 const props = defineProps({
 	canContinue: Boolean,

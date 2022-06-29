@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 // MAIN ROUTES
-import MainPage from '@/components/global/base-layout/MainPage.vue';
+import MainPage from '@/components/base/layout/MainPage.vue';
 import Home from '../views/Home.vue';
 import HowToPlay from '../views/HowToPlay.vue';
 import Tutorial from '../views/Tutorial.vue';

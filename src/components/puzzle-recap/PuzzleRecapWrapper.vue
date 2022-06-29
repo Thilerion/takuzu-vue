@@ -30,8 +30,8 @@
 
 <script setup>
 import { nextTick, onBeforeUnmount, onMounted, ref, toRef, watch, watchEffect } from 'vue';
-import PuzzleRecapBanner from './PuzzleRecapBanner.vue';
-import PuzzleRecapModalTransition from './PuzzleRecapModalTransition.vue';
+
+
 
 const props = defineProps({
 	show: Boolean

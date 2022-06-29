@@ -33,7 +33,7 @@
 <script setup>
 import { useStatisticsStore } from '@/stores/statistics.js';
 import { computed, toRef } from 'vue';
-import StatsOverviewCard from './overview/StatsOverviewCard.vue';
+
 
 const statsStore = useStatisticsStore();
 

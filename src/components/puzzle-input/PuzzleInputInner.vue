@@ -99,17 +99,17 @@
 
 <script setup>
 import { computed, onBeforeUpdate, ref } from 'vue';
-import PuzzleInputTable from '@/components/puzzle-input/PuzzleInputTable.vue';
-import PuzzleInputField from '@/components/puzzle-input/PuzzleInputField.vue';
+
+
 import { EMPTY, ONE, ZERO } from '@/lib/constants';
 import { useSharedPuzzleToggle } from '@/composables/use-puzzle-toggle';
-import GridControls from './GridControls.vue';
+
 import { refAutoReset, toReactive, useLocalStorage } from '@vueuse/core';
 import { puzzleGridToString, shortenPuzzleString } from '@/components/puzzle-input/convert';
 import { chunk } from '@/utils/array.utils';
-import ExpandTransition from '@/views/transitions/ExpandTransition.vue';
+
 import { usePuzzleInputSolvable } from '@/components/puzzle-input/usePuzzleInputSolvable';
-import InputValidityDisplay from '@/components/puzzle-input/InputValidityDisplay.vue';
+
 import { parseExportString } from '@/lib/utils';
 
 const config = useLocalStorage('takuzu_puzzle-input-config', {
