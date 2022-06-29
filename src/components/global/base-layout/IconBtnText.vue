@@ -9,20 +9,17 @@
 	</button>
 </template>
 
-<script>
-export default {
-	props: {
-		scale: {
-			type: [Number, String],
-			default: '1.25'
-		},
-		icon: {
-			type: String,
-			// required: true
-		},
-		vertical: Boolean
-	},
-};
+<script setup lang="ts">
+const props = withDefaults(
+	defineProps<{
+		scale?: number | string,
+		icon?: string,
+		vertical?: boolean
+	}>(),
+	{
+		scale: '1.25'
+	}
+);
 </script>
 
 <style scoped>

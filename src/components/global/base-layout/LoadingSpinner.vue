@@ -4,39 +4,28 @@
 	></div>
 </template>
 
-<script>
-export default {
-	props: {
-		size: {
-			type: Number,
-			required: true
-		}
-	},
-	computed: {
-		baseSize() {
-			return this.size;
-		},
-		marginSize() {
-			return Math.floor(this.size / 8);
-		},
-		afterSize() {
-			return this.baseSize - (2 * this.marginSize);
-		},
-		borderSize() {
-			if (this.marginSize >= 8) return 6;
-			else if (this.marginSize >= 6) return 4;
-			else if (this.marginSize >= 4) return 3;
-			return 2;
-		}
-	}
-};
+<script setup lang="ts">
+import { computed } from 'vue';
+
+const props = defineProps<{
+	size: number
+}>();
+
+const marginSize = computed(() => Math.floor(props.size / 8));
+const afterSize = computed(() => props.size - (2 * marginSize.value));
+const borderSize = computed<2 | 3 | 4 | 6>(() => {
+	if (marginSize.value >= 8) return 6;
+	else if (marginSize.value >= 6) return 4;
+	else if (marginSize.value >= 4) return 3;
+	return 2;
+})
 </script>
 
 <style scoped>
 /* from: https://loading.io/css/ */
 .loading-spinner {
   display: inline-block;
-  --size: calc(v-bind(baseSize) * 1px);
+  --size: calc(v-bind(size) * 1px);
   --margin: calc(v-bind(marginSize) * 1px);
   --after-size: calc(v-bind(afterSize) * 1px);
   --border: calc(v-bind(borderSize) * 1px);

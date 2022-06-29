@@ -4,28 +4,16 @@
 	</button>
 </template>
 
-<script>
-export default {
-	props: {
-		size: {
-			type: [String, Number],
-			default: 24
-		},
-		scale: {
-			type: [String, Number],
-			default: '1.25'
-		},
-		name: {
-			type: String,
-			// required: true
-		},
-	},
-	computed: {
-		sizePx() {
-			return this.size + 'px';
-		}
-	}
+<script setup lang="ts">
+import { computed } from 'vue';
+
+export interface Props {
+	scale?: string | number,
 };
+
+const props = withDefaults(defineProps<Props>(), {
+	scale: '1.25'
+})
 </script>
 
 <style scoped>

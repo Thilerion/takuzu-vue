@@ -3,7 +3,7 @@
 		<div class="flex justify-evenly h-full">
 			<router-link
 				v-for="item in menuItems"
-				:key="item.to"
+				:key="item.label"
 				:to="item.to"
 				v-slot="{ isExactActive, href, navigate }"
 				custom
@@ -28,11 +28,11 @@
 	</nav>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useMainStore } from "@/stores/main";
 import { computed } from "vue";
-import { useRoute } from "vue-router";
-import BottomNavIcon from "./BottomNavIcon.vue";
+import { useRoute, type RouteLocationNormalizedLoaded } from "vue-router";
+import BottomNavIcon, { type BottomNavIconNames } from "./BottomNavIcon.vue";
 
 const mainStore = useMainStore();
 const customPuzzleToolEnabled = computed(() => mainStore.featureToggles.customPuzzleTool.isEnabled);
@@ -41,7 +41,10 @@ const showToolsMenu = computed(() => {
 	return customPuzzleToolEnabled.value || analysisToolEnabled.value;
 })
 
-const baseMenuItems = [
+type ActiveWhenCheckFn = (args: RouteLocationNormalizedLoaded) => boolean;
+type Item = { label: string, icon: BottomNavIconNames, to: string | { name: string }, activeWhen: ActiveWhenCheckFn };
+
+const baseMenuItems: Item[] = [
 	{
 		label: 'Home', to: { name: 'Home' }, icon: 'home',
 		activeWhen: ({ name }) => name === 'Home'

@@ -26,29 +26,26 @@
 	</header>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted, ref, useAttrs } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-const props = defineProps({
-	closeBtn: Boolean,
-	hideBack: Boolean,
-	small: {
-		type: Boolean,
-		default: true
-	},
-	transparent: {
-		type: Boolean,
-		default: false
-	},
-	elevated: {
-		validator(value) {
-			return value == null || value === '' || value === true || value === false;
-		},
-		default: null
-	}
-})
-const emit = defineEmits(['close']);
+export interface Props {
+	closeBtn?: boolean,
+	hideBack?: boolean,
+	small?: boolean,
+	transparent?: boolean,
+	elevated?: '' | boolean | null
+}
+
+const props = withDefaults(defineProps<Props>(), {
+	small: true,
+	transparent: false,
+	elevated: null
+});
+const emit = defineEmits<{
+	(e: 'close'): void
+}>();
 
 const route = useRoute();
 const router = useRouter();

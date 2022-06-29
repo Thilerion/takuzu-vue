@@ -6,15 +6,11 @@
 	<icon-mdi-tools v-else-if="icon === 'tools'" />
 </template>
 
-<script>
-export default {
-	props: {
-		icon: {
-			type: String,
-			required: true
-		}
-	}
-};
+<script setup lang="ts">
+export type BottomNavIconNames = 'home' | 'stats' | 'settings' | 'more' | 'tools';
+const props = defineProps<{
+	icon: BottomNavIconNames
+}>();
 </script>
 
 <style scoped>
