@@ -10,30 +10,23 @@ export const chunk = <T>(arr: T[], size: number): T[][] => {
 		const end = i + size;
 		const values = arr.slice(i, end);
 		chunked.push(values);
-	} 
+	}
 	return chunked;
 }
 export const sortAsc = <T extends number>(arr: T[]) => [...arr].sort((a, z) => a - z);
 export const sortDesc = <T extends number>(arr: T[]) => [...arr].sort((a, z) => z - a);
 
 
-// GroupBy source: https://johns.codes/blog/type-safe-groupby-in-typescript
-type MapValuesToKeysIfAllowed<T> = {
-	[K in keyof T]: T[K] extends PropertyKey ? K : never;
-  };
-type ValuesOf<A> = A extends infer O ? A[keyof A] : never;
-type Filter<T> = ValuesOf<MapValuesToKeysIfAllowed<T>>;
-  
-export function groupBy<T extends Record<PropertyKey, any>, Key extends Filter<T>>(
-	arr: T[],
-	key: Key
-  ): Record<T[Key], T[]> {
-	return arr.reduce((accumulator, val) => {
-	  const groupedKey = val[key];
-	  if (!accumulator[groupedKey]) {
-		accumulator[groupedKey] = [];
-	  }
-	  accumulator[groupedKey].push(val);
-	  return accumulator;
-	}, {} as Record<T[Key], T[]>);
-};
+export const groupBy = <K extends PropertyKey, TItem extends Record<K, PropertyKey >> (
+	items: TItem[],
+	key: K
+): Record<PropertyKey, TItem[]> => {
+	return items.reduce((acc, item) => {
+		const groupedKey = item[key];
+		if (!acc[groupedKey]) {
+			acc[groupedKey] = [];
+		}
+		acc[groupedKey].push(item);
+		return acc;
+	}, {} as Record<PropertyKey, TItem[]>);
+}
