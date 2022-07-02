@@ -1,4 +1,3 @@
-const defaultTheme = require('tailwindcss/defaultTheme');
 const plugin = require('tailwindcss/plugin');
 
 /** @type {import("@types/tailwindcss/tailwind-config").TailwindConfig } */
@@ -108,7 +107,7 @@ function HSLToRGB (h, s, l) {
 	const k = n => (n + h / 30) % 12;
 	const a = s * Math.min(l, 1 - l);
 	const f = n =>
-	  l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+		l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
 	const rgb = [255 * f(0), 255 * f(8), 255 * f(4)];
 	return `rgb(${rgb.map(val => Math.round(val)).join(', ')})`;
-};
+}

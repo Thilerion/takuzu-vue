@@ -1,4 +1,4 @@
-import { expect, it, beforeEach, test, describe } from 'vitest';
+import { expect, test, describe } from 'vitest';
 import { BoardLine } from '../../../../src/lib/board/BoardLineOld';
 import { SimpleBoard } from '../../../../src/lib/board/Board';
 
