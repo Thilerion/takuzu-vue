@@ -1,4 +1,4 @@
-import { expect, it, beforeEach, test, describe, vi } from 'vitest';
+import { expect, it, describe, vi } from 'vitest';
 import { memoize } from '../../../../src/lib/utils';
 
 describe('memoize function', () => {

@@ -1,9 +1,9 @@
 import { expandPuzzleString, puzzleGridToString, puzzleStringToGrid, shortenPuzzleString, toSingleDigitSequence } from '@/components/puzzle-input/convert';
 import { EMPTY } from '@/lib/constants';
-import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
+import { describe, expect, test } from 'vitest';
 
 describe('puzzle input conversion helpers', () => {
-	let testCases = [
+	const testCases = [
 		[
 			'Simple 6x6 puzzle',
 			{

@@ -1,4 +1,4 @@
-import { expect, it, beforeEach, test, describe } from 'vitest';
+import { expect, test, describe } from 'vitest';
 
 import { sum, mean, percentile, minMax, median, iqr, stdDev, zScores } from '@/utils/array.utils.js';
 

@@ -1,4 +1,4 @@
-import { expect, it, beforeEach, test, describe } from 'vitest';
+import { expect, test, describe } from 'vitest';
 import * as dateUtils from '@/utils/date.utils.js';
 
 describe('date utilities', () => {
