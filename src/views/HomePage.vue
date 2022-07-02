@@ -25,7 +25,7 @@ import { ref } from 'vue';
 
 const { savedPuzzle, hasCurrentSavedGame } = useSavedPuzzle();
 
-const mainStore = useMainStore();
+useMainStore();
 const newUpdateNotificationShown = ref(false);
 
 </script>

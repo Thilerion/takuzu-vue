@@ -82,11 +82,11 @@
 
 <script setup>
 import { DIFFICULTY_LABELS, PRESET_BOARD_SIZES } from '@/config';
-import { computed, onBeforeUpdate, onMounted, ref, toRef, watch, watchEffect } from 'vue';
+import { computed, ref, toRef, watch, watchEffect } from 'vue';
 
 
 
-import { onBeforeRouteLeave, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { usePreviousSelection } from '../components/new-puzzle/usePreviousSelection.js';
 
 

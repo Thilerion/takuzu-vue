@@ -104,7 +104,7 @@ import { storeToRefs, mapState } from 'pinia';
 import { usePuzzleHistoryStore } from '@/stores/puzzle-history.js';
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
 import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
-import { computed, readonly, ref, toRef, watch } from 'vue';
+import { computed, readonly, toRef, watch } from 'vue';
 import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
 import { usePuzzleStore } from '@/stores/puzzle.js';
 import { useMainStore } from '@/stores/main.js';
@@ -131,7 +131,7 @@ export default {
 
 		const { showLineInfo, enableWakeLock, showBoardCoordinates, showBoardLineCounts, showRulers, showTimer } = storeToRefs(settingsStore);
 
-		const recapStatsStore = useRecapStatsStore();
+		useRecapStatsStore();
 		const puzzleHistoryStore = usePuzzleHistoryStore();
 		const puzzleHintsStore = usePuzzleHintsStore();
 		const getHint = () => puzzleHintsStore.getHint();

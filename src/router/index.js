@@ -2,11 +2,11 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 // MAIN ROUTES
 import MainPage from '@/components/base/layout/MainPage.vue';
-import Home from '../views/Home.vue';
+import HomePage from '../views/HomePage.vue';
 import HowToPlay from '../views/HowToPlay.vue';
-import Tutorial from '../views/Tutorial.vue';
-import Statistics from '../views/Statistics.vue';
-import Settings from '../views/Settings.vue';
+import TutorialPage from '../views/TutorialPage.vue';
+import StatisticsPage from '../views/StatisticsPage.vue';
+import SettingsPage from '../views/SettingsPage.vue';
 
 // NESTED PAGES / OVERLAY PAGES
 import FreePlay from '../views/NewPuzzle.vue';
@@ -30,7 +30,7 @@ const routes = [
 			{
 				path: '',
 				name: 'Home',
-				component: Home,
+				component: HomePage,
 				meta: {
 					metaThemeColor: '#4DBA87'
 				}
@@ -38,7 +38,7 @@ const routes = [
 			{
 				path: '/stats',
 				name: 'Statistics',
-				component: Statistics,
+				component: StatisticsPage,
 				meta: {
 					title: 'Statistics'
 				}
@@ -62,7 +62,7 @@ const routes = [
 			{
 				path: '/settings',
 				name: 'Settings',
-				component: Settings,
+				component: SettingsPage,
 				meta: {
 					title: 'Settings'
 				},
@@ -98,7 +98,7 @@ const routes = [
 	{
 		path: '/help/tutorial',
 		name: 'Tutorial',
-		component: Tutorial,
+		component: TutorialPage,
 	},
 	{
 		path: '/play',
@@ -120,7 +120,7 @@ const routes = [
 			{
 				path: 'settings',
 				name: 'PlayPuzzle.settings',
-				component: Settings
+				component: SettingsPage
 			}
 		]
 	},

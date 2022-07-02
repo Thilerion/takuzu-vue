@@ -139,7 +139,7 @@ import { useThemePreferences } from '@/composables/use-theme-preferences';
 import { onBeforeUnmount } from 'vue';
 import { CheckButtonOption, rulerType } from '@/stores/settings/options';
 
-const props = defineProps({
+defineProps({
 	hideBack: Boolean
 })
 
