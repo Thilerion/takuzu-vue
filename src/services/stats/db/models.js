@@ -1,4 +1,4 @@
-import { dimensionsToBoardType } from "@/config.js";
+import { dimensionsToBoardType } from "@/config";
 import { formatYYYYMMDD } from "@/utils/date.utils.js";
 
 export class DbHistoryEntry {

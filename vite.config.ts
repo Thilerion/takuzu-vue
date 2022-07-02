@@ -9,7 +9,7 @@ import IconsResolver from 'unplugin-icons/resolver';
 import Components from 'unplugin-vue-components/vite';
 import copy from 'rollup-plugin-copy';
 
-// @ts-ignore
+// @ts-ignore TODO 02-07-2022: remove when pwa.config.js is converted to typescript
 import { createVitePwaConfig } from './pwa.config.js';
 
 export default defineConfig(({ command, mode }) => {

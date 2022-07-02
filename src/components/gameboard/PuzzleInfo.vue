@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { DIFFICULTY_LABELS } from '@/config.js';
+import { DIFFICULTY_LABELS } from '@/config';
 import { computed } from 'vue';
 
 export interface Props {

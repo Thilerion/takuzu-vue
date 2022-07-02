@@ -16,10 +16,10 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { initPregeneratedPuzzles } from '@/services/puzzles-db/init-pregen-puzzles.js';
 import { computed, onMounted, toRef } from 'vue';
-import { provideGlobalBuildData } from './app.globals.js';
+import { provideGlobalBuildData } from './app.globals';
 import { initSettingsPersistence } from './stores/settings/index.js';
 import { useStatisticsStore } from './stores/statistics.js';
 import { useMainStore } from './stores/main.js';
@@ -39,7 +39,7 @@ provideGlobalBuildData();
 initPWAInstallListeners();
 
 // load statistics store; to prevent store data from being reset each time statistics page gets unloaded
-const statsStore = useStatisticsStore();
+useStatisticsStore();
 
 const viewportHeight = toRef(store.context, 'viewportHeight');
 

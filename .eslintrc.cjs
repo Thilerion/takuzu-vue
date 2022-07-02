@@ -20,6 +20,7 @@ module.exports = /** @type {import("eslint").Linter.BaseConfig} */ ({
 			'ts-nocheck': 'allow-with-description',
 			'ts-check': false,
 			minimumDescriptionLength: 10
-		}]
+		}],
+		"no-undef": 'off'
 	},
 });

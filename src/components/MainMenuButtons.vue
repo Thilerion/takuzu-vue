@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { DIFFICULTY_LABELS } from "@/config.js";
+import { DIFFICULTY_LABELS } from "@/config";
 import { timeFormatter } from "@/utils/date.utils.js";
 import { computed, toRefs } from "vue";
 

@@ -81,7 +81,7 @@
 </template>
 
 <script setup>
-import { DIFFICULTY_LABELS, PRESET_BOARD_SIZES } from '@/config.js';
+import { DIFFICULTY_LABELS, PRESET_BOARD_SIZES } from '@/config';
 import { computed, onBeforeUpdate, onMounted, ref, toRef, watch, watchEffect } from 'vue';
 
 

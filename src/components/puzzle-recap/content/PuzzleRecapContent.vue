@@ -74,7 +74,7 @@
 
 <script setup>
 
-import { DIFFICULTY_LABELS } from '@/config.js';
+import { DIFFICULTY_LABELS } from '@/config';
 import { getRecapMessageType, getRecordMessageData } from '@/services/recap-message/index.js';
 import { recapMessageMap } from '@/services/recap-message/recap-message.js';
 import { useRecapStatsStore } from '@/stores/recap-stats.js';

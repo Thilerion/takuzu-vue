@@ -1,4 +1,4 @@
-import { getAllPresetSizeDifficultyCombinations } from "@/config.js";
+import { getAllPresetSizeDifficultyCombinations } from "@/config";
 import { addPuzzle, puzzleTable } from "@/services/puzzles-db/db.js";
 
 import GeneratePuzzleWorker from './generate-puzzle.worker.js?worker';

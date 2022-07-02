@@ -5,3 +5,17 @@ declare module '*.vue' {
   const component: DefineComponent<{}, {}, any>
   export default component
 }
+
+interface ImportMetaEnv {
+  // more env variables...
+  readonly VITE_APP_TITLE: string,
+  readonly VITE_APP_NAME: string,
+  readonly VITE_APP_SHORT_NAME: string,
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv
+}
+
+declare const __PKG_VERSION__: string;
+declare const __BUILD_DATE__: string;

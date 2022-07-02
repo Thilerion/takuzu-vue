@@ -1,9 +1,16 @@
-class BoardPreset {
-	constructor(w, h, maxDifficulty) {
-		this.width = w;
-		this.height = h;
-		this.type = dimensionsToBoardType(w, h);
-		this.maxDifficulty = maxDifficulty;
+export const boardTypes = {
+	NORMAL: 'Normal',
+	RECT: 'Rectangular',
+	ODD: 'Odd',
+} as const;
+type BoardType = typeof boardTypes[keyof typeof boardTypes];
+interface IsBoardType<T extends BoardType> { type: T }
+
+export class BoardPreset {
+	type: BoardType;
+
+	constructor(public width: number, public height: number, public maxDifficulty: number) {
+		this.type = dimensionsToBoardType(width, height);
 	}
 
 	get isRect() {
@@ -12,14 +19,21 @@ class BoardPreset {
 	get isOdd() {
 		return this.type === boardTypes.ODD;
 	}
+	get isNormal() {
+		return this.type === boardTypes.NORMAL;
+	}
+	isOddBoardType(): this is BoardPreset & IsBoardType<'Odd'> {
+		return this.isOdd;
+	}
+	isRectBoardType(): this is BoardPreset & IsBoardType<'Rectangular'> {
+		return this.isRect;
+	}
+	isNormalBoardType(): this is BoardPreset & IsBoardType<'Normal'> {
+		return this.isNormal;
+	}
 }
 
-export const boardTypes = {
-	NORMAL: 'Normal',
-	RECT: 'Rectangular',
-	ODD: 'Odd',
-};
-export const dimensionsToBoardType = (w, h = w) => {
+export const dimensionsToBoardType = (w: number, h = w): BoardType => {
 	if (w !== h) return boardTypes.RECT;
 	if (w % 2 === 1) return boardTypes.ODD;
 	return boardTypes.NORMAL;
@@ -52,7 +66,7 @@ export const DIFFICULTY_LABELS = {
 	3: 'Hard',
 	4: 'Very Hard',
 	5: 'Extreme',
-}
+} as const;
 
 export const getAllDifficultyValues = () => {
 	return Object.keys(DIFFICULTY_LABELS);
