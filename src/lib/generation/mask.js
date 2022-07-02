@@ -27,7 +27,7 @@ export function createMaskWithDifficulty(board, difficulty) {
 export function createMask(board, { canSolveWith }) {
 	const maskedBoard = board.copy();
 
-	for (let { x, y, value } of maskedBoard.cells({ shuffled: true, skipEmpty: true })) {
+	for (const { x, y, value } of maskedBoard.cells({ shuffled: true, skipEmpty: true })) {
 		maskedBoard.assign(x, y, EMPTY);
 		if (!canSolveWith(maskedBoard)) {
 			// undo removing this as it results in an unsolvable board

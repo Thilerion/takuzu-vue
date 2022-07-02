@@ -22,13 +22,6 @@ export const useListFilters = () => {
 		return result;
 	})
 
-	const currentFiltersArray = computed(() => {
-		return filterCategories.map(key => {
-			const value = filters[key];
-			return { key, value };
-		})
-	})
-
 	const setFilter = (key, value) => {
 		console.log('setting filter');
 		console.log({ key, value });
@@ -85,10 +78,6 @@ function getBoardSizeFilter(selectedSizes) {
 function getDifficultyFilter(range) {
 	if (range?.length !== 2) return () => true;
 	return item => item.difficulty >= range[0] && item.difficulty <= range[1];
-}
-function getDifficultyFilterIncludes(selectedStars) {
-	if (!selectedStars?.length) return () => true;
-	return item => selectedStars.includes(item.difficulty);
 }
 
 function getFavoritesFilter(enabled) {

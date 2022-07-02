@@ -1,5 +1,4 @@
 import { useStorage } from "@vueuse/core";
-import { toRefs } from "vue";
 
 const STORAGE_KEY = 'takuzu_freeplay-selection';
 const DEFAULT_SELECTION = {

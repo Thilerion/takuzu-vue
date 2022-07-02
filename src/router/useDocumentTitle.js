@@ -6,11 +6,11 @@ export const useRouteDocumentTitle = ({
 }) => {
 	const title = ref(document.title);
 
-	if (!title && !!defaultTitle) {
+	if (!title.value && !!defaultTitle) {
 		title.value = defaultTitle;
 	}
 
-	const updateTitleWithRouteMeta = (to, from) => {
+	const updateTitleWithRouteMeta = (to) => {
 		let newTitle = to?.meta?.title;
 
 		if (titlePrefix && newTitle) {

@@ -35,7 +35,7 @@ export const puzzleGridToString = (arr2, { width, height }, opts = {}) => {
 
 export const expandPuzzleString = (str, dimensions) => {
 	let expanded = '';
-	for (let ch of str) {
+	for (const ch of str) {
 		if (ch === ZERO || ch === ONE || ch === EMPTY) {
 			expanded += ch;
 		} else {

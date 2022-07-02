@@ -170,7 +170,7 @@ export class SimpleBoard {
 		return [...coords];
 	}
 	*cells({ skipFilled = false, skipEmpty = false, shuffled = false } = {}) {
-		for (let coords of this.cellCoords({ shuffled })) {
+		for (const coords of this.cellCoords({ shuffled })) {
 			const { x, y } = coords;
 			const cellValue = this.get(x, y);
 

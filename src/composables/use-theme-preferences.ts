@@ -1,5 +1,5 @@
 import { usePreferredColorScheme, useStorage } from "@vueuse/core";
-import { computed, inject, provide, readonly, watchEffect, type ComputedRef } from "vue";
+import { computed, inject, provide, watchEffect, type ComputedRef } from "vue";
 import type { InjectionKey } from 'vue'
 
 export const BASE_THEMES = {

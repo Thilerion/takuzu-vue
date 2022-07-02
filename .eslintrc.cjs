@@ -21,6 +21,9 @@ module.exports = /** @type {import("eslint").Linter.BaseConfig} */ ({
 			'ts-check': false,
 			minimumDescriptionLength: 10
 		}],
-		"no-undef": 'off'
+		"no-undef": 'off',
+		"no-unused-vars": 'off',
+		"@typescript-eslint/no-unused-vars": ["error", { "ignoreRestSiblings": true }],
+		"prefer-const": ["error", {"destructuring": "all"}]
 	},
 });

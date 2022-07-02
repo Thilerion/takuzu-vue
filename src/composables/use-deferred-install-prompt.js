@@ -33,6 +33,7 @@ export const initInstalledListener = () => {
 		checkMediaForStandaloneInstalled();
 		console.log('[event appinstalled]: PWA was installed');
 	})
+	hasInstalledListener = true;
 }
 
 export const initListeners = () => {

@@ -2,7 +2,7 @@
 import { EMPTY } from "../constants.js";
 import { checkLineBalanceStrategy } from "../strategies/LineBalance.js";
 
-export function humanSolveBalance(data, options = {}) {
+export function humanSolveBalance(data, /* options = {} */) {
 	const { board } = data;
 
 	const results = [];

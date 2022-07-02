@@ -13,7 +13,7 @@ export default function applyEliminationConstraint(board, options = {}) {
 
 	const allLines = [...board.boardLines()];
 
-	let filledLines = findFilledLines(allLines, enforceUniqueLines);
+	const filledLines = findFilledLines(allLines, enforceUniqueLines);
 
 	// TODO: filter here instead of checking during the loop
 	const linesToProcess = [...allLines].filter(boardLine => {

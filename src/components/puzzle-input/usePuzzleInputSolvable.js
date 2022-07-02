@@ -2,8 +2,8 @@ import { SimpleBoard } from "@/lib";
 import { EMPTY, ONE, ZERO } from "@/lib/constants";
 import { quickSolve } from "@/lib/solver";
 import { count } from "@/lib/utils";
-import { and, useDebounceFn } from "@vueuse/core";
-import { computed, reactive, ref, toRaw, toRefs, watch, watchEffect } from "vue";
+import { useDebounceFn } from "@vueuse/core";
+import { computed, reactive, ref, toRefs, watch } from "vue";
 
 const MAX_MASK_RATIO = 0.9;
 
@@ -66,7 +66,7 @@ export const usePuzzleInputSolvable = (gridRef, isValidGridRef, dimensionsRef) =
 			data.solvable = false;
 			data.validPuzzle = false;
 			return;
-		};
+		}
 		runSolver(grid);
 	}, { deep: true, immediate: true })
 

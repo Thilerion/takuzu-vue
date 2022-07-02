@@ -5,9 +5,9 @@ import { getOptimalMaskRatio, getMaskQuality } from "./quality.js";
 const minMaskedRatioQuality = 0.94;
 const minSymbolDistributionQuality = 0.36;
 
-const _tryDurations = [250, 1000, 1750, 2000];
-const _totalMaxDuration = _tryDurations.reduce((acc, val) => acc + val, 0);
-const _maxTries = 20;
+// const _tryDurations = [250, 1000, 1750, 2000];
+// const _totalMaxDuration = _tryDurations.reduce((acc, val) => acc + val, 0);
+// const _maxTries = 20;
 
 
 /**

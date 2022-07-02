@@ -8,8 +8,8 @@ export function memoize(fn, opts = {}) {
 		initialCache = new Map()
 	} = opts;
 
-	let memoized = function (...args) {
-		let cache = memoized.cache;
+	const memoized = function (...args) {
+		const cache = memoized.cache;
 		const key = argsToKey(...args);
 
 		if (cache.has(key)) {

@@ -85,9 +85,12 @@ export const usePuzzleRecapModalActions = () => {
 		}
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	const noop = () => { };
+
 	async function exitTo(actionName) {
 		console.log({ actionName });
-		let actionFn = () => {};
+		let actionFn = noop;
 		switch (actionName) {
 			case 'play-again': {
 				actionFn = () => playAgainAction();
@@ -110,7 +113,7 @@ export const usePuzzleRecapModalActions = () => {
 				break;
 			}
 			default: {
-				actionFn = () => { };
+				actionFn = noop;
 				break;
 			}
 		}

@@ -13,7 +13,7 @@ const techniqueList = [
 	// ({ board, solution }) => humanSolveElimination({ board, solution }, { least: [3, 10], enforceUniqueLines: true }),
 ]
 
-export function findAllAvailableMoves({ board, solution }, options = {}) {
+export function findAllAvailableMoves({ board, solution }) {
 	const availableMoves = techniqueList.flatMap(techniqueFn => {
 		return techniqueFn({ board, solution });
 	})

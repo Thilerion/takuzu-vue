@@ -3,7 +3,7 @@ import { useSettingsStore } from "@/stores/settings/store"
 import { CellThemeTypes } from "@/stores/settings/options";
 import { cellThemeTypeMap } from "@/stores/settings/types";
 import { storeToRefs } from "pinia";
-import { computed, inject, provide, reactive, unref, watchEffect } from "vue";
+import { computed, inject, provide, unref } from "vue";
 import FastPuzzleCellColored from "../gameboard/cell/FastPuzzleCellColored.vue";
 import FastPuzzleCellSymbol from "../gameboard/cell/FastPuzzleCellSymbol.vue";
 

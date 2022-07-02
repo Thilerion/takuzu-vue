@@ -2,7 +2,7 @@ import { COLUMN, ROW } from "../constants.js";
 import { areLinesEqual } from "../utils.js";
 import { createFilterLinesByRemainingValues, getRecurringValuesFromPermutations } from "./utils.js";
 
-export function humanSolveDuplicateLine({ board, solution }, options = {}) {
+export function humanSolveDuplicateLine({ board }, options = {}) {
 	const results = [];
 
 	const {
