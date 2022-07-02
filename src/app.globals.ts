@@ -1,4 +1,4 @@
-import { provide, inject } from 'vue'
+import { provide, inject } from 'vue';
 
 const key = Symbol('appGlobalBuildData');
 
