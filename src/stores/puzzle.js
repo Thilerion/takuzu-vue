@@ -88,8 +88,6 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				return PUZZLE_STATUS.FINISHED;
 			} else if (state.paused) {
 				return PUZZLE_STATUS.PAUSED;
-			} else if (state.finished) {
-				return PUZZLE_STATUS.FINISHED;
 			} else if (state.board != null) {
 				return PUZZLE_STATUS.PLAYING;
 			}

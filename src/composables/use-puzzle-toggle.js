@@ -12,6 +12,7 @@ export const usePuzzleToggle = () => {
 		} else if (mode.value === ONE) {
 			return [EMPTY, ONE, ZERO];
 		}
+		throw new Error(`Unexpected toggle mode: "${mode.value}"`);
 	})
 
 	const toggle = (currentValue) => {

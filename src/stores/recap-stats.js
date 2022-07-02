@@ -371,7 +371,3 @@ function getBestAndAverageTimes({ items, previousItems }) {
 		previousBest: previousBestTimeItem?.timeElapsed ?? null,
 	}
 }
-
-const isSamePuzzleEntry = (a = {}, b = {}) => {
-	return a.timestamp != null && a.timestamp === b.timestamp && a.initialBoard != null && a.initialBoard === b.initialBoard;
-}
