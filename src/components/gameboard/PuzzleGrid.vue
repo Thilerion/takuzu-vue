@@ -68,7 +68,7 @@ export default {
 
 		const initialGridComp = computed(() => initialGrid.value);
 
-		let { cellData, nRows, nCols, nCells, lockedCells, coords } = useGridData(props.columns, props.rows, initialGrid.value);
+		const { cellData, nRows, nCols, nCells, lockedCells, coords } = useGridData(props.columns, props.rows, initialGrid.value);
 
 		const lockedCellsRef = ref(lockedCells);
 		const cellDataRef = ref(cellData);

@@ -10,7 +10,7 @@ export interface Props {
 	filled?: boolean,
 	half?: boolean,
 	gray?: boolean
-};
+}
 const props = defineProps<Props>();
 </script>
 

@@ -276,7 +276,7 @@ const toggleValue = (x, y, index) => {
 }
 
 const updatePuzzleGridBase = (w = width.value, h = height.value) => {	
-	let base = puzzleGridBase.value ?? [];
+	const base = puzzleGridBase.value ?? [];
 
 	let arrCopy = base.map(r => [...r]);
 	const diffHeight = h - base.length;
@@ -323,7 +323,7 @@ const skipFocusFrom = (amount, {x, y, index}) => {
 				console.log('setting empty');
 
 				
-			};
+			}
 			if (i === emptyAmount) {
 				const el = els.value[focusTo];
 				el?.focus?.();

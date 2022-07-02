@@ -27,7 +27,7 @@ export interface Props {
 	difficulty: keyof typeof DIFFICULTY_LABELS,
 	progress?: number,
 	hasBorder?: boolean
-};
+}
 
 const props = withDefaults(defineProps<Props>(), {
 	progress: -1

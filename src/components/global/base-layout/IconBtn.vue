@@ -9,7 +9,7 @@ import { computed } from 'vue';
 
 export interface Props {
 	scale?: string | number,
-};
+}
 
 const props = withDefaults(defineProps<Props>(), {
 	scale: '1.25'
