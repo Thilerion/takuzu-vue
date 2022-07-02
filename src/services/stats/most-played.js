@@ -81,7 +81,7 @@ export function getMostPlayedPuzzleConfigs(items = []) {
 
 function addFavoriteScores(groups) {
 	for (const group of groups) {
-		const { summary, groupData } = group;
+		const { summary } = group;
 		const { sum, count } = summary;
 
 		const favScore = sum + (count * 15000);

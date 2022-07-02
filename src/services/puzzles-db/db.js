@@ -8,7 +8,7 @@ puzzleDb.version(1).stores({
 puzzleDb.open();
 
 class GeneratedPuzzle {
-	constructor({ boardStr, solutionStr, difficulty, width, height, populated }) {
+	constructor({ boardStr, solutionStr, difficulty, width, height }) {
 		this.boardStr = boardStr;
 		this.solutionStr = solutionStr;
 
@@ -29,7 +29,7 @@ function addPuzzles(puzzles = []) {
 
 	return puzzleDb.puzzles
 		.bulkAdd(genPuzzles)
-		.then(result => {
+		.then(() => {
 			console.log('Puzzles saved succesfully.');
 		}).catch(err => {
 			console.warn('Puzzles could not be saved to database.');

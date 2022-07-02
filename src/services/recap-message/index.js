@@ -1,4 +1,4 @@
-import { createResult, falseResult, pickRandomly } from "./helpers";
+import { falseResult, pickRandomly } from "./helpers";
 import { firstOfDifficulty, firstOfSize, firstSolvedTotal, firstWithSizeDifficulty, hardestPuzzleSolved, isAlmostTimeRecordAbsolute, isAlmostTimeRecordPercentage, isBetterThanAverage, isLargeTimeRecord, isMuchBetterThanAverageAbsolute, isMuchBetterThanAveragePercentage, isReplayTimeRecord, isTimeRecord, notAddedToDatabaseCheatsUsed, playsToday, playsTodayWithConfig, playsTotal, playsTotalWithConfig, replayPlaysTotal } from "./recap-message-types"
 import { RECAP_MSG_TYPES } from "./types";
 

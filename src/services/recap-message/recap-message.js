@@ -31,7 +31,7 @@ const formatPercentage = (value, { maxDigits = 0 } = {}) => {
 	return new Intl.NumberFormat(undefined, opts).format(value);
 }
 const formatOrdinal = (value, locale = 'en-US') => {
-	var pr = new Intl.PluralRules(locale, { type: 'ordinal' });
+	const pr = new Intl.PluralRules(locale, { type: 'ordinal' });
 
 	const suffixes = new Map([
 	['one',   'st'],

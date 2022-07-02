@@ -104,7 +104,10 @@ export async function importPuzzleHistoryItemsWithVersionUpgrade(db, blob) {
 			try {
 				tempStatsDb.close();
 				tempStatsDb.delete();
-			} catch {}			
+			} catch (e) {
+				console.error('Could not close and delete tempStatsDb!');
+				console.error(e);
+			}			
 		}
 	}
 }
