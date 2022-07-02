@@ -19,8 +19,6 @@ interface GlobalDefinedBuildData {
 	buildDate: typeof __BUILD_DATE__;
 }
 
-const __PKG_VERSION__ = '0.14.1';
-
 export interface InjectedBuildData extends AppVersionDataRefs, GlobalDefinedBuildData { }
 
 export const provideGlobalBuildData = () => {
