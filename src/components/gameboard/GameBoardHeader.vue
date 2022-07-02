@@ -30,7 +30,7 @@
 
 <script setup>
 import { usePuzzleStore } from '@/stores/puzzle.js';
-import { computed, toRef, ref, watchEffect } from 'vue';
+import { computed, ref, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 

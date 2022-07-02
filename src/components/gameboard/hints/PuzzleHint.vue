@@ -18,7 +18,7 @@
 			</IconBtn>
 		</header>
 		<div
-		 class="pl-4 pr-2 my-auto min-h-[4em] w-full flex-1 flex justify-stretch items-start flex-col text-xs leading-[1.5] overflow-x-hidden overflow-y-auto max-h-full h-full"
+			class="pl-4 pr-2 my-auto min-h-[4em] w-full flex-1 flex justify-stretch items-start flex-col text-xs leading-[1.5] overflow-x-hidden overflow-y-auto max-h-full h-full"
 		>
 			<!-- Normally, space for max 3 lines -->
 			<p class="my-auto">{{message}}</p>
@@ -34,7 +34,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeMount, onMounted, ref, toRef, toRefs, watchEffect } from 'vue';
+import { computed, toRef, toRefs } from 'vue';
 
 const emit = defineEmits(['hide', 'done']);
 const props = defineProps({
@@ -45,7 +45,7 @@ const props = defineProps({
 })
 const hint = toRef(props, 'hint');
 const {
-	actions, message, type
+	actions, message
 } = toRefs(hint.value);
 
 const action = computed(() => {

@@ -1,28 +1,22 @@
 <template>
-	<div class="ruler counts" :class="{'ruler-rows': lineType === 'rows', 'ruler-columns': lineType === 'columns'}" @pointerdown="handlePointerdown">
-		<div
-			class="ruler-cell"
-			v-for="(lineCount, lineIdx) in debouncedCounts"
-			:key="lineIdx"
+	<div class="ruler counts" :class="{ 'ruler-rows': lineType === 'rows', 'ruler-columns': lineType === 'columns' }"
+		@pointerdown="handlePointerdown">
+		<div class="ruler-cell" v-for="(lineCount, lineIdx) in debouncedCounts" :key="lineIdx"
 			@pointerenter="handlePointerover($event, lineIdx)"
-			:class="{ 'complete-single': completeCounts[lineIdx][0] || completeCounts[lineIdx][1],  'complete-both': completeCounts[lineIdx][0] && completeCounts[lineIdx][1] }"
-		>
+			:class="{ 'complete-single': completeCounts[lineIdx][0] || completeCounts[lineIdx][1], 'complete-both': completeCounts[lineIdx][0] && completeCounts[lineIdx][1] }">
 
-			<div class="count-wrapper zero"
-				:class="{
-						'count-error': errorCounts[lineIdx][0],
-						'count-complete': completeCounts[lineIdx][0]
-					}"
-			>
-				<div class="count zero">{{lineCount[0]}}
+			<div class="count-wrapper zero" :class="{
+				'count-error': errorCounts[lineIdx][0],
+				'count-complete': completeCounts[lineIdx][0]
+			}">
+				<div class="count zero">{{ lineCount[0] }}
 				</div>
 			</div>
 			<div class="count-wrapper one" :class="{
-						'count-error': errorCounts[lineIdx][1],
-						'count-complete': completeCounts[lineIdx][1]
-					}"
-				>
-				<div class="count one">{{lineCount[1]}}
+				'count-error': errorCounts[lineIdx][1],
+				'count-complete': completeCounts[lineIdx][1]
+			}">
+				<div class="count one">{{ lineCount[1] }}
 				</div>
 			</div>
 			<div class="divider-wrapper">
@@ -78,7 +72,7 @@ export default {
 	},
 	methods: {
 		handlePointerdown(e) {
-    		e.target.releasePointerCapture(e.pointerId);
+			e.target.releasePointerCapture(e.pointerId);
 		},
 		handlePointerover(ev, lineIdx = 'line') {
 			ev.preventDefault();
@@ -147,6 +141,7 @@ export default {
 </script>
 
 <style scoped>
+
 .ruler {
 	@apply grid leading-none place-items-center;
 	gap: var(--grid-gap);
@@ -262,35 +257,36 @@ export default {
 	animation-name: headShake;
 }
 @keyframes headShake {
-  0% {
-    transform: translateX(0);
-	font-weight: normal;
-  }
+	0% {
+		transform: translateX(0);
+		font-weight: normal;
+	}
 
-  6.5% {
-    transform: translateX(-1.5px) rotateY(-9deg);
-  }
+	6.5% {
+		transform: translateX(-1.5px) rotateY(-9deg);
+	}
 
-  18.5% {
-    transform: translateX(1px) rotateY(7deg);
-	font-weight: 600;
-  }
+	18.5% {
+		transform: translateX(1px) rotateY(7deg);
+		font-weight: 600;
+	}
 
-  31.5% {
-    transform: translateX(-0.75px) rotateY(-5deg);
-	
-  }
+	31.5% {
+		transform: translateX(-0.75px) rotateY(-5deg);
 
-  43.5% {
-    transform: translateX(0.6px) rotateY(3deg);
-  }
+	}
 
-  50% {
-    transform: translateX(0);
-  }
-  100% {
-	  transform: translateX(0) rotateY(0deg);
-	  font-weight: 600;
-  }
+	43.5% {
+		transform: translateX(0.6px) rotateY(3deg);
+	}
+
+	50% {
+		transform: translateX(0);
+	}
+
+	100% {
+		transform: translateX(0) rotateY(0deg);
+		font-weight: 600;
+	}
 }
 </style>

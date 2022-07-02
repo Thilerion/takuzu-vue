@@ -119,6 +119,7 @@ declare module '@vue/runtime-core' {
     PuzzleGrid: typeof import('./src/components/gameboard/PuzzleGrid.vue')['default']
     PuzzleGridHighlightItem: typeof import('./src/components/gameboard/PuzzleGridHighlightItem.vue')['default']
     PuzzleGridHighlights: typeof import('./src/components/gameboard/PuzzleGridHighlights.vue')['default']
+    PuzzleHint: typeof import('./src/components/gameboard/hints/PuzzleHint.vue')['default']
     PuzzleHistoryView: typeof import('./src/views/PuzzleHistoryView.vue')['default']
     PuzzleInfo: typeof import('./src/components/gameboard/PuzzleInfo.vue')['default']
     PuzzleInfoTimer: typeof import('./src/components/gameboard/PuzzleInfoTimer.vue')['default']

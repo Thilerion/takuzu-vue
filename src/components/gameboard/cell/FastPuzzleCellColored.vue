@@ -13,7 +13,7 @@
 
 <script setup>
 import { EMPTY } from "@/lib/constants";
-import { computed, toRefs, Transition } from "vue";
+import { computed, toRefs } from "vue";
 
 const props = defineProps({
 	value: {

@@ -25,18 +25,18 @@
 
 <script>
 import PuzzleGridHighlights from '@/components/gameboard/PuzzleGridHighlights.vue';
-import { EMPTY } from '@/lib/constants';
-import { computed, provide, reactive, ref, toRef, toRefs, watch } from 'vue';
-import { usePuzzleStore } from '@/stores/puzzle.js';
 import { useTapVibrate } from '@/composables/use-tap-vibrate.js';
-import FastPuzzleCellWrapper from './cell/FastPuzzleCellWrapper.vue';
-import FastPuzzleCellColored from './cell/FastPuzzleCellColored.vue';
-import FastPuzzleCellSymbol from './cell/FastPuzzleCellSymbol.vue';
+import { EMPTY } from '@/lib/constants';
+import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
+import { usePuzzleStore } from '@/stores/puzzle.js';
+import { CellThemeTypes } from '@/stores/settings/options';
 import { useSettingsStore } from '@/stores/settings/store';
 import { storeToRefs } from 'pinia';
-import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
+import { computed, ref, toRef, watch } from 'vue';
 import { useCellThemeProvider } from '../puzzleboard/useCellThemeProvider';
-import { CellThemeTypes } from '@/stores/settings/options';
+import FastPuzzleCellColored from './cell/FastPuzzleCellColored.vue';
+import FastPuzzleCellSymbol from './cell/FastPuzzleCellSymbol.vue';
+import FastPuzzleCellWrapper from './cell/FastPuzzleCellWrapper.vue';
 
 export default {
 	components: {

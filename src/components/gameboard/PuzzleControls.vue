@@ -63,7 +63,7 @@
 import type { SimpleBoard } from '@/lib';
 import { usePuzzleStore } from '@/stores/puzzle';
 import { useSettingsStore } from '@/stores/settings/store';
-import { computed, watchEffect } from 'vue';
+import { computed } from 'vue';
 
 const props = defineProps<{
 	canUndo?: boolean,

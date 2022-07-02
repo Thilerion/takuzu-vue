@@ -42,7 +42,9 @@ useResizeObserver(container, (entries) => {
 		const { inlineSize, blockSize } = el.contentBoxSize[0];
 		width.value = inlineSize;
 		height.value = blockSize;
-	} catch { }
+	} catch (e) {
+		console.warn('Error in resize observer entries');
+	}
 })
 
 const rowsWithRuler = computed(() => {

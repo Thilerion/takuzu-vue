@@ -1,17 +1,20 @@
 <template>
 		<PuzzleGridHighlightItem
 			class="highlight hl-cell"
-			v-for="cellHl in cellHighlights"
+			v-for="(cellHl, idx) in cellHighlights"
+			:key="`cell-${idx}`"
 			v-bind="cellHl"
 		/>
 		<PuzzleGridHighlightItem
 			class="highlight hl-line"
-			v-for="lineHl in lineHighlights"
+			v-for="(lineHl, idx) in lineHighlights"
+			:key="`line-${idx}`"
 			v-bind="lineHl"
 		/>
 		<PuzzleGridHighlightItem
 			class="highlight hl-area"
-			v-for="areaHl in areaHighlights"
+			v-for="(areaHl, idx) in areaHighlights"
+			:key="`area-${idx}`"
 			v-bind="areaHl"
 		/>
 </template>

@@ -39,8 +39,8 @@ const BinarySymbols = {
 import { useCellThemeProvider } from "@/components/puzzleboard/useCellThemeProvider";
 import { EMPTY, ONE, ZERO } from "@/lib/constants";
 import { isValidPuzzleValue } from "@/lib/utils";
-import { computed, toRefs, Transition, inject, toRef } from "vue";
 import { CellThemes } from "@/stores/settings/options";
+import { computed, toRefs } from "vue";
 
 const props = defineProps({
 	value: {
