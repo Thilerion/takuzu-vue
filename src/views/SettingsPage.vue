@@ -113,8 +113,23 @@
 					<button
 						@click="toggleDebugMode(true, { immediate: false })"
 						:disabled="isDebugModeEnabled"
+						class="w-full"
 					>
-					<span class="mr-4 text-base">App version:</span>{{ pkgVersion }}_<small>{{buildDate}}</small>
+						<div class="flex flex-row gap-x-2 items-start h-full text-start w-full max-w-[40ch] overflow-x-hidden">
+							<div class="min-w-fit h-full grow-[20] shrink-[1]">
+								<div class="text-start">App version</div>
+								<div class="text-xs text-start opacity-50" v-if="prevAppVersion && prevAppVersion.includes('_')">Previous version</div>
+							</div>
+							<div class="grow-[25] shrink-[2] h-full flex flex-col min-w-0">
+								<div class="text-ellipsis">{{ curAppVersionSplit.pkgVersion }}<small>_{{curAppVersionSplit.buildDate}}</small></div>
+								<div class="text-xs opacity-50 tracking-wider text-ellipsis" v-if="prevAppVersion && prevAppVersion.includes('_')">{{prevAppVersion}}</div>
+							</div>
+							<!-- <div class="flex-auto">{{ curAppVersionSplit.pkgVersion }}<small>{{curAppVersionSplit.buildDate}}</small></div> -->
+							<!-- <div class="">
+								<span class="mr-4 text-xs">{{ prevAppVersion }}</span>
+							</div> -->
+						</div>
+						
 					</button>
 				</BasicLinkListItem>
 				<BasicLinkListItem v-if="isDebugModeEnabled"><router-link to="/debug-options">Developer options</router-link></BasicLinkListItem>
@@ -136,7 +151,7 @@ import { useSettingsStore } from '@/stores/settings/store';
 import { storeToRefs } from 'pinia';
 import { useGlobalBuildData } from '@/app.globals';
 import { useThemePreferences } from '@/composables/use-theme-preferences';
-import { onBeforeUnmount } from 'vue';
+import { computed, onBeforeUnmount } from 'vue';
 import { CheckButtonOption, rulerType } from '@/stores/settings/options';
 
 defineProps({
@@ -175,7 +190,11 @@ const lineInfoOptions = [
 	{ label: 'Current values in line', value: rulerType.COUNT_CURRENT}
 ]
 
-const { pkgVersion, buildDate } = useGlobalBuildData();
+const { curAppVersion, prevAppVersion } = useGlobalBuildData();
+const curAppVersionSplit = computed(() => {
+	const [pkgVersion, buildDate] = curAppVersion.value.split('_');
+	return { pkgVersion, buildDate };
+})
 
 const closeSettings = () => {
 	const prev = this.$route.meta.prev;
