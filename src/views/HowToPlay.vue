@@ -11,8 +11,8 @@
 						<li class="pl-2 leading-relaxed mb-1 transition-all" :class="{ 'mb-5': showExampleOne }">
 							<div>Each row, and each column, contains an equal amount of 0s and 1s.</div>
 							<BaseButton class="mb-2 text-xs h-min w-[18ch]" @click="showExampleOne = !showExampleOne"><span v-if="!showExampleOne">Show examples</span><span v-else>Hide examples</span></BaseButton>
-							<ExpandTransition :duration-per-100-px="220">
-								<div v-if="showExampleOne">
+							<ExpandTransition :duration-per-100-px="220" :show="showExampleOne">
+								<div>
 							<div class="rule-examples pb-4">
 								<div class="text-sm mt-1 text-gray-700 dark:text-gray-200">Correct:</div>
 								<PuzzleRowExample
@@ -30,8 +30,8 @@
 						<li class="pl-2 leading-relaxed mb-1">
 							<div>There cannot be more than two 0s or 1s next to each other.</div>
 							<BaseButton class="mb-2 text-xs h-min w-[18ch]" @click="showExampleTwo = !showExampleTwo"><span v-if="!showExampleTwo">Show examples</span><span v-else>Hide examples</span></BaseButton>
-							<ExpandTransition :duration-per-100-px="220">
-								<div v-if="showExampleTwo">
+							<ExpandTransition :duration-per-100-px="220" :show="showExampleTwo">
+								<div>
 									<div class="rule-examples pb-4">
 								<div class="text-sm mt-1 text-gray-700 dark:text-gray-200">Correct:</div>
 								<PuzzleRowExample
@@ -50,8 +50,8 @@
 						<li class="pl-2 leading-relaxed mb-1">
 							<div>No two rows, and no two columns can be the same.</div>
 							<BaseButton class="mb-2 text-xs h-min w-[18ch]" @click="showExampleThree = !showExampleThree"><span v-if="!showExampleThree">Show examples</span><span v-else>Hide examples</span></BaseButton>
-							<ExpandTransition :duration-per-100-px="220">
-								<div v-if="showExampleThree">
+							<ExpandTransition :duration-per-100-px="220" :show="showExampleThree">
+								<div>
 									<div class="rule-examples pb-4">
 								<div class="text-sm mt-1 text-gray-700 dark:text-gray-200">Correct:</div>
 								<PuzzleRowExample
@@ -79,8 +79,8 @@
 						<h2>Rules for puzzle variations</h2>
 						<icon-ic-outline-keyboard-arrow-down class="ml-auto" :class="{rotated: showVariationRules }" />
 					</button>
-					<ExpandTransition :duration="350" @after-enter="afterEnterVariation">
-					<div v-if="showVariationRules" class="border-t" ref="variationRulesEl">
+					<ExpandTransition :duration="350" @after-enter="afterEnterVariation" :show="showVariationRules">
+					<div class="border-t" ref="variationRulesEl">
 					<div
 						class="expansion-block pt-2 bg-gray-50"
 					>

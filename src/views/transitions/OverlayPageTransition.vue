@@ -7,7 +7,9 @@
 		@after-leave="showOverflow"
 		mode="out-in"
 	>
-		<slot />
+		<template v-if="show">
+			<slot />		
+		</template>
 	</transition>
 </template>
 
@@ -15,7 +17,8 @@
 import { computed, ref, watchEffect } from 'vue';
 
 const props = defineProps<{
-	disable?: boolean
+	disable?: boolean,
+	show: boolean
 }>();
 
 const hideRootOverflow = ref(false);

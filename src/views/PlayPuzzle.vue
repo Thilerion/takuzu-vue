@@ -68,8 +68,8 @@
 		</div>
 
 		<router-view v-slot="{ Component }">
-			<OverlayPageTransition>
-				<div v-if="Component" class="fixed inset-0 text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-white overflow-y-auto pb-8 z-40">
+			<OverlayPageTransition :show="Component != null">
+				<div class="fixed inset-0 text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-white overflow-y-auto pb-8 z-40">
 					<component :is="Component" />
 				</div>
 			</OverlayPageTransition>

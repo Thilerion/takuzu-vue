@@ -2,8 +2,8 @@
 	<div>
 		<header>Puzzle dimensions</header>
 		<button @click="expanded = !expanded">Expand</button>
-	<ExpandTransition :duration="300">
-	<div v-if="expanded">
+	<ExpandTransition :duration="300" :show="expanded">
+	<div>
 		<div class="flex flex-row gap-x-4">
 			<div class="flex flex-col">
 				<label for="widthInput">Width</label>

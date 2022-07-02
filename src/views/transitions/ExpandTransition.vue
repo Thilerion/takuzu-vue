@@ -5,7 +5,7 @@
 		@after-enter="afterEnter"
 		@leave="leave"
 		@after-leave="afterLeave"
-	><slot /></transition>
+	><template v-if="show"><slot /></template></transition>
 </template>
 
 <script setup>
@@ -23,6 +23,10 @@ const props = defineProps({
 		type: Number,
 		default: 1000
 	},
+	show: {
+		type: Boolean,
+		default: true
+	}
 })
 
 const emit = defineEmits(['after-enter', 'after-leave']);

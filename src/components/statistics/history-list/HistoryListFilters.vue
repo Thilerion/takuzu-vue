@@ -1,7 +1,7 @@
 <template>
 	<div class="bg-white px-2 py-0 border-y">
-		<ExpandTransition>
-			<div v-if="showFilterInputs">
+		<ExpandTransition :show="showFilterInputs">
+			<div>
 			<div class="divide-y bg-blue-100/0">
 				<div class="py-2 px-2">
 					<InputToggle2 v-model="favoritesOnly" id="favoritesOnlyToggle" class="mb-0 w-full font-medium">Favorites only</InputToggle2>

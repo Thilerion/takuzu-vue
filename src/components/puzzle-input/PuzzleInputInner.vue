@@ -68,8 +68,8 @@
 						}" />
 					</div>
 				</BaseButton>
-				<ExpandTransition @after-enter="scrollToPuzzleStrings" :duration="200">
-					<div v-show="showPuzzleStrings" ref="puzzleStringsEl">
+				<ExpandTransition @after-enter="scrollToPuzzleStrings" :duration="200" :show="showPuzzleStrings">
+					<div ref="puzzleStringsEl">
 				<div class="pt-2 w-full flex flex-col px-3 gap-y-2 box-border border border-gray-200 border-t-transparent pb-3 rounded-b">
 					<div>Short</div>
 					<div class="max-w-full text-sm pr-1 pl-2 py-2 bg-gray-100 rounded mb-2">
