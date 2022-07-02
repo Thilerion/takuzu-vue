@@ -1,3 +1,5 @@
+import type { PuzzleSymbol } from "@/lib/constants";
+
 export const validVibrationStrengths = [0, 18, 32, 45, 60, 76] as const;
 export type ValidVibrationStrength = typeof validVibrationStrengths[number];
 
@@ -29,9 +31,8 @@ interface VibrationSettings {
 	enableVibration: boolean,
 	vibrationStrength: ValidVibrationStrength
 }
-// TODO: convert type to PuzzleSymbol type
 interface InputSettings {
-	toggleMode: '1' | '0'
+	toggleMode: PuzzleSymbol
 }
 interface PuzzleAssistanceSettings {
 	// automaticValidation: TODO, with values disabled/ruleViolations/incorrectValues, or some other options to be decided,
