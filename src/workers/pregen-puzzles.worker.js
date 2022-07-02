@@ -69,7 +69,7 @@ async function findPresetsWithoutPuzzles({ lazy = true, verbose = true, maxDiffi
 		if (i >= maxTries) {
 			console.error(`Reached maxAttempts while pregenerating puzzles! "${numGenerated}" succesfully generated puzzles, and ${numFailures} total failures, with ${failedGenerationPresets.size} presets that could not be generated.`);
 			break;
-		};
+		}
 
 		i += 1;
 

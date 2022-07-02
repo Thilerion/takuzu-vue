@@ -23,7 +23,7 @@ function sendCaughtError(event) {
 
 addEventListener('message', event => {
 	const receivedMsg = event?.data?.message ?? {};
-	const { task, id, data } = receivedMsg;
+	const { task, /* id, data */ } = receivedMsg;
 
 	switch(task) {
 		case 'test-success': {
