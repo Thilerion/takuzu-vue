@@ -1,4 +1,4 @@
-import { shuffle } from "@/lib/utils.js";
+import { shuffle } from "@/lib/utils";
 
 const pregeneratedPuzzles = shuffle([
     {

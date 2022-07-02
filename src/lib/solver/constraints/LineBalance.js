@@ -1,5 +1,5 @@
-import { EMPTY } from "../../constants.js";
-import { checkLineBalanceStrategy } from "../../strategies/LineBalance.js";
+import { EMPTY } from "../../constants";
+import { checkLineBalanceStrategy } from "../../strategies/LineBalance";
 
 export default function applyLineBalanceConstraint(board, options = {}) {
 	let changed = false;

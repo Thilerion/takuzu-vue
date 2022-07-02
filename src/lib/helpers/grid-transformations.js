@@ -1,5 +1,5 @@
-import { SimpleBoard } from "../board/Board.js";
-import { EMPTY, ONE, ZERO } from "../constants.js";
+import { SimpleBoard } from "../board/Board";
+import { EMPTY, ONE, ZERO } from "../constants";
 
 const reversed = arr => [...arr].reverse();
 

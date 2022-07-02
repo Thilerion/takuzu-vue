@@ -1,4 +1,4 @@
-import { EMPTY } from "@/lib/constants.js";
+import { EMPTY } from "@/lib/constants";
 import { defineStore } from "pinia";
 
 export const usePuzzleHistoryStore = defineStore('puzzleHistory', {

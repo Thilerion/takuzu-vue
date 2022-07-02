@@ -37,15 +37,15 @@ const BinarySymbols = {
 
 <script setup>
 import { useCellThemeProvider } from "@/components/puzzleboard/useCellThemeProvider";
-import { EMPTY, ONE, ZERO } from "@/lib/constants.js";
-import { isValidPuzzleSymbol } from "@/lib/utils";
+import { EMPTY, ONE, ZERO } from "@/lib/constants";
+import { isValidPuzzleValue } from "@/lib/utils";
 import { computed, toRefs, Transition, inject, toRef } from "vue";
 import { CellThemes } from "@/stores/settings/options";
 
 const props = defineProps({
 	value: {
 		validator(val) {
-			return isValidPuzzleSymbol(val);
+			return isValidPuzzleValue(val);
 		},
 		required: true
 	},

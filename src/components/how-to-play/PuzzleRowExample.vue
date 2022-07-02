@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-import { EMPTY } from '@/lib/constants.js';
+import { EMPTY } from '@/lib/constants';
 import { computed } from 'vue';
 
 const props = defineProps({

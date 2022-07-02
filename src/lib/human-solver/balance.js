@@ -1,6 +1,6 @@
 
-import { EMPTY } from "../constants.js";
-import { checkLineBalanceStrategy } from "../strategies/LineBalance.js";
+import { EMPTY } from "../constants";
+import { checkLineBalanceStrategy } from "../strategies/LineBalance";
 
 export function humanSolveBalance(data, /* options = {} */) {
 	const { board } = data;

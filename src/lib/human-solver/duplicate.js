@@ -1,6 +1,6 @@
-import { COLUMN, ROW } from "../constants.js";
-import { areLinesEqual } from "../utils.js";
-import { createFilterLinesByRemainingValues, getRecurringValuesFromPermutations } from "./utils.js";
+import { COLUMN, ROW } from "../constants";
+import { areLinesEqual } from "../utils";
+import { createFilterLinesByRemainingValues, getRecurringValuesFromPermutations } from "./utils";
 
 export function humanSolveDuplicateLine({ board }, options = {}) {
 	const results = [];

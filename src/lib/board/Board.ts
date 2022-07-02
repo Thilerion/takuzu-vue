@@ -1,77 +1,77 @@
-import { COLUMN, EMPTY, ONE, ROW, ZERO } from "../constants.js";
-import { array2d, cloneArray2d, columnIdToX, count, deducePuzzleDimensionsFromLength, generateColumnIds, generateRowIds, getCoordsForBoardSize, isExportString, isValidCellDigit, parseExportString, rowIdToY, shuffle } from "../utils.js";
-import { validateBoard } from "../validate/board.js";
-import { BoardLine } from "./BoardLine.js";
-import { ThreesUnit } from "./ThreesUnit.js";
+import { COLUMN, EMPTY, ONE, ROW, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "../constants";
+import type { ColumnId, IterableBoardLineString, LineId, PuzzleGrid, RowId, Vec } from "../types";
+import { array2d, cloneArray2d, columnIdToX, deducePuzzleDimensionsFromLength, generateColumnIds, generateRowIds, getCoordsForBoardSize, isExportString, isLineIdColumn, isLineIdRow, isValidCellDigit, lineSizeToNumRequired, parseExportString, rowIdToY, shuffle, type PuzzleExportString } from "../utils";
+import { validateBoard } from "../validate/board";
+import { BoardLine } from "./BoardLine";
+import { ThreesUnit } from "./ThreesUnit";
 
 export class SimpleBoard {
-	constructor(grid) {
+	grid: PuzzleGrid;
+	width: number;
+	height: number;
+	numRequired: Record<LineType, Record<PuzzleSymbol, number>>;
+	rowIds: string[];
+	columnIds: string[];
+	lineIds: string[];
+
+	constructor(grid: PuzzleGrid) {
 		this.grid = grid;
-		
-		this.width = this.grid[0].length;
-		this.height = this.grid.length;
-
-		// TODO: validate grid size
-		
+		this.width = grid[0].length;
+		this.height = grid.length;
 		this.numRequired = {
-			[ROW]: {
-				[ONE]: Math.ceil(this.width / 2),
-				[ZERO]: Math.floor(this.width / 2),
-			},
-			[COLUMN]: {
-				[ONE]: Math.ceil(this.height / 2),
-				[ZERO]: Math.floor(this.height / 2),
-			}
+			[ROW]: lineSizeToNumRequired(this.width),
+			[COLUMN]: lineSizeToNumRequired(this.height)
 		}
-
 		this.rowIds = generateRowIds(this.height);
 		this.columnIds = generateColumnIds(this.width);
 		this.lineIds = [...this.rowIds, ...this.columnIds];
 	}
 
-	// STATIC CLASS INSTANTIATION METHODS
-	static empty(width, height = width) {
-		const grid = array2d(width, height, EMPTY);
+	static empty(width: number, height = width) {
+		const grid: PuzzleGrid = array2d(width, height, EMPTY);
 		return new SimpleBoard(grid);
 	}
-	static import(exportStr) {
-		return SimpleBoard.fromString(exportStr);
-	}
-	static fromString(exportedStr) {
-		const data = { width: null, height: null, boardStr: exportedStr };
+	static fromString(exportedStr: string) {
 		const isExport = isExportString(exportedStr);
+		let width: number;
+		let height: number;
+		let boardStr: string;
 		if (isExport) {
-			const { width, height, boardStr } = parseExportString(exportedStr);
-			Object.assign(data, { width, height, boardStr });
+			const parsed = parseExportString(exportedStr);
+			width = parsed.width;
+			height = parsed.height;
+			boardStr = parsed.boardStr;
 		} else {
-			const { width, height } = deducePuzzleDimensionsFromLength(exportedStr.length);
-			data.width = width;
-			data.height = height;
+			const dims = deducePuzzleDimensionsFromLength(exportedStr.length);
+			width = dims.width;
+			height = dims.height;
+			boardStr = exportedStr;
 		}
-
-		const { width, height, boardStr } = data;
 		if (boardStr.length < width * height) {
-			console.warn(`Unexpected boardStr size, smaller than board dimensions (str len: ${boardStr.length}, dimensions: ${width}x${height}=${width * height})`);
+			throw new Error(`Unexpected boardStr size, smaller than board dimensions (str len: ${boardStr.length}, dimensions: ${width}x${height}=${width * height})`);
 		}
 
-		const grid = [];
+		const grid: PuzzleGrid = [];
 		for (let y = 0; y < height; y++) {
-			const row = [];
+			const row: PuzzleValue[] = [];
 			for (let x = 0; x < width; x++) {
 				const idx = (y * width) + x;
 				const rawVal = boardStr[idx];
-				if (rawVal == ONE) row.push(ONE);
-				else if (rawVal == ZERO) row.push(ZERO);
-				else row.push(EMPTY);
+				if (rawVal === ONE) {
+					row.push(ONE);
+				} else if (rawVal === ZERO) {
+					row.push(ZERO);
+				} else row.push(EMPTY);
 			}
 			grid.push(row);
 		}
 		return new SimpleBoard(grid);
 	}
+	static import(str: PuzzleExportString) {
+		return SimpleBoard.fromString(str);
+	}
 
-	// RETRIEVE BOARD VALUES;
-	// TODO: retrieve lines/columns/rows
-	get(x, y) {
+	get(x: number, y: number): PuzzleValue {
 		if (x < 0 || y < 0 || x >= this.width || y >= this.height) {
 			// return null;
 			// TODO: return null here? or remove this check?
@@ -79,42 +79,30 @@ export class SimpleBoard {
 		}
 		return this.grid[y][x];
 	}
-	isCellEmpty(x, y) {
+	isCellEmpty(x: number, y: number) {
 		return this.get(x, y) === EMPTY;
 	}
-	getColumn(x) {
-		if (typeof x === 'string') {
-			x = columnIdToX(x);
-		}
-		return this.grid.map(row => row[x]);
+	getColumn(x: ColumnId | number) {
+		const coordX = typeof x === 'string' ? columnIdToX(x) : x;
+		return this.grid.map(row => row[coordX]);
 	}
-	getRow(y) {
-		if (typeof y === 'string') {
-			y = rowIdToY(y);
-		}
-		return [...this.grid[y]];
+	getRow(y: RowId | number) {
+		const coordY = typeof y === 'string' ? rowIdToY(y) : y;
+		return [...this.grid[coordY]];
 	}
-	getLine(lineId) {
-		if (typeof lineId !== 'string') {
-			throw new Error('LineId in board.getLine should be a string');
-		}
-		if (this.rowIds.includes(lineId)) {
-			return this.getRow(lineId);
-		} else if (this.columnIds.includes(lineId)) {
+	getLine(lineId: LineId) {
+		if (isLineIdColumn(lineId)) {
 			return this.getColumn(lineId);
+		} else if (isLineIdRow(lineId)) {
+			return this.getRow(lineId);
+		} else {
+			throw new Error(`Invalid lineId ("${lineId}")`);
 		}
-		throw new Error(`Invalid lineId ("${lineId}")`);
-	}
-
-	get numEmpty() {
-		// TODO: cache gridCounts?
-		const flat = [...this.grid].flat();
-		return count(flat, EMPTY);
 	}
 
 	// SET BOARD VALUES
 	// TODO: set lines/columns/rows
-	assign(x, y, value) {
+	assign(x: number, y: number, value: PuzzleValue) {
 		if (x == null && y != null) {
 			// TODO: assign row
 			throw new Error('Assign row not yet implemented');
@@ -135,14 +123,14 @@ export class SimpleBoard {
 		
 		return this;
 	}
-	assignRow(y, values) {
+	assignRow(y: number, values: PuzzleValue[]) {
 		if (!Array.isArray(values) || values.length !== this.width) {
 			throw new Error("Can only assign row with an array of values");
 		}
 		this.grid.splice(y, 1, [...values]);
 		return this;
 	}
-	assignColumn(x, values) {
+	assignColumn(x: number, values: PuzzleValue[]) {
 		if (!Array.isArray(values) || values.length !== this.height) {
 			throw new Error("Can only assign column with an array of values");
 		}
@@ -151,23 +139,27 @@ export class SimpleBoard {
 		}
 		return this;
 	}
-	assignLine(lineId, values) {
+	assignLine(lineId: LineId, values: PuzzleValue[]) {
 		if (this.rowIds.includes(lineId)) {
-			return this.assignRow(rowIdToY(lineId), values);
+			return this.assignRow(rowIdToY((lineId as RowId)), values);
 		} else if (this.columnIds.includes(lineId)) {
-			return this.assignColumn(columnIdToX(lineId), values);
+			return this.assignColumn(columnIdToX((lineId as ColumnId)), values);
 		}
 	}
-	_set(x, y, value) {
+	_set(x: number, y: number, value: PuzzleValue) {
 		this.grid[y][x] = value;
 		return this;
 	}
 
-	// BOARD ITERATION METHODS
 	cellCoords({ shuffled = false } = {}) {
-		const coords = getCoordsForBoardSize(this.width, this.height);
+		const coords: Vec[] = getCoordsForBoardSize(this.width, this.height);
 		if (shuffled) return shuffle(coords);
 		return [...coords];
+	}
+	*values() {
+		for (const { x, y } of this.cellCoords()) {
+			yield this.get(x, y);
+		}
 	}
 	*cells({ skipFilled = false, skipEmpty = false, shuffled = false } = {}) {
 		for (const coords of this.cellCoords({ shuffled })) {
@@ -180,7 +172,7 @@ export class SimpleBoard {
 			yield { x, y, value: cellValue };
 		}
 	}
-	*lineStrings() {
+	*lineStrings(): Generator<IterableBoardLineString> {
 		for (const lineId of this.lineIds) {
 			const lineValues = this.getLine(lineId);
 			yield {
@@ -210,6 +202,14 @@ export class SimpleBoard {
 		}
 	}
 
+	get numEmpty() {
+		let count = 0;
+		for (const value of this.values()) {
+			if (value === EMPTY) count += 1;
+		}
+		return count;
+	}
+
 	// VALIDITY / SOLVED CHECKS
 	isFilled() {
 		return !this.grid.flat().includes(EMPTY);
@@ -223,7 +223,7 @@ export class SimpleBoard {
 
 	// compare values to a solutionBoard
 	// does not check for "rule violations", only compares to the solution
-	hasIncorrectValues(solutionBoard) {
+	hasIncorrectValues(solutionBoard: SimpleBoard): { hasMistakes: false, result: null } | { hasMistakes: true, result: Vec[] } {
 		const incorrectValueCells = [];
 		for (const cell of this.cells({ skipEmpty: true })) {
 			const { x, y, value } = cell;
@@ -232,17 +232,16 @@ export class SimpleBoard {
 			}
 		}
 		const hasMistakes = incorrectValueCells.length > 0;
-		return {
-			hasMistakes,
-			result: hasMistakes ? incorrectValueCells : null
+		if (hasMistakes) {
+			return { hasMistakes: true, result: incorrectValueCells };
+		} else {
+			return { hasMistakes: false, result: null }
 		}
 	}
 	// checks if the board is solved by comparing to the solutionBoard
-	equalsSolution(solutionBoard) {
+	equalsSolution(solutionBoard: SimpleBoard) {
 		return this.isFilled() && this.toBoardString() === solutionBoard.toBoardString();
 	}
-
-
 
 	// CLASS UTILTIES
 	copy() {

@@ -1,4 +1,4 @@
-import { checkTriplesStrategy } from "../strategies/Triples.js";
+import { checkTriplesStrategy } from "../strategies/Triples";
 
 export function humanSolveTriples(data, options = {}) {
 	const { board } = data;
@@ -7,7 +7,7 @@ export function humanSolveTriples(data, options = {}) {
 
 	for (const threesUnit of board.threesUnits()) {
 		
-		const result = checkTriplesStrategy(threesUnit, { expanded: true });
+		const result = checkTriplesStrategy(threesUnit, { detailed: true });
 
 		if (!result.found) continue;
 

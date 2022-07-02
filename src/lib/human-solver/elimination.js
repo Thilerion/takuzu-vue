@@ -1,5 +1,5 @@
-import { ONE, ZERO } from "../constants.js";
-import { getRecurringValuesFromPermutations } from "./utils.js";
+import { ONE, ZERO } from "../constants";
+import { getRecurringValuesFromPermutations } from "./utils";
 
 export function humanSolveElimination({ board }, options = {}) {
 	

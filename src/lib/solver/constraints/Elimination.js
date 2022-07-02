@@ -1,5 +1,5 @@
-import { COLUMN, EMPTY, ROW } from "../../constants.js";
-import { areLinesEqual } from "../../utils.js";
+import { COLUMN, EMPTY, ROW } from "../../constants";
+import { areLinesEqual } from "../../utils";
 
 export default function applyEliminationConstraint(board, options = {}) {
 	let changed = false;
