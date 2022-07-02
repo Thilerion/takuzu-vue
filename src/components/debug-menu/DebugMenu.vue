@@ -22,7 +22,7 @@
 <script setup>
 import { clearPuzzleDb } from '@/services/puzzles-db/db.js';
 import { initPregenWorker } from '@/workers/pregen-puzzles.js';
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 
 const clearPuzzlesResult = ref([]);
 let notificationId = -1;
@@ -37,11 +37,12 @@ const addDbResultNotification = (str, timeout = 2000) => {
 const clearPuzzleDbAction = async () => {	
 	try {
 		addDbResultNotification('Resetting pregenerated puzzle database now...');
-		const [result, timeoutResult] = await Promise.all([
+		const result = await Promise.all([
 			clearPuzzleDb(),
 			awaitTimeout()
 		])
-		console.log(result);
+		const clearDbResult = result[0];
+		console.log(clearDbResult);
 		addDbResultNotification('Successfully cleared puzzle database.');
 		return true;
 	} catch(e) {
@@ -52,7 +53,7 @@ const clearPuzzleDbAction = async () => {
 }
 
 const awaitTimeout = async (timeout = 1000) => {
-	return new Promise((resolve, reject) => {
+	return new Promise((resolve) => {
 		setTimeout(() => {
 			resolve();
 		}, timeout)
@@ -63,11 +64,12 @@ const initPregenPuzzles = async () => {
 	try {
 		await clearPuzzleDb();
 		addDbResultNotification('Now generating puzzles.', 20000);
-		const [result, timeoutResult] = await Promise.all([
+		const result = await Promise.all([
 			initPregenWorker(),
 			awaitTimeout()
-		])
-		console.log(result);
+		]);
+		const initPregenWorkerResult = result[0];
+		console.log(initPregenWorkerResult);
 		addDbResultNotification('Succesfully generated puzzles.', 10000);
 	} catch(e) {
 		console.warn(e);

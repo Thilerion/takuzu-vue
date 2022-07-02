@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, useAttrs } from 'vue';
+import { computed, useAttrs } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 export interface Props {

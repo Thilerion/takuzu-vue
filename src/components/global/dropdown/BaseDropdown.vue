@@ -79,7 +79,9 @@ export default {
 			setTimeout(() => {
 				try {
 					this.isClosed = true;
-				} catch { }
+				} catch (e) {
+					// console.log('Can not close.');
+				}
 			}, 150);
 		}
 	}

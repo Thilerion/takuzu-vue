@@ -59,9 +59,6 @@ const maxPage = computed(() => {
 	return numPages.value - 1;
 })
 
-const displayMaxPage = computed(() => {
-	return Math.max(1, numPages.value);
-})
 
 const goToPage = (value) => {
 	const newPage = Math.max(0, Math.min(maxPage.value, value));
