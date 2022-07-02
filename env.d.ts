@@ -6,11 +6,14 @@ declare module '*.vue' {
   export default component
 }
 
+export type AppMode = 'alpha' | 'beta' | 'development' | 'production' | 'test';
+
 interface ImportMetaEnv {
   // more env variables...
   readonly VITE_APP_TITLE: string,
   readonly VITE_APP_NAME: string,
   readonly VITE_APP_SHORT_NAME: string,
+  readonly MODE: AppMode
 }
 
 interface ImportMeta {

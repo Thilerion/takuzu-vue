@@ -22,7 +22,7 @@ const useTouchDetection = () => {
 	}, { passive: true });
 
 	const rootEl = document.documentElement;
-	window.addEventListener('touchstart', (ev) => {
+	window.addEventListener('touchstart', () => {
 		hasTouched.value = true;
 		rootEl.dataset.hasTouch = true;
 	}, { once: true, passive: true });

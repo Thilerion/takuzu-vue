@@ -44,7 +44,9 @@ function compatCheck() {
 			value = hasOld1;
 			localStorage.removeItem('takuzu-debug-mode');
 		}
-		localStorage.removeItem('takuzu-dev-mode');
+	} catch {
 		return value;
-	} catch(e) {}
+	} finally {
+		localStorage.removeItem('takuzu-dev-mode');
+	}
 }

@@ -372,7 +372,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			const timer = usePuzzleTimer();
 			timer.pause();
 
-			let timeElapsed = timer.timeElapsed;
+			const timeElapsed = timer.timeElapsed;
 			const checkAssistanceData = usePuzzleMistakesStore().checkAssistanceData;
 			const hintAssistanceData = usePuzzleHintsStore().hintAssistanceData;
 			const state = { ...this.$state };

@@ -107,7 +107,7 @@ const createMistakeHint = (cells) => {
 		targets,
 	);
 	const hintValidator = ({ board, solution }) => {
-		for (let { x, y } of targets) {
+		for (const { x, y } of targets) {
 			const boardValue = board.get(x, y);
 			const solutionValue = solution.get(x, y);
 			if (boardValue !== solutionValue && boardValue !== EMPTY) return true;
