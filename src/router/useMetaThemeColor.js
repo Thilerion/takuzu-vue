@@ -17,7 +17,7 @@ export const useMetaThemeColor = ({
 	return {
 		color: readonly(color),
 		setThemeColor: setCurrentThemeColor,
-		updateThemeColorWithRouteMeta: (to, from) => {
+		updateThemeColorWithRouteMeta: (to) => {
 			const newColor = to?.meta?.metaThemeColor ?? defaultColor;
 			if (!newColor) {
 				return;

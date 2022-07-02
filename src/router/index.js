@@ -150,8 +150,8 @@ const routes = [
 const router = createRouter({
 	history: createWebHistory(),
 	routes,
-	scrollBehavior(to, from, savedPosition) {
-		return new Promise((resolve, reject) => {
+	scrollBehavior() {
+		return new Promise((resolve) => {
 			setTimeout(() => {
 				// resolve(savedPosition ?? { top: 0, behavior: 'smooth' });
 				resolve({ top: 0, left: 0 });
