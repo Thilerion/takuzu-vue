@@ -17,8 +17,8 @@ export default class Solver {
 	selectValue: Required<SolverConfig>['selectValue'];
 	constraintFns: Required<SolverConfig>['constraintFns'];
 	solutions: SimpleBoard[] = [];
-	solving: boolean = false;
-	finished: boolean = false;
+	solving = false;
+	finished = false;
 	startTime: null | number = null;
 	solveDuration: null | number = null;
 	constructor(

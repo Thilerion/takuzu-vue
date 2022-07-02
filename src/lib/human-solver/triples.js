@@ -1,6 +1,6 @@
 import { checkTriplesStrategy } from "../strategies/Triples";
 
-export function humanSolveTriples(data, options = {}) {
+export function humanSolveTriples(data) {
 	const { board } = data;
 
 	const results = [];

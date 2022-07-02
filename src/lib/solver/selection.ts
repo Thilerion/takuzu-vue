@@ -64,8 +64,8 @@ export function selectCellRandom(board: SimpleBoard): Vec {
 
 type SelectValueFn = (board: SimpleBoard, x: number, y: number) => PuzzleSymbol;
 
-export const selectValueZeroFirst: SelectValueFn = (board, x, y) => ZERO;
-export const selectValueRandom: SelectValueFn = (board, x, y) => Math.random() < 0.5 ? ONE : ZERO;
+export const selectValueZeroFirst: SelectValueFn = () => ZERO;
+export const selectValueRandom: SelectValueFn = () => Math.random() < 0.5 ? ONE : ZERO;
 
 /* 
 Select value that is used the least among the cells' peers (least constraining value in CSP).

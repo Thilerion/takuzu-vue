@@ -1,6 +1,6 @@
-import { EMPTY, ONE, ZERO, type PuzzleSymbol, type PuzzleValue } from "../constants";
+import { EMPTY, ONE, ZERO, type PuzzleSymbol } from "../constants";
 import { memoize } from "../memoize.utils";
-import type { LineValueCount, PuzzleSymbolLine, PuzzleSymbolLineStr, PuzzleValueLine, ROPuzzleSymbolLine, ROPuzzleValueLine } from "../types";
+import type { LineValueCount, PuzzleSymbolLineStr, PuzzleValueLine, ROPuzzleSymbolLine, ROPuzzleValueLine } from "../types";
 import { countLineValues, lineSizeToNumRequired, numRequiredOfValue, sortLineValues } from "../utils";
 import { validateLine } from "../validate/line";
 import permuteUnique from "./permute";

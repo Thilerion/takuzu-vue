@@ -1,7 +1,7 @@
 import type { SimpleBoard } from "../board/Board";
 import { EMPTY, ONE, ROW, ZERO } from "../constants";
 import type { ColumnId, LineId, RowId, Vec } from "../types";
-import { threeInARowRegex, validateLine, validateMaxDigitsPerLine, validateThreeInARow } from "./line.js";
+import { threeInARowRegex, validateLine, validateMaxDigitsPerLine } from "./line.js";
 import { RuleConflictType } from './types';
 
 export function validateBoard(board: SimpleBoard, validateUniqueness = true) {
@@ -40,6 +40,7 @@ export function findRuleConflicts(board: SimpleBoard, validateUniqueness = true)
 		// three+ in a row
 		const threeInARowMatches = [...str.matchAll(threeInARowRegex)];
 		for (const group of threeInARowMatches) {
+			if (group.index == null) continue;
 			const idx = group.index;
 			const length = group[0].length;
 			const cells: Vec[] = [];
