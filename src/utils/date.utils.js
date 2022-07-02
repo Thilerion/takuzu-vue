@@ -1,4 +1,4 @@
-import { eachDayOfInterval, endOfWeek, format, getISODay, startOfWeek, addDays, isSameDay } from 'date-fns/esm';
+import { eachDayOfInterval, endOfWeek, getISODay, startOfWeek, addDays, isSameDay } from 'date-fns/esm';
 
 export { isSameDay };
 
@@ -58,10 +58,10 @@ export const timeFormatter = (formatOptions) => {
 
 		if (msPrecision) {
 			const precisionDivider = 1000 / msPrecision;
-			let remainingMs = timestampMS - (fullSeconds * 1000);
+			const remainingMs = timestampMS - (fullSeconds * 1000);
 			const digits = msPrecision <= 10 ? 1 : msPrecision <= 100 ? 2 : 3;
-			let msToPrecision = Math.floor(remainingMs / precisionDivider);
-			let msToPrecisionDigits = `${msToPrecision}000`.slice(0, digits);
+			const msToPrecision = Math.floor(remainingMs / precisionDivider);
+			const msToPrecisionDigits = `${msToPrecision}000`.slice(0, digits);
 			str += `.${msToPrecisionDigits}`;
 		}
 		return str;
@@ -99,7 +99,7 @@ export const formatTimeMMSSss = (timestampMS, { padMinutes = true } = {}) => {
 }
 
 export const formatTimeHHMMSS = (timestampMS, { padHours = false } = {}) => {
-	let totalSeconds = Math.round(timestampMS / 1000);
+	const totalSeconds = Math.round(timestampMS / 1000);
 	
 	const time = new Date(totalSeconds * 1000);
 

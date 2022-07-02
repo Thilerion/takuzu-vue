@@ -11,8 +11,8 @@ export const minMaxSum = (arr) => arr.reduce((acc, val) => {
 }, { min: Infinity, max: -Infinity, sum: 0 });
 
 export const average = (arr, data = {}) => {
-	const count = data.count ??= arr.length;
-	const summed = data.sum ??= sum(arr);
+	const count = data.count ?? arr.length;
+	const summed = data.sum ?? sum(arr);
 	return summed / count;
 }
 
@@ -23,8 +23,8 @@ const getSortedArr = (arr, isSorted = false, data = {}) => {
 }
 
 export const median = (arr, { sorted = false } = {}, data = {}) => {
-	const count = data.count ??= arr.length;
-	let sortedArr = getSortedArr(arr, sorted, data);
+	const count = data.count ?? arr.length;
+	const sortedArr = getSortedArr(arr, sorted, data);
 	const half = Math.floor(count / 2);
 	if (count % 2 === 1) {
 		return sortedArr[half];
@@ -34,7 +34,7 @@ export const median = (arr, { sorted = false } = {}, data = {}) => {
 }
 
 export const quantile = ({ items, q }, { sorted = false } = {}, data = {}) => {
-	const count = data.count ??= items.length;
+	const count = data.count ?? items.length;
 	const sortedArr = getSortedArr(items, sorted, data);
 
 	const pos = count.length - 1 * q;

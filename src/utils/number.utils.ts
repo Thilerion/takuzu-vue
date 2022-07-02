@@ -1,7 +1,7 @@
 export const asPercentage = (value: number) => value.toLocaleString(undefined, { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
 export const formatOrdinal = (value: number, locale = 'en-US') => {
-	var pr = new Intl.PluralRules(locale, { type: 'ordinal' });
+	const pr = new Intl.PluralRules(locale, { type: 'ordinal' });
 
 	const suffixes = new Map([
 		['one',   'st'],

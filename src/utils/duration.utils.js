@@ -1,7 +1,7 @@
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 const HOUR = 60 * MINUTE;
-const DAY = 24 * HOUR;
+// const DAY = 24 * HOUR;
 
 const getSeconds = ms => {
 	return Math.floor(ms / SECOND);
@@ -18,7 +18,7 @@ const getNormalizedMinutes = ms => {
 const getHours = ms => {
 	return Math.floor(ms / HOUR);
 }
-const getNormalizedHours = ms => getHours(ms) % 24;
+// const getNormalizedHours = ms => getHours(ms) % 24;
 
 const durationInMinutesSeconds = baseMs => {
 	const remainderMs = baseMs % 1000;
