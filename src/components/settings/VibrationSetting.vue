@@ -23,7 +23,7 @@
 
 <script setup>
 import { useTapVibrate } from '@/composables/use-tap-vibrate.js';
-import { useSettingsStore } from '@/stores/settings/index.js';
+import { useSettingsStore } from '@/stores/settings/store';
 import { validVibrationStrengths } from '@/stores/settings/options';
 import { storeToRefs } from 'pinia';
 import { computed, ref, toRef } from 'vue';

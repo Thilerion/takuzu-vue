@@ -62,7 +62,7 @@
 <script setup lang="ts">
 import type { SimpleBoard } from '@/lib';
 import { usePuzzleStore } from '@/stores/puzzle';
-import { useSettingsStore } from '@/stores/settings/index.js';
+import { useSettingsStore } from '@/stores/settings/store';
 import { computed, watchEffect } from 'vue';
 
 const props = defineProps<{

@@ -132,7 +132,7 @@
 
 <script setup>
 import { useDebugMode } from '@/stores/composables/useDebugMode';
-import { useSettingsStore } from '@/stores/settings/index.js';
+import { useSettingsStore } from '@/stores/settings/store';
 import { storeToRefs } from 'pinia';
 import { useGlobalBuildData } from '@/app.globals';
 import { useThemePreferences } from '@/composables/use-theme-preferences';

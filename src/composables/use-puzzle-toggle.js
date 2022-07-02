@@ -1,5 +1,5 @@
 import { EMPTY, ONE, ZERO } from "@/lib/constants";
-import { useSettingsStore } from "@/stores/settings/index.js"
+import { useSettingsStore } from "@/stores/settings/store"
 import { createSharedComposable } from "@vueuse/core";
 import { computed, toRef } from "vue";
 

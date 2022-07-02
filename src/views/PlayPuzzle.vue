@@ -99,7 +99,7 @@ import { usePuzzleWakeLock } from '@/composables/use-wake-lock.js';
 import { COLUMN, ROW } from '@/lib/constants.js';
 
 import debounce from 'lodash.debounce';
-import { useSettingsStore } from '@/stores/settings/index.js';
+import { useSettingsStore } from '@/stores/settings/store';
 import { storeToRefs, mapState } from 'pinia';
 import { usePuzzleHistoryStore } from '@/stores/puzzle-history.js';
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';

@@ -65,7 +65,7 @@ import { shuffle } from '@/lib/utils.js';
 import { useMainStore } from '@/stores/main.js';
 import { usePuzzleTimer } from '@/stores/puzzle-timer';
 import { usePuzzleStore } from '@/stores/puzzle.js';
-import { useSettingsStore } from '@/stores/settings/index.js';
+import { useSettingsStore } from '@/stores/settings/store';
 import { rafPromise, timeoutPromise } from '@/utils/delay.utils.js';
 import { storeToRefs } from 'pinia';
 import { readonly, toRef } from 'vue';

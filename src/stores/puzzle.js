@@ -8,13 +8,11 @@ import { puzzleHistoryTable } from "@/services/stats/db";
 import { useSavedPuzzle } from "@/services/useSavedPuzzle";
 import { initPregenWorker } from "@/workers/pregen-puzzles";
 import { defineStore } from "pinia";
-import { unref } from "vue";
 import { usePuzzleHintsStore } from "./puzzle-hinter";
 import { usePuzzleHistoryStore } from "./puzzle-history";
 import { usePuzzleMistakesStore } from "./puzzle-mistakes";
 import { usePuzzleTimer } from "./puzzle-timer";
 import { useRecapStatsStore } from "./recap-stats";
-import { useSettingsStore } from "./settings/index.js";
 
 export const PUZZLE_STATUS = {
 	'NONE': 'NONE',

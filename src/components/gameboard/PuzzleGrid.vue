@@ -32,7 +32,7 @@ import { useTapVibrate } from '@/composables/use-tap-vibrate.js';
 import FastPuzzleCellWrapper from './cell/FastPuzzleCellWrapper.vue';
 import FastPuzzleCellColored from './cell/FastPuzzleCellColored.vue';
 import FastPuzzleCellSymbol from './cell/FastPuzzleCellSymbol.vue';
-import { useSettingsStore } from '@/stores/settings/index.js';
+import { useSettingsStore } from '@/stores/settings/store';
 import { storeToRefs } from 'pinia';
 import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
 import { useCellThemeProvider } from '../puzzleboard/useCellThemeProvider';
