@@ -4,7 +4,8 @@
 		<div class="heatmap-wrapper grid w-fit snap-end mx-auto">
 			<div class="months relative">
 				<div class="month"
-					v-for="month in months"
+					v-for="(month, idx) in months"
+					:key="`${idx}${month}`"
 					:style="{
 						'grid-column': `${month.colStart} / span 3`,
 						'grid-row': '1 / span 1'
@@ -12,7 +13,7 @@
 				>{{month.name}}</div>
 			</div>
 			<div class="weekdays flex">
-				<div class="weekday" v-for="day in weekdays">
+				<div class="weekday" v-for="day in weekdays" :key="day.name">
 					<span v-if="day.show">{{day.name}}</span>
 				</div>
 			</div>
@@ -30,6 +31,7 @@
 						'selected': square.dateStr === selectedSquare?.dateStr
 					}"
 					v-for="(square) in squares"
+					:key="square.index"
 				><div class="w-full h-full pointer-events-none"></div></div>
 			</div>
 		</div>
@@ -243,12 +245,8 @@ const createHeatmapCells = interval => {
 	})
 }
 
-const createHeatmapSquares = (itemsByDate, { interval, timeRange, playedRange }) => {
-	const played = Object.values(itemsByDate.value).map(arr => arr.length);
-	const maxPlayed = Math.max(...played);
-
+const createHeatmapSquares = (_itemsByDate, { interval }) => {
 	const cells = createHeatmapCells(interval);
-
 	return cells;
 }
 

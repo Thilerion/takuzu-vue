@@ -1,10 +1,11 @@
 <template>
 <div class="puzzle-row-wrapper">
-	<div class="puzzle-row" v-for="row in cellsByRow">
+	<div class="puzzle-row" v-for="row in cellsByRow" :key="row.index">
 		<div
 			class="puzzle-cell"
-			:class="[cell.valueClass], { highlight: cell.highlighted, incorrect: cell.incorrect }"
+			:class="[cell.valueClass, { highlight: cell.highlighted, incorrect: cell.incorrect }]"
 			v-for="cell in row"
+			:key="`${row.index} ${cell.index}`"
 		>{{cell.displayValue}}</div>
 	</div>
 </div>

@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-import { computed, ref, toRef, watch, watchEffect } from 'vue';
+import { computed, ref, toRef, watch } from 'vue';
 
 
 const props = defineProps({

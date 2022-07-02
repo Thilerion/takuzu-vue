@@ -85,11 +85,11 @@ const bannerText = ref(
 
 .t-banner-enter-active {
 	transform: translateX(-100%);
-  	animation: slideIn v-bind(enterDurMs) cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+	animation: slideIn v-bind(enterDurMs) cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
 }
 .t-banner-enter-active .banner {
 	opacity: 0;
-  	animation: fadeIn v-bind(enterDurMs) cubic-bezier(0.165, 0.84, 0.44, 1) forwards v-bind(bannerEnterDurMs);
+	animation: fadeIn v-bind(enterDurMs) cubic-bezier(0.165, 0.84, 0.44, 1) forwards v-bind(bannerEnterDurMs);
 }
 .t-banner-enter-active .banner-container {
 	transition: box-shadow v-bind(enterDurMs) ease;

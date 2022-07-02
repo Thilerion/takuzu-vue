@@ -44,10 +44,7 @@
 </template>
 
 <script setup>
-import { DIFFICULTY_LABELS } from "@/config";
-import { timeFormatter } from "@/utils/date.utils.js";
-import { computed, toRefs } from "vue";
-
+import { toRefs } from "vue";
 
 const props = defineProps({
 	canContinue: Boolean,
@@ -55,21 +52,6 @@ const props = defineProps({
 });
 
 const { canContinue, saveData } = toRefs(props);
-
-const msToTime = timeFormatter({
-	padMinutes: true
-});
-
-const continueData = computed(() => {
-	if (saveData.value == null) return {};
-	const { width, height, difficulty, timeElapsed} = saveData.value;
-	const formattedTime = msToTime(timeElapsed);
-	const diffLabel = DIFFICULTY_LABELS[difficulty];
-
-	const dimensions = `${width}x${height}`;
-
-	return { dimensions, difficulty: diffLabel, time: formattedTime };
-})
 </script>
 
 <style scoped>

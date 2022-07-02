@@ -52,7 +52,7 @@
 
 <script setup>
 import { useElementSize } from '@vueuse/core';
-import { computed, ref, watchEffect } from 'vue';
+import { computed, ref } from 'vue';
 
 
 const props = defineProps({
@@ -71,8 +71,8 @@ const aspectRatio = computed(() => height.value / width.value);
 
 const tableWrapperEl = ref(null);
 const tableEl = ref(null);
-const { width: wrapperWidth, height: wrapperHeight } = useElementSize(tableWrapperEl, { width: window.innerWidth - 28, height: (window.innerWidth - 10) * aspectRatio.value }, { box: 'content-box' });
-const { width: elWidth, height: elHeight } = useElementSize(tableEl, { width: window.innerWidth - 28, height: (window.innerWidth - 10) * aspectRatio.value }, { box: 'content-box' });
+const { width: wrapperWidth } = useElementSize(tableWrapperEl, { width: window.innerWidth - 28, height: (window.innerWidth - 10) * aspectRatio.value }, { box: 'content-box' });
+const { width: elWidth } = useElementSize(tableEl, { width: window.innerWidth - 28, height: (window.innerWidth - 10) * aspectRatio.value }, { box: 'content-box' });
 
 const approxBoxSizeFromWrapper = computed(() => {
 	return Math.floor(wrapperWidth.value / width.value);

@@ -13,6 +13,7 @@
 						<label
 							v-for="opt in timeRecordOpts"
 							class="max-w-1/2 min-w-max leading-loose"
+							:key="opt.label"
 						>
 							<input type="radio" :value="opt.value" v-model="timeRecordFilterValue">
 							<span class="ml-1.5">{{opt.label}}</span>
@@ -113,7 +114,7 @@ const emit = defineEmits(['update', 'update:modelValue']);
 
 const showFilterInputs = toRef(props, 'modelValue');
 
-const { currentFilters, activeFilters, filterFns, filterItems, setFilter, removeFilter } = inject('filterUtils');
+const { currentFilters, activeFilters, /* filterFns, filterItems, */ setFilter, removeFilter } = inject('filterUtils');
 
 const hasActiveFilters = computed(() => {
 	return Object.keys(activeFilters.value).length > 0;
@@ -152,10 +153,6 @@ const timeRecordOpts = [
 	{ label: 'All time records', value: 'record' },
 	{ label: 'Only current records', value: 'current' },
 	{ label: 'Only first records', value: 'first' }
-]
-
-const difficultyValueOpts = [
-	1, 2, 3, 4, 5
 ]
 
 const boardSizeOpts = [

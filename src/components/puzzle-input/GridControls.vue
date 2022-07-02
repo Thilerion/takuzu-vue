@@ -32,7 +32,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeMount, onMounted, ref, toRef } from 'vue';
+import { computed, onMounted, ref, toRef } from 'vue';
 
 
 const emit = defineEmits([

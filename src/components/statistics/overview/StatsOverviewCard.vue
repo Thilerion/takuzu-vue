@@ -24,7 +24,6 @@
 </template>
 
 <script setup>
-import { useSlots } from 'vue';
 
 const props = defineProps({
 	value: {
@@ -32,10 +31,6 @@ const props = defineProps({
 		required: true
 	}
 })
-
-const slots = useSlots();
-
-
 </script>
 
 <style scoped>

@@ -59,6 +59,6 @@ defineEmits(['select']);
   }
 
   .list-move {
-	  transition: all 0.25s ease 0.15s;
+	transition: all 0.25s ease 0.15s;
   }
 </style>

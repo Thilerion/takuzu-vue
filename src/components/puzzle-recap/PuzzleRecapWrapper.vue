@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-import { nextTick, onBeforeUnmount, onMounted, ref, toRef, watch, watchEffect } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue';
 
 
 
@@ -95,7 +95,7 @@ onBeforeUnmount(() => {
 
 .t-backdrop-enter-active {
 	transform: scaleY(0.01) scaleX(1);
-  	animation: unfoldIn 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+	animation: unfoldIn 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
 }
 .t-backdrop-enter-from {
 	transform: scaleY(0.01) scaleX(1);

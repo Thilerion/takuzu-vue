@@ -18,7 +18,7 @@
 <script setup>
 import { ONE, ZERO } from '@/lib/constants';
 import { isExportString } from '@/lib/utils';
-import { computed, nextTick, ref, toRef, watch } from 'vue';
+import { computed, ref, toRef } from 'vue';
 
 const props = defineProps({
 	modelValue: [String, Number],
@@ -73,12 +73,10 @@ const handleInputChange = (ev) => {
 		inputValue.value = null;
 	}	
 }
-const handleKeydown = (ev) => {
-	
-}
-const handleFocus = (ev) => {
-
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => { };
+const handleKeydown = noop;
+const handleFocus = noop;
 const handlePaste = (ev) => {
 	const data = (ev.clipboardData ?? window.clipboardData)?.getData('text') ?? '';
 	if (data.length === 0) {

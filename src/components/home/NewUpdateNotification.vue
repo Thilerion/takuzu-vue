@@ -11,7 +11,7 @@
 
 <script setup>
 import { useRegisterSW } from 'virtual:pwa-register/vue';
-import { computed, watch, watchEffect } from 'vue';
+import { computed, watchEffect } from 'vue';
 const { needRefresh, updateServiceWorker } = useRegisterSW();
 
 const show = computed(() => needRefresh.value);

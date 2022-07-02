@@ -89,9 +89,10 @@ defineEmits(['exit-to']);
 
 const recapStatsStore = useRecapStatsStore();
 const {
-	isTimeRecord,
+	// isTimeRecord,
 	count,
-	currentTimeElapsed, best, previousBest, average, previousAverage,
+	currentTimeElapsed, best, previousBest, average,
+	// previousAverage,
 	isFavorite, isSavedToDb
 } = storeToRefs(recapStatsStore);
 

@@ -37,8 +37,14 @@ const streakLengthClasses = computed(() => {
 		return ["border-green-500", "text-green-700/90", "bg-green-400/20"];
 	} else if (props.length > 1) {
 		return ["border-gray-500/50", "text-gray-500", "bg-gray-300/10"];
-	} else if (props.length <= 1) return ["border-gray-500/50", "text-gray-500", "bg-gray-300/10", "opacity-60"]
+	} else if (props.length <= 1) {
+		return ["border-gray-500/50", "text-gray-500", "bg-gray-300/10", "opacity-60"]
+	} else {
+		console.error(`Unexpected streak length error in streakLengthClasses: ${props.length}`);
+		return [];
+	}
 })
+
 
 function formatDate(d) {
 	return d.toLocaleDateString(undefined, {

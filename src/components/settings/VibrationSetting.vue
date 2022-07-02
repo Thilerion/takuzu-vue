@@ -49,8 +49,6 @@ const { vibrate, isSupported } = useTapVibrate({
 const { enableVibration, vibrationStrength } = storeToRefs(settingsStore);
 
 
-const vStrengthValue = vibrationStrength.value;
-const vStrengthAsInput = durationInputValueMap.get(vStrengthValue);
 const vibrationSliderValue = ref(durationInputValueMap.get(vibrationStrength.value) ?? 0);
 
 const vibrationStrengthPercentage = computed(() => {

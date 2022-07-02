@@ -32,11 +32,11 @@ const { baseThemeUserPref: themeValue, setBaseThemePreference: setTheme, baseThe
 
 const selectedValue = ref(themeValue.value);
 
-debouncedWatch(selectedValue, (value, prev) => {
+debouncedWatch(selectedValue, (value) => {
 	setTheme(value);
 }, { debounce: 600 });
 
-watch(themeValue, (value, prev) => {
+watch(themeValue, (value) => {
 	if (value !== selectedValue.value) {
 		selectedValue.value = value;
 	}

@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import { computed, ref, toRef, toRefs } from 'vue';
+import { computed, ref, toRefs } from 'vue';
 
 const formatTime = (ms) => formatDurationMMSSss(ms, { padFirst: true });
 
@@ -74,8 +74,8 @@ export default {
 
 import { useMainStore } from '@/stores/main.js';
 import { usePuzzleStore } from '@/stores/puzzle';
-import { useRouter } from 'vue-router';
 import { formatDurationMMSSss } from '@/utils/duration.utils';
+import { useRouter } from 'vue-router';
 
 const props = defineProps({
 	difficulty: [Number, String],

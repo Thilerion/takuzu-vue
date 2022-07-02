@@ -242,9 +242,6 @@ const gapSize = computed(() => {
 	return '1px';
 })
 
-const xyToIndex = (x, y) => {
-	return y * width.value + x;
-}
 const indexToXY = (index) => {
 	const x = index % width.value;
 	const y = Math.floor(index / width.value);
@@ -265,7 +262,7 @@ const resetGridValues = (width, height) => {
 	puzzleGridBase.value = grid;
 }
 const { toggle } = useSharedPuzzleToggle();
-const toggleValue = (x, y, index) => {
+const toggleValue = (x, y) => {
 	let current = puzzleGridBase.value[y][x];
 	if (current !== ONE && current !== ZERO) {
 		current = EMPTY;

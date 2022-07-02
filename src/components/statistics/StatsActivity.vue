@@ -19,12 +19,8 @@
 </template>
 
 <script setup>
-import { getUniqueDatesFromItems } from '@/services/stats/dates.js';
 import { processDateStreaks } from '@/services/stats/streaks.js';
 import { computed, inject, toRef } from 'vue';
-
-
-
 
 import { useStatisticsStore } from '@/stores/statistics.js';
 
