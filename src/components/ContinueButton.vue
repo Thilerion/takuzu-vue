@@ -12,10 +12,13 @@
 import { DIFFICULTY_LABELS } from '@/config';
 import { timeFormatter } from '@/utils/date.utils.js';
 import { computed } from 'vue';
-import type { BasicPuzzleConfig, DimensionStr } from '@/lib/types';
+import type { DifficultyKey, DimensionStr } from '@/lib/types';
 
-export interface Props extends BasicPuzzleConfig {
-	timeElapsed: number
+export interface Props {
+	timeElapsed: number,
+	width: number,
+	height: number,
+	difficulty: DifficultyKey
 }
 
 const props = defineProps<Props>();
