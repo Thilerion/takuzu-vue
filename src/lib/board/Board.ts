@@ -140,10 +140,10 @@ export class SimpleBoard {
 		return this;
 	}
 	assignLine(lineId: LineId, values: PuzzleValue[]) {
-		if (this.rowIds.includes(lineId)) {
-			return this.assignRow(rowIdToY((lineId as RowId)), values);
-		} else if (this.columnIds.includes(lineId)) {
-			return this.assignColumn(columnIdToX((lineId as ColumnId)), values);
+		if (this.isRowId(lineId)) {
+			return this.assignRow(rowIdToY(lineId), values);
+		} else if (this.isColumnId(lineId)) {
+			return this.assignColumn(columnIdToX(lineId), values);
 		}
 	}
 	_set(x: number, y: number, value: PuzzleValue) {
@@ -177,7 +177,7 @@ export class SimpleBoard {
 			const lineValues = this.getLine(lineId);
 			yield {
 				lineStr: lineValues.join(''),
-				lineType: this.rowIds.includes(lineId) ? ROW : COLUMN,
+				lineType: this.isRowId(lineId) ? ROW : COLUMN,
 				lineId
 			}
 		}
@@ -208,6 +208,13 @@ export class SimpleBoard {
 			if (value === EMPTY) count += 1;
 		}
 		return count;
+	}
+
+	private isRowId(id: string): id is RowId {
+		return this.rowIds.includes(id);
+	}
+	private isColumnId(id: string): id is ColumnId {
+		return this.columnIds.includes(id);
 	}
 
 	// VALIDITY / SOLVED CHECKS

@@ -23,6 +23,7 @@ export type PuzzleValueLine = PuzzleValue[];
 export type PuzzleSymbolLine = PuzzleSymbol[];
 export type LineSymbolCount = Record<PuzzleSymbol, number>;
 export type LineValueCount = Record<PuzzleValue, number>;
+export type NumSymbolRequired = Record<LineType, LineSymbolCount>;
 
 export type ROPuzzleValueLine = Readonly<PuzzleValueLine>;
 export type ROPuzzleSymbolLine = Readonly<PuzzleSymbolLine>;
