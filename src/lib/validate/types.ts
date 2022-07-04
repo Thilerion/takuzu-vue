@@ -3,3 +3,9 @@ export enum RuleConflictType {
 	IMBALANCED = 'imbalanced',
 	DUPLICATE_LINE = 'duplicate line'
 }
+
+export const ruleConflictTypes = [
+	RuleConflictType.MAX_CONSECUTIVE,
+	RuleConflictType.IMBALANCED,
+	RuleConflictType.DUPLICATE_LINE
+];

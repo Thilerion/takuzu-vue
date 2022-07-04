@@ -17,5 +17,7 @@ export const OPPOSITE_SYMBOL_MAP = {
 // line types
 export const ROW = 'row';
 export const COLUMN = 'column';
+export type Row = typeof ROW;
+export type Column = typeof COLUMN;
 
-export type LineType = typeof ROW | typeof COLUMN;
+export type LineType = Row | Column;
