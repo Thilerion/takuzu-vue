@@ -20,7 +20,7 @@ const props = defineProps([
 	'x', 'y', 'locked',
 	'initialValue', 'value', 'incorrect'
 ]);
-const emit = defineEmits('toggle');
+const emit = defineEmits(['toggle']);
 
 const {
 	value,
