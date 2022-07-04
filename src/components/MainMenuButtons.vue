@@ -43,13 +43,17 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { BasicPuzzleConfig } from "@/lib/types";
 import { toRefs } from "vue";
+export interface ContinueButtonSaveDataProps extends BasicPuzzleConfig {
+	timeElapsed: number
+}
+const props = defineProps<{
+	canContinue?: boolean,
+	saveData: ContinueButtonSaveDataProps
+}>();
 
-const props = defineProps({
-	canContinue: Boolean,
-	saveData: Object
-});
 
 const { canContinue, saveData } = toRefs(props);
 </script>

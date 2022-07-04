@@ -29,3 +29,10 @@ export type ROPuzzleSymbolLine = Readonly<PuzzleSymbolLine>;
 
 export type PuzzleSymbolLineStr = Flavor<string, 'PuzzleSymbolLineStr'>;
 export type PuzzleValueLineStr = Flavor<string, 'PuzzleValueLineStr'>;
+
+export type DimensionStr = `${number}x${number}`;
+export type DifficultyKey = 1 | 2 | 3 | 4 | 5;
+export interface Dimensions { width: number, height: number; }
+export interface BasicPuzzleConfig extends Dimensions { 
+	difficulty: DifficultyKey
+}

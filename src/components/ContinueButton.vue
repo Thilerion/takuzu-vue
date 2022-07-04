@@ -8,31 +8,19 @@
 	</BaseButton>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { DIFFICULTY_LABELS } from '@/config';
 import { timeFormatter } from '@/utils/date.utils.js';
 import { computed } from 'vue';
+import type { BasicPuzzleConfig, DimensionStr } from '@/lib/types';
 
-const props = defineProps({
-	width: {
-		required: true,
-		type: Number
-	},
-	height: {
-		required: true,
-		type: Number
-	},
-	difficulty: {
-		required: true,
-		type: Number
-	},
-	timeElapsed: {
-		required: true,
-		type: Number
-	}
-});
+export interface Props extends BasicPuzzleConfig {
+	timeElapsed: number
+}
 
-const diffLabel = computed(() => {
+const props = defineProps<Props>();
+
+const diffLabel = computed<string>(() => {
 	return DIFFICULTY_LABELS[props.difficulty];
 })
 const time = computed(() => {
@@ -40,8 +28,7 @@ const time = computed(() => {
 		padMinutes: true
 	})(props.timeElapsed)
 })
-
-const dimensions = computed(() => {
+const dimensions = computed<DimensionStr>(() => {
 	return `${props.width}x${props.height}`;
 })
 
