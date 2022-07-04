@@ -15,6 +15,7 @@
     "preview": "vite preview --port 4173",
     "test:unit": "vitest --environment jsdom",
     "test": "run-s test:unit",
+    "vitest": "vitest",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint . --ext .vue,.js,.cjs,.mjs,.ts,.cts,.mts,.jsx,.tsx --fix --ignore-path .gitignore",

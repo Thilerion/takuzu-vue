@@ -71,7 +71,8 @@ export default defineConfig(({ command, mode }) => {
 				inline: [
 					'date-fns/esm', // required by vitest (for now) due to ESM/CJS conflict
 				]
-			}
+			},
+			environment: 'jsdom'
 		}
 	}
 })
