@@ -62,7 +62,7 @@
 import { EMPTY } from '@/lib/constants';
 import { humanSolveTriples } from '@/lib/human-solver/triples.js';
 import { shuffle } from '@/lib/utils';
-import { useMainStore } from '@/stores/main.js';
+import { useMainStore } from '@/stores/main';
 import { usePuzzleTimer } from '@/stores/puzzle-timer';
 import { usePuzzleStore } from '@/stores/puzzle.js';
 import { useSettingsStore } from '@/stores/settings/store';

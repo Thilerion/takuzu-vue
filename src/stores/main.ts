@@ -8,11 +8,13 @@ import { useFeatureToggles } from "./composables/useFeatureToggle";
 import { useTouchDetection } from "./composables/useDetectTouch";
 import { useIsPwaInstalled } from "./composables/useIsPwaInstalled";
 import { useIsFirstVisit } from "./composables/useIsFirstVisit";
+import { useUserAgentData } from "./composables/useUserAgentData";
 
 const { enabled: debugModeEnabled } = useDebugMode();
 
 const useAppContext = () => {
-	const isMobile = navigator?.userAgentData?.mobile ?? null;
+	const uaData = useUserAgentData();
+	const { mobile: isMobile, ...userAgentData } = uaData;
 	const hasTouchscreen = navigator?.maxTouchPoints > 0;
 	const { orientation } = useDeviceOrientation();
 	const { viewportWidth, viewportHeight } = useViewportSize();
@@ -25,6 +27,8 @@ const useAppContext = () => {
 
 	return {
 		isMobile,
+		userAgentData,
+
 		isInstalled,
 		orientation,
 		viewportWidth,

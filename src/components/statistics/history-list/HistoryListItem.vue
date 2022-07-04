@@ -72,7 +72,7 @@ export default {
 <script setup>
 
 
-import { useMainStore } from '@/stores/main.js';
+import { useMainStore } from '@/stores/main';
 import { usePuzzleStore } from '@/stores/puzzle';
 import { formatDurationMMSSss } from '@/utils/duration.utils';
 import { useRouter } from 'vue-router';

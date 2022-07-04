@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-import { useMainStore } from '@/stores/main.js';
+import { useMainStore } from '@/stores/main';
 import { computed } from 'vue';
 
 const mainStore = useMainStore();

@@ -2,7 +2,7 @@ import { createSharedComposable } from '@vueuse/core';
 import { computed, ref, watchEffect } from 'vue';
 
 const useTouchDetection = () => {
-	const lastInteractionType = ref(null);
+	const lastInteractionType = ref<string | null>(null);
 	const coarsePointer = window?.matchMedia?.('(pointer: coarse)')?.matches ?? null;
 	const lastInteractionWasTouch = computed(() => {
 		if (lastInteractionType.value == null) {
@@ -24,7 +24,7 @@ const useTouchDetection = () => {
 	const rootEl = document.documentElement;
 	window.addEventListener('touchstart', () => {
 		hasTouched.value = true;
-		rootEl.dataset.hasTouch = true;
+		rootEl.dataset.hasTouch = String(true);
 	}, { once: true, passive: true });
 
 
@@ -32,7 +32,8 @@ const useTouchDetection = () => {
 		const type = lastInteractionType.value;
 		if (type != null) {
 			rootEl.dataset.lastPointer = type;
-			rootEl.dataset.lastTouch = !!lastInteractionWasTouch.value;
+			const lastTouch = String(!!lastInteractionWasTouch.value);
+			rootEl.dataset.lastTouch = lastTouch;
 		}
 	})
 

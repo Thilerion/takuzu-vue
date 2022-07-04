@@ -107,7 +107,7 @@ import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
 import { computed, readonly, toRef, watch } from 'vue';
 import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
 import { usePuzzleStore } from '@/stores/puzzle.js';
-import { useMainStore } from '@/stores/main.js';
+import { useMainStore } from '@/stores/main';
 import { useRecapStatsStore } from '@/stores/recap-stats';
 import { savePuzzleSaveData } from '@/stores/helpers/save-data';
 import { rulerType } from '@/stores/settings/options';

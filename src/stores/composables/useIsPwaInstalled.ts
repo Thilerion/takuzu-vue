@@ -7,6 +7,7 @@ const mm = window.matchMedia('(display-mode: standalone), (display-mode: fullscr
 isInstalled.value = !!mm.matches;
 const check = () => {
 	isInstalled.value = !!mm.matches;
+	return isInstalled.value;
 }
 
 export const useIsPwaInstalled = () => {

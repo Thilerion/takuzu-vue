@@ -5,16 +5,16 @@ export const DEBUG_MODE_LS_KEY = 'takuzu_debug-mode';
 
 const isEnabled = useStorage(
 	DEBUG_MODE_LS_KEY,
-	compatCheck() ?? import.meta.env.DEV,
+	getInitialValue(),
 	localStorage,
-	{ writeDefaults: false }
+	{ writeDefaults: true }
 );
 const enableCounter = autoResetRef(0, 10000);
 const immediateDebugModeToggle = useToggle(isEnabled);
 
 export const useDebugMode = () => {
 
-	const toggleDebugMode = (value, { immediate = false } = {}) => {
+	const toggleDebugMode = (value: boolean, { immediate = false } = {}) => {
 		if (!value || (value && immediate)) {
 			return immediateDebugModeToggle(value);
 		} else {
@@ -35,18 +35,18 @@ export const useDebugMode = () => {
 	return { toggleDebugMode, enabled };
 }
 
-function compatCheck() {
+function getInitialValue() {
 	// TODO: removes old key from localstorage, for compatibility, 24/05/2022, can be removed later
-	let value;
+	let value = import.meta.env.DEV;
 	try {
-		const hasOld1 = localStorage.getItem('takuzu-debug-mode');
-		if (hasOld1) {
-			value = hasOld1;
-			localStorage.removeItem('takuzu-debug-mode');
+		const oldValue = localStorage.getItem('takuzu-debug-mode');
+		localStorage.removeItem('takuzu-debug-mode');
+		if (oldValue) {
+			const parsed = JSON.parse(oldValue);
+			value = !!parsed;
 		}
-	} catch {
 		return value;
-	} finally {
-		localStorage.removeItem('takuzu-dev-mode');
+	} catch {
+		return value ?? false;
 	}
 }

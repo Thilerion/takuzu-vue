@@ -1,20 +1,21 @@
 import { useStorage, useTimestamp } from "@vueuse/core";
 import { computed, toRefs } from "vue"
 
+interface FirstVisitData {
+	firstVisitTimestamp: ReturnType<typeof Date.now>,
+	handledFirstVisit: boolean,
+	visits: number
+}
 const defaultData = {
 	firstVisitTimestamp: Date.now(),
 	handledFirstVisit: false,
-	visits: 1,
+	visits: 0,
 }
-const firstVisitData = useStorage('takuzu_handled-first-visit', {}, localStorage, {
+const firstVisitData = useStorage<FirstVisitData>('takuzu_handled-first-visit', {...defaultData}, localStorage, {
 	writeDefaults: true,
 });
 
-if (firstVisitData.value?.visits == null || firstVisitData.value.visits < 1) {
-	firstVisitData.value = { ...defaultData };
-} else {
-	firstVisitData.value.visits += 1;
-}
+firstVisitData.value.visits += 1;
 firstVisitData.value = {
 	...defaultData,
 	...firstVisitData.value

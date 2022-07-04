@@ -2,15 +2,18 @@ import { useStorage } from "@vueuse/core";
 import { computed, reactive, ref, watch } from "vue"
 import { useDebugMode } from "./useDebugMode";
 
+export type FeatureToggleKey = 'addPuzzleToHistoryWithCheats' | 'analysisTool' | 'customPuzzleTool';
+export type FeatureData = ReturnType<typeof useFeatureToggle>;
+
 export const useFeatureToggles = () => {
 	const { enabled: debugModeEnabled } = useDebugMode();
 
-	const storageState = useStorage('takuzu_feature-toggles', {}, localStorage, {
+	const storageState = useStorage<Record<string, boolean>>('takuzu_feature-toggles', {}, localStorage, {
 		writeDefaults: true,
 		deep: true
 	});
 
-	const features = reactive({
+	const features = reactive<Record<FeatureToggleKey, FeatureData>>({
 		addPuzzleToHistoryWithCheats: useFeatureToggle({ 
 			defaultValue: storageState.value?.addPuzzleToHistoryWithCheats ?? false,
 			requiresDebugMode: true,
@@ -28,12 +31,12 @@ export const useFeatureToggles = () => {
 		}),
 	});
 	const featureNames = computed(() => {
-		return Object.keys({...features});
+		return Object.keys({...features}) as FeatureToggleKey[];
 	})
 
 	const featureValues = computed(() => {
 		const keys = featureNames.value;
-		const result = {};
+		const result = {} as Record<keyof typeof features, boolean>;
 		for (const key of keys) {
 			result[key] = features[key].toggleValue;
 		}
@@ -47,9 +50,14 @@ export const useFeatureToggles = () => {
 	return features;
 }
 
+interface FeatureToggleProps {
+	defaultValue: boolean,
+	requiresDebugMode?: boolean,
+	label: string
+}
 export const useFeatureToggle = ({
 	defaultValue, requiresDebugMode, label
-}) => {
+}: FeatureToggleProps) => {
 	const { enabled: debugModeEnabled } = useDebugMode();
 
 	const toggleValue = ref(defaultValue);
