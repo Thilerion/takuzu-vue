@@ -35,7 +35,7 @@ const getTotalTime = () => {
 }
 
 onMounted(() => {
-	interval.value = setInterval(() => {
+	interval.value = window.setInterval(() => {
 		getTotalTime();
 	}, 1000 / 15);
 })

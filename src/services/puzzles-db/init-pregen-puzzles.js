@@ -8,7 +8,7 @@ export async function initPregeneratedPuzzles(
 	if (count > 0) {
 		console.log('Starting pregen worker.');
 		return new Promise((resolve) => {
-			setTimeout(() => {
+			window.setTimeout(() => {
 				initPregenWorker();
 				resolve();
 			}, pregenTimeout)

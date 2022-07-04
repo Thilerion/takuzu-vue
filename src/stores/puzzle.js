@@ -275,7 +275,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 					this.setAllBoards({ board, solution, initialBoard });
 					this.setLoading(false);
 
-					setTimeout(() => {
+					window.setTimeout(() => {
 						initPregenWorker();
 					}, 2000);
 				} else {

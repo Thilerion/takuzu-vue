@@ -68,7 +68,7 @@ const setVibrationStrength = (value) => {
 	}
 
 	vibrationStrength.value = duration;
-	setTimeout(() => {
+	window.setTimeout(() => {
 		vibrate();
 	}, 0);
 }

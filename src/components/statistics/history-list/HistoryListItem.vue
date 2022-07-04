@@ -147,7 +147,7 @@ const goToPlayPuzzleRoute = () => router.push({ name: 'PlayPuzzle'});
 
 async function awaitTimeout(length = 300) {
 	return new Promise((resolve) => {
-		setTimeout(() => {
+		window.setTimeout(() => {
 			resolve();
 		}, length);
 	})

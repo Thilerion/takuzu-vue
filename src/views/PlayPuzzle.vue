@@ -300,7 +300,7 @@ export default {
 		},
 		initAutoSave() {
 			// console.log('init auto save');
-			this.autoSaveInterval = setInterval(() => {
+			this.autoSaveInterval = window.setInterval(() => {
 				this.saveGame();
 			}, 1500);
 		},
@@ -384,7 +384,7 @@ export default {
 		finishedAndSolved: {
 			handler(newValue, prevValue) {
 				if (newValue) {
-					this.finishedTimeout = setTimeout(() => {
+					this.finishedTimeout = window.setTimeout(() => {
 						this.finishGame();
 						this.finishedTimeout = null;
 					}, 600);
@@ -398,7 +398,7 @@ export default {
 		finishedWithMistakes: {
 			handler(newValue) {
 				if (newValue) {
-					this.mistakeCheckTimeout = setTimeout(() => {
+					this.mistakeCheckTimeout = window.setTimeout(() => {
 						this.mistakeCheckTimeout = null;
 						if (!this.finishedWithMistakes) {
 							return;
@@ -412,7 +412,7 @@ export default {
 			}
 		},
 		puzzleShouldBePaused(newValue, prevValue) {
-			setTimeout(() => {
+			window.setTimeout(() => {
 				if (newValue && !prevValue) {
 					// immediately pause
 					this.debouncedPause(true);

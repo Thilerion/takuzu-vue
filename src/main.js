@@ -12,7 +12,7 @@ const SW_UPDATE_INTERVAL_MS = 60 * 60 * 1000;
 /* const updateSW =  */registerSW({
 	immediate: true,
 	onRegistered(r) {
-		r && setInterval(() => {
+		r && window.setInterval(() => {
 			r.update();
 		}, SW_UPDATE_INTERVAL_MS)
 	}

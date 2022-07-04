@@ -20,7 +20,7 @@ const emit = defineEmits(['click']);
 const closeDropdown = inject('closeDropdown') as () => void;
 const handleItemClick = () => {
 	if (!props.interactive) {
-		setTimeout(() => {
+		window.setTimeout(() => {
 			closeDropdown();
 		}, 67);
 	}

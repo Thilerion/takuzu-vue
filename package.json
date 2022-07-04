@@ -17,7 +17,7 @@
     "test": "run-s test:unit",
     "vitest": "vitest",
     "build-only": "vite build",
-    "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
+    "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
     "lint": "eslint . --ext .vue,.js,.cjs,.mjs,.ts,.cts,.mts,.jsx,.tsx --fix --ignore-path .gitignore",
     "lint:src": "eslint src --ext .vue,.js,.cjs,.mjs,.ts,.cts,.mts,.jsx,.tsx --fix --ignore-path .gitignore",
     "lint:nofix": "eslint . --ext .vue,.js,.cjs,.mjs,.ts,.cts,.mts,.jsx,.tsx --ignore-path .gitignore"

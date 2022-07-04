@@ -8,7 +8,7 @@ let hasInstalledListener = false;
 
 const checkMediaForStandaloneInstalled = (timeoutMS = 1000) => {
 	const { check } = useIsPwaInstalled();
-	setTimeout(() => {
+	window.setTimeout(() => {
 		check();
 	}, timeoutMS);
 }

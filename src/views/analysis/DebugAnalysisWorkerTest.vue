@@ -27,7 +27,7 @@ const isActiveDelayed = ref(false);
 
 const awaitTimeout = (length = 200) => {
 	return new Promise((resolve) => {
-		setTimeout(() => {
+		window.setTimeout(() => {
 			resolve();
 		}, length);
 	})

@@ -58,7 +58,7 @@ onMounted(() => showBanner.value = true);
 let bannerAfterEnterTimeout = null;
 const bannerAfterEnter = () => {
 	clearTimeout(bannerAfterEnterTimeout);
-	bannerAfterEnterTimeout = setTimeout(() => {
+	bannerAfterEnterTimeout = window.setTimeout(() => {
 		showBackdrop.value = true;
 		showBanner.value = false;
 		showContent.value = true;

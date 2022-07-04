@@ -12,7 +12,7 @@ import { useRouter } from 'vue-router';
 const timeout = ref<null | number>(null);
 const router = useRouter();
 onMounted(() => {
-	timeout.value = setTimeout(() => {
+	timeout.value = window.setTimeout(() => {
 		timeout.value = null;
 		router.replace({ name: 'Home' });
 	}, 2000);

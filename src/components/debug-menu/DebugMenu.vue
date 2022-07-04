@@ -29,7 +29,7 @@ let notificationId = -1;
 const addDbResultNotification = (str, timeout = 2000) => {
 	const id = ++notificationId;
 	clearPuzzlesResult.value.push({str, id});
-	setTimeout(() => {
+	window.setTimeout(() => {
 		clearPuzzlesResult.value = clearPuzzlesResult.value.filter(val => val.id !== id);
 	}, timeout);
 }
@@ -54,7 +54,7 @@ const clearPuzzleDbAction = async () => {
 
 const awaitTimeout = async (timeout = 1000) => {
 	return new Promise((resolve) => {
-		setTimeout(() => {
+		window.setTimeout(() => {
 			resolve();
 		}, timeout)
 	})

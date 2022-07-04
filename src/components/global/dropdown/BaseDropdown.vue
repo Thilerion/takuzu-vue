@@ -76,7 +76,7 @@ export default {
 	watch: {
 		isOpen(value, prev) {
 			if (value || !prev) return;
-			setTimeout(() => {
+			window.setTimeout(() => {
 				try {
 					this.isClosed = true;
 				} catch (e) {

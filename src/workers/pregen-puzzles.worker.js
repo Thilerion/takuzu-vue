@@ -22,7 +22,7 @@ export function initPuzzleWorkerReceiver() {
 
 function waitFor(ms = 500) {
 	return new Promise((resolve) => {
-		setTimeout(() => {
+		window.setTimeout(() => {
 			resolve();
 		}, ms);
 	})

@@ -165,7 +165,7 @@ let resetToDefaultsTimeout = null;
 
 const resetSettingsToDefaults = (closeCb) => {
 	settingsStore.resetToDefaults();
-	resetToDefaultsTimeout = setTimeout(() => {
+	resetToDefaultsTimeout = window.setTimeout(() => {
 		resetBaseThemeToDefault();
 		resetToDefaultsTimeout = null;
 	}, 500);

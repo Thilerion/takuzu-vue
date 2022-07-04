@@ -72,7 +72,7 @@ const exportStats = async () => {
 		console.error(e);
 	} finally {
 		// delay to prevent accidental redownloads
-		setTimeout(() => {
+		window.setTimeout(() => {
 			isExporting.value = false;
 		}, 1000);
 	}

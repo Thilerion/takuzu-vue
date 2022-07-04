@@ -48,7 +48,7 @@ export default class Timer {
 		const distanceFromSec = this.elapsed % 1000;
 		const distanceToSec = Math.floor(1000 - distanceFromSec);
 
-		this._timeout = setTimeout(() => {
+		this._timeout = window.setTimeout(() => {
 			this.tick();
 		}, distanceToSec);
 	}

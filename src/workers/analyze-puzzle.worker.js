@@ -8,7 +8,7 @@ function runTestTask(success) {
 		success,
 		messageValue
 	);
-	setTimeout(()=> {
+	window.setTimeout(()=> {
 		postMessage(message);
 	}, 1000);
 }

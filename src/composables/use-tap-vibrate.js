@@ -18,7 +18,7 @@ export const useTapVibrate = ({
 		if (delay == null) {
 			return _vibrateFn();
 		} else {
-			setTimeout(_vibrateFn, delay);
+			window.setTimeout(_vibrateFn, delay);
 			return;
 		}
 	}
