@@ -13,7 +13,7 @@ export const useFeatureToggles = () => {
 		deep: true
 	});
 
-	const features = reactive<Record<FeatureToggleKey, FeatureData>>({
+	const features: Record<FeatureToggleKey, FeatureData> = reactive({
 		addPuzzleToHistoryWithCheats: useFeatureToggle({ 
 			defaultValue: storageState.value?.addPuzzleToHistoryWithCheats ?? false,
 			requiresDebugMode: true,
@@ -68,5 +68,5 @@ export const useFeatureToggle = ({
 		get: () => toggleValue.value ?? true,
 		set: (value) => toggleValue.value = value
 	});
-	return { toggleValue, isEnabled, label };
+	return reactive({ toggleValue, isEnabled, label });
 }
