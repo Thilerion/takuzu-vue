@@ -101,7 +101,7 @@ import { COLUMN, ROW } from '@/lib/constants';
 import debounce from 'lodash.debounce';
 import { useSettingsStore } from '@/stores/settings/store';
 import { storeToRefs, mapState } from 'pinia';
-import { usePuzzleHistoryStore } from '@/stores/puzzle-history.js';
+import { usePuzzleHistoryStore } from '@/stores/puzzle-history';
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
 import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
 import { computed, readonly, toRef, watch } from 'vue';

@@ -1,5 +1,5 @@
 import { COLUMN, EMPTY, ONE, PUZZLE_VALUES, ROW, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "./constants";
-import type { ColumnId, Grid, LineId, RowId } from "./types";
+import type { ColumnId, Grid, LineId, BoardExportString, RowId } from "./types";
 import { memoize } from "./memoize.utils";
 
 // ARRAY UTILS //
@@ -131,11 +131,10 @@ export const sortLineValues = (values: PuzzleValue[]) => {
 }
 
 const exportStrRegex = /^\d{1,2}x\d{1,2};([.01]){4,}$/;
-export type PuzzleExportString = string & { _flavor?: 'PuzzleExportString' };
-export const isExportString = (str: string): str is PuzzleExportString => {
+export const isExportString = (str: string): str is BoardExportString => {
 	return exportStrRegex.test(str);
 }
-export const parseExportString = (str: PuzzleExportString) => {
+export const parseExportString = (str: BoardExportString) => {
 	const [dimensions, boardStr] = str.split(';');
 	const [width, height] = dimensions.split('x').map(Number);
 	return { width, height, boardStr };

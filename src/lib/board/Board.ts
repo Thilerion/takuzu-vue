@@ -1,6 +1,6 @@
 import { COLUMN, EMPTY, ONE, ROW, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "../constants";
-import type { ColumnId, IterableBoardLineString, LineId, PuzzleGrid, RowId, Vec } from "../types";
-import { array2d, cloneArray2d, columnIdToX, deducePuzzleDimensionsFromLength, generateColumnIds, generateRowIds, getCoordsForBoardSize, isExportString, isLineIdColumn, isLineIdRow, isValidCellDigit, lineSizeToNumRequired, parseExportString, rowIdToY, shuffle, type PuzzleExportString } from "../utils";
+import type { ColumnId, IterableBoardLineString, LineId, BoardExportString, PuzzleGrid, RowId, Vec } from "../types";
+import { array2d, cloneArray2d, columnIdToX, deducePuzzleDimensionsFromLength, generateColumnIds, generateRowIds, getCoordsForBoardSize, isExportString, isLineIdColumn, isLineIdRow, isValidCellDigit, lineSizeToNumRequired, parseExportString, rowIdToY, shuffle } from "../utils";
 import { validateBoard } from "../validate/board";
 import { BoardLine } from "./BoardLine";
 import { ThreesUnit } from "./ThreesUnit";
@@ -67,7 +67,7 @@ export class SimpleBoard {
 		}
 		return new SimpleBoard(grid);
 	}
-	static import(str: PuzzleExportString) {
+	static import(str: BoardExportString) {
 		return SimpleBoard.fromString(str);
 	}
 
