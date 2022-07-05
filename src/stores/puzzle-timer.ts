@@ -1,5 +1,25 @@
 import { defineStore } from "pinia";
 
+interface PendingState {
+	startTime: null,
+	timeElapsed: number,
+	started: false,
+	running: false
+}
+interface StartedState {
+	startTime: number,
+	timeElapsed: number,
+	started: true,
+	running: boolean
+}
+interface PausedState {
+	startTime: null,
+	timeElapsed: number,
+	started: true,
+	running: false
+}
+type PuzzleTimerState = PendingState | StartedState | PausedState;
+
 export const usePuzzleTimer = defineStore('puzzleTimer', {
 	state: () => ({
 		startTime: null,
@@ -7,12 +27,12 @@ export const usePuzzleTimer = defineStore('puzzleTimer', {
 
 		started: false,
 		running: false
-	}),
+	}) as PuzzleTimerState,
 
 	getters: {},
 
 	actions: {
-		setInitialTimeElapsed(timeElapsed) {
+		setInitialTimeElapsed(timeElapsed: number) {
 			if (this.started || this.running) {
 				console.warn('Cant set initial time elapsed when timer is running or started...');
 				return;
@@ -27,11 +47,11 @@ export const usePuzzleTimer = defineStore('puzzleTimer', {
 		},
 		pause() {
 			if (!this.running) return;
-			const curElapsed = Date.now() - this.startTime;
-			this.timeElapsed += curElapsed;
-
-			this.running = false;
-			this.startTime = null;
+			this.$patch({
+				startTime: null,
+				running: false,
+				timeElapsed: this.timeElapsed + (Date.now() - this.startTime)
+			})
 		},
 		resume() {
 			if (this.running) return;
