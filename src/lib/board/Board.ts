@@ -1,5 +1,5 @@
 import { COLUMN, EMPTY, ONE, ROW, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "../constants";
-import type { ColumnId, IterableBoardLineString, LineId, BoardExportString, PuzzleGrid, RowId, Vec } from "../types";
+import type { ColumnId, IterableBoardLineString, LineId, BoardExportString, PuzzleGrid, RowId, Vec, BoardString } from "../types";
 import { array2d, cloneArray2d, columnIdToX, deducePuzzleDimensionsFromLength, generateColumnIds, generateRowIds, getCoordsForBoardSize, isExportString, isLineIdColumn, isLineIdRow, isValidCellDigit, lineSizeToNumRequired, parseExportString, rowIdToY, shuffle } from "../utils";
 import { validateBoard } from "../validate/board";
 import { BoardLine } from "./BoardLine";
@@ -230,7 +230,7 @@ export class SimpleBoard {
 
 	// compare values to a solutionBoard
 	// does not check for "rule violations", only compares to the solution
-	hasIncorrectValues(solutionBoard: SimpleBoard): { hasMistakes: false, result: null } | { hasMistakes: true, result: Vec[] } {
+	hasIncorrectValues(solutionBoard: SimpleBoard): IncorrectCheckReturnValue {
 		const incorrectValueCells = [];
 		for (const cell of this.cells({ skipEmpty: true })) {
 			const { x, y, value } = cell;
@@ -257,7 +257,7 @@ export class SimpleBoard {
 	}
 
 	// STRINGIFY UTILITIES
-	toString() {
+	toString(): BoardString {
 		return this.toBoardString();
 	}
 	toDisplayString() {
@@ -265,7 +265,7 @@ export class SimpleBoard {
 			return row.join('');
 		}).join('\n');
 	}
-	toBoardString() {
+	toBoardString(): BoardString {
 		return this.grid.flat().join('');
 	}
 	
@@ -273,3 +273,13 @@ export class SimpleBoard {
 		return `${this.width}x${this.height};${this.toBoardString()}` as BoardExportString;
 	}
 }
+
+interface IncorrectCheckNoMistakesResult {
+	hasMistakes: false,
+	result: null
+}
+interface IncorrectCheckMistakesResult {
+	hasMistakes: true,
+	result: Vec[]
+}
+type IncorrectCheckReturnValue = IncorrectCheckMistakesResult | IncorrectCheckNoMistakesResult;

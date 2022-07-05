@@ -36,6 +36,7 @@ export type DimensionStr = `${number}x${number}`;
 export type DifficultyKey = 1 | 2 | 3 | 4 | 5;
 
 export type BoardExportString = Brand<string, "BoardExportString">;
+export type BoardString = Flavor<string, "Board.toString()">;
 
 export interface BoardShape {
 	width: number,

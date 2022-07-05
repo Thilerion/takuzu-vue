@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import { usePuzzleMistakesStore } from "@/stores/puzzle-mistakes.js";
+import { usePuzzleMistakesStore } from "@/stores/puzzle-mistakes";
 import { storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
 

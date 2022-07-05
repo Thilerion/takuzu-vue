@@ -27,7 +27,7 @@
 import PuzzleGridHighlights from '@/components/gameboard/PuzzleGridHighlights.vue';
 import { useTapVibrate } from '@/composables/use-tap-vibrate.js';
 import { EMPTY } from '@/lib/constants';
-import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
+import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes';
 import { usePuzzleStore } from '@/stores/puzzle.js';
 import { CellThemeTypes } from '@/stores/settings/options';
 import { useSettingsStore } from '@/stores/settings/store';

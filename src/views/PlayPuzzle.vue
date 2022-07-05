@@ -103,7 +103,7 @@ import { useSettingsStore } from '@/stores/settings/store';
 import { storeToRefs, mapState } from 'pinia';
 import { usePuzzleHistoryStore } from '@/stores/puzzle-history';
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
-import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
+import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes';
 import { computed, readonly, toRef, watch } from 'vue';
 import { useSavedPuzzle } from '@/services/savegame/useSavedGame';
 import { usePuzzleStore } from '@/stores/puzzle.js';
