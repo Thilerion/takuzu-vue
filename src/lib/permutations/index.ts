@@ -1,6 +1,6 @@
 import { EMPTY, ONE, ZERO, type PuzzleSymbol } from "../constants";
 import { memoize } from "../memoize.utils";
-import type { LineValueCount, PuzzleSymbolLineStr, PuzzleValueLine, ROPuzzleSymbolLine, ROPuzzleValueLine } from "../types";
+import type { PuzzleValueCount, PuzzleSymbolLineStr, PuzzleValueLine, ROPuzzleSymbolLine, ROPuzzleValueLine } from "../types";
 import { countLineValues, lineSizeToNumRequired, numRequiredOfValue, sortLineValues } from "../utils";
 import { validateLine } from "../validate/line";
 import permuteUnique from "./permute";
@@ -34,7 +34,7 @@ export const getEmptyLinePermutations = memoize(innerGetEmptyLinePermutations, (
 
 const innerGetLinePermutations = (
 	lineArr: PuzzleValueLine,
-	lineCount?: LineValueCount
+	lineCount?: PuzzleValueCount
 ): readonly ROPuzzleSymbolLine[] => {
 	if (lineCount == null) lineCount = countLineValues(lineArr);
 	const numRequired = lineSizeToNumRequired(lineArr.length);
@@ -58,7 +58,7 @@ export const getLinePermutations = memoize(
 
 const innerGetValidLinePermutations = (
 	lineArr: PuzzleValueLine,
-	lineCount: LineValueCount,
+	lineCount: PuzzleValueCount,
 	maxZero: number,
 	maxOne: number
 ): readonly ROPuzzleSymbolLine[] => {

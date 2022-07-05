@@ -1,6 +1,6 @@
 import { COLUMN, EMPTY, ONE, ROW, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "../constants";
 import { getValidLinePermutations } from "../permutations";
-import type { LineId, LineValueCount, PuzzleValueLine, ROPuzzleSymbolLine, ROPuzzleValueLine, Vec } from "../types";
+import type { LineId, PuzzleValueCount, PuzzleValueLine, ROPuzzleSymbolLine, ROPuzzleValueLine, Vec } from "../types";
 import { columnIdToX, countLineValues, isLineIdRow, lineSizeToNumRequired, lineTypeFromLineId, rowIdToY } from "../utils";
 import type { SimpleBoard } from "./Board";
 
@@ -10,7 +10,7 @@ export class BoardLine {
 
 	_values: null | PuzzleValueLine = null;
 	_coords: null | Vec[] = null;
-	_counts: null | LineValueCount = null;
+	_counts: null | PuzzleValueCount = null;
 	_numRequired: null | Record<PuzzleSymbol, number> = null;
 	_validPermutations: null | Readonly<ROPuzzleSymbolLine[]> = null;
 	constructor(
@@ -68,7 +68,7 @@ export class BoardLine {
 		}
 		return this._coords;
 	}
-	get counts(): LineValueCount {
+	get counts(): PuzzleValueCount {
 		if (this._counts == null) {
 			this._counts = countLineValues([...this.values]);
 		}

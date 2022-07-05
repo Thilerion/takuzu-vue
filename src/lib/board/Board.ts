@@ -251,7 +251,7 @@ export class SimpleBoard {
 	}
 
 	// CLASS UTILTIES
-	copy() {
+	copy(): SimpleBoard {
 		const grid = cloneArray2d(this.grid);
 		return new SimpleBoard(grid);
 	}
@@ -269,7 +269,7 @@ export class SimpleBoard {
 		return this.grid.flat().join('');
 	}
 	
-	export() {
+	export(): BoardExportString {
 		return `${this.width}x${this.height};${this.toBoardString()}` as BoardExportString;
 	}
 }
