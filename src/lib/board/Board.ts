@@ -270,6 +270,6 @@ export class SimpleBoard {
 	}
 	
 	export() {
-		return `${this.width}x${this.height};${this.toBoardString()}`;
+		return `${this.width}x${this.height};${this.toBoardString()}` as BoardExportString;
 	}
 }

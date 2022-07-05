@@ -86,3 +86,8 @@ export const moveFromString = (str: MoveExport) => {
 	const prevValue = split[3] as PuzzleValue;
 	return createPuzzleMove(x, y, value, prevValue);
 }
+
+export const exportMoveList = (): MoveExport[] => {
+	const history = usePuzzleHistoryStore();
+	return history.moveList.map(moveToString);
+}

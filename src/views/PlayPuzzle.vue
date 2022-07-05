@@ -105,11 +105,10 @@ import { usePuzzleHistoryStore } from '@/stores/puzzle-history';
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
 import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes.js';
 import { computed, readonly, toRef, watch } from 'vue';
-import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
+import { useSavedPuzzle } from '@/services/savegame/useSavedGame';
 import { usePuzzleStore } from '@/stores/puzzle.js';
 import { useMainStore } from '@/stores/main';
 import { useRecapStatsStore } from '@/stores/recap-stats';
-import { savePuzzleSaveData } from '@/stores/helpers/save-data';
 import { rulerType } from '@/stores/settings/options';
 
 export default {
@@ -140,7 +139,7 @@ export default {
 		const wakeLock = usePuzzleWakeLock();
 		const userIdle = wakeLock.idle;
 
-		const { hasCurrentSavedGame } = useSavedPuzzle();
+		const { hasCurrentSavedGame, savePuzzleSaveData } = useSavedPuzzle();
 
 		const puzzleStore = usePuzzleStore();
 
@@ -171,7 +170,7 @@ export default {
 			userCheckErrors: (boardStr) => puzzleMistakesStore.userCheckErrors(boardStr),
 			autoCheckErrors: () => puzzleMistakesStore.autoCheckFinishedWithMistakes(),
 			wakeLock,
-			hasCurrentSavedGame,
+			hasCurrentSavedGame, savePuzzleSaveData,
 			puzzleStore, pause, resume, pausedByUser, userIdle
 		};
 	},
@@ -295,7 +294,7 @@ export default {
 		},
 		saveGame() {
 			if (this.canSaveGame()) {
-				savePuzzleSaveData();
+				this.savePuzzleSaveData();
 			}
 		},
 		initAutoSave() {

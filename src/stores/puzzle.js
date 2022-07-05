@@ -5,7 +5,7 @@ import { getRandomTransformation } from "@/lib/helpers/grid-transformations";
 import { countLineValues, pickRandom } from "@/lib/utils";
 import { requestPuzzle } from "@/services/create-puzzle";
 import { puzzleHistoryTable } from "@/services/stats/db";
-import { useSavedPuzzle } from "@/services/useSavedPuzzle";
+import { useSavedPuzzle } from "@/services/savegame/useSavedGame";
 import { initPregenWorker } from "@/workers/pregen-puzzles";
 import { defineStore } from "pinia";
 import { usePuzzleHintsStore } from "./puzzle-hinter";

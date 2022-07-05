@@ -1,14 +1,14 @@
 <template>
 	<div class="flex flex-col items-center justify-start space-y-6 main-menu-buttons mx-auto">
 		<router-link
-			v-if="canContinue"
+			v-if="validSaveData"
 			:to="{ name: 'PlayPuzzle' }"
 			custom
 			v-slot="{ navigate }"
 		><ContinueButton
 			@click="navigate"
 			class="btn-primary shadow-md route-btn route-primary continue-btn relative"
-			v-bind="saveData"
+			v-bind="validSaveData"
 		></ContinueButton></router-link>
 
 		<router-link
@@ -44,18 +44,22 @@
 </template>
 
 <script setup lang="ts">
-import type { BasicPuzzleConfig } from "@/lib/types";
-import { toRefs } from "vue";
-export interface ContinueButtonSaveDataProps extends BasicPuzzleConfig {
-	timeElapsed: number
-}
+import type { SaveData } from "@/services/savegame/types";
+import { computed, toRefs } from "vue";
+export type ContinueButtonSaveDataProps = Pick<SaveData, "timeElapsed" | "width" | "height" | "difficulty">;
 const props = defineProps<{
 	canContinue?: boolean,
-	saveData: ContinueButtonSaveDataProps
+	saveData: ContinueButtonSaveDataProps | null
 }>();
 
+const validSaveData = computed(() => {
+	if (props.canContinue) {
+		return props.saveData as SaveData;
+	}
+	return false;
+})
 
-const { canContinue, saveData } = toRefs(props);
+const { canContinue } = toRefs(props);
 </script>
 
 <style scoped>

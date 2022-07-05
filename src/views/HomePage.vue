@@ -14,12 +14,10 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 
-import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
-
-
+import { useSavedPuzzle } from '@/services/savegame/useSavedGame';
 import { useMainStore } from '@/stores/main';
 import { ref } from 'vue';
 

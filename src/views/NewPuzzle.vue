@@ -90,12 +90,12 @@ import { useRouter } from 'vue-router';
 import { usePreviousSelection } from '../components/new-puzzle/usePreviousSelection.js';
 
 
-import { useSavedPuzzle } from '@/services/useSavedPuzzle.js';
 import { usePuzzleStore } from '@/stores/puzzle.js';
 
 
 
 import { useMainStore } from '@/stores/main';
+import { useSavedPuzzle } from '@/services/savegame/useSavedGame';
 const { hasCurrentSavedGame } = useSavedPuzzle();
 // display warning message if creating a new game will overwrite the currently saved puzzle
 
