@@ -40,14 +40,8 @@ export const provideGlobalBuildData = () => {
 
 		if (hasStoredVersion) {
 			console.log(`App version increased from "${storedVersion}" to "${version}"!`);
-			if (import.meta.env.DEV) {
-				window.alert(`App version increased from "${storedVersion}" to "${version}"!`)
-			}
 		} else {
 			console.log(`App version has been set for the first time to "${version}"!`);
-			if (import.meta.env.DEV) {
-				window.alert(`App version has been set for the first time to "${version}"!`)
-			}
 		}
 	}
 	provide(key, {
