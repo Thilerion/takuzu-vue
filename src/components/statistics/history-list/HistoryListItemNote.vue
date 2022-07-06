@@ -1,18 +1,18 @@
 <template>
 	<div>
 		<div
-			class="w-full flex items-end justify-start relative pr-2 py-1 text-ellipsis overflow-x-hidden -ml-1"
+			class="w-full flex items-end justify-start relative pr-2 py-1 -ml-1"
 			v-if="isEditing || hasNote || unsavedNote"
 		>
 			<div class="relative w-full">
 				<div
-					class="text-xs text-gray-600 w-full border-0 p-0 m-0 leading-loose"
+					class="text-xs text-gray-600 w-full border-0 p-0 m-0 leading-loose max-w-full text-ellipsis overflow-x-hidden"
 					@click="startEditing"
 				>{{noteStr}}</div>
 				<input
 					type="text"
 					v-model="unsavedNote"
-					class="w-full border-0 p-0 m-0 text-xs h-full absolute inset-0 focus:border-0 focus:outline-none focus:ring-2 focus:ring-slate-500/50 leading-loose"
+					class="w-full border-0 p-0 m-0 text-xs h-full absolute inset-0 focus:border-0 focus:outline-none focus:ring-2 focus:ring-slate-500/50 leading-loose max-w-full"
 					ref="inputEl"
 					v-if="isEditing"
 					@blur="saveNote"
