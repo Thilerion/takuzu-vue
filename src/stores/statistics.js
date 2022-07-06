@@ -2,7 +2,7 @@ import { PuzzleStatisticData } from "@/services/stats/db/models.js";
 import * as StatsDB from "@/services/stats/db/index.js";
 import { formatBasicSortableDateKey } from "@/utils/date.utils.js";
 import { defineStore } from "pinia";
-import { shallowReactive } from "vue";
+import { reactive, shallowReactive } from "vue";
 import { isBefore, isToday, subDays } from "date-fns/esm";
 import { getUniqueDatesFromItems } from "@/services/stats/dates.js";
 import { getMostPlayedPuzzleConfigs, getMostPlayedPuzzleSizes } from "@/services/stats/most-played";
@@ -18,7 +18,7 @@ export const useStatisticsStore = defineStore('statistics', {
 		initializedDate: null,
 		isLoading: false,
 
-		historyItems: shallowReactive([])
+		historyItems: reactive([])
 	}),
 
 	getters: {
@@ -110,7 +110,7 @@ export const useStatisticsStore = defineStore('statistics', {
 
 	actions: {
 		setHistoryItems(items) {
-			this.historyItems = shallowReactive(items);
+			this.historyItems = reactive(items);
 		},
 		async markFavorite(id, value) {
 			const dbVal = value ? 1 : 0;
@@ -123,6 +123,16 @@ export const useStatisticsStore = defineStore('statistics', {
 					...item.flags,
 					favorite: value
 				}
+			}
+			return success;
+		},
+		async saveNote(id, note) {
+			const success = await StatsDB.update(id, {
+				note
+			});
+			if (success) {
+				const item = this.historyItems.find(i => i.id === id);
+				item.note = note;
 			}
 			return success;
 		},

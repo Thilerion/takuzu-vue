@@ -39,6 +39,7 @@
 					:key="JSON.stringify({ dataOptions })">
 					<HistoryListItem v-for="item in shownItems" :key="item.id" v-bind="item"
 						:time-record="isTimeRecord(item)" @favorite="(val) => markFavorite(item.id, val)"
+						@save-note="(note) => saveNote(item.id, note)"
 						@delete="() => deleteItem(item.id)"></HistoryListItem>
 				</div>
 				<div class="py-4 text-lg px-8 text-center" v-else-if="historyItems.length" key="none-filtered">No
@@ -241,6 +242,9 @@ const shownItems = computed(() => {
 
 const markFavorite = async (id, value) => {
 	statsStore.markFavorite(id, value);
+}
+const saveNote = async (id, note) => {
+	statsStore.saveNote(id, note);
 }
 const deleteItem = async (id) => {
 	await statsStore.deleteItem(id);

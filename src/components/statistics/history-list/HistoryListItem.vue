@@ -45,10 +45,11 @@
 			<div class="ml-1" v-else-if="firstTimeRecord">First time solved</div>
 			<div class="ml-1" v-else-if="previousTimeRecord">Previous time record</div>
 		</div>
-		<div
-			v-if="hasNote"
-			class="text-xs leading-loose text-gray-600"
-		>{{note}}</div>
+		<HistoryListItemNote
+			:note="note"
+			@save-note="(note) => $emit('save-note', note)"
+		/>
+		<div class="h-2"></div>
 	</div>
 </template>
 
@@ -105,15 +106,9 @@ const props = defineProps({
 	}
 })
 
-const emit = defineEmits(['favorite', 'delete']);
+const emit = defineEmits(['favorite', 'delete', 'save-note']);
 
 const { difficulty, dimensions, flags, date, timeElapsed, width, height } = toRefs(props);
-const hasNote = computed(() => {
-	return props?.note != null && props?.note != '';
-})
-const note = computed(() => {
-	return hasNote.value ? props.note : undefined;
-})
 
 const currentTimeRecord = computed(() => !!props.timeRecord?.current);
 const firstTimeRecord = computed(() => !!props.timeRecord?.first);

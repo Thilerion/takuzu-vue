@@ -48,6 +48,7 @@ declare module '@vue/runtime-core' {
     HistoryListFilterDifficulty: typeof import('./src/components/statistics/history-list/HistoryListFilterDifficulty.vue')['default']
     HistoryListFilters: typeof import('./src/components/statistics/history-list/HistoryListFilters.vue')['default']
     HistoryListItem: typeof import('./src/components/statistics/history-list/HistoryListItem.vue')['default']
+    HistoryListItemNote: typeof import('./src/components/statistics/history-list/HistoryListItemNote.vue')['default']
     HomePage: typeof import('./src/views/HomePage.vue')['default']
     HowToPlay: typeof import('./src/views/HowToPlay.vue')['default']
     IconBtn: typeof import('./src/components/global/base-layout/IconBtn.vue')['default']
