@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div
-			class="w-full flex items-end justify-start relative pr-2 py-1 -ml-1"
+			class="w-full flex items-end justify-start relative py-1 -ml-1"
 			v-if="isEditing || hasNote || unsavedNote"
 		>
 			<div class="relative w-full">
@@ -9,15 +9,27 @@
 					class="text-xs text-gray-600 w-full border-0 p-0 m-0 leading-loose max-w-full text-ellipsis overflow-x-hidden"
 					@click="startEditing"
 				>{{noteStr}}</div>
-				<input
-					type="text"
-					v-model="unsavedNote"
-					class="w-full border-0 p-0 m-0 text-xs h-full absolute inset-0 focus:border-0 focus:outline-none focus:ring-2 focus:ring-slate-500/50 leading-loose max-w-full"
-					ref="inputEl"
+				<transition name="t-fade">
+				<div
 					v-if="isEditing"
-					@blur="saveNote"
-					@keydown.enter="saveNote"
+					class="h-full absolute inset-y-0 -inset-x-2 pl-1 flex -mr-2 justify-between items-center"
 				>
+					<input
+						type="text"
+						v-model="unsavedNote"
+						class="w-full border-0 p-0 m-0 text-xs h-full focus:border-0 focus:outline-none ring-2 ring-slate-500/30 focus:ring-2 focus:ring-slate-500/50 leading-loose max-w-full pl-1 rounded-sm transition duration-150"
+						ref="inputEl"
+						@blur="stopEditingOnBlur"
+						@keydown.enter="saveNote"
+					>
+					<IconBtn
+						class="text-xxs active:hover-none:bg-gray-300/20 text-gray-800/70 h-8 w-8 flex-none ml-1"
+						scale="0.875"
+						@click="clearNote"
+					><icon-ic-baseline-close /></IconBtn>
+				</div>
+				</transition>
+				
 			</div>
 		</div>
 	</div>
@@ -25,7 +37,7 @@
 
 <script setup lang="ts">
 import { useStatisticsStore } from '@/stores/statistics';
-import { awaitRaf } from '@/utils/delay.utils';
+import { awaitRaf, awaitTimeout } from '@/utils/delay.utils';
 import { computed, onMounted, ref, toRef, watch, watchEffect, type Ref } from 'vue';
 
 const props = defineProps<{
@@ -83,6 +95,17 @@ const saveNote = async () => {
 	const hasValue = unsavedNote.value != null && unsavedNote.value !== '';
 	emit('save-note', hasValue ? unsavedNote.value : undefined);
 }
+const stopEditingOnBlur = async () => {
+	await awaitTimeout(250);
+	if (!isEditing.value) return;
+	isEditing.value = false;
+	saveNote();
+}
+const clearNote = async () => {
+	isEditing.value = false;
+	unsavedNote.value = null;
+	emit('save-note', null);
+}
 
 const propsNote = computed(() => {
 	return props?.note ?? undefined;
@@ -93,5 +116,10 @@ watch(propsNote, (value) => {
 </script>
 
 <style scoped>
-
+.t-fade-leave-active {
+	transition: opacity 0.1s ease;
+}
+.t-fade-leave-to {
+	opacity: 0;
+}
 </style>
