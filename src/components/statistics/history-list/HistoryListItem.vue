@@ -45,11 +45,16 @@
 			<div class="ml-1" v-else-if="firstTimeRecord">First time solved</div>
 			<div class="ml-1" v-else-if="previousTimeRecord">Previous time record</div>
 		</div>
+		<div
+			v-if="hasNote"
+			class="text-xs leading-loose text-gray-600"
+		>{{note}}</div>
 	</div>
 </template>
 
 <script>
 import { computed, ref, toRefs } from 'vue';
+import { awaitTimeout } from '@/utils/delay.utils';
 
 const formatTime = (ms) => formatDurationMMSSss(ms, { padFirst: true });
 
@@ -94,12 +99,21 @@ const props = defineProps({
 	solution: String,
 	timeRecord: {
 		type: Object
+	},
+	note: {
+		type: [String, null]
 	}
 })
 
 const emit = defineEmits(['favorite', 'delete']);
 
-const {difficulty, dimensions, flags, date, timeElapsed, width, height} = toRefs(props);
+const { difficulty, dimensions, flags, date, timeElapsed, width, height } = toRefs(props);
+const hasNote = computed(() => {
+	return props?.note != null && props?.note != '';
+})
+const note = computed(() => {
+	return hasNote.value ? props.note : undefined;
+})
 
 const currentTimeRecord = computed(() => !!props.timeRecord?.current);
 const firstTimeRecord = computed(() => !!props.timeRecord?.first);
@@ -144,14 +158,6 @@ const puzzleConfig = computed(() => {
 })
 const router = useRouter();
 const goToPlayPuzzleRoute = () => router.push({ name: 'PlayPuzzle'});
-
-async function awaitTimeout(length = 300) {
-	return new Promise((resolve) => {
-		window.setTimeout(() => {
-			resolve();
-		}, length);
-	})
-}
 async function replayPuzzle() {
 	const boardStrings = {
 		board: props.initialBoard,
