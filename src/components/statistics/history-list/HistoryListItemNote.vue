@@ -8,7 +8,7 @@
 				<div
 					class="text-xs text-gray-600 w-full border-0 p-0 m-0 leading-loose max-w-full text-ellipsis overflow-x-hidden"
 					@click="startEditing"
-				>{{noteStr}}</div>
+				><span v-if="noteStr">{{noteStr}}</span><div v-else class="opacity-0">Enter note here</div></div>
 				<transition name="t-fade">
 				<div
 					v-if="isEditing"
@@ -17,6 +17,7 @@
 					<input
 						type="text"
 						v-model="unsavedNote"
+						placeholder="Enter note here"
 						class="w-full border-0 p-0 m-0 text-xs h-full focus:border-0 focus:outline-none ring-2 ring-slate-500/30 focus:ring-2 focus:ring-slate-500/50 leading-loose max-w-full pl-1 rounded-sm transition duration-150"
 						ref="inputEl"
 						@blur="stopEditingOnBlur"
@@ -38,7 +39,7 @@
 <script setup lang="ts">
 import { useStatisticsStore } from '@/stores/statistics';
 import { awaitRaf, awaitTimeout } from '@/utils/delay.utils';
-import { computed, onMounted, ref, toRef, watch, watchEffect, type Ref } from 'vue';
+import { computed, onMounted, ref, toRef, watch, type Ref } from 'vue';
 
 const props = defineProps<{
 	note?: string | null | undefined,
@@ -61,6 +62,9 @@ const noteStr = computed(() => {
 	console.log('showing propsNote');
 	return props.note as string;
 })
+const propsNote = computed(() => {
+	return props?.note ?? undefined;
+})
 onMounted(() => {
 	if (hasNote.value) {
 		unsavedNote.value = noteStr.value;
@@ -75,12 +79,25 @@ const isEditing = computed({
 		return editingNoteId.value === props.id;
 	},
 	set(value: boolean) {
-		editingNoteId.value = value ? props.id : null;
+		if (!value && editingNoteId.value === props.id) {
+			editingNoteId.value = null;
+		} else if (value) {
+			editingNoteId.value = props.id;
+		}
 	}
 })
-watchEffect(() => {
-	if (isEditing.value) {
-		console.log(isEditing.value)		
+watch(isEditing, (value) => {
+	if (value) {
+		if (unsavedNote.value == null) {
+			unsavedNote.value = '';
+		}
+		awaitTimeout(200).then(() => {
+			inputEl.value?.focus?.();
+		})
+	} else if (!value) {
+		awaitTimeout(200).then(() => {
+			saveNote();
+		})
 	}
 })
 
@@ -106,10 +123,6 @@ const clearNote = async () => {
 	unsavedNote.value = null;
 	emit('save-note', null);
 }
-
-const propsNote = computed(() => {
-	return props?.note ?? undefined;
-})
 watch(propsNote, (value) => {
 	unsavedNote.value = value;
 })

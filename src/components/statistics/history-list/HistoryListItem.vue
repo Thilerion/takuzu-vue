@@ -6,6 +6,13 @@
 			<div class="text-gray-500">{{dateFormatted}}</div>
 			<div class="flex flex-row">
 				<IconBtn
+					class="text-xs text-gray-500"
+					scale="1"
+					@click="editNote"
+				>
+					<icon-mdi-pencil />
+				</IconBtn>
+				<IconBtn
 					class="text-xs"
 					scale="1"
 					@click="replayPuzzle"
@@ -57,6 +64,7 @@
 <script>
 import { computed, ref, toRefs } from 'vue';
 import { awaitTimeout } from '@/utils/delay.utils';
+import { useStatisticsStore } from '@/stores/statistics';
 
 const formatTime = (ms) => formatDurationMMSSss(ms, { padFirst: true });
 
@@ -126,6 +134,10 @@ const toggleFavorite = () => {
 	forcedFavorite.value = value;
 
 	emit('favorite', value);
+}
+const statsStore = useStatisticsStore();
+const editNote = () => {
+	statsStore.editingNoteId = props.id;
 }
 
 const dateFormatted = computed(() => {
