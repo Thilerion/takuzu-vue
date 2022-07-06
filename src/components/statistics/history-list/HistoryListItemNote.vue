@@ -24,11 +24,13 @@
 </template>
 
 <script setup lang="ts">
+import { useStatisticsStore } from '@/stores/statistics';
 import { awaitRaf } from '@/utils/delay.utils';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, toRef, watch, watchEffect, type Ref } from 'vue';
 
 const props = defineProps<{
-	note?: string | null | undefined
+	note?: string | null | undefined,
+	id: string | number
 }>();
 const emit = defineEmits(['save-note']);
 
@@ -54,7 +56,22 @@ onMounted(() => {
 })
 const inputEl = ref<HTMLInputElement | null>(null);
 
-const isEditing = ref(false);
+const statsStore = useStatisticsStore();
+const editingNoteId = toRef(statsStore, 'editingNoteId') as Ref<string | number | null>;
+const isEditing = computed({
+	get() {
+		return editingNoteId.value === props.id;
+	},
+	set(value: boolean) {
+		editingNoteId.value = value ? props.id : null;
+	}
+})
+watchEffect(() => {
+	if (isEditing.value) {
+		console.log(isEditing.value)		
+	}
+})
+
 const startEditing = async () => {
 	isEditing.value = true;
 	await awaitRaf();

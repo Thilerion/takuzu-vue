@@ -47,6 +47,7 @@
 		</div>
 		<HistoryListItemNote
 			:note="note"
+			:id="props.id"
 			@save-note="(note) => $emit('save-note', note)"
 		/>
 		<div class="h-2"></div>

@@ -1,11 +1,11 @@
-import { PuzzleStatisticData } from "@/services/stats/db/models.js";
-import * as StatsDB from "@/services/stats/db/index.js";
-import { formatBasicSortableDateKey } from "@/utils/date.utils.js";
-import { defineStore } from "pinia";
-import { reactive, shallowReactive } from "vue";
-import { isBefore, isToday, subDays } from "date-fns/esm";
 import { getUniqueDatesFromItems } from "@/services/stats/dates.js";
+import * as StatsDB from "@/services/stats/db/index.js";
+import { PuzzleStatisticData } from "@/services/stats/db/models.js";
 import { getMostPlayedPuzzleConfigs, getMostPlayedPuzzleSizes } from "@/services/stats/most-played";
+import { formatBasicSortableDateKey } from "@/utils/date.utils.js";
+import { isBefore, isToday, subDays } from "date-fns/esm";
+import { defineStore } from "pinia";
+import { reactive } from "vue";
 
 const getPuzzlesSolved = StatsDB.getCount;
 const getAllHistoryItems = () => StatsDB.getAll().then(list => list.map(item => {
@@ -18,10 +18,13 @@ export const useStatisticsStore = defineStore('statistics', {
 		initializedDate: null,
 		isLoading: false,
 
-		historyItems: reactive([])
+		historyItems: reactive([]),
+
+		editingNoteId: null
 	}),
 
 	getters: {
+		isEditingNote: state => state.editingNoteId != null,
 		puzzlesSolved: state => state.historyItems.length,
 		noPuzzlesSolved: state => state.initialized && state.historyItems.length === 0,
 
