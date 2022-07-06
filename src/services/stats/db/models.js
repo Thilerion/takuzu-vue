@@ -13,7 +13,8 @@ export class DbHistoryEntry {
 
 			timestamp, localDateStr,
 			flags = {},
-			id
+			id,
+			note
 		} = data;
 
 		this.width = width;
@@ -29,6 +30,9 @@ export class DbHistoryEntry {
 		this.localDateStr = localDateStr;
 
 		this.flags = { ...flags };
+		if (note != null) {
+			this.note = note;
+		}
 		
 		if (id !== undefined) {
 			this.id = id;

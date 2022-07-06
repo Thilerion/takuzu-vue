@@ -18,7 +18,8 @@ export const useRecapStatsStore = defineStore('recapStats', {
 			flags: {
 				favorite: null,
 				cheatsUsed: null
-			}
+			},
+			note: null
 		},
 
 		currentTimeElapsed: null,
@@ -168,6 +169,25 @@ export const useRecapStatsStore = defineStore('recapStats', {
 
 		async toggleFavorite() {
 			return this.markFavorite(!this.isFavorite);
+		},
+		async saveNote(note = null) {
+			const { id } = this.lastPuzzleEntry;
+			try {
+				const success = await StatsDB.update(id, {
+					note
+				});
+				if (success) {
+					console.log('Succesfully saved note.');
+					this.lastPuzzleEntry.note = note;
+				} else {
+					console.error('Could not save note.');
+				}
+				return success;
+			} catch (e) {
+				console.warn('Error in saving note.');
+				console.error(e);
+				return false;
+			}
 		},
 
 		async markFavorite(value = true) {

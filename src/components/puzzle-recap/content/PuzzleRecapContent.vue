@@ -1,9 +1,16 @@
 <template>
 	<div class="recap-modal scale-100 min-h-[200px] min-w-min max-w-sm w-full sm:w-max max-h-[90vh] rounded-xl flex flex-col m-auto bg-white text-gray-900 relative">
-		<div class="absolute right-1 -top-1 -translate-y-full text-sm flex items-center z-100">
+		<div class="absolute right-1 -top-1 -translate-y-full text-sm flex items-end justify-end z-100 w-full pl-2 h-9">
+			<RecapContent.FavoriteNote
+				v-if="isSavedToDb"
+				:favorite="isFavorite"
+				:note="note"
+				@save-note="recapStatsStore.saveNote"
+			/>
 			<RecapContent.Favorite
 				v-if="isSavedToDb"
 				:value="isFavorite"
+				class="ml-auto"
 				@toggle="recapStatsStore.toggleFavorite"
 			/>
 		</div>
@@ -93,12 +100,21 @@ const {
 	count,
 	currentTimeElapsed, best, previousBest, average,
 	// previousAverage,
-	isFavorite, isSavedToDb
+	isFavorite, isSavedToDb, lastPuzzleEntry
 } = storeToRefs(recapStatsStore);
+
+const note = computed(() => {
+	// must be computed (not ref), because note property may not be set on the lastPuzzleEntry
+	const entry = recapStatsStore.lastPuzzleEntry;
+	if ('note' in entry) {
+		return entry.note;
+	}
+	return undefined;
+})
 
 const {
 	difficulty, width, height
-} = toRefs(recapStatsStore.lastPuzzleEntry);
+} = toRefs(lastPuzzleEntry.value);
 const difficultyLabel = computed(() => {
 	return DIFFICULTY_LABELS[difficulty.value];
 })
