@@ -66,7 +66,7 @@ import { useMainStore } from '@/stores/main';
 import { usePuzzleTimer } from '@/stores/puzzle-timer';
 import { usePuzzleStore } from '@/stores/puzzle.js';
 import { useSettingsStore } from '@/stores/settings/store';
-import { rafPromise, timeoutPromise } from '@/utils/delay.utils.js';
+import { awaitTimeout, awaitRaf } from '@/utils/delay.utils';
 import { storeToRefs } from 'pinia';
 import { readonly, toRef } from 'vue';
 
@@ -129,7 +129,7 @@ export default {
 
 			const cells = shuffle(emptyCells.slice(0, -1));
 
-			await timeoutPromise(500);
+			await awaitTimeout(500);
 
 			let count = 0;
 
@@ -142,7 +142,7 @@ export default {
 				count += 1;
 
 				if (count % 4 === 0) {
-					await rafPromise();
+					await awaitRaf();
 				}
 			}			
 		},
@@ -174,7 +174,7 @@ export default {
 			let movesFound = true;
 			let count = 0;
 
-			await timeoutPromise(400);
+			await awaitTimeout(400);
 
 			while (movesFound) {
 				const triplesHumanResult = humanSolveTriples({ board });
@@ -193,7 +193,7 @@ export default {
 						})
 						count += 1;
 						if (count % 4 === 0) {
-							await rafPromise();
+							await awaitRaf();
 						}
 					}
 				}
