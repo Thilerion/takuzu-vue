@@ -24,8 +24,87 @@ describe('date utilities', () => {
 		expect(dateUtils.isNextDay(dateB, dateA)).toBe(true);
 	})
 
-	test('formatBasicDDMMYYYY', () => {
-		const date = new Date(2021, 4, 19); // 19-5-2021
-		expect(dateUtils.formatBasicDDMMYYYY(date)).toBe('19-5-2021');
+	test('formatBasicSortableDateKey', () => {
+		const dateA = new Date('1995-12-17T03:24:00');
+		expect(dateUtils.formatBasicSortableDateKey(dateA)).toBe('1995-12-17');
+
+		const dateB = new Date(2022, 0, 2, 12, 32, 33, 340);
+		expect(dateUtils.formatBasicSortableDateKey(dateB)).toBe('2022-01-02');
+	})
+
+	test('formatYYYYMMDD', () => {
+		const dateAStr = '1995-12-17T03:24:00'
+		const dateA = new Date(dateAStr);
+		const timestampA = dateA.valueOf();
+		const expectedA = '1995-12-17';
+		expect(dateUtils.formatYYYYMMDD(dateA)).toBe(expectedA);
+		expect(dateUtils.formatYYYYMMDD(dateAStr)).toBe(expectedA);
+		expect(dateUtils.formatYYYYMMDD(timestampA)).toBe(expectedA);
+
+		const dateB = new Date(2022, 0, 2, 12, 32, 33, 340);
+		const dateBStr = dateB.toISOString();
+		const timestampB = dateB.valueOf();
+		const expectedB = '2022-01-02';
+		expect(dateUtils.formatYYYYMMDD(dateB)).toBe(expectedB);
+		expect(dateUtils.formatYYYYMMDD(dateBStr)).toBe(expectedB);
+		expect(dateUtils.formatYYYYMMDD(timestampB)).toBe(expectedB);
+	})
+
+	describe('getDateRange()', () => {
+		test('returns range from specific date to today', () => {
+			const today = new Date();
+			const twoDaysAgo = dateUtils.getDaysAgo(today, 2);
+
+			const result = dateUtils.getDateRange(twoDaysAgo);
+			expect(result).toHaveLength(3);
+			expect(result[0]).toEqual(twoDaysAgo);
+			expect(result[1]).toEqual(dateUtils.getNextDay(twoDaysAgo));
+			expect(result[2]).toEqual(today);
+		})
+
+		test('can be used without last including end', () => {
+			const dateA = new Date(2022, 0, 1, 12, 0, 0);
+			const dateB = new Date(2022, 0, 4, 12, 0, 0);
+
+			expect(dateUtils.getDateRange(dateA, dateB)).toHaveLength(4);
+			expect(dateUtils.getDateRange(dateA, dateB, { includeEnd: false })).toHaveLength(3);
+		})
+	})
+
+	describe('getWeekdayNamesShort()', () => {
+		test('Nederlands; starting with monday', () => {
+			const result = dateUtils.getWeekdayNamesShort({
+				locales: 'nl-nl',
+			});
+			expect(result).toMatchInlineSnapshot(`
+				[
+				  "zo",
+				  "ma",
+				  "di",
+				  "wo",
+				  "do",
+				  "vr",
+				  "za",
+				]
+			`);
+		})
+
+		test('English; starting with sunday', () => {
+			const result = dateUtils.getWeekdayNamesShort({
+				locales: ['en-US'],
+				weekStartsOn: 'sunday'
+			});
+			expect(result).toMatchInlineSnapshot(`
+				[
+				  "Sun",
+				  "Mon",
+				  "Tue",
+				  "Wed",
+				  "Thu",
+				  "Fri",
+				  "Sat",
+				]
+			`);
+		})
 	})
 })

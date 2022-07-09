@@ -52,11 +52,11 @@
 </template>
 
 <script setup>
-import { subYears, startOfDay, addDays, differenceInCalendarISOWeeks, eachDayOfInterval, isWithinInterval, endOfDay } from 'date-fns/esm';
-import { formatBasicSortableDateKey, getWeekdayFromDate, getMonthNameShort, getWeekDaysShort, timeFormatter } from '@/utils/date.utils.js';
-import { computed, inject, ref } from 'vue';
 import { getItemsByDate } from '@/services/stats/dates.js';
-import { calculateScoresByDate, mapScoreToArray, getValueWithinRange } from './heatmap-data.js';
+import { formatBasicSortableDateKey, getMonthNameShort, getWeekdayFromDate, getWeekdayNamesShort, timeFormatter } from '@/utils/date.utils.js';
+import { addDays, differenceInCalendarISOWeeks, eachDayOfInterval, endOfDay, isWithinInterval, startOfDay, subYears } from 'date-fns/esm';
+import { computed, inject, ref } from 'vue';
+import { calculateScoresByDate, getValueWithinRange, mapScoreToArray } from './heatmap-data.js';
 
 const historyItems = inject('historyItems', () => [], true);
 const formatTime = timeFormatter({
@@ -171,7 +171,7 @@ const selectedDateValues = computed(() => {
 <script>
 
 const useWeekdays = () => {
-	const weekdays = getWeekDaysShort();
+	const weekdays = getWeekdayNamesShort();
 	const shown = [1, 3, 5];
 	return weekdays.map((name, i) => {
 		return {

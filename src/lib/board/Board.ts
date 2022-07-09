@@ -67,7 +67,7 @@ export class SimpleBoard {
 		}
 		return new SimpleBoard(grid);
 	}
-	static import(str: BoardExportString) {
+	static import(str: string) {
 		return SimpleBoard.fromString(str);
 	}
 

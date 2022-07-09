@@ -1,43 +1,6 @@
-import { eachDayOfInterval, endOfWeek, getISODay, startOfWeek, addDays, isSameDay } from 'date-fns/esm';
+import { getISODay } from 'date-fns/esm';
 
-export { isSameDay };
-
-export const getNextDay = date => {
-	return addDays(date, 1);
-}
-
-export const isNextDay = (dateA, dateB) => {
-	const nextDay = getNextDay(dateA);
-	return isSameDay(dateB, nextDay);
-}
-
-export const formatBasicDDMMYYYY = (date) => {
-	return new Date(date).toLocaleDateString('nl');
-}
-export const formatBasicSortableDateKey = (date) => {
-	const d = new Date(date);
-	return [
-		d.getFullYear(),
-		`00${d.getMonth() + 1}`.slice(-2),
-		`00${d.getDate()}`.slice(-2),
-	].join('-');
-}
-export const formatYYYYMMDD = dateOrTimestamp => {
-	const date = new Date(dateOrTimestamp);
-	return [
-		`${date.getFullYear()}`,
-		`00${date.getMonth() + 1}`.slice(-2),
-		`00${date.getDate()}`.slice(-2),
-	].join('-');
-}
-
-export const getDateRange = (startDate, endDate = new Date()) => {
-	const arr = [];
-	for (let d = startDate; d <= endDate; d = getNextDay(d)) {
-		arr.push(d);
-	}
-	return arr;
-}
+export { formatBasicSortableDateKey, formatYYYYMMDD, getDateRange, getDaysAgo, getNextDay, getWeekdayNamesShort, isNextDay, isSameDay } from './date.utilsts';
 
 const padLeft = (num) => `0${num}`.slice(-2);
 
@@ -108,24 +71,6 @@ export const formatTimeHHMMSS = (timestampMS, { padHours = false } = {}) => {
 	const seconds = time.getSeconds();	
 
 	return `${padHours ? padLeft(hours) : hours}:${padLeft(minutes)}:${padLeft(seconds)}`;
-}
-
-export const getWeekDaysShort = ({
-	weekStartsOn = 1, // 1 for monday
-} = {}) => {
-	const now = new Date();
-	const weekdays = [];
-
-	const start = startOfWeek(now, { weekStartsOn });
-	const end = endOfWeek(now, { weekStartsOn });
-
-	const intl = new Intl.DateTimeFormat(undefined, { weekday: 'short' });
-	eachDayOfInterval({ start, end }).forEach(day => {
-		weekdays.push(
-			intl.format(day)
-		)
-	})
-	return weekdays;
 }
 
 export const getMonthNameShort = (date) => {
