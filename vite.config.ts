@@ -58,16 +58,6 @@ export default defineConfig(({ command, mode }) => {
 			}
 		},
 		define: {
-			__BUILD_DATE__: JSON.stringify(
-				(() => {
-					// include correction for timezone offset in ISO string
-					const date = new Date();
-					const offset = date.getTimezoneOffset() * 60000;
-					const offsetDate = new Date(date.getTime() - offset);
-					return offsetDate.toISOString().slice(0, 16);
-				})()
-			),
-			__PKG_VERSION__: JSON.stringify(process.env.npm_package_version),
 			__BUILD_VERSION_DETAILS__: JSON.stringify(buildVersionDetails)
 		},
 		test: {

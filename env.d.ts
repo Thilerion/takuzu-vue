@@ -21,8 +21,5 @@ interface ImportMeta {
 }
 
 declare global {
-  const __PKG_VERSION__: string;
-  const __BUILD_DATE__: string;
-  const __BUILD_APPMODE__: 'alpha' | 'beta' | '';
   const __BUILD_VERSION_DETAILS__: import('./scripts/build-metadata').BuildVersionDetails;
 }
