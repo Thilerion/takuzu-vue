@@ -21,8 +21,8 @@
 <script setup>
 import { computed } from 'vue';
 
-import { formatTimeMMSS } from '@/utils/date.utils';
-const formatTime = formatTimeMMSS;
+import { formatTimeMMSSWithRounding } from '@/utils/time.utils';
+const formatTime = formatTimeMMSSWithRounding(200);
 
 const props = defineProps({
 	best: {

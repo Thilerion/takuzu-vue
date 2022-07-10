@@ -2,7 +2,7 @@ import { getISODay } from 'date-fns/esm';
 
 export { formatBasicSortableDateKey, formatYYYYMMDD, getDateRange, getDaysAgo, getNextDay, getWeekdayNamesShort, isNextDay, isSameDay } from './date.utilsts';
 
-const padLeft = (num) => `0${num}`.slice(-2);
+const padLeft = (num, n = 2, value = '0') => `${num}`.padStart(n, value);
 
 export const timeFormatter = (formatOptions) => {
 	const {
@@ -29,21 +29,6 @@ export const timeFormatter = (formatOptions) => {
 		}
 		return str;
 	}
-}
-
-export const formatTimeMMSS = (timestampMS, {
-	padMinutes = true,
-} = {}) => {
-	let totalSeconds = timestampMS / 1000;
-	const remainingMS = timestampMS % 1000;
-	if (remainingMS <= 200) {
-		totalSeconds = Math.floor(totalSeconds);
-	} else totalSeconds = Math.ceil(totalSeconds);
-
-	const seconds = totalSeconds % 60;
-	const minutes = (totalSeconds - seconds) / 60;
-
-	return `${padMinutes ? padLeft(minutes) : minutes}:${padLeft(seconds)}`;
 }
 
 export const formatTimeMMSSss = (timestampMS, { padMinutes = true } = {}) => {

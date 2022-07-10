@@ -89,7 +89,8 @@ import { storeToRefs } from 'pinia';
 import { computed, ref, toRefs, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import * as RecapContent from './recap-content-elements.js';
-import { formatTimeMMSS } from '@/utils/date.utils';
+import { formatTimeMMSSWithRounding } from '@/utils/time.utils';
+const formatTimeMMSS = formatTimeMMSSWithRounding(200);
 
 defineEmits(['exit-to']);
 

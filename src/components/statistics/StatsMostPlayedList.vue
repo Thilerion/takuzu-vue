@@ -59,9 +59,9 @@
 <script setup>
 import { useStatisticsStore } from '@/stores/statistics';
 import { computed, onBeforeMount, ref, watch } from 'vue';
-
-import { formatTimeMMSS } from '@/utils/date.utils';
+import { formatTimeMMSSWithRounding } from '@/utils/time.utils';
 import { useStorage } from '@vueuse/core';
+const formatTime = formatTimeMMSSWithRounding(200);
 
 const statsStore = useStatisticsStore();
 onBeforeMount(() => {
@@ -158,7 +158,7 @@ const tableRows = computed(() => {
 	const res = [];
 	for (const [key, data] of raw) {
 		const { count, pCount, pTime, pFavScore, cells, timePer100Cells } = data;
-		const row = [key, count, asPercentage(pCount), asPercentage(pTime), asPercentage(pFavScore), cells, formatTimeMMSS(timePer100Cells)];
+		const row = [key, count, asPercentage(pCount), asPercentage(pTime), asPercentage(pFavScore), cells, formatTime(timePer100Cells)];
 		res.push(row);
 	}
 	return res;
