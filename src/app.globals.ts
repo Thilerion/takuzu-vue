@@ -1,55 +1,20 @@
-import { useStorage } from '@vueuse/core';
-import { provide, inject, computed, type ComputedRef } from 'vue';
+import { inject, provide, type InjectionKey } from 'vue';
+import { useAppSemver } from './stores/composables/useAppSemver';
 
-const key = Symbol('appGlobalBuildData');
-const lsKeyVersion = 'takuzu_app-versions';
+type InjectedBuildData = ReturnType<typeof useAppSemver>;
 
-interface AppVersionDataPersisted {
-	version: string
-	previous: null | string;
-}
-
-interface AppVersionDataRefs {
-	curAppVersion: ComputedRef<AppVersionDataPersisted['version']>;
-	prevAppVersion: ComputedRef<AppVersionDataPersisted['previous']>;
-}
-
-interface GlobalDefinedBuildData {
-	pkgVersion: typeof __PKG_VERSION__;
-	buildDate: typeof __BUILD_DATE__;
-}
-
-export interface InjectedBuildData extends AppVersionDataRefs, GlobalDefinedBuildData { }
+const key: InjectionKey<InjectedBuildData> = Symbol('appGlobalBuildData');
 
 export const provideGlobalBuildData = () => {
-	const appVersionData = useStorage<AppVersionDataPersisted>(lsKeyVersion, {
-		version: '',
-		previous: null
-	});
-	const prevAppVersion = computed(() => appVersionData.value.previous);
-	const curAppVersion = computed(() => appVersionData.value.version);
-
-	const constructedVersion = `${__PKG_VERSION__}_${__BUILD_DATE__}`;
-
-	if (constructedVersion !== appVersionData.value.version) {
-		const version = constructedVersion;
-		const storedVersion = appVersionData.value.version;
-		const hasStoredVersion = storedVersion != null && storedVersion !== '';
-		const previous = hasStoredVersion ? storedVersion : null;
-		appVersionData.value = { version, previous };
-
-		if (hasStoredVersion) {
-			console.log(`App version increased from "${storedVersion}" to "${version}"!`);
-		} else {
-			console.log(`App version has been set for the first time to "${version}"!`);
-		}
-	}
+	const { pkgVersion, buildDate, curAppVersion, prevAppVersion, versionUpdated, buildVersionDetails } = useAppSemver();
 	provide(key, {
-		pkgVersion: __PKG_VERSION__,
+		pkgVersion,
 		curAppVersion,
 		prevAppVersion,
-		buildDate: __BUILD_DATE__
-	} as InjectedBuildData)
+		buildDate,
+		versionUpdated,
+		buildVersionDetails
+	});
 }
 
 export const useGlobalBuildData = (): InjectedBuildData => {
@@ -57,6 +22,6 @@ export const useGlobalBuildData = (): InjectedBuildData => {
 	if (buildData === undefined) {
 		throw new Error('Injected build data must not be undefined.')
 	}
-	const { pkgVersion, buildDate, curAppVersion, prevAppVersion } = (buildData as InjectedBuildData);
-	return { pkgVersion, buildDate, curAppVersion, prevAppVersion };
+	const { pkgVersion, buildDate, curAppVersion, prevAppVersion, versionUpdated, buildVersionDetails } = buildData;
+	return { pkgVersion, buildDate, curAppVersion, prevAppVersion, versionUpdated, buildVersionDetails };
 }

@@ -1,6 +1,7 @@
 import { fileURLToPath, URL } from 'url';
 
 import { defineConfig, loadEnv } from 'vite';
+import { getBuildVersionDetails } from './scripts/build-metadata.js';
 
 import vue from '@vitejs/plugin-vue';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -23,6 +24,8 @@ export default defineConfig(({ command, mode }) => {
 			{ src: 'dist/index.html', dest: 'dist/', rename: '200.html' }
 		]
 	}) : undefined;
+
+	const buildVersionDetails = getBuildVersionDetails(mode);
 
 	return {
 		plugins: [
@@ -65,6 +68,7 @@ export default defineConfig(({ command, mode }) => {
 				})()
 			),
 			__PKG_VERSION__: JSON.stringify(process.env.npm_package_version),
+			__BUILD_VERSION_DETAILS__: JSON.stringify(buildVersionDetails)
 		},
 		test: {
 			deps: {
