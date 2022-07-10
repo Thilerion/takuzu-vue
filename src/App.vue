@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { initPregeneratedPuzzles } from '@/services/puzzles-db/init-pregen-puzzles.js';
+import { initPregeneratedPuzzles } from '@/services/puzzles-db/init-pregen-puzzles';
 import { computed, onMounted, toRef } from 'vue';
 import { initSettingsPersistence } from './stores/settings/store';
 import { useStatisticsStore } from './stores/statistics.js';

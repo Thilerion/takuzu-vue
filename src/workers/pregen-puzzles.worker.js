@@ -1,5 +1,6 @@
 import { getAllPresetSizeDifficultyCombinations } from "@/config";
-import { addPuzzle, puzzleTable } from "@/services/puzzles-db/db.js";
+import { addPuzzle, puzzleDb } from "@/services/puzzles-db/db";
+import { awaitTimeout } from "@/utils/delay.utils";
 
 import GeneratePuzzleWorker from './generate-puzzle.worker.js?worker';
 import { createWorkerResult } from "./WorkerResult.js";
@@ -20,14 +21,6 @@ export function initPuzzleWorkerReceiver() {
 	})
 }
 
-function waitFor(ms = 500) {
-	return new Promise((resolve) => {
-		window.setTimeout(() => {
-			resolve();
-		}, ms);
-	})
-}
-
 const presets = getAllPresetSizeDifficultyCombinations()
 	.map(({ width, height, difficulty }) => {
 		const key = `${width}x${height}-${difficulty}`;
@@ -35,7 +28,7 @@ const presets = getAllPresetSizeDifficultyCombinations()
 	});
 
 async function findPresetsWithoutPuzzles({ lazy = true, verbose = true, maxDifficulty = 3 } = {}) {
-	const presetsInDb = await puzzleTable
+	const presetsInDb = await puzzleDb.puzzles
 		.orderBy('[width+height+difficulty]')
 		.uniqueKeys();
 	
@@ -79,7 +72,7 @@ async function findPresetsWithoutPuzzles({ lazy = true, verbose = true, maxDiffi
 			// prevent fans blowing etc when first opening the page
 			// higher value for larger boards, because the wait cannot be implemented for the inner createPuzzle function, which will run at full-speed. This tries to mitigate that.
 			const waitMs = Math.floor(200 + nextPreset.numCells * 2);
-			await waitFor(waitMs);
+			await awaitTimeout(waitMs);
 		}
 
 		const result = await generatePuzzleForPreset(nextPreset);

@@ -1,5 +1,5 @@
 import { generatePuzzle } from "@/workers/generate-puzzle.js";
-import { getPuzzle } from "./puzzles-db/db.js";
+import { puzzleDb } from "./puzzles-db/db";
 
 export async function requestPuzzle(puzzleConfig) {
 	console.log('PUZZLE REQUESTED');
@@ -27,7 +27,7 @@ export async function requestPuzzle(puzzleConfig) {
 
 export async function retrievePuzzleFromDatabase(puzzleConfig) {
 	try {
-		const result = await getPuzzle(puzzleConfig);
+		const result = await puzzleDb.getPuzzle(puzzleConfig);
 		if (result) {
 			const { boardStr, solutionStr } = result;
 			return { success: true, data: { boardStr, solutionStr } };

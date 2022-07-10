@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import { clearPuzzleDb } from '@/services/puzzles-db/db.js';
+import { clearPuzzleDb } from '@/services/puzzles-db/db';
 import { initPregenWorker } from '@/workers/pregen-puzzles.js';
 import { ref } from 'vue';
 

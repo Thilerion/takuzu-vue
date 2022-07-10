@@ -1,5 +1,5 @@
 import { initPregenWorker } from '@/workers/pregen-puzzles.js';
-import { puzzleDb } from './db.js';
+import { puzzleDb } from './db';
 
 export async function initPregeneratedPuzzles(
 	{ pregenTimeout = 2000 } = {}
@@ -10,14 +10,12 @@ export async function initPregeneratedPuzzles(
 		return new Promise((resolve) => {
 			window.setTimeout(() => {
 				initPregenWorker();
-				resolve();
+				resolve(true);
 			}, pregenTimeout)
 		})
 	} else {
 		console.log('Populating database with initial puzzles.');
 		const initialPopulation = await import('./populate-pregen-puzzles.js');
-		return puzzleDb.puzzles.bulkPut(initialPopulation.default.map(item => {
-			return {...item, populated: true}
-		}));
+		return puzzleDb.populateWith(initialPopulation.default);
 	}
 }
