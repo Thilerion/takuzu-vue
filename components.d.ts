@@ -6,6 +6,7 @@ import '@vue/runtime-core'
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     AppTitle: typeof import('./src/components/AppTitle.vue')['default']
+    AppVersionDisplay: typeof import('./src/components/settings/AppVersionDisplay.vue')['default']
     BaseButton: typeof import('./src/components/base/BaseButton.vue')['default']
     BaseComponentShowcase: typeof import('./src/views/BaseComponentShowcase.vue')['default']
     BaseDropdown: typeof import('./src/components/global/dropdown/BaseDropdown.vue')['default']

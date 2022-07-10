@@ -19,7 +19,6 @@
 <script setup lang="ts">
 import { initPregeneratedPuzzles } from '@/services/puzzles-db/init-pregen-puzzles.js';
 import { computed, onMounted, toRef } from 'vue';
-import { provideGlobalBuildData } from './app.globals';
 import { initSettingsPersistence } from './stores/settings/store';
 import { useStatisticsStore } from './stores/statistics.js';
 import { useMainStore } from './stores/main';
@@ -34,7 +33,6 @@ initSettingsPersistence();
 // initDarkLightAutoTheme();
 // useColorSchemeProvider();
 useInitThemePreferenceProvider();
-provideGlobalBuildData();
 
 initPWAInstallListeners();
 
