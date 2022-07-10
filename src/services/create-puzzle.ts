@@ -1,13 +1,17 @@
+import type { BasicPuzzleConfig, BoardString } from "@/lib/types";
 import { generatePuzzle } from "@/workers/generate-puzzle.js";
 import { puzzleDb } from "./puzzles-db/db";
 
-export async function requestPuzzle(puzzleConfig) {
+type RequestError<T> = T extends 'reason' ? { success: false, reason: unknown } : T extends 'error' ? { success: false, error: unknown } : never;
+type PuzzleRequestResult<T> = RequestError<T> | { success: true, data: { boardStr: BoardString, solutionStr: BoardString } };
+
+export async function requestPuzzle(puzzleConfig: BasicPuzzleConfig): Promise<PuzzleRequestResult<'reason'>> {
 	console.log('PUZZLE REQUESTED');
 	try {
 		const dbResult = await retrievePuzzleFromDatabase(puzzleConfig);
 		if (dbResult.success) {
 			// type of data: { boardStr, solutionStr };
-			return { success: true, data: dbResult.data };
+			return { success: true as const, data: dbResult.data };
 		}
 		console.log('TRYING TO GENERATE');
 		const genResult = await generateNewPuzzle(puzzleConfig);
@@ -25,7 +29,7 @@ export async function requestPuzzle(puzzleConfig) {
 	}	
 }
 
-export async function retrievePuzzleFromDatabase(puzzleConfig) {
+export async function retrievePuzzleFromDatabase(puzzleConfig: BasicPuzzleConfig): Promise<PuzzleRequestResult<'error'>> {
 	try {
 		const result = await puzzleDb.getPuzzle(puzzleConfig);
 		if (result) {
@@ -41,7 +45,7 @@ export async function retrievePuzzleFromDatabase(puzzleConfig) {
 	}
 }
 
-export async function generateNewPuzzle(puzzleConfig) {
+export async function generateNewPuzzle(puzzleConfig: BasicPuzzleConfig): Promise<PuzzleRequestResult<'error'>> {
 	try {
 		const result = await generatePuzzle(puzzleConfig);
 		if (result && result.success) {
