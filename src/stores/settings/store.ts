@@ -4,7 +4,7 @@ import { getDefaultSettings, loadSettings, saveSettings } from "./settings-ls";
 import { cellThemeTypeMap, type SettingsState } from "./types";
 
 
-export const useSettingsStore = defineStore<'settings', SettingsState>('settings', {
+export const useSettingsStore = defineStore('settings', {
 	state: loadSettings,
 
 	getters: {

@@ -1,7 +1,6 @@
 <template>
 	<div class="relative bg-gray-50 dark:bg-slate-900">
 		<PageHeader
-			@close="closeSettings"
 			small
 			:elevated="true"
 			:transparent="false"
@@ -126,7 +125,7 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useThemePreferences } from '@/composables/use-theme-preferences';
 import { useDebugMode } from '@/stores/composables/useDebugMode';
 import { CheckButtonOption, rulerType } from '@/stores/settings/options';
@@ -145,9 +144,9 @@ const { cellTheme, checkButton, toggleMode, showLineInfo, enableWakeLock, showTi
 
 const { setBaseThemeDefault: resetBaseThemeToDefault } = useThemePreferences();
 
-let resetToDefaultsTimeout = null;
+let resetToDefaultsTimeout: null | number = null;
 
-const resetSettingsToDefaults = (closeCb) => {
+const resetSettingsToDefaults = (closeCb: () => void) => {
 	settingsStore.resetToDefaults();
 	resetToDefaultsTimeout = window.setTimeout(() => {
 		resetBaseThemeToDefault();
@@ -169,17 +168,6 @@ const lineInfoOptions = [
 	{ label: 'Remaining values in line', value: rulerType.COUNT_REMAINING},
 	{ label: 'Current values in line', value: rulerType.COUNT_CURRENT}
 ]
-
-const closeSettings = () => {
-	const prev = this.$route.meta.prev;
-	if (this.$route.name === 'PlayPuzzle.settings') {
-		if (prev == null || (prev && prev.name !== 'PlayPuzzle')) this.$router.replace({ name: 'PlayPuzzle' });
-		else this.$router.go(-1);
-	} else {
-		if (prev) this.$router.go(-1);
-		else this.$router.replace({ name: 'Home' });
-	}
-}
 </script>
 
 <style scoped>
