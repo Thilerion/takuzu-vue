@@ -3,10 +3,9 @@ import { addPuzzle, puzzleDb } from "@/services/puzzles-db/db";
 import { awaitTimeout } from "@/utils/delay.utils";
 
 import GeneratePuzzleWorker from './generate-puzzle.worker.js?worker';
-import { createWorkerResult } from "./WorkerResult.js";
+import { createWorkerResult } from "./WorkerResult";
 const puzzleWorker = new GeneratePuzzleWorker();
-
-const createPregenMessage = createWorkerResult('pregen-puzzles');
+const MSG_SOURCE = 'pregen-puzzles';
 
 export function sendWorkerMessage(message) {
 	puzzleWorker.postMessage({ message });
@@ -138,10 +137,10 @@ async function initPuzzlePregen(opts = {}) {
 	
 	try {
 		const result = await findPresetsWithoutPuzzles(opts);
-		postMessage(createPregenMessage(true, result));
+		postMessage(createWorkerResult(true, result, MSG_SOURCE));
 	} catch (e) {
 		console.error(e);
-		postMessage(createPregenMessage(false, e?.message ?? e));
+		postMessage(createWorkerResult(false, e?.message ?? e, MSG_SOURCE));
 	}
 }
 
@@ -157,6 +156,6 @@ addEventListener('message', event => {
 	} else {
 		console.warn('Could not recognize task for PregenPuzzle worker.');
 		console.warn(event.data);
-		postMessage(createPregenMessage(false, `Unrecognized task: "${task}"`));
+		postMessage(createWorkerResult(false, `Unrecognized task: "${task}"`, MSG_SOURCE));
 	}
 })
