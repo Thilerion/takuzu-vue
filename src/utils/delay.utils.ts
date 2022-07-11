@@ -1,11 +1,11 @@
 export async function awaitTimeout(timeout = 300) {
 	return new Promise((resolve) => {
-		window.setTimeout(resolve, timeout);
+		setTimeout(resolve, timeout);
 	})
 }
 export async function awaitRaf() {
 	return new Promise((resolve) => {
-		window.requestAnimationFrame(resolve);
+		requestAnimationFrame(resolve);
 	})
 }
 export async function awaitImmediate() {
