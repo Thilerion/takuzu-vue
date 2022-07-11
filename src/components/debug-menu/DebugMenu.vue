@@ -21,7 +21,7 @@
 
 <script setup>
 import { clearPuzzleDb } from '@/services/puzzles-db/db';
-import { initPregenWorker } from '@/workers/pregen-puzzles.js';
+import { initPregenWorker } from '@/workers/pregen/index';
 import { ref } from 'vue';
 
 const clearPuzzlesResult = ref([]);

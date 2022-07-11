@@ -1,4 +1,4 @@
-import { initPregenWorker } from '@/workers/pregen-puzzles.js';
+import { initPregenWorker } from '@/workers/pregen/index';
 import { puzzleDb } from './db';
 
 export async function initPregeneratedPuzzles(
