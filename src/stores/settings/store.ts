@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { toRaw } from "vue";
-import { loadSettings, saveSettings } from "./settings-ls";
+import { getDefaultSettings, loadSettings, saveSettings } from "./settings-ls";
 import { cellThemeTypeMap, type SettingsState } from "./types";
 
 
@@ -18,6 +18,10 @@ export const useSettingsStore = defineStore<'settings', SettingsState>('settings
 		saveToStorage() {
 			const state: SettingsState = toRaw(this.$state);
 			saveSettings(state);
+		},
+		resetToDefaults() {
+			const defaults = getDefaultSettings();
+			Object.assign(this.$state, defaults);
 		}
 	}
 })
