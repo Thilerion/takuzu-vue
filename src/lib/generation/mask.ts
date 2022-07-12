@@ -1,7 +1,11 @@
 import { EMPTY } from "@/lib/constants";
+import type { SimpleBoard } from "../board/Board.js";
+import type { DifficultyKey } from "../types.js";
 import { getMaskValidatorsForPuzzleConfig } from "./mask-validation.js";
 
-export function createMaskWithDifficulty(board, difficulty) {
+type SolveCheckerFn = (maskedBoard: SimpleBoard) => boolean;
+
+export function createMaskWithDifficulty(board: SimpleBoard, difficulty: DifficultyKey) {
 	const { width, height } = board;
 	const { canSolveWith, canNotSolveWith } = getMaskValidatorsForPuzzleConfig({
 		width, height, difficulty
@@ -11,7 +15,7 @@ export function createMaskWithDifficulty(board, difficulty) {
 	let bestMask;
 
 	for (let i = 0; i < maxAttempts; i++) {
-		bestMask = createMask(board, { canSolveWith, canNotSolveWith });
+		bestMask = createMask(board, { canSolveWith });
 
 		// verify puzzle is not too easy
 		if (canNotSolveWith == null) {
@@ -24,7 +28,7 @@ export function createMaskWithDifficulty(board, difficulty) {
 	return null;
 }
 
-export function createMask(board, { canSolveWith }) {
+export function createMask(board: SimpleBoard, { canSolveWith }: { canSolveWith: SolveCheckerFn }) {
 	const maskedBoard = board.copy();
 
 	for (const { x, y, value } of maskedBoard.cells({ shuffled: true, skipEmpty: true })) {
