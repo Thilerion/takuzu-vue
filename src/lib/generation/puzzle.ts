@@ -1,3 +1,5 @@
+import type { SimpleBoard } from "../board/Board";
+import type { BasicPuzzleConfig } from "../types";
 import { generateBoard } from "./board";
 import { createMaskWithDifficulty } from "./mask";
 import { getOptimalMaskRatio, getMaskQuality } from "./quality";
@@ -17,7 +19,12 @@ const minSymbolDistributionQuality = 0.36;
  * @param {number} puzzleConfig.height
  * @param {1|2|3|4|5} puzzleConfig.difficulty
  */
-export function createPuzzle(puzzleConfig, opts = {}) {
+interface CreatePuzzleOpts {
+	maxTries?: number,
+	totalMaxDuration?: number,
+	tryDurations?: number[]
+}
+export function createPuzzle(puzzleConfig: BasicPuzzleConfig, opts: CreatePuzzleOpts = {}): { board: SimpleBoard, solution: SimpleBoard, quality: null | ReturnType<typeof getMaskQuality> } | undefined {
 	const { width, height, difficulty } = puzzleConfig;
 	const {
 		maxTries = 20,
@@ -38,13 +45,12 @@ export function createPuzzle(puzzleConfig, opts = {}) {
 			maxTime = tryDurations[i];
 		}
 		const genResult = createBoardAndMaskOnce({ optimalMaskedRatio, width, height, difficulty }, maxTime);
-		const { success, error } = genResult;
+		const { success } = genResult;
+
 
 		if (success) {
 			const { solution, board, quality } = genResult;
 			return { solution, board, quality };
-		} else if (error) {
-			// console.warn(`Puzzle generation, try [${i}/${maxTries}]: ${error}`);
 		}
 	}
 	console.warn('Timeout reached generating puzzle.');
@@ -60,42 +66,50 @@ export function createPuzzle(puzzleConfig, opts = {}) {
  * @param {1|2|3|4|5} opts.difficulty
  * @param {number} maxTime 
  */
-function createBoardAndMaskOnce(opts, maxTime = 1000) {
+interface CreateBoardAndMaskOnceOpts extends BasicPuzzleConfig {
+	optimalMaskedRatio: number
+}
+type CreateBoardAndMaskOnceReturns =
+	| { error: string, success: false }
+	| { success: true, board: SimpleBoard, solution: SimpleBoard, quality: null | ReturnType<typeof getMaskQuality>};
+function createBoardAndMaskOnce(opts: CreateBoardAndMaskOnceOpts, maxTime = 1000): CreateBoardAndMaskOnceReturns  {
 	const { width, height, difficulty, optimalMaskedRatio } = opts;
 	const start = performance.now();
 	const timeoutAfter = start + maxTime;
 
 	const timeoutReached = () => performance.now() > timeoutAfter;
 
-	const data = { solution: null, board: null, quality: null };
+	let datasolution: null | SimpleBoard = null;
+	let databoard: null | SimpleBoard = null;
+	let dataquality: null | ReturnType<typeof getMaskQuality> = null;
 
-	while (!data.solution && !timeoutReached()) {
+	while (!datasolution && !timeoutReached()) {
 		const result = generateBoard(width, height);
-		if (result) data.solution = result;
+		if (result) datasolution = result;
 	}
 
-	if (!data.solution) {
-		return { error: 'Solution generation timeout reached.' };
+	if (!datasolution) {
+		return { error: 'Solution generation timeout reached.', success: false as const };
 	}
 
-	while (!data.board && !timeoutReached()) {
-		const maskResult = createMaskWithDifficulty(data.solution, difficulty);
+	while (!databoard && !timeoutReached()) {
+		const maskResult = createMaskWithDifficulty(datasolution, difficulty);
 
 		if (!maskResult) continue;
 
 		const quality = getMaskQuality(maskResult, optimalMaskedRatio);
 		if (maskResult && quality.maskedRatio >= minMaskedRatioQuality && quality.symbolDistribution >= minSymbolDistributionQuality) {
-			data.board = maskResult;
-			data.quality = quality;
+			databoard = maskResult;
+			dataquality = quality;
 		} else if (maskResult) {
 			// console.warn('Generated mask quality was not good enough.');
 			// console.log({ board: maskResult, quality, minMaskedRatioQuality, minSymbolDistributionQuality });
 		}
 	}
 
-	if (!data.board) {
-		return { error: 'Mask/board generation timeout reached. Maybe retry with another solutionBoard.' };
+	if (!databoard) {
+		return { error: 'Mask/board generation timeout reached. Maybe retry with another solutionBoard.', success: false } as const;
 	} else {
-		return { ...data, success: true };
+		return { board: databoard, solution: datasolution, quality: dataquality, success: true as const };
 	}
 }
