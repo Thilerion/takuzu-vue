@@ -1,4 +1,4 @@
-import { EMPTY, ONE, ZERO, type PuzzleSymbol } from "../constants";
+import { EMPTY, ONE, ZERO } from "../constants";
 import { memoize } from "../memoize.utils";
 import type { PuzzleValueCount, PuzzleSymbolLineStr, PuzzleValueLine, ROPuzzleSymbolLine, ROPuzzleValueLine, PuzzleSymbolLine } from "../types";
 import { countLineValues, lineSizeToNumRequired, numRequiredOfValue, sortLineValues } from "../utils";
@@ -45,23 +45,20 @@ const innerGetLinePermutations = (
 	const remainingOne = numRequired[ONE] - lineCount[ONE];
 	const remainingZero = numRequired[ZERO] - lineCount[ZERO];
 
-	// TODO: different type return value if line is invalid
-	if (remainingOne < 0 || remainingZero < 0) return { error: 'No valid permutations, line is invalid and has no solution' }; //line is invalid
+	if (remainingOne < 0 || remainingZero < 0) return { error: 'No valid permutations, line is invalid and has no solution' };
 
-	const values = (ZERO.repeat(remainingZero) + '' + ONE.repeat(remainingOne)).split('') as PuzzleSymbolLine;
-	const valuePermutations = getArrayPermutations(values) as LineArrSymbolPermutations; // cast because input was PuzzleSymbolLine, so can only contain symbols
+	// values to insert into lineArr in place of EMPTY
+	const valuesToPlace = `${ZERO.repeat(remainingZero)}${ONE.repeat(remainingOne)}`.split('') as PuzzleSymbolLine;
+
+	const valuePermutations = getArrayPermutations(valuesToPlace) as LineArrSymbolPermutations; // cast because input was PuzzleSymbolLine, so can only contain symbols
 	const result = valuePermutations.map(valuePerm => {
-		const vals = [...valuePerm];
+		const toInsert = [...valuePerm]; // insert at places where lineArr has EMPTY
 		const mapped = lineArr.map(origVal => {
 			if (origVal === EMPTY) {
-				const shifted = vals.shift();
-				if (shifted == null) {
-					console.error('Shifted is undefined!!');
-				}
-				return shifted;				
+				return toInsert.shift()!; // known not to be undefined, because toInsert has same length as amount of EMPTY places in lineArr			
 			} else return origVal;
 		})
-		return mapped.filter((symbolOrUndef): symbolOrUndef is PuzzleSymbol => symbolOrUndef !== undefined);
+		return mapped;
 	})
 	return result;
 }
