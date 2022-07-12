@@ -1,5 +1,5 @@
 import { COLUMN, EMPTY, ONE, PUZZLE_VALUES, ROW, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "./constants";
-import type { ColumnId, Grid, LineId, BoardExportString, RowId } from "./types";
+import type { ColumnId, Grid, LineId, BoardExportString, RowId, ROPuzzleValueLine, PuzzleValueLine, PuzzleValueLineStr, PuzzleSymbolLineStr } from "./types";
 import { memoize } from "./memoize.utils";
 
 // ARRAY UTILS //
@@ -31,8 +31,8 @@ export const countValuesInMap = <T>(arr: T[]) => {
 		return acc;
 	}, new Map() as Map<T, number>);
 }
-export const randomIndex = (arr: unknown[]) => Math.floor(Math.random() * arr.length);
-export const pickRandom = <T>(arr: T[]) => arr[randomIndex(arr)];
+export const randomIndex = (arr: ReadonlyArray<unknown>) => Math.floor(Math.random() * arr.length);
+export const pickRandom = <T>(arr: ReadonlyArray<T>) => arr[randomIndex(arr)];
 
 
 // BOARD / CELL UTILS //
@@ -124,10 +124,12 @@ export const lineTypeFromLineId = (lineId: string): LineType => {
 }
 
 const lineValueOrder = [ZERO, ONE, EMPTY] as const;
-export const sortLineValues = (values: PuzzleValue[]) => {
-	return [...values].sort((a, b) => {
-		return lineValueOrder.indexOf(a) - lineValueOrder.indexOf(b);
+export const sortLineValues = (values: ROPuzzleValueLine): PuzzleValueLine => {
+	const copy: PuzzleValueLine = [...values];
+	copy.sort((a, z) => {
+		return lineValueOrder.indexOf(a) - lineValueOrder.indexOf(z);
 	})
+	return copy;
 }
 
 const exportStrRegex = /^\d{1,2}x\d{1,2};([.01]){4,}$/;
@@ -184,4 +186,11 @@ export const deducePuzzleDimensionsFromLength = (length: number) => {
 	}
 
 	throw new Error(`Cannot deduce correct puzzle size from this length (${length})`);
+}
+
+export const isPuzzleValueLineStr = (str: string): str is PuzzleValueLineStr => {
+	return /^[01.]+$/.test(str);
+}
+export const isPuzzleSymbolLineStr = (str: string): str is PuzzleSymbolLineStr => {
+	return /^[01]+$/.test(str);
 }

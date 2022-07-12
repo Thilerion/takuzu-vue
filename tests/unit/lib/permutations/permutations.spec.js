@@ -146,6 +146,54 @@ describe('getLinePermutations', () => {
 		expect(resultWith).toEqual(expected);
 		expect(resultWith).toBe(resultWithout);
 	})
+
+	test('matches snapshot', () => {
+		const line = ['.', '0', '0', '.', '1', '0', '.', '.'];
+		expect(getLinePermutations(line)).toMatchInlineSnapshot(`
+			[
+			  [
+			    "0",
+			    "0",
+			    "0",
+			    "1",
+			    "1",
+			    "0",
+			    "1",
+			    "1",
+			  ],
+			  [
+			    "1",
+			    "0",
+			    "0",
+			    "0",
+			    "1",
+			    "0",
+			    "1",
+			    "1",
+			  ],
+			  [
+			    "1",
+			    "0",
+			    "0",
+			    "1",
+			    "1",
+			    "0",
+			    "0",
+			    "1",
+			  ],
+			  [
+			    "1",
+			    "0",
+			    "0",
+			    "1",
+			    "1",
+			    "0",
+			    "1",
+			    "0",
+			  ],
+			]
+		`);
+	})
 })
 
 test.todo('permutation functions use cache');

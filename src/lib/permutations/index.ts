@@ -1,12 +1,16 @@
 import { EMPTY, ONE, ZERO, type PuzzleSymbol } from "../constants";
 import { memoize } from "../memoize.utils";
-import type { PuzzleValueCount, PuzzleSymbolLineStr, PuzzleValueLine, ROPuzzleSymbolLine, ROPuzzleValueLine } from "../types";
+import type { PuzzleValueCount, PuzzleSymbolLineStr, PuzzleValueLine, ROPuzzleSymbolLine, ROPuzzleValueLine, PuzzleSymbolLine } from "../types";
 import { countLineValues, lineSizeToNumRequired, numRequiredOfValue, sortLineValues } from "../utils";
 import { validateLine } from "../validate/line";
 import permuteUnique from "./permute";
 
-const innerGetArrayPermutations = (values: PuzzleValueLine): readonly ROPuzzleValueLine[] => {
-	const sortedValues = sortLineValues(values);
+export type LineArrValuePermutations = ReadonlyArray<ROPuzzleValueLine>;
+export type LineArrSymbolPermutations = ReadonlyArray<ROPuzzleSymbolLine>;
+export type LineStrSymbolPermutations = ReadonlyArray<PuzzleSymbolLineStr>;
+
+const innerGetArrayPermutations = (values: ROPuzzleValueLine): LineArrValuePermutations => {
+	const sortedValues: PuzzleValueLine = sortLineValues(values);
 	return permuteUnique(sortedValues);
 }
 export const getArrayPermutations = memoize(
@@ -14,18 +18,18 @@ export const getArrayPermutations = memoize(
 	(lineArr) => lineArr.join('')
 );
 
-const innerGetEmptyLinePermutations = (size: number) => {
+const innerGetEmptyLinePermutations = (size: number): LineStrSymbolPermutations => {
 	const num = Math.pow(2, size);
 	const perms: PuzzleSymbolLineStr[] = [];
 	for (let i = 0; i < num; i++) {
 		// convert i to binary value (as string)
 		// which is just 1s and 0s, just like a binary board line
-		const line = i.toString(2).padStart(size, '0');
+		const line: PuzzleSymbolLineStr = i.toString(2).padStart(size, '0');
 		perms.push(line);
 	}
 	const maxOne = numRequiredOfValue(size, ONE);
 	const maxZero = numRequiredOfValue(size, ZERO);
-	const validPerms: readonly PuzzleSymbolLineStr[] = perms.filter(lineStr => {
+	const validPerms = perms.filter(lineStr => {
 		return validateLine(lineStr, maxZero, maxOne);
 	})
 	return validPerms;
@@ -35,7 +39,7 @@ export const getEmptyLinePermutations = memoize(innerGetEmptyLinePermutations, (
 const innerGetLinePermutations = (
 	lineArr: PuzzleValueLine,
 	lineCount?: PuzzleValueCount
-): readonly ROPuzzleSymbolLine[] => {
+): LineArrSymbolPermutations => {
 	if (lineCount == null) lineCount = countLineValues(lineArr);
 	const numRequired = lineSizeToNumRequired(lineArr.length);
 	const remainingOne = numRequired[ONE] - lineCount[ONE];
@@ -43,7 +47,7 @@ const innerGetLinePermutations = (
 
 	if (remainingOne < 0 || remainingZero < 0) return []; //line is invalid
 
-	const values = (ZERO.repeat(remainingZero) + '' + ONE.repeat(remainingOne)).split('') as PuzzleSymbol[];
+	const values = (ZERO.repeat(remainingZero) + '' + ONE.repeat(remainingOne)).split('') as PuzzleSymbolLine;
 	const valuePermutations = getArrayPermutations(values);
 	const result = valuePermutations.map(valuePerm => {
 		const vals: PuzzleValueLine = [...valuePerm];
@@ -61,7 +65,7 @@ const innerGetValidLinePermutations = (
 	lineCount: PuzzleValueCount,
 	maxZero: number,
 	maxOne: number
-): readonly ROPuzzleSymbolLine[] => {
+): LineArrSymbolPermutations => {
 	const linePerms = getLinePermutations(lineArr, lineCount);
 	return linePerms.filter(pValues => validateLine(pValues.join(''), maxZero, maxOne));
 }
