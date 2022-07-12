@@ -1,11 +1,13 @@
 import { SimpleBoard } from "../board/Board";
-import { COLUMN, ROW } from "../constants";
+import { COLUMN, ROW, type LineType } from "../constants";
 import { getEmptyLinePermutations } from "../permutations/index";
 import { selectValue } from "../solver/selection";
 import Solver from "../solver/Solver";
-import { pickRandom } from "../utils";
+import type { SolverConfig } from "../solver/types";
+import type { PuzzleSymbolLineStr } from "../types";
+import { pickRandom, splitSymbolLineStr } from "../utils";
 
-export function generateBoard(width, height, maxAttempts = 5) {
+export function generateBoard(width: number, height: number, maxAttempts = 5) {
 	return new BoardGenerator(width, height, maxAttempts).start();
 }
 
@@ -17,7 +19,7 @@ const baseSolverConf = {
 	disableBacktracking: false,
 }
 
-const getMaxSolverDuration = (width, height) => {
+const getMaxSolverDuration = (width: number, height: number) => {
 	const value = Math.ceil(Math.pow(((width + height) / 3), 3));
 	const min = 100;
 	const max = 1000;
@@ -25,16 +27,22 @@ const getMaxSolverDuration = (width, height) => {
 }
 
 class BoardGenerator {
-	constructor(width, height = width, maxAttempts = 5) {
-		this.width = width;
-		this.height = height;
+	private maxSolverDuration: number;
+	private readonly initialFillSize: number;
+	private readonly initialFillType: LineType;
+	private readonly possibleLines: ReadonlyArray<PuzzleSymbolLineStr>;
+	solverConfig: SolverConfig;
 
+	constructor(
+		public width: number,
+		public height = width,
+		public maxAttempts = 5
+	) {
 		this.maxSolverDuration = getMaxSolverDuration(width, height);
-		this.maxAttempts = maxAttempts;
 
 		this.solverConfig = {
 			...baseSolverConf,
-			timeoutDuration: this.maxSolverDuration
+			timeoutDuration: this.maxSolverDuration,
 		}
 
 		// initial fill of either rows or columns, depending on which is smaller
@@ -46,7 +54,7 @@ class BoardGenerator {
 		this.possibleLines = getEmptyLinePermutations(this.initialFillSize);
 	}
 
-	start() {
+	public start() {
 		for (let i = 0; i < this.maxAttempts; i++) {
 			const board = this.initialFill();
 			if (!board.isValid()) {
@@ -63,7 +71,7 @@ class BoardGenerator {
 		return null;
 	}
 
-	initialFill() {
+	protected initialFill() {
 		const board = SimpleBoard.empty(this.width, this.height);
 		const lineIds = this.initialFillType === ROW ?
 			[...board.rowIds] :
@@ -75,7 +83,7 @@ class BoardGenerator {
 			linesToFill.push(lineIds[i]);
 		}
 
-		const usedLines = [];
+		const usedLines: PuzzleSymbolLineStr[] = [];
 		for (const lineId of linesToFill) {
 			let line = pickRandom(this.possibleLines);
 			while (usedLines.includes(line)) {
@@ -83,7 +91,7 @@ class BoardGenerator {
 				line = pickRandom(this.possibleLines);
 			}
 			usedLines.push(line);
-			const lineValues = line.split('');
+			const lineValues = splitSymbolLineStr(line);
 			board.assignLine(lineId, lineValues);
 		}
 		return board;

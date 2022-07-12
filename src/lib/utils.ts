@@ -1,5 +1,5 @@
 import { COLUMN, EMPTY, ONE, PUZZLE_VALUES, ROW, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "./constants";
-import type { ColumnId, Grid, LineId, BoardExportString, RowId, ROPuzzleValueLine, PuzzleValueLine, PuzzleValueLineStr, PuzzleSymbolLineStr } from "./types";
+import type { ColumnId, Grid, LineId, BoardExportString, RowId, ROPuzzleValueLine, PuzzleValueLine, PuzzleValueLineStr, PuzzleSymbolLineStr, PuzzleSymbolLine } from "./types";
 import { memoize } from "./memoize.utils";
 
 // ARRAY UTILS //
@@ -193,4 +193,11 @@ export const isPuzzleValueLineStr = (str: string): str is PuzzleValueLineStr => 
 }
 export const isPuzzleSymbolLineStr = (str: string): str is PuzzleSymbolLineStr => {
 	return /^[01]+$/.test(str);
+}
+
+export const splitSymbolLineStr = (str: PuzzleSymbolLineStr): PuzzleSymbolLine => {
+	return str.split('') as PuzzleSymbolLine;
+}
+export const splitValueLineStr = (str: PuzzleValueLineStr): PuzzleValueLine => {
+	return str.split('') as PuzzleValueLine;
 }
