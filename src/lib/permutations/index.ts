@@ -39,19 +39,29 @@ export const getEmptyLinePermutations = memoize(innerGetEmptyLinePermutations, (
 const innerGetLinePermutations = (
 	lineArr: PuzzleValueLine,
 	lineCount?: PuzzleValueCount
-): LineArrSymbolPermutations => {
+): LineArrSymbolPermutations | { error: string } => {
 	if (lineCount == null) lineCount = countLineValues(lineArr);
 	const numRequired = lineSizeToNumRequired(lineArr.length);
 	const remainingOne = numRequired[ONE] - lineCount[ONE];
 	const remainingZero = numRequired[ZERO] - lineCount[ZERO];
 
-	if (remainingOne < 0 || remainingZero < 0) return []; //line is invalid
+	// TODO: different type return value if line is invalid
+	if (remainingOne < 0 || remainingZero < 0) return { error: 'No valid permutations, line is invalid and has no solution' }; //line is invalid
 
 	const values = (ZERO.repeat(remainingZero) + '' + ONE.repeat(remainingOne)).split('') as PuzzleSymbolLine;
-	const valuePermutations = getArrayPermutations(values);
+	const valuePermutations = getArrayPermutations(values) as LineArrSymbolPermutations; // cast because input was PuzzleSymbolLine, so can only contain symbols
 	const result = valuePermutations.map(valuePerm => {
-		const vals: PuzzleValueLine = [...valuePerm];
-		return lineArr.map(v => v === EMPTY ? vals.shift() : v).filter((v): v is PuzzleSymbol => v !== undefined);
+		const vals = [...valuePerm];
+		const mapped = lineArr.map(origVal => {
+			if (origVal === EMPTY) {
+				const shifted = vals.shift();
+				if (shifted == null) {
+					console.error('Shifted is undefined!!');
+				}
+				return shifted;				
+			} else return origVal;
+		})
+		return mapped.filter((symbolOrUndef): symbolOrUndef is PuzzleSymbol => symbolOrUndef !== undefined);
 	})
 	return result;
 }
@@ -67,7 +77,13 @@ const innerGetValidLinePermutations = (
 	maxOne: number
 ): LineArrSymbolPermutations => {
 	const linePerms = getLinePermutations(lineArr, lineCount);
-	return linePerms.filter(pValues => validateLine(pValues.join(''), maxZero, maxOne));
+	// TODO: what about the case where line is already filled?
+	if (Array.isArray(linePerms)) {
+		const validPerms = linePerms.filter(pValues => validateLine(pValues.join(''), maxZero, maxOne));
+		return validPerms;
+	}
+	// TODO: different type return value if lineArr (input) is invalid, filteredLinePerms is empty, and thus there are no valid line permutatations
+	return [];
 }
 export const getValidLinePermutations = memoize(
 	innerGetValidLinePermutations,

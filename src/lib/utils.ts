@@ -1,6 +1,6 @@
 import { COLUMN, EMPTY, ONE, PUZZLE_VALUES, ROW, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "./constants";
-import type { ColumnId, Grid, LineId, BoardExportString, RowId, ROPuzzleValueLine, PuzzleValueLine, PuzzleValueLineStr, PuzzleSymbolLineStr, PuzzleSymbolLine } from "./types";
 import { memoize } from "./memoize.utils";
+import type { BoardExportString, ColumnId, Grid, LineId, PuzzleSymbolLine, PuzzleSymbolLineStr, PuzzleValueLine, PuzzleValueLineStr, RowId } from "./types";
 
 // ARRAY UTILS //
 export const array2d = <T = unknown>(width: number, height = width, value: T) => {
@@ -124,8 +124,9 @@ export const lineTypeFromLineId = (lineId: string): LineType => {
 }
 
 const lineValueOrder = [ZERO, ONE, EMPTY] as const;
-export const sortLineValues = (values: ROPuzzleValueLine): PuzzleValueLine => {
-	const copy: PuzzleValueLine = [...values];
+
+export const sortLineValues = <T extends PuzzleValue>(values: T[] | ReadonlyArray<T>): T[] => {
+	const copy: T[] = [...values];
 	copy.sort((a, z) => {
 		return lineValueOrder.indexOf(a) - lineValueOrder.indexOf(z);
 	})

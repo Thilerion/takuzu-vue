@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type MemoizableFn = (...args: any[]) => any;
 type SerializeArgs<T extends MemoizableFn> = (...args: Parameters<T>) => any;
-type MemoizeCache<T extends MemoizableFn> = Map<any, ReturnType<T>>;
+export type MemoizeCache<T extends MemoizableFn> = Map<any, ReturnType<T>>;
 
 export interface Memoized<T extends MemoizableFn> {
 	(...args: Parameters<T>): ReturnType<T>

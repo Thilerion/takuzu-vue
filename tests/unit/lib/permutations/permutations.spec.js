@@ -198,3 +198,38 @@ describe('getLinePermutations', () => {
 
 test.todo('permutation functions use cache');
 test.todo('getValidLinePermutations');
+
+describe('getValidLinePermutations()', () => {
+	test('with a filled line', () => {
+		const filledLine = '101010'.split('');
+		const count = {
+			'1': 3,
+			'0': 3,
+			'.': 0
+		};
+		const result = getValidLinePermutations(filledLine, count, 3, 3);
+		expect(result).toEqual([filledLine]);
+	})
+
+	test('with an invalid filled line', () => {
+		const filledLine = '111010'.split('');
+		const count = {
+			'1': 4,
+			'0': 2,
+			'.': 0
+		};
+		const result = getValidLinePermutations(filledLine, count, 3, 3);
+		expect(result).toEqual([]);
+	})
+
+	test('with an invalid line', () => {
+		const line = '111...'.split('');
+		const count = {
+			'1': 3,
+			'0': 0,
+			'.': 0
+		};
+		const result = getValidLinePermutations(line, count, 3, 3);
+		expect(result).toEqual([]);
+	})
+})
