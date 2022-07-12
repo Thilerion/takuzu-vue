@@ -1,7 +1,19 @@
-import { COLUMN, EMPTY, ROW } from "../../constants";
+import type { SimpleBoard } from "@/lib/board/Board";
+import type { BoardLine } from "@/lib/board/BoardLine";
+import type { ROPuzzleSymbolLine, Target } from "@/lib/types";
+import { COLUMN, EMPTY, ROW, type LineType } from "../../constants";
 import { areLinesEqual } from "../../utils";
 
-export default function applyEliminationConstraint(board, options = {}) {
+type FilledLineRecord = Record<LineType, BoardLine[]>;
+type LinePerms = Readonly<ROPuzzleSymbolLine[]>
+
+export interface ElimConstraintOpts {
+	singleAction?: boolean,
+	enforceUniqueLines?: boolean,
+	maxLeast?: number,
+	minLeast?: number
+}
+export default function applyEliminationConstraint(board: SimpleBoard, options: ElimConstraintOpts = {}) {
 	let changed = false;
 
 	const {
@@ -13,7 +25,7 @@ export default function applyEliminationConstraint(board, options = {}) {
 
 	const allLines = [...board.boardLines()];
 
-	const filledLines = findFilledLines(allLines, enforceUniqueLines);
+	const filledLines: FilledLineRecord = findFilledLines(allLines, enforceUniqueLines);
 
 	// TODO: filter here instead of checking during the loop
 	const linesToProcess = [...allLines].filter(boardLine => {
@@ -23,7 +35,7 @@ export default function applyEliminationConstraint(board, options = {}) {
 		if (maxLeast != null && leastRem > maxLeast) return false;
 		if (minLeast != null && leastRem < minLeast) return false;
 		return true;
-	}).sort((a, b) => {
+	}).sort((a: BoardLine, b: BoardLine) => {
 		// chance for a result is largest when difference between least and most is largest
 		// and we want the easiest results first
 
@@ -47,14 +59,14 @@ export default function applyEliminationConstraint(board, options = {}) {
 		const filled = filledLines[boardLine.type];
 
 		// get line permutations (valid)
-		const validPermutations = getValidLinePermutations(boardLine);
+		const validPermutations: LinePerms = getValidLinePermutations(boardLine);
 		// if none: error, no valid possibility for line
 		if (!validPermutations || !validPermutations.length) {
 			return { error: 'No valid line permutations' };
 		}
 
 		// filter out duplicate Lines
-		const filteredPermutations = filterOutDuplicateLines(validPermutations, filled);
+		const filteredPermutations: LinePerms = filterOutDuplicateLines(validPermutations, filled);
 		// if none: error, no valid possibility for line
 		if (!filteredPermutations || !filteredPermutations.length) {
 			return { error: 'No valid line permutations' };
@@ -98,8 +110,8 @@ export default function applyEliminationConstraint(board, options = {}) {
 	return changed;
 }
 
-function findFilledLines(lines, enforceUniqueLines = true) {
-	const filled = {
+function findFilledLines(lines: BoardLine[], enforceUniqueLines = true) {
+	const filled: FilledLineRecord = {
 		[ROW]: [],
 		[COLUMN]: []
 	}
@@ -115,11 +127,11 @@ function findFilledLines(lines, enforceUniqueLines = true) {
 	return filled;
 }
 
-function getValidLinePermutations(boardLine) {
+function getValidLinePermutations(boardLine: BoardLine): LinePerms {
 	return boardLine.validPermutations;
 }
 
-function filterOutDuplicateLines(linePerms, filledLines = []) {
+function filterOutDuplicateLines(linePerms: LinePerms, filledLines: BoardLine[] = []): LinePerms {
 	if (!filledLines.length) return [...linePerms];
 	return linePerms.filter((perm) => {
 		const isDuplicate = filledLines.find(l => areLinesEqual(perm, l.values));
@@ -127,12 +139,12 @@ function filterOutDuplicateLines(linePerms, filledLines = []) {
 	})
 }
 
-function getRecurringValuesFromPermutations(boardLine, permutations) {
+function getRecurringValuesFromPermutations(boardLine: BoardLine, permutations: LinePerms): Target[] {
 	const { values, length } = boardLine;
 
 	if (permutations.length === 1) {
 		// just use all values in this single permutation
-		return permutations[0].reduce((acc, val, idx) => {
+		return permutations[0].reduce<Target[]>((acc, val, idx) => {
 			if (values[idx] === EMPTY) {
 				const { x, y } = boardLine.getCoords(idx);
 				acc.push({ x, y, value: val });

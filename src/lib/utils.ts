@@ -64,7 +64,7 @@ export const countLineValues = (lineArr: PuzzleValue[]) => {
 
 // faster than casting to strings and comparing them
 // IMPORTANT: assumes both lines have the same length; this is always the case in this game type, as rows and columns should never be compared
-export const areLinesEqual = (a: string | PuzzleValue[], b: string | PuzzleValue[]) => {
+export const areLinesEqual = (a: string | ReadonlyArray<PuzzleValue>, b: string | ReadonlyArray<PuzzleValue>) => {
 	for (let i = 0; i < a.length; i++) {
 		if (a[i] !== b[i]) return false;
 	}

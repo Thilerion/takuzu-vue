@@ -60,7 +60,7 @@
 
 <script>
 import { EMPTY } from '@/lib/constants';
-import { humanSolveTriples } from '@/lib/human-solver/triples.js';
+import { humanSolveTriples } from '@/lib/human-solver/triples.';
 import { shuffle } from '@/lib/utils';
 import { useMainStore } from '@/stores/main';
 import { usePuzzleTimer } from '@/stores/puzzle-timer';

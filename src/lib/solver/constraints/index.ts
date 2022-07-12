@@ -1,6 +1,6 @@
-import applyTriplesConstraint from "./Triples.js";
-import applyLineBalanceConstraint from "./LineBalance.js";
-import applyEliminationConstraint from "./Elimination.js";
+import applyTriplesConstraint from "./Triples";
+import applyLineBalanceConstraint from "./LineBalance";
+import applyEliminationConstraint from "./Elimination";
 
 export type ConstraintFn = typeof applyTriplesConstraint | typeof applyLineBalanceConstraint | typeof applyEliminationConstraint;
 

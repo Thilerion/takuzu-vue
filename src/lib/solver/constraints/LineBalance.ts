@@ -1,16 +1,18 @@
+import type { SimpleBoard } from "@/lib/board/Board";
 import { EMPTY } from "../../constants";
 import { checkLineBalanceStrategy } from "../../strategies/LineBalance";
 
-export default function applyLineBalanceConstraint(board, options = {}) {
+export type ApplyLineBalanceConstraintOpts = { singleAction?: boolean };
+export default function applyLineBalanceConstraint(board: SimpleBoard, options: ApplyLineBalanceConstraintOpts = {}) {
 	let changed = false;
 
 	const { singleAction = false } = options;
 
 	for (const boardLine of board.boardLines()) {
-		const { found, value } = checkLineBalanceStrategy(boardLine);
+		const res = checkLineBalanceStrategy(boardLine);
 
-		if (!found) continue;
-
+		if (!res.found) continue;
+		const { value } = res;
 		// TODO: assignLine?
 		for (let i = 0; i < boardLine.length; i++) {
 			if (boardLine.values[i] === EMPTY) {
