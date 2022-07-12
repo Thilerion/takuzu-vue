@@ -25,6 +25,7 @@ module.exports = /** @type {import("eslint").Linter.BaseConfig} */ ({
 		"no-unused-vars": 'off',
 		"@typescript-eslint/no-unused-vars": ["error", { "ignoreRestSiblings": true, "varsIgnorePattern": "^(props|emit)$" }],
 		"prefer-const": ["error", {"destructuring": "all"}],
+		"@typescript-eslint/no-non-null-assertion": 0,
 	},
 	"overrides": [
 		{

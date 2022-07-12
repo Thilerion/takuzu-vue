@@ -1,6 +1,6 @@
-import { generateBoard } from "./board.js";
-import { createMaskWithDifficulty } from "./mask.js";
-import { getOptimalMaskRatio, getMaskQuality } from "./quality.js";
+import { generateBoard } from "./board";
+import { createMaskWithDifficulty } from "./mask";
+import { getOptimalMaskRatio, getMaskQuality } from "./quality";
 
 const minMaskedRatioQuality = 0.94;
 const minSymbolDistributionQuality = 0.36;
