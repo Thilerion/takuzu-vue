@@ -1,4 +1,3 @@
-export { chunk, sortDesc, sortAsc, groupBy } from './array.ts.utils';
 import { sortAsc } from './array.ts.utils';
 
 export const sum = arr => arr.reduce((acc, val) => acc + val, 0);

@@ -1,4 +1,4 @@
-import { groupBy } from "@/utils/array.utils";
+import { groupBy } from "@/utils/array.ts.utils";
 import { minMaxSum, average, median } from '@/utils/data-analysis.utils';
 
 function groupItemsByPuzzleConfig(items = []) {

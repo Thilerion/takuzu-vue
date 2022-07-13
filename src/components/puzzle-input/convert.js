@@ -1,5 +1,5 @@
 import { EMPTY, ONE, ZERO } from "@/lib/constants";
-import { chunk } from "@/utils/array.utils";
+import { chunk } from "@/utils/array.ts.utils";
 
 export const puzzleStringToGrid = (str, dimensions) => {
 	if (dimensions == null) throw new Error('Puzzle string to grid requires dimensions.');

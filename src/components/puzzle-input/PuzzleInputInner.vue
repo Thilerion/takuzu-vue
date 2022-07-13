@@ -1,66 +1,43 @@
 <template>
-		<main class="pt-4 gap-y-4 grid bleed-grid-4 v-grid-bleed text-sm">
-			<GridControls
-				class="bg-white rounded px-4 pt-4 pb-2 shadow"
-				@reset="resetGridValues"
-				@set-dimensions="(w, h) => updatePuzzleGridBase(w, h)"
-				:grid-exists="puzzleGridBase != null && puzzleGridBase?.[0] != null"
-				v-model="config"
-			/>
+	<main class="pt-4 gap-y-4 grid bleed-grid-4 v-grid-bleed text-sm">
+		<GridControls class="bg-white rounded px-4 pt-4 pb-2 shadow" @reset="resetGridValues"
+			@set-dimensions="(w, h) => updatePuzzleGridBase(w, h)"
+			:grid-exists="puzzleGridBase != null && puzzleGridBase?.[0] != null" v-model="config" />
 
-			<div class="bg-white rounded px-1 py-4 shadow full-bleed" v-if="isValidPuzzleGrid">
-				<div class="mb-2 px-2">
+		<div class="bg-white rounded px-1 py-4 shadow full-bleed" v-if="isValidPuzzleGrid">
+			<div class="mb-2 px-2">
 				<label>
 					<input type="checkbox" v-model="toggleInputMode">
 					Use toggle input mode
 				</label>
-				</div>				
-				<PuzzleInputTable
-					v-if="isValidPuzzleGrid"
-					:grid="puzzleGridBase"
-					@set-value="({ x, y, value}) => puzzleGridBase[y][x] = value"
-				>
-					<template v-slot="{ x, y, index }">
-						<PuzzleInputField
-							v-model="puzzleGridBase[y][x]"
-							@skip-focus="(val) => skipFocusFrom(val, { x, y, index })"
-							@set-multiple="(val) => setMultipleValuesFromString(val, { x, y, index })"
-							@import-export-string="importExportString"
-							inputmode="numeric"
-							enterkeyhint="next"
-							:ref="(el) => setRef(el, { x, y, index })"
-							:index="index"
-							:disabled="toggleInputMode"
-							:class="{
-								'bg-blue-100': puzzleGridBase[y][x] === '0',
-								'bg-red-100': puzzleGridBase[y][x] === '1',
-							}"
-						/>
-						<button
-							class="absolute top-0 left-0 z-20 w-full h-full touch-manipulation"
-							@click="toggleValue(x, y, index)"
-							v-if="toggleInputMode"
-						></button>
-					</template>
-				</PuzzleInputTable>
+			</div>
+			<PuzzleInputTable v-if="isValidPuzzleGrid" :grid="puzzleGridBase"
+				@set-value="({ x, y, value }) => puzzleGridBase[y][x] = value">
+				<template v-slot="{ x, y, index }">
+					<PuzzleInputField v-model="puzzleGridBase[y][x]"
+						@skip-focus="(val) => skipFocusFrom(val, { x, y, index })"
+						@set-multiple="(val) => setMultipleValuesFromString(val, { x, y, index })"
+						@import-export-string="importExportString" inputmode="numeric" enterkeyhint="next"
+						:ref="(el) => setRef(el, { x, y, index })" :index="index" :disabled="toggleInputMode" :class="{
+							'bg-blue-100': puzzleGridBase[y][x] === '0',
+							'bg-red-100': puzzleGridBase[y][x] === '1',
+						}" />
+					<button class="absolute top-0 left-0 z-20 w-full h-full touch-manipulation"
+						@click="toggleValue(x, y, index)" v-if="toggleInputMode"></button>
+				</template>
+			</PuzzleInputTable>
 
-				<div class="my-2">
-					<InputValidityDisplay
-						v-if="puzzleGridBase != null"
-						v-bind="inputSolutionsDataRaw"
-						:max-solutions="maxSolutions"
-					/>
-				</div>
+			<div class="my-2">
+				<InputValidityDisplay v-if="puzzleGridBase != null" v-bind="inputSolutionsDataRaw"
+					:max-solutions="maxSolutions" />
+			</div>
 
-				<div class="my-2 px-0.5">
-				<BaseButton
-					@click="showPuzzleStrings = !showPuzzleStrings"
-					class="w-full -mb-0.5 transition-colors duration-500"
-					:class="{
+			<div class="my-2 px-0.5">
+				<BaseButton @click="showPuzzleStrings = !showPuzzleStrings"
+					class="w-full -mb-0.5 transition-colors duration-500" :class="{
 						'!rounded-b-none': showPuzzleStrings,
 						'!bg-gray-100': !showPuzzleStrings
-					}"
-				>
+					}">
 					<div class="w-full flex justify-between">
 						<span>Puzzle strings</span>
 						<icon-ic-outline-keyboard-arrow-down class="ml-auto transition-transform duration-500" :class="{
@@ -70,31 +47,39 @@
 				</BaseButton>
 				<ExpandTransition @after-enter="scrollToPuzzleStrings" :duration="200" :show="showPuzzleStrings">
 					<div ref="puzzleStringsEl">
-				<div class="pt-2 w-full flex flex-col px-3 gap-y-2 box-border border border-gray-200 border-t-transparent pb-3 rounded-b">
-					<div>Short</div>
-					<div class="max-w-full text-sm pr-1 pl-2 py-2 bg-gray-100 rounded mb-2">
-						<BaseButton class="float-right ml-2 mb-0.5 px-2 py-2 my-auto rounded border inline-block w-24" @click="copyShortStr">{{copyShortSuccess ? 'Copied!' : 'Copy'}}</BaseButton>
-						<p class="break-all font-mono">{{puzzleGridStrShort}}</p>
+						<div
+							class="pt-2 w-full flex flex-col px-3 gap-y-2 box-border border border-gray-200 border-t-transparent pb-3 rounded-b">
+							<div>Short</div>
+							<div class="max-w-full text-sm pr-1 pl-2 py-2 bg-gray-100 rounded mb-2">
+								<BaseButton
+									class="float-right ml-2 mb-0.5 px-2 py-2 my-auto rounded border inline-block w-24"
+									@click="copyShortStr">{{ copyShortSuccess ? 'Copied!' : 'Copy' }}</BaseButton>
+								<p class="break-all font-mono">{{ puzzleGridStrShort }}</p>
+							</div>
+							<div>Long</div>
+							<div class="max-w-full text-sm pr-1 pl-2 py-2 bg-gray-100 rounded">
+								<BaseButton
+									class="float-right ml-2 mb-0.5 px-2 py-2 my-auto rounded border inline-block w-24"
+									@click="copyLongStr">{{ copyLongSuccess ? 'Copied!' : 'Copy' }}</BaseButton>
+								<p class="break-words font-mono">{{ puzzleGridStrLongFormatted }}</p>
+							</div>
+							<div>Export string</div>
+							<div class="max-w-full text-sm pr-1 pl-2 py-2 bg-gray-100 rounded">
+								<BaseButton
+									class="float-right ml-2 mb-0.5 px-2 py-2 my-auto rounded border inline-block w-24"
+									@click="copyExportStr">{{ copyExportStrSuccess ? 'Copied!' : 'Copy' }}</BaseButton>
+								<p class="break-words font-mono">{{ puzzleGridExportStr }}</p>
+							</div>
+						</div>
 					</div>
-					<div>Long</div>
-					<div class="max-w-full text-sm pr-1 pl-2 py-2 bg-gray-100 rounded">
-						<BaseButton class="float-right ml-2 mb-0.5 px-2 py-2 my-auto rounded border inline-block w-24" @click="copyLongStr">{{copyLongSuccess ? 'Copied!' : 'Copy'}}</BaseButton>
-						<p class="break-words font-mono">{{puzzleGridStrLongFormatted}}</p>
-					</div>
-					<div>Export string</div>
-					<div class="max-w-full text-sm pr-1 pl-2 py-2 bg-gray-100 rounded">
-						<BaseButton class="float-right ml-2 mb-0.5 px-2 py-2 my-auto rounded border inline-block w-24" @click="copyExportStr">{{copyExportStrSuccess ? 'Copied!' : 'Copy'}}</BaseButton>
-						<p class="break-words font-mono">{{puzzleGridExportStr}}</p>
-					</div>
-				</div>
-				</div>
 				</ExpandTransition>
-				</div>
 			</div>
-			<div class="bg-white rounded px-6 text-center text-lg py-4 grid place-items-center h-40 shadow full-bleed" v-else>
-				<div>Select grid dimensions to start</div>
-			</div>
-		</main>
+		</div>
+		<div class="bg-white rounded px-6 text-center text-lg py-4 grid place-items-center h-40 shadow full-bleed"
+			v-else>
+			<div>Select grid dimensions to start</div>
+		</div>
+	</main>
 </template>
 
 <script setup>
@@ -106,7 +91,7 @@ import { useSharedPuzzleToggle } from '@/composables/use-puzzle-toggle';
 
 import { refAutoReset, toReactive, useLocalStorage } from '@vueuse/core';
 import { puzzleGridToString, shortenPuzzleString } from '@/components/puzzle-input/convert';
-import { chunk } from '@/utils/array.utils';
+import { chunk } from '@/utils/array.ts.utils';
 
 import { usePuzzleInputSolvable } from '@/components/puzzle-input/usePuzzleInputSolvable';
 
@@ -118,7 +103,7 @@ const config = useLocalStorage('takuzu_puzzle-input-config', {
 	forceSquareGrid: false
 }, {
 	deep: true,
-	writeDefaults: true,	
+	writeDefaults: true,
 });
 
 const width = computed(() => puzzleGridBase.value?.[0]?.length ?? 0);
@@ -138,7 +123,7 @@ const puzzleGridBase = useLocalStorage('takuzu_puzzle-input-grid', [], {
 			if (!v) return null;
 			try {
 				const parsed = JSON.parse(v);
-				
+
 				if (!Array.isArray(parsed) || !Array.isArray(parsed?.[0])) {
 					return null;
 				}
@@ -147,7 +132,7 @@ const puzzleGridBase = useLocalStorage('takuzu_puzzle-input-grid', [], {
 					return null;
 				}
 				return parsed;
-			} catch(e) {
+			} catch (e) {
 				console.warn(e);
 				console.warn('Could not read input grid from storage');
 				return null;
@@ -211,11 +196,11 @@ const copyValueToClipboard = async (value = '') => {
 	try {
 		await navigator.clipboard.writeText(value);
 		return true;
-	} catch(e) {
+	} catch (e) {
 		console.warn(e);
 		return false;
 	}
-	
+
 }
 const copyShortSuccess = refAutoReset(false, 4000);
 const copyLongSuccess = refAutoReset(false, 4000);
@@ -253,7 +238,7 @@ const toggleInputMode = ref(false);
 const createEmptyPuzzleGrid = (width, height) => {
 	const w = width ?? config.value.width;
 	const h = height ?? config.value.height;
-	return Array(h).fill(null).map(() => Array(w).fill(''));	
+	return Array(h).fill(null).map(() => Array(w).fill(''));
 }
 const resetGridValues = (width, height) => {
 	const w = width ?? config.value.width;
@@ -272,12 +257,12 @@ const toggleValue = (x, y) => {
 	puzzleGridBase.value[y][x] = value;
 }
 
-const updatePuzzleGridBase = (w = width.value, h = height.value) => {	
+const updatePuzzleGridBase = (w = width.value, h = height.value) => {
 	const base = puzzleGridBase.value ?? [];
 
 	let arrCopy = base.map(r => [...r]);
 	const diffHeight = h - base.length;
-	
+
 	if (diffHeight < 0) {
 		arrCopy.splice(diffHeight, -diffHeight);
 	} else if (diffHeight > 0) {
@@ -309,17 +294,17 @@ const setRef = (el, { index }) => {
 	els.value[index] = el2;
 }
 
-const skipFocusFrom = (amount, {x, y, index}) => {
+const skipFocusFrom = (amount, { x, y, index }) => {
 	const focusTo = index + amount;
 	const emptyAmount = amount - 1;
 	for (let gy = y, i = 0; gy < height.value; gy++) {
 		for (let gx = x; gx < width.value; gx++, i++) {
-			
+
 			if (i <= emptyAmount) {
 				puzzleGridBase.value[gy][gx] = '';
 				console.log('setting empty');
 
-				
+
 			}
 			if (i === emptyAmount) {
 				const el = els.value[focusTo];
@@ -358,7 +343,7 @@ const setFocusToCell = (idx, currentIdx) => {
 }
 
 const setMultipleValuesFromString = (values = '', { index }) => {
-	console.log({values})
+	console.log({ values })
 	const parsedValues = values.flatMap(v => {
 		if (v === ONE || v === ZERO) {
 			return v;
@@ -378,7 +363,7 @@ const setMultipleValuesFromString = (values = '', { index }) => {
 	setFocusToCell(index + parsedValues.length, index);
 }
 
-const {maxSolutions, ...inputSolutionsData} = usePuzzleInputSolvable(puzzleGridBase, isValidPuzzleGrid, gridDimensions);
+const { maxSolutions, ...inputSolutionsData } = usePuzzleInputSolvable(puzzleGridBase, isValidPuzzleGrid, gridDimensions);
 
 const inputSolutionsDataRaw = toReactive(inputSolutionsData);
 
@@ -389,7 +374,7 @@ const importExportString = (str) => {
 		config.value.height = height;
 		resetGridValues(width, height);
 		setMultipleValuesFromString(boardStr.split(''), { index: 0 });
-	} catch(e) {
+	} catch (e) {
 		console.warn(e);
 	}
 }
@@ -403,9 +388,11 @@ const importExportString = (str) => {
 .double-border-right {
 	@apply border-r-2 -mr-0.5 border-r-gray-400 z-10 relative;
 }
+
 .double-border-bottom {
 	@apply border-b-2 -mb-0.5 border-b-gray-400 z-10 relative;
 }
+
 .double-border-right.double-border-bottom {
 	@apply z-20;
 }

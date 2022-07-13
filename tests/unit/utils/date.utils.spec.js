@@ -50,7 +50,7 @@ describe('date utilities', () => {
 		expect(dateUtils.formatYYYYMMDD(timestampB)).toBe(expectedB);
 	})
 
-	describe('getDateRange()', () => {
+	describe.skip('getDateRange()', () => {
 		test('returns range from specific date to today', () => {
 			const today = new Date();
 			const twoDaysAgo = dateUtils.getDaysAgo(today, 2);
