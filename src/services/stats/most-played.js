@@ -1,5 +1,5 @@
 import { groupBy } from "@/utils/array.utils";
-import * as dataAnalysis from '@/utils/data-analysis.utils';
+import { minMaxSum, average, median } from '@/utils/data-analysis.utils';
 
 function groupItemsByPuzzleConfig(items = []) {
 	const groupedObj = groupBy(items, 'puzzleConfigKey');
@@ -23,9 +23,9 @@ function summarizeGroup(times = []) {
 	const summary = {
 		count: times.length,
 	};
-	Object.assign(summary, dataAnalysis.minMaxSum(times));
-	summary.average = dataAnalysis.average(times, summary);
-	summary.median = dataAnalysis.median(times, { sorted: false }, summary);
+	Object.assign(summary, minMaxSum(times));
+	summary.average = average(times, summary);
+	summary.median = median(times, { sorted: false }, summary);
 	return summary;
 }
 
