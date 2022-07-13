@@ -3,7 +3,7 @@ import type { LineId, Target } from "../types";
 import type { ElimTechniqueOpts, HumanTechniqueBoardOnly } from "./types";
 import { getRecurringValuesFromPermutations } from "./utils";
 
-type ElimTechniqueResult = {
+export type ElimTechniqueResult = {
 	technique: 'elimination',
 	elimType: `${number}-${number}`,
 	source: LineId[],

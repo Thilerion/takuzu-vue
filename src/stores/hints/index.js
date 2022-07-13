@@ -8,7 +8,7 @@ export function createHint(type, data) {
 	return hintGenerators[type](data);
 }
 
-export function validateHint(hint, /* state */) {
+export function validateHint(hint) {
 	if (!Object.keys(HINT_TYPE).includes(hint.type)) {
 		throw new Error('No hint validator found for hint of this type:', type);
 	}

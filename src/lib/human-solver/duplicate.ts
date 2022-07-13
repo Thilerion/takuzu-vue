@@ -6,7 +6,7 @@ import { areLinesEqual } from "../utils";
 import type { FilledLineRecord, ElimTechniqueOpts, HumanTechniqueBoardOnly } from "./types";
 import { createFilterLinesByRemainingValues, getRecurringValuesFromPermutations } from "./utils";
 
-type DuplicateLineTechniqueResult = {
+export type DuplicateLineTechniqueResult = {
 	targets: Target[],
 	technique: 'elim-duplicate',
 	elimType: `${number}-${number}`,

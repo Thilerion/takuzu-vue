@@ -1,83 +1,52 @@
 <template>
-	<div class="play-puzzle fixed box-border overflow-auto inset-0 flex flex-col z-20 text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-white" :class="{'puzzle-paused': paused, 'puzzle-finished': finished }">
-		<GameBoardHeader
-			@close="exitGame"
-			@dropdown-toggled="dropdownToggled"	
-			@pause="pause"
-			@resume="resume"
-		/>
-		<GameBoardWrapper
-			:ruler-height="rulerSize"
-			:ruler-width="rulerSize"
-			:info-height="'21px'"
-			v-slot="{width, height, cellSize}"
-		>
-			<GameBoard
-				v-if="started && board"
-				:paused="paused"
-				:rows="rows"
-				:columns="columns"
-				:board="board"
-				:grid-height="height"
-				:grid-width="width"
-				:cell-size="cellSize"			
-			>
+	<div class="play-puzzle fixed box-border overflow-auto inset-0 flex flex-col z-20 text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-white"
+		:class="{ 'puzzle-paused': paused, 'puzzle-finished': finished }">
+		<GameBoardHeader @close="exitGame" @dropdown-toggled="dropdownToggled" @pause="pause" @resume="resume" />
+		<GameBoardWrapper :ruler-height="rulerSize" :ruler-width="rulerSize" :info-height="'21px'"
+			v-slot="{ width, height, cellSize }">
+			<GameBoard v-if="started && board" :paused="paused" :rows="rows" :columns="columns" :board="board"
+				:grid-height="height" :grid-width="width" :cell-size="cellSize">
 				<template v-slot:puzzle-info>
-					<PuzzleInfo
-						:show-timer="showTimer"
-						:difficulty="difficulty"
-						:progress="progress"
-						:has-border="showRulers"
-					/>
+					<PuzzleInfo :show-timer="showTimer" :difficulty="difficulty" :progress="progress"
+						:has-border="showRulers" />
 				</template>
 				<template v-slot:ruler-rows>
-					<RulerCoords @select-line="selectLine" v-if="rulerType === 'coords'" line-type="rows" :line-ids="board.rowIds" />
-					<RulerCounts @select-line="selectLine" v-else-if="showRulers && false" line-type="rows" :ruler-type="rulerType" :counts="rowCounts" />
-					<CountsRuler
-						@select-line="selectLine"
-						v-else-if="showRulers"
-						:count-type="rulerType === 'count-remaining' ? 'remaining' : 'current'"
-						line-type="rows"
-						:counts="rowCounts"
-						:cell-size="cellSize" />
+					<RulerCoords @select-line="selectLine" v-if="rulerType === 'coords'" line-type="rows"
+						:line-ids="board.rowIds" />
+					<RulerCounts @select-line="selectLine" v-else-if="showRulers && false" line-type="rows"
+						:ruler-type="rulerType" :counts="rowCounts" />
+					<CountsRuler @select-line="selectLine" v-else-if="showRulers"
+						:count-type="rulerType === 'count-remaining' ? 'remaining' : 'current'" line-type="rows"
+						:counts="rowCounts" :cell-size="cellSize" />
 				</template>
 				<template v-slot:ruler-columns>
-					<RulerCoords @select-line="selectLine" v-if="rulerType === 'coords'" line-type="columns" :line-ids="board.columnIds" />
-					<CountsRuler @select-line="selectLine" v-else-if="showRulers && false" line-type="columns" :ruler-type="rulerType" :counts="columnCounts" />
-					<CountsRuler
-						@select-line="selectLine"
-						v-else-if="showRulers"
-						:count-type="rulerType === 'count-remaining' ? 'remaining' : 'current'"
-						line-type="columns"
-						:counts="columnCounts"
-						:cell-size="cellSize" />
+					<RulerCoords @select-line="selectLine" v-if="rulerType === 'coords'" line-type="columns"
+						:line-ids="board.columnIds" />
+					<CountsRuler @select-line="selectLine" v-else-if="showRulers && false" line-type="columns"
+						:ruler-type="rulerType" :counts="columnCounts" />
+					<CountsRuler @select-line="selectLine" v-else-if="showRulers"
+						:count-type="rulerType === 'count-remaining' ? 'remaining' : 'current'" line-type="columns"
+						:counts="columnCounts" :cell-size="cellSize" />
 				</template>
 			</GameBoard>
 		</GameBoardWrapper>
-		
+
 		<div class="footer2 h-32 w-full relative">
-			<PuzzleControls
-				:can-undo="canUndo"
-				:paused="paused"
-				@undo="undo"
-				@restart="restart"
-				@check="checkErrors"
-				@get-hint="getHint"
-			/>
+			<PuzzleControls :can-undo="canUndo" :paused="paused" @undo="undo" @restart="restart" @check="checkErrors"
+				@get-hint="getHint" />
 			<HintWrapper></HintWrapper>
 		</div>
 
 		<router-view v-slot="{ Component }">
 			<OverlayPageTransition :show="Component != null">
-				<div class="fixed inset-0 text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-white overflow-y-auto pb-8 z-40">
+				<div
+					class="fixed inset-0 text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-white overflow-y-auto pb-8 z-40">
 					<component :is="Component" />
 				</div>
 			</OverlayPageTransition>
 		</router-view>
 
-		<PuzzleRecap
-			:finished="finished"
-		></PuzzleRecap>
+		<PuzzleRecap :finished="finished"></PuzzleRecap>
 	</div>
 </template>
 
@@ -102,7 +71,7 @@ import debounce from 'lodash.debounce';
 import { useSettingsStore } from '@/stores/settings/store';
 import { storeToRefs, mapState } from 'pinia';
 import { usePuzzleHistoryStore } from '@/stores/puzzle-history';
-import { usePuzzleHintsStore } from '@/stores/puzzle-hinter.js';
+import { usePuzzleHintsStore } from '@/stores/puzzle-hinter';
 import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes';
 import { computed, readonly, toRef, watch } from 'vue';
 import { useSavedPuzzle } from '@/services/savegame/useSavedGame';
@@ -124,7 +93,7 @@ export default {
 		PuzzleRecap,
 		CountsRuler,
 		HintWrapper
-},
+	},
 	setup() {
 		const settingsStore = useSettingsStore();
 
@@ -161,7 +130,7 @@ export default {
 		const windowHidden = toRef(mainStore.context, 'windowHidden');
 
 
-		return { 
+		return {
 			windowHidden,
 			showLineInfo, showBoardCoordinates, showBoardLineCounts, showRulers,
 			isWakeLockEnabled: computed(() => wakeLock.isActive.value),
@@ -179,7 +148,7 @@ export default {
 			finishedTimeout: null,
 			mistakeCheckTimeout: null,
 			autoSaveInterval: null,
-			
+
 			rowKey: ROW,
 			columnKey: COLUMN,
 
@@ -231,7 +200,7 @@ export default {
 		},
 		finishedAndSolved() {
 			return this.puzzleStore.finishedAndSolved;
-					},
+		},
 		finishedWithMistakes() {
 			return this.puzzleStore.finishedWithMistakes;
 		},

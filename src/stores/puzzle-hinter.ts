@@ -1,18 +1,20 @@
 import { humanSolveBalance, humanSolveDuplicateLine, humanSolveElimination, humanSolveTriples } from "@/lib/human-solver";
-import { HINT_TYPE } from "./hints/Hint.js";
+import { Hint, HINT_TYPE } from "./hints/Hint.js";
 import { createHint, validateHint } from "./hints/index.js";
 import { defineStore } from "pinia";
 import { usePuzzleStore } from "./puzzle.js";
 import { useHintHighlightsStore } from "./highlight-store.js";
+import type { BoardString } from "@/lib/types";
+import type { SimpleBoard } from "@/lib/index";
 
 export const usePuzzleHintsStore = defineStore('puzzleHints', {
 
 	state: () => ({
 		showHint: false,
-		currentHint: null,
-		currentHintValidForBoardStr: null,
+		currentHint: null as null | Hint,
+		currentHintValidForBoardStr: null as null | BoardString,
 
-		cache: new Map()
+		cache: new Map<BoardString, (null | Hint)>()
 	}),
 
 	getters: {
@@ -36,7 +38,7 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 		show() {
 			if (this.currentHint == null) {
 				console.warn('Cannot show hint as there is no current hint set. Will hide hint and highlights instead.');
-				return this.hideHint();
+				return this.hide();
 			}
 
 			const hintHighlightsStore = useHintHighlightsStore();
@@ -50,7 +52,7 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 			const hintHighlightsStore = useHintHighlightsStore();
 			hintHighlightsStore.clear();
 		},
-		showNewHint(hint) {
+		showNewHint(hint: Hint) {
 			this.currentHint = hint;
 			this.currentHintValidForBoardStr = this._getBoardStr();
 			this.showHint = true;
@@ -77,11 +79,12 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 				this.showNewHint(cacheResult);
 				return;
 			}
-			const board = puzzleStore.board;
-			const solution = puzzleStore.solution;
+			// TODO: remove cast when puzzleStore is converted to TS
+			const board = puzzleStore.board as unknown as SimpleBoard;
+			const solution = puzzleStore.solution as unknown as SimpleBoard;
 			const currentHint = this.currentHint;
 			if (currentHint) {
-				const isValid = validateHint(currentHint, { board, solution });
+				const isValid = validateHint(currentHint);
 				if (isValid) {
 					console.log('Hint is still valid. Showing it now.');
 					this.show();
@@ -141,7 +144,11 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 
 			// ELIMINATION HINT
 			const eliminationHintResult = humanSolveElimination({ board });
-			if (eliminationHintResult && eliminationHintResult.length) {
+			if (!Array.isArray(eliminationHintResult)) {
+				const err = eliminationHintResult.error;
+				throw new Error(`Elimination Technique returned an error, but the mistakes checker found none. This should not be possible. Error: ${err}`);
+			}
+			if (eliminationHintResult.length) {
 				const sorted = [...eliminationHintResult].sort((a, b) => {
 					if (a.elimType === b.elimType) {
 						return 0;
@@ -156,8 +163,11 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 
 			// ELIMINATION/DUPE HINT
 			const dupeHintResult = humanSolveDuplicateLine({ board });
-			console.log({ dupeHintResult });
-			if (dupeHintResult && dupeHintResult.length) {
+			if (!Array.isArray(dupeHintResult)) {
+				const err = dupeHintResult.error;
+				throw new Error(`DuplicateLine Technique returned an error, but the mistakes checker found none. This should not be possible. Error: ${err}`);
+			}
+			if (dupeHintResult.length) {
 				const sorted = [...dupeHintResult].sort((a, b) => {
 					if (a.elimType === b.elimType) {
 						return 0;
@@ -177,13 +187,13 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 			this.setHints();
 		},
 
-		setHints(hints = []) {
+		setHints(hints: Hint[] = []) {
 			// TODO: pick one single hint from a list of hints
 			if (hints.length === 0) {
 				console.warn('SetHints was called, but there were no hints in the array. Seems like there are no valid hints for this board state.');
 				this.removeHint();
 				// still add to cache, because no hint being available is also worth caching
-				this.addHintToCache()
+				this.addNoHintAvailableToCache();
 			} else {
 				const hint = hints[0];
 				this.showNewHint(hint);
@@ -197,12 +207,13 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 		},
 
 		addHintToCache({
-			hint, boardStr = this._getBoardStr()
-		}) {
-			this.cache.set(boardStr, hint);
+			hint, boardStr
+		}: { hint: Hint, boardStr?: BoardString }) {
+			const _boardStr: BoardString = boardStr ?? this._getBoardStr();
+			this.cache.set(_boardStr, hint);
 		},
-		addNoHintAvailableToCache(boardStr = this._getBoardStr()) {
-			this.cache.set(boardStr, null);
+		addNoHintAvailableToCache(boardStr?: BoardString) {
+			this.cache.set(boardStr ?? this._getBoardStr(), null);
 		}
 	}
 

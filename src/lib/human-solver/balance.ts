@@ -4,7 +4,7 @@ import { checkLineBalanceStrategy } from "../strategies/LineBalance";
 import type { LineId, Target } from "../types";
 import type { HumanTechniqueBoardOnly } from "./types";
 
-type BalanceTechniqueResult = {
+export type BalanceTechniqueResult = {
 	technique: 'balance',
 	targets: Target[],
 	origin: [LineId]

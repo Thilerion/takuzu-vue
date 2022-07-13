@@ -3,7 +3,7 @@ import type { Target, Vec } from "../types";
 import type { HumanTechniqueBoardOnly } from "./types";
 
 type DoubleVec = readonly [Vec, Vec];
-type TriplesTechniqueResult = {
+export type TriplesTechniqueResult = {
 	technique: 'triples',
 	type: TriplesSubtype,
 	targets: Target[],
