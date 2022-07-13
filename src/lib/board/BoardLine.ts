@@ -1,7 +1,7 @@
 import { COLUMN, EMPTY, ONE, ROW, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "../constants";
 import { getValidLinePermutations, type LineArrSymbolPermutations } from "../permutations";
-import type { LineId, PuzzleValueCount, PuzzleValueLine, ROPuzzleValueLine, Vec } from "../types";
-import { columnIdToX, countLineValues, isLineIdRow, lineSizeToNumRequired, lineTypeFromLineId, rowIdToY } from "../utils";
+import type { LineId, PuzzleValueCount, PuzzleValueLine, PuzzleValueLineStr, ROPuzzleValueLine, Vec } from "../types";
+import { columnIdToX, countLineValues, isLineIdRow, lineSizeToNumRequired, lineTypeFromLineId, rowIdToY, splitLine } from "../utils";
 import type { SimpleBoard } from "./Board";
 
 export class BoardLine {
@@ -26,7 +26,7 @@ export class BoardLine {
 
 	static fromString(lineStr: string, lineId = 'A') {
 		const line = new BoardLine(null, lineId);
-		line._values = lineStr.split('') as PuzzleValueLine;
+		line._values = splitLine(lineStr as PuzzleValueLineStr)
 		return line;
 	}
 

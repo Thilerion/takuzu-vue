@@ -1,9 +1,16 @@
-import { checkTriplesStrategy } from "../strategies/Triples";
+import { checkTriplesStrategy, type TriplesSubtype } from "../strategies/Triples";
+import type { Target, Vec } from "../types";
+import type { HumanTechniqueBoardOnly } from "./types";
 
-export function humanSolveTriples(data) {
-	const { board } = data;
-
-	const results = [];
+type DoubleVec = readonly [Vec, Vec];
+type TriplesTechniqueResult = {
+	technique: 'triples',
+	type: TriplesSubtype,
+	targets: Target[],
+	origin: DoubleVec
+}
+export function humanSolveTriples({ board }: HumanTechniqueBoardOnly) {
+	const results: TriplesTechniqueResult[] = [];
 
 	for (const threesUnit of board.threesUnits()) {
 		
@@ -26,6 +33,7 @@ export function humanSolveTriples(data) {
 			equalResult.targets.push(target);
 		} else {
 			results.push({
+				technique: 'triples',
 				targets: [target],
 				type,
 				origin
@@ -35,14 +43,13 @@ export function humanSolveTriples(data) {
 
 	return results;
 }
-
-function isOriginEqual(a, b) {
+function isOriginEqual(a: DoubleVec, b: DoubleVec) {
 	const [a1, a2] = a;
 	const [b1, b2] = b;
 
 	return areCoordsEqual(a1, b1) && areCoordsEqual(a2, b2);
 }
 
-function areCoordsEqual(coordsA, coordsB) {
+function areCoordsEqual(coordsA: Vec, coordsB: Vec) {
 	return coordsA.x === coordsB.x && coordsA.y === coordsB.y;
 }

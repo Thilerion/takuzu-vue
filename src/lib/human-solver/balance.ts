@@ -1,11 +1,16 @@
 
 import { EMPTY } from "../constants";
 import { checkLineBalanceStrategy } from "../strategies/LineBalance";
+import type { LineId, Target } from "../types";
+import type { HumanTechniqueBoardOnly } from "./types";
 
-export function humanSolveBalance(data, /* options = {} */) {
-	const { board } = data;
-
-	const results = [];
+type BalanceTechniqueResult = {
+	technique: 'balance',
+	targets: Target[],
+	origin: [LineId]
+}
+export function humanSolveBalance({ board }: HumanTechniqueBoardOnly) {
+	const results: BalanceTechniqueResult[] = [];
 	
 	for (const boardLine of board.boardLines()) {
 		const result = checkLineBalanceStrategy(boardLine);
@@ -13,7 +18,6 @@ export function humanSolveBalance(data, /* options = {} */) {
 		if (!result.found) continue;
 
 		const { value } = result;
-
 		const targets = [];
 
 		for (let i = 0; i < boardLine.length; i++) {
@@ -22,8 +26,11 @@ export function humanSolveBalance(data, /* options = {} */) {
 			}
 		}
 
-		const origin = [boardLine.lineId];
-		results.push({ targets, origin });
+		results.push({ 
+			technique: 'balance',
+			targets,
+			origin: [boardLine.lineId],
+		});
 	}
 	return results;
 }

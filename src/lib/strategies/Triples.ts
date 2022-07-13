@@ -13,7 +13,7 @@ type TriplesStrategyOptions = {
 	detailed?: boolean
 }
 type TriplesStrategyNoResult = { found: false };
-type TriplesSubtype = 'sandwich' | 'double';
+export type TriplesSubtype = 'sandwich' | 'double';
 type TriplesStrategyBasicResult = { found: true, target: Target };
 type TriplesStrategyDetailedResult = {
 	found: true;

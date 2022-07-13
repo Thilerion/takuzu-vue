@@ -196,9 +196,22 @@ export const isPuzzleSymbolLineStr = (str: string): str is PuzzleSymbolLineStr =
 	return /^[01]+$/.test(str);
 }
 
-export const splitSymbolLineStr = (str: PuzzleSymbolLineStr): PuzzleSymbolLine => {
-	return str.split('') as PuzzleSymbolLine;
+interface SplitLineFn {
+	(str: PuzzleValueLineStr): PuzzleValueLine;
+	(str: PuzzleSymbolLineStr): PuzzleSymbolLine;
+	(str: PuzzleSymbolLineStr | PuzzleValueLineStr): PuzzleValueLine;
+	(str: string): string[];
 }
-export const splitValueLineStr = (str: PuzzleValueLineStr): PuzzleValueLine => {
-	return str.split('') as PuzzleValueLine;
+export const splitLine: SplitLineFn = (str: PuzzleSymbolLineStr | PuzzleValueLineStr) => {
+	// slight problem: if input string is neither ValueLineStr or SymbolLineStr (but a string literal), the result is ValueLine even though there may be other characters
+	if (import.meta.env.DEV) {
+		for (const char of str) {
+			if (!isPuzzleValueLineStr(char)) {
+				throw new Error(`Can only call split line with ValueLineStr or SymbolLineStr. Unexpected char: "${char}"`);
+			}
+		}
+	}
+	// Overloads take care of this, cast to any is (somewhat?) safe
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	return str.split('') as any[];
 }

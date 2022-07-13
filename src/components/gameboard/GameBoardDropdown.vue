@@ -1,11 +1,6 @@
 <template>
-	<BaseDropdown
-		align-right
-		align-below
-		ref="dropdown"
-		@toggled="dropdownToggled"
-	>
-		<template #trigger="{toggle}">
+	<BaseDropdown align-right align-below ref="dropdown" @toggled="dropdownToggled">
+		<template #trigger="{ toggle }">
 			<IconBtn @click="toggle" name="md-morevert">
 				<icon-ic-baseline-more-vert />
 			</IconBtn>
@@ -19,20 +14,20 @@
 				<icon-ic-outline-bookmark-remove class="opacity-80 text-base" />
 				<span class="ml-3 mt-px">Delete bookmark</span>
 			</BaseDropdownItem>
-			<BaseDropdownDivider/>
+			<BaseDropdownDivider />
 			<BaseDropdownItem>
 				<label class="flex items-center">
 					<input type="checkbox" v-model="showTimer">
 					<span class="ml-2">Show timer</span>
 				</label>
 			</BaseDropdownItem>
-			<BaseDropdownDivider/>
+			<BaseDropdownDivider />
 
 			<template v-if="debugModeEnabled">
 				<BaseDropdownItem @click="copyPuzzleString">
-					<icon-heroicons-outline-clipboard-copy class="opacity-80 text-base"/>
+					<icon-heroicons-outline-clipboard-copy class="opacity-80 text-base" />
 					<span class="ml-3 mt-px">Copy board string</span>
-					<span v-if="copyError" class="ml-2 text-xs text-red-700 mt-px">{{copyError}}</span>
+					<span v-if="copyError" class="ml-2 text-xs text-red-700 mt-px">{{ copyError }}</span>
 				</BaseDropdownItem>
 				<BaseDropdownItem @click="solvePuzzle">
 					<span class="ml-7 mt-px">Solve puzzle</span>
@@ -46,11 +41,10 @@
 				<BaseDropdownItem @click="solveTrios">
 					<span class="ml-7 mt-px">Solve all trios</span>
 				</BaseDropdownItem>
-				<BaseDropdownDivider/>
+				<BaseDropdownDivider />
 			</template>
 
-			<BaseDropdownItem @click="goToSettings"
-			>
+			<BaseDropdownItem @click="goToSettings">
 				<icon-ic-baseline-settings class="opacity-80" />
 				<span class="ml-3 mt-px">Settings</span>
 			</BaseDropdownItem>
@@ -60,7 +54,7 @@
 
 <script>
 import { EMPTY } from '@/lib/constants';
-import { humanSolveTriples } from '@/lib/human-solver/triples';
+import { humanSolveTriples } from '@/lib/human-solver';
 import { shuffle } from '@/lib/utils';
 import { useMainStore } from '@/stores/main';
 import { usePuzzleTimer } from '@/stores/puzzle-timer';
@@ -111,8 +105,8 @@ export default {
 				const boardStr = this.board.export();
 				await navigator.clipboard.writeText(boardStr);
 				console.log('copied to clipboard!');
-				console.log(boardStr);		
-			} catch(e) {
+				console.log(boardStr);
+			} catch (e) {
 				console.warn('could not copy to clipboard...');
 				console.warn(e);
 			}
@@ -121,7 +115,7 @@ export default {
 		async solvePuzzle() {
 			this.$refs.dropdown.closeDropdownMenu();
 
-			const emptyCells = [...this.board.cells({ skipFilled: true} )];
+			const emptyCells = [...this.board.cells({ skipFilled: true })];
 			if (emptyCells.length <= 1) return;
 
 			this.setCheatUsed();
@@ -144,7 +138,7 @@ export default {
 				if (count % 4 === 0) {
 					await awaitRaf();
 				}
-			}			
+			}
 		},
 		increasePuzzleTime() {
 			this.setCheatUsed();
@@ -153,7 +147,7 @@ export default {
 		},
 		async solveInstantly() {
 			this.$refs.dropdown.closeDropdownMenu();
-			const emptyCells = [...this.board.cells({ skipFilled: true} )];
+			const emptyCells = [...this.board.cells({ skipFilled: true })];
 			if (emptyCells.length <= 1) return;
 
 			this.setCheatUsed();
@@ -161,7 +155,7 @@ export default {
 			const moves = emptyCells.slice(0, -1).map(cell => {
 				const { x, y, value: prevValue } = cell;
 				const value = this.puzzleStore.solution.get(x, y);
-				return { x,y, value,prevValue};
+				return { x, y, value, prevValue };
 			})
 			this.puzzleStore.setMultipleValues(moves);
 		},
@@ -182,7 +176,7 @@ export default {
 					movesFound = false;
 					break;
 				}
-				
+
 				for (const move of triplesHumanResult) {
 					for (const target of move.targets) {
 						const { x, y, value } = target;
@@ -208,5 +202,4 @@ export default {
 </script>
 
 <style scoped>
-	
 </style>

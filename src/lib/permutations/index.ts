@@ -48,7 +48,7 @@ const innerGetLinePermutations = (
 	if (remainingOne < 0 || remainingZero < 0) return { error: 'No valid permutations, line is invalid and has no solution' };
 
 	// values to insert into lineArr in place of EMPTY
-	const valuesToPlace = `${ZERO.repeat(remainingZero)}${ONE.repeat(remainingOne)}`.split('') as PuzzleSymbolLine;
+	const valuesToPlace: PuzzleSymbolLine = [...Array(remainingZero).fill(ZERO), ...Array(remainingOne).fill(ONE)];
 
 	const valuePermutations = getArrayPermutations(valuesToPlace) as LineArrSymbolPermutations; // cast because input was PuzzleSymbolLine, so can only contain symbols
 	const result = valuePermutations.map(valuePerm => {

@@ -5,7 +5,7 @@ import { selectValue } from "../solver/selection";
 import Solver from "../solver/Solver";
 import type { SolverConfig } from "../solver/types";
 import type { PuzzleSymbolLineStr } from "../types";
-import { pickRandom, splitSymbolLineStr } from "../utils";
+import { pickRandom, splitLine } from "../utils";
 
 export function generateBoard(width: number, height: number, maxAttempts = 5) {
 	return new BoardGenerator(width, height, maxAttempts).start();
@@ -91,7 +91,7 @@ class BoardGenerator {
 				line = pickRandom(this.possibleLines);
 			}
 			usedLines.push(line);
-			const lineValues = splitSymbolLineStr(line);
+			const lineValues = splitLine(line);
 			board.assignLine(lineId, lineValues);
 		}
 		return board;
