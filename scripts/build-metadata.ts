@@ -13,7 +13,11 @@ export interface BuildVersionDetails {
 }
 
 const getGitRevision = (): GitRevisionString => execSync('git rev-parse --short HEAD').toString().trim();
-const getAppBuildMode = (mode: string): AppBuildMode | null => {
+const getAppBuildMode = (mode: string): AppBuildMode | null | 'test' => {
+	if (mode === 'test') {
+		console.warn('Test mode in build!');
+		return 'test';
+	}
 	if (mode === 'alpha' || mode === 'beta') {
 		return mode;
 	}
@@ -21,7 +25,13 @@ const getAppBuildMode = (mode: string): AppBuildMode | null => {
 } 
 const getPkgVersion = () => process.env.npm_package_version as PkgVersion;
 const parsePkgVersion = (versionStr: PkgVersion): SemverData => {
-	const [major, minor, patch] = versionStr.split('.').map(val => {
+	const split = (versionStr || '').split('.');
+	if (!versionStr || split.length < 2) {
+		// included because, when running vitest from vscode, versionStr is undefined and would cause an error
+		console.warn('Cannot parse package version, as versionStr is not defined, or not of correct length.');
+		return { major: 0, minor: 0, patch: 0 };
+	}
+	const [major, minor, patch] = split.map(val => {
 		const int = Number.parseInt(val);
 		if (int == null || Number.isNaN(int)) {
 			return 0;
@@ -30,7 +40,7 @@ const parsePkgVersion = (versionStr: PkgVersion): SemverData => {
 	});
 	return { major, minor, patch };
 }
-const getMetadataString = (appBuildMode: AppBuildMode | null, dateStr: BuildDateString, revision: GitRevisionString): MetadataString => {
+const getMetadataString = (appBuildMode: AppBuildMode | null | 'test', dateStr: BuildDateString, revision: GitRevisionString): MetadataString => {
 	if (appBuildMode != null) {
 		return `${appBuildMode}.${dateStr}_${revision}`;
 	} else {
@@ -49,7 +59,7 @@ export const getBuildVersionDetails = (mode: string): BuildVersionDetails => {
 	const metadata = getMetadataString(buildMode, date, revision);
 	const detailedVersion = getDetailedVersionString(pkgVersion, metadata);
 	return {
-		mode: buildMode,
+		mode: buildMode as AppBuildMode | null,
 		revision,
 		date,
 		pkgVersion,

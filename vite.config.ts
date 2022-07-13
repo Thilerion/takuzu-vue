@@ -1,7 +1,7 @@
 import { fileURLToPath, URL } from 'url';
 
 import { defineConfig, loadEnv } from 'vite';
-import { getBuildVersionDetails } from './scripts/build-metadata.js';
+import { getBuildVersionDetails } from './scripts/build-metadata';
 
 import vue from '@vitejs/plugin-vue';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -25,7 +25,14 @@ export default defineConfig(({ command, mode }) => {
 		]
 	}) : undefined;
 
-	const buildVersionDetails = getBuildVersionDetails(mode);
+	let buildVersionDetails = {};
+	try {
+		buildVersionDetails = getBuildVersionDetails(mode);
+	} catch(e) {
+		console.warn('Error in getting build version details.');
+		console.error(e);
+		console.error({ command, mode, processEnv: process.env });
+	}
 
 	return {
 		plugins: [
