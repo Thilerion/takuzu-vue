@@ -1,28 +1,37 @@
+import type { BoardLine } from "../board/BoardLine";
 import { COLUMN, ROW } from "../constants";
+import type { LineArrSymbolPermutations } from "../permutations";
+import type { LineId, Target } from "../types";
 import { areLinesEqual } from "../utils";
+import type { FilledLineRecord, ElimTechniqueOpts, HumanTechniqueBoardOnly } from "./types";
 import { createFilterLinesByRemainingValues, getRecurringValuesFromPermutations } from "./utils";
 
-export function humanSolveDuplicateLine({ board }, options = {}) {
-	const results = [];
+type DuplicateLineTechniqueResult = {
+	targets: Target[],
+	technique: 'elim-duplicate',
+	elimType: `${number}-${number}`,
+	source: LineId[],
+	targetLine: LineId
+};
 
-	const {
-		least: leastRemainingRange = [1, 2],
-		most: mostRemainingRange = [1, 10]
-	} = options;
+export function humanSolveDuplicateLine({ board }: HumanTechniqueBoardOnly, {
+	least: leastRemainingRange = [1, 2],
+	most: mostRemainingRange = [1, 10]
+}: ElimTechniqueOpts = {}): DuplicateLineTechniqueResult[] | { error: string } {
+	const results: DuplicateLineTechniqueResult[] = [];
 
-	const lines = [...board.boardLines()];
+	const lines: BoardLine[] = [...board.boardLines()];
 	const filterByRemValues = createFilterLinesByRemainingValues(leastRemainingRange, mostRemainingRange);
 
-	const filteredLines = lines.filter(filterByRemValues).sort((lineA, lineB) => {
-		const leastDiff = lineA._least - lineB._least;
+	const filteredLines = lines.filter(filterByRemValues).sort((lineA, lineB): number => {
+		const leastDiff = lineA.leastRem - lineB.leastRem;
 		if (leastDiff !== 0) return leastDiff;
-		return lineA._most - lineB._most;
+		return lineA.mostRem - lineB.mostRem;
 	});
-	console.log({ filteredLines });
 
 	const filledLines = findFilledLines(lines);
 	if (!filledLines || (!filledLines[ROW].length && !filledLines[COLUMN].length)) {
-		return results;
+		return [];
 	}
 		
 
@@ -43,8 +52,8 @@ export function humanSolveDuplicateLine({ board }, options = {}) {
 		const {
 			result: permsDupesFiltered,
 			sources
-		} = filterOutDuplicateLines(validPerms, filled);
-		console.log({ permsDupesFiltered, sources });
+		} = filterOutDuplicateLines(validPerms, filled)
+		console.warn({ permsDupesFiltered, sources });
 		if (!permsDupesFiltered || !permsDupesFiltered.length) {
 			return { error: 'No valid line permutations after potential duplicate lines were removed.' };
 		} else if (!sources || !sources.length) {
@@ -60,7 +69,7 @@ export function humanSolveDuplicateLine({ board }, options = {}) {
 		results.push({
 			targets,
 			technique: 'elim-duplicate',
-			elimType: `${boardLine._least}-${boardLine._most}`,
+			elimType: `${boardLine.leastRem}-${boardLine.mostRem}`,
 			source: [...sources],
 			targetLine: boardLine.lineId
 		});
@@ -68,8 +77,8 @@ export function humanSolveDuplicateLine({ board }, options = {}) {
 	return results;
 }
 
-function findFilledLines(lines) {
-	return lines.reduce((acc, line) => {
+function findFilledLines(lines: BoardLine[]): FilledLineRecord {
+	return lines.reduce<FilledLineRecord>((acc, line) => {
 		if (line.isFilled) {
 			const { type } = line;
 			acc[type].push(line);
@@ -81,8 +90,10 @@ function findFilledLines(lines) {
 	})
 }
 
-function filterOutDuplicateLines(linePerms, filledLines = []) {
-	if (!filledLines.length) return [...linePerms];
+function filterOutDuplicateLines(linePerms: LineArrSymbolPermutations, filledLines: BoardLine[]) {
+	if (!filledLines?.length) {
+		return { result: [...linePerms], sources: [] }
+	}
 	
 	const result = [];
 	const sources = [];

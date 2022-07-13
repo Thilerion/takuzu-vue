@@ -1,7 +1,7 @@
-import { humanSolveBalance } from "@/lib/human-solver/balance.js";
-import { humanSolveDuplicateLine } from "@/lib/human-solver/duplicate.js";
-import { humanSolveElimination } from "@/lib/human-solver/elimination.js";
-import { humanSolveTriples } from "@/lib/human-solver/triples.js";
+import { humanSolveBalance } from "@/lib/human-solver/balance";
+import { humanSolveDuplicateLine } from "@/lib/human-solver/duplicate";
+import { humanSolveElimination } from "@/lib/human-solver/elimination";
+import { humanSolveTriples } from "@/lib/human-solver/triples";
 import { HINT_TYPE } from "./hints/Hint.js";
 import { createHint, validateHint } from "./hints/index.js";
 import { defineStore } from "pinia";

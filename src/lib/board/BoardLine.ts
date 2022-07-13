@@ -1,6 +1,6 @@
 import { COLUMN, EMPTY, ONE, ROW, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "../constants";
-import { getValidLinePermutations } from "../permutations";
-import type { LineId, PuzzleValueCount, PuzzleValueLine, ROPuzzleSymbolLine, ROPuzzleValueLine, Vec } from "../types";
+import { getValidLinePermutations, type LineArrSymbolPermutations } from "../permutations";
+import type { LineId, PuzzleValueCount, PuzzleValueLine, ROPuzzleValueLine, Vec } from "../types";
 import { columnIdToX, countLineValues, isLineIdRow, lineSizeToNumRequired, lineTypeFromLineId, rowIdToY } from "../utils";
 import type { SimpleBoard } from "./Board";
 
@@ -8,11 +8,14 @@ export class BoardLine {
 	type: LineType;
 	index: number;
 
-	_values: null | PuzzleValueLine = null;
-	_coords: null | Vec[] = null;
-	_counts: null | PuzzleValueCount = null;
-	_numRequired: null | Record<PuzzleSymbol, number> = null;
-	_validPermutations: null | Readonly<ROPuzzleSymbolLine[]> = null;
+	private _values: null | PuzzleValueLine = null;
+	private _coords: null | Vec[] = null;
+	private _counts: null | PuzzleValueCount = null;
+	private _numRequired: null | Record<PuzzleSymbol, number> = null;
+	private _validPermutations: null | LineArrSymbolPermutations = null;
+	private _least: null | number = null;
+	private _most: null | number = null;
+
 	constructor(
 		private _board: SimpleBoard | null,
 		public lineId: LineId
@@ -37,6 +40,8 @@ export class BoardLine {
 		this._counts = null;
 		this._numRequired = null;
 		this._validPermutations = null;
+		this._least = null;
+		this._most = null;
 		return this;
 	}
 
@@ -86,7 +91,7 @@ export class BoardLine {
 		}
 		return this._numRequired;
 	}
-	get validPermutations(): Readonly<ROPuzzleSymbolLine[]> {
+	get validPermutations(): LineArrSymbolPermutations {
 		if (this._validPermutations == null) {
 			const { values, counts, numRequired } = this;
 			const maxZero = numRequired[ZERO];
@@ -121,12 +126,22 @@ export class BoardLine {
 	getLeastRemaining() {
 		const oneRemaining = this.getValueRemaining(ONE);
 		const zeroRemaining = this.getValueRemaining(ZERO);
-		return Math.min(zeroRemaining, oneRemaining);
+		const result = Math.min(zeroRemaining, oneRemaining);
+		this._least = result;
+		return result;
 	}
 	getMostRemaining() {
 		const oneRemaining = this.getValueRemaining(ONE);
 		const zeroRemaining = this.getValueRemaining(ZERO);
-		return Math.max(zeroRemaining, oneRemaining);
+		const result = Math.max(zeroRemaining, oneRemaining);
+		this._most = result;
+		return result;
+	}
+	get leastRem() {
+		return this._least ?? this.getLeastRemaining();
+	}
+	get mostRem() {
+		return this._most ?? this.getMostRemaining();
 	}
 
 	// STRINGIFY METHODS

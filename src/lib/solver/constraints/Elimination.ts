@@ -1,10 +1,10 @@
 import type { SimpleBoard } from "@/lib/board/Board";
 import type { BoardLine } from "@/lib/board/BoardLine";
+import type { FilledLineRecord } from "@/lib/human-solver/types";
 import type { ROPuzzleSymbolLine, Target } from "@/lib/types";
-import { COLUMN, EMPTY, ROW, type LineType } from "../../constants";
+import { COLUMN, EMPTY, ROW } from "../../constants";
 import { areLinesEqual } from "../../utils";
 
-type FilledLineRecord = Record<LineType, BoardLine[]>;
 type LinePerms = Readonly<ROPuzzleSymbolLine[]>
 
 export interface ElimConstraintOpts {

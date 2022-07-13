@@ -1,6 +1,6 @@
-import { humanSolveBalance } from "./balance.js";
-import { humanSolveElimination } from "./elimination.js";
-import { humanSolveTriples } from "./triples.js";
+import { humanSolveBalance } from "./balance";
+import { humanSolveElimination } from "./elimination";
+import { humanSolveTriples } from "./triples";
 
 const techniqueList = [
 	humanSolveTriples,
