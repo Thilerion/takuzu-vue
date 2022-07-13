@@ -1,4 +1,4 @@
-import { readJsonFile, writeObjToBlob } from "@/utils/file.utils.js";
+import { readJsonFile, writeObjToBlob } from "@/utils/file.utils";
 import Dexie from "dexie";
 import { exportDB, importInto, peakImportFile } from "dexie-export-import";
 import { initVersions } from "./versions.js";
