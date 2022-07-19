@@ -1,6 +1,92 @@
-import { expect, test, describe } from 'vitest';
+import { expect, test, describe, it } from 'vitest';
 
 import { sum, mean, percentile, minMax, median, iqr, stdDev, zScores } from '@/utils/array.utils.js';
+import { cartesian } from '@/utils/array.ts.utils';
+
+describe('cartesian()', () => {
+	const sortCartesianResultInner = (a, b) => {
+		return [...a].join('') - [...b].join('');
+	}
+	const sortedResult = (arr) => [...arr].sort(sortCartesianResultInner);
+
+	it('should return the cartesian product of non-empty arrays', () => {
+		const factorsA = [
+			[1, 2],
+			[3, 4],
+		];
+		const origFactorsA = factorsA.map(row => [...row]);
+		const resultA = cartesian(factorsA);
+		expect(resultA).toEqual([
+			[1, 3],
+			[2, 3],
+			[1, 4],
+			[2, 4],
+		]);
+		expect(factorsA).toEqual(origFactorsA);
+
+		const factorsB = [
+			[1, 2],
+			[3],
+			[4, 5, 6]
+		];
+		const resultB = cartesian(factorsB);
+		expect(resultB).toEqual([
+			[1, 3, 4],
+			[2, 3, 4],
+			[1, 3, 5],
+			[2, 3, 5],
+			[1, 3, 6],
+			[2, 3, 6]
+		]);
+	})
+
+	it('should work with empty arrays', () => {
+		const factors = [
+			[1, 2, 3],
+			[],
+			[],
+			[4]
+		];
+		const result = cartesian(factors);
+		const expected = sortedResult([
+			[1, 4],
+			[2, 4],
+			[3, 4]
+		]);
+		expect(result).toEqual(expected);
+	})
+
+	it('should work with a value instead of an array', () => {
+		const factors = [
+			[1, 2, 3],
+			[4]
+		];
+		const factorsB = [
+			[1, 2, 3],
+			4
+		];
+		const resultA = cartesian(factors);
+		const resultB = cartesian(factorsB);
+
+		expect(resultA).toEqual(resultB);
+		expect(resultA).toMatchInlineSnapshot(`
+			[
+			  [
+			    1,
+			    4,
+			  ],
+			  [
+			    2,
+			    4,
+			  ],
+			  [
+			    3,
+			    4,
+			  ],
+			]
+		`);
+	})
+})
 
 describe('array statistics', () => {
 	test('sum array', () => {
@@ -40,7 +126,7 @@ describe('array statistics', () => {
 		const arr = [2, 4, 4, 6, 6, 8, 10, 10, 10, 20];
 		expect(iqr(arr)).toBe(6);
 	})
-	
+
 	test('min max', () => {
 		const arrA = [-10, -9.99, -20, 1];
 		expect(minMax(arrA)).toEqual([-20, 1]);

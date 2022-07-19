@@ -17,7 +17,7 @@ export const sortAsc = <T extends number>(arr: T[]) => [...arr].sort((a, z) => a
 export const sortDesc = <T extends number>(arr: T[]) => [...arr].sort((a, z) => z - a);
 
 
-export const groupBy = <K extends PropertyKey, TItem extends Record<K, PropertyKey >> (
+export const groupBy = <K extends PropertyKey, TItem extends Record<K, PropertyKey>>(
 	items: TItem[],
 	key: K
 ): Record<PropertyKey, TItem[]> => {
@@ -29,4 +29,30 @@ export const groupBy = <K extends PropertyKey, TItem extends Record<K, PropertyK
 		acc[groupedKey].push(item);
 		return acc;
 	}, {} as Record<PropertyKey, TItem[]>);
+}
+
+function* cartesianGenerator<T>(...sets: T[][]): Generator<T[]> {
+	const [head, ...tail] = sets;
+	const remainder: Iterable<T[]> = tail.length ? cartesianGenerator(...tail) : [[]];
+
+	for (const r of remainder) {
+		for (const h of head) yield [h, ...r];
+	}
+}
+const validateCartesianInput = <T>(sets: (T[] | T)[]): T[][] => {
+	return sets.flatMap((set) =>
+		Array.isArray(set)
+			? set.length
+				? [set] // use as normal
+				: [] // empty array should be excluded
+			: set == null
+				? [] // null or undefined should be excluded
+				: [[set]] // use normal values as arrays of length 1
+	);
+}
+export const cartesian = <T>(sets: (T[] | T)[]): T[][] => {
+	return [...cartesianGenerator(...validateCartesianInput(sets))];
+}
+export function* generateCartesian<T>(sets: T[][]): Generator<T[]> {
+	yield* cartesianGenerator(...validateCartesianInput(sets));
 }
