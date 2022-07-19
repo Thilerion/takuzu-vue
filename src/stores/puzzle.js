@@ -1,7 +1,7 @@
 import { useSharedPuzzleToggle } from "@/composables/use-puzzle-toggle";
 import { SimpleBoard } from "@/lib";
 import { EMPTY, ONE, ZERO } from "@/lib/constants";
-import { getRandomTransformation } from "@/lib/helpers/grid-transformations";
+import { getRandomTransformation } from "@/lib/helpers/transformations/grid-transformations";
 import { countLineValues, pickRandom } from "@/lib/utils";
 import { requestPuzzle } from "@/services/create-puzzle";
 import { puzzleHistoryTable } from "@/services/stats/db";
@@ -60,7 +60,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 	getters: {
 		boardStr: state => state.board?.toString(),
 		boardFilled: state => state.gridCounts[EMPTY] === 0,
-		
+
 		hasStarted: state => state.started && state.initialized && state.board != null,
 		finishedAndSolved() {
 			if (!this.hasStarted || !this.boardFilled) return false;
@@ -244,7 +244,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 		},
 		toggle({ x, y, value, prevValue }) {
 			const previous = prevValue ?? this.board.grid[y][x];
-			
+
 			if (value == null) {
 				const { toggle } = useSharedPuzzleToggle();
 				value = toggle(previous);
@@ -381,7 +381,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			};
 
 			// console.log({ ...finishedPuzzleState });
-			
+
 			const recapStatsStore = useRecapStatsStore();
 
 			try {
@@ -439,7 +439,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			const { moveList } = saveData;
 			const { width, height, difficulty } = saveData;
 			this.setPuzzleConfig({ width, height, difficulty });
-			
+
 			// set time elapsed
 			const { timeElapsed } = saveData;
 			const timer = usePuzzleTimer();
@@ -452,7 +452,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			const initialBoard2 = SimpleBoard.fromString(initialBoard);
 			const board2 = SimpleBoard.fromString(board);
 			const solution2 = SimpleBoard.fromString(solution);
-			this.setAllBoards({ 
+			this.setAllBoards({
 				initialBoard: initialBoard2,
 				board: board2,
 				solution: solution2
@@ -460,8 +460,8 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 
 			const puzzleHistory = usePuzzleHistoryStore();
 			puzzleHistory.importMoveHistory(moveList);
-			
-			
+
+
 			this.setInitialized(true);
 
 		},

@@ -1,3 +1,4 @@
+import type { SimpleBoard } from "./board/Board";
 import type { LineType, PuzzleSymbol, PuzzleValue } from "./constants";
 
 export type Brand<T, Brand extends string> = T & { _brand: Brand };
@@ -43,6 +44,11 @@ export interface BoardShape {
 	width: number,
 	height: number
 }
-export interface BasicPuzzleConfig extends BoardShape { 
+export interface BasicPuzzleConfig extends BoardShape {
 	difficulty: DifficultyKey
+}
+
+export interface PuzzleBoards {
+	board: SimpleBoard,
+	solution: SimpleBoard
 }
