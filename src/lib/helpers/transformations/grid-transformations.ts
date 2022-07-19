@@ -2,7 +2,7 @@ import { identity } from "@/utils/function.utils";
 import { SimpleBoard } from "@/lib";
 import type { BoardShape } from "@/lib/types";
 import type { PuzzleTransformFn } from "./types";
-import { rotate90, rotate180, rotate270, hFlip, vFlip, invertPuzzle } from "./transformation-fns";
+import { rotate90, rotate180, rotate270, hFlip, vFlip, invertPuzzle, identifyTransform } from "./transformation-fns";
 
 export type PuzzleTransformCategories = 'rotation' | 'reflection' | 'value';
 export type RotationTransforms = 'rotate90' | 'rotate180' | 'rotate270';
@@ -24,10 +24,11 @@ const valueTransformFnMap: Record<ValueTransforms, PuzzleTransformFn> = {
 	invertSymbols: invertPuzzle,
 }
 
-const transformFnMap: Record<PuzzleTransforms, PuzzleTransformFn> = {
+const transformFnMap: Record<(PuzzleTransforms | IdentityTransform), PuzzleTransformFn> = {
 	...rotationTransformFnMap,
 	...reflectionTransformFnMap,
-	...valueTransformFnMap
+	...valueTransformFnMap,
+	'identity': identifyTransform
 };
 type TransformsByCategory = {
 	'rotation': RotationTransforms,
@@ -80,6 +81,10 @@ export const getValidTransformsForOddSquarePuzzle = (): TransformCategoryFnMap =
 export const getValidTransformsForOddRectPuzzle = (): TransformCategoryFnMap => {
 	const { reflection, rotation } = getValidTransformsForRectPuzzle();
 	return { value: [], reflection, rotation };
+}
+export const getTransformFnFromName = (name: PuzzleTransforms | IdentityTransform) => {
+	if (name === 'identity') return identifyTransform;
+	return transformFnMap[name];
 }
 
 export function getRandomTransformation({
