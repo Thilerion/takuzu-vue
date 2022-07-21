@@ -24,3 +24,26 @@ export const invertPuzzle: PuzzleTransformFn = (grid) => {
 export const identifyTransform: GenericTransformFn = (grid) => {
 	return grid.map(row => [...row]);
 }
+
+// combined
+export const rotate0 = identifyTransform;
+export const rotate0_reflect = vFlip;
+export const rotate90_reflect: GenericTransformFn = (grid) => vFlip(rotate90(grid));
+export const rotate180_reflect = hFlip;
+export const rotate270_reflect: GenericTransformFn = (grid) => vFlip(rotate270(grid));
+
+export const uniqueTransformationFns = {
+	rotate0,
+	rotate0_reflect,
+
+	rotate90,
+	rotate90_reflect,
+
+	rotate180,
+	rotate180_reflect,
+
+	rotate270,
+	rotate270_reflect
+} as const;
+
+export type UniqueTransformation = keyof typeof uniqueTransformationFns;
