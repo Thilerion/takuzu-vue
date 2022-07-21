@@ -1,7 +1,7 @@
 import { useSharedPuzzleToggle } from "@/composables/use-puzzle-toggle";
 import { SimpleBoard } from "@/lib";
 import { EMPTY, ONE, ZERO } from "@/lib/constants";
-import { getRandomTransformation } from "@/lib/helpers/transformations/grid-transformations";
+import { getRandomTransformedPuzzle } from "@/lib/helpers/transform/random-transform";
 import { countLineValues, pickRandom } from "@/lib/utils";
 import { requestPuzzle } from "@/services/create-puzzle";
 import { puzzleHistoryTable } from "@/services/stats/db";
@@ -402,13 +402,12 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			const { deleteSavedPuzzle } = useSavedPuzzle();
 			deleteSavedPuzzle();
 
-			const {
-				board,
-				solution
-			} = getRandomTransformation({
+			const transformResult = getRandomTransformedPuzzle({
 				board: this.initialBoard.copy(),
-				solution: this.solution.copy()
+				solution: this.solution.copy(),
 			})
+			const { board, solution } = transformResult;
+
 			const initialBoard = board.copy();
 			this.setAllBoards({ board, solution, initialBoard });
 

@@ -1,4 +1,4 @@
-import { hFlip, identifyTransform, invertPuzzle, rotate180, rotate270, rotate90, vFlip } from "@/lib/helpers/transformations/transformation-fns";
+import { hFlip, identifyTransform, invertPuzzle, rotate180, rotate270, rotate90, vFlip } from "@/lib/helpers/transform/transformation-fns";
 import type { ROPuzzleGrid } from "@/lib/types";
 import { beforeEach, describe, expect, it, test } from "vitest";
 

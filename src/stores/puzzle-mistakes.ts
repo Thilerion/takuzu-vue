@@ -1,16 +1,12 @@
 import type { SimpleBoard } from "@/lib";
-import type { BoardString, Flavor } from "@/lib/types";
+import type { BoardString, Flavor, PuzzleBoards } from "@/lib/types";
 import { defineStore } from "pinia";
 import { usePuzzleStore } from "./puzzle";
 
 type CheckId = Flavor<number, 'checkId'>;
 type IncorrectCheckValue = `${number},${number}`;
 type CacheValue = IncorrectCheckValue[] | null;
-interface BoardAndSolution {
-	board: SimpleBoard,
-	solution: SimpleBoard
-}
-interface CheckIncorrectCellsArgs extends BoardAndSolution {
+interface CheckIncorrectCellsArgs extends PuzzleBoards {
 	boardStr: BoardString
 }
 
@@ -93,7 +89,7 @@ export const usePuzzleMistakesStore = defineStore('puzzleMistakes', {
 	}
 })
 
-function checkForIncorrectCells(data: BoardAndSolution) {
+function checkForIncorrectCells(data: PuzzleBoards) {
 	const { hasMistakes, result } = data.board.hasIncorrectValues(data.solution);
 	if (!hasMistakes) {
 		return null;

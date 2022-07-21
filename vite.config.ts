@@ -15,7 +15,7 @@ import { createVitePwaConfig } from './pwa.config.js';
 
 export default defineConfig(({ command, mode }) => {
 	// load env variables from relevant env file to set manifest app name
-	process.env = {...process.env, ...loadEnv(mode, process.cwd())};
+	process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
 
 	// if building for production, create a 200.html fallback for nested routes
 	const copyFallback200 = command === 'build' ? copy({
@@ -28,7 +28,7 @@ export default defineConfig(({ command, mode }) => {
 	let buildVersionDetails = {};
 	try {
 		buildVersionDetails = getBuildVersionDetails(mode);
-	} catch(e) {
+	} catch (e) {
 		console.warn('Error in getting build version details.');
 		console.error(e);
 		console.error({ command, mode, processEnv: process.env });
@@ -65,7 +65,8 @@ export default defineConfig(({ command, mode }) => {
 			}
 		},
 		define: {
-			__BUILD_VERSION_DETAILS__: JSON.stringify(buildVersionDetails)
+			__BUILD_VERSION_DETAILS__: JSON.stringify(buildVersionDetails),
+			'import.meta.vitest': false
 		},
 		test: {
 			deps: {
@@ -73,7 +74,8 @@ export default defineConfig(({ command, mode }) => {
 					'date-fns/esm', // required by vitest (for now) due to ESM/CJS conflict
 				]
 			},
-			environment: 'jsdom'
+			environment: 'jsdom',
+			includeSource: ['src/**/*.ts']
 		}
 	}
 })
