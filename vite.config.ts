@@ -59,6 +59,9 @@ export default defineConfig(({ command, mode }) => {
 			}),
 			copyFallback200
 		],
+		optimizeDeps: {
+			exclude: ["dexie-export-import"]
+		},
 		resolve: {
 			alias: {
 				'@': fileURLToPath(new URL('./src', import.meta.url))
