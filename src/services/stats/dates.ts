@@ -1,4 +1,9 @@
-export function getUniqueDatesFromItems(historyItems = []) {
+type BaseItem = {
+	localDateStr: string
+}
+type BaseItemWithDate = BaseItem & { date: Date };
+
+export function getUniqueDatesFromItems(historyItems: BaseItem[] = []): BaseItemWithDate[] {
 	if (!historyItems.length) return [];
 
 	const uniqueDateStrings = [...new Set(
@@ -10,13 +15,13 @@ export function getUniqueDatesFromItems(historyItems = []) {
 	})
 }
 
-export function getItemsByDate(historyItems = []) {
+export function getItemsByDate<T extends BaseItem>(historyItems: T[] = []) {
 	if (!historyItems.length) return {};
 
 	// TODO: maybe, not as efficient as can be
 	const uniqueDates = getUniqueDatesFromItems(historyItems).map(d => d.localDateStr);
 
-	const map = Object.fromEntries(
+	const map: Record<string, T[]> = Object.fromEntries(
 		uniqueDates.map(dStr => [dStr, []])
 	);
 
@@ -27,11 +32,11 @@ export function getItemsByDate(historyItems = []) {
 	return map;
 }
 
-export function getDateRange(historyItems = []) {
+export function getDateRange<T extends BaseItemWithDate>(historyItems: T[] = []) {
 	if (!historyItems.length) return {
 		from: null,
 		to: null
-	}
+	} as const;
 
 	const a = historyItems[0];
 	const b = historyItems[historyItems.length - 1];

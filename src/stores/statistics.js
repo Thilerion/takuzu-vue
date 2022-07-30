@@ -1,4 +1,4 @@
-import { getUniqueDatesFromItems } from "@/services/stats/dates.js";
+import { getUniqueDatesFromItems } from "@/services/stats/dates";
 import * as StatsDB from "@/services/stats/db/index.js";
 import { PuzzleStatisticData } from "@/services/stats/db/models.js";
 import { getMostPlayedPuzzleConfigs, getMostPlayedPuzzleSizes } from "@/services/stats/most-played";

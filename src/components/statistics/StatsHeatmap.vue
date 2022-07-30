@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { getItemsByDate } from '@/services/stats/dates.js';
+import { getItemsByDate } from '@/services/stats/dates';
 import { formatBasicSortableDateKey, getMonthNameShort, getWeekdayFromDate, getWeekdayNamesShort, timeFormatter } from '@/utils/date.utils.js';
 import { addDays, differenceInCalendarISOWeeks, eachDayOfInterval, endOfDay, isWithinInterval, startOfDay, subYears } from 'date-fns';
 import { computed, inject, ref } from 'vue';
@@ -85,7 +85,7 @@ const allSortedScores = computed(() => {
 	}
 
 	const upTo97Idx = Math.round(0.97 * byDate.length);
-	console.log({upTo97Idx});
+	console.log({ upTo97Idx });
 	const upTo97 = byDate.slice(0, upTo97Idx);
 
 	const midPoint = Math.round(upTo97.length / 2);
@@ -103,15 +103,15 @@ const allSortedScores = computed(() => {
 
 	const rescaledLower = lowerHalf.map(obj => {
 		const score2 = getValueWithinRange(minLower, obj.combinedScore, maxLower);
-		return {...obj, combinedScore: a(score2) };
+		return { ...obj, combinedScore: a(score2) };
 	})
 	const rescaledUpper = upperHalf.map(obj => {
 		const score2 = getValueWithinRange(minUpper, obj.combinedScore, maxUpper);
-		return {...obj, combinedScore: Math.min(b(score2), 1) };
+		return { ...obj, combinedScore: Math.min(b(score2), 1) };
 	})
-	
+
 	const from97 = byDate.slice(upTo97Idx).map(val => {
-		return {...val, combinedScore: 1 };
+		return { ...val, combinedScore: 1 };
 	})
 	const resultArr = [
 		...rescaledLower,
