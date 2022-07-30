@@ -1,5 +1,6 @@
 import type { PuzzleBoards } from "@/lib/types";
 import { pickRandom } from "@/lib/utils";
+import { shuffleCopy } from "@/utils/random.utils";
 import { getBoardShapeType } from "../board-type";
 import { getTransformedPuzzleBoards } from "./transform-grid";
 import type { GridTransformationId } from "./types";
@@ -86,6 +87,45 @@ export function getRandomTransformedPuzzle(boards: PuzzleBoards, opts: RandomTra
 	const id = getRandomTransformationId(type, opts);
 	const { board, solution } = getTransformedPuzzleBoards(boards, id);
 	return { transformation: id, board, solution };
+}
+
+export function* generateRandomRepeatingSequence<T>(
+	list: ReadonlyArray<T>,
+	initPrevious: T[] = []
+) {
+	const length = list.length + initPrevious.length;
+	const shuffleAfter = Math.ceil(length / 2);
+
+	let current: T[] = shuffleCopy(list);
+	let previous: T[] = [...initPrevious];
+
+	while (true) {
+		const next = current.pop()!;
+		yield next;
+
+		if (previous.length >= shuffleAfter) {
+			current = [
+				...shuffleCopy(previous),
+				...current,
+			];
+			previous = [next];
+		} else {
+			previous.push(next);
+		}
+	}
+
+}
+
+export function* generateRandomRepeatingTransformIdList(list: GridTransformIdList) {
+	let baseList, initPrevious;
+
+	if (list.includes('rotate0')) {
+		baseList = list.filter(val => val !== 'rotate0');
+		initPrevious = ['rotate0'];
+	} else {
+		baseList = [...list];
+	}
+	yield* generateRandomRepeatingSequence(baseList, initPrevious);
 }
 
 if (import.meta.vitest) {
