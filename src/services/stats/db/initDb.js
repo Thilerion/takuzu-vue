@@ -1,4 +1,4 @@
-import { persistStorage } from '@/services/storage-manager.js';
+import { persistStorage } from '@/services/storage-manager';
 import Dexie from 'dexie';
 import { DbHistoryEntry } from './models.js';
 import { initVersions } from './versions.js';

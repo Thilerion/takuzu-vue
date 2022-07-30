@@ -24,16 +24,21 @@ export async function estimateStorage() {
 	try {
 		if (navigator.storage && navigator.storage.estimate) {
 			const estimate = await navigator.storage.estimate();
-	
-			const { quota, usage, usageDetails } = estimate;
-	
+
+			const { quota, usage } = estimate;
+
+			if (quota == null || usage == null) {
+				throw new Error('Quota and/or usage in storage.estimate() are undefined.');
+			}
+
 			const quotaMB = quota / 1024 / 1024;
 			const usageMB = usage / 1024 / 1024;
 			const percentageUsed = usage / quota;
-	
-			console.log({ quota, usage, usageDetails, quotaMB, usageMB, percentageUsed });
+
+			console.log({ quota, usage, quotaMB, usageMB, percentageUsed });
 			return {
-				...estimate,
+				quota,
+				usage,
 				quotaMB,
 				usageMB,
 				percentageUsed
