@@ -1,7 +1,7 @@
 import { useSharedPuzzleToggle } from "@/composables/use-puzzle-toggle";
 import { SimpleBoard } from "@/lib";
 import { EMPTY, ONE, ZERO } from "@/lib/constants";
-import { getRandomTransformedPuzzle } from "@/lib/helpers/transform/random-transform";
+import { getRandomTransformedPuzzle } from "@/lib/helpers/transform";
 import { countLineValues, pickRandom } from "@/lib/utils";
 import { requestPuzzle } from "@/services/create-puzzle";
 import { puzzleHistoryTable } from "@/services/stats/db";
