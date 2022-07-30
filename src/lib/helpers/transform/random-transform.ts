@@ -4,7 +4,7 @@ import { getBoardShapeType } from "../board-type";
 import { getTransformedPuzzleBoards } from "./transform-grid";
 import type { GridTransformationId } from "./types";
 
-export const allTransformationIds = [
+const allTransformationIds = [
 	'rotate0', 'rotate0_reflect',
 	'rotate90', 'rotate90_reflect',
 	'rotate180', 'rotate180_reflect',
@@ -17,11 +17,11 @@ export const allTransformationIds = [
 
 type GridTransformIdList = ReadonlyArray<GridTransformationId>;
 
-export const squareTransformationIds: GridTransformIdList = [...allTransformationIds];
-export const rectTransformationIds: GridTransformIdList = allTransformationIds.filter(val => {
+const squareTransformationIds: GridTransformIdList = [...allTransformationIds];
+const rectTransformationIds: GridTransformIdList = allTransformationIds.filter(val => {
 	return val.startsWith('rotate0') || val.startsWith('rotate180'); // remove rotate90 and rotate270
 })
-export const oddSquareTransformationIds: GridTransformIdList = allTransformationIds.filter(val => {
+const oddSquareTransformationIds: GridTransformIdList = allTransformationIds.filter(val => {
 	return !(val.includes('invertSymbols')); // without invert symbols transformation
 })
 type ExcludeIdentity<T extends string> = Exclude<T, 'rotate0'>;
