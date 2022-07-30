@@ -1,6 +1,39 @@
 import { differenceInCalendarDays } from "date-fns";
 
-const createLongestStreak = (streaks = []) => {
+export type Streak = Date[];
+export type DateStreaks = Streak[];
+interface StreakLength {
+	length: number,
+	from: Date,
+	to: Date
+}
+interface StreakLengthNone {
+	length: 0,
+	from: null,
+	to: null
+}
+type StreakLengthResult = StreakLength | StreakLengthNone;
+interface CurrentStreakTrue {
+	length: number,
+	from: Date,
+	active: boolean
+}
+interface CurrentStreakFalse {
+	length: 0,
+	from: null,
+	active: false
+}
+type CurrentStreakResult = CurrentStreakTrue | CurrentStreakFalse;
+
+const createLongestStreak = (streaks: DateStreaks = []): StreakLengthResult => {
+	if (!streaks || !streaks.length) {
+		return {
+			length: 0,
+			from: null,
+			to: null
+		} as const;
+	}
+	const base = { length: 0, from: null, to: null } as StreakLengthResult;
 	return streaks.reduce((acc, val) => {
 		const length = val.length;
 		if (length < acc.length) return acc;
@@ -10,20 +43,20 @@ const createLongestStreak = (streaks = []) => {
 			from: val[length - 1],
 			to: val[0],
 		}
-	}, { length: 0, from: null, to: null });
+	}, base);
 }
 
-const createCurrentStreak = (streaks = []) => {
+const createCurrentStreak = (streaks: DateStreaks = []): CurrentStreakResult => {
 	if (!streaks.length) {
 		return {
 			length: 0,
 			from: null,
 			active: false
-		}
+		} as const;
 	}
 
-	const mostRecent = streaks[streaks.length - 1];
-	const mostRecentDate = mostRecent[0];
+	const mostRecentStreak: Streak = streaks[streaks.length - 1];
+	const mostRecentDate: Date = mostRecentStreak[0];
 	const diff = Math.abs(differenceInCalendarDays(
 		new Date(),
 		mostRecentDate
@@ -34,16 +67,16 @@ const createCurrentStreak = (streaks = []) => {
 			length: 0,
 			from: null,
 			active: false
-		}
+		} as const;
 	}
 	return {
-		length: mostRecent.length,
-		from: mostRecent[mostRecent.length - 1],
+		length: mostRecentStreak.length,
+		from: mostRecentStreak[mostRecentStreak.length - 1],
 		active: diff === 0
 	}
 }
 
-export function processDateStreaks(uniqueDates = []) {
+export function processDateStreaks(uniqueDates: Date[] = []) {
 	if (!uniqueDates.length) {
 		return {
 			longest: createLongestStreak(),
