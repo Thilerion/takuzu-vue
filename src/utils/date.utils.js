@@ -1,4 +1,4 @@
-import { getISODay } from 'date-fns/esm';
+import { getISODay } from 'date-fns';
 
 export { formatBasicSortableDateKey, formatYYYYMMDD, getDateRange, getDaysAgo, getNextDay, getWeekdayNamesShort, isNextDay, isSameDay } from './date.utilsts';
 
@@ -37,7 +37,7 @@ export const formatTimeMMSSss = (timestampMS, { padMinutes = true } = {}) => {
 	let minutes = date.getMinutes();
 	let seconds = date.getSeconds();
 	let hundredths = Math.round(date.getMilliseconds() / 10);
-	
+
 	if (padMinutes) {
 		minutes = padLeft(minutes);
 	}
@@ -48,12 +48,12 @@ export const formatTimeMMSSss = (timestampMS, { padMinutes = true } = {}) => {
 
 export const formatTimeHHMMSS = (timestampMS, { padHours = false } = {}) => {
 	const totalSeconds = Math.round(timestampMS / 1000);
-	
+
 	const time = new Date(totalSeconds * 1000);
 
 	const hours = time.getHours();
 	const minutes = time.getMinutes();
-	const seconds = time.getSeconds();	
+	const seconds = time.getSeconds();
 
 	return `${padHours ? padLeft(hours) : hours}:${padLeft(minutes)}:${padLeft(seconds)}`;
 }

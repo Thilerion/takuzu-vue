@@ -3,7 +3,7 @@ import * as StatsDB from "@/services/stats/db/index.js";
 import { PuzzleStatisticData } from "@/services/stats/db/models.js";
 import { getMostPlayedPuzzleConfigs, getMostPlayedPuzzleSizes } from "@/services/stats/most-played";
 import { formatBasicSortableDateKey } from "@/utils/date.utils.js";
-import { isBefore, isToday, subDays } from "date-fns/esm";
+import { isBefore, isToday, subDays } from "date-fns";
 import { defineStore } from "pinia";
 import { reactive } from "vue";
 
@@ -168,7 +168,7 @@ export const useStatisticsStore = defineStore('statistics', {
 		},
 		async initialize({ forceUpdate = false } = {}) {
 			if (forceUpdate) this.reset();
-			
+
 			if (this.isLoading) return;
 			if (this.initialized) {
 				const needReload = await this.checkIfStatsNeedsUpdate();

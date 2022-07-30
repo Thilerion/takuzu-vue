@@ -1,9 +1,8 @@
 <template>
 	<section>
 		<h2>Longest streak</h2>
-		<div class="streak-length border-4" :class="[streakLengthClasses]"
-		><span :class="{
-			'text-xl': length >= 100
+		<div class="streak-length border-4" :class="[streakLengthClasses]"><span :class="{
+				'text-xl': length >= 100
 		}">{{length}}</span></div>
 		<div class="text">
 			<div v-if="fromStr && toStr">
@@ -14,7 +13,7 @@
 </template>
 
 <script setup>
-import { differenceInCalendarDays } from 'date-fns/esm';
+import { differenceInCalendarDays } from 'date-fns';
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -78,5 +77,4 @@ const toStr = computed(() => {
 </script>
 
 <style scoped>
-
 </style>

@@ -1,4 +1,4 @@
-import { differenceInCalendarDays } from "date-fns/esm";
+import { differenceInCalendarDays } from "date-fns";
 
 const createLongestStreak = (streaks = []) => {
 	return streaks.reduce((acc, val) => {

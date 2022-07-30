@@ -72,11 +72,6 @@ export default defineConfig(({ command, mode }) => {
 			'import.meta.vitest': false
 		},
 		test: {
-			deps: {
-				inline: [
-					'date-fns/esm', // required by vitest (for now) due to ESM/CJS conflict
-				]
-			},
 			environment: 'jsdom',
 			includeSource: ['src/**/*.ts']
 		}

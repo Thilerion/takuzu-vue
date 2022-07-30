@@ -1,5 +1,5 @@
-import { addDays, eachDayOfInterval, endOfWeek, isSameDay, startOfWeek, subDays } from 'date-fns/esm';
-export { isSameDay } from 'date-fns/esm';
+import { addDays, eachDayOfInterval, endOfWeek, isSameDay, startOfWeek, subDays } from 'date-fns';
+export { isSameDay } from 'date-fns';
 
 type Timestamp = number;
 

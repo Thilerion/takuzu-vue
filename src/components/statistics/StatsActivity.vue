@@ -2,16 +2,10 @@
 	<div class="activity px-4">
 		<h2 class="text-gray-600 text-lg font-medium px-1 pt-2 pb-1">Play activity</h2>
 		<div class="bg-white rounded shadow-lg shadow-gray-600/10 divide-y pt-1" v-if="streaks != null">
-			<StatsHeatmap/>
+			<StatsHeatmap />
 			<div class="streaks flex flex-row h-fit w-full max-w-xl mx-auto divide-x">
-				<CurrentStreak
-					v-bind="streaks.current"
-					class="streak-container"
-				></CurrentStreak>
-				<LongestStreak
-					v-bind="streaks.longest"
-					class="streak-container"
-				></LongestStreak>
+				<CurrentStreak v-bind="streaks.current" class="streak-container"></CurrentStreak>
+				<LongestStreak v-bind="streaks.longest" class="streak-container"></LongestStreak>
 			</div>
 			<MostRecentHistory />
 		</div>
@@ -19,7 +13,7 @@
 </template>
 
 <script setup>
-import { processDateStreaks } from '@/services/stats/streaks.js';
+import { processDateStreaks } from '@/services/stats/streaks';
 import { computed, inject, toRef } from 'vue';
 
 import { useStatisticsStore } from '@/stores/statistics.js';

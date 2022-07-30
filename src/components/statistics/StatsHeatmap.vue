@@ -1,47 +1,39 @@
 <template>
-		<div class="heatmap-scroll-wrapper overflow-x-auto overflow-y-visible w-full mx-auto h-fit snap-both snap-proximity bg-white">
+	<div
+		class="heatmap-scroll-wrapper overflow-x-auto overflow-y-visible w-full mx-auto h-fit snap-both snap-proximity bg-white">
 
 		<div class="heatmap-wrapper grid w-fit snap-end mx-auto">
 			<div class="months relative">
-				<div class="month"
-					v-for="(month, idx) in months"
-					:key="`${idx}${month}`"
-					:style="{
-						'grid-column': `${month.colStart} / span 3`,
-						'grid-row': '1 / span 1'
-					}"
-				>{{month.name}}</div>
+				<div class="month" v-for="(month, idx) in months" :key="`${idx}${month}`" :style="{
+					'grid-column': `${month.colStart} / span 3`,
+					'grid-row': '1 / span 1'
+				}">{{ month.name }}</div>
 			</div>
 			<div class="weekdays flex">
 				<div class="weekday" v-for="day in weekdays" :key="day.name">
-					<span v-if="day.show">{{day.name}}</span>
+					<span v-if="day.show">{{ day.name }}</span>
 				</div>
 			</div>
 			<div class="squares grid grid-flow-col">
-				<div
-					class="square bg-white"
-					@click="toggleSelectedSquare(square.dateStr, square)"
-					:data-level="dateToScaleLevelMap.get(square.dateStr) ?? 0"
-					:style="{
+				<div class="square bg-white" @click="toggleSelectedSquare(square.dateStr, square)"
+					:data-level="dateToScaleLevelMap.get(square.dateStr) ?? 0" :style="{
 						'grid-row': `${square.weekday + 1} / span 1`,
 						'grid-column': `${square.weekColumn + 1} / span 1`,
-					}"
-					:class="{ 
-						'snap-start': square.index % 7 === 0,
-						'selected': square.dateStr === selectedSquare?.dateStr
-					}"
-					v-for="(square) in squares"
-					:key="square.index"
-				><div class="w-full h-full pointer-events-none"></div></div>
+					}" :class="{
+	'snap-start': square.index % 7 === 0,
+	'selected': square.dateStr === selectedSquare?.dateStr
+}" v-for="(square) in squares" :key="square.index">
+					<div class="w-full h-full pointer-events-none"></div>
+				</div>
 			</div>
 		</div>
 	</div>
 	<div class="w-full" v-if="selectedDateValues != null">
 		<div class="flex flex-row gap-4 items-center justify-between text-xs max-w-md mx-auto px-3 py-1">
-			<div>{{selectedDateValues.date}}</div>
+			<div>{{ selectedDateValues.date }}</div>
 			<template v-if="selectedDateValues.played > 0">
-				<div>{{selectedDateValues.played}} puzzles</div>
-				<div>playtime: {{formatTime(selectedDateValues.time)}}</div>
+				<div>{{ selectedDateValues.played }} puzzles</div>
+				<div>playtime: {{ formatTime(selectedDateValues.time) }}</div>
 			</template>
 			<template v-else>
 				<div>No puzzles played</div>
@@ -54,7 +46,7 @@
 <script setup>
 import { getItemsByDate } from '@/services/stats/dates.js';
 import { formatBasicSortableDateKey, getMonthNameShort, getWeekdayFromDate, getWeekdayNamesShort, timeFormatter } from '@/utils/date.utils.js';
-import { addDays, differenceInCalendarISOWeeks, eachDayOfInterval, endOfDay, isWithinInterval, startOfDay, subYears } from 'date-fns/esm';
+import { addDays, differenceInCalendarISOWeeks, eachDayOfInterval, endOfDay, isWithinInterval, startOfDay, subYears } from 'date-fns';
 import { computed, inject, ref } from 'vue';
 import { calculateScoresByDate, getValueWithinRange, mapScoreToArray } from './heatmap-data.js';
 
@@ -263,8 +255,9 @@ const createHeatmapSquares = (_itemsByDate, { interval }) => {
 
 	--num-weeks: v-bind('numWeeks');
 }
+
 .heatmap-wrapper {
-	grid-template-areas: 
+	grid-template-areas:
 		"weekdays months"
 		"weekdays squares";
 	grid-template-rows: auto auto;
@@ -288,12 +281,13 @@ const createHeatmapSquares = (_itemsByDate, { interval }) => {
 	@apply bg-white sticky left-0 flex flex-col justify-end text-xxs text-right w-6 z-50 text-gray-600/80;
 	gap: var(--square-gap);
 }
+
 .weekday {
 	height: var(--square-size);
 	@apply text-xxs flex items-center justify-end pr-1;
 	width: fit-content;
 	min-width: var(--square-size);
-	max-width: calc(var(--square-size) * 2.5); 
+	max-width: calc(var(--square-size) * 2.5);
 }
 
 .squares {
@@ -306,12 +300,11 @@ const createHeatmapSquares = (_itemsByDate, { interval }) => {
 
 	gap: var(--square-gap);
 
-	--shadow-blur: clamp(
-		2px,
-		calc(var(--square-size) * 0.2),
-		0.4rem
-	);
+	--shadow-blur: clamp(2px,
+			calc(var(--square-size) * 0.2),
+			0.4rem);
 }
+
 .square.selected {
 	@apply ring-2 ring-black ring-inset;
 }
@@ -320,22 +313,28 @@ const createHeatmapSquares = (_itemsByDate, { interval }) => {
 	--bg-opacity: 1;
 	--shadow-opacity: 0.1;
 }
+
 [data-level="0"] {
 	--bg: hsl(193, 44%, 96%);
 	--shadow-opacity: 0.05;
 }
+
 [data-level="1"] {
 	--bg: #9ebcda;
 }
+
 [data-level="2"] {
 	--bg: #8c96c6;
 }
+
 [data-level="3"] {
 	--bg: #8c6bb1;
 }
+
 [data-level="4"] {
 	--bg: #88419d;
 }
+
 [data-level="5"] {
 	--bg: #6e016b;
 }
