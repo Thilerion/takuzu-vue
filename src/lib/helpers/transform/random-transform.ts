@@ -71,7 +71,7 @@ const getRandomOddSquareTransformationId: GetRandomTransformIdFn = ({
 	return getRandomTransformationIdFromList(baseList, exclude);
 }
 
-export const getRandomTransformationId = (type: 'square' | 'odd' | 'rect', opts: RandomTransformIdOpts) => {
+export const getRandomTransformationId = (type: 'square' | 'odd' | 'rect', opts: RandomTransformIdOpts = {}) => {
 	if (type === 'square') {
 		return getRandomSquareTransformationId(opts);
 	} else if (type === 'odd') {
