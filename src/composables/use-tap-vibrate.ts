@@ -1,12 +1,16 @@
-import { ref } from "vue";
+import { ref, unref, type Ref } from "vue";
 
 const isSupported = typeof navigator !== 'undefined' && 'vibrate' in navigator;
-
+type UseTapVibrateOpts = {
+	pattern: Ref<number | number[]>;
+	delay?: Ref<number> | number;
+	enable?: Ref<boolean> | boolean;
+};
 export const useTapVibrate = ({
-	pattern = 25,
-	delay = null,
-	enable = isSupported
-}) => {
+	pattern = ref(25),
+	delay = ref(0),
+	enable = ref(isSupported)
+}: UseTapVibrateOpts) => {
 	const patternRef = ref(pattern);
 	const isEnabled = ref(enable);
 
@@ -18,7 +22,7 @@ export const useTapVibrate = ({
 		if (delay == null) {
 			return _vibrateFn();
 		} else {
-			window.setTimeout(_vibrateFn, delay);
+			window.setTimeout(_vibrateFn, unref(delay));
 			return;
 		}
 	}

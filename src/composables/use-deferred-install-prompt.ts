@@ -1,8 +1,9 @@
 import { useIsPwaInstalled } from '@/stores/composables/useIsPwaInstalled';
-import { computed, ref } from 'vue';
+import { computed, ref, type Ref } from 'vue';
+import type { BeforeInstallPromptEvent } from './types';
 
-const deferredPrompt = ref(null);
-const promptOutcome = ref(null);
+const deferredPrompt: Ref<null | BeforeInstallPromptEvent> = ref(null);
+const promptOutcome: Ref<null | boolean> = ref(null);
 let hasPromptListener = false;
 let hasInstalledListener = false;
 

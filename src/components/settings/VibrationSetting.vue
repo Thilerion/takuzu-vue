@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import { useTapVibrate } from '@/composables/use-tap-vibrate.js';
+import { useTapVibrate } from '@/composables/use-tap-vibrate';
 import { useSettingsStore } from '@/stores/settings/store';
 import { validVibrationStrengths } from '@/stores/settings/options';
 import { storeToRefs } from 'pinia';
@@ -43,7 +43,7 @@ const settingsStore = useSettingsStore();
 const pattern = toRef(settingsStore, 'vibrationStrength');
 const { vibrate, isSupported } = useTapVibrate({
 	pattern,
-	delay: null,
+	delay: 0,
 	enable: true
 })
 const { enableVibration, vibrationStrength } = storeToRefs(settingsStore);

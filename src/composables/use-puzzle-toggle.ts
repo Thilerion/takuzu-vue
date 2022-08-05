@@ -1,4 +1,4 @@
-import { EMPTY, ONE, ZERO } from "@/lib/constants";
+import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
 import { useSettingsStore } from "@/stores/settings/store"
 import { createSharedComposable } from "@vueuse/core";
 import { computed, toRef } from "vue";
@@ -15,7 +15,7 @@ export const usePuzzleToggle = () => {
 		throw new Error(`Unexpected toggle mode: "${mode.value}"`);
 	})
 
-	const toggle = (currentValue) => {
+	const toggle = (currentValue: PuzzleValue) => {
 		const idx = order.value.indexOf(currentValue);
 		const next = (idx + 1) % order.value.length;
 		return order.value[next]
