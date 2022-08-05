@@ -6,40 +6,52 @@ type UseTapVibrateOpts = {
 	delay?: Ref<number> | number;
 	enable?: Ref<boolean> | boolean;
 };
-export const useTapVibrate = ({
-	pattern = ref(25),
-	delay = ref(0),
-	enable = ref(isSupported)
-}: UseTapVibrateOpts) => {
-	const patternRef = ref(pattern);
-	const isEnabled = ref(enable);
 
-	const _vibrateFn = () => navigator.vibrate(patternRef.value);
+export const useTapVibrate = (opts: UseTapVibrateOpts) => {
+	const {
+		pattern,
+		delay = ref(0),
+		enable: enabled = ref(isSupported)
+	} = opts;
 
-	const vibrate = () => {
-		if (!isSupported || !isEnabled.value) return;
+	let vibrateTimeout: null | ReturnType<typeof setTimeout> = null;
 
-		if (delay == null) {
-			return _vibrateFn();
-		} else {
-			window.setTimeout(_vibrateFn, unref(delay));
+	const _vibrateFn = () => {
+		console.log('inner vibrate');
+		return navigator.vibrate(pattern.value);
+	}
+	const vibrate = !isSupported ? () => { } : () => {
+		if (!unref(enabled)) return;
+		const delayMs = unref(delay);
+
+		if (!delayMs) return _vibrateFn();
+		if (vibrateTimeout == null) {
+			vibrateTimeout = setTimeout(_vibrateFn, delayMs);
 			return;
 		}
-	}
-
-	const stop = () => {
-		if (isSupported) {
-			navigator.vibrate(0);
+		// vibrateTimeout is still active
+		clearTimeout(vibrateTimeout);
+		vibrateTimeout = null;
+		const halfDelay = delayMs / 2;
+		if (halfDelay < 20) return _vibrateFn();
+		else {
+			vibrateTimeout = setTimeout(_vibrateFn, halfDelay);
 		}
+	}
+	const cancel = () => {
+		navigator?.vibrate(0);
 	}
 
 	return {
 		isSupported,
+		isEnabled: enabled,
 
-		isEnabled,
-		pattern: patternRef,
+		pattern,
+		delay,
 
 		vibrate,
-		stop,
+
+		stop: cancel,
+		cancel,
 	}
 }
