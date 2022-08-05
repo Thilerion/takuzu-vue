@@ -27,7 +27,7 @@
 import PuzzleGridHighlights from '@/components/gameboard/PuzzleGridHighlights.vue';
 import { useTapVibrate } from '@/composables/use-tap-vibrate';
 import { EMPTY } from '@/lib/constants';
-import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes';
+import { usePuzzleAssistanceStore } from '@/stores/assistance/store';
 import { usePuzzleStore } from '@/stores/puzzle.js';
 import { CellThemeTypes } from '@/stores/settings/options';
 import { useSettingsStore } from '@/stores/settings/store';
@@ -96,8 +96,8 @@ export default {
 			vibrate,
 		} = useTapVibrate({ pattern: vibrationStrengthSetting, delay: delay, enable: shouldEnableVibration });
 
-		const puzzleMistakesStore = usePuzzleMistakesStore();
-		const incorrectMarkedCells = toRef(puzzleMistakesStore, 'currentMarked');
+		const assistanceStore = usePuzzleAssistanceStore();
+		const incorrectMarkedCells = toRef(assistanceStore, 'currentMarked');
 
 		const cellThemeProvidedData = useCellThemeProvider();
 		const { classes: cellThemeClasses, attrs: cellThemeAttrs, cellTheme, cellThemeType } = cellThemeProvidedData;

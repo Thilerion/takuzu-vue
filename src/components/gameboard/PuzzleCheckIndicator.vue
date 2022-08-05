@@ -14,21 +14,15 @@
 </template>
 
 <script setup>
-import { usePuzzleMistakesStore } from "@/stores/puzzle-mistakes";
+import { usePuzzleAssistanceStore } from "@/stores/assistance/store";
 import { storeToRefs } from "pinia";
-import { computed, ref, watch } from "vue";
+import { ref, watch } from "vue";
 
-const mistakesStore = usePuzzleMistakesStore();
-const { currentMarked, checkId, lastCheckType } = storeToRefs(mistakesStore);
-
-const lastCheckedByUser = computed(() => lastCheckType.value === 'user');
+const assistanceStore = usePuzzleAssistanceStore();
+const { checkId, lastCheckedByUser, mistakesFound: errorFound } = storeToRefs(assistanceStore);
 
 const correctEl = ref(null);
 const incorrectEl = ref(null);
-
-const errorFound = computed(() => {
-	return currentMarked.value?.length > 0;
-})
 
 const checkAnim = {
 	options: {

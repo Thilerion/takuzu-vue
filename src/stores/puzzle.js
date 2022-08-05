@@ -10,9 +10,9 @@ import { initPregenWorker } from "@/workers/pregen/index";
 import { defineStore } from "pinia";
 import { usePuzzleHintsStore } from "./puzzle-hinter";
 import { usePuzzleHistoryStore } from "./puzzle-history";
-import { usePuzzleMistakesStore } from "./puzzle-mistakes";
 import { usePuzzleTimer } from "./puzzle-timer";
 import { useRecapStatsStore } from "./recap-stats";
+import { usePuzzleAssistanceStore } from "./assistance/store";
 
 export const PUZZLE_STATUS = {
 	'NONE': 'NONE',
@@ -138,7 +138,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			usePuzzleTimer().reset();
 			usePuzzleHistoryStore().reset();
 			usePuzzleHintsStore().reset();
-			usePuzzleMistakesStore().reset();
+			usePuzzleAssistanceStore().reset();
 
 			this.$reset();
 		},
@@ -212,7 +212,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			}
 			this.refreshLineCounts();
 			this.refreshGridCounts();
-			usePuzzleMistakesStore().resetMarkedCells();
+			usePuzzleAssistanceStore().resetMarkedCells();
 			const puzzleHintsStore = usePuzzleHintsStore();
 			if (puzzleHintsStore.showHint) {
 				usePuzzleHintsStore().hide();
@@ -223,7 +223,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				this._setValue({ x, y, value, prevValue: this.board.grid[y][x] });
 			} else this._setValue({ x, y, value, prevValue });
 
-			usePuzzleMistakesStore().removeFromCurrentMarkedCells(`${x},${y}`);
+			usePuzzleAssistanceStore().removeFromMarkedCells(`${x},${y}`);
 			const puzzleHintsStore = usePuzzleHintsStore();
 			if (puzzleHintsStore.showHint) {
 				usePuzzleHintsStore().hide();
@@ -369,7 +369,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			timer.pause();
 
 			const timeElapsed = timer.timeElapsed;
-			const checkAssistanceData = usePuzzleMistakesStore().checkAssistanceData;
+			const checkAssistanceData = usePuzzleAssistanceStore().checkAssistanceData;
 			const hintAssistanceData = usePuzzleHintsStore().hintAssistanceData;
 			const state = { ...this.$state };
 			const finishedPuzzleState = {
@@ -414,7 +414,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			const puzzleHistory = usePuzzleHistoryStore();
 			puzzleHistory.reset();
 			usePuzzleHintsStore().reset();
-			usePuzzleMistakesStore().reset();
+			usePuzzleAssistanceStore().reset();
 			const timer = usePuzzleTimer();
 			timer.reset();
 			timer.start();

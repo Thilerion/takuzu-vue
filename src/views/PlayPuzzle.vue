@@ -72,13 +72,13 @@ import { useSettingsStore } from '@/stores/settings/store';
 import { storeToRefs, mapState } from 'pinia';
 import { usePuzzleHistoryStore } from '@/stores/puzzle-history';
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter';
-import { usePuzzleMistakesStore } from '@/stores/puzzle-mistakes';
 import { computed, readonly, toRef, watch } from 'vue';
 import { useSavedPuzzle } from '@/services/savegame/useSavedGame';
 import { usePuzzleStore } from '@/stores/puzzle.js';
 import { useMainStore } from '@/stores/main';
 import { useRecapStatsStore } from '@/stores/recap-stats';
 import { rulerType } from '@/stores/settings/options';
+import { usePuzzleAssistanceStore } from '@/stores/assistance/store';
 
 export default {
 	components: {
@@ -103,7 +103,8 @@ export default {
 		const puzzleHistoryStore = usePuzzleHistoryStore();
 		const puzzleHintsStore = usePuzzleHintsStore();
 		const getHint = () => puzzleHintsStore.getHint();
-		const puzzleMistakesStore = usePuzzleMistakesStore();
+		const puzzleAssistanceStore = usePuzzleAssistanceStore();
+		const { autoCheckIncorrectCells, userCheckIncorrectCells } = puzzleAssistanceStore;
 
 		const wakeLock = usePuzzleWakeLock();
 		const userIdle = wakeLock.idle;
@@ -136,8 +137,8 @@ export default {
 			isWakeLockEnabled: computed(() => wakeLock.isActive.value),
 			shouldEnableWakeLock: enableWakeLock, showTimer,
 			puzzleHistoryStore, getHint,
-			userCheckErrors: (boardStr) => puzzleMistakesStore.userCheckErrors(boardStr),
-			autoCheckErrors: () => puzzleMistakesStore.autoCheckFinishedWithMistakes(),
+			userCheckErrors: userCheckIncorrectCells,
+			autoCheckErrors: autoCheckIncorrectCells,
 			wakeLock,
 			hasCurrentSavedGame, savePuzzleSaveData,
 			puzzleStore, pause, resume, pausedByUser, userIdle
