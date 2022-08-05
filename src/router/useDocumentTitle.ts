@@ -1,23 +1,25 @@
 import { ref, watch } from "vue";
+import type { RouteLocationNormalized } from "vue-router";
+export type UseRouteDocumentTitleOpts = {
+	defaultTitle?: string;
+	titlePrefix?: string;
+};
+
 
 export const useRouteDocumentTitle = ({
 	defaultTitle = 'Takuzu',
-	titlePrefix,
-}) => {
+	titlePrefix = '',
+}: UseRouteDocumentTitleOpts) => {
 	const title = ref(document.title);
 
 	if (!title.value && !!defaultTitle) {
 		title.value = defaultTitle;
 	}
 
-	const updateTitleWithRouteMeta = (to) => {
-		let newTitle = to?.meta?.title;
+	const updateTitleWithRouteMeta = (to: RouteLocationNormalized) => {
+		const metaTitle = to.meta?.title;
 
-		if (titlePrefix && newTitle) {
-			newTitle = `${titlePrefix}${newTitle}`;
-		} else if (titlePrefix) {
-			newTitle = defaultTitle;
-		}
+		let newTitle = metaTitle ? `${titlePrefix}${metaTitle}` : null;
 
 		if (!!newTitle && newTitle !== title.value) {
 			title.value = newTitle;

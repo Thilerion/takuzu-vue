@@ -1,5 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
+declare module 'vue-router' {
+	interface RouteMeta {
+		metaThemeColor?: string;
+		title?: string;
+		usePuzzleKey?: boolean;
+	}
+}
+
 // MAIN ROUTES
 import MainPage from '@/components/base/layout/MainPage.vue';
 import HomePage from '../views/HomePage.vue';
@@ -168,8 +176,8 @@ const { updateThemeColorWithRouteMeta } = useMetaThemeColor();
 
 router.afterEach((to, from) => {
 	// set document title based on route
-	updateTitleWithRouteMeta(to, from);
-	updateThemeColorWithRouteMeta(to, from);
+	updateTitleWithRouteMeta(to);
+	updateThemeColorWithRouteMeta(to);
 
 	// set previous route, for better back-button navigation
 	if (from && from.matched && from.matched.length) {
