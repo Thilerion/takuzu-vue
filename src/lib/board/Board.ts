@@ -118,9 +118,9 @@ export class SimpleBoard {
 		}
 
 		// TODO: update grid and line counts?
-		
+
 		this._set(x, y, value);
-		
+
 		return this;
 	}
 	assignRow(y: number, values: PuzzleValue[]) {
@@ -210,10 +210,10 @@ export class SimpleBoard {
 		return count;
 	}
 
-	private isRowId(id: string): id is RowId {
+	isRowId(id: string): id is RowId {
 		return this.rowIds.includes(id);
 	}
-	private isColumnId(id: string): id is ColumnId {
+	isColumnId(id: string): id is ColumnId {
 		return this.columnIds.includes(id);
 	}
 
@@ -268,7 +268,7 @@ export class SimpleBoard {
 	toBoardString(): BoardString {
 		return this.grid.flat().join('');
 	}
-	
+
 	export(): BoardExportString {
 		return `${this.width}x${this.height};${this.toBoardString()}` as BoardExportString;
 	}
@@ -282,4 +282,4 @@ interface IncorrectCheckMistakesResult {
 	hasMistakes: true,
 	result: Vec[]
 }
-type IncorrectCheckReturnValue = IncorrectCheckMistakesResult | IncorrectCheckNoMistakesResult;
+export type IncorrectCheckReturnValue = IncorrectCheckMistakesResult | IncorrectCheckNoMistakesResult;
