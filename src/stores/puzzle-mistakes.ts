@@ -9,6 +9,11 @@ type CacheValue = IncorrectCheckValue[] | null;
 interface CheckIncorrectCellsArgs extends PuzzleBoards {
 	boardStr: BoardString
 }
+export interface CheckAssistanceData {
+	checks: number,
+	checksWithResults: number,
+	incorrectCellsFound: number
+}
 
 export const usePuzzleMistakesStore = defineStore('puzzleMistakes', {
 	state: () => ({
@@ -25,6 +30,13 @@ export const usePuzzleMistakesStore = defineStore('puzzleMistakes', {
 			const arr = Array.from(state.cache.values());
 			// return arr.filter(val => val?.length).length;
 			return arr;
+		},
+		checkAssistanceData(state): CheckAssistanceData {
+			return {
+				checks: this.totalUniqueChecks,
+				checksWithResults: this.totalUniqueChecksWithResults.length,
+				incorrectCellsFound: state.totalCellsFound.size
+			}
 		}
 	},
 
