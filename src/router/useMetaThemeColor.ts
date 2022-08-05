@@ -12,30 +12,31 @@ export const useMetaThemeColor = ({
 	const metaEl = document.querySelector('meta[name=theme-color]');
 
 	const getCurrentThemeColor = () => {
-	  return metaEl!.getAttribute('content') ?? null;
+		return metaEl!.getAttribute('content') ?? null;
 	};
   
 	const initialColor = getCurrentThemeColor() ?? defaultColor;
 	const color: Ref<string> = ref(initialColor);
   
 	const setCurrentThemeColor = (value: string) => {
-	  metaEl!.setAttribute('content', value);
-	  color.value = value;
+		console.log('Setting theme color to:', value);
+		metaEl!.setAttribute('content', value);
+		color.value = value;
 	};
   
 	if (getCurrentThemeColor() == null) {
-	  setCurrentThemeColor(color.value);
+		setCurrentThemeColor(color.value);
 	}
 
 	return {
 		color: readonly(color),
 		setThemeColor: setCurrentThemeColor,
 		updateThemeColorWithRouteMeta: (to: RouteLocationNormalized) => {
-		  const newColor = to.meta?.metaThemeColor;
-		  if (newColor == null) return;
-		  if (newColor !== color.value) {
-			setCurrentThemeColor(newColor);
-		  }
+			const newColor = to.meta?.metaThemeColor ?? defaultColor;
+			if (newColor == null) return;
+			if (newColor !== color.value) {
+				setCurrentThemeColor(newColor);
+		  	}
 		},
 	  };
 }
