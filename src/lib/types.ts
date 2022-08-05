@@ -28,6 +28,8 @@ export type CountsOf<T extends (string | number)> = Record<T, number>;
 export type PuzzleSymbolCount = CountsOf<PuzzleSymbol>;
 export type PuzzleValueCount = CountsOf<PuzzleValue>;
 export type NumSymbolRequired = Record<LineType, PuzzleSymbolCount>;
+export type LineCounts = PuzzleValueCount[];
+export type GridCounts = PuzzleValueCount;
 
 export type ROPuzzleValueLine = Readonly<PuzzleValueLine>;
 export type ROPuzzleSymbolLine = Readonly<PuzzleSymbolLine>;
