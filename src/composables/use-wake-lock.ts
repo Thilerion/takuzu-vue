@@ -24,7 +24,7 @@ export const usePuzzleWakeLock = ({ pauseAfter = 1.5 * MINUTE } = {}) => {
 	const requestWakeLock = () => {
 		if (shouldEnableWakeLock.value) {
 			// console.log('Requesting wake lock.');
-			request?.();
+			request?.('screen');
 		}
 	}
 
@@ -62,7 +62,7 @@ export const usePuzzleWakeLock = ({ pauseAfter = 1.5 * MINUTE } = {}) => {
 
 	provide('WAKE_LOCK_STATE', {
 		active: isActive,
-		supported: ref(isSupported)
+		supported: isSupported
 	});
 
 	return {

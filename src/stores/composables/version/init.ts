@@ -56,7 +56,7 @@ export const initializePersistence = (details: BuildVersionDetails) => {
 		LS_KEY,
 		(storedValueRef as Ref<PersistedBuildVersionData>),
 		localStorage,
-		{ deep: true, writeDefaults: true, listenToStorageChanges: false }
+		{ deep: true, writeDefaults: true, listenToStorageChanges: false, mergeDefaults: false }
 	);
 
 	return {

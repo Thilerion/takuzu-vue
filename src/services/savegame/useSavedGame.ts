@@ -1,15 +1,12 @@
 import { computed } from "vue";
-import { createSharedComposable, useStorage } from "@vueuse/core";
+import { createSharedComposable, StorageSerializers, useStorage } from "@vueuse/core";
 import { readonly } from "vue";
 import type { SaveData, SaveGame } from "./types";
 import { getSaveData } from "./getSaveData";
 const SAVE_DATA_STORAGE_KEY = 'takuzu_saved-game';
 
 const savedPuzzle = useStorage<SaveGame | null>(SAVE_DATA_STORAGE_KEY, null, localStorage, {
-	serializer: {
-		read: v => JSON.parse(v) ?? undefined,
-		write: v => JSON.stringify(v)
-	}
+	serializer: StorageSerializers.object
 })
 
 const _useSavedPuzzle = () => {

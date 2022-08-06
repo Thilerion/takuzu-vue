@@ -87,7 +87,7 @@ import { computed, ref, toRef, watch, watchEffect } from 'vue';
 
 
 import { useRouter } from 'vue-router';
-import { usePreviousSelection } from '../components/new-puzzle/usePreviousSelection.js';
+import { usePreviousSelection } from '../components/new-puzzle/usePreviousSelection';
 
 
 import { usePuzzleStore } from '@/stores/puzzle.js';

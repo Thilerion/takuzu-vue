@@ -10,7 +10,8 @@ export const useFeatureToggles = () => {
 
 	const storageState = useStorage<Record<string, boolean>>('takuzu_feature-toggles', {}, localStorage, {
 		writeDefaults: true,
-		deep: true
+		deep: true,
+		mergeDefaults: true
 	});
 
 	const features: Record<FeatureToggleKey, FeatureData> = reactive({

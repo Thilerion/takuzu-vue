@@ -13,6 +13,7 @@ const defaultData = {
 }
 const firstVisitData = useStorage<FirstVisitData>('takuzu_handled-first-visit', {...defaultData}, localStorage, {
 	writeDefaults: true,
+	mergeDefaults: true
 });
 
 firstVisitData.value.visits += 1;
