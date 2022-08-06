@@ -14,12 +14,12 @@
 </template>
 
 <script setup>
-import { usePuzzleAssistanceStore } from "@/stores/assistance/store";
+import { usePuzzleValidationStore } from "@/stores/assistance/validation";
 import { storeToRefs } from "pinia";
 import { ref, watch } from "vue";
 
-const assistanceStore = usePuzzleAssistanceStore();
-const { checkId, lastCheckedByUser, mistakesFound: errorFound } = storeToRefs(assistanceStore);
+const validationStore = usePuzzleValidationStore();
+const { lastCheckedByUser, mistakesFound: errorFound, userChecks: checkId } = storeToRefs(validationStore);
 
 const correctEl = ref(null);
 const incorrectEl = ref(null);

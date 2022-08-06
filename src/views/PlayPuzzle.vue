@@ -79,6 +79,7 @@ import { useMainStore } from '@/stores/main';
 import { useRecapStatsStore } from '@/stores/recap-stats';
 import { rulerType } from '@/stores/settings/options';
 import { usePuzzleAssistanceStore } from '@/stores/assistance/store';
+import { usePuzzleValidationStore } from '@/stores/assistance/validation';
 
 export default {
 	components: {
@@ -104,7 +105,9 @@ export default {
 		const puzzleHintsStore = usePuzzleHintsStore();
 		const getHint = () => puzzleHintsStore.getHint();
 		const puzzleAssistanceStore = usePuzzleAssistanceStore();
-		const { autoCheckIncorrectCells, userCheckIncorrectCells } = puzzleAssistanceStore;
+		const puzzleValidationStore = usePuzzleValidationStore();
+		const { userCheck: userCheckIncorrectCells } = puzzleValidationStore;
+		const { autoCheckIncorrectCells } = puzzleAssistanceStore;
 
 		const wakeLock = usePuzzleWakeLock();
 		const userIdle = wakeLock.idle;

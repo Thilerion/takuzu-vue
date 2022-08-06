@@ -13,6 +13,7 @@ import { usePuzzleHistoryStore } from "./puzzle-history";
 import { usePuzzleTimer } from "./puzzle-timer";
 import { useRecapStatsStore } from "./recap-stats";
 import { usePuzzleAssistanceStore } from "./assistance/store";
+import { usePuzzleValidationStore } from "./assistance/validation";
 
 export const PUZZLE_STATUS = {
 	'NONE': 'NONE',
@@ -139,6 +140,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			usePuzzleHistoryStore().reset();
 			usePuzzleHintsStore().reset();
 			usePuzzleAssistanceStore().reset();
+			usePuzzleValidationStore().reset();
 
 			this.$reset();
 		},
@@ -213,6 +215,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			this.refreshLineCounts();
 			this.refreshGridCounts();
 			usePuzzleAssistanceStore().resetMarkedCells();
+			usePuzzleValidationStore().resetMarkedMistakes();
 			const puzzleHintsStore = usePuzzleHintsStore();
 			if (puzzleHintsStore.showHint) {
 				usePuzzleHintsStore().hide();
@@ -224,6 +227,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			} else this._setValue({ x, y, value, prevValue });
 
 			usePuzzleAssistanceStore().removeFromMarkedCells(`${x},${y}`);
+			usePuzzleValidationStore().removeFromMarkedMistakes({ x, y });
 			const puzzleHintsStore = usePuzzleHintsStore();
 			if (puzzleHintsStore.showHint) {
 				usePuzzleHintsStore().hide();
@@ -369,12 +373,15 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			timer.pause();
 
 			const timeElapsed = timer.timeElapsed;
-			const checkAssistanceData = usePuzzleAssistanceStore().checkAssistanceData;
+			const checkData = {
+				...usePuzzleAssistanceStore().checkAssistanceData,
+				...usePuzzleValidationStore().checkAssistanceData
+			}
 			const hintAssistanceData = usePuzzleHintsStore().hintAssistanceData;
 			const state = { ...this.$state };
 			const finishedPuzzleState = {
 				...state, timeElapsed, assistance: {
-					checkData: checkAssistanceData,
+					checkData,
 					hintData: hintAssistanceData,
 					cheatsUsed: this.cheatsUsed
 				}
@@ -415,6 +422,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			puzzleHistory.reset();
 			usePuzzleHintsStore().reset();
 			usePuzzleAssistanceStore().reset();
+			usePuzzleValidationStore().reset();
 			const timer = usePuzzleTimer();
 			timer.reset();
 			timer.start();
