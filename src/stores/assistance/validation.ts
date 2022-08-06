@@ -2,15 +2,8 @@ import type { SimpleBoard } from "@/lib";
 import type { BoardString, PuzzleBoards, Vec } from "@/lib/types";
 import { defineStore } from "pinia";
 import { usePuzzleStore } from "../puzzle";
-
-export type MarkedMistake = `${number},${number}`;
-export type CheckActionSource = 'auto' | 'auto-filled' | 'user';
-export type CheckActionResult = ReturnType<typeof findMistakes>;
-export type CurrentCheck = {
-	boardStr: BoardString,
-	action: CheckActionSource,
-	result: CheckActionResult
-}
+import { markedMistakeFromCellOrString, vecToMark } from "./helpers";
+import type { CheckActionResult, CurrentCheck, MarkedMistake } from "./types";
 
 export const usePuzzleValidationStore = defineStore('puzzleValidation', {
 	state: () => ({
@@ -20,12 +13,11 @@ export const usePuzzleValidationStore = defineStore('puzzleValidation', {
 		previousAutoFilledCheckResults: new Map<BoardString, CheckActionResult>(),
 
 		markedMistakes: [] as MarkedMistake[],
-
-		autoFilledCheckTimer: null as ReturnType<typeof setTimeout> | null,
 	}),
 
 	getters: {
 		checkAssistanceData() {
+			console.log('getting checkAssistanceData');
 			// TODO: used for puzzleFinished history state later
 			return {};
 		},
@@ -61,7 +53,7 @@ export const usePuzzleValidationStore = defineStore('puzzleValidation', {
 				result
 			}, { addToPrevious: true });
 		},
-		autoCheckFilledBoard() {
+		autoFilledBoardCheck() {
 			const data = getRequiredDataFromPuzzleStore();
 			const { boardStr } = data;
 
@@ -148,12 +140,8 @@ const getRequiredDataFromPuzzleStore = () => {
 	return { boardStr, board, solution };
 }
 
-const findMistakes = ({ board, solution }: PuzzleBoards): { found: false } | { found: true, cells: Vec[] } => {
+const findMistakes = ({ board, solution }: PuzzleBoards): CheckActionResult => {
 	const { hasMistakes, result } = board.hasIncorrectValues(solution);
 	if (!hasMistakes) return { found: false };
 	return { found: true, cells: result }
-}
-const vecToMark = ({ x, y }: Vec): MarkedMistake => `${x},${y}`;
-const markedMistakeFromCellOrString = (cellOrMark: Vec | MarkedMistake): MarkedMistake => {
-	return typeof cellOrMark === 'string' ? cellOrMark : vecToMark(cellOrMark);
 }

@@ -1,12 +1,10 @@
-import type { Vec } from "@/lib/types";
+import type { BoardString, Vec } from "@/lib/types";
 
-export type CheckActionSource = 'user' | 'auto';
-export type IncorrectCellMark = `${number},${number}`;
-export type MistakeCheckResult = {
-	found: false
-} | { found: true, cells: Vec[] };
-export interface CheckAssistanceData {
-	checks: number,
-	checksWithResults: number,
-	incorrectCellsFound: number
+export type MarkedMistake = `${number},${number}`;
+export type CheckActionSource = 'auto' | 'auto-filled' | 'user';
+export type CheckActionResult = { found: false } | { found: true, cells: Vec[] };
+export type CurrentCheck = {
+	boardStr: BoardString,
+	action: CheckActionSource,
+	result: CheckActionResult
 }
