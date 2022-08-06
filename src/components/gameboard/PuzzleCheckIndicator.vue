@@ -48,7 +48,6 @@ const animateCorrectEl = () => {
 		correctElAnimation = el.animate(checkAnim.keyframes, checkAnim.options);
 		correctElAnimation.persist();
 	} else {
-		console.log('play it');
 		correctElAnimation.cancel();
 		correctElAnimation.play();
 	}
@@ -60,7 +59,6 @@ const animateIncorrectEl = () => {
 		incorrectElAnimation = el.animate(checkAnim.keyframes, checkAnim.options);
 		incorrectElAnimation.persist();
 	} else {
-		console.log('play it');
 		incorrectElAnimation.cancel();
 		incorrectElAnimation.play();
 	}

@@ -17,7 +17,6 @@ export const usePuzzleValidationStore = defineStore('puzzleValidation', {
 
 	getters: {
 		checkAssistanceData() {
-			console.log('getting checkAssistanceData');
 			// TODO: used for puzzleFinished history state later
 			return {};
 		},

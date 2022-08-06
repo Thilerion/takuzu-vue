@@ -17,7 +17,6 @@ export const useTapVibrate = (opts: UseTapVibrateOpts) => {
 	let vibrateTimeout: null | ReturnType<typeof setTimeout> = null;
 
 	const _vibrateFn = () => {
-		console.log('inner vibrate');
 		return navigator.vibrate(pattern.value);
 	}
 	const vibrate = !isSupported ? () => { } : () => {

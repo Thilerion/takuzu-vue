@@ -121,7 +121,6 @@ const getTimeRecordType = (id) => {
 }
 
 const historyItems = computed(() => {
-	console.log('getHistoryItems');
 	const res = rawHistoryItems.value.map(item => {
 		const { id } = item;
 		const timeRecord = getTimeRecordType(id);
@@ -152,7 +151,6 @@ provide('filterUtils', { currentFilters, activeFilters, filterFns, filterItems, 
 
 const parseFilterQueryData = (data = {}) => {
 	for (const [key, strVal] of Object.entries(data)) {
-		console.log({key, strVal});
 		try {
 			const val = JSON.parse(strVal);
 			setFilter(key, val);

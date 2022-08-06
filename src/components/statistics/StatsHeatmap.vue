@@ -85,7 +85,6 @@ const allSortedScores = computed(() => {
 	}
 
 	const upTo97Idx = Math.round(0.97 * byDate.length);
-	console.log({ upTo97Idx });
 	const upTo97 = byDate.slice(0, upTo97Idx);
 
 	const midPoint = Math.round(upTo97.length / 2);

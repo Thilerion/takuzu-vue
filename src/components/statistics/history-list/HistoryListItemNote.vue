@@ -55,11 +55,11 @@ const hasNote = computed(() => {
 })
 const noteStr = computed(() => {
 	if (unsavedNote.value !== props.note && !!(unsavedNote.value)) {
-		console.log('Showing unsaved note');
+		// show unsaved note
 		return unsavedNote.value as string;
 	}
 	if (!hasNote.value) return null;
-	console.log('showing propsNote');
+	// show note from props
 	return props.note as string;
 })
 const propsNote = computed(() => {

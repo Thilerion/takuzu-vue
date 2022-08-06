@@ -23,8 +23,6 @@ export const useListFilters = () => {
 	})
 
 	const setFilter = (key, value) => {
-		console.log('setting filter');
-		console.log({ key, value });
 		filters[key] = value;
 	}
 	const removeFilter = (key) => {

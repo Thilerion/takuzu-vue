@@ -47,7 +47,6 @@ const startEditing = () => {
 	})
 }
 const clearNote = () => {
-	console.log('clear');
 	isEditing.value = false;
 	unsavedNote.value = '';
 	saveNote();
@@ -68,10 +67,8 @@ const saveNote = () => {
 		return;
 	}
 	if (unsavedNote.value) {
-		console.log('Saving note with value.');
 		emit('save-note', unsavedNote.value);
 	} else {
-		console.log('Saving note with undefined.');
 		emit('save-note', undefined);
 	}
 }

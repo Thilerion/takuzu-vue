@@ -394,7 +394,6 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				console.warn(e);
 				return null;
 			} finally {
-				console.log('deleting saved puzzle');
 				const { deleteSavedPuzzle } = useSavedPuzzle();
 				deleteSavedPuzzle();
 			}

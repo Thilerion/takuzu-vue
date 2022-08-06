@@ -156,10 +156,8 @@ const goBackToRoute = ({ name }, navigateFn) => {
 	const routeMetaPrev = route?.meta?.prev;
 	const prevName = routeMetaPrev?.name;
 	if (prevName === name) {
-		console.log('back');
 		router.go(-1);
 	} else {
-		console.log('navigate');
 		navigateFn();
 	}
 }

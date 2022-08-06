@@ -165,7 +165,6 @@ const tableRows = computed(() => {
 })
 
 watch(baseTableData, (value) => {
-	console.log(value);
 }, { deep: true, immediate: true })
 </script>
 

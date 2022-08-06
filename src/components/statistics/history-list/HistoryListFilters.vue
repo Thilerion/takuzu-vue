@@ -169,7 +169,6 @@ const difficultyFilterValues = computed({
 		return currentFilters.difficulty;
 	},
 	set(value) {
-		console.log(value);
 		if (value?.length !== 2 || value[0] === 1 && value[1] === 5) {
 			setFilter('difficulty', []);
 		} else {

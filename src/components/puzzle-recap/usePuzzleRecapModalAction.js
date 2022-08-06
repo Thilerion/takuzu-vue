@@ -89,7 +89,6 @@ export const usePuzzleRecapModalActions = () => {
 	const noop = () => { };
 
 	async function exitTo(actionName) {
-		console.log({ actionName });
 		let actionFn = noop;
 		switch (actionName) {
 			case 'play-again': {

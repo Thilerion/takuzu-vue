@@ -135,14 +135,13 @@ export const useRecapStatsStore = defineStore('recapStats', {
 
 			if (puzzleState.assistance.cheatsUsed) {
 				const savePuzzleToHistoryIfCheatedFlag = useMainStore().featureToggles.addPuzzleToHistoryWithCheats.isEnabled;
-				if (savePuzzleToHistoryIfCheatedFlag) {
-					console.log('Cheats used, but will save to history anyway.');
-				} else {
+				if (!savePuzzleToHistoryIfCheatedFlag) {
 					console.warn('Cheats used; will not save entry to history!');
 					this.setPuzzleEntry({ historyEntry, puzzleState });
 					this.initializeGameEndStats(historyEntry);
 					return historyEntry;
 				}
+				// cheats were used, but will save to history anyway
 			}
 			const historyEntryUpdated = await this.addFinishedPuzzleToDb(historyEntry);
 			this.setPuzzleEntry({ historyEntry: historyEntryUpdated, puzzleState });
@@ -202,7 +201,6 @@ export const useRecapStatsStore = defineStore('recapStats', {
 					flags: { ...newFlags }
 				});
 				if (success) {
-					console.log(`Succesfully set puzzle as "favorite = ${value}"`);
 					this.lastPuzzleEntry.flags = { ...newFlags };
 				} else {
 					console.warn(`Could not set puzzle as "favorite = ${value}"`);
