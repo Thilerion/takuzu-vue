@@ -12,7 +12,6 @@ import { usePuzzleHintsStore } from "./puzzle-hinter";
 import { usePuzzleHistoryStore } from "./puzzle-history";
 import { usePuzzleTimer } from "./puzzle-timer";
 import { useRecapStatsStore } from "./recap-stats";
-import { usePuzzleAssistanceStore } from "./assistance/store";
 import { usePuzzleValidationStore } from "./assistance/validation";
 
 export const PUZZLE_STATUS = {
@@ -139,7 +138,6 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			usePuzzleTimer().reset();
 			usePuzzleHistoryStore().reset();
 			usePuzzleHintsStore().reset();
-			usePuzzleAssistanceStore().reset();
 			usePuzzleValidationStore().reset();
 
 			this.$reset();
@@ -214,7 +212,6 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			}
 			this.refreshLineCounts();
 			this.refreshGridCounts();
-			usePuzzleAssistanceStore().resetMarkedCells();
 			usePuzzleValidationStore().resetMarkedMistakes();
 			const puzzleHintsStore = usePuzzleHintsStore();
 			if (puzzleHintsStore.showHint) {
@@ -226,7 +223,6 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				this._setValue({ x, y, value, prevValue: this.board.grid[y][x] });
 			} else this._setValue({ x, y, value, prevValue });
 
-			usePuzzleAssistanceStore().removeFromMarkedCells(`${x},${y}`);
 			usePuzzleValidationStore().removeFromMarkedMistakes({ x, y });
 			const puzzleHintsStore = usePuzzleHintsStore();
 			if (puzzleHintsStore.showHint) {
@@ -374,7 +370,6 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 
 			const timeElapsed = timer.timeElapsed;
 			const checkData = {
-				...usePuzzleAssistanceStore().checkAssistanceData,
 				...usePuzzleValidationStore().checkAssistanceData
 			}
 			const hintAssistanceData = usePuzzleHintsStore().hintAssistanceData;
@@ -421,7 +416,6 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			const puzzleHistory = usePuzzleHistoryStore();
 			puzzleHistory.reset();
 			usePuzzleHintsStore().reset();
-			usePuzzleAssistanceStore().reset();
 			usePuzzleValidationStore().reset();
 			const timer = usePuzzleTimer();
 			timer.reset();

@@ -67,9 +67,12 @@ const animateIncorrectEl = () => {
 }
 
 watch(checkId, (value, prev) => {
-	if (!lastCheckedByUser.value || value < prev) {
+	if (value <= prev) {
 		return;
 	}
+	/* if (!lastCheckedByUser.value || value < prev) {
+		return;
+	} */
 	if (!errorFound.value) {
 		animateCorrectEl();
 	} else {

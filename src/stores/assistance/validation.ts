@@ -4,7 +4,7 @@ import { defineStore } from "pinia";
 import { usePuzzleStore } from "../puzzle";
 
 export type MarkedMistake = `${number},${number}`;
-export type CheckActionSource = 'auto' | 'user';
+export type CheckActionSource = 'auto' | 'auto-filled' | 'user';
 export type CheckActionResult = ReturnType<typeof findMistakes>;
 export type CurrentCheck = {
 	boardStr: BoardString,
@@ -16,9 +16,12 @@ export const usePuzzleValidationStore = defineStore('puzzleValidation', {
 	state: () => ({
 		userChecks: 0,
 		lastCheck: null as CurrentCheck | null,
-		previousResults: new Map<BoardString, CheckActionResult>(),
+		previousUserCheckResults: new Map<BoardString, CheckActionResult>(),
+		previousAutoFilledCheckResults: new Map<BoardString, CheckActionResult>(),
 
-		markedMistakes: [] as MarkedMistake[]
+		markedMistakes: [] as MarkedMistake[],
+
+		autoFilledCheckTimer: null as ReturnType<typeof setTimeout> | null,
 	}),
 
 	getters: {
@@ -38,14 +41,10 @@ export const usePuzzleValidationStore = defineStore('puzzleValidation', {
 			const { boardStr } = data;
 
 			// check if current result still applies
-			if (this._currentResultStillApplies(boardStr)) {
-				// set marked cells again to be sure
-				this._setMarkedMistakes();
-				return;
-			}
+			if (this._currentResultStillApplies(boardStr)) return;
 
 			// check previous results first for match
-			const prev = this._getResultFromPreviousResults(boardStr);
+			const prev = this._getFromPreviousUserCheckResults(boardStr);
 			if (prev) {
 				this._setLastCheck({
 					boardStr,
@@ -59,6 +58,31 @@ export const usePuzzleValidationStore = defineStore('puzzleValidation', {
 			this._setLastCheck({
 				boardStr,
 				action: 'user',
+				result
+			}, { addToPrevious: true });
+		},
+		autoCheckFilledBoard() {
+			const data = getRequiredDataFromPuzzleStore();
+			const { boardStr } = data;
+
+			// check if previous result still applies first
+			if (this._currentResultStillApplies(boardStr)) return;
+
+			// check previous (autoFilledCheck) results for match
+			const prevAutoFilled = this._getFromPreviousAutoFilledCheckResults(boardStr);
+			if (prevAutoFilled) {
+				this._setLastCheck({
+					boardStr,
+					action: 'auto-filled',
+					result: prevAutoFilled
+				}, { addToPrevious: false });
+				return;
+			}
+
+			const result = findMistakes(data);
+			this._setLastCheck({
+				boardStr,
+				action: 'auto-filled',
 				result
 			}, { addToPrevious: true });
 		},
@@ -81,19 +105,32 @@ export const usePuzzleValidationStore = defineStore('puzzleValidation', {
 				result: data.result
 			}
 			if (addToPrevious) {
-				this.previousResults.set(data.boardStr, data.result);
+				if (data.action === 'user') {
+					this.previousUserCheckResults.set(data.boardStr, data.result);
+				} else if (data.action === 'auto-filled') {
+					this.previousAutoFilledCheckResults.set(data.boardStr, data.result);
+				} else {
+					throw new Error('Add to previous what results?');
+				}
 			}
 			this._setMarkedMistakes();
 		},
-		_getResultFromPreviousResults(boardStr: BoardString) {
-			const prev = this.previousResults.get(boardStr);
+		_getFromPreviousUserCheckResults(boardStr: BoardString) {
+			const prev = this.previousUserCheckResults.get(boardStr);
+			if (prev == null) return false;
+			return prev;			
+		},
+		_getFromPreviousAutoFilledCheckResults(boardStr: BoardString) {
+			const prev = this.previousAutoFilledCheckResults.get(boardStr);
 			if (prev == null) return false;
 			return prev;
-			
 		},
 		_currentResultStillApplies(boardStr: BoardString) {
 			if (this.lastCheck == null) return false;
 			if (this.lastCheck.boardStr !== boardStr) return false;
+
+			// set marked cells again to be sure
+			this._setMarkedMistakes();
 			return true;
 		},
 		_setMarkedMistakes() {

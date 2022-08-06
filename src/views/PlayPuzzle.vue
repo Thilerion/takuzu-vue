@@ -78,7 +78,6 @@ import { usePuzzleStore } from '@/stores/puzzle.js';
 import { useMainStore } from '@/stores/main';
 import { useRecapStatsStore } from '@/stores/recap-stats';
 import { rulerType } from '@/stores/settings/options';
-import { usePuzzleAssistanceStore } from '@/stores/assistance/store';
 import { usePuzzleValidationStore } from '@/stores/assistance/validation';
 
 export default {
@@ -104,10 +103,11 @@ export default {
 		const puzzleHistoryStore = usePuzzleHistoryStore();
 		const puzzleHintsStore = usePuzzleHintsStore();
 		const getHint = () => puzzleHintsStore.getHint();
-		const puzzleAssistanceStore = usePuzzleAssistanceStore();
 		const puzzleValidationStore = usePuzzleValidationStore();
-		const { userCheck: userCheckIncorrectCells } = puzzleValidationStore;
-		const { autoCheckIncorrectCells } = puzzleAssistanceStore;
+		const {
+			userCheck: userCheckIncorrectCells,
+			autoCheckFilledBoard
+		} = puzzleValidationStore;
 
 		const wakeLock = usePuzzleWakeLock();
 		const userIdle = wakeLock.idle;
@@ -141,7 +141,7 @@ export default {
 			shouldEnableWakeLock: enableWakeLock, showTimer,
 			puzzleHistoryStore, getHint,
 			userCheckErrors: userCheckIncorrectCells,
-			autoCheckErrors: autoCheckIncorrectCells,
+			autoCheckErrors: autoCheckFilledBoard,
 			wakeLock,
 			hasCurrentSavedGame, savePuzzleSaveData,
 			puzzleStore, pause, resume, pausedByUser, userIdle
