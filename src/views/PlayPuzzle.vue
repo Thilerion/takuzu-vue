@@ -63,7 +63,7 @@ import HintWrapper from '@/components/gameboard/hints/HintWrapper.vue';
 import PuzzleRecap from '@/components/puzzle-recap/PuzzleRecap.vue';
 import CountsRuler from '@/components/gameboard/ruler/CountsRuler.vue';
 
-import { usePuzzleWakeLock } from '@/composables/use-wake-lock.js';
+import { usePuzzleWakeLock } from '@/composables/use-wake-lock';
 
 import { COLUMN, ROW } from '@/lib/constants';
 

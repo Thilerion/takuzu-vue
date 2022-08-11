@@ -8,8 +8,8 @@
 
 <script setup lang="ts">
 import { usePuzzleStore } from '@/stores/puzzle';
-import { usePuzzleTimer } from '@/stores/puzzle-timer.js';
-import { timeFormatter } from '@/utils/date.utils.js';
+import { usePuzzleTimer } from '@/stores/puzzle-timer';
+import { timeFormatter } from '@/utils/date.utils';
 import { computed, onBeforeUnmount, onMounted, ref, toRef } from 'vue';
 
 const puzzleTimer = usePuzzleTimer();
