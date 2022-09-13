@@ -1,27 +1,22 @@
 import { COLUMN, ROW } from "@/lib/constants";
 import { columnIdToX, lineTypeFromLineId, rowIdToY } from "@/lib/utils";
-
+import { SimpleBoard } from "../../../lib/board/Board";
+import { LineType, LineId } from "../../../lib/constants";
+import { Vec } from "../../../lib/types";
+import type { LineHL, AreaHL, CellHL } from "./types";
+import { HighlightLevel, defaultLevel, HighlightType } from "./types";
+export { HighlightLevel, HighlightType } from './types';
 // can be shown as multiple colors; ie a duplicate line hint may want to show the possible duplicate lines as a different color than the target line
-export const HighlightLevel = {
-	PRIMARY: 'PRIMARY',
-	SECONDARY: 'SECONDARY'
-}
-const defaultLevel = HighlightLevel.PRIMARY;
-export const HighlightType = {
-	CELL: 'CELL',
-	LINE: 'LINE',
-	AREA: 'AREA'
-}
 
-
-const CellHighlight = ({ x, y }, level = defaultLevel) => {
+const CellHighlight = (vec: Vec, level: HighlightLevel = defaultLevel): CellHL => {
+	const { x, y } = vec;
 	return {
 		type: HighlightType.CELL,
 		level,
 		cell: { x, y },
 	}
 }
-const LineHighlight = ({ lineId }, level = defaultLevel, board) => {
+const LineHighlight = ({ lineId }, level = defaultLevel, board): LineHL => {
 	const lineType = lineTypeFromLineId(lineId);
 	const { start, end } = lineHighlightEndPoints({
 		lineId, lineType, board
@@ -37,7 +32,7 @@ const LineHighlight = ({ lineId }, level = defaultLevel, board) => {
 		end
 	}
 }
-const AreaHighlight = ({ start, end }, level = defaultLevel) => {
+const AreaHighlight = ({ start, end }, level = defaultLevel): AreaHL => {
 	const { x: x0, y: y0 } = start;
 	const { x: x1, y: y1 } = end;
 
@@ -65,26 +60,33 @@ export const hintHighlightFromType = (hlType, data, level, { board } = {}) => {
 	}
 }
 
+export type HlEndPointsArgs = {
+	lineId: LineId,
+	lineType: LineType,
+	board: SimpleBoard
+}
 function lineHighlightEndPoints({
 	lineId, lineType, board
-}) {
-	let start, end;
+}: HlEndPointsArgs) {
 	if (lineType === ROW) {
 		const y = rowIdToY(lineId);
-		start = {
+		const start = {
 			x: 0, y
 		}
-		end = {
+		const end = {
 			x: board.width - 1, y
 		}
+		return { start, end };
 	} else if (lineType === COLUMN) {
 		const x = columnIdToX(lineId);
-		start = {
+		const start = {
 			x, y: 0
 		};
-		end = {
+		const end = {
 			x, y: board.height - 1
 		}
+		return { start, end };
+	} else {
+		throw new Error(`Unrecognized LineType: ${lineType}`);
 	}
-	return { start, end };
 }
