@@ -187,14 +187,21 @@ type CreateHintByTypeMap = {
     [HintType.BALANCE]: typeof createBasicBalanceHint,
     [HintType.ELIMINATION]: typeof createBasicEliminationHint,
     [HintType.ELIM_DUPE]: typeof createBasicElimDupeHint,
-}
-export function createBasicHint<
+  }
+  const hintGenerators: CreateHintByTypeMap = {
+    [HintType.MISTAKE]: createBasicMistakeHint,
+    [HintType.TRIPLES]: createBasicTriplesHint,
+    [HintType.BALANCE]: createBasicBalanceHint,
+    [HintType.ELIMINATION]: createBasicEliminationHint,
+    [HintType.ELIM_DUPE]: createBasicElimDupeHint,
+  }
+  export function createBasicHint<
     T extends keyof CreateHintByTypeMap,
     Fn extends CreateHintByTypeMap[T],
     Ret extends ReturnType<Fn>
->(
+  >(
     type: T,
     data: Parameters<Fn>[0]
-) {
+  ) {
     return hintGenerators[type](data as any) as Ret;
-}
+  }
