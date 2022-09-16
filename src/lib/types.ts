@@ -21,6 +21,7 @@ export type IterableBoardLineString = {
 
 export type Vec = { x: number, y: number };
 export type Target = Vec & { value: PuzzleSymbol };
+export type Move = Vec & { value: PuzzleValue };
 
 export type PuzzleValueLine = PuzzleValue[];
 export type PuzzleSymbolLine = PuzzleSymbol[];
