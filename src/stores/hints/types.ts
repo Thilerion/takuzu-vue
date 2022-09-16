@@ -1,3 +1,5 @@
+import { PuzzleBoards } from "../../lib/types";
+
 export enum HintType {
     MISTAKE = 'MISTAKE',
     TRIPLES = 'TRIPLES',
@@ -26,5 +28,7 @@ export interface BasicHint<Type extends HintType = HintType> {
     type: Type;
     primaryAction: HintAction;
     // TODO: add createHighlights to basicHint itself
-    // createHighlights: () => HintHighlightTemp[]
+    // createHighlights: () => HintHighlightTemp[],
+    // TODO: add hintValidator to basicHint, maybe required
+    validate?: ({ board, solution }: PuzzleBoards) => boolean,
 }
