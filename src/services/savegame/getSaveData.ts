@@ -1,6 +1,6 @@
 import { usePuzzleStore } from "@/stores/puzzle";
 import { exportMoveList } from "@/stores/puzzle-history";
-import { usePuzzleTimer } from "@/stores/puzzle-timer";
+import { getTotalTimeElapsed } from "@/stores/puzzle-timer";
 import type { HistorySaveData, PuzzleSaveData, SaveData, TimerSaveData } from "./types";
 
 export const getSaveData = (): SaveData => {
@@ -18,13 +18,7 @@ function getSaveDataFromPuzzleStore (): PuzzleSaveData {
 	return { initialBoard, board, solution, width, height, difficulty };
 }
 function getSaveDataFromTimer(): TimerSaveData {
-	const timer = usePuzzleTimer();
-	let timeElapsed = timer.timeElapsed;
-	const { running, startTime } = timer;
-	if (running && !!startTime) {
-		timeElapsed += (Date.now() - startTime);
-	}
-	return { timeElapsed };
+	return { timeElapsed: getTotalTimeElapsed() };
 }
 function getSaveDataFromHistory(): HistorySaveData {
 	return { moveList: exportMoveList() };

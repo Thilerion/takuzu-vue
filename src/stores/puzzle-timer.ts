@@ -63,3 +63,21 @@ export const usePuzzleTimer = defineStore('puzzleTimer', {
 		}
 	}
 })
+
+export const getTimeSinceTimerStart = (now?: number) => {
+	const puzzleTimerStore = usePuzzleTimer();
+	if (puzzleTimerStore.running) {
+		const start: number = puzzleTimerStore.startTime;
+		const timeSinceStart: number = (now ?? Date.now()) - start;
+		return timeSinceStart;
+	}
+	return 0;
+}
+export const getTotalTimeElapsed = (now?: number) => {
+	const puzzleTimerStore = usePuzzleTimer();
+	if (!puzzleTimerStore.started) {
+		throw new Error('Cannot get total time elapsed if timer has not even started yet.');
+	}
+	const sinceStart = getTimeSinceTimerStart();
+	return puzzleTimerStore.timeElapsed + sinceStart;
+}
