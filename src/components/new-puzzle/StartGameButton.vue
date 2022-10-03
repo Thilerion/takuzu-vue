@@ -6,7 +6,7 @@
 	<transition name="fade-start" mode="out-in">
 		<div v-if="!loading">
 		<template v-if="!disabled">
-			<div>Start game</div>
+			<div>Start game <small class="text-xs opacity-70 font-normal" v-if="replay">(replay)</small></div>
 			<div class="text-xs" v-if="!disabled">{{sizeStr}} - {{difficultyLabel}} - {{difficultyStars}}*</div>
 			<div class="text-xs font-normal" v-else>Please select a puzzle size.<br>Note: some puzzle sizes are disabled for harder puzzles.</div>
 		</template>
@@ -21,7 +21,8 @@
 					:size="32"
 				/>
 			</div>
-			<span>Creating game...</span>
+			<span v-if="!replay">Creating game...</span>
+			<span v-else>Loading replay...</span>
 		</div>
 		</transition>
 	</BaseButton>
@@ -35,6 +36,7 @@ import { computed } from 'vue';
 const props = defineProps({
 	disabled: Boolean,
 	loading: Boolean,
+	replay: Boolean,
 	difficultyLabel: {
 		type: String,
 		required: true

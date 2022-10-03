@@ -14,7 +14,13 @@
 						<IconBtn @click="toggle"><icon-ic-baseline-more-vert /></IconBtn>
 					</template>
 					<template #content>
-						<BaseDropdownItem @click="replayRandom">Replay random with selected settings
+						<!-- <BaseDropdownItem @click="replayRandom">Replay random with selected settings
+						</BaseDropdownItem> -->
+						<BaseDropdownItem v-if="debugModeEnabled">
+							<label class="flex items-center">
+								<input type="checkbox" v-model="computedAutoReplayMode">
+								<span class="ml-2">Automatic Replay Mode</span>
+							</label>
 						</BaseDropdownItem>
 					</template>
 				</BaseDropdown>
@@ -68,13 +74,14 @@
 			</div>
 			<StartGameButton
 				class="first:mt-4"
-				@click="createGame"
+				@click="startGame"
 
 				:size="selectedDimensions"
 				:difficulty-label="selectedDifficultyLabel"
 				:difficulty-stars="selectedDifficulty"
 				:disabled="disableStartButton"
 				:loading="puzzleIsLoading"
+				:replay="debugAutoReplayModeEnabled"
 			/>
 		</div>
 	</div>
@@ -84,26 +91,29 @@
 import { DIFFICULTY_LABELS, PRESET_BOARD_SIZES } from '@/config';
 import { computed, ref, toRef, watch, watchEffect } from 'vue';
 
-
-
 import { useRouter } from 'vue-router';
-import { usePreviousSelection } from '../components/new-puzzle/usePreviousSelection';
-
-
-import { usePuzzleStore } from '@/stores/puzzle.js';
-
-
-
+import { usePuzzleStore } from '@/stores/puzzle.js'
 import { useMainStore } from '@/stores/main';
 import { useSavedPuzzle } from '@/services/savegame/useSavedGame';
+import { useNewPuzzleSetupSelection } from '@/components/new-puzzle/useNewPuzzleSetupSelection';
+
 const { hasCurrentSavedGame } = useSavedPuzzle();
 // display warning message if creating a new game will overwrite the currently saved puzzle
 
 const mainStore = useMainStore();
 const debugModeEnabled = toRef(mainStore, 'debugMode');
 
-const previousSelection = usePreviousSelection();
-const selectedDifficulty = ref(previousSelection.value.difficulty);
+const newPuzzleSetupSelection = useNewPuzzleSetupSelection();
+const debugAutoReplayModeEnabled = computed(() => debugModeEnabled.value && newPuzzleSetupSelection.value.debug_autoReplayMode);
+const computedAutoReplayMode = computed({
+	get() {
+		return newPuzzleSetupSelection.value.debug_autoReplayMode ?? false;
+	},
+	set(value) {
+		newPuzzleSetupSelection.value.debug_autoReplayMode = !!value;
+	}
+})
+const selectedDifficulty = ref(newPuzzleSetupSelection.value.difficulty);
 const selectedDifficultyLabel = computed(() => {
 	return DIFFICULTY_LABELS[selectedDifficulty.value];
 })
@@ -147,8 +157,8 @@ const oddPresets = computed(() => {
 const disableStartButton = ref(false);
 
 const selectedDimensions = ref({
-	width: previousSelection.value.size.width,
-	height: previousSelection.value.size.height
+	width: newPuzzleSetupSelection.value.size.width,
+	height: newPuzzleSetupSelection.value.size.height
 })
 
 function selectPreset(preset) {
@@ -178,14 +188,12 @@ watch([selectedDimensions, selectedDifficulty], (value) => {
 	if (!isValidDifficultySizeCombination.value) {
 		return;
 	}
-	const obj = {
+	const merged = {
+		...newPuzzleSetupSelection.value,
 		difficulty: value[1],
-		size: {
-			width: value[0].width,
-			height: value[0].height
-		}
-	};
-	previousSelection.value = obj;
+		size: {...value[0]}
+	}
+	newPuzzleSetupSelection.value = merged;
 })
 
 const puzzleStore = usePuzzleStore();
@@ -193,6 +201,11 @@ const puzzleIsLoading = computed(() => puzzleStore.loading);
 const resetGame = () => puzzleStore.reset();
 
 const router = useRouter();
+
+async function startGame() {
+	if (debugAutoReplayModeEnabled.value) return replayRandom();
+	return createGame();
+}
 
 async function createGame() {
 	resetGame();
