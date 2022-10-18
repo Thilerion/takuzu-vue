@@ -3,7 +3,7 @@ export const boardTypes = {
 	RECT: 'Rectangular',
 	ODD: 'Odd',
 } as const;
-type BoardType = typeof boardTypes[keyof typeof boardTypes];
+export type BoardType = typeof boardTypes[keyof typeof boardTypes];
 interface IsBoardType<T extends BoardType> { type: T }
 
 export class BoardPreset {

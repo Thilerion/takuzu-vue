@@ -1,4 +1,4 @@
-import { DbHistoryEntry as HistoryDbEntry } from "@/services/stats/db/models";
+import { DbHistoryEntry as HistoryDbEntry } from "@/services/stats/db/models/index.js";
 import { defineStore } from "pinia";
 import * as StatsDB from "@/services/stats/db/index.js";
 import { startOfDay } from "date-fns/esm";
