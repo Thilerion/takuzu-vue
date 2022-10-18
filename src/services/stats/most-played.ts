@@ -79,6 +79,8 @@ export function getMostPlayedPuzzleSizes<T extends BaseHistoryItem>(items: T[] =
 	}
 }
 
+export type MostPlayedPuzzleConfigs<T extends BaseHistoryItem> = ReturnType<typeof getMostPlayedPuzzleConfigs<T>>;
+export type MostPlayedPuzzleSizes<T extends BaseHistoryItem> = ReturnType<typeof getMostPlayedPuzzleSizes<T>>;
 export function getMostPlayedPuzzleConfigs<T extends BaseHistoryItem>(items: T[] = []) {
 	const groupedArr = groupItemsByPuzzleConfig(items).map(g => {
 		const { items } = g;
