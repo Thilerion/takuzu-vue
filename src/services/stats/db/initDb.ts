@@ -3,6 +3,11 @@ import Dexie from 'dexie';
 import { DbHistoryEntry } from './models/index.js';
 import { initVersions } from './versions.js';
 
+type PickByValueType<T, U> = {
+	[K in keyof T as T[K] extends U ? K : never]: T[K]
+  }
+type StatsDbTable = keyof PickByValueType<StatsDb, Dexie.Table>;
+
 class StatsDb extends Dexie {
 
 	puzzleHistory!: Dexie.Table<DbHistoryEntry, number>;	
@@ -42,10 +47,10 @@ class StatsDb extends Dexie {
 		return this.puzzleHistory.delete(primaryKey);
 	}
 
-	getCount(table: Parameters<typeof this.table>[0] = 'puzzleHistory') {
+	getCount(table: StatsDbTable = 'puzzleHistory') {
 		return this.table(table).count();
 	}
-	getAll(table: Parameters<typeof this.table>[0] = 'puzzleHistory') {
+	getAll(table: StatsDbTable = 'puzzleHistory') {
 		return this.table(table).toArray();
 	}
 }
