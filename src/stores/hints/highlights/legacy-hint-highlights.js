@@ -1,6 +1,6 @@
 import { extent } from "@/utils/data-analysis.utils";
 import { HINT_TYPE } from "../Hint";
-import { HighlightType, hintHighlightFromType, HighlightLevel } from "./highlight.js";
+import { HighlightType, hintHighlightFromType, HighlightLevel } from "./highlight";
 import { usePuzzleStore } from "@/stores/puzzle";
 
 export const createHighlightsFromLegacyHint = (hint, board) => {

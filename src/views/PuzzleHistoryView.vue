@@ -98,7 +98,7 @@ const getDefaultOptions = () => ({
 </script>
 
 <script setup>
-import { useStatisticsStore } from '@/stores/statistics.js';
+import { useStatisticsStore } from '@/stores/statistics';
 import { storeToRefs } from 'pinia';
 import { ref, computed, watch, onBeforeMount, reactive, toRefs, provide } from 'vue';
 import { useRoute, useRouter } from 'vue-router';

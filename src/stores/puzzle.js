@@ -4,7 +4,7 @@ import { EMPTY, ONE, ZERO } from "@/lib/constants";
 import { getRandomTransformedPuzzle } from "@/lib/helpers/transform";
 import { countLineValues, pickRandom } from "@/lib/utils";
 import { requestPuzzle } from "@/services/create-puzzle";
-import { puzzleHistoryTable } from "@/services/stats/db";
+import { db as StatsDB } from "@/services/stats/db";
 import { useSavedPuzzle } from "@/services/savegame/useSavedGame";
 import { initPregenWorker } from "@/workers/pregen/index";
 import { defineStore } from "pinia";
@@ -312,7 +312,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 		async replayRandomPuzzle({
 			width, height, difficulty
 		}) {
-			const previousPlays = await puzzleHistoryTable.where('[width+height+difficulty]').equals([width, height, difficulty]).toArray();
+			const previousPlays = await StatsDB.puzzleHistory.where('[width+height+difficulty]').equals([width, height, difficulty]).toArray();
 			if (!previousPlays.length) return false;
 
 			const timestamp = Date.now();

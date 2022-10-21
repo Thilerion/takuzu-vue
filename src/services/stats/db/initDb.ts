@@ -27,7 +27,7 @@ class StatsDb extends Dexie {
 		if (updateItemId) item.id = primaryKey;
 		return primaryKey;
 	}
-	async updateHistoryItem(primaryKey: number, modifiedProps: Partial<DbHistoryEntry> = {}) {
+	async updateHistoryItem(primaryKey: number, modifiedProps: Partial<DbHistoryEntry> & { [keyPath: string]: any} = {}) {
 		const success = await this.puzzleHistory.update(primaryKey, modifiedProps);
 		if (!success) {
 			console.warn(`Updating item with primary key "${primaryKey}" failed; probably because no item could be found with this key.`);

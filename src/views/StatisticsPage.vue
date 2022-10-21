@@ -26,7 +26,7 @@
 
 <script setup>
 import { onBeforeMount } from 'vue';
-import { useStatisticsStore } from '@/stores/statistics.js';
+import { useStatisticsStore } from '@/stores/statistics';
 import { storeToRefs } from 'pinia';
 
 const statsStore = useStatisticsStore();

@@ -16,7 +16,7 @@
 import { processDateStreaks } from '@/services/stats/streaks';
 import { computed, inject, toRef } from 'vue';
 
-import { useStatisticsStore } from '@/stores/statistics.js';
+import { useStatisticsStore } from '@/stores/statistics';
 
 const items = inject('historyItems', () => [], true);
 const statsStore = useStatisticsStore();

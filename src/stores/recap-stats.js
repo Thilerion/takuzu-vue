@@ -1,6 +1,6 @@
-import { DbHistoryEntry as HistoryDbEntry } from "@/services/stats/db/models/index.js";
+import { DbHistoryEntry as HistoryDbEntry } from "@/services/stats/db/models/index";
 import { defineStore } from "pinia";
-import * as StatsDB from "@/services/stats/db/index.js";
+import {db as StatsDB} from "@/services/stats/db/index";
 import { startOfDay } from "date-fns/esm";
 import { useMainStore } from "./main";
 
@@ -151,7 +151,7 @@ export const useRecapStatsStore = defineStore('recapStats', {
 		},
 		async addFinishedPuzzleToDb(historyEntry) {
 			try {
-				const id = await StatsDB.add(historyEntry, true);
+				const id = await StatsDB.addHistoryItem(historyEntry, true);
 				if (id && typeof id === 'number') {
 					historyEntry.id = id;
 					return historyEntry;
@@ -172,7 +172,7 @@ export const useRecapStatsStore = defineStore('recapStats', {
 		async saveNote(note = null) {
 			const { id } = this.lastPuzzleEntry;
 			try {
-				const success = await StatsDB.update(id, {
+				const success = await StatsDB.updateHistoryItem(id, {
 					note
 				});
 				if (success) {
@@ -197,7 +197,7 @@ export const useRecapStatsStore = defineStore('recapStats', {
 			const { id, flags: currentFlags } = this.lastPuzzleEntry;
 			const newFlags = { ...currentFlags, favorite: value ? 1 : 0 };
 			try {
-				const success = await StatsDB.update(id, {
+				const success = await StatsDB.updateHistoryItem(id, {
 					flags: { ...newFlags }
 				});
 				if (success) {
@@ -277,7 +277,7 @@ async function createGameEndStats({ width, height, difficulty, timeElapsed, id, 
 }
 
 async function getItemsWithSameInitialBoard({initialBoard, id}) {
-	const previousPlays = await StatsDB.puzzleHistoryTable.where({
+	const previousPlays = await StatsDB.puzzleHistory.where({
 		initialBoard
 	}).filter(item => id == null || item.id !== id).toArray();
 
@@ -288,14 +288,14 @@ async function getItemsWithSameInitialBoard({initialBoard, id}) {
 async function getTotalSolved() {
 	try {
 		const totalSolved = await StatsDB.getCount();
-		const sizes = await StatsDB.puzzleHistoryTable.orderBy('[width+height]').uniqueKeys();
-		const difficulties = await StatsDB.puzzleHistoryTable.orderBy('difficulty').uniqueKeys();
-		const sizeAndDifficulties = await StatsDB.puzzleHistoryTable.orderBy('[width+height+difficulty]').uniqueKeys();
+		const sizes = await StatsDB.puzzleHistory.orderBy('[width+height]').uniqueKeys();
+		const difficulties = await StatsDB.puzzleHistory.orderBy('difficulty').uniqueKeys();
+		const sizeAndDifficulties = await StatsDB.puzzleHistory.orderBy('[width+height+difficulty]').uniqueKeys();
 
 		const startOfToday = startOfDay(Date.now());
 		const startOfTodayTimestamp = startOfToday.getTime();
 
-		const totalSolvedToday = await StatsDB.puzzleHistoryTable.where('timestamp').above(startOfTodayTimestamp).count();
+		const totalSolvedToday = await StatsDB.puzzleHistory.where('timestamp').above(startOfTodayTimestamp).count();
 
 		const sizesPlayed = sizes.map(([width, height]) => {
 			const cells = width * height;
@@ -336,7 +336,7 @@ async function getTotalSolved() {
 
 async function getPuzzlesPlayedWithPuzzleConfig({ width, height, difficulty, id }) {
 	try {
-		const items = await StatsDB.puzzleHistoryTable
+		const items = await StatsDB.puzzleHistory
 			.where('[width+height+difficulty]')
 			.equals([width, height, difficulty])
 			.sortBy('timeElapsed');
@@ -353,8 +353,8 @@ async function getPuzzlesPlayedWithPuzzleConfig({ width, height, difficulty, id 
 
 async function getPuzzleCountWithSizeOrDifficulty({ width, height, difficulty }) {
 	try {
-		const sizeCount = StatsDB.puzzleHistoryTable.where('[width+height]').equals([width, height]).count();
-		const difficultyCount = StatsDB.puzzleHistoryTable.where('difficulty').equals(difficulty).count();
+		const sizeCount = StatsDB.puzzleHistory.where('[width+height]').equals([width, height]).count();
+		const difficultyCount = StatsDB.puzzleHistory.where('difficulty').equals(difficulty).count();
 		
 		return {
 			sizeCount: await sizeCount,

@@ -1,7 +1,7 @@
 import type { DimensionStr, PuzzleConfigKey } from "@/lib/types";
 import { getUniqueDatesFromItems } from "@/services/stats/dates";
-import * as StatsDB from "@/services/stats/db/index.js";
-import { type DbHistoryEntry, PuzzleStatisticData } from "@/services/stats/db/models/index.js";
+import { db as StatsDB } from "@/services/stats/db/index";
+import { type DbHistoryEntry, PuzzleStatisticData } from "@/services/stats/db/models/index";
 import { getMostPlayedPuzzleConfigs, getMostPlayedPuzzleSizes, type MostPlayedPuzzleConfigs, type MostPlayedPuzzleSizes } from "@/services/stats/most-played";
 import { formatBasicSortableDateKey } from "@/utils/date.utils.js";
 import { isBefore, isToday, subDays } from "date-fns";
@@ -135,7 +135,7 @@ export const useStatisticsStore = defineStore('statistics', {
 		},
 		async markFavorite(id: number, value: boolean | 1 | 0) {
 			const dbVal = value ? 1 : 0;
-			const success = await StatsDB.update(id, {
+			const success = await StatsDB.updateHistoryItem(id, {
 				'flags.favorite': dbVal
 			});
 			if (success) {
@@ -148,7 +148,7 @@ export const useStatisticsStore = defineStore('statistics', {
 			return success;
 		},
 		async saveNote(id: number, note: string) {
-			const success = await StatsDB.update(id, {
+			const success = await StatsDB.updateHistoryItem(id, {
 				note
 			});
 			if (success) {
@@ -163,7 +163,7 @@ export const useStatisticsStore = defineStore('statistics', {
 				console.warn('No item found with this id. Cannot delete it.');
 				return;
 			}
-			await StatsDB.deleteItem(id);
+			await StatsDB.deleteHistoryItem(id);
 			this.historyItems.splice(idx, 1);
 		},
 		setInitialized(value: boolean) {

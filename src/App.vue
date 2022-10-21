@@ -20,7 +20,7 @@
 import { initPregeneratedPuzzles } from '@/services/puzzles-db/init-pregen-puzzles';
 import { computed, onMounted, toRef } from 'vue';
 import { initSettingsPersistence } from './stores/settings/store';
-import { useStatisticsStore } from './stores/statistics.js';
+import { useStatisticsStore } from './stores/statistics';
 import { useMainStore } from './stores/main';
 import { initListeners as initPWAInstallListeners } from './composables/use-deferred-install-prompt';
 import { useInitThemePreferenceProvider } from './composables/use-theme-preferences';

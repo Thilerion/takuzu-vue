@@ -1,4 +1,4 @@
-import { db } from "./initDb.js";
+import { db } from "./initDb";
 
 const clearTableFromDb = (db, table) => db[table].clear();
 const addItemToDb = (db, table) => async (item, updateItemId = true) => {

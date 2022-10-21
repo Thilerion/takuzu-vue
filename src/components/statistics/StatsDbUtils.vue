@@ -30,7 +30,7 @@
 import { formatYYYYMMDD } from '@/utils/date.utils.js';
 import { computed, ref, toRef } from 'vue';
 import { importPeek, exportPuzzleHistoryDb, cleanImportPuzzleHistoryDb, importPuzzleHistoryItemsWithVersionUpgrade } from '@/services/stats/db/import-export.js';
-import * as StatsDB from '@/services/stats/db/index.js';
+import {db as StatsDB} from '@/services/stats/db/index.js';
 
 const props = defineProps({
 	numSolved: {
@@ -49,10 +49,12 @@ const isExporting = ref(false);
 const isImporting = ref(false);
 const isBusy = computed(() => isExporting.value || isImporting.value);
 
+const getStatsDbVerno = () => StatsDB.verno;
+
 const downloadBlobAsFile = (blob, baseName = 'puzzle-history') => {
 	const dateStr = formatYYYYMMDD(Date.now()).replaceAll('-', '');
 	const count = numSolved.value;
-	const verno = StatsDB.db.verno;
+	const verno = getStatsDbVerno();
 	const filename = `${baseName}-${dateStr}-solved_${count}-v${verno}.json`;
 	const url = URL.createObjectURL(blob);
 	const a = document.createElement('a');
@@ -66,7 +68,7 @@ const exportStats = async () => {
 	isExporting.value = true;
 	
 	try {
-		const blob = await exportPuzzleHistoryDb(StatsDB.db);
+		const blob = await exportPuzzleHistoryDb(StatsDB);
 		downloadBlobAsFile(blob);
 	} catch(e) {
 		console.error(e);
@@ -88,7 +90,7 @@ const processStatsFile = async (ev) => {
 		isImporting.value = true;
 		const file = ev.target.files[0];
 		const r = await importPeek(file);
-		if (r.databaseVersion < StatsDB.db.verno) {
+		if (r.databaseVersion < getStatsDbVerno()) {
 			await importIntoDatabaseMergeAndUpgrade(file);
 		} else {
 			await importIntoDatabase(file);
@@ -119,7 +121,7 @@ const processMultipleStatsFiles = async ev => {
 
 const processSingleStatFile = async file => {
 	const r = await importPeek(file);
-	if (r.databaseVersion < StatsDB.db.verno) {
+	if (r.databaseVersion < getStatsDbVerno()) {
 		await importIntoDatabaseMergeAndUpgrade(file);
 	} else {
 		await importIntoDatabase(file);
@@ -141,7 +143,7 @@ const importIntoDatabase = async (blob) => {
 	if (!confirmBeforeCleanImport()) return;
 	
 	try {
-		const result = await cleanImportPuzzleHistoryDb(StatsDB.db, blob);
+		const result = await cleanImportPuzzleHistoryDb(StatsDB, blob);
 		console.log({ importResult: result });
 		console.log('successful import!');
 		// TODO: better message (modal?) that shows umport was successful
@@ -156,7 +158,7 @@ const importIntoDatabase = async (blob) => {
 
 const importIntoDatabaseMergeAndUpgrade = async blob => {
 	try {
-		const result = await importPuzzleHistoryItemsWithVersionUpgrade(StatsDB.db, blob);
+		const result = await importPuzzleHistoryItemsWithVersionUpgrade(StatsDB, blob);
 		console.log(result);
 	} catch(e) {
 		console.error(e);
@@ -178,7 +180,7 @@ const resetStats = async () => {
 	if (!confirm2) return;
 
 	try {
-		await StatsDB.clearTable();
+		await StatsDB.clearHistory();
 		window.alert('Puzzle statistics and puzzle history have succesfully been reset.');
 	} catch(e) {
 		const str = `[ERROR]: Puzzle statistics and history could not be reset due to error, or something else went wrong: ${e.message}`;
