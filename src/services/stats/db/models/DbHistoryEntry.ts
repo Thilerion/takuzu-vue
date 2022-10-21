@@ -20,7 +20,7 @@ export interface EntryData {
 	id?: number;
 	note?: string;
 }
-type PuzzleStateData = Omit<EntryData, 'initialBoard' | 'solution' | 'localDateStr'> & { timestamp?: number, date?: number, localDateStr?: string, assistance?: { cheatsUsed?: boolean } } & { initialBoard: SimpleBoard, solution: SimpleBoard };
+export type PuzzleStateData = Omit<EntryData, 'initialBoard' | 'solution' | 'localDateStr'> & { timestamp?: number, date?: number, localDateStr?: string, assistance?: { cheatsUsed?: boolean } } & { initialBoard: SimpleBoard, solution: SimpleBoard };
 
 export class DbHistoryEntry {
 	width: number;
