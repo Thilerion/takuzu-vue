@@ -8,7 +8,9 @@ const createResult = <T>(val: boolean, ctx: T) => {
 	return trueResult(ctx);
 }
 
-export const notAddedToDatabaseCheatsUsed = (data: AppliesRequiredData) => {
+type ReqData<T extends keyof AppliesRequiredData> = Pick<AppliesRequiredData, T>;
+
+export const notAddedToDatabaseCheatsUsed = (data: ReqData<'isSavedToDb' | 'lastPuzzleEntry'>) => {
 	const { isSavedToDb, lastPuzzleEntry } = data;
 	const cheatsUsedB = lastPuzzleEntry?.flags?.cheatsUsed;
 	const cheatsUsed = cheatsUsedB !== undefined && !!cheatsUsedB;
@@ -19,7 +21,7 @@ export const notAddedToDatabaseCheatsUsed = (data: AppliesRequiredData) => {
 	)
 }
 
-export const firstSolvedTotal = (data: AppliesRequiredData) => {
+export const firstSolvedTotal = (data: ReqData<'totalSolved'>) => {
 	const { totalSolved } = data;
 	return createResult(
 		totalSolved === 1,
@@ -27,16 +29,28 @@ export const firstSolvedTotal = (data: AppliesRequiredData) => {
 	)
 }
 
-export const hardestPuzzleSolved = (data: AppliesRequiredData) => {
+export const hardestPuzzleSolved = (
+	data: ReqData<
+		'isFirstSolvedWithPuzzleConfig' | 'puzzleConfigsPlayed' |
+		'lastPuzzleEntry'
+	>
+) => {
 	if (!data.isFirstSolvedWithPuzzleConfig) {
 		return falseResult();
 	}
 	const configsPlayed = data.puzzleConfigsPlayed;
+	const sortedConfigs = [...configsPlayed].sort((a, b) => {
+		if (a.difficulty > b.difficulty) return 1;
+		else if (a.difficulty < b.difficulty) return -1;
+		if (a.cells > b.cells) return 1;
+		else if (a.cells < b.cells) return -1;
+		return 0;
+	})
 	const lastWidth = data.lastPuzzleEntry.width;
 	const lastHeight = data.lastPuzzleEntry.height;
 	const lastDifficulty = data.lastPuzzleEntry.difficulty;
 
-	const hardestPlayed = configsPlayed.at(-1)!;
+	const hardestPlayed = sortedConfigs.at(-1)!;
 	const result = hardestPlayed.width === lastWidth && hardestPlayed.height === lastHeight && hardestPlayed.difficulty === lastDifficulty;
 	return createResult(result, {});
 }
