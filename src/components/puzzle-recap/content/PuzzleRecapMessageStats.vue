@@ -13,13 +13,10 @@
 	</div>
 </template>
 
-<script setup>
-const props = defineProps({
-	navigationFn: {
-		type: Function,
-		required: true
-	}
-})
+<script setup lang="ts">
+const props = defineProps<{
+	navigationFn: (val: { name: string }, nav: () => void) => void
+}>();
 // insert non-breaking space to prevent a single word in a line break
 const formatMessage = (str = '') => {
 	const words = str.split(' ');

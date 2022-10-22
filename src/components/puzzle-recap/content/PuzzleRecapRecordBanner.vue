@@ -5,15 +5,25 @@
 			<div class="h-5 w-5 mb-[0.1em]">
 				<icon-fxemoji-trophy class="w-full h-full" />
 			</div>
-			<div class="text-base ml-2">
-				<slot>New time record</slot>
-			</div>
+			<div class="text-base ml-2">{{ message }}</div>
 		</div>
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { RecordType } from '@/services/recap-message-ts/types';
+import { onMounted, ref, watch } from 'vue';
 
+const props = defineProps<{
+	type: RecordType,
+	getMessage: () => string
+}>();
+
+const message = ref('');
+
+const setMessage = () => message.value = props.getMessage();
+onMounted(() => setMessage());
+watch(() => props.getMessage, () => setMessage());
 </script>
 
 <style scoped>
