@@ -37,7 +37,7 @@
 
 	<div class="h-2 relative" v-if="hasRecordBanner">
 		<div class="w-full -translate-y-full flex items-center justify-center h-10">
-			<PuzzleRecapRecordBanner>{{(recapMessageData!.record as string)}}</PuzzleRecapRecordBanner>
+			<PuzzleRecapRecordBanner>{{(recordMessage!)}}</PuzzleRecapRecordBanner>
 		</div>
 	</div>
 	<RecapContent.RecapScores
@@ -84,7 +84,7 @@
 import { DIFFICULTY_LABELS } from '@/config';
 import { getRecapData } from '@/services/recap-message-ts';
 import { useRecapStatsStore } from '@/stores/recap-stats';
-import { computed, ref, toRefs, watch, type Ref } from 'vue';
+import { computed, ref, toRefs, watch, watchEffect, type Ref } from 'vue';
 import { useRecapData, type RecapDataInitialized } from './getRecapData';
 import * as RecapContent from './recap-content-elements.js';
 import { formatTimeMMSSWithRounding } from '@/utils/time.utils';
@@ -99,8 +99,14 @@ const { data, initialized } = toRefs(recapData);
 
 const recapMessageData = ref<null | ReturnType<typeof getRecapData>>(null);
 
-const hasRecordBanner = computed(() => !!recapMessageData.value?.record);
 const recapMessage = computed(() => recapMessageData.value?.message);
+const recordData = computed(() => recapMessageData.value?.record ?? false)
+const hasRecordBanner = computed(() => recordData.value !== false);
+const recordMessage = ref<string | null>(null);
+watchEffect(() => {
+	const msg = recordData.value == false ? null : recordData.value.getMessage();
+	recordMessage.value = msg;
+})
 
 const difficultyLabel = computed(() => data.value == null ? null : DIFFICULTY_LABELS[data.value.difficulty])
 

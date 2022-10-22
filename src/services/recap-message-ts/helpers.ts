@@ -39,15 +39,17 @@ export function dimensionsString(width: number, height: number) {
 
 export function checkImprovementOverPreviousBest({
 	time, best, previousBest
-}: { time: number, best: number, previousBest: number }) {
+}: { time: number, best: number, previousBest: number | null }) {
 	if (time !== best) {
 		throw new Error('Not a time record. Check if this is a time record first.');
+	} else if (previousBest == null) {
+		throw new Error('Not an improvement, as there is no previousBest time.');
 	}
 	return previousBest - time;
 }
 
 export function checkIsTimeRecord({
 	time, best, previousBest
-}: { time: number, best: number, previousBest: number }) {
-	return time === best && time < previousBest;
+}: { time: number, best: number, previousBest: number | null }) {
+	return time === best && previousBest != null && time < previousBest;
 }

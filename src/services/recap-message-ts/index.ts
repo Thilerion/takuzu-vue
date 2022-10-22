@@ -1,6 +1,7 @@
 import { almostTimeRecordAbsolute, almostTimeRecordPercentage, defaultRecapGen, firstOfDifficulty, firstOfSize, firstTotal, firstWithSizeDifficulty, hardestEver, isBetterThanAverage, muchBetterThanAverageAbsolute, muchBetterThanAveragePercentage, notAddedToDbCheats, playsConfigToday, playsConfigTotal, playsToday, playsTotal, replayPlaysTotal, replayTimeRecord, timeRecord, timeRecordLarge, type RecapGenerator } from './generators';
-import { checkIsTimeRecord, pickRandomly } from './helpers';
-import { RecordType, type AppliesRequiredData, type RecapMsgType } from './types';
+import { pickRandomly } from './helpers';
+import { checkPuzzleNewRecord } from './records';
+import type { AppliesRequiredData, RecapMsgType } from './types';
 
 const recapFnsOrdered: (RecapGenerator | RecapGenerator[])[] = [
 	notAddedToDbCheats,
@@ -55,19 +56,11 @@ export function getRecapMessage(data: AppliesRequiredData): RecapMsgRes {
 	const defaulted = defaultRecapGen.fn(data)!;
 	return defaulted();
 }
-export function getRecordType(data: AppliesRequiredData) {
-	if (data.count === 1) {
-		return RecordType.FIRST_TOTAL;
-	} else if (checkIsTimeRecord({ ...data, time: data.currentTimeElapsed })) {
-		return RecordType.TIME_RECORD;
-	}
-	return false;
-}
 
-export function getRecapData(data: AppliesRequiredData): RecapMsgRes & { record: RecordType | false } {
+export function getRecapData(data: AppliesRequiredData) {
 	return {
 		...getRecapMessage(data),
-		record: getRecordType(data)
+		record: checkPuzzleNewRecord(data)
 	}
 }
 
