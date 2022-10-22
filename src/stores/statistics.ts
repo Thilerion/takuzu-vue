@@ -8,7 +8,6 @@ import { isBefore, isToday, subDays } from "date-fns";
 import { defineStore } from "pinia";
 import { reactive } from "vue";
 
-const getPuzzlesSolved = StatsDB.getCount;
 const getAllHistoryItems = () => StatsDB.getAll().then(list => list.map((item: DbHistoryEntry) => {
 	return new PuzzleStatisticData(item);
 }));
@@ -179,7 +178,7 @@ export const useStatisticsStore = defineStore('statistics', {
 			// check for change in date; if so: reset stats
 			if (formatBasicSortableDateKey(new Date()) !== this.initializedDate) {
 				return true;
-			} else if (await getPuzzlesSolved() !== this.puzzlesSolved) {
+			} else if (await StatsDB.getCount() !== this.puzzlesSolved) {
 				return true;
 			}
 			return false;
@@ -195,7 +194,7 @@ export const useStatisticsStore = defineStore('statistics', {
 			}
 
 			this.isLoading = true;
-			const puzzlesSolved = await getPuzzlesSolved();
+			const puzzlesSolved = await StatsDB.getCount();
 
 			if (puzzlesSolved > 0) {
 				const items = await getAllHistoryItems();

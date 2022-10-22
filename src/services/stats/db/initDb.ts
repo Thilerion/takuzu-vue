@@ -6,14 +6,14 @@ import { initVersions } from './versions.js';
 type PickByValueType<T, U> = {
 	[K in keyof T as T[K] extends U ? K : never]: T[K]
   }
-type StatsDbTable = keyof PickByValueType<StatsDb, Dexie.Table>;
+type StatsDbTable = keyof PickByValueType<StatsDB, Dexie.Table>;
 
-class StatsDb extends Dexie {
+class StatsDB extends Dexie {
 
 	puzzleHistory!: Dexie.Table<DbHistoryEntry, number>;	
 
 	constructor() {
-		super('StatsDb');
+		super('StatsDB');
 		initVersions(this);
 		this.puzzleHistory.mapToClass(DbHistoryEntry);
 		persistStorage({ preventPermissionPrompt: true });
@@ -47,12 +47,12 @@ class StatsDb extends Dexie {
 		return this.puzzleHistory.delete(primaryKey);
 	}
 
-	getCount(table: StatsDbTable = 'puzzleHistory') {
-		return this.table(table).count();
+	getCount(this: StatsDB, table: StatsDbTable = 'puzzleHistory') {
+		return this[table].count();
 	}
 	getAll(table: StatsDbTable = 'puzzleHistory') {
-		return this.table(table).toArray();
+		return this[table].toArray();
 	}
 }
 
-export const db = new StatsDb();
+export const db = new StatsDB();
