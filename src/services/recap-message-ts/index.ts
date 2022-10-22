@@ -41,8 +41,10 @@ export function getRecapMessage(data: AppliesRequiredData): RecapMsgRes {
 		if (Array.isArray(item)) {
 			const results = getAll(item, data);
 			const picked = pickRandomly(results);
-			const res = picked();
-			return res;
+			if (picked != null) {
+				const res = picked();
+				return res;
+			}
 		} else {
 			const res = item.fn(data);
 			if (res != null) {

@@ -25,9 +25,9 @@ export function oneOfOrMultipleOf(value: number, {
 	return isMultipleOf(value, multipleOf);
 }
 
-export function pickRandomly<T>(arr: ReadonlyArray<T>): T {
+export function pickRandomly<T>(arr: ReadonlyArray<T>): T | null {
 	const length = arr.length;
-	if (length < 1) throw new Error('Cannot pick randomly from empty array.');
+	if (length < 1) return null;
 	else if (length === 1) return arr[0];
 	const rnd = Math.floor(Math.random() * length);
 	return arr[rnd];

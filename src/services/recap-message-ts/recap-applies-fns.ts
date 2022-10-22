@@ -4,11 +4,15 @@ import type { AppliesRequiredData } from "./types";
 const falseResult = () => null;
 const trueResult = <T>(ctx: T) => ({ result: true as const, ...ctx });
 const createResult = <T>(val: boolean, ctx: T) => {
-	if (val) return falseResult();
+	if (!val) return falseResult();
 	return trueResult(ctx);
 }
 
 export const notAddedToDatabaseCheatsUsed = (data: AppliesRequiredData) => {
+	const { isSavedToDb, lastPuzzleEntry } = data;
+	const cheatsUsedB = lastPuzzleEntry?.flags?.cheatsUsed;
+	const cheatsUsed = cheatsUsedB !== undefined && !!cheatsUsedB;
+	console.log({ isSavedToDb, cheatsUsed });
 	return createResult(
 		!data.isSavedToDb && !!data.lastPuzzleEntry.flags.cheatsUsed,
 		{}
