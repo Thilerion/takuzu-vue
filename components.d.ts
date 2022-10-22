@@ -127,6 +127,7 @@ declare module '@vue/runtime-core' {
     PuzzleRecap: typeof import('./src/components/puzzle-recap/PuzzleRecap.vue')['default']
     PuzzleRecapBanner: typeof import('./src/components/puzzle-recap/PuzzleRecapBanner.vue')['default']
     PuzzleRecapContent: typeof import('./src/components/puzzle-recap/content/PuzzleRecapContent.vue')['default']
+    PuzzleRecapContent2: typeof import('./src/components/puzzle-recap/content/PuzzleRecapContent2.vue')['default']
     PuzzleRecapFavorite: typeof import('./src/components/puzzle-recap/content/PuzzleRecapFavorite.vue')['default']
     PuzzleRecapFavoriteNote: typeof import('./src/components/puzzle-recap/content/PuzzleRecapFavoriteNote.vue')['default']
     PuzzleRecapMessageStats: typeof import('./src/components/puzzle-recap/content/PuzzleRecapMessageStats.vue')['default']
