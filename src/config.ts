@@ -1,3 +1,5 @@
+import type { DifficultyKey } from "./lib/types";
+
 export const boardTypes = {
 	NORMAL: 'Normal',
 	RECT: 'Rectangular',
@@ -61,12 +63,12 @@ export const PRESET_BOARD_SIZES = [
 ]
 
 export const DIFFICULTY_LABELS = {
-	1: 'Beginner',
-	2: 'Normal',
-	3: 'Hard',
-	4: 'Very Hard',
-	5: 'Extreme',
-} as const;
+	1: 'Beginner' as const,
+	2: 'Normal' as const,
+	3: 'Hard' as const,
+	4: 'Very Hard' as const,
+	5: 'Extreme' as const,
+}
 
 export const getAllDifficultyValues = () => {
 	return Object.keys(DIFFICULTY_LABELS);
