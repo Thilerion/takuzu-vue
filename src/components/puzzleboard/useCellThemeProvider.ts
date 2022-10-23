@@ -1,16 +1,16 @@
-// @ts-c
 import { useSettingsStore } from "@/stores/settings/store"
-import { CellThemeTypes } from "@/stores/settings/options";
-import { cellThemeTypeMap } from "@/stores/settings/types";
+import { cellThemeTypeMap, type CellTheme, type CellThemeType } from "@/stores/settings/types";
 import { storeToRefs } from "pinia";
-import { computed, inject, provide, unref } from "vue";
+import { computed, inject, provide, unref, type Ref } from "vue";
 import FastPuzzleCellColored from "../gameboard/cell/FastPuzzleCellColored.vue";
 import FastPuzzleCellSymbol from "../gameboard/cell/FastPuzzleCellSymbol.vue";
+
+type InputThemeValue = Ref<CellTheme> | CellTheme;
 
 export const useCellThemeProvider = ({
 	themeValue, // maybeRef
 	useGlobalTheme = false
-} = {}) => {
+}: { themeValue?: InputThemeValue, useGlobalTheme?: boolean } = {}) => {
 	const settingsStore = useSettingsStore();
 
 	const {
@@ -26,23 +26,24 @@ export const useCellThemeProvider = ({
 		return true;
 	})
 
-	const cellTheme = computed(() => {
+	const cellTheme = computed<CellTheme>(() => {
 		if (shouldUseLocalThemeValue.value) {
-			return themeValue?.value ?? themeValue;
+			return unref(themeValue!);
 		}
 		return injectedCellThemeData.theme.value;
 	})
-	const cellThemeType = computed(() => {
+	const cellThemeType = computed<CellThemeType>(() => {
 		return cellThemeTypeMap[cellTheme.value];
 	})
 
 	const cellComponent = computed(() => {
 		switch (cellThemeType.value) {
-			case CellThemeTypes.COLORED_TILES:
+			case 'coloredTiles':
 				return FastPuzzleCellColored;
-			case CellThemeTypes.SYMBOLS:
+			case 'symbols':
 				return FastPuzzleCellSymbol;
 			default:
+				const x: never = cellThemeType.value;
 				throw new Error(`Cell theme type "${cellThemeType.value}" does not have a matching cell component.`);
 		}
 	})
@@ -59,7 +60,7 @@ export const useCellThemeProvider = ({
 		return [
 			`cell-theme-${cellTheme.value}`,
 			`cell-theme-type-${cellThemeType.value}`
-		]
+		] as const;
 	});
 
 	return { cellTheme, cellThemeType, attrs, classes, cellComponent };

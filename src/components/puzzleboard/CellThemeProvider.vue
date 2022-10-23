@@ -2,7 +2,7 @@
 	<slot :theme-data="themeData" :theme-attrs="attrs" :theme-classes="classes" />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 import { useCellThemeProvider } from './useCellThemeProvider';
 
@@ -14,6 +14,7 @@ const props = defineProps({
 })
 
 const { cellThemeType, cellTheme, attrs, classes, cellComponent } = useCellThemeProvider(props.config);
+
 
 const themeData = computed(() => ({
 	theme: cellTheme.value,
