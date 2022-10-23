@@ -3,16 +3,18 @@ import { usePuzzleStore } from "@/stores/puzzle";
 import { useRecapStatsStore } from "@/stores/recap-stats"
 import { useRoute, useRouter } from "vue-router";
 
+type ActionName = 'play-again' | 'statistics' | 'new-puzzle' | 'replay' | 'home';
+
 export const usePuzzleRecapModalActions = () => {
 	const hideModal = () => recapStatsStore.hideModal();
 	const route = useRoute();
 	const router = useRouter();
 	const recapStatsStore = useRecapStatsStore();
 	const puzzleStore = usePuzzleStore();
-	const goBackToRoute = makeGoBackToRoute({ route, router });
+	const goBackToRoute = makeGoBackToRoute();
 	const mainStore = useMainStore();
 
-	async function playAgainAction() {
+	async function playAgainAction(): Promise<void> {
 		const mode = route?.query?.mode;
 		if (mode === 'replay') {
 			// mode is stripped from route query if replay action fails
@@ -41,7 +43,7 @@ export const usePuzzleRecapModalActions = () => {
 	
 	const stripReplayModeFromRoute = () => {
 		try {
-			const name = route.name;
+			const name = route.name === null ? undefined : route.name;
 			const query = route.query;
 			const { mode, ...otherQueries } = query;
 			router.replace({
@@ -53,7 +55,7 @@ export const usePuzzleRecapModalActions = () => {
 		}	
 	}
 	
-	async function replayAction() {
+	async function replayAction(): Promise<void> {
 		try {
 			const { width, height, difficulty } = recapStatsStore.lastPuzzleEntry;
 			puzzleStore.reset();
@@ -71,7 +73,7 @@ export const usePuzzleRecapModalActions = () => {
 	} 
 	
 	function makeGoBackToRoute() {
-		return (routeName, { replace = true } = {}) => {
+		return (routeName: string, { replace = true } = {}) => {
 			const routeMetaPrev = route?.meta?.prev;
 			const prevName = routeMetaPrev?.name;
 		
@@ -86,9 +88,9 @@ export const usePuzzleRecapModalActions = () => {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
-	const noop = () => { };
+	const noop = (): void => { };
 
-	async function exitTo(actionName) {
+	async function exitTo(actionName: ActionName) {
 		let actionFn = noop;
 		switch (actionName) {
 			case 'play-again': {
@@ -112,6 +114,7 @@ export const usePuzzleRecapModalActions = () => {
 				break;
 			}
 			default: {
+				const x: never = actionName;
 				actionFn = noop;
 				break;
 			}

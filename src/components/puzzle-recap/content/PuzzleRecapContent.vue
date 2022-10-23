@@ -124,7 +124,7 @@
 	const route = useRoute();
 	const router = useRouter();
 	const goBackToRoute = ({ name }: { name: string }, navigateFn: () => void) => {
-		const routeMetaPrev = route?.meta?.prev as Partial<Record<string, string>>;
+		const routeMetaPrev = route.meta.prev;
 		const prevName = routeMetaPrev?.name;
 		if (prevName === name) {
 			router.go(-1);

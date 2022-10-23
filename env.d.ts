@@ -23,3 +23,9 @@ interface ImportMeta {
 declare global {
   const __BUILD_VERSION_DETAILS__: import('./scripts/build-metadata').BuildVersionDetails;
 }
+
+declare module 'vue-router' {
+  interface RouteMeta {
+    prev?: RouteLocationNormalized | null
+  }
+}
