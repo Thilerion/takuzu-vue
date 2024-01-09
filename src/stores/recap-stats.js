@@ -1,7 +1,7 @@
 import { DbHistoryEntry as HistoryDbEntry } from "@/services/stats/db/models";
 import { defineStore } from "pinia";
 import * as StatsDB from "@/services/stats/db/index.js";
-import { startOfDay } from "date-fns/esm";
+import { startOfDay } from "date-fns";
 import { useMainStore } from "./main";
 
 export const useRecapStatsStore = defineStore('recapStats', {

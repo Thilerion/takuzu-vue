@@ -1,11 +1,10 @@
 {
 	"extends": "./tsconfig.app.json",
-	"include": ["env.d.ts", "components.d.ts", "src/**/*.ts", "src/**/*.js", "src/**/*.vue", "tests/unit/**/*.js", "tests/unit/**/*.ts"],
 	"exclude": [],
 	"compilerOptions": {
 	  "composite": true,
-	  "lib": [],
-	  "types": ["node", "jsdom"]
+	  "lib": ["ES2023"],
+	  "types": ["node", "jsdom", "vitest/globals"]
 	}
   }
   
