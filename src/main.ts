@@ -1,12 +1,13 @@
+import './assets/fonts.css';
+import './assets/tailwind.css';
+
 import { createApp } from 'vue';
-import './fonts.css';
-import './tailwind.css';
+import { createPinia } from 'pinia';
 import App from './App.vue';
+import router from './router';
 
 import { registerSW } from 'virtual:pwa-register';
 
-import router from './router';
-import { createPinia } from 'pinia';
 
 const SW_UPDATE_INTERVAL_MS = 60 * 60 * 1000;
 /* const updateSW =  */registerSW({
@@ -18,8 +19,8 @@ const SW_UPDATE_INTERVAL_MS = 60 * 60 * 1000;
 	}
 })
 
-const app = createApp(App)
-	.use(router)
-	.use(createPinia())
-	
+const app = createApp(App);
+app.use(router);
+app.use(createPinia());
+
 app.mount('#app')
