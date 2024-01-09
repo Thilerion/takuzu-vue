@@ -1,11 +1,10 @@
+import { VitePWAOptions } from "vite-plugin-pwa";
+
 export const createVitePwaConfig = ({
 	name = 'Takuzu Vue',
 	short_name = 'Takuzu Vue'
-}) => {
-	/**
-	 * @type {import('vite-plugin-pwa').VitePWAOptions}
-	 */
-	const config = {
+}): Partial<VitePWAOptions> => {
+	const config: Partial<VitePWAOptions> = {
 		includeAssets: ['favicon.ico', 'robots.txt', 'safari-pinned-tab.svg', 'apple-touch-icon.png', '**/*.{woff,woff2}'],
 		manifest: {
 			name,

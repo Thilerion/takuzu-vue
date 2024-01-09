@@ -6,23 +6,22 @@ import { VitePWA } from 'vite-plugin-pwa';
 import Icons from 'unplugin-icons/vite';
 import IconsResolver from 'unplugin-icons/resolver';
 import Components from 'unplugin-vue-components/vite';
-// import copy from 'rollup-plugin-copy';
 
 // @ts-ignore TODO 02-07-2022: remove when pwa.config.js is converted to typescript
 import { createVitePwaConfig } from './pwa.config.js';
 import { defineConfig, loadEnv } from 'vite';
+import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 export default defineConfig(({ command, mode }) => {
 	// load env variables from relevant env file to set manifest app name
 	process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
 
 	// if building for production, create a 200.html fallback for nested routes
-	/* const copyFallback200 = command === 'build' ? copy({
-		hook: 'writeBundle',
+	const copyFallback200 = command === 'build' ? viteStaticCopy({
 		targets: [
-			{ src: 'dist/index.html', dest: 'dist/', rename: '200.html' }
+			{ src: 'dist/index.html', dest: '', rename: '200.html' }
 		]
-	}) : undefined; */
+	}) : undefined;
 
 	let buildVersionDetails = {};
 	try {
@@ -56,7 +55,7 @@ export default defineConfig(({ command, mode }) => {
 			Icons({
 				defaultClass: 'base-icon',
 			}),
-			// copyFallback200
+			copyFallback200
 		],
 		optimizeDeps: {
 			exclude: ["dexie-export-import"]

@@ -1,7 +1,8 @@
-const plugin = require('tailwindcss/plugin');
+import plugin from 'tailwindcss/plugin.js';
+import tailwindcssForms from '@tailwindcss/forms';
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
 	content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
 	darkMode: 'class',
 	theme: {
@@ -72,7 +73,7 @@ module.exports = {
 		}
 	},
 	plugins: [
-		require('@tailwindcss/forms'),
+		tailwindcssForms(),
 		plugin(function ({ addVariant }) {
 			// notouch data attributes are set by useDetectTouch composable, based on pointerType from last interaction
 			addVariant('hover-notouch', '[data-last-touch="false"] &:hover');
