@@ -13,13 +13,12 @@
 	</div>
 </template>
 
-<script setup>
-const props = defineProps({
-	navigationFn: {
-		type: Function,
-		required: true
-	}
-})
+<script setup lang="ts">
+import type { NavigationFailure } from 'vue-router';
+
+const props = defineProps<{
+	navigationFn: (to: { name: string }, navigate: () => Promise<void | NavigationFailure>) => void
+}>()
 // insert non-breaking space to prevent a single word in a line break
 const formatMessage = (str = '') => {
 	const words = str.split(' ');

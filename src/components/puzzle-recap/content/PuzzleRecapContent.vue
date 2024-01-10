@@ -30,7 +30,7 @@
 			</div>
 		
 			<div class="pb-6 relative z-10">
-				<RecapContent.TimeScore>{{formatTimeMMSS(currentTimeElapsed)}}</RecapContent.TimeScore>	
+				<RecapContent.TimeScore>{{formatTimeMMSS(currentTimeElapsed ?? 0)}}</RecapContent.TimeScore>	
 			</div>			
 		</div>
 		<div class="h-2 relative" v-if="hasRecordBanner">
@@ -79,21 +79,23 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { DIFFICULTY_LABELS } from '@/config';
 import { getRecapMessageType, getRecordMessageData } from '@/services/recap-message/index.js';
 import { recapMessageMap } from '@/services/recap-message/recap-message.js';
 import { useRecapStatsStore } from '@/stores/recap-stats';
 import { storeToRefs } from 'pinia';
-import { computed, ref, toRefs, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import * as RecapContent from './recap-content-elements.js';
+import * as RecapContent from './recap-content-elements';
 import { formatTimeMMSSWithRounding } from '@/utils/time.utils';
+import { toRefs } from '@vueuse/core';
+import type { DifficultyKey } from '@/lib/types.js';
+import type { NavigationFailure } from 'vue-router';
 const formatTimeMMSS = formatTimeMMSSWithRounding(200);
 
 defineEmits(['exit-to']);
-
 
 const recapStatsStore = useRecapStatsStore();
 const {
@@ -107,15 +109,23 @@ const {
 const note = computed(() => {
 	// must be computed (not ref), because note property may not be set on the lastPuzzleEntry
 	const entry = recapStatsStore.lastPuzzleEntry;
-	if ('note' in entry) {
+	if (entry != null && 'note' in entry) {
 		return entry.note;
 	}
 	return undefined;
 })
 
+const prevPuzzle = computed(() => {
+	if (lastPuzzleEntry.value == null) {
+		// this shouldn't happen
+		return { difficulty: 1 as DifficultyKey, width: 0, height: 0 }
+	}
+	return lastPuzzleEntry.value;
+})
+
 const {
 	difficulty, width, height
-} = toRefs(lastPuzzleEntry.value);
+} = toRefs(prevPuzzle.value);
 const difficultyLabel = computed(() => {
 	return DIFFICULTY_LABELS[difficulty.value];
 })
@@ -152,7 +162,7 @@ watch(recapStatsInitialized, (value) => {
 
 const route = useRoute();
 const router = useRouter();
-const goBackToRoute = ({ name }, navigateFn) => {
+const goBackToRoute: (to: { name: string }, navigate: () => Promise<void | NavigationFailure>) => void = ({ name }, navigateFn) => {
 	const routeMetaPrev = route?.meta?.prev;
 	const prevName = routeMetaPrev?.name;
 	if (prevName === name) {

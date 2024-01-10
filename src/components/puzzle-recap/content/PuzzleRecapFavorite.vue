@@ -6,11 +6,11 @@
 	><StarIcon :class="{ 'text-gray-400': !value }" :filled="value" :gray="!value" /></IconBtn>
 </template>
 
-<script setup>
+<script setup lang="ts">
 defineEmits(['toggle']);
-const props = defineProps({
-	value: Boolean
-})
+const props = defineProps<{
+	value: boolean
+}>();
 </script>
 
 <style scoped>

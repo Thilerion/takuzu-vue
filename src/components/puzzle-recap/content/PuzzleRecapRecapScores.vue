@@ -5,7 +5,7 @@
 				<div class="text-xs">Best time</div>
 				<div class="text-base flex flex-row items-center">
 					<span class="text-base">{{formatTime(best)}}</span>
-					<span v-if="isTimeRecord" class="line-through decoration-green-500/60 decoration-2 text-gray-600 ml-1 text-xs">{{formatTime(previousBest)}}</span>
+					<span v-if="isTimeRecord" class="line-through decoration-green-500/60 decoration-2 text-gray-600 ml-1 text-xs">{{formatTime(previousBest ?? 0)}}</span>
 				</div>
 			</div>
 		</div>
@@ -18,25 +18,18 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 
 import { formatTimeMMSSWithRounding } from '@/utils/time.utils';
 const formatTime = formatTimeMMSSWithRounding(200);
 
-const props = defineProps({
-	best: {
-		type: Number,
-		required: true
-	},
-	average: {
-		type: Number,
-		required: true
-	},
-	previousBest: {
-		type: Number,
-		default: null
-	},
+const props = withDefaults(defineProps<{
+	best: number,
+	average: number,
+	previousBest?: number | null
+}>(), {
+	previousBest: null
 })
 
 const isTimeRecord = computed(() => props.previousBest != null && props.best < props.previousBest);

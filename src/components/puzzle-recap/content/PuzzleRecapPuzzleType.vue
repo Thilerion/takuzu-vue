@@ -15,27 +15,12 @@
 	</div>
 </template>
 
-<script setup>
-const props = defineProps({
-	width: {
-		type: Number,
-		required: true
-	},
-	height: {
-		type: Number,
-		required: true
-	},
-	difficultyStars: {
-		type: Number,
-		required: true
-	},
-	difficultyLabel: {
-		type: String,
-		required: true
-	},
-	solved: {
-		type: Number,
-		required: true
-	}
-});
+<script setup lang="ts">
+const props = defineProps<{
+	width: number,
+	height: number,
+	difficultyStars: number,
+	difficultyLabel: string,
+	solved: number
+}>();
 </script>

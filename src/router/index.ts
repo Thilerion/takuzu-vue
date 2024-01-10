@@ -5,6 +5,7 @@ declare module 'vue-router' {
 		metaThemeColor?: string;
 		title?: string;
 		usePuzzleKey?: boolean;
+		prev?: RouteLocationNormalized | null;
 	}
 }
 

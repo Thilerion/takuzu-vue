@@ -14,7 +14,7 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useMainStore } from '@/stores/main';
 import { defineAsyncComponent, ref, toRef } from 'vue';
 
