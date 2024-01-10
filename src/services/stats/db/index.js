@@ -1,5 +1,5 @@
-import { db } from './initDb.js';
-export { db } from './initDb.js';
-export * from './db-helpers.js';
+import { db } from './initDb';
+export { db } from './initDb';
+export * from './db-helpers';
 
 export const puzzleHistoryTable = db.puzzleHistory;
