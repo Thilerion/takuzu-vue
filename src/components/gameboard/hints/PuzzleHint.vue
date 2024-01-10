@@ -33,20 +33,18 @@
 </div>
 </template>
 
-<script setup>
-import { computed, toRef, toRefs } from 'vue';
+<script setup lang="ts">
+import type { Hint } from '@/stores/hints/Hint.js';
+import { computed, toRef } from 'vue';
 
 const emit = defineEmits(['hide', 'done']);
-const props = defineProps({
-	hint: {
-		type: Object,
-		required: true
-	}
-})
+const props = defineProps<{
+	hint: Hint
+}>()
 const hint = toRef(props, 'hint');
-const {
-	actions, message
-} = toRefs(hint.value);
+
+const actions = computed(() => hint.value.actions ?? []);
+const message = computed(() => hint.value.message);
 
 const action = computed(() => {
 	if (actions.value?.length) {
@@ -62,7 +60,7 @@ const hasActionFn = computed(() => {
 })
 const onActionBtn = () => {
 	if (hasActionFn.value) {
-		action.value.fn(hint.value);
+		action.value!.fn(hint.value);
 	}
 	emit('done');
 }

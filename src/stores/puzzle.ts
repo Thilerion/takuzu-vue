@@ -382,6 +382,10 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			const randomBoard = pickRandom(uniquePreviousBoards);
 
 			const randomPuzzle = previousPlays.find((val: { initialBoard: string }) => val.initialBoard === randomBoard);
+			if (randomPuzzle == null) {
+				// TODO: is this check needed? when can it fail and why?
+				throw new Error('Could not find random puzzle from previous plays.');
+			}
 			const boardStrings = {
 				board: randomPuzzle.initialBoard,
 				solution: randomPuzzle.solution

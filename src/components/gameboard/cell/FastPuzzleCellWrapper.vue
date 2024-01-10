@@ -13,13 +13,18 @@
 	</component>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { PuzzleValue } from "@/lib/constants.js";
 import { computed, ref, toRefs, watch } from "vue";
 
-const props = defineProps([
-	'x', 'y', 'locked',
-	'initialValue', 'value', 'incorrect'
-]);
+const props = defineProps<{
+	x: number,
+	y: number,
+	locked: boolean,
+	initialValue: PuzzleValue,
+	value: PuzzleValue,
+	incorrect: boolean | undefined // TODO: not sure about this one
+}>();
 const emit = defineEmits(['toggle']);
 
 const {

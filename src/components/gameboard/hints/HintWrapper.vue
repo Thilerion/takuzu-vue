@@ -14,7 +14,7 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter';
 import { storeToRefs } from 'pinia';
 

@@ -12,32 +12,26 @@
 	</div>
 </template>
 
-<script setup>
-import { COLUMN, ONE, ROW, ZERO } from '@/lib/constants';
+<script setup lang="ts">
+import { COLUMN, ONE, ROW, ZERO, type LineType, type PuzzleValue } from '@/lib/constants';
 import { usePuzzleStore } from '@/stores/puzzle';
 import { watchDebounced } from '@vueuse/core';
 import { computed, onBeforeMount, ref, toRefs } from 'vue';
 
-const props = defineProps({
-	lineType: {
-		type: String,
-		required: true
-	},
-	counts: {
-		type: Array,
-		required: true
-	},
-	countType: {
-		validator(value) {
-			return value === 'remaining' || value === 'current';
-		},
-		required: true
-	},
-	cellSize: {
-		type: Number,
-		required: true
-	}
-})
+export type RulerCellValueCountData = {
+	current: number,
+	remaining: number,
+	error: boolean,
+	complete: boolean
+};
+export type RulerCountType = 'remaining' | 'current';
+
+const props = defineProps<{
+	lineType: 'rows' | 'columns',
+	counts: Record<PuzzleValue, number>[],
+	countType: RulerCountType,
+	cellSize: number
+}>()
 const { counts, countType } = toRefs(props);
 const puzzleStore = usePuzzleStore();
 const numRequired = computed(() => {
@@ -55,9 +49,9 @@ const lineRequired = computed(() => {
 	const { [ZERO]: zero, [ONE]: one } = values;
 	return [zero, one];
 })
-const countCellData = ref([]);
+const countCellData = ref([] as { index: number, complete: boolean, zero: RulerCellValueCountData, one: RulerCellValueCountData }[]);
 
-const parseCellData = (counts) => {
+const parseCellData = (counts: Record<PuzzleValue, number>[]) => {
 	const [reqZero, reqOne] = lineRequired.value;
 	return counts.map((c, i) => {
 		const {

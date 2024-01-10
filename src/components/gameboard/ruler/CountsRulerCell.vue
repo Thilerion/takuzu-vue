@@ -9,28 +9,16 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
+import type { RulerCellValueCountData, RulerCountType } from './CountsRuler.vue.js';
 
-const props = defineProps({
-	zero: {
-		type: Object,
-		required: true
-	},
-	one: {
-		type: Object,
-		required: true
-	},
-	type: {
-		validator(value) {
-			return ['remaining', 'current'].includes(value)
-		},
-		required: true
-	},
-	complete: {
-		type: Boolean
-	}
-})
+const props = defineProps<{
+	zero: RulerCellValueCountData,
+	one: RulerCellValueCountData,
+	type: RulerCountType,
+	complete?: boolean
+}>()
 
 const valueZero = computed(() => props.zero[props.type]);
 const valueOne = computed(() => props.one[props.type]);

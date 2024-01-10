@@ -19,14 +19,14 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { clearPuzzleDb } from '@/services/puzzles-db/db';
 import { initPregenWorker } from '@/workers/pregen/index';
 import { ref } from 'vue';
 
-const clearPuzzlesResult = ref([]);
+const clearPuzzlesResult = ref<{ str: string, id: number }[]>([]);
 let notificationId = -1;
-const addDbResultNotification = (str, timeout = 2000) => {
+const addDbResultNotification = (str: string, timeout = 2000) => {
 	const id = ++notificationId;
 	clearPuzzlesResult.value.push({str, id});
 	window.setTimeout(() => {
@@ -53,7 +53,7 @@ const clearPuzzleDbAction = async () => {
 }
 
 const awaitTimeout = async (timeout = 1000) => {
-	return new Promise((resolve) => {
+	return new Promise<void>((resolve) => {
 		window.setTimeout(() => {
 			resolve();
 		}, timeout)

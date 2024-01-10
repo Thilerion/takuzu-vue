@@ -11,17 +11,15 @@
 	</div>
 </template>
 
-<script setup>
-import { EMPTY } from "@/lib/constants";
+<script setup lang="ts">
+import { EMPTY, type PuzzleValue } from "@/lib/constants";
 import { computed, toRefs } from "vue";
 
-const props = defineProps({
-	value: {
-		type: [String, null],
-	},
-	locked: Boolean,
-	incorrect: Boolean
-})
+const props = defineProps<{
+	value: PuzzleValue,
+	locked: boolean,
+	incorrect: boolean | undefined
+}>()
 
 const { value, locked, incorrect } = toRefs(props);
 

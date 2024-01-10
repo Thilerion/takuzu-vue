@@ -1,11 +1,11 @@
 <template>
 	<div
 		class="cell"
-		:class="[{ locked, incorrect }]"
+		:class="[{ locked, incorrect: !!incorrect }]"
 	>
 			<template v-if="symbolType === CellThemes.CLASSIC">
 				<transition name="cell-symbol">
-					<div v-if="symbolValue !== '.'" class="number-icon-wrapper">
+					<div v-if="symbolValue !== ''" class="number-icon-wrapper">
 						<icon-tabler-number-0 class="number-icon text-cyan-700 dark:text-cyan-500" v-if="symbolValue === '0'" />
 						<icon-tabler-number-1 class="number-icon text-gray-600 dark:text-gray-300" v-else-if="symbolValue === '1'" />
 					</div>
@@ -13,7 +13,7 @@
 			</template>
 			<template v-else-if="symbolType === CellThemes.TICTACTOE">
 				<transition name="cell-symbol">
-					<div v-if="symbolValue !== '.'" class="">
+					<div v-if="symbolValue !== ''" class="">
 						<span class="cell-symbol-value text-cyan-700 dark:text-cyan-500" v-if="symbolValue === 'O'">O</span>
 						<span class="cell-symbol-value text-gray-600 dark:text-gray-300" v-else-if="symbolValue === 'X'">X</span>
 					</div>
@@ -22,36 +22,30 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 const TicTacToeSymbols = {
 	[EMPTY]: '',
 	[ZERO]: 'O',
 	[ONE]: 'X'
-}
+} as const satisfies Record<PuzzleValue, string>;
 const BinarySymbols = {
 	[EMPTY]: '',
 	[ZERO]: '0',
 	[ONE]: '1'
-}
+} as const satisfies Record<PuzzleValue, string>;
 </script>
 
-<script setup>
+<script setup lang="ts">
 import { useCellThemeProvider } from "@/components/puzzleboard/useCellThemeProvider";
-import { EMPTY, ONE, ZERO } from "@/lib/constants";
-import { isValidPuzzleValue } from "@/lib/utils";
+import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
 import { CellThemes } from "@/stores/settings/options";
 import { computed, toRefs } from "vue";
 
-const props = defineProps({
-	value: {
-		validator(val) {
-			return isValidPuzzleValue(val);
-		},
-		required: true
-	},
-	locked: Boolean,
-	incorrect: Boolean
-})
+const props = defineProps<{
+	value: PuzzleValue,
+	locked: boolean,
+	incorrect: boolean | undefined
+}>()
 
 const { value, locked, incorrect } = toRefs(props);
 
