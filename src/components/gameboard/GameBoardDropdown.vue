@@ -58,7 +58,7 @@ import { humanSolveTriples } from '@/lib/human-solver';
 import { shuffle } from '@/lib/utils';
 import { useMainStore } from '@/stores/main';
 import { usePuzzleTimer } from '@/stores/puzzle-timer';
-import { usePuzzleStore } from '@/stores/puzzle.js';
+import { usePuzzleStore } from '@/stores/puzzle';
 import { useSettingsStore } from '@/stores/settings/store';
 import { awaitTimeout, awaitRaf } from '@/utils/delay.utils';
 import { storeToRefs } from 'pinia';

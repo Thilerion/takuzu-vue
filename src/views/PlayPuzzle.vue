@@ -74,7 +74,7 @@ import { usePuzzleHistoryStore } from '@/stores/puzzle-history';
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter';
 import { computed, readonly, toRef, watch } from 'vue';
 import { useSavedPuzzle } from '@/services/savegame/useSavedGame';
-import { usePuzzleStore } from '@/stores/puzzle.js';
+import { usePuzzleStore } from '@/stores/puzzle';
 import { useMainStore } from '@/stores/main';
 import { useRecapStatsStore } from '@/stores/recap-stats';
 import { rulerType } from '@/stores/settings/options';

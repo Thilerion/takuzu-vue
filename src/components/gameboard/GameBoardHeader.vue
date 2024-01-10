@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-import { usePuzzleStore } from '@/stores/puzzle.js';
+import { usePuzzleStore } from '@/stores/puzzle';
 import { computed, ref, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 

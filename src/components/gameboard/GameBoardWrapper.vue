@@ -9,7 +9,7 @@
 <script setup>
 import { computed, ref, toRefs } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
-import { usePuzzleStore } from '@/stores/puzzle.js';
+import { usePuzzleStore } from '@/stores/puzzle';
 
 const props = defineProps({
 	rulerHeight: String,

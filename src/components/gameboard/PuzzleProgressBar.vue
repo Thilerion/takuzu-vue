@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { usePuzzleStore } from '@/stores/puzzle.js';
+import { usePuzzleStore } from '@/stores/puzzle';
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 

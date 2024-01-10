@@ -28,7 +28,7 @@ import PuzzleGridHighlights from '@/components/gameboard/PuzzleGridHighlights.vu
 import { useTapVibrate } from '@/composables/use-tap-vibrate';
 import { EMPTY } from '@/lib/constants';
 import { usePuzzleAssistanceStore } from '@/stores/assistance/store';
-import { usePuzzleStore } from '@/stores/puzzle.js';
+import { usePuzzleStore } from '@/stores/puzzle';
 import { CellThemeTypes } from '@/stores/settings/options';
 import { useSettingsStore } from '@/stores/settings/store';
 import { storeToRefs } from 'pinia';

@@ -29,7 +29,7 @@
 <script>
 import { COLUMN, ONE, ROW, ZERO } from '@/lib/constants';
 import { computed, ref, watch } from 'vue';
-import { usePuzzleStore } from '@/stores/puzzle.js';
+import { usePuzzleStore } from '@/stores/puzzle';
 import { useDebounceFn } from '@vueuse/core';
 export default {
 	props: {

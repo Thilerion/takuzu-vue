@@ -39,7 +39,7 @@
 </template>
 
 <script setup>
-import { usePuzzleStore } from '@/stores/puzzle.js';
+import { usePuzzleStore } from '@/stores/puzzle';
 
 const props = defineProps({
 	rows: Number,

@@ -92,7 +92,7 @@ import { DIFFICULTY_LABELS, PRESET_BOARD_SIZES } from '@/config';
 import { computed, ref, toRef, watch, watchEffect } from 'vue';
 
 import { useRouter } from 'vue-router';
-import { usePuzzleStore } from '@/stores/puzzle.js'
+import { usePuzzleStore } from '@/stores/puzzle'
 import { useMainStore } from '@/stores/main';
 import { useSavedPuzzle } from '@/services/savegame/useSavedGame';
 import { useNewPuzzleSetupSelection } from '@/components/new-puzzle/useNewPuzzleSetupSelection';
