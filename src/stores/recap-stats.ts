@@ -5,7 +5,7 @@ import { startOfDay } from "date-fns";
 import { useMainStore } from "./main";
 import type { BasicPuzzleConfig, DifficultyKey } from "@/lib/types.js";
 
-type RecapStatsBase = {
+type PuzzleStatistics = {
 	best: number;
 	previousBest: number | null;
 	average: number;
@@ -15,27 +15,32 @@ type RecapStatsBase = {
 	countToday: number;
 	isTimeRecord: boolean;
 }
-type RecapReplayStats = {
+type ReplayStatistics = {
 	isReplay: boolean | null;
 	previousPlays: HistoryDbEntry[];
 }
-type RecapHistoryTotals = {
-	totalSolved: number;
-	totalSolvedToday: number;
+type PlayedPuzzleData = {
+	lastPuzzleEntry: HistoryDbEntry | null;
+	currentTimeElapsed: number | null;
+}
+type PuzzleConfigurationHistory = {
 	sizesPlayed: { width: number, height: number, cells: number }[];
 	difficultiesPlayed: DifficultyKey[];
 	puzzleConfigsPlayed: { width: number, height: number, difficulty: DifficultyKey, cells: number }[];
 }
-export type RecapStatsStoreState = RecapStatsBase & RecapReplayStats & RecapHistoryTotals & {
-	modalShown: boolean;
-	lastPuzzleEntry: HistoryDbEntry | null;
-	currentTimeElapsed: number | null;
-
+type HistoryTotals = {
+	totalSolved: number;
+	totalSolvedToday: number;
+}
+type PuzzleConfigurationStatistics = {
 	itemsPlayedWithSize: number;
 	itemsPlayedWithDifficulty: number;
-
+}
+type UIState = {
+	modalShown: boolean;
 	initialized: boolean;
 }
+export type RecapStatsStoreState = PuzzleStatistics & PlayedPuzzleData & ReplayStatistics & PuzzleConfigurationHistory & HistoryTotals & PuzzleConfigurationStatistics & UIState;
 
 export const useRecapStatsStore = defineStore('recapStats', {
 
@@ -287,7 +292,7 @@ async function createGameEndStats({ width, height, difficulty, timeElapsed, id, 
 
 	const { isReplay, previousPlays } = itemsWithSameInitialBoardResult;
 
-	const result: RecapStatsBase & RecapReplayStats & RecapHistoryTotals & {
+	const result: PuzzleStatistics & HistoryTotals & PuzzleConfigurationHistory & ReplayStatistics & {
 		sizeCount: number,
 		difficultyCount: number,
 	} = {
@@ -321,7 +326,7 @@ async function getItemsWithSameInitialBoard({initialBoard, id}: { initialBoard: 
 	return { isReplay, previousPlays };
 }
 
-async function getTotalSolved(): Promise<RecapHistoryTotals> {
+async function getTotalSolved(): Promise<HistoryTotals & PuzzleConfigurationHistory> {
 	try {
 		const totalSolved = await StatsDB.getCount();
 		const sizes = await StatsDB.puzzleHistoryTable.orderBy('[width+height]').uniqueKeys();
