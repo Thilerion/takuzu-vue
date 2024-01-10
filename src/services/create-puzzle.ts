@@ -1,9 +1,9 @@
 import type { BasicPuzzleConfig, BoardString } from "@/lib/types";
-import { generatePuzzle } from "@/workers/generate-puzzle.js";
+import { generatePuzzle, type GenPuzzleReqResult } from "@/workers/generate-puzzle.js";
 import { puzzleDb } from "./puzzles-db/db";
 
 type RequestError<T> = T extends 'reason' ? { success: false, reason: unknown } : T extends 'error' ? { success: false, error: unknown } : never;
-type PuzzleRequestResult<T> = RequestError<T> | { success: true, data: { boardStr: BoardString, solutionStr: BoardString } };
+type PuzzleRequestResult<T> = RequestError<T> | { success: true, data: GenPuzzleReqResult };
 
 export async function requestPuzzle(puzzleConfig: BasicPuzzleConfig): Promise<PuzzleRequestResult<'reason'>> {
 	console.log('PUZZLE REQUESTED');
