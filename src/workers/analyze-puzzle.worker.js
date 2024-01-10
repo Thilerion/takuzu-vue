@@ -8,7 +8,7 @@ function runTestTask(success) {
 		messageValue,
 		MSG_SOURCE
 	);
-	window.setTimeout(()=> {
+	globalThis.setTimeout(()=> {
 		postMessage(message);
 	}, 1000);
 }
