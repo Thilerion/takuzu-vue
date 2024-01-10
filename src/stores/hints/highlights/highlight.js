@@ -5,13 +5,13 @@ import { columnIdToX, lineTypeFromLineId, rowIdToY } from "@/lib/utils";
 export const HighlightLevel = {
 	PRIMARY: 'PRIMARY',
 	SECONDARY: 'SECONDARY'
-}
+} /* types => HighlightLevel */
 const defaultLevel = HighlightLevel.PRIMARY;
 export const HighlightType = {
 	CELL: 'CELL',
 	LINE: 'LINE',
 	AREA: 'AREA'
-}
+} /* types => HighlightType */
 
 
 const CellHighlight = ({ x, y }, level = defaultLevel) => {

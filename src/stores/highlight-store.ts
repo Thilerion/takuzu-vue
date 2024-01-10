@@ -1,10 +1,12 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { createHighlightsFromLegacyHint } from "./hints/highlights/legacy-hint-highlights";
+import type { Hint } from "./hints/Hint.js";
+import type { HintHighlight } from "./hints/highlights/types.js";
 
 export const useHintHighlightsStore = defineStore('hintHighlights', () => {
 	const visible = ref(false);
-	const currentHighlights = ref([]);
+	const currentHighlights = ref<HintHighlight[]>([]);
 
 	const show = () => {
 		if (visible.value) return;
@@ -16,9 +18,9 @@ export const useHintHighlightsStore = defineStore('hintHighlights', () => {
 			visible.value = true;
 		}
 	}
-	const displayFromHint = (hint) => {
+	const displayFromHint = (hint: Hint) => {
 		if (hint.isLegacyHint) {
-			const highlights = createHighlightsFromLegacyHint(hint) ?? [];
+			const highlights: HintHighlight[] = createHighlightsFromLegacyHint(hint) ?? [];
 			setHighlights(highlights, { setVisible: true });
 			return;
 		} else {
@@ -30,7 +32,7 @@ export const useHintHighlightsStore = defineStore('hintHighlights', () => {
 		if (!visible.value) return;
 		visible.value = false;
 	}
-	const setHighlights = (highlights, { setVisible = false } = {}) => {
+	const setHighlights = (highlights: HintHighlight[], { setVisible = false } = {}) => {
 		if (!Array.isArray(highlights)) {
 			console.warn('Setting highlights requires an array.');
 			return;
