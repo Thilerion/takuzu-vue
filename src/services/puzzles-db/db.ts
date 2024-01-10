@@ -1,17 +1,17 @@
-import type { BoardShape, BoardString, DifficultyKey } from "@/lib/types";
+import type { BoardExportString, BoardShape, DifficultyKey } from "@/lib/types";
 import { getRandomItem } from "@/utils/array.utils";
 import Dexie from "dexie";
 
 
 export interface IPregenPuzzle extends BoardShape {
-	boardStr: BoardString,
-	solutionStr: BoardString,
+	boardStr: BoardExportString,
+	solutionStr: BoardExportString,
 	difficulty: DifficultyKey
 }
 
 export class GeneratedPuzzle implements IPregenPuzzle {
-	boardStr: BoardString;
-	solutionStr: BoardString;
+	boardStr: BoardExportString;
+	solutionStr: BoardExportString;
 	difficulty: DifficultyKey;
 	width: number;
 	height: number;
@@ -21,6 +21,7 @@ export class GeneratedPuzzle implements IPregenPuzzle {
 		difficulty,
 		width, height, populated
 	}: IPregenPuzzle & { populated?: boolean }) {
+		console.log({ boardStr, solutionStr });
 		this.boardStr = boardStr;
 		this.solutionStr = solutionStr;
 		this.difficulty = difficulty;
@@ -35,7 +36,7 @@ export class GeneratedPuzzle implements IPregenPuzzle {
 export class PregenPuzzlesDb extends Dexie {
 	// Declare implicit table properties.
     // (just to inform Typescript. Instanciated by Dexie in stores() method)
-	puzzles!: Dexie.Table<GeneratedPuzzle, BoardString>;
+	puzzles!: Dexie.Table<GeneratedPuzzle, BoardExportString>;
 
 	constructor() {
 		super("PuzzleDB");

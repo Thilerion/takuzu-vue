@@ -1,9 +1,9 @@
 import type { BasicPuzzleConfig, BoardString } from "@/lib/types";
-import { generatePuzzle, type GenPuzzleReqResult } from "@/workers/generate-puzzle.js";
+import { generatePuzzle, type GeneratedPuzzleResult } from "@/workers/generate-puzzle-v2.js";
 import { puzzleDb } from "./puzzles-db/db";
 
 type RequestError<T> = T extends 'reason' ? { success: false, reason: unknown } : T extends 'error' ? { success: false, error: unknown } : never;
-type PuzzleRequestResult<T> = RequestError<T> | { success: true, data: GenPuzzleReqResult };
+type PuzzleRequestResult<T> = RequestError<T> | { success: true, data: GeneratedPuzzleResult };
 
 export async function requestPuzzle(puzzleConfig: BasicPuzzleConfig): Promise<PuzzleRequestResult<'reason'>> {
 	console.log('PUZZLE REQUESTED');
@@ -48,13 +48,8 @@ export async function retrievePuzzleFromDatabase(puzzleConfig: BasicPuzzleConfig
 export async function generateNewPuzzle(puzzleConfig: BasicPuzzleConfig): Promise<PuzzleRequestResult<'error'>> {
 	try {
 		const result = await generatePuzzle(puzzleConfig);
-		if (result && result.success) {
-			const { boardStr, solutionStr } = result.value;
-			return { success: true, data: { boardStr, solutionStr } };
-		} else {
-			console.error({ result });
-			throw new Error('Error in generateNewPuzzle; invalid result data.');
-		}
+		const { boardStr, solutionStr } = result;
+		return { success: true, data: { boardStr, solutionStr } };
 	} catch (e) {
 		return { success: false, error: e };
 	}

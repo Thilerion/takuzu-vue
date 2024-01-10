@@ -4,9 +4,10 @@ import { addPuzzle, puzzleDb } from "@/services/puzzles-db/db";
 import { awaitTimeout } from "@/utils/delay.utils";
 
 import { createWorkerResult } from "../WorkerResult";
+import { createNewPuzzleWorker } from "../generate-puzzle-v2.js";
 const MSG_SOURCE = 'pregen-puzzles';
 
-const puzzleWorker = new Worker(new URL('../generate-puzzle.worker.js', import.meta.url), { type: 'module' });
+const puzzleWorker = createNewPuzzleWorker();
 
 export function sendWorkerMessage(message) {
 	puzzleWorker.postMessage({ message });
@@ -115,15 +116,10 @@ async function findPresetsWithoutPuzzles({ lazy = true, verbose = true, maxDiffi
 }
 
 export async function generatePuzzleForPreset(preset) {
+	console.log(' requesting for preset');
 	const { width, height, difficulty } = preset;
 	try {
-		const resultPromise = initPuzzleWorkerReceiver();
-		sendWorkerMessage({ width, height, difficulty });
-		const data = await resultPromise;
-
-		if (!data.success) throw new Error(data.error);
-
-		const { boardStr, solutionStr } = data.value;
+		const { boardStr, solutionStr } = await puzzleWorker.request('single', { width, height, difficulty })
 		return {
 			boardStr, solutionStr, width, height, difficulty
 		}
