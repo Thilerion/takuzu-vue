@@ -188,6 +188,8 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 		},
 
 		setHints(hints: Hint[] = []) {
+			console.log('setting hints');
+			console.log({ hints });
 			// TODO: pick one single hint from a list of hints
 			if (hints.length === 0) {
 				console.warn('SetHints was called, but there were no hints in the array. Seems like there are no valid hints for this board state.');

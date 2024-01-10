@@ -4,7 +4,7 @@ import { HIGHLIGHT_TYPES, hintHighlightFromType, HIGHLIGHT_LEVELS } from "./high
 import { usePuzzleStore } from "@/stores/puzzle";
 import type { SimpleBoard } from "@/lib/index.js";
 import type { HintAreaHighlight, HintCellHighlight, HintHighlight, HintLineHighlight } from "./types.js";
-import type { Vec } from "@/lib/types.js";
+import type { LineId, Vec } from "@/lib/types.js";
 
 export const createHighlightsFromLegacyHint = (hint: Hint, board: SimpleBoard) => {
 	switch (hint.type) {
@@ -23,8 +23,9 @@ export const createHighlightsFromLegacyHint = (hint: Hint, board: SimpleBoard) =
 }
 
 function createLegacyTriplesHintHighlights(hint: Hint): HintAreaHighlight[] {
-	const xValues = hint.source.map(v => v.x);
-	const yValues = hint.source.map(v => v.y);
+	const source = hint.source as Vec[];
+	const xValues = source.map(v => v.x);
+	const yValues = source.map(v => v.y);
 
 	const [minX, maxX] = extent(xValues);
 	const [minY, maxY] = extent(yValues);
@@ -45,7 +46,7 @@ function createLegacyTriplesHintHighlights(hint: Hint): HintAreaHighlight[] {
 
 function createLegacyBalanceHintHighlights(hint: Hint, board: SimpleBoard): (HintCellHighlight | HintLineHighlight)[] {
 	const { targetLine, source } = hint;
-	const lineId = targetLine ?? source[0];
+	const lineId = targetLine ?? source[0] as LineId;
 	if (board == null) {
 		const puzzleStore = usePuzzleStore();
 		board = puzzleStore.board!;
@@ -71,7 +72,7 @@ function createLegacyBalanceHintHighlights(hint: Hint, board: SimpleBoard): (Hin
 
 function createLegacyEliminationHintHighlights(hint: Hint, board: SimpleBoard): HintLineHighlight[] {
 	const { targetLine, source } = hint;
-	const lineId = targetLine ?? source[0];
+	const lineId = targetLine ?? source[0] as LineId;
 	if (board == null) {
 		const puzzleStore = usePuzzleStore();
 		board = puzzleStore.board!;
@@ -91,7 +92,10 @@ function createLegacyElimDupleHintHighlights(hint: Hint, board: SimpleBoard): Hi
 		const puzzleStore = usePuzzleStore();
 		board = puzzleStore.board!;
 	}
-	const sourceHighlights = source.map(lineId => {
+	if (targetLine == null) {
+		throw new Error(`targetLine is null for elimDupe hint ${hint.id}`);
+	}
+	const sourceHighlights = (source as LineId[]).map(lineId => {
 		return hintHighlightFromType(
 			HIGHLIGHT_TYPES.LINE,
 			{ lineId },
