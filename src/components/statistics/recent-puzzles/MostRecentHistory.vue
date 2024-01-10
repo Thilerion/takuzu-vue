@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import { useStatisticsStore } from '@/stores/statistics.js';
+import { useStatisticsStore } from '@/stores/statistics';
 
 import { computed, toRef } from 'vue';
 

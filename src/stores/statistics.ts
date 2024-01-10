@@ -7,13 +7,27 @@ import { isBefore, isToday, subDays } from "date-fns";
 import { defineStore } from "pinia";
 import { reactive } from "vue";
 
-const getPuzzlesSolved = StatsDB.getCount;
+const getPuzzlesSolved = (): Promise<number> => StatsDB.getCount();
 const getAllHistoryItems = () => StatsDB.getAll().then(list => list.map(item => {
 	return new PuzzleStatisticData(item);
 }));
 
+export type StatsStoreState = {
+	initialized: false;
+	initializedDate: null;
+	isLoading: boolean;
+	historyItems: [];
+	editingNoteId: null;
+} | {
+	initialized: true;
+	initializedDate: string;
+	isLoading: boolean;
+	historyItems: PuzzleStatisticData[];
+	editingNoteId: string | null;
+}
+
 export const useStatisticsStore = defineStore('statistics', {
-	state: () => ({
+	state: (): StatsStoreState => ({
 		initialized: false,
 		initializedDate: null,
 		isLoading: false,
@@ -28,20 +42,20 @@ export const useStatisticsStore = defineStore('statistics', {
 		puzzlesSolved: state => state.historyItems.length,
 		noPuzzlesSolved: state => state.initialized && state.historyItems.length === 0,
 
-		sortedByDate: state => [...state.historyItems].sort((a, b) => b.timestamp - a.timestamp),
+		sortedByDate: (state): PuzzleStatisticData[] => [...state.historyItems].sort((a, b) => b.timestamp - a.timestamp),
 
 		itemsSolvedToday: state => state.historyItems.filter(item => {
 			const date = item.date ?? new Date(item.timestamp);
 			return isToday(date);
 		}),
-		itemsSolvedPast30Days() {
+		itemsSolvedPast30Days(): PuzzleStatisticData[] {
 			const now = new Date();
 			const daysAgo = subDays(now, 30);
 			const idx = this.sortedByDate.findIndex(item => isBefore(item.date, daysAgo));
 			if (idx <= 0) return [];
 			return this.sortedByDate.slice(0, idx);
 		},
-		itemsSolvedPast90Days() {
+		itemsSolvedPast90Days(): PuzzleStatisticData[] {
 			const now = new Date();
 			const daysAgo = subDays(now, 90);
 			const idx = this.sortedByDate.findIndex(item => isBefore(item.date, daysAgo));
@@ -56,7 +70,11 @@ export const useStatisticsStore = defineStore('statistics', {
 
 		timePlayed: state => state.historyItems.reduce((acc, val) => acc + val.timeElapsed, 0),
 
-		historyItemsWithTimeRecord() {
+		historyItemsWithTimeRecord(): {
+			first: number[];
+			current: number[];
+			all: number[];
+		} {
 			const items = this.sortedByDate;
 
 			const iterationTimeRecord = new Map();
@@ -70,13 +88,13 @@ export const useStatisticsStore = defineStore('statistics', {
 
 				if (!iterationTimeRecord.has(puzzleConfigKey)) {
 					iterationTimeRecord.set(puzzleConfigKey, timeElapsed);
-					firstTimes.push(item.id);
+					firstTimes.push(item.id!);
 				}
 				const prev = iterationTimeRecord.get(puzzleConfigKey);
 				if (timeElapsed < prev) {
-					withTimeRecord.push(item.id);
+					withTimeRecord.push(item.id!);
 					iterationTimeRecord.set(puzzleConfigKey, timeElapsed);
-					currentRecords.set(puzzleConfigKey, item.id);
+					currentRecords.set(puzzleConfigKey, item.id!);
 				}
 			}
 
@@ -87,41 +105,44 @@ export const useStatisticsStore = defineStore('statistics', {
 			}
 		},
 
-		boardSizesInHistory() {
+		boardSizesInHistory(): string[] {
 			return [...new Set(this.historyItems.map(i => i.dimensions))];
 		},
 
-		summariesByDimensionsAllTime() {
+		summariesByDimensionsAllTime(): ReturnType<typeof getMostPlayedPuzzleSizes> {
 			return getMostPlayedPuzzleSizes(this.sortedByDate);
 		},
-		summariesByPuzzleConfigsAllTime() {
+		summariesByPuzzleConfigsAllTime(): ReturnType<typeof getMostPlayedPuzzleConfigs> {
 			return getMostPlayedPuzzleConfigs(this.sortedByDate);
 		},
-		summariesByDimensions30Days() {
+		summariesByDimensions30Days(): ReturnType<typeof getMostPlayedPuzzleSizes> {
 			return getMostPlayedPuzzleSizes(this.itemsSolvedPast30Days);
 		},
-		summariesByPuzzleConfigs30Days() {
+		summariesByPuzzleConfigs30Days(): ReturnType<typeof getMostPlayedPuzzleConfigs> {
 			return getMostPlayedPuzzleConfigs(this.itemsSolvedPast30Days);
 		},
-		summariesByDimensions90Days() {
+		summariesByDimensions90Days(): ReturnType<typeof getMostPlayedPuzzleSizes> {
 			return getMostPlayedPuzzleSizes(this.itemsSolvedPast90Days);
 		},
-		summariesByPuzzleConfigs90Days() {
+		summariesByPuzzleConfigs90Days(): ReturnType<typeof getMostPlayedPuzzleConfigs> {
 			return getMostPlayedPuzzleConfigs(this.itemsSolvedPast90Days);
 		},
 	},
 
 	actions: {
-		setHistoryItems(items) {
+		setHistoryItems(items: PuzzleStatisticData[]) {
 			this.historyItems = reactive(items);
 		},
-		async markFavorite(id, value) {
+		async markFavorite(id: number, value: boolean) {
 			const dbVal = value ? 1 : 0;
 			const success = await StatsDB.update(id, {
 				'flags.favorite': dbVal
 			});
 			if (success) {
 				const item = this.historyItems.find(i => i.id === id);
+				if (item == null) {
+					throw new Error('No item found with this id.');
+				}
 				item.flags = {
 					...item.flags,
 					favorite: value
@@ -129,17 +150,20 @@ export const useStatisticsStore = defineStore('statistics', {
 			}
 			return success;
 		},
-		async saveNote(id, note) {
+		async saveNote(id: number, note: string) {
 			const success = await StatsDB.update(id, {
 				note
 			});
 			if (success) {
 				const item = this.historyItems.find(i => i.id === id);
+				if (item == null) {
+					throw new Error('No item found with this id.');
+				}
 				item.note = note;
 			}
 			return success;
 		},
-		async deleteItem(id) {
+		async deleteItem(id: number) {
 			const idx = this.historyItems.findIndex(val => val.id === id);
 			if (idx < 0) {
 				console.warn('No item found with this id. Cannot delete it.');
@@ -148,7 +172,7 @@ export const useStatisticsStore = defineStore('statistics', {
 			await StatsDB.deleteItem(id);
 			this.historyItems.splice(idx, 1);
 		},
-		setInitialized(value) {
+		setInitialized(value: boolean) {
 			if (!value) {
 				this.initialized = false;
 				this.initializedDate = null;

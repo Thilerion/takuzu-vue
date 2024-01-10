@@ -1,6 +1,6 @@
-import type { DifficultyKey, DimensionStr, PuzzleConfigKey } from "@/lib/types";
 import { groupBy } from "@/utils/array.ts.utils";
 import { minMaxSum, average, median } from '@/utils/data-analysis.utils';
+import type { PuzzleStatisticData } from "./db/models.js";
 
 interface MinMaxSumResult {
 	min: number,
@@ -12,18 +12,8 @@ export interface Summary extends MinMaxSumResult {
 	average: number,
 	median: number,
 }
-export interface BaseHistoryItem {
-	timeElapsed: number,
-	puzzleConfigKey: PuzzleConfigKey,
-	dimensions: DimensionStr,
-	date: Date,
-	width: number,
-	height: number,
-	difficulty: DifficultyKey,
-	numCells: number
-}
 
-function groupItemsByPuzzleConfig<T extends BaseHistoryItem>(items: T[] = []) {
+function groupItemsByPuzzleConfig<T extends PuzzleStatisticData>(items: T[] = []) {
 	const groupedObj = groupBy(items, 'puzzleConfigKey');
 	return Object.entries(groupedObj).map(([key, items]) => {
 		const { width, height, dimensions, difficulty, numCells } = items[0];
@@ -32,7 +22,7 @@ function groupItemsByPuzzleConfig<T extends BaseHistoryItem>(items: T[] = []) {
 	})
 }
 
-function groupItemsByDimensions<T extends BaseHistoryItem>(items: T[] = []) {
+function groupItemsByDimensions<T extends PuzzleStatisticData>(items: T[] = []) {
 	const groupedObj = groupBy(items, 'dimensions');
 	return Object.entries(groupedObj).map(([key, items]) => {
 		const { width, height, dimensions, numCells } = items[0];
@@ -51,7 +41,7 @@ function summarizeGroup(times: number[] = []) {
 	return summary;
 }
 
-export function getMostPlayedPuzzleSizes<T extends BaseHistoryItem>(items: T[] = []) {
+export function getMostPlayedPuzzleSizes<T extends PuzzleStatisticData>(items: T[] = []) {
 	const groupedArr = groupItemsByDimensions(items).map(g => {
 		const { items } = g;
 		const times = items.map(i => i.timeElapsed);
@@ -79,7 +69,7 @@ export function getMostPlayedPuzzleSizes<T extends BaseHistoryItem>(items: T[] =
 	}
 }
 
-export function getMostPlayedPuzzleConfigs<T extends BaseHistoryItem>(items: T[] = []) {
+export function getMostPlayedPuzzleConfigs<T extends PuzzleStatisticData>(items: T[] = []) {
 	const groupedArr = groupItemsByPuzzleConfig(items).map(g => {
 		const { items } = g;
 		const times = items.map(i => i.timeElapsed);

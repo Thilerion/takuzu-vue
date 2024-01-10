@@ -31,7 +31,7 @@ const deleteItemFromDb = (_db: Dexie, table: string) => async (primaryKey: numbe
 
 export const clearTable = (table: StatsDBTable = 'puzzleHistory') => clearTableFromDb(db, table);
 export const add = addItemToDb<DbHistoryEntry>(db, 'puzzleHistory');
-export const update: (primaryKey: number, modifiedKeys?: Partial<DbHistoryEntry>) => Promise<boolean> = updateItemInDb(db, 'puzzleHistory');
+export const update: (primaryKey: number, modifiedKeys?: Partial<DbHistoryEntry> | Record<string, any>) => Promise<boolean> = updateItemInDb(db, 'puzzleHistory');
 export const put = putItemInDb<DbHistoryEntry>(db, 'puzzleHistory');
 export const deleteItem = deleteItemFromDb(db, 'puzzleHistory');
 
