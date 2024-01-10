@@ -51,16 +51,14 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { CellThemes } from '@/stores/settings/options';
+import type { CellTheme } from '@/stores/settings/types.js';
 import { computed } from 'vue';
 
-const props = defineProps({
-	modelValue: {
-		type: String,
-		required: true
-	}
-})
+const props = defineProps<{
+	modelValue: CellTheme
+}>()
 const emit = defineEmits(['update:modelValue']);
 const cellTheme = computed({
 	get() {

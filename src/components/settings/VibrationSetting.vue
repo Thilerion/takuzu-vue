@@ -21,7 +21,7 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useTapVibrate } from '@/composables/use-tap-vibrate';
 import { useSettingsStore } from '@/stores/settings/store';
 import { validVibrationStrengths } from '@/stores/settings/options';
@@ -33,11 +33,10 @@ import { computed, ref, toRef } from 'vue';
 const vibrationOptsLength = validVibrationStrengths.length;
 const inputDurationMap = new Map(
 	validVibrationStrengths.map((val, idx) => {
-		return [String(idx), val];
+		return [String(idx) as `${number}`, val];
 	})
 )
-
-const durationInputValueMap = new Map([...inputDurationMap].map(val => val.reverse()));
+const durationInputValueMap = new Map([...inputDurationMap].map(val => [...val].reverse() as [typeof validVibrationStrengths[number], `${number}`]));
 
 const settingsStore = useSettingsStore();
 const pattern = toRef(settingsStore, 'vibrationStrength');
@@ -49,14 +48,14 @@ const { vibrate, isSupported } = useTapVibrate({
 const { enableVibration, vibrationStrength } = storeToRefs(settingsStore);
 
 
-const vibrationSliderValue = ref(durationInputValueMap.get(vibrationStrength.value) ?? 0);
+const vibrationSliderValue = ref<`${number}`>(durationInputValueMap.get(vibrationStrength.value) ?? '0');
 
 const vibrationStrengthPercentage = computed(() => {
-	const inputValue = (vibrationSliderValue.value * 1);
+	const inputValue = typeof vibrationSliderValue.value === 'string' ? parseInt(vibrationSliderValue.value) : vibrationSliderValue.value;
 	return `${inputValue / 5 * 100}%`;
 })
 
-const setVibrationStrength = (value) => {
+const setVibrationStrength = (value: `${number}`) => {
 	vibrationSliderValue.value = value;
 
 	const duration = inputDurationMap.get(value) ?? 0;
@@ -68,7 +67,7 @@ const setVibrationStrength = (value) => {
 	}
 
 	vibrationStrength.value = duration;
-	window.setTimeout(() => {
+	globalThis.setTimeout(() => {
 		vibrate();
 	}, 0);
 }
