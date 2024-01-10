@@ -28,7 +28,7 @@
 	<PuzzleProgressBar v-show="puzzleStore.started" />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { usePuzzleStore } from '@/stores/puzzle';
 import { computed, ref, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -42,8 +42,8 @@ const puzzleStore = usePuzzleStore();
 const { paused, width, height } = storeToRefs(puzzleStore);
 
 // update with watcher, to prevent values being removed during playPuzzle exit transition after the puzzleStore was reset
-const rows = ref(null);
-const columns = ref(null);
+const rows = ref<number | null>(null);
+const columns = ref<number | null>(null);
 watchEffect(() => {
 	if (width.value != null && height.value != null) {
 		rows.value = height.value;
@@ -53,16 +53,15 @@ watchEffect(() => {
 
 const route = useRoute();
 const puzzleMode = computed(() => {
-	if (puzzleStore?.puzzleMode != null) return puzzleStore.puzzleMode;
 	return route.query.mode;
 })
 const isReplayMode = computed(() => {
-	return typeof puzzleMode.value === 'string' && puzzleMode.value.toLowerCase() === 'replay';
+	return puzzleMode.value != null && typeof puzzleMode.value === 'string' && puzzleMode.value.toLowerCase() === 'replay';
 })
 
 // dropdown/button actions
 const router = useRouter();
-const dropdownToggled = (value) => emit('dropdown-toggled', value)
+const dropdownToggled = (value: boolean) => emit('dropdown-toggled', value);
 const openSettings = () => {
 	router.push({ name: 'PlayPuzzle.settings' });
 	dropdownToggled(false);

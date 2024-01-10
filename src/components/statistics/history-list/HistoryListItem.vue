@@ -167,6 +167,7 @@ const puzzleConfig = computed(() => {
 const router = useRouter();
 const goToPlayPuzzleRoute = () => router.push({ name: 'PlayPuzzle'});
 async function replayPuzzle() {
+	// TODO: SET REPLAY_MODE IN ROUTE, so game board header knows this, etc
 	const boardStrings = {
 		board: props.initialBoard,
 		solution: props.solution

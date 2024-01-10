@@ -6,42 +6,44 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, ref, toRefs } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
 import { usePuzzleStore } from '@/stores/puzzle';
 
-const props = defineProps({
-	rulerHeight: String,
-	rulerWidth: String,
-	infoHeight: String,
-	paddingX: {
-		type: String,
-		default: "4px"
-	},
-	paddingY: {
-		type: String,
-		default: "6px"
-	},
-})
+const props = withDefaults(defineProps<{
+	rulerHeight: string,
+	rulerWidth: string,
+	infoHeight: string,
+	paddingX?: string,
+	paddingY?: string
+}>(), {
+	paddingX: "4px",
+	paddingY: "6px"
+});
 
 const { rulerHeight, rulerWidth, infoHeight, paddingX, paddingY } = toRefs(props);
 
 const container = ref(null);
 const pStore = usePuzzleStore();
-const rows = computed(() => pStore.height);
-const columns = computed(() => pStore.width);
+const rows = computed(() => pStore.height!);
+const columns = computed(() => pStore.width!);
 
 // use sensible defaults
-const width = ref(window.clientWidth * 0.98);
-const height = ref(window.clientHeight - 150);
+const width = ref(Math.floor(window.screen.availWidth * 0.98));
+const height = ref(window.screen.availHeight - 40);
 
 useResizeObserver(container, (entries) => {
 	try {
 		const el = entries[0];
-		const { inlineSize, blockSize } = el.contentBoxSize[0];
-		width.value = inlineSize;
-		height.value = blockSize;
+		if (el.contentBoxSize) {
+			const { inlineSize, blockSize } = el.contentBoxSize[0];
+			width.value = inlineSize;
+			height.value = blockSize;
+		} else {
+			width.value = el.contentRect.width;
+			height.value = el.contentRect.height;
+		}
 	} catch (e) {
 		console.warn('Error in resize observer entries');
 	}
@@ -64,8 +66,9 @@ const aspectRatio = computed(() => {
 	return columnsWithRuler.value / rowsWithRuler.value;
 })
 
-function getPxValue(str = '0px') {
-	return str.slice(0, -2) * 1;
+function getPxValue(str = '0px'): number {
+	const int = parseInt(str.replace('px', ''));
+	return Number.isNaN(int) ? 0 : int;
 }
 
 const unavailableHeight = computed(() => {

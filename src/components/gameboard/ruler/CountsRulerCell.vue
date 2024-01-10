@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { RulerCellValueCountData, RulerCountType } from './CountsRuler.vue.js';
+import type { RulerCellValueCountData, RulerCountType } from './CountsRuler.vue';
 
 const props = defineProps<{
 	zero: RulerCellValueCountData,

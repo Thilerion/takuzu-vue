@@ -2,10 +2,10 @@
 	<div
 		class="highlight"
 		:class="{
-			'hl-cell': type === HIGHLIGHT_TYPES.CELL,
-			'hl-line': type === HIGHLIGHT_TYPES.LINE,
-			'hl-area': type === HIGHLIGHT_TYPES.AREA,
-			'hl-line-area': type !== HIGHLIGHT_TYPES.CELL,
+			'hl-cell': hlType === HIGHLIGHT_TYPES.CELL,
+			'hl-line': hlType === HIGHLIGHT_TYPES.LINE,
+			'hl-area': hlType === HIGHLIGHT_TYPES.AREA,
+			'hl-line-area': hlType !== HIGHLIGHT_TYPES.CELL,
 			primary: level === HIGHLIGHT_LEVELS.PRIMARY,
 			secondary: level === HIGHLIGHT_LEVELS.SECONDARY
 		}"
@@ -15,39 +15,45 @@
 	</div>
 </template>
 
-<script>
-const HL_TYPES = Object.keys(HIGHLIGHT_TYPES);
-const HL_LEVELS = Object.keys(HIGHLIGHT_LEVELS);
+<script lang="ts">
+const HL_TYPES: HighlightType[] = Object.keys(HIGHLIGHT_TYPES) as HighlightType[];
+const HL_LEVELS: HighlightLevel[] = Object.keys(HIGHLIGHT_LEVELS) as HighlightLevel[];
 
 export default { HL_TYPES, HL_LEVELS };
 </script>
 
-<script setup>
+<script setup lang="ts">
+import type { BoardShape, Vec } from '@/lib/types.js';
 import { HIGHLIGHT_LEVELS, HIGHLIGHT_TYPES } from '@/stores/hints/highlights/highlight';
+import type { HighlightLevel, HighlightType } from '@/stores/hints/highlights/types.js';
 import { computed } from 'vue';
 
-const props = defineProps({
-	type: {
-		validator(v) {
-			return HL_TYPES.includes(v);
-		},
-		required: true
-	},
-	level: {
-		validator(v) {
-			return HL_LEVELS.includes(v);
-		},
-		required: true
-	},
-	context: Object,
-	end: Object,
-	start: Object,
-	cell: Object
-})
+const props = defineProps<{
+	type: HighlightType,
+	level: HighlightLevel,
+	context?: BoardShape,
+	end?: Vec,
+	start?: Vec,
+	cell?: Vec,
+}>();
+
+const hlType = computed(() => props.type);
 
 const isCellType = computed(() => props.type === HIGHLIGHT_TYPES.CELL);
+const areaHighlightData = computed(() => {
+	if (isCellType.value) return null;
+	// data is for line and area highlight
+	const shape = props.context!;
+	const end = props.end!;
+	const start = props.start!;
+	return { shape, end, start };
+})
+const cellHighlightData = computed(() => {
+	if (isCellType.value) return { cell: props.cell! };
+	return null;
+})
 
-const cornersToGridArea = (start, end, { width, height }) => {
+const cornersToGridArea = (start: Vec, end: Vec, { width, height }: BoardShape) => {
 	const { x: x0, y: y0 } = start;
 	const rowSpan = height;
 	const colSpan = width;
@@ -56,7 +62,7 @@ const cornersToGridArea = (start, end, { width, height }) => {
 		'grid-row': `${y0 + 1} / span ${rowSpan}`
 	};
 }
-const cellToGridArea = (cell) => {
+const cellToGridArea = (cell: Vec) => {
 	const { x, y } = cell;
 	return {
 		'grid-column': `${x + 1} / span 1`,
@@ -65,13 +71,19 @@ const cellToGridArea = (cell) => {
 }
 
 const gridAreaStyle = computed(() => {
-	if (isCellType.value) {
-		return cellToGridArea(props.cell);
-	} else return cornersToGridArea(
-		props.start,
-		props.end,
-		props.context
-	)
+	if (cellHighlightData.value != null) {
+		return cellToGridArea(cellHighlightData.value.cell);
+	} else if (areaHighlightData.value != null) {
+		const { start, end, shape } = areaHighlightData.value;
+		return cornersToGridArea(
+			start,
+			end,
+			shape
+		)
+	} else {
+		console.error('Cannot convert highlight data to grid area.');
+		return {};
+	}
 })
 </script>
 

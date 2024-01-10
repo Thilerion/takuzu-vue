@@ -9,6 +9,7 @@
 </template>
 
 <script setup>
+// TODO: similarly to CountsRuler, update this to create CoordsRuler in the same setup
 const props = defineProps({
 	lineType: {
 		type: String,

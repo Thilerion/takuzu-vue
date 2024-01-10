@@ -19,17 +19,18 @@
 		/>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useHintHighlightsStore } from '@/stores/highlight-store';
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 import { HIGHLIGHT_TYPES } from '@/stores/hints/highlights/highlight';
+import type { HintAreaHighlight, HintCellHighlight, HintHighlight, HintLineHighlight } from '@/stores/hints/highlights/types.js';
 
 
 const hintHighlightsStore = useHintHighlightsStore();
 const { visible, currentHighlights } = storeToRefs(hintHighlightsStore);
-const hasHighlights = computed(() => currentHighlights.value?.length);
-const visibleHighlights = computed(() => {
+const hasHighlights = computed(() => !!(currentHighlights.value?.length));
+const visibleHighlights = computed((): HintHighlight[] => {
 	if (!visible.value || !hasHighlights.value) {
 		return [];
 	}
@@ -37,14 +38,15 @@ const visibleHighlights = computed(() => {
 })
 
 const cellHighlights = computed(() => {
-	return visibleHighlights.value.filter(hl => hl.type === HIGHLIGHT_TYPES.CELL);
+	return visibleHighlights.value.filter((hl): hl is HintCellHighlight => hl.type === HIGHLIGHT_TYPES.CELL);
 })
 const lineHighlights = computed(() => {
-	return visibleHighlights.value.filter(hl => hl.type === HIGHLIGHT_TYPES.LINE);
+	return visibleHighlights.value.filter((hl): hl is HintLineHighlight => hl.type === HIGHLIGHT_TYPES.LINE);
 })
 const areaHighlights = computed(() => {
-	return visibleHighlights.value.filter(hl => hl.type === HIGHLIGHT_TYPES.AREA);
+	return visibleHighlights.value.filter((hl): hl is HintAreaHighlight => hl.type === HIGHLIGHT_TYPES.AREA);
 })
+
 
 </script>
 

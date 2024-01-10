@@ -13,7 +13,7 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { usePuzzleAssistanceStore } from "@/stores/assistance/store";
 import { storeToRefs } from "pinia";
 import { ref, watch } from "vue";
@@ -21,31 +21,29 @@ import { ref, watch } from "vue";
 const puzzleAssistanceStore = usePuzzleAssistanceStore();
 const { mistakesFound: errorFound, userChecks: checkId } = storeToRefs(puzzleAssistanceStore);
 
-const correctEl = ref(null);
-const incorrectEl = ref(null);
+const correctEl = ref<HTMLElement | null>(null);
+const incorrectEl = ref<HTMLElement | null>(null);
 
-const checkAnim = {
-	options: {
-		duration: 2000,
-		iterations: 1,
-		fill: 'forwards',
-		easing: 'cubic-bezier(0.25, 1, 0.5, 1)'
-	},
-	keyframes: [
+const checkAnimKeyframes: Keyframe[] = [
 		{ opacity: 0 },
 		{ opacity: 0.8, offset: 0.12 },
 		{ opacity: 0 }
-	]
+	];
+const checkAnimOptions: KeyframeAnimationOptions = {
+	duration: 2000,
+	iterations: 1,
+	fill: 'forwards',
+	easing: 'cubic-bezier(0.25, 1, 0.5, 1)'
 }
 
-let correctElAnimation = null;
-let incorrectElAnimation = null;
+let correctElAnimation: Animation | null = null;
+let incorrectElAnimation: Animation | null = null;
 
 const animateCorrectEl = () => {
-	const el = correctEl.value;
+	const el = correctEl.value!;
 	incorrectElAnimation?.cancel?.();
 	if (correctElAnimation == null) {
-		correctElAnimation = el.animate(checkAnim.keyframes, checkAnim.options);
+		correctElAnimation = el.animate(checkAnimKeyframes, checkAnimOptions);
 		correctElAnimation.persist();
 	} else {
 		correctElAnimation.cancel();
@@ -53,10 +51,10 @@ const animateCorrectEl = () => {
 	}
 }
 const animateIncorrectEl = () => {
-	const el = incorrectEl.value;
+	const el = incorrectEl.value!;
 	correctElAnimation?.cancel?.();
 	if (incorrectElAnimation == null) {
-		incorrectElAnimation = el.animate(checkAnim.keyframes, checkAnim.options);
+		incorrectElAnimation = el.animate(checkAnimKeyframes, checkAnimOptions);
 		incorrectElAnimation.persist();
 	} else {
 		incorrectElAnimation.cancel();
