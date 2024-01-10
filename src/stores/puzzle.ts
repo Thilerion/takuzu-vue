@@ -1,6 +1,6 @@
 import { useSharedPuzzleToggle } from "@/composables/use-puzzle-toggle";
 import { SimpleBoard } from "@/lib";
-import type { BasicPuzzleConfig, BoardString, PuzzleBoards, Target, Vec } from "@/lib/types";
+import type { BasicPuzzleConfig, BoardString, DifficultyKey, PuzzleBoards, Target, Vec } from "@/lib/types";
 import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
 import { getRandomTransformedPuzzle } from "@/lib/helpers/transform";
 import { countLineValues, pickRandom } from "@/lib/utils";
@@ -14,6 +14,7 @@ import { usePuzzleHistoryStore } from "./puzzle-history";
 import { usePuzzleTimer } from "./puzzle-timer";
 import { useRecapStatsStore } from "./recap-stats";
 import { usePuzzleAssistanceStore } from "./assistance/store";
+import type { FinishedPuzzleState } from "@/services/stats/db/models.js";
 
 export const PUZZLE_STATUS = {
 	'NONE': 'NONE',
@@ -407,20 +408,29 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			timer.pause();
 
 			const timeElapsed = timer.timeElapsed;
-			const checkData = {
+			/* const checkData = {
 				...usePuzzleAssistanceStore().checkAssistanceData
 			}
 			const hintAssistanceData = usePuzzleHintsStore().hintAssistanceData;
-			const state = { ...this.$state };
-			const finishedPuzzleState = {
-				...state, timeElapsed, assistance: {
-					checkData,
-					hintData: hintAssistanceData,
+			const state = { ...this.$state }; */
+			// const finishedPuzzleState: FinishedPuzzleState = {
+			// 	...state, timeElapsed, assistance: {
+			// 		// checkData,
+			// 		// hintData: hintAssistanceData,
+			// 		cheatsUsed: this.cheatsUsed
+			// 	}
+			// };
+			const finishedPuzzleState: FinishedPuzzleState = {
+				width: this.width as number,
+				height: this.height as number,
+				difficulty: this.difficulty as DifficultyKey,
+				initialBoard: this.initialBoard as SimpleBoard,
+				solution: this.solution as SimpleBoard,
+				timeElapsed,
+				assistance: {
 					cheatsUsed: this.cheatsUsed
 				}
-			};
-
-			// console.log({ ...finishedPuzzleState });
+			}
 
 			const recapStatsStore = useRecapStatsStore();
 

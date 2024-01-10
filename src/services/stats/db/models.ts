@@ -1,8 +1,50 @@
-import { dimensionsToBoardType } from "@/config";
+import { dimensionsToBoardType, type BoardType } from "@/config";
+import type { BasicPuzzleConfig, BoardShape } from "@/lib/types.js";
 import { formatYYYYMMDD } from "@/utils/date.utils.js";
+import type { DifficultyKey } from "@/lib/types.js";
+import type { SimpleBoard } from "@/lib/index.js";
+
+export type DbHistoryEntryData = BasicPuzzleConfig & {
+	initialBoard: string,
+	solution: string,
+	timeElapsed: number,
+	timestamp: number,
+	localDateStr: string,
+	flags: DbHistoryEntryFlags,
+	id?: number,
+	note?: string
+}
+export type DbHistoryEntryFlags = {
+	cheatsUsed?: boolean,
+	favorite?: boolean,
+};
+
+export type FinishedPuzzleState = Omit<DbHistoryEntry, 'initialBoard' | 'solution' | 'timestamp' | 'localDateStr' | 'flags'> & {
+	initialBoard: SimpleBoard,
+	solution: SimpleBoard,
+	assistance: {
+		cheatsUsed: boolean,
+	},
+	date?: Date,
+	timestamp?: number,
+	localDateStr?: string,
+	flags?: DbHistoryEntryFlags,
+}
 
 export class DbHistoryEntry {
-	constructor(data) {
+	width: number;
+	height: number;
+	difficulty: DifficultyKey;
+	timeElapsed: number;
+	flags: DbHistoryEntryFlags;
+	initialBoard: string;
+	solution: string;
+	timestamp: number;
+	localDateStr: string;
+	id?: number;
+	note?: string;
+
+	constructor(data: DbHistoryEntryData | Record<string, any>) {
 
 		validateKeys(data);
 
@@ -37,9 +79,10 @@ export class DbHistoryEntry {
 		if (id !== undefined) {
 			this.id = id;
 		}
+		console.warn(this);
 	}
 
-	static fromPuzzleState(puzzleState) {
+	static fromPuzzleState(puzzleState: FinishedPuzzleState) {
 		if (puzzleState == null) {
 			throw new Error('Invalid puzzleState; cannot turn this into a DbHistoryEntry entry');
 		}
@@ -69,7 +112,14 @@ export class DbHistoryEntry {
 
 
 export class PuzzleStatisticData extends DbHistoryEntry {
-	constructor(data) {
+	boardType: BoardType;
+	date: Date;
+	dimensions: string;
+	puzzleConfigKey: string;
+	numCells: number;
+	timePer100: number;
+
+	constructor(data: DbHistoryEntryData | Record<string, any>) {
 		super(data);
 
 		this.boardType = dimensionsToBoardType(this.width, this.height);
@@ -83,20 +133,23 @@ export class PuzzleStatisticData extends DbHistoryEntry {
 		this.timePer100 = this.calculateAdjustedTimeElapsed(100);
 	}
 
-	calculateAdjustedTimeElapsed(fromBase = 100) {
+	calculateAdjustedTimeElapsed(fromBase = 100): number {
 		const numCells = this.width * this.height;
 		const ratio = numCells / fromBase;
 		return Math.round(this.timeElapsed / ratio);
 	}
 
-	get timeElapsedAdjusted() {
+	get timeElapsedAdjusted(): number {
 		console.warn('GET: TimeElapsedAdjusted is deprecated. Use timePer100 instead.');
 		return this.timePer100;
 	}
 }
 
-function validateKeys(data) {
+function validateKeys(data: Record<string, any> | null | undefined): asserts data is DbHistoryEntryData {
 	if (!data) {
+		throw new Error('Data for history entry must be an object.');
+	}
+	if (typeof data !== 'object') {
 		throw new Error('Data for history entry must be an object.');
 	}
 	if (!isNumber(data.width) || !isNumber(data.height) || !isNumber(data.difficulty)) {
@@ -114,12 +167,11 @@ function validateKeys(data) {
 	if (!isString(data.localDateStr)) {
 		throw new Error('LocalDateStr must be a string.');
 	}
-	return true;
 }
 
-function isNumber(value) {
-	return value != null && Math.floor(value) === value;
+function isNumber(value: unknown): value is number {
+	return value != null && typeof value === 'number' && !Number.isNaN(value);
 }
-function isString(value) {
+function isString(value: unknown): value is string {
 	return typeof value === 'string' || value instanceof String;
 }

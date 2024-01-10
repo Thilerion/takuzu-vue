@@ -19,7 +19,7 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 
 	getters: {
 		baseHintsRequested: state => state.cache.size,
-		hintAssistanceData() {
+		hintAssistanceData(): { amountRequested: number } {
 			const amountRequested = this.baseHintsRequested;
 			return { amountRequested };
 		},
