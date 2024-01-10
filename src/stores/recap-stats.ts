@@ -1,26 +1,48 @@
-import { DbHistoryEntry as HistoryDbEntry } from "@/services/stats/db/models";
+import { DbHistoryEntry as HistoryDbEntry, type FinishedPuzzleState } from "@/services/stats/db/models";
 import { defineStore } from "pinia";
 import * as StatsDB from "@/services/stats/db/index.js";
 import { startOfDay } from "date-fns";
 import { useMainStore } from "./main";
+import type { BasicPuzzleConfig, DifficultyKey } from "@/lib/types.js";
+
+type RecapStatsBase = {
+	best: number;
+	previousBest: number | null;
+	average: number;
+	previousAverage: number | null;
+	count: number;
+	previousCount: number;
+	countToday: number;
+	isTimeRecord: boolean;
+}
+type RecapReplayStats = {
+	isReplay: boolean | null;
+	previousPlays: HistoryDbEntry[];
+}
+type RecapHistoryTotals = {
+	totalSolved: number;
+	totalSolvedToday: number;
+	sizesPlayed: { width: number, height: number, cells: number }[];
+	difficultiesPlayed: DifficultyKey[];
+	puzzleConfigsPlayed: { width: number, height: number, difficulty: DifficultyKey, cells: number }[];
+}
+export type RecapStatsStoreState = RecapStatsBase & RecapReplayStats & RecapHistoryTotals & {
+	modalShown: boolean;
+	lastPuzzleEntry: HistoryDbEntry | null;
+	currentTimeElapsed: number | null;
+
+	itemsPlayedWithSize: number;
+	itemsPlayedWithDifficulty: number;
+
+	initialized: boolean;
+}
 
 export const useRecapStatsStore = defineStore('recapStats', {
 
-	state: () => ({
+	state: (): RecapStatsStoreState => ({
 		modalShown: false,
 
-		lastPuzzleEntry: {
-			width: null,
-			height: null,
-			difficulty: null,
-			id: null,
-			timeElapsed: null,
-			flags: {
-				favorite: null,
-				cheatsUsed: null
-			},
-			note: null
-		},
+		lastPuzzleEntry: null,
 
 		currentTimeElapsed: null,
 
@@ -49,19 +71,20 @@ export const useRecapStatsStore = defineStore('recapStats', {
 	}),
 
 	getters: {
-		modalHidden: state => !state.modalShown,
-		hasPuzzleData: state => state.lastPuzzleEntry?.width != null,
-		isSavedToDb: state => state.lastPuzzleEntry?.id != null,
-		isFavorite: state => !!state.lastPuzzleEntry?.flags?.favorite,
+		modalHidden: (state): boolean => !state.modalShown,
+		hasPuzzleData: (state): boolean => state.lastPuzzleEntry?.width != null,
+		isSavedToDb: (state): boolean => state.lastPuzzleEntry?.id != null,
+		isFavorite: (state): boolean => !!state.lastPuzzleEntry?.flags?.favorite,
 
-		differencePreviousAverage() {
+		differencePreviousAverage(): number | null {
 			if (!this.initialized) return null;
 			else if (this.isFirstSolvedWithPuzzleConfig) return this.currentTimeElapsed;
+			else if (this.currentTimeElapsed == null || this.previousAverage == null) return null;
 			return this.currentTimeElapsed - this.previousAverage;
 		},
-		isFirstSolvedWithPuzzleConfig: state => state.initialized && state.previousCount === 0 && state.count === 1,
-		isFirstSolvedWithDifficulty: state => state.initialized && state.itemsPlayedWithDifficulty === 1,
-		isFirstSolvedWithSize: state => state.initialized && state.itemsPlayedWithSize === 1,
+		isFirstSolvedWithPuzzleConfig: (state): boolean => state.initialized && state.previousCount === 0 && state.count === 1,
+		isFirstSolvedWithDifficulty: (state): boolean => state.initialized && state.itemsPlayedWithDifficulty === 1,
+		isFirstSolvedWithSize: (state): boolean => state.initialized && state.itemsPlayedWithSize === 1,
 	},
 
 	actions: {
@@ -74,7 +97,7 @@ export const useRecapStatsStore = defineStore('recapStats', {
 		hideModal() {
 			this.modalShown = false;
 		},
-		toggleModal(val) {
+		toggleModal(val: boolean) {
 			if (val == null) {
 				this.modalShown = !this.modalShown;
 			} else {
@@ -82,12 +105,15 @@ export const useRecapStatsStore = defineStore('recapStats', {
 			}
 		},
 
-		setPuzzleEntry({historyEntry}) {
+		setPuzzleEntry({historyEntry}: { historyEntry: HistoryDbEntry }) {
 			this.lastPuzzleEntry = historyEntry;
 		},
 
 		async initializeGameEndStats() {
 			const historyEntry = this.lastPuzzleEntry;
+			if (historyEntry == null || historyEntry.timestamp == null || historyEntry.difficulty == null) {
+				throw new Error('Cannot initialize game end stats because puzzle entry is not initialized.');
+			}
 			const { timeElapsed } = historyEntry;
 			
 			const {
@@ -130,26 +156,26 @@ export const useRecapStatsStore = defineStore('recapStats', {
 			})
 		},
 
-		async addFinishedPuzzleToHistory(puzzleState) {
+		async addFinishedPuzzleToHistory(puzzleState: FinishedPuzzleState) {
 			const historyEntry = HistoryDbEntry.fromPuzzleState(puzzleState);
 
 			if (puzzleState.assistance.cheatsUsed) {
 				const savePuzzleToHistoryIfCheatedFlag = useMainStore().featureToggles.addPuzzleToHistoryWithCheats.isEnabled;
 				if (!savePuzzleToHistoryIfCheatedFlag) {
 					console.warn('Cheats used; will not save entry to history!');
-					this.setPuzzleEntry({ historyEntry, puzzleState });
-					this.initializeGameEndStats(historyEntry);
+					this.setPuzzleEntry({ historyEntry/* , puzzleState */ });
+					this.initializeGameEndStats(/* historyEntry */);
 					return historyEntry;
 				}
 				// cheats were used, but will save to history anyway
 			}
 			const historyEntryUpdated = await this.addFinishedPuzzleToDb(historyEntry);
-			this.setPuzzleEntry({ historyEntry: historyEntryUpdated, puzzleState });
-			this.initializeGameEndStats(historyEntryUpdated);
+			this.setPuzzleEntry({ historyEntry: historyEntryUpdated });
+			this.initializeGameEndStats();
 			console.log('Puzzle saved to history.');
 			return historyEntryUpdated;
 		},
-		async addFinishedPuzzleToDb(historyEntry) {
+		async addFinishedPuzzleToDb(historyEntry: HistoryDbEntry) {
 			try {
 				const id = await StatsDB.add(historyEntry, true);
 				if (id && typeof id === 'number') {
@@ -158,6 +184,7 @@ export const useRecapStatsStore = defineStore('recapStats', {
 				} else {
 					console.error('Did not receive a correct id after saving history entry.');
 					console.warn({ id });
+					return historyEntry; // TODO: should I return it here?
 				}
 			} catch (e) {
 				console.error(e);
@@ -169,15 +196,19 @@ export const useRecapStatsStore = defineStore('recapStats', {
 		async toggleFavorite() {
 			return this.markFavorite(!this.isFavorite);
 		},
-		async saveNote(note = null) {
+		async saveNote(note: string | null | undefined = null) {
+			if (this.lastPuzzleEntry == null || this.lastPuzzleEntry.id == null) {
+				console.warn('Cannot save note because puzzle is not saved to database.');
+				return false;
+			}
 			const { id } = this.lastPuzzleEntry;
 			try {
 				const success = await StatsDB.update(id, {
-					note
+					note: note ?? undefined
 				});
 				if (success) {
 					console.log('Succesfully saved note.');
-					this.lastPuzzleEntry.note = note;
+					this.lastPuzzleEntry.note = note ?? undefined;
 				} else {
 					console.error('Could not save note.');
 				}
@@ -190,7 +221,7 @@ export const useRecapStatsStore = defineStore('recapStats', {
 		},
 
 		async markFavorite(value = true) {
-			if (!this.isSavedToDb) {
+			if (!this.isSavedToDb || this.lastPuzzleEntry == null || this.lastPuzzleEntry.id == null) {
 				console.warn('Cannot mark as favorite because puzzle is not saved to database.');
 				return;
 			}
@@ -216,7 +247,7 @@ export const useRecapStatsStore = defineStore('recapStats', {
 
 });
 
-async function createGameEndStats({ width, height, difficulty, timeElapsed, id, initialBoard }) {
+async function createGameEndStats({ width, height, difficulty, timeElapsed, id, initialBoard }: HistoryDbEntry) {
 
 	const [
 		puzzleConfigResult,
@@ -252,11 +283,14 @@ async function createGameEndStats({ width, height, difficulty, timeElapsed, id, 
 		items, previousItems
 	});
 
-	const isTimeRecord = best < previousBest && best === timeElapsed;
+	const isTimeRecord = previousBest == null || (best < previousBest && best === timeElapsed);
 
 	const { isReplay, previousPlays } = itemsWithSameInitialBoardResult;
 
-	return {
+	const result: RecapStatsBase & RecapReplayStats & RecapHistoryTotals & {
+		sizeCount: number,
+		difficultyCount: number,
+	} = {
 		best, previousBest,
 		average, previousAverage,
 		count, previousCount, countToday,
@@ -273,10 +307,12 @@ async function createGameEndStats({ width, height, difficulty, timeElapsed, id, 
 
 		isReplay,
 		previousPlays
-	};
+	}
+
+	return result;
 }
 
-async function getItemsWithSameInitialBoard({initialBoard, id}) {
+async function getItemsWithSameInitialBoard({initialBoard, id}: { initialBoard: string, id?: number }) {
 	const previousPlays = await StatsDB.puzzleHistoryTable.where({
 		initialBoard
 	}).filter(item => id == null || item.id !== id).toArray();
@@ -285,7 +321,7 @@ async function getItemsWithSameInitialBoard({initialBoard, id}) {
 	return { isReplay, previousPlays };
 }
 
-async function getTotalSolved() {
+async function getTotalSolved(): Promise<RecapHistoryTotals> {
 	try {
 		const totalSolved = await StatsDB.getCount();
 		const sizes = await StatsDB.puzzleHistoryTable.orderBy('[width+height]').uniqueKeys();
@@ -297,16 +333,16 @@ async function getTotalSolved() {
 
 		const totalSolvedToday = await StatsDB.puzzleHistoryTable.where('timestamp').above(startOfTodayTimestamp).count();
 
-		const sizesPlayed = sizes.map(([width, height]) => {
+		const sizesPlayed = (sizes as unknown as [number, number][]).map(([width, height]) => {
 			const cells = width * height;
 			return { width, height, cells };
 		}).sort((a, b) => {
 			return a.cells - b.cells;
 		});
-		const difficultiesPlayed = [...difficulties].sort((a, b) => {
+		const difficultiesPlayed = ([...difficulties] as DifficultyKey[]).sort((a, b) => {
 			return a - b;
 		})
-		const puzzleConfigsPlayed = sizeAndDifficulties.map(([width, height, difficulty]) => {
+		const puzzleConfigsPlayed = (sizeAndDifficulties as unknown as [number, number, DifficultyKey][]).map(([width, height, difficulty]) => {
 			const cells = width * height;
 			return { width, height, difficulty, cells };
 		}).sort((a, b) => {
@@ -325,7 +361,7 @@ async function getTotalSolved() {
 	} catch (e) {
 		console.error(e);
 		return {
-			totalSolved: null,
+			totalSolved: 0,
 			totalSolvedToday: 0,
 			sizesPlayed: [],
 			difficultiesPlayed: [],
@@ -334,7 +370,7 @@ async function getTotalSolved() {
 	}
 }
 
-async function getPuzzlesPlayedWithPuzzleConfig({ width, height, difficulty, id }) {
+async function getPuzzlesPlayedWithPuzzleConfig({ width, height, difficulty, id }: BasicPuzzleConfig & { id?: number}) {
 	try {
 		const items = await StatsDB.puzzleHistoryTable
 			.where('[width+height+difficulty]')
@@ -351,7 +387,7 @@ async function getPuzzlesPlayedWithPuzzleConfig({ width, height, difficulty, id 
 	}
 }
 
-async function getPuzzleCountWithSizeOrDifficulty({ width, height, difficulty }) {
+async function getPuzzleCountWithSizeOrDifficulty({ width, height, difficulty }: BasicPuzzleConfig) {
 	try {
 		const sizeCount = StatsDB.puzzleHistoryTable.where('[width+height]').equals([width, height]).count();
 		const difficultyCount = StatsDB.puzzleHistoryTable.where('difficulty').equals(difficulty).count();
@@ -366,12 +402,16 @@ async function getPuzzleCountWithSizeOrDifficulty({ width, height, difficulty })
 	}
 }
 
-function getBestAndAverageTimes({ items, previousItems }) {
+type BestAndAverageTimesResult = {
+	best: number, previousBest: number | null,
+	average: number, previousAverage: number | null
+}
+function getBestAndAverageTimes({ items, previousItems }: { items: HistoryDbEntry[], previousItems: HistoryDbEntry[] }): BestAndAverageTimesResult {
 	if (!items.length) {
 		return {
-			best: null,
+			best: 0,
 			previousBest: null,
-			average: null,
+			average: 0,
 			previousAverage: null
 		}
 	}
@@ -382,10 +422,10 @@ function getBestAndAverageTimes({ items, previousItems }) {
 	const previousSum = previousItems.reduce((acc, val) => acc + val.timeElapsed, 0);
 
 	return {
-		average: sum / items.length,
+		average: sum == null ? 0 : sum / items.length,
 		previousAverage: previousSum ? previousSum / previousItems.length : null,
 
-		best: bestTimeItem.timeElapsed,
+		best: bestTimeItem.timeElapsed ?? 0,
 		previousBest: previousBestTimeItem?.timeElapsed ?? null,
 	}
 }

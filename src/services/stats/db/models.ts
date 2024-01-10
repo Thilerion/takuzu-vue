@@ -15,8 +15,8 @@ export type DbHistoryEntryData = BasicPuzzleConfig & {
 	note?: string
 }
 export type DbHistoryEntryFlags = {
-	cheatsUsed?: boolean,
-	favorite?: boolean,
+	cheatsUsed?: boolean | number,
+	favorite?: boolean | number,
 };
 
 export type FinishedPuzzleState = Omit<DbHistoryEntry, 'initialBoard' | 'solution' | 'timestamp' | 'localDateStr' | 'flags'> & {
