@@ -1,9 +1,12 @@
 import { extent } from "@/utils/data-analysis.utils";
-import { HINT_TYPE } from "../Hint";
-import { HighlightType, hintHighlightFromType, HighlightLevel } from "./highlight.js";
+import { HINT_TYPE, Hint } from "../Hint";
+import { HIGHLIGHT_TYPES, hintHighlightFromType, HIGHLIGHT_LEVELS } from "./highlight";
 import { usePuzzleStore } from "@/stores/puzzle";
+import type { SimpleBoard } from "@/lib/index.js";
+import type { HintAreaHighlight, HintCellHighlight, HintHighlight, HintLineHighlight } from "./types.js";
+import type { Vec } from "@/lib/types.js";
 
-export const createHighlightsFromLegacyHint = (hint, board) => {
+export const createHighlightsFromLegacyHint = (hint: Hint, board: SimpleBoard) => {
 	switch (hint.type) {
 		case HINT_TYPE.TRIPLES:
 			return createLegacyTriplesHintHighlights(hint);
@@ -19,7 +22,7 @@ export const createHighlightsFromLegacyHint = (hint, board) => {
 	}
 }
 
-function createLegacyTriplesHintHighlights(hint) {
+function createLegacyTriplesHintHighlights(hint: Hint): HintAreaHighlight[] {
 	const xValues = hint.source.map(v => v.x);
 	const yValues = hint.source.map(v => v.y);
 
@@ -33,75 +36,74 @@ function createLegacyTriplesHintHighlights(hint) {
 	}
 	return [
 		hintHighlightFromType(
-			HighlightType.AREA,
+			HIGHLIGHT_TYPES.AREA,
 			{ start, end },
-			HighlightLevel.PRIMARY,
+			HIGHLIGHT_LEVELS.PRIMARY,
 		)
 	]
 }
 
-function createLegacyBalanceHintHighlights(hint, board) {
+function createLegacyBalanceHintHighlights(hint: Hint, board: SimpleBoard): (HintCellHighlight | HintLineHighlight)[] {
 	const { targetLine, source } = hint;
 	const lineId = targetLine ?? source[0];
 	if (board == null) {
 		const puzzleStore = usePuzzleStore();
-		board = puzzleStore.board;
+		board = puzzleStore.board!;
 	}
-	const targetHighlights = hint.targets.map(move => {
+	const targetHighlights = (hint.targets as Vec[]).map((move: Vec) => { /* TODO: remove cast */
 		const { x, y } = move;
 		return hintHighlightFromType(
-			HighlightType.CELL,
+			HIGHLIGHT_TYPES.CELL,
 			{ x, y },
-			HighlightLevel.SECONDARY,
-			{ board }
+			HIGHLIGHT_LEVELS.SECONDARY,
 		)
 	})
 	return [
 		...targetHighlights,
 		hintHighlightFromType(
-			HighlightType.LINE,
+			HIGHLIGHT_TYPES.LINE,
 			{ lineId },
-			HighlightLevel.PRIMARY,
+			HIGHLIGHT_LEVELS.PRIMARY,
 			{ board }
 		)
 	]
 }
 
-function createLegacyEliminationHintHighlights(hint, board) {
+function createLegacyEliminationHintHighlights(hint: Hint, board: SimpleBoard): HintLineHighlight[] {
 	const { targetLine, source } = hint;
 	const lineId = targetLine ?? source[0];
 	if (board == null) {
 		const puzzleStore = usePuzzleStore();
-		board = puzzleStore.board;
+		board = puzzleStore.board!;
 	}
 	const hl = hintHighlightFromType(
-		HighlightType.LINE,
+		HIGHLIGHT_TYPES.LINE,
 		{ lineId },
-		HighlightLevel.PRIMARY,
+		HIGHLIGHT_LEVELS.PRIMARY,
 		{ board }
 	)
 	return [hl];
 }
 
-function createLegacyElimDupleHintHighlights(hint, board) {
+function createLegacyElimDupleHintHighlights(hint: Hint, board: SimpleBoard): HintLineHighlight[] {
 	const { targetLine, source } = hint;
 	if (board == null) {
 		const puzzleStore = usePuzzleStore();
-		board = puzzleStore.board;
+		board = puzzleStore.board!;
 	}
 	const sourceHighlights = source.map(lineId => {
 		return hintHighlightFromType(
-			HighlightType.LINE,
+			HIGHLIGHT_TYPES.LINE,
 			{ lineId },
-			HighlightLevel.SECONDARY,
+			HIGHLIGHT_LEVELS.SECONDARY,
 			{ board }
 		)
 	})
 	return [
 		hintHighlightFromType(
-			HighlightType.LINE,
+			HIGHLIGHT_TYPES.LINE,
 			{ lineId: targetLine },
-			HighlightLevel.PRIMARY,
+			HIGHLIGHT_LEVELS.PRIMARY,
 			{ board }
 		),
 		...sourceHighlights

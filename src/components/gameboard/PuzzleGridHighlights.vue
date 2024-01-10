@@ -23,7 +23,7 @@
 import { useHintHighlightsStore } from '@/stores/highlight-store';
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
-import { HighlightType } from '@/stores/hints/highlights/highlight';
+import { HIGHLIGHT_TYPES } from '@/stores/hints/highlights/highlight';
 
 
 const hintHighlightsStore = useHintHighlightsStore();
@@ -37,13 +37,13 @@ const visibleHighlights = computed(() => {
 })
 
 const cellHighlights = computed(() => {
-	return visibleHighlights.value.filter(hl => hl.type === HighlightType.CELL);
+	return visibleHighlights.value.filter(hl => hl.type === HIGHLIGHT_TYPES.CELL);
 })
 const lineHighlights = computed(() => {
-	return visibleHighlights.value.filter(hl => hl.type === HighlightType.LINE);
+	return visibleHighlights.value.filter(hl => hl.type === HIGHLIGHT_TYPES.LINE);
 })
 const areaHighlights = computed(() => {
-	return visibleHighlights.value.filter(hl => hl.type === HighlightType.AREA);
+	return visibleHighlights.value.filter(hl => hl.type === HIGHLIGHT_TYPES.AREA);
 })
 
 </script>

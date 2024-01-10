@@ -117,9 +117,24 @@ export const isLineId = (str: unknown): str is LineId => {
 	return typeof str === 'string' && str.length === 1;
 }
 
-export const lineTypeFromLineId = (lineId: string): LineType => {
+export function lineTypeFromLineId(lineId: RowId): typeof ROW;
+export function lineTypeFromLineId(lineId: ColumnId): typeof COLUMN;
+export function lineTypeFromLineId(lineId: LineId): LineType;
+export function lineTypeFromLineId(lineId: string): LineType {
 	if (isLineIdRow(lineId)) return ROW;
 	if (isLineIdColumn(lineId)) return COLUMN;
+	throw new Error('Unrecognized lineId');
+}
+
+export function getLineDataFromId(id: RowId): { lineId: RowId, lineType: typeof ROW };
+export function getLineDataFromId(id: ColumnId): { lineId: ColumnId, lineType: typeof COLUMN };
+export function getLineDataFromId(id: LineId): { lineId: RowId, lineType: typeof ROW } | { lineId: ColumnId, lineType: typeof COLUMN };
+export function getLineDataFromId(id: LineId): { lineId: LineId, lineType: LineType } {
+	if (isLineIdRow(id)) {
+		return { lineId: id, lineType: ROW };
+	} else if (isLineIdColumn(id)) {
+		return { lineId: id, lineType: COLUMN };
+	}
 	throw new Error('Unrecognized lineId');
 }
 

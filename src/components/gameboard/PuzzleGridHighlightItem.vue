@@ -2,12 +2,12 @@
 	<div
 		class="highlight"
 		:class="{
-			'hl-cell': type === HighlightType.CELL,
-			'hl-line': type === HighlightType.LINE,
-			'hl-area': type === HighlightType.AREA,
-			'hl-line-area': type !== HighlightType.CELL,
-			primary: level === HighlightLevel.PRIMARY,
-			secondary: level === HighlightLevel.SECONDARY
+			'hl-cell': type === HIGHLIGHT_TYPES.CELL,
+			'hl-line': type === HIGHLIGHT_TYPES.LINE,
+			'hl-area': type === HIGHLIGHT_TYPES.AREA,
+			'hl-line-area': type !== HIGHLIGHT_TYPES.CELL,
+			primary: level === HIGHLIGHT_LEVELS.PRIMARY,
+			secondary: level === HIGHLIGHT_LEVELS.SECONDARY
 		}"
 		:style="[gridAreaStyle]"
 	>
@@ -16,14 +16,14 @@
 </template>
 
 <script>
-const HL_TYPES = Object.keys(HighlightType);
-const HL_LEVELS = Object.keys(HighlightLevel);
+const HL_TYPES = Object.keys(HIGHLIGHT_TYPES);
+const HL_LEVELS = Object.keys(HIGHLIGHT_LEVELS);
 
 export default { HL_TYPES, HL_LEVELS };
 </script>
 
 <script setup>
-import { HighlightLevel, HighlightType } from '@/stores/hints/highlights/highlight';
+import { HIGHLIGHT_LEVELS, HIGHLIGHT_TYPES } from '@/stores/hints/highlights/highlight';
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -45,7 +45,7 @@ const props = defineProps({
 	cell: Object
 })
 
-const isCellType = computed(() => props.type === HighlightType.CELL);
+const isCellType = computed(() => props.type === HIGHLIGHT_TYPES.CELL);
 
 const cornersToGridArea = (start, end, { width, height }) => {
 	const { x: x0, y: y0 } = start;
