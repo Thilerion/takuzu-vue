@@ -54,7 +54,7 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 		},
 		showNewHint(hint: Hint) {
 			this.currentHint = hint;
-			this.currentHintValidForBoardStr = this._getBoardStr();
+			this.currentHintValidForBoardStr = this._getBoardStr() ?? null;
 			this.showHint = true;
 			const hintHighlightsStore = useHintHighlightsStore();
 			hintHighlightsStore.displayFromHint(hint);
@@ -70,7 +70,7 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 		// original actions
 		getHint() {
 			const puzzleStore = usePuzzleStore();
-			const boardStr = puzzleStore.boardStr;
+			const boardStr = puzzleStore.boardStr!;
 			const cacheResult = this.cache.get(boardStr);
 			if (cacheResult && this.currentHint != null && this.currentHintValidForBoardStr === this._getBoardStr()) {
 				this.show();
@@ -202,8 +202,8 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 			}
 		},
 
-		_getBoardStr() {
-			return usePuzzleStore().boardStr;
+		_getBoardStr(): BoardString {
+			return usePuzzleStore().boardStr!;
 		},
 
 		addHintToCache({

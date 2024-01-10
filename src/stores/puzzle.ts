@@ -1,6 +1,6 @@
 import { useSharedPuzzleToggle } from "@/composables/use-puzzle-toggle";
 import { SimpleBoard } from "@/lib";
-import type { BasicPuzzleConfig, PuzzleBoards, Target, Vec } from "@/lib/types";
+import type { BasicPuzzleConfig, BoardString, PuzzleBoards, Target, Vec } from "@/lib/types";
 import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
 import { getRandomTransformedPuzzle } from "@/lib/helpers/transform";
 import { countLineValues, pickRandom } from "@/lib/utils";
@@ -89,7 +89,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 	}),
 
 	getters: {
-		boardStr: state => state.board?.toString(),
+		boardStr: (state): BoardString | undefined => state.board?.toString(),
 		boardFilled: state => state.gridCounts[EMPTY] === 0,
 
 		hasStarted: state => state.started && state.initialized && state.board != null,
