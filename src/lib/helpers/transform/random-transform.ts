@@ -82,7 +82,7 @@ export const getRandomTransformationId = (type: 'square' | 'odd' | 'rect', opts:
 	throw new Error(`Unexpected type: ${type}`);
 }
 
-export function getRandomTransformedPuzzle(boards: PuzzleBoards, opts: RandomTransformIdOpts) {
+export function getRandomTransformedPuzzle(boards: PuzzleBoards, opts?: RandomTransformIdOpts) {
 	const type = getBoardShapeType(boards.board);
 	const id = getRandomTransformationId(type, opts);
 	const { board, solution } = getTransformedPuzzleBoards(boards, id);

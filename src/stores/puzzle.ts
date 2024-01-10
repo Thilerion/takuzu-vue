@@ -1,6 +1,7 @@
 import { useSharedPuzzleToggle } from "@/composables/use-puzzle-toggle";
 import { SimpleBoard } from "@/lib";
-import { EMPTY, ONE, ZERO } from "@/lib/constants";
+import type { BasicPuzzleConfig, PuzzleBoards, Target, Vec } from "@/lib/types";
+import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
 import { getRandomTransformedPuzzle } from "@/lib/helpers/transform";
 import { countLineValues, pickRandom } from "@/lib/utils";
 import { requestPuzzle } from "@/services/create-puzzle";
@@ -24,8 +25,38 @@ export const PUZZLE_STATUS = {
 	'FINISHED': 'FINISHED'
 }
 
+export type PuzzleStoreState = {
+	width: number | null,
+	height: number | null,
+	difficulty: number | null,
+
+	initialBoard: SimpleBoard | null,
+	board: SimpleBoard | null,
+	solution: SimpleBoard | null,
+	solutionBoardStr: string | null,
+
+	numCells: number | null,
+	initialEmpty: number | null,
+
+	rowCounts: Record<PuzzleValue, number>[],
+	colCounts: Record<PuzzleValue, number>[],
+	gridCounts: Record<PropertyKey, number>, // TODO: type gridCounts
+
+	cheatsUsed: boolean,
+
+	initialized: boolean,
+	started: boolean,
+	paused: boolean,
+	pausedByUser: boolean,
+	finished: boolean,
+
+	loading: boolean,
+	creationError: boolean
+}
+export type PuzzleStoreSetAction = Vec & { prevValue?: PuzzleValue, value: PuzzleValue };
+
 export const usePuzzleStore = defineStore('puzzleOld', {
-	state: () => ({
+	state: (): PuzzleStoreState => ({
 		width: null,
 		height: null,
 		difficulty: null,
@@ -62,16 +93,16 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 		boardFilled: state => state.gridCounts[EMPTY] === 0,
 
 		hasStarted: state => state.started && state.initialized && state.board != null,
-		finishedAndSolved() {
+		finishedAndSolved(): boolean {
 			if (!this.hasStarted || !this.boardFilled) return false;
 			return this.solutionBoardStr === this.boardStr;
 		},
-		finishedWithMistakes() {
+		finishedWithMistakes(): boolean {
 			if (!this.hasStarted || !this.boardFilled) return false;
 			return this.solutionBoardStr !== this.boardStr;
 		},
 		progress: state => {
-			const initialEmpty = state.initialEmpty;
+			const initialEmpty = state.initialEmpty!;
 			const currentEmpty = state.gridCounts[EMPTY];
 			const progress = 1 - (currentEmpty / initialEmpty);
 			return progress;
@@ -97,19 +128,19 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 
 	actions: {
 		// original mutations
-		setLoading(val) {
+		setLoading(val: boolean) {
 			this.loading = val;
 		},
-		setCreationError(val) {
+		setCreationError(val: boolean) {
 			this.creationError = val;
 		},
-		setPuzzleConfig({ width, height, difficulty }) {
+		setPuzzleConfig({ width, height, difficulty }: BasicPuzzleConfig) {
 			this.width = width;
 			this.height = height;
 			this.difficulty = difficulty;
 			this.numCells = width * height;
 		},
-		setAllBoards({ board, solution, initialBoard }) {
+		setAllBoards({ board, solution, initialBoard }: PuzzleBoards & { initialBoard: SimpleBoard }) {
 			this.board = board;
 			this.solution = solution;
 			this.initialBoard = initialBoard;
@@ -123,11 +154,11 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			this.initialEmpty = [...initialBoard.cells({ skipFilled: true })].length;
 		},
 		refreshLineCounts() {
-			const { rowCounts, colCounts } = calculateLineCounts(this.board);
+			const { rowCounts, colCounts } = calculateLineCounts(this.board!);
 			this.$patch({ rowCounts, colCounts });
 		},
 		refreshGridCounts() {
-			this.gridCounts = calculateGridCounts(this.board);
+			this.gridCounts = calculateGridCounts(this.board!);
 		},
 		reset() {
 			if (this.board != null && !this.initialized && !!this.board && !this.creationError) {
@@ -151,7 +182,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 		setFinished(val = true) {
 			this.finished = val;
 		},
-		setPaused(val, { userAction = false } = {}) {
+		setPaused(val: boolean, { userAction = false } = {}) {
 			if (userAction) {
 				this.paused = val;
 				this.pausedByUser = val;
@@ -171,19 +202,19 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			this.cheatsUsed = true;
 		},
 
-		_updateGridCount(value, prev) {
+		_updateGridCount(value: PuzzleValue, prev: PuzzleValue) {
 			this.gridCounts[value] += 1;
 			this.gridCounts[prev] -= 1;
 		},
-		_updateLineCount(x, y, value, prev) {
+		_updateLineCount(x: number, y: number, value: PuzzleValue, prev: PuzzleValue) {
 			this.rowCounts[y][value] += 1;
 			this.rowCounts[y][prev] -= 1;
 			this.colCounts[x][value] += 1;
 			this.colCounts[x][prev] -= 1;
 		},
 
-		_setValue({ x, y, value, prevValue }, updateCounts = true) {
-			this.board.assign(x, y, value);
+		_setValue({ x, y, value, prevValue }: Required<PuzzleStoreSetAction>, updateCounts = true) {
+			this.board!.assign(x, y, value);
 			if (updateCounts) {
 				this._updateGridCount(value, prevValue);
 				this._updateLineCount(x, y, value, prevValue);
@@ -203,7 +234,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				const {
 					x, y,
 					value,
-					prevValue = this.board.grid[y][x]
+					prevValue = this.board!.grid[y][x]
 				} = move;
 				return { x, y, value, prevValue };
 			})
@@ -218,9 +249,9 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				usePuzzleHintsStore().hide();
 			}
 		},
-		setValue({ x, y, value, prevValue }) {
+		setValue({ x, y, value, prevValue }: PuzzleStoreSetAction) {
 			if (!prevValue) {
-				this._setValue({ x, y, value, prevValue: this.board.grid[y][x] });
+				this._setValue({ x, y, value, prevValue: this.board!.grid[y][x] });
 			} else this._setValue({ x, y, value, prevValue });
 
 			usePuzzleAssistanceStore().removeFromMarkedMistakes({ x, y });
@@ -229,9 +260,9 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				usePuzzleHintsStore().hide();
 			}
 		},
-		makeMove({ x, y, value, prevValue }) {
+		makeMove({ x, y, value, prevValue }: PuzzleStoreSetAction) {
 			if (!prevValue) {
-				prevValue = this.board.grid[y][x];
+				prevValue = this.board!.grid[y][x];
 			}
 			if (prevValue === value) {
 				console.log('Previous value is equal to current value. This move will not be committed.');
@@ -242,8 +273,8 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				x, y, value: prevValue, nextValue: value
 			})
 		},
-		toggle({ x, y, value, prevValue }) {
-			const previous = prevValue ?? this.board.grid[y][x];
+		toggle({ x, y, value, prevValue }: PuzzleStoreSetAction) {
+			const previous = prevValue ?? this.board!.grid[y][x];
 
 			if (value == null) {
 				const { toggle } = useSharedPuzzleToggle();
@@ -258,15 +289,21 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			const move = { ...puzzleHistory.lastMove };
 			puzzleHistory.undoMove();
 			const { x, y, prevValue: value, value: prevValue } = move;
+			if (x == null || y == null || value == null) {
+				console.warn('Could not undo move. No move to undo.');
+				return;
+			}
 			this.setValue({ x, y, value, prevValue });
 		},
 
-		async createPuzzle({ width, height, difficulty }) {
+		async createPuzzle({ width, height, difficulty }: BasicPuzzleConfig) {
 			this.setLoading(true);
 
 			try {
-				const { success, data, reason } = await requestPuzzle({ width, height, difficulty });
+				const res = await requestPuzzle({ width, height, difficulty });
+				const { success } = res;
 				if (success) {
+					const { data } = res;
 					const { boardStr, solutionStr } = data;
 					const board = SimpleBoard.import(boardStr);
 					const solution = SimpleBoard.import(solutionStr);
@@ -279,14 +316,15 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 						initPregenWorker();
 					}, 2000);
 				} else {
-					throw new Error(reason);
+					const { reason } = res;
+					throw new Error(reason as any); // TODO: remove cast
 				}
 			} catch (e) {
 				this.setLoading(false);
-				throw new Error(e);
+				throw e;
 			}
 		},
-		async initPuzzle(puzzleConfig = {}) {
+		async initPuzzle(puzzleConfig: BasicPuzzleConfig) {
 			try {
 				this.setPuzzleConfig(puzzleConfig);
 				await this.createPuzzle(puzzleConfig);
@@ -294,13 +332,13 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			} catch (e) {
 				this.reset();
 				this.setCreationError(true);
-				throw new Error(e);
+				throw e;
 			}
 		},
 		async replayPuzzle({
 			puzzleConfig,
 			boardStrings
-		}) {
+		}: { puzzleConfig: BasicPuzzleConfig, boardStrings: { board: string, solution: string } }) {
 			const board = SimpleBoard.import(boardStrings.board);
 			const initialBoard = board.copy();
 			const solution = SimpleBoard.import(boardStrings.solution);
@@ -311,7 +349,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 		},
 		async replayRandomPuzzle({
 			width, height, difficulty
-		}) {
+		}: BasicPuzzleConfig) {
 			const previousPlays = await puzzleHistoryTable.where('[width+height+difficulty]').equals([width, height, difficulty]).toArray();
 			if (!previousPlays.length) return false;
 
@@ -321,13 +359,13 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			const hour = 60 * minute;
 			const fourHours = hour * 4;
 
-			const recentlyPlayedBoards = previousPlays.filter(val => {
-				const timeDiff = timestamp - val.timestamp;
+			const recentlyPlayedBoards: string[] = previousPlays.filter((val: any) => {
+				const timeDiff: number = timestamp - val.timestamp;
 				if (timeDiff < fourHours) return true;
 				return false;
-			}).map(val => val.initialBoard);
+			}).map((val: any): string => val.initialBoard);
 
-			const initialBoards = previousPlays.map(val => val.initialBoard);
+			const initialBoards: string[] = previousPlays.map((val: any): string => val.initialBoard);
 			const uniquePreviousBoards = [
 				...new Set(initialBoards)
 			].filter(initialBoardStr => {
@@ -342,7 +380,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 
 			const randomBoard = pickRandom(uniquePreviousBoards);
 
-			const randomPuzzle = previousPlays.find(val => val.initialBoard === randomBoard);
+			const randomPuzzle = previousPlays.find((val: { initialBoard: string }) => val.initialBoard === randomBoard);
 			const boardStrings = {
 				board: randomPuzzle.initialBoard,
 				solution: randomPuzzle.solution
@@ -357,7 +395,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 		loadPuzzle({
 			width, height, difficulty,
 			board, solution, initialBoard = board.copy()
-		}) {
+		}: BasicPuzzleConfig & PuzzleBoards & { initialBoard?: SimpleBoard }) {
 			this.reset();
 			this.setPuzzleConfig({ width, height, difficulty });
 			this.setAllBoards({ board, solution, initialBoard });
@@ -404,8 +442,8 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			deleteSavedPuzzle();
 
 			const transformResult = getRandomTransformedPuzzle({
-				board: this.initialBoard.copy(),
-				solution: this.solution.copy(),
+				board: this.initialBoard!.copy(),
+				solution: this.solution!.copy(),
 			})
 			const { board, solution } = transformResult;
 
@@ -434,8 +472,10 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			this.reset();
 			const { savedPuzzle: currentSaved } = useSavedPuzzle();
 			const saveData = currentSaved.value;
-
-			// import moveLi.jsst
+			if (saveData == null) {
+				throw new Error('No saved puzzle found!');
+			}
+			// import moveList
 			const { moveList } = saveData;
 			const { width, height, difficulty } = saveData;
 			this.setPuzzleConfig({ width, height, difficulty });
@@ -459,7 +499,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			})
 
 			const puzzleHistory = usePuzzleHistoryStore();
-			puzzleHistory.importMoveHistory(moveList);
+			puzzleHistory.importMoveHistory([...moveList]);
 
 
 			this.setInitialized(true);
@@ -469,7 +509,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 })
 
 // whenever the board object changes, recheck line counts
-function calculateLineCounts(board) {
+function calculateLineCounts(board: SimpleBoard): { rowCounts: Record<PuzzleValue, number>[], colCounts: Record<PuzzleValue, number>[] } {
 	const rowCounts = board.grid.map(row => {
 		return countLineValues(row);
 	})
@@ -482,7 +522,7 @@ function calculateLineCounts(board) {
 	return { rowCounts, colCounts };
 }
 
-function calculateGridCounts(board) {
+function calculateGridCounts(board: SimpleBoard): Record<PuzzleValue, number> {
 	const counts = { [ONE]: 0, [ZERO]: 0, [EMPTY]: 0 };
 	for (const cell of board.cells({ skipEmpty: false })) {
 		counts[cell.value] += 1;
