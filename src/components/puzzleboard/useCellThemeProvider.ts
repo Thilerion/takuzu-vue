@@ -1,16 +1,25 @@
 // @ts-c
 import { useSettingsStore } from "@/stores/settings/store"
 import { CellThemeTypes } from "@/stores/settings/options";
-import { cellThemeTypeMap } from "@/stores/settings/types";
+import { cellThemeTypeMap, type CellTheme, type CellThemeType } from "@/stores/settings/types";
 import { storeToRefs } from "pinia";
 import { computed, inject, provide, unref } from "vue";
 import FastPuzzleCellColored from "../gameboard/cell/FastPuzzleCellColored.vue";
 import FastPuzzleCellSymbol from "../gameboard/cell/FastPuzzleCellSymbol.vue";
+import type { Ref } from "vue";
 
+export type UseCellThemeThemeValue = {
+	theme: CellTheme,
+	type: CellThemeType
+}
+export type UseCellThemeConfig = { 
+	themeValue?: Ref<UseCellThemeThemeValue> | UseCellThemeThemeValue,
+	useGlobalTheme?: boolean 
+};
 export const useCellThemeProvider = ({
 	themeValue, // maybeRef
 	useGlobalTheme = false
-} = {}) => {
+}: UseCellThemeConfig = {}) => {
 	const settingsStore = useSettingsStore();
 
 	const {
@@ -26,9 +35,11 @@ export const useCellThemeProvider = ({
 		return true;
 	})
 
-	const cellTheme = computed(() => {
+	// TODO: test this computed, may not be correct
+	const cellTheme = computed((): CellTheme => {
 		if (shouldUseLocalThemeValue.value) {
-			return themeValue?.value ?? themeValue;
+			const val = unref(themeValue);
+			if (val != null) return val.theme;
 		}
 		return injectedCellThemeData.theme.value;
 	})
