@@ -5,14 +5,18 @@ import { startOfDay } from "date-fns";
 import { useMainStore } from "./main";
 import type { BasicPuzzleConfig, DifficultyKey } from "@/lib/types.js";
 
-type PuzzleStatistics = {
+type PuzzleStatisticsBestAverages = {
 	best: number;
 	previousBest: number | null;
 	average: number;
 	previousAverage: number | null;
+}
+type PuzzleStatisticsCounts = {
 	count: number;
 	previousCount: number;
 	countToday: number;
+}
+type PuzzleStatistics = PuzzleStatisticsBestAverages & PuzzleStatisticsCounts & {
 	isTimeRecord: boolean;
 }
 type ReplayStatistics = {
@@ -121,43 +125,12 @@ export const useRecapStatsStore = defineStore('recapStats', {
 			}
 			const { timeElapsed } = historyEntry;
 			
-			const {
-				best, previousBest,
-				average, previousAverage,
-				count, previousCount, countToday,
-				isTimeRecord,
-
-				sizeCount,
-				difficultyCount,
-
-				totalSolved,
-				totalSolvedToday,
-				sizesPlayed,
-				difficultiesPlayed,
-				puzzleConfigsPlayed,
-
-				isReplay,
-				previousPlays
-			} = await createGameEndStats(historyEntry);
+			const gameEndStatsBase = await createGameEndStats(historyEntry);
 			
 			this.$patch({
-				best, previousBest, average, previousAverage,
-				count, previousCount, countToday,
-				isTimeRecord,
 				modalShown: true, initialized: true,
 				currentTimeElapsed: timeElapsed,
-
-				itemsPlayedWithDifficulty: difficultyCount,
-				itemsPlayedWithSize: sizeCount,
-
-				totalSolved,
-				totalSolvedToday,
-				sizesPlayed,
-				difficultiesPlayed,
-				puzzleConfigsPlayed,
-
-				isReplay,
-				previousPlays
+				...gameEndStatsBase
 			})
 		},
 
@@ -272,7 +245,7 @@ async function createGameEndStats({ width, height, difficulty, timeElapsed, id, 
 
 
 	const { items, previousItems } = puzzleConfigResult;
-	const { sizeCount, difficultyCount } = sizeDifficultyResult;
+	const { itemsPlayedWithDifficulty, itemsPlayedWithSize } = sizeDifficultyResult;
 	const { totalSolved, totalSolvedToday, sizesPlayed, difficultiesPlayed, puzzleConfigsPlayed } = totalsResult;
 
 	const startOfToday = startOfDay(Date.now());
@@ -284,25 +257,21 @@ async function createGameEndStats({ width, height, difficulty, timeElapsed, id, 
 	const count = items.length;
 	const previousCount = previousItems.length;
 
-	const { best, previousBest, average, previousAverage } = getBestAndAverageTimes({
+	const bestAverageTimes = getBestAndAverageTimes({
 		items, previousItems
 	});
 
-	const isTimeRecord = previousBest == null || (best < previousBest && best === timeElapsed);
+	const isTimeRecord = checkIsTimeRecord(bestAverageTimes, timeElapsed);
 
 	const { isReplay, previousPlays } = itemsWithSameInitialBoardResult;
 
-	const result: PuzzleStatistics & HistoryTotals & PuzzleConfigurationHistory & ReplayStatistics & {
-		sizeCount: number,
-		difficultyCount: number,
-	} = {
-		best, previousBest,
-		average, previousAverage,
+	const result: PuzzleStatistics & HistoryTotals & PuzzleConfigurationHistory & ReplayStatistics & PuzzleConfigurationStatistics = {
+		...bestAverageTimes,
 		count, previousCount, countToday,
 		isTimeRecord,
 
-		sizeCount,
-		difficultyCount,
+		itemsPlayedWithDifficulty,
+		itemsPlayedWithSize,
 		
 		totalSolved,
 		totalSolvedToday,
@@ -392,26 +361,22 @@ async function getPuzzlesPlayedWithPuzzleConfig({ width, height, difficulty, id 
 	}
 }
 
-async function getPuzzleCountWithSizeOrDifficulty({ width, height, difficulty }: BasicPuzzleConfig) {
+async function getPuzzleCountWithSizeOrDifficulty({ width, height, difficulty }: BasicPuzzleConfig): Promise<PuzzleConfigurationStatistics> {
 	try {
 		const sizeCount = StatsDB.puzzleHistoryTable.where('[width+height]').equals([width, height]).count();
 		const difficultyCount = StatsDB.puzzleHistoryTable.where('difficulty').equals(difficulty).count();
 		
 		return {
-			sizeCount: await sizeCount,
-			difficultyCount: await difficultyCount
+			itemsPlayedWithSize: await sizeCount,
+			itemsPlayedWithDifficulty: await difficultyCount
 		}
 	} catch (e) {
 		console.error(e);
-		return { sizeCount: 0, difficultyCount: 0 };
+		return { itemsPlayedWithSize: 0, itemsPlayedWithDifficulty: 0 };
 	}
 }
 
-type BestAndAverageTimesResult = {
-	best: number, previousBest: number | null,
-	average: number, previousAverage: number | null
-}
-function getBestAndAverageTimes({ items, previousItems }: { items: HistoryDbEntry[], previousItems: HistoryDbEntry[] }): BestAndAverageTimesResult {
+function getBestAndAverageTimes({ items, previousItems }: { items: HistoryDbEntry[], previousItems: HistoryDbEntry[] }): PuzzleStatisticsBestAverages {
 	if (!items.length) {
 		return {
 			best: 0,
@@ -433,4 +398,8 @@ function getBestAndAverageTimes({ items, previousItems }: { items: HistoryDbEntr
 		best: bestTimeItem.timeElapsed ?? 0,
 		previousBest: previousBestTimeItem?.timeElapsed ?? null,
 	}
+}
+function checkIsTimeRecord(times: PuzzleStatisticsBestAverages, timeElapsed: number): boolean {
+	const { best, previousBest } = times;
+	return previousBest == null || (best < previousBest && best === timeElapsed)
 }
