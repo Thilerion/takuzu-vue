@@ -24,7 +24,7 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onBeforeMount } from 'vue';
 import { useStatisticsStore } from '@/stores/statistics.js';
 import { storeToRefs } from 'pinia';

@@ -18,7 +18,7 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useMainStore } from '@/stores/main';
 import { computed } from 'vue';
 
