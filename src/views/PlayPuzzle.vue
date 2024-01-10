@@ -13,8 +13,6 @@
 				<template v-slot:ruler-rows>
 					<RulerCoords @select-line="selectLine" v-if="rulerType === 'coords'" line-type="rows"
 						:line-ids="board.rowIds" />
-					<RulerCounts @select-line="selectLine" v-else-if="showRulers && false" line-type="rows"
-						:ruler-type="rulerType" :counts="rowCounts" />
 					<CountsRuler @select-line="selectLine" v-else-if="showRulers"
 						:count-type="rulerType === 'count-remaining' ? 'remaining' : 'current'" line-type="rows"
 						:counts="rowCounts" :cell-size="cellSize" />
@@ -22,8 +20,6 @@
 				<template v-slot:ruler-columns>
 					<RulerCoords @select-line="selectLine" v-if="rulerType === 'coords'" line-type="columns"
 						:line-ids="board.columnIds" />
-					<CountsRuler @select-line="selectLine" v-else-if="showRulers && false" line-type="columns"
-						:ruler-type="rulerType" :counts="columnCounts" />
 					<CountsRuler @select-line="selectLine" v-else-if="showRulers"
 						:count-type="rulerType === 'count-remaining' ? 'remaining' : 'current'" line-type="columns"
 						:counts="columnCounts" :cell-size="cellSize" />
@@ -57,7 +53,6 @@ import GameBoardWrapper from '@/components/gameboard/GameBoardWrapper.vue';
 import PuzzleControls from '@/components/gameboard/PuzzleControls.vue';
 import PuzzleInfo from '@/components/gameboard/PuzzleInfo.vue';
 import RulerCoords from '@/components/gameboard/RulerCoords.vue';
-import RulerCounts from '@/components/gameboard/RulerCounts.vue';
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
 import HintWrapper from '@/components/gameboard/hints/HintWrapper.vue';
 import PuzzleRecap from '@/components/puzzle-recap/PuzzleRecap.vue';
@@ -88,7 +83,6 @@ export default {
 		PuzzleControls,
 		PuzzleInfo,
 		RulerCoords,
-		RulerCounts,
 		OverlayPageTransition,
 		PuzzleRecap,
 		CountsRuler,
