@@ -28,14 +28,14 @@
 		</transition>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { nextTick, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue';
 
 
 
-const props = defineProps({
-	show: Boolean
-})
+const props = defineProps<{
+	show: boolean
+}>()
 const emit = defineEmits(['close']);
 const show = toRef(props, 'show');
 
@@ -55,10 +55,10 @@ watch(show, (value) => {
 
 onMounted(() => showBanner.value = true);
 
-let bannerAfterEnterTimeout = null;
+let bannerAfterEnterTimeout: ReturnType<typeof setTimeout> | null = null;
 const bannerAfterEnter = () => {
-	clearTimeout(bannerAfterEnterTimeout);
-	bannerAfterEnterTimeout = window.setTimeout(() => {
+	clearTimeout(bannerAfterEnterTimeout!);
+	bannerAfterEnterTimeout = globalThis.setTimeout(() => {
 		showBackdrop.value = true;
 		showBanner.value = false;
 		showContent.value = true;
@@ -66,7 +66,7 @@ const bannerAfterEnter = () => {
 }
 
 onBeforeUnmount(() => {
-	clearTimeout(bannerAfterEnterTimeout);
+	clearTimeout(bannerAfterEnterTimeout!);
 	bannerAfterEnterTimeout = null;
 })
 </script>

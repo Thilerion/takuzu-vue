@@ -22,7 +22,7 @@
 	</transition>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { pickRandom } from '@/lib/utils';
 import { ref, toRefs, computed } from 'vue';
 
@@ -46,16 +46,13 @@ const BANNER_STRINGS = [
 ];
 
 const emit = defineEmits(['close', 'banner-after-enter', 'banner-after-leave']);
-const props = defineProps({
-	show: Boolean,
-	enterDuration: {
-		type: Number,
-		default: 400
-	},
-	leaveDuration: {
-		type: Number,
-		default: 200
-	}
+const props = withDefaults(defineProps<{
+	show: boolean,
+	enterDuration?: number,
+	leaveDuration?: number
+}>(), {
+	enterDuration: 400,
+	leaveDuration: 200
 })
 
 const { enterDuration, leaveDuration } = toRefs(props);

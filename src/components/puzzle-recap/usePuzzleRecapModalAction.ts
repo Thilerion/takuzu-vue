@@ -9,17 +9,17 @@ export const usePuzzleRecapModalActions = () => {
 	const router = useRouter();
 	const recapStatsStore = useRecapStatsStore();
 	const puzzleStore = usePuzzleStore();
-	const goBackToRoute = makeGoBackToRoute({ route, router });
+	const goBackToRoute = makeGoBackToRoute();
 	const mainStore = useMainStore();
 
-	async function playAgainAction() {
+	async function playAgainAction(): Promise<void> {
 		const mode = route?.query?.mode;
 		if (mode === 'replay') {
 			// mode is stripped from route query if replay action fails
 			return replayAction();
 		}		
 	
-		const { width, height, difficulty } = recapStatsStore.lastPuzzleEntry;
+		const { width, height, difficulty } = recapStatsStore.lastPuzzleEntry!;
 		puzzleStore.reset();
 		await puzzleStore.initPuzzle({ width, height, difficulty });
 	
@@ -41,7 +41,7 @@ export const usePuzzleRecapModalActions = () => {
 	
 	const stripReplayModeFromRoute = () => {
 		try {
-			const name = route.name;
+			const name = route.name ?? undefined;
 			const query = route.query;
 			const { mode, ...otherQueries } = query;
 			router.replace({
@@ -53,9 +53,9 @@ export const usePuzzleRecapModalActions = () => {
 		}	
 	}
 	
-	async function replayAction() {
+	async function replayAction(): Promise<void> {
 		try {
-			const { width, height, difficulty } = recapStatsStore.lastPuzzleEntry;
+			const { width, height, difficulty } = recapStatsStore.lastPuzzleEntry!;
 			puzzleStore.reset();
 			const found = await puzzleStore.replayRandomPuzzle({ width, height, difficulty });
 			if (!found) {
@@ -71,7 +71,7 @@ export const usePuzzleRecapModalActions = () => {
 	} 
 	
 	function makeGoBackToRoute() {
-		return (routeName, { replace = true } = {}) => {
+		return (routeName: string, { replace = true } = {}) => {
 			const routeMetaPrev = route?.meta?.prev;
 			const prevName = routeMetaPrev?.name;
 		
@@ -88,7 +88,7 @@ export const usePuzzleRecapModalActions = () => {
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	const noop = () => { };
 
-	async function exitTo(actionName) {
+	async function exitTo(actionName: 'play-again' | 'statistics' | 'home' | 'replay' | 'new-puzzle') {
 		let actionFn = noop;
 		switch (actionName) {
 			case 'play-again': {

@@ -17,15 +17,15 @@
 	</teleport>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useRecapStatsStore } from '@/stores/recap-stats';
 import { computed, toRef } from 'vue';
 import { usePuzzleRecapModalActions } from './usePuzzleRecapModalAction';
 
 
-const props = defineProps({
-	finished: Boolean
-})
+const props = defineProps<{
+	finished: boolean
+}>()
 
 const finished = toRef(props, 'finished');
 
