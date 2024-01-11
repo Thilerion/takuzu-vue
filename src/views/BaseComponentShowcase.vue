@@ -62,6 +62,10 @@
 					<label for="input-1-value" class="ml-2">value is: {{input1Value}}</label>
 				</div>
 				<div>
+					<InputToggle2 small v-model="input1Value" inline id="input-2-value" />
+					<label for="input2-value" class="ml-2">value is: {{input1Value}}</label>
+				</div>
+				<div>
 					<label for="baseRange" class="w-full flex justify-between items-center">Base range <span class="text-xs">({{baseRangeValue}})</span></label>
 					<input type="range" id="baseRange" v-model="baseRangeValue" min="0" max="100" step="5">
 				</div>
