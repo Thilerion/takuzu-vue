@@ -19,65 +19,59 @@
 	</transition>
 </template>
 
-<script>
-export default {
-	data() {
-		return {
-			isActive: false,
-			prevFocus: null,
-		}
-	},
-	props: {
-		// disable closing by "esc" or backdrop click => if enabled, must have at least one focusable close control!
-		preventClose: Boolean,
-		autoOpen: Boolean
-	},
-	methods: {
-		backdropClose() {
-			if (this.preventClose) return;
-			this.close();
-		},
-		keyClose() {
-			if (this.preventClose) return;
-			if (!this.isActive) return;
-			this.close();
-		},
-		close() {
-			this.isActive = false;
-		},
-		open() {
-			this.isActive = true;
-		},
-	},
-	watch: {
-		isActive(cur, prev) {
-			if (cur && !prev) {
-				this.prevFocus = document.activeElement;
-				this.$nextTick(() => {
+<script setup lang="ts">
+import { onBeforeMount, ref, watch, nextTick } from 'vue';
+
+const isActive = ref(false);
+const prevFocus = ref<null | HTMLElement>(null);
+
+const props = defineProps<{
+	preventClose?: boolean,
+	autoOpen?: boolean
+}>();
+
+const close = () => isActive.value = false;
+const open = () => isActive.value = true;
+const backdropClose = () => {
+	if (props.preventClose) return;
+	close();
+}
+const keyClose = () => {
+	if (props.preventClose || isActive.value) return;
+	close();
+}
+
+onBeforeMount(() => {
+	if (props.autoOpen) open();
+})
+
+const modalContent = ref<HTMLElement | null>(null);
+
+watch(isActive, (cur, prev) => {
+	if (cur && !prev) {
+				prevFocus.value = document.activeElement as HTMLElement;
+				nextTick(() => {
 					try {
-						this.$refs.modalContent.focus();
+						modalContent.value!.focus();
 					} catch(e) {
 						console.warn('Could not focus modalContent.');
 						console.warn(e);
 					}
 				})
-			} else if (!cur && prev && this.prevFocus != null) {
+			} else if (!cur && prev && prevFocus.value != null) {
 				try {
-					this.prevFocus.focus();
+					prevFocus.value!.focus();
 				} catch(e) {
 					console.warn('Could not focus previously focused element.');
-					console.warn({e, prevFocus: this.prevFocus});
+					console.warn({e, prevFocus: prevFocus.value});
 				}
-				this.prevFocus = null;
+				prevFocus.value = null;
 			}
-		}
-	},
-	beforeMount() {
-		if (this.autoOpen) {
-			this.open();
-		}
-	}
-};
+})
+
+defineExpose({
+	open, close, isActive
+})
 </script>
 
 <style>
