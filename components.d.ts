@@ -43,6 +43,7 @@ declare module 'vue' {
     FastPuzzleCellWrapper: typeof import('./src/components/gameboard/cell/FastPuzzleCellWrapper.vue')['default']
     GameBoard: typeof import('./src/components/gameboard/GameBoard.vue')['default']
     GameBoardDropdown: typeof import('./src/components/gameboard/GameBoardDropdown.vue')['default']
+    GameBoardDropdown2: typeof import('./src/components/gameboard/GameBoardDropdown2.vue')['default']
     GameBoardHeader: typeof import('./src/components/gameboard/GameBoardHeader.vue')['default']
     GameBoardWrapper: typeof import('./src/components/gameboard/GameBoardWrapper.vue')['default']
     GameModeDimensionsButton: typeof import('./src/components/new-puzzle/GameModeDimensionsButton.vue')['default']

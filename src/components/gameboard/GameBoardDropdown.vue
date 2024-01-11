@@ -1,5 +1,5 @@
 <template>
-	<BaseDropdown align-right align-below ref="dropdown" @toggled="dropdownToggled">
+	<BaseDropdown align-right align-below ref="dropdownRef" @toggled="dropdownToggled">
 		<template #trigger="{ toggle }">
 			<IconBtn @click="toggle" name="md-morevert">
 				<icon-ic-baseline-more-vert />
@@ -52,154 +52,133 @@
 	</BaseDropdown>
 </template>
 
-<script>
-import { EMPTY } from '@/lib/constants';
-import { humanSolveTriples } from '@/lib/human-solver';
-import { shuffle } from '@/lib/utils';
-import { useMainStore } from '@/stores/main';
-import { usePuzzleTimer } from '@/stores/puzzle-timer';
-import { usePuzzleStore } from '@/stores/puzzle';
-import { useSettingsStore } from '@/stores/settings/store';
-import { awaitTimeout, awaitRaf } from '@/utils/delay.utils';
+<script setup lang="ts">
+import { useMainStore } from '@/stores/main.js';
+import { usePuzzleStore } from '@/stores/puzzle.js';
+import { useSettingsStore } from '@/stores/settings/store.js';
 import { storeToRefs } from 'pinia';
-import { readonly, toRef } from 'vue';
+import { ref } from 'vue';
+import { toRef } from 'vue';
+import BaseDropdown from '../global/dropdown/BaseDropdown.vue';
+import { shuffle } from '@/lib/utils.js';
+import { awaitRaf, awaitTimeout } from '@/utils/delay.utils.js';
+import { usePuzzleTimer } from '@/stores/puzzle-timer.js';
+import { humanSolveTriples } from '@/lib/human-solver/triples.js';
+import { EMPTY } from '@/lib/constants.js';
 
-export default {
-	emits: ['open-settings', 'dropdown-toggled'],
-	setup() {
-		const settingsStore = useSettingsStore();
-		const showTimer = toRef(settingsStore, 'showTimer');
+const settingsStore = useSettingsStore();
+const showTimer = toRef(settingsStore, 'showTimer');
 
-		const puzzleStore = usePuzzleStore();
-		const {
-			board,
-		} = storeToRefs(puzzleStore);
-		const setCheatUsed = () => puzzleStore.setCheatUsed();
+const puzzleStore = usePuzzleStore();
+const {
+	board,
+} = storeToRefs(puzzleStore);
+const setCheatUsed = () => puzzleStore.setCheatUsed();
 
-		const mainStore = useMainStore();
-		const debugMode = toRef(mainStore, 'debugMode');
+const mainStore = useMainStore();
+const debugModeEnabled = toRef(mainStore, 'debugMode');
 
-		return {
-			showTimer,
+const copyError = ref<null | string>(null);
 
-			puzzleStore,
-			board,
+const emit = defineEmits(['open-settings', 'dropdown-toggled']);
+const dropdownRef = ref<InstanceType<typeof BaseDropdown> | null>(null);
+const closeDD = () => dropdownRef.value!.closeDropdownMenu();
 
-			setCheatUsed,
+const goToSettings = () => {
+	closeDD();
+	emit('open-settings');
+}
 
-			debugModeEnabled: readonly(debugMode)
-		};
-	},
-	data() {
-		return {
-			copyError: null
+const copyPuzzleString = async () => {
+	try {
+		const boardStr = board.value!.export();
+		await navigator.clipboard.writeText(boardStr);
+	} catch(e) {
+		console.warn('could not copy to clipboard...');
+		console.warn(e);
+	}
+	closeDD();
+}
+const solvePuzzle = async () => {
+	closeDD();
+	const emptyCells = [...board.value!.cells({ skipFilled: true })];
+	if (emptyCells.length <= 1) return;
+
+	setCheatUsed();
+	const cells = shuffle(emptyCells.slice(0, -1));
+
+	await awaitTimeout(500);
+
+	let count = 0;
+	for (const cell of cells) {
+		const { x, y, value: prevValue } = cell;
+		const solutionValue = puzzleStore.solution!.get(x, y);
+		puzzleStore.makeMove({
+			x, y, prevValue, value: solutionValue
+		})
+		count += 1;
+
+		if (count % 4 === 0) {
+			await awaitRaf();
 		}
-	},
-	methods: {
-		goToSettings() {
-			this.$refs.dropdown.closeDropdownMenu();
-			this.$emit('open-settings');
-		},
-		async copyPuzzleString() {
-			try {
-				const boardStr = this.board.export();
-				await navigator.clipboard.writeText(boardStr);
-				console.log('copied to clipboard!');
-				console.log(boardStr);
-			} catch (e) {
-				console.warn('could not copy to clipboard...');
-				console.warn(e);
-			}
-			this.$refs.dropdown.closeDropdownMenu();
-		},
-		async solvePuzzle() {
-			this.$refs.dropdown.closeDropdownMenu();
+	}
+}
 
-			const emptyCells = [...this.board.cells({ skipFilled: true })];
-			if (emptyCells.length <= 1) return;
+const increasePuzzleTime = () => {
+	setCheatUsed();
+	const timer = usePuzzleTimer();
+	timer.timeElapsed += 10000;
+}
+const solveInstantly = async () => {
+	closeDD();
+	const emptyCells = [...board.value!.cells({ skipFilled: true })];
+	if (emptyCells.length <= 1) return;
 
-			this.setCheatUsed();
+	setCheatUsed();
+	const moves = emptyCells.slice(0, -1).map(cell => {
+		const { x, y, value: prevValue } = cell;
+		const value = puzzleStore.solution!.get(x, y);
+		return { x, y, value, prevValue };
+	})
+	puzzleStore.setMultipleValues(moves);
+}
 
+const solveTrios = async () => {
+	closeDD();
+	setCheatUsed();
 
-			const cells = shuffle(emptyCells.slice(0, -1));
+	let movesFound = true;
+	let count = 0;
+	await awaitTimeout(400);
 
-			await awaitTimeout(500);
-
-			let count = 0;
-
-			for (const cell of cells) {
-				const { x, y, value: prevValue } = cell;
-				const solutionValue = this.puzzleStore.solution.get(x, y);
-				this.puzzleStore.makeMove({
-					x, y, prevValue, value: solutionValue
+	while (movesFound) {
+		const triplesHumanResult = humanSolveTriples({ board: board.value! });
+		if (!triplesHumanResult || !triplesHumanResult.length) {
+			movesFound = false;
+			break;
+		}
+		for (const move of triplesHumanResult) {
+			for (const target of move.targets) {
+				const { x, y, value } = target;
+				const prevValue = puzzleStore.board!.grid[y][x];
+				if (prevValue !== EMPTY) continue;
+				puzzleStore.makeMove({
+					x, y, value, prevValue
 				})
 				count += 1;
-
 				if (count % 4 === 0) {
 					await awaitRaf();
 				}
 			}
-		},
-		increasePuzzleTime() {
-			this.setCheatUsed();
-			const puzzleTimer = usePuzzleTimer();
-			puzzleTimer.timeElapsed += 10000;
-		},
-		async solveInstantly() {
-			this.$refs.dropdown.closeDropdownMenu();
-			const emptyCells = [...this.board.cells({ skipFilled: true })];
-			if (emptyCells.length <= 1) return;
-
-			this.setCheatUsed();
-
-			const moves = emptyCells.slice(0, -1).map(cell => {
-				const { x, y, value: prevValue } = cell;
-				const value = this.puzzleStore.solution.get(x, y);
-				return { x, y, value, prevValue };
-			})
-			this.puzzleStore.setMultipleValues(moves);
-		},
-		async solveTrios() {
-			this.$refs.dropdown.closeDropdownMenu();
-			this.setCheatUsed();
-
-			const board = this.board;
-
-			let movesFound = true;
-			let count = 0;
-
-			await awaitTimeout(400);
-
-			while (movesFound) {
-				const triplesHumanResult = humanSolveTriples({ board });
-				if (!triplesHumanResult || !triplesHumanResult.length) {
-					movesFound = false;
-					break;
-				}
-
-				for (const move of triplesHumanResult) {
-					for (const target of move.targets) {
-						const { x, y, value } = target;
-						const prevValue = this.puzzleStore.board.grid[y][x];
-						if (prevValue !== EMPTY) continue;
-						this.puzzleStore.makeMove({
-							x, y, value, prevValue
-						})
-						count += 1;
-						if (count % 4 === 0) {
-							await awaitRaf();
-						}
-					}
-				}
-			}
-			console.log(`${count} values found with trios strategy.`);
-		},
-		dropdownToggled(value) {
-			this.$emit('dropdown-toggled', value);
 		}
 	}
-};
+	console.log(`${count} values found with trios strategy.`);
+}
+const dropdownToggled = (val: boolean) => {
+	emit('dropdown-toggled', val);
+}
 </script>
 
 <style scoped>
+
 </style>

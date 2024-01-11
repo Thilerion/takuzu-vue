@@ -1,6 +1,6 @@
 import { useSharedPuzzleToggle } from "@/composables/use-puzzle-toggle";
 import { SimpleBoard } from "@/lib";
-import type { BasicPuzzleConfig, BoardString, DifficultyKey, PuzzleBoards, Target, Vec } from "@/lib/types";
+import type { BasicPuzzleConfig, BoardString, DifficultyKey, PuzzleBoards, VecValueChange, Vec, BoardExportString } from "@/lib/types";
 import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
 import { getRandomTransformedPuzzle } from "@/lib/helpers/transform";
 import { countLineValues, pickRandom } from "@/lib/utils";
@@ -15,6 +15,7 @@ import { usePuzzleTimer } from "./puzzle-timer";
 import { useRecapStatsStore } from "./recap-stats";
 import { usePuzzleAssistanceStore } from "./assistance/store";
 import type { FinishedPuzzleState } from "@/services/stats/db/models.js";
+import type { PickOptional } from "@/types.js";
 
 export const PUZZLE_STATUS = {
 	'NONE': 'NONE',
@@ -54,7 +55,7 @@ export type PuzzleStoreState = {
 	loading: boolean,
 	creationError: boolean
 }
-export type PuzzleStoreSetAction = Vec & { prevValue?: PuzzleValue, value: PuzzleValue };
+export type PuzzleStoreSetAction = PickOptional<VecValueChange, 'prevValue'>;
 
 export const usePuzzleStore = defineStore('puzzleOld', {
 	state: (): PuzzleStoreState => ({
@@ -214,7 +215,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			this.colCounts[x][prev] -= 1;
 		},
 
-		_setValue({ x, y, value, prevValue }: Required<PuzzleStoreSetAction>, updateCounts = true) {
+		_setValue({ x, y, value, prevValue }: VecValueChange, updateCounts = true) {
 			this.board!.assign(x, y, value);
 			if (updateCounts) {
 				this._updateGridCount(value, prevValue);
@@ -230,7 +231,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				timer.pause();
 			} else timer.resume();
 		},
-		setMultipleValues(changeList = []) {
+		setMultipleValues(changeList: VecValueChange[] = []) {
 			const moves = changeList.map(move => {
 				const {
 					x, y,
@@ -250,7 +251,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				usePuzzleHintsStore().hide();
 			}
 		},
-		setValue({ x, y, value, prevValue }: PuzzleStoreSetAction) {
+		setValue({ x, y, value, prevValue }: PickOptional<VecValueChange, 'prevValue'>) {
 			if (!prevValue) {
 				this._setValue({ x, y, value, prevValue: this.board!.grid[y][x] });
 			} else this._setValue({ x, y, value, prevValue });
@@ -261,7 +262,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				usePuzzleHintsStore().hide();
 			}
 		},
-		makeMove({ x, y, value, prevValue }: PuzzleStoreSetAction) {
+		makeMove({ x, y, value, prevValue }: PickOptional<VecValueChange, 'prevValue'>) {
 			if (!prevValue) {
 				prevValue = this.board!.grid[y][x];
 			}
@@ -274,7 +275,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				x, y, value: prevValue, nextValue: value
 			})
 		},
-		toggle({ x, y, value, prevValue }: PuzzleStoreSetAction) {
+		toggle({ x, y, value, prevValue }: PickOptional<VecValueChange, 'prevValue'>) {
 			const previous = prevValue ?? this.board!.grid[y][x];
 
 			if (value == null) {
@@ -339,7 +340,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 		async replayPuzzle({
 			puzzleConfig,
 			boardStrings
-		}: { puzzleConfig: BasicPuzzleConfig, boardStrings: { board: string, solution: string } }) {
+		}: { puzzleConfig: BasicPuzzleConfig, boardStrings: { board: BoardExportString | string, solution: BoardExportString | string /*TODO: use correct BoardExportString only*/ } }) {
 			const board = SimpleBoard.import(boardStrings.board);
 			const initialBoard = board.copy();
 			const solution = SimpleBoard.import(boardStrings.solution);

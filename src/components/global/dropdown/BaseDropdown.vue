@@ -1,91 +1,97 @@
 <template>
 	<div class="dropdown" ref="ddMenu">
 		<div class="dropdown-trigger">
-			<slot name="trigger" :open="openDropdownMenu" :close="closeDropdownMenu" :toggle="toggleDropdownMenu">
-				<BaseButton @click="openDropdownMenu">Dropdown</BaseButton>
+			<slot name="trigger" :open="openDropdown" :close="closeDropdown" :toggle="toggleDropdown">
+				<BaseButton @click="openDropdown">Dropdown</BaseButton>
 			</slot>
 		</div>
 		<transition name="drop">
-			<div class="dropdown-menu" v-show="isOpen" :class="{'menu-align-below': alignBelow, 'menu-align-right': alignRight}">
+			<div class="dropdown-menu" v-show="state.isOpen" :class="{'menu-align-below': alignBelow, 'menu-align-right': alignRight}">
 				<div class="dropdown-content">
-					<slot name="content" :open="openDropdownMenu" :close="closeDropdownMenu" :toggle="toggleDropdownMenu">
-						<BaseDropdownItem @click="closeDropdownMenu">This dropdown menu is empty...</BaseDropdownItem>
+					<slot name="content" :open="openDropdown" :close="closeDropdown" :toggle="toggleDropdown">
+						<BaseDropdownItem @click="closeDropdown">This dropdown menu is empty...</BaseDropdownItem>
 					</slot>
 				</div>
 			</div>
 		</transition>
 	</div>
-	<div v-if="!isClosed" class="fixed inset-0 pointer-events-auto touch-none z-10"></div>
+	<div v-if="!state.isClosed" class="fixed inset-0 pointer-events-auto touch-none z-10"></div>
 </template>
 
-<script>
-export default {
-	emits: ['toggled'],
-	props: {
-		alignBelow: Boolean,
-		alignRight: Boolean,
-	},
-	data() {
-		return {
-			isOpen: false,
-			isClosed: true,
-		}
-	},
-	methods: {
-		openDropdownMenu() {
-			this.isOpen = true;
-			this.isClosed = false;
-			this.emitState();
-		},
-		closeDropdownMenu() {
-			this.isOpen = false;
-			this.emitState();
-		},
-		toggleDropdownMenu() {
-			this.isOpen = !this.isOpen;
-			if (this.isOpen) {
-				this.isClosed = false;
-			}
-			this.emitState();
-		},
-		emitState() {
-			this.$emit('toggled', this.isOpen);
-		},
-		clickOutsideHandler(e) {
-			if (this.isClosed || !this.isOpen) return;
+<script setup lang="ts">
+import { onBeforeMount, watch, ref, reactive, onBeforeUnmount } from 'vue';
 
-			const menuRef = this.$refs.ddMenu;
-			if (!menuRef || menuRef.contains(e.target)) {
-				return;
-			}
+const emit = defineEmits(['toggled']);
+const props = defineProps<{
+	alignBelow: boolean,
+	alignRight: boolean,
+}>();
+const state = reactive({
+	isOpen: false,
+	isClosed: true
+})
 
-			this.closeDropdownMenu();
-			e.preventDefault();
-			e.stopPropagation();
-		},
-		removeListeners() {
-			window.removeEventListener('pointerdown', this.clickOutsideHandler, { capture: true });
-		},
-	},
-	beforeMount() {
-		window.addEventListener('pointerdown', this.clickOutsideHandler, { capture: true });
-	},
-	beforeUnmount() {
-		this.removeListeners();
-	},
-	watch: {
-		isOpen(value, prev) {
-			if (value || !prev) return;
-			window.setTimeout(() => {
-				try {
-					this.isClosed = true;
-				} catch (e) {
-					// console.log('Can not close.');
-				}
-			}, 150);
-		}
+const emitState = () => {
+	emit('toggled', state.isOpen);
+}
+const openDropdown = () => {
+	state.isOpen = true;
+	state.isClosed = false;
+	emitState();
+}
+const closeDropdown = () => {
+	state.isOpen = false;
+	// isClosed triggers after timeout or transition
+	emitState();
+}
+const toggleDropdown = () => {
+	state.isOpen = !state.isOpen;
+	if (state.isOpen) {
+		state.isClosed = false;
 	}
-};
+	emitState();
+}
+const menuRef = ref<HTMLElement | null>(null);
+const clickOutsideHandler = (e: MouseEvent) => {
+	if (state.isClosed || !state.isOpen) return;
+	if (!menuRef.value || menuRef.value.contains(e.target as Node)) {
+		return;
+	}
+	closeDropdown();
+	e.preventDefault();
+	e.stopPropagation();
+}
+const removeListeners = () => {
+	window.removeEventListener('pointerdown', clickOutsideHandler, { capture: true });
+}
+const setListeners = () => {
+	window.addEventListener('pointerdown', clickOutsideHandler, { capture: true });
+}
+
+let isClosedTimeoutId: ReturnType<typeof setTimeout> | null = null;
+watch(() => state.isOpen, (value, prev) => {
+	if (value || !prev) return;
+	clearTimeout(isClosedTimeoutId!);
+	globalThis.setTimeout(() => {
+		try {
+			state.isClosed = true;
+		} catch {}
+		finally {
+			isClosedTimeoutId = null;
+		}
+	}, 150);
+})
+
+onBeforeMount(() => setListeners());
+onBeforeUnmount(() => {
+	clearTimeout(isClosedTimeoutId!);
+	isClosedTimeoutId = null;
+	removeListeners();
+})
+
+defineExpose({
+	closeDropdownMenu: closeDropdown
+})
 </script>
 
 <style scoped>
