@@ -25,6 +25,7 @@ declare module 'vue' {
     CellThemeProvider: typeof import('./src/components/puzzleboard/CellThemeProvider.vue')['default']
     CellThemeSetting: typeof import('./src/components/settings/CellThemeSetting.vue')['default']
     ContinueButton: typeof import('./src/components/ContinueButton.vue')['default']
+    CoordsRuler: typeof import('./src/components/gameboard/ruler/CoordsRuler.vue')['default']
     CountsRuler: typeof import('./src/components/gameboard/ruler/CountsRuler.vue')['default']
     CountsRulerCell: typeof import('./src/components/gameboard/ruler/CountsRulerCell.vue')['default']
     CurrentStreak: typeof import('./src/components/statistics/streaks/CurrentStreak.vue')['default']

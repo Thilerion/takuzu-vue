@@ -1,5 +1,7 @@
 <template>
-	<div class="ruler coords" :class="{'ruler-rows': lineType === 'rows', 'ruler-columns': lineType === 'columns'}">
+	<div class="ruler coords"
+		:class="{'ruler-rows': lineType === 'rows', 'ruler-columns': lineType === 'columns'}"
+	>
 		<div
 			class="ruler-cell"
 			v-for="lineId in lineIds"
@@ -8,18 +10,13 @@
 	</div>
 </template>
 
-<script setup>
-// TODO: similarly to CountsRuler, update this to create CoordsRuler in the same setup
-const props = defineProps({
-	lineType: {
-		type: String,
-		required: true
-	},
-	lineIds: {
-		type: Array,
-		required: true
-	}
-})
+<script setup lang="ts">
+const props = defineProps<{
+	lineType: 'rows' | 'columns',
+	lineIds: string[]
+}>();
+
+// TODO: similarly to CountsRuler, also optionally highlight red if incorrect
 </script>
 
 <style scoped>

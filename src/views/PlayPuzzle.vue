@@ -11,16 +11,16 @@
 						:has-border="showRulers" />
 				</template>
 				<template v-slot:ruler-rows>
-					<RulerCoords @select-line="selectLine" v-if="rulerType === 'coords'" line-type="rows"
+					<CoordsRuler v-if="rulerType === 'coords'" line-type="rows"
 						:line-ids="board.rowIds" />
-					<CountsRuler @select-line="selectLine" v-else-if="showRulers"
+					<CountsRuler v-else-if="showRulers"
 						:count-type="rulerType === 'count-remaining' ? 'remaining' : 'current'" line-type="rows"
 						:counts="rowCounts" :cell-size="cellSize" />
 				</template>
 				<template v-slot:ruler-columns>
-					<RulerCoords @select-line="selectLine" v-if="rulerType === 'coords'" line-type="columns"
+					<CoordsRuler v-if="rulerType === 'coords'" line-type="columns"
 						:line-ids="board.columnIds" />
-					<CountsRuler @select-line="selectLine" v-else-if="showRulers"
+					<CountsRuler v-else-if="showRulers"
 						:count-type="rulerType === 'count-remaining' ? 'remaining' : 'current'" line-type="columns"
 						:counts="columnCounts" :cell-size="cellSize" />
 				</template>
@@ -52,11 +52,11 @@ import GameBoardHeader from '@/components/gameboard/GameBoardHeader.vue';
 import GameBoardWrapper from '@/components/gameboard/GameBoardWrapper.vue';
 import PuzzleControls from '@/components/gameboard/PuzzleControls.vue';
 import PuzzleInfo from '@/components/gameboard/PuzzleInfo.vue';
-import RulerCoords from '@/components/gameboard/RulerCoords.vue';
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
 import HintWrapper from '@/components/gameboard/hints/HintWrapper.vue';
 import PuzzleRecap from '@/components/puzzle-recap/PuzzleRecap.vue';
 import CountsRuler from '@/components/gameboard/ruler/CountsRuler.vue';
+import CoordsRuler from '@/components/gameboard/ruler/CoordsRuler.vue';
 
 import { usePuzzleWakeLock } from '@/composables/use-wake-lock';
 
@@ -82,9 +82,9 @@ export default {
 		GameBoardWrapper,
 		PuzzleControls,
 		PuzzleInfo,
-		RulerCoords,
 		OverlayPageTransition,
 		PuzzleRecap,
+		CoordsRuler,
 		CountsRuler,
 		HintWrapper
 	},
@@ -152,8 +152,6 @@ export default {
 
 			dropdownOpen: false,
 			settingsOpen: false,
-
-			selectedLine: null
 		}
 	},
 	computed: {
@@ -210,14 +208,6 @@ export default {
 		}
 	},
 	methods: {
-		selectLine(value) {
-			if (!value) {
-				this.selectedLine = null;
-			} else {
-				const { type, index } = value;
-				this.selectedLine = { type, index };
-			}
-		},
 		startGame() {
 			if (!this.initialized) {
 				console.warn('Cannot start puzzle that is not initialized');

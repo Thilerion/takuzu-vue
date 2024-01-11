@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { COLUMN, ONE, ROW, ZERO, type LineType, type PuzzleValue } from '@/lib/constants';
+import { COLUMN, ONE, ROW, ZERO, type PuzzleValue } from '@/lib/constants';
 import { usePuzzleStore } from '@/stores/puzzle';
 import { watchDebounced } from '@vueuse/core';
 import { computed, onBeforeMount, ref, toRefs } from 'vue';
