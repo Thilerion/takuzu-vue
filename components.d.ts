@@ -150,6 +150,7 @@ declare module 'vue' {
     PuzzleRecapTimeScore: typeof import('./src/components/puzzle-recap/content/PuzzleRecapTimeScore.vue')['default']
     PuzzleRecapWrapper: typeof import('./src/components/puzzle-recap/PuzzleRecapWrapper.vue')['default']
     PuzzleRowExample: typeof import('./src/components/how-to-play/PuzzleRowExample.vue')['default']
+    PuzzleRowExampleLine: typeof import('./src/components/how-to-play/PuzzleRowExampleLine.vue')['default']
     PuzzleStatisticsTable: typeof import('./src/views/PuzzleStatisticsTable.vue')['default']
     PuzzleTools: typeof import('./src/views/PuzzleTools.vue')['default']
     PwaInstallNotification: typeof import('./src/components/home/PwaInstallNotification.vue')['default']

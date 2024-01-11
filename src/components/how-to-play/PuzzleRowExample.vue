@@ -11,7 +11,7 @@ import { computed } from 'vue';
 import PuzzleRowExampleLine from './PuzzleRowExampleLine.vue';
 
 type Props = {
-  values: PuzzleValueLine;
+  values: PuzzleValueLine | string;
   incorrect?: any[];
   highlight?: any[];
   multirow?: boolean;
@@ -47,7 +47,7 @@ export type PuzzleRowExampleCellData = {
 
 const cells = computed((): PuzzleRowExampleCellData[] => {
 	return Array(props.values.length).fill(null).map((_v, index) => {
-		const value = props.values[index];
+		const value = props.values[index] as PuzzleValue;
 		const valueName = value === EMPTY ? 'none' : value;
 		return {
 			index,

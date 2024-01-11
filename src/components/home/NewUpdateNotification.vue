@@ -31,8 +31,7 @@ watchEffect(() => {
 </script>
 
 <style scoped>
-.clamped-container {
-	/* max-width: clamp(10ch, 100rem, 90vw); */
-	
-}
+/*.clamped-container {
+	max-width: clamp(10ch, 100rem, 90vw);	
+}*/
 </style>

@@ -16,11 +16,11 @@
 							<div class="rule-examples pb-4">
 								<div class="text-sm mt-1 text-gray-700 dark:text-gray-200">Correct:</div>
 								<PuzzleRowExample
-									:values="'10101100'.split('')"
+									values="10101100"
 								/>
 								<div class="text-sm mt-1 text-gray-700 dark:text-gray-200">Incorrect:</div>
 								<PuzzleRowExample
-									:values="'10101101'.split('')"
+									values="10101101"
 									:incorrect="[0, 2, 4, 5, 7]"
 								/>
 							</div>
@@ -35,11 +35,11 @@
 									<div class="rule-examples pb-4">
 								<div class="text-sm mt-1 text-gray-700 dark:text-gray-200">Correct:</div>
 								<PuzzleRowExample
-									:values="'11..001.'.split('')"
+									values="11..001."
 								/>
 								<div class="text-sm mt-1 text-gray-700 dark:text-gray-200">Incorrect:</div>
 								<PuzzleRowExample
-									:values="'111.001.'.split('')"
+									values="111.001."
 									:incorrect="[0, 1, 2]"
 								/>
 							</div>
@@ -55,7 +55,7 @@
 									<div class="rule-examples pb-4">
 								<div class="text-sm mt-1 text-gray-700 dark:text-gray-200">Correct:</div>
 								<PuzzleRowExample
-									:values="'01011001010110..01011010'.split('')"
+									values="01011001010110..01011010"
 									:multirow="true"
 									:highlight="[6, 7, 14, 15, 22, 23]"
 									:rowlength="8"
@@ -64,7 +64,7 @@
 								<PuzzleRowExample
 									multirow
 									:rowlength="8"
-									:values="'0101100101011001'.split('')"
+									values="0101100101011001"
 									:incorrect="[6, 7, 14, 15]"
 								/>
 							</div>
@@ -102,7 +102,7 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 
 
@@ -112,13 +112,17 @@ const showExampleTwo = ref(false);
 const showExampleThree = ref(false);
 
 const showVariationRules = ref(false);
-const variationRulesEl = ref(null);
+const variationRulesEl = ref<HTMLDivElement>();
 
 function afterEnterVariation() {
 	scrollVariationRulesIntoView();
 }
 function scrollVariationRulesIntoView() {
 	const el = variationRulesEl.value;
+	if (!el) {
+		console.warn('Cannot scroll into view, no element found');
+		return;
+	}
 	el.scrollIntoView({
 		behavior: 'smooth'
 	})
@@ -165,10 +169,10 @@ ol {
 .expansion-block {
 	@apply relative;
 }
-.expansion-block::before {
+/* .expansion-block::before { */
 	/* @apply absolute w-full h-px bg-red-500 z-10 content-[''] inset-x-0 top-0; */
 	/* @apply border-t; */
-}
+/* } */
 .expansion-wrapper h2 {
 	@apply m-0 text-base;
 }
