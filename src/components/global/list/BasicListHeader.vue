@@ -5,13 +5,12 @@
 	><slot /></component>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
-const props = defineProps({
-	level: {
-		type: Number,
-		default: 2
-	}
+const props = withDefaults(defineProps<{
+	level?: number
+}>(), {
+	level: 2
 })
 const elementType = computed(() => {
 	return `h${props.level}`;

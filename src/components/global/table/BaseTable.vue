@@ -46,24 +46,28 @@
 	</div>
 </template>
 
-<script setup>
-defineProps({
-	columns: {
-		type: Array,
-		required: true
-	},
-	currentSort: {
-		type: Object,
-		default: () => ({})
-	},
-	rows: {
-		type: Array,
-		default: () => [
+<script setup lang="ts">
+export type BaseTableColumn = {
+	sortable?: boolean,
+	label: string,
+	key: string
+}
+export type BaseTableSortOpts = {
+	dir: 'asc' | 'desc',
+	key: string, // TODO: can be typed more strictly with generic component
+}
+
+withDefaults(defineProps<{
+	columns: BaseTableColumn[],
+	currentSort?: Record<string, unknown>,
+	rows?: (string | number)[][]
+}>(), {
+	currentSort: () => ({}),
+	rows: () => [
 			['Macbook Pro', 'Silver', 'Laptop', '$2999'],
 			['Surface Pro', 'White', 'Laptop PC', '$1999'],
 			['Magic Mouse', 'Black', 'Accesories', '$99']
 		]
-	}
 })
 defineEmits(['sort-header']);
 </script>

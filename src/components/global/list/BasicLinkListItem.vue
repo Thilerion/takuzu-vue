@@ -4,18 +4,14 @@
 	</li>
 </template>
 
-<script>
-export default {
+<script setup lang="ts">
+defineOptions({
 	inheritAttrs: false
-}
-</script>
-
-<script setup>
-const props = defineProps({
-	wrapperClasses: {
-		type: [Array, Object, String]
-	}
 })
+
+const props = defineProps<{
+	wrapperClasses?: string[] | Record<string, unknown> | string
+}>();
 </script>
 
 <style scoped>
