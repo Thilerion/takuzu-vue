@@ -1,5 +1,5 @@
 <template>
-	<div class="dropdown" ref="ddMenu">
+	<div class="dropdown" ref="menuRef">
 		<div class="dropdown-trigger">
 			<slot name="trigger" :open="openDropdown" :close="closeDropdown" :toggle="toggleDropdown">
 				<BaseButton @click="openDropdown">Dropdown</BaseButton>
@@ -23,8 +23,8 @@ import { onBeforeMount, watch, ref, reactive, onBeforeUnmount } from 'vue';
 
 const emit = defineEmits(['toggled']);
 const props = defineProps<{
-	alignBelow: boolean,
-	alignRight: boolean,
+	alignBelow?: boolean,
+	alignRight?: boolean,
 }>();
 const state = reactive({
 	isOpen: false,
