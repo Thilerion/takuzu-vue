@@ -19,7 +19,7 @@
 	</transition>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useMainStore } from '@/stores/main';
 import { computed, onBeforeMount, toRefs } from 'vue';
 import { useDeferredInstallPrompt } from '@/composables/use-deferred-install-prompt';
@@ -34,7 +34,14 @@ const { canPrompt, showInstallPrompt } = useDeferredInstallPrompt();
 const { isInstalled } = useIsPwaInstalled();
 
 const reverseDismissalAfter = 1000 * 60 * 60 * 24 * 2; // 2 days
-const isDismissed = useStorage('takuzu_install-notification-dismissed', { value: false, enableAt: null }, localStorage, { writeDefaults: true });
+const isDismissed = useStorage<{
+	value: boolean, enableAt: null | number
+}>(
+	'takuzu_install-notification-dismissed',
+	{ value: false, enableAt: null },
+	localStorage,
+	{ writeDefaults: true }
+);
 
 const enableInstallNotification = computed(() => {
 	if (!canPrompt.value || isDismissed.value.value) return false;
@@ -51,7 +58,7 @@ const prompt = () => {
 onBeforeMount(() => {
 	if (!isDismissed.value.value) return;
 	const enableAt = isDismissed.value.enableAt;
-	if (enableAt < Date.now()) {
+	if (enableAt != null && enableAt < Date.now()) {
 		isDismissed.value = {
 			value: false,
 			enableAt: null

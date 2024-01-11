@@ -9,7 +9,7 @@
 	</button>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useRegisterSW } from 'virtual:pwa-register/vue';
 import { computed, watchEffect } from 'vue';
 const { needRefresh, updateServiceWorker } = useRegisterSW();
