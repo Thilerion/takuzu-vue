@@ -79,7 +79,6 @@ export class DbHistoryEntry {
 		if (id !== undefined) {
 			this.id = id;
 		}
-		console.warn(this);
 	}
 
 	static fromPuzzleState(puzzleState: FinishedPuzzleState) {

@@ -133,9 +133,9 @@ import { useSettingsStore } from '@/stores/settings/store';
 import { storeToRefs } from 'pinia';
 import { onBeforeUnmount } from 'vue';
 
-defineProps({
-	hideBack: Boolean
-})
+defineProps<{
+	hideBack?: boolean
+}>();
 
 const { enabled: isDebugModeEnabled, toggleDebugMode } = useDebugMode();
 
