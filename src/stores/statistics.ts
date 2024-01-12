@@ -150,7 +150,7 @@ export const useStatisticsStore = defineStore('statistics', {
 			}
 			return success;
 		},
-		async saveNote(id: number, note: string) {
+		async saveNote(id: number, note: string | undefined) {
 			const success = await StatsDB.update(id, {
 				note
 			});

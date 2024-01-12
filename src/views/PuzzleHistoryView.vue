@@ -38,9 +38,9 @@
 				<div class="list divide-y border-y relative" v-if="shownItems.length"
 					:key="JSON.stringify({ dataOptions })">
 					<HistoryListItem v-for="item in shownItems" :key="item.id" v-bind="item"
-						:time-record="isTimeRecord(item)" @favorite="(val) => markFavorite(item.id, val)"
-						@save-note="(note) => saveNote(item.id, note)"
-						@delete="() => deleteItem(item.id)"></HistoryListItem>
+						:time-record="isTimeRecord(item)" @favorite="(val) => markFavorite(item.id!, val)"
+						@save-note="(note) => saveNote(item.id!, note)"
+						@delete="() => deleteItem(item.id!)"></HistoryListItem>
 				</div>
 				<div class="py-4 text-lg px-8 text-center" v-else-if="historyItems.length" key="none-filtered">No
 					puzzles found with current filters!</div>
@@ -59,7 +59,7 @@ import { ref, computed, watch, onBeforeMount, reactive, toRefs, provide } from '
 import { useRoute, useRouter } from 'vue-router';
 import { useListFilters } from '@/components/statistics/history-list/useListFilters.js';
 import { useDebounceFn } from '@vueuse/core';
-import { usePuzzleHistorySorting, type SortType } from './usePuzzleHistorySorting.js';
+import { usePuzzleHistorySorting, type SortType, type SortOptions } from './usePuzzleHistorySorting.js';
 import type { PuzzleStatisticData } from '@/services/stats/db/models.js';
 
 const { getDefaultOptions, resetCurrentItems, sortItems, isSortType } = usePuzzleHistorySorting();
@@ -103,7 +103,7 @@ const dataOptions = reactive(getDefaultOptions())
 
 const { page, pageSize } = toRefs(dataOptions);
 
-const currentItems = ref<null | PuzzleStatisticData[]>(null);
+const currentItems = ref<PuzzleStatisticData[]>([]);
 
 const { currentFilters, activeFilters, filterFns, filterItems, setFilter, removeFilter } = useListFilters();
 provide('filterUtils', { currentFilters, activeFilters, filterFns, filterItems, setFilter, removeFilter });
@@ -202,19 +202,19 @@ const shownItems = computed(() => {
 	return currentItems.value.slice(idx, idx + dataOptions.pageSize);
 })
 
-const markFavorite = async (id, value) => {
+const markFavorite = async (id: number, value: boolean) => {
 	statsStore.markFavorite(id, value);
 }
-const saveNote = async (id, note) => {
+const saveNote = async (id: number, note: string | undefined) => {
 	statsStore.saveNote(id, note);
 }
-const deleteItem = async (id) => {
+const deleteItem = async (id: number) => {
 	await statsStore.deleteItem(id);
 	currentItems.value = resetCurrentItems(historyItems.value, dataOptions, filterItems);
 }
 
 function getFilterQueryFromOptions() {
-	const result = {};
+	const result: Record<string, unknown> = {};
 	for (const [key, val] of Object.entries(activeFilters.value)) {
 		result[key] = JSON.stringify(val);
 	}
@@ -223,7 +223,7 @@ function getFilterQueryFromOptions() {
 
 function getQueryFromFilterAndSortOptions({
 	sortBy, filters, pageSize, page
-}) {
+}: SortOptions & { filters: unknown }) {
 	const defaults = getDefaultOptions();
 
 	const query = {
