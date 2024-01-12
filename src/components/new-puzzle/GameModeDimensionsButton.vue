@@ -7,13 +7,15 @@
 	</button>
 </template>
 
-<script setup>
-const props = defineProps({
-	tall: Boolean,
-	selected: Boolean,
-	width: Number,
-	height: Number
-})
+<script setup lang="ts">
+import type { BoardShape } from '@/lib/types.js';
+
+export type GameModeDimensionsButtonProps = BoardShape & {
+	tall?: boolean,
+	selected?: boolean
+}
+
+const props = defineProps<GameModeDimensionsButtonProps>();
 </script>
 
 <style scoped>

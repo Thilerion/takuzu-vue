@@ -87,8 +87,8 @@
 	</div>
 </template>
 
-<script setup>
-import { DIFFICULTY_LABELS, PRESET_BOARD_SIZES } from '@/config';
+<script setup lang="ts">
+import { DIFFICULTY_LABELS, PRESET_BOARD_SIZES, isDifficultyKey } from '@/config';
 import { computed, ref, toRef, watch, watchEffect } from 'vue';
 
 import { useRouter } from 'vue-router';
@@ -96,6 +96,7 @@ import { usePuzzleStore } from '@/stores/puzzle'
 import { useMainStore } from '@/stores/main';
 import { useSavedPuzzle } from '@/services/savegame/useSavedGame';
 import { useNewPuzzleSetupSelection } from '@/components/new-puzzle/useNewPuzzleSetupSelection';
+import type { BoardShape, DifficultyKey } from '@/lib/types.js';
 
 const { hasCurrentSavedGame } = useSavedPuzzle();
 // display warning message if creating a new game will overwrite the currently saved puzzle
@@ -117,18 +118,25 @@ const selectedDifficulty = ref(newPuzzleSetupSelection.value.difficulty);
 const selectedDifficultyLabel = computed(() => {
 	return DIFFICULTY_LABELS[selectedDifficulty.value];
 })
+const selectDifficulty = (val: DifficultyKey | number) => {
+	if (isDifficultyKey(val)) {
+		selectedDifficulty.value = val;
+	} else {
+		throw new Error(`Cannot select difficulty of "${val}"; this is not a valid DifficultyKey.`);
+	}
+}
 const increaseDifficulty = () => {
 	const next = selectedDifficulty.value + 1;
 	if (next > 5) {
-		selectedDifficulty.value = 1;
-	} else selectedDifficulty.value = next;
+		selectDifficulty(1);
+	} else selectDifficulty(next);
 }
 const decreaseDifficulty = () => {
 	const next = selectedDifficulty.value - 1;
 	if (next < 1) {
-		selectedDifficulty.value = 5;
+		selectDifficulty(5);
 	} else {
-		selectedDifficulty.value = next;
+		selectDifficulty(next);
 	}
 }
 
@@ -161,7 +169,7 @@ const selectedDimensions = ref({
 	height: newPuzzleSetupSelection.value.size.height
 })
 
-function selectPreset(preset) {
+function selectPreset(preset: BoardShape) {
 	selectedDimensions.value = {
 		width: preset.width,
 		height: preset.height

@@ -78,32 +78,30 @@
 	</div>
 </template>
 
-<script>
+<script setup lang="ts">
+import type BaseModal from '@/components/global/BaseModal.vue';
 import { ref } from 'vue';
 
-export default {
-	setup() {
-		const baseRangeValue = ref(40);
-		const componentRangeValue = ref(60);
-		return { baseRangeValue, componentRangeValue };
-	},
-	data() {
-		return {
-			modal1Active: false,
-			modal2Active: false,
+const baseRangeValue = ref(40);
+const componentRangeValue = ref(60);
 
-			input1Value: true
-		}
-	},
-	methods: {
-		openModal(refName) {
-			const modalRef = this.$refs[refName];
-			if (modalRef != null && !!modalRef.open) {
-				modalRef.open();
-			} 
-		}
+const modal1Active = ref(false);
+const modal2Active = ref(false);
+const input1Value = ref(true);
+
+const modal1 = ref<InstanceType<typeof BaseModal> | null>(null);
+const modal2 = ref<InstanceType<typeof BaseModal> | null>(null);
+const modalRefs = {
+	modal1,
+	modal2
+} as const;
+
+const openModal = (refName: keyof typeof modalRefs) => {
+	const modalRef: InstanceType<typeof BaseModal> | null = modalRefs[refName].value;
+	if (modalRef != null && !!modalRef.open) {
+		modalRef.open();
 	}
-};
+}
 </script>
 
 <style scoped>

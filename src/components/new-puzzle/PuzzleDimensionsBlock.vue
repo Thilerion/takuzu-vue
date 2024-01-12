@@ -14,18 +14,13 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { BoardShape } from '@/lib/types.js';
 
-const props = defineProps({
-	presets: {
-		type: Object,
-		required: true
-	},
-	selectedDimensions: {
-		type: Object,
-		required: true
-	}
-})
+const props = defineProps<{
+	presets: BoardShape[],
+	selectedDimensions: BoardShape
+}>();
 
 defineEmits(['select']);
 </script>

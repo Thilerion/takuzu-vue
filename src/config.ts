@@ -1,3 +1,5 @@
+import type { DifficultyKey } from "./lib/types.js";
+
 export const boardTypes = {
 	NORMAL: 'Normal',
 	RECT: 'Rectangular',
@@ -66,10 +68,14 @@ export const DIFFICULTY_LABELS = {
 	3: 'Hard',
 	4: 'Very Hard',
 	5: 'Extreme',
-} as const;
+} as const satisfies Record<DifficultyKey, string>;
+export const DIFFICULTY_KEYS = Object.keys(DIFFICULTY_LABELS).map(str => parseInt(str)) as DifficultyKey[];
 
 export const getAllDifficultyValues = () => {
 	return Object.keys(DIFFICULTY_LABELS);
+}
+export const isDifficultyKey = (val: number): val is DifficultyKey => {
+	return DIFFICULTY_KEYS.includes(val as any);
 }
 export const getAllBoardPresetSizes = () => {
 	return PRESET_BOARD_SIZES.map(val => {

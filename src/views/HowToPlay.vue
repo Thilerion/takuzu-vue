@@ -105,8 +105,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-
-
 const showExampleOne = ref(false);
 const showExampleTwo = ref(false);
 const showExampleThree = ref(false);
