@@ -9,7 +9,7 @@
 						class="text-sm flex flex-row items-center gap-3"
 						><span>Per page:</span>
 						<select
-							:value="pageSize" @change="(ev) => setPageSize(ev.target.value * 1)"
+							:value="pageSize" @change="(ev) => setPageSize(parseInt((ev.target as HTMLSelectElement).value) * 1)"
 							class="form-select text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-1 text-sm">
 							<option :value="15">15</option>
 							<option :value="30">30</option>
@@ -22,7 +22,7 @@
 							v-if="showFilters">Hide filters</span><span v-else>Show filters</span></BaseButton>
 				</div>
 				<label class="text-sm flex flex-row items-center px-2 pb-4"><span>Sort by:</span>
-						<select :value="dataOptions.sortBy" @change="ev => changeSort(ev.target.value)"
+						<select :value="dataOptions.sortBy" @change="changeSortHandler"
 							class="form-select text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-1 text-sm">
 							<option value="newest">Newest first</option>
 							<option value="oldest">Oldest first</option>
@@ -32,7 +32,7 @@
 					</label>
 				<HistoryListFilters v-model="showFilters" />
 			</div>
-			<BasePagination :modelValue="page" @update:modelValue="setActivePage" :length="currentItems.length"
+			<BasePagination :modelValue="page" @update:modelValue="setActivePage" :length="currentItems?.length ?? 0"
 				:page-size="pageSize" />
 			<transition name="fade" mode="out-in">
 				<div class="list divide-y border-y relative" v-if="shownItems.length"
@@ -47,63 +47,22 @@
 				<div class="py-4 text-lg px-8 text-center" key="none" v-else>You haven't played any puzzles yet!</div>
 			</transition>
 		</div>
-		<BasePagination :modelValue="page" @update:modelValue="setActivePage" :length="currentItems.length"
+		<BasePagination :modelValue="page" @update:modelValue="setActivePage" :length="currentItems?.length ?? 0"
 			:page-size="pageSize" />
 	</div>
 </template>
 
-<script>
-
-const sortDateNewest = (a, b) => {
-	if (a.date < b.date) return 1;
-	else if (a.date > b.date) return -1;
-	return 0;
-}
-const sortDateOldest = (a, b) => {
-	return sortDateNewest(b, a);
-}
-const sortTimeElapsedFastest = (a, b) => {
-	return a.timeElapsed - b.timeElapsed;
-}
-const sortTimeElapsedSlowest = (a, b) => sortTimeElapsedFastest(b, a);
-
-const sortFns = {
-	newest: sortDateNewest,
-	oldest: sortDateOldest,
-	fastestTime: sortTimeElapsedFastest,
-	slowestTime: sortTimeElapsedSlowest
-}
-
-function sortItems(items, sortBy = 'newest') {
-	const fn = sortFns[sortBy];
-	items.sort(fn);
-	return items;
-}
-
-function resetCurrentItems(items, { sortBy }, filterItemsFn) {
-	const sortFn = sortFns[sortBy];
-
-	if (filterItemsFn) {
-		return filterItemsFn(items).sort(sortFn);
-	} else {
-		throw new Error('No filter items function defined?');
-	}
-}
-
-const getDefaultOptions = () => ({
-	sortBy: 'newest',
-	page: 0,
-	pageSize: 30
-});
-</script>
-
-<script setup>
+<script setup lang="ts">
 import { useStatisticsStore } from '@/stores/statistics';
 import { storeToRefs } from 'pinia';
 import { ref, computed, watch, onBeforeMount, reactive, toRefs, provide } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useListFilters } from '@/components/statistics/history-list/useListFilters';
+import { useListFilters } from '@/components/statistics/history-list/useListFilters.js';
 import { useDebounceFn } from '@vueuse/core';
+import { usePuzzleHistorySorting, type SortType } from './usePuzzleHistorySorting.js';
+import type { PuzzleStatisticData } from '@/services/stats/db/models.js';
+
+const { getDefaultOptions, resetCurrentItems, sortItems, isSortType } = usePuzzleHistorySorting();
 
 const showFilters = ref(false);
 const toggleShowFilters = () => showFilters.value = !showFilters.value;
@@ -112,7 +71,7 @@ const statsStore = useStatisticsStore();
 
 const { historyItems: rawHistoryItems, historyItemsWithTimeRecord } = storeToRefs(statsStore);
 
-const getTimeRecordType = (id) => {
+const getTimeRecordType = (id: number) => {
 	const { all, current, first } = historyItemsWithTimeRecord.value;
 	if (!all.includes(id)) return { record: false };
 	const isCurrent = current.includes(id);
@@ -123,15 +82,15 @@ const getTimeRecordType = (id) => {
 const historyItems = computed(() => {
 	const res = rawHistoryItems.value.map(item => {
 		const { id } = item;
-		const timeRecord = getTimeRecordType(id);
+		const timeRecord = getTimeRecordType(id!);
 		return { ...item, timeRecord };
 	})
 	return res;
 })
 
 
-const isTimeRecord = (item) => {
-	const id = item.id;
+const isTimeRecord = (item: PuzzleStatisticData) => {
+	const id = item.id!;
 	if (!historyItemsWithTimeRecord.value) return null;
 	const value = historyItemsWithTimeRecord.value.all.includes(id);
 	if (!value) return null;
@@ -144,7 +103,7 @@ const dataOptions = reactive(getDefaultOptions())
 
 const { page, pageSize } = toRefs(dataOptions);
 
-const currentItems = ref(null);
+const currentItems = ref<null | PuzzleStatisticData[]>(null);
 
 const { currentFilters, activeFilters, filterFns, filterItems, setFilter, removeFilter } = useListFilters();
 provide('filterUtils', { currentFilters, activeFilters, filterFns, filterItems, setFilter, removeFilter });
@@ -152,7 +111,7 @@ provide('filterUtils', { currentFilters, activeFilters, filterFns, filterItems, 
 const parseFilterQueryData = (data = {}) => {
 	for (const [key, strVal] of Object.entries(data)) {
 		try {
-			const val = JSON.parse(strVal);
+			const val = JSON.parse(strVal as string);
 			setFilter(key, val);
 
 		} catch(e) {
@@ -161,8 +120,6 @@ const parseFilterQueryData = (data = {}) => {
 	}
 	return;
 }
-
-
 
 onBeforeMount(() => {
 	statsStore.initialize({ forceUpdate: false });
@@ -178,9 +135,9 @@ onBeforeMount(() => {
 	} = query;
 
 
-	dataOptions.sortBy = querySortBy;
-	dataOptions.page = queryPage * 1;
-	dataOptions.pageSize = queryPageSize * 1;
+	dataOptions.sortBy = querySortBy as SortType; // TODO: test this type?
+	dataOptions.page = parseInt(queryPage as string ?? 1);
+	dataOptions.pageSize = parseInt(queryPageSize as string ?? 30);
 
 	parseFilterQueryData(activeFilterQueryData);
 	currentItems.value = resetCurrentItems(historyItems.value, dataOptions, filterItems);
@@ -190,20 +147,27 @@ watch(historyItems, (items) => {
 	currentItems.value = resetCurrentItems(items, dataOptions, filterItems);
 })
 
-const setActivePage = (value) => {
+const setActivePage = (value: number) => {
 	dataOptions.page = value;
 }
-const setPageSize = (value) => {
+const setPageSize = (value: number) => {
 	if (value === dataOptions.pageSize) return;
 	setActivePage(0);
 	dataOptions.pageSize = value;
 }
 
-const changeSort = (sortType) => {
+
+const changeSort = (sortType: SortType) => {
 	if (sortType === dataOptions.sortBy) return;
 	setActivePage(0);
 	dataOptions.sortBy = sortType;
 	currentItems.value = sortItems(currentItems.value, sortType);
+}
+const changeSortHandler = (ev: Event) => {
+	const tg = ev.target as HTMLSelectElement;
+	const val = tg.value;
+	if (!isSortType(val)) return;
+	changeSort(val);
 }
 
 const updateFilteredItems = () => {
@@ -215,7 +179,7 @@ watch(activeFilters, useDebounceFn(updateFilteredItems, 800, { maxWait: 5000 }))
 
 // TODO: set router query on dataOptions change
 
-const anchorEl = ref(null);
+const anchorEl = ref<HTMLElement | null>(null);
 watch(() => dataOptions.page, (value, prev) => {
 	if (value === prev) return;
 	if (anchorEl.value != null) {
