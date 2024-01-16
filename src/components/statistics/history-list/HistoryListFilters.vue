@@ -106,6 +106,7 @@ import { computed, inject, toRef, watch } from 'vue';
 import Multiselect from '@vueform/multiselect';
 import '@vueform/multiselect/themes/default.css';
 import type { ListFilterUtils, ListFiltersData } from './useListFilters.js';
+import type { DifficultyKey } from '@/lib/types.js';
 
 
 const props = defineProps<{
@@ -165,14 +166,14 @@ const boardSizeOpts = [
 	'6x10', '8x12', '10x14', '12x16'
 ];
 
-const difficultyFilterValues = computed<number[]>({
+const difficultyFilterValues = computed<DifficultyKey[]>({
 	get() {
 		if (currentFilters.difficulty?.length !== 2) {
 			return [1, 5];
 		}
 		return [...currentFilters.difficulty];
 	},
-	set(value: number[]) {
+	set(value: DifficultyKey[]) {
 		if (value?.length !== 2 || value[0] === 1 && value[1] === 5) {
 			setFilter('difficulty', []);
 		} else {

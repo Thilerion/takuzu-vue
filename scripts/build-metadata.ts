@@ -1,6 +1,6 @@
 import { execSync } from "child_process";
-import type { AppBuildMode, PkgVersion, GitRevisionString, MetadataString, DetailedVersionString, BuildDateString, SemverData } from '../src/services/build-data/types';
-import { createBuildDateString } from '../src/services/build-data/buildDateString';
+import type { AppBuildMode, PkgVersion, GitRevisionString, MetadataString, DetailedVersionString, BuildDateString, SemverData } from '../src/services/build-data/types.js';
+import { createBuildDateString } from '../src/services/build-data/buildDateString.js';
 
 export interface BuildVersionDetails {
 	mode: AppBuildMode | null,
@@ -12,7 +12,7 @@ export interface BuildVersionDetails {
 	detailedVersion: DetailedVersionString
 }
 
-const getGitRevision = (): GitRevisionString => execSync('git rev-parse --short HEAD').toString().trim();
+const getGitRevision = (): GitRevisionString => execSync('git rev-parse --short HEAD').toString().trim() as GitRevisionString;
 const getAppBuildMode = (mode: string): AppBuildMode | null | 'test' => {
 	if (mode === 'test') {
 		console.warn('Test mode in build!');
@@ -25,13 +25,13 @@ const getAppBuildMode = (mode: string): AppBuildMode | null | 'test' => {
 } 
 const getPkgVersion = () => process.env.npm_package_version as PkgVersion;
 const parsePkgVersion = (versionStr: PkgVersion): SemverData => {
-	const split = (versionStr || '').split('.');
+	const split: string[] = (versionStr || '').split('.');
 	if (!versionStr || split.length < 2) {
 		// included because, when running vitest from vscode, versionStr is undefined and would cause an error
 		console.warn('Cannot parse package version, as versionStr is not defined, or not of correct length.');
 		return { major: 0, minor: 0, patch: 0 };
 	}
-	const [major, minor, patch] = split.map(val => {
+	const [major, minor, patch] = split.map((val: string) => {
 		const int = Number.parseInt(val);
 		if (int == null || Number.isNaN(int)) {
 			return 0;
@@ -41,10 +41,11 @@ const parsePkgVersion = (versionStr: PkgVersion): SemverData => {
 	return { major, minor, patch };
 }
 const getMetadataString = (appBuildMode: AppBuildMode | null | 'test', dateStr: BuildDateString, revision: GitRevisionString): MetadataString => {
+	// MetaDataString: GitRevision_BuildDate || BuildMove.GitRevision_BuildDate
 	if (appBuildMode != null) {
-		return `${appBuildMode}.${dateStr}_${revision}`;
+		return `${appBuildMode}.${revision}_${dateStr}`;
 	} else {
-		return `${dateStr}_${revision}`;
+		return `${revision}_${dateStr}`;
 	}
 }
 const getDetailedVersionString = (version: PkgVersion, metadata: MetadataString): DetailedVersionString => {

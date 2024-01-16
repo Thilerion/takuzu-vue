@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { createHighlightsFromLegacyHint } from "./hints/highlights/legacy-hint-highlights";
 import type { Hint } from "./hints/Hint.js";
 import type { HintHighlight } from "./hints/highlights/types.js";
+import { usePuzzleStore } from "./puzzle.js";
 
 export const useHintHighlightsStore = defineStore('hintHighlights', () => {
 	const visible = ref(false);
@@ -20,7 +21,8 @@ export const useHintHighlightsStore = defineStore('hintHighlights', () => {
 	}
 	const displayFromHint = (hint: Hint) => {
 		if (hint.isLegacyHint) {
-			const highlights: HintHighlight[] = createHighlightsFromLegacyHint(hint) ?? [];
+			const puzzleStore = usePuzzleStore();
+			const highlights: HintHighlight[] = createHighlightsFromLegacyHint(hint, puzzleStore.board!) ?? [];
 			setHighlights(highlights, { setVisible: true });
 			return;
 		} else {

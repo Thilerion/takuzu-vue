@@ -5,7 +5,7 @@
 		<transition name="t-slide-up">
 				<PuzzleHint
 					class="z-50 absolute bottom-0 pointer-events-none"
-					v-if="showHint"
+					v-if="showHint && currentHint != null"
 					:hint="currentHint"
 					@done="puzzleHintsStore.removeHint"
 					@hide="puzzleHintsStore.hide"

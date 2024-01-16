@@ -5,7 +5,8 @@
 		"components.d.ts",
 		"src/**/*.ts",
 		"src/**/*.js",
-		"src/**/*.vue"
+		"src/**/*.vue",
+		"scripts/**/*.ts"
 	],
 	"exclude": [
 		"src/**/__tests__/*", "src/**/*.spec.ts", "src/**/*.test.ts"

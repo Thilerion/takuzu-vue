@@ -57,7 +57,7 @@ import { useStatisticsStore } from '@/stores/statistics';
 import { storeToRefs } from 'pinia';
 import { ref, computed, watch, onBeforeMount, reactive, toRefs, provide } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useListFilters, type ListFilterKey } from '@/components/statistics/history-list/useListFilters.js';
+import { useListFilters, type ListFilterKey, type FilterableListItem } from '@/components/statistics/history-list/useListFilters.js';
 import { useDebounceFn } from '@vueuse/core';
 import { usePuzzleHistorySorting, type SortType, type SortOptions } from './usePuzzleHistorySorting.js';
 import type { PuzzleStatisticData } from '@/services/stats/db/models.js';
@@ -123,7 +123,6 @@ const parseFilterQueryData = (data = {}) => {
 	}
 	return;
 }
-
 onBeforeMount(() => {
 	statsStore.initialize({ forceUpdate: false });
 
@@ -143,6 +142,7 @@ onBeforeMount(() => {
 	dataOptions.pageSize = parseInt(queryPageSize as string ?? 30);
 
 	parseFilterQueryData(activeFilterQueryData);
+	
 	currentItems.value = resetCurrentItems(historyItems.value, dataOptions, filterItems);
 })
 
