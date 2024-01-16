@@ -16,9 +16,9 @@ const { needRefresh, updateServiceWorker } = useRegisterSW();
 
 const show = computed(() => needRefresh.value);
 
-const emit = defineEmits([
-	'displayed'
-])
+const emit = defineEmits<{
+	displayed: [shown: boolean]
+}>()
 
 const updateAndReload = () => {
 	updateServiceWorker(true);

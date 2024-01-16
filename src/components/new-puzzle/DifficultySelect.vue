@@ -32,7 +32,10 @@ type DifficultySelectProps = {
 }
 
 const props = defineProps<DifficultySelectProps>();
-const emit = defineEmits(['increase', 'decrease']);
+const emit = defineEmits<{
+	increase: [],
+	decrease: []
+}>();
 
 const difficulty = toRef(props, 'difficulty');
 

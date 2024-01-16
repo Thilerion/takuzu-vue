@@ -36,7 +36,9 @@ import { nextTick, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue';
 const props = defineProps<{
 	show: boolean
 }>()
-const emit = defineEmits(['close']);
+const emit = defineEmits<{
+	close: []
+}>();
 const show = toRef(props, 'show');
 
 const showBanner = ref(false);

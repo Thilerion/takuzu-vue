@@ -25,7 +25,11 @@
 const props = defineProps<{
 	isEditing: boolean
 }>();
-const emit = defineEmits(['save', 'clear', 'edit']);
+const emit = defineEmits<{
+	save: [],
+	clear: [],
+	edit: []
+}>();
 
 const saveOrEdit = () => {
 	if (props.isEditing) {

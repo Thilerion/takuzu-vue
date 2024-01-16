@@ -80,7 +80,10 @@ const debugModeEnabled = toRef(mainStore, 'debugMode');
 
 const copyError = ref<null | string>(null);
 
-const emit = defineEmits(['open-settings', 'dropdown-toggled']);
+const emit = defineEmits<{
+	'open-settings': [],
+	'dropdown-toggled': [val: boolean]
+}>();
 const dropdownRef = ref<InstanceType<typeof BaseDropdown> | null>(null);
 const closeDD = () => dropdownRef.value!.closeDropdownMenu();
 

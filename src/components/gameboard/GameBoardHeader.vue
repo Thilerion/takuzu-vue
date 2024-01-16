@@ -36,7 +36,12 @@ import { useRoute, useRouter } from 'vue-router';
 
 import { storeToRefs } from 'pinia';
 
-const emit = defineEmits(['close', 'dropdown-toggled', 'pause', 'resume']);
+const emit = defineEmits<{
+	close: [],
+	'dropdown-toggled': [val: boolean],
+	pause: [],
+	resume: []
+}>();
 
 const puzzleStore = usePuzzleStore();
 const { paused, width, height } = storeToRefs(puzzleStore);

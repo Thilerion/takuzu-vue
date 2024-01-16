@@ -71,7 +71,12 @@ const props = defineProps<{
 	paused?: boolean
 }>();
 
-const emit = defineEmits(['undo', 'restart', 'check', 'get-hint']);
+const emit = defineEmits<{
+	undo: [],
+	restart: [],
+	check: [],
+	'get-hint': []
+}>();
 
 const settingsStore = useSettingsStore();
 const checkButtonEnabled = computed(() => settingsStore.checkButton !== 'disabled');

@@ -59,7 +59,9 @@ import { computed } from 'vue';
 const props = defineProps<{
 	modelValue: CellTheme
 }>()
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits<{
+	'update:modelValue': [theme: CellTheme]
+}>();
 const cellTheme = computed({
 	get() {
 		return props.modelValue;

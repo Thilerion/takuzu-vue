@@ -7,7 +7,9 @@
 </template>
 
 <script setup lang="ts">
-defineEmits(['toggle']);
+defineEmits<{
+	toggle: []
+}>();
 const props = defineProps<{
 	value: boolean
 }>();

@@ -105,13 +105,16 @@ import { computed, inject, toRef, watch } from 'vue';
 
 import Multiselect from '@vueform/multiselect';
 import '@vueform/multiselect/themes/default.css';
-import type { ListFilterUtils } from './useListFilters.js';
+import type { ListFilterUtils, ListFiltersData } from './useListFilters.js';
 
 
 const props = defineProps<{
 	modelValue: boolean
 }>()
-const emit = defineEmits(['update', 'update:modelValue']);
+const emit = defineEmits<{
+	update: [filters: Partial<ListFiltersData>],
+	'update:modelValue': [val: boolean]
+}>();
 
 const showFilterInputs = toRef(props, 'modelValue');
 

@@ -45,7 +45,11 @@ const BANNER_STRINGS = [
 	"Amazing!",
 ];
 
-const emit = defineEmits(['close', 'banner-after-enter', 'banner-after-leave']);
+const emit = defineEmits<{
+	close: [],
+	'banner-after-enter': [],
+	'banner-after-leave': []
+}>();
 const props = withDefaults(defineProps<{
 	show: boolean,
 	enterDuration?: number,

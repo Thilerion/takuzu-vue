@@ -93,7 +93,11 @@ const dateTimeOpts: Intl.DateTimeFormatOptions = {
 const formatDate = (date: Date) => date.toLocaleString(undefined, dateTimeOpts);
 
 const props = defineProps<PuzzleStatisticData & { timeRecord: null | { current: boolean, first: boolean } }>();
-const emit = defineEmits(['favorite', 'delete', 'save-note']);
+const emit = defineEmits<{
+	favorite: [val: boolean],
+	delete: [],
+	'save-note': [note: string | undefined]
+}>();
 const { difficulty, dimensions, flags, date, timeElapsed, width, height } = toRefs(props);
 
 const currentTimeRecord = computed(() => !!props.timeRecord?.current);

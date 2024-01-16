@@ -23,7 +23,9 @@
 import { useMainStore } from '@/stores/main';
 import { computed, toRef, toRefs } from 'vue';
 
-const emit = defineEmits(['increment-debug-mode']);
+const emit = defineEmits<{
+	'increment-debug-mode': []
+}>();
 
 const props = defineProps<{
 	debugMode: boolean

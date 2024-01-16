@@ -37,7 +37,10 @@
 import type { Hint } from '@/stores/hints/Hint.js';
 import { computed, toRef } from 'vue';
 
-const emit = defineEmits(['hide', 'done']);
+const emit = defineEmits<{
+	hide: [],
+	done: []
+}>();
 const props = defineProps<{
 	hint: Hint
 }>()

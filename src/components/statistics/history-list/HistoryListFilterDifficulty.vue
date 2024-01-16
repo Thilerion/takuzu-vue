@@ -14,8 +14,11 @@
 import { computed } from 'vue';
 
 // TODO: range is [number, number], not number[]
-const props = defineProps<{modelValue: number[]}>()
-const emit = defineEmits(['update:modelValue']);
+type HistoryListDifficultyFilterProp = number[];
+const props = defineProps<{modelValue: HistoryListDifficultyFilterProp}>()
+const emit = defineEmits<{
+	'update:modelValue': [difficultyFilterValue: HistoryListDifficultyFilterProp]
+}>();
 
 const minValue = computed(() => {
 	return props.modelValue[0];

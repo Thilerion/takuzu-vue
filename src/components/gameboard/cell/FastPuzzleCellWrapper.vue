@@ -15,6 +15,7 @@
 
 <script setup lang="ts">
 import type { PuzzleValue } from "@/lib/constants.js";
+import type { VecValueChange } from "@/lib/types.js";
 import { computed, ref, toRefs, watch } from "vue";
 
 const props = defineProps<{
@@ -25,7 +26,9 @@ const props = defineProps<{
 	value: PuzzleValue,
 	incorrect: boolean | undefined // TODO: not sure about this one
 }>();
-const emit = defineEmits(['toggle']);
+const emit = defineEmits<{
+	toggle: [toggleTarget: Omit<VecValueChange, 'prevValue'>]
+}>();
 
 const {
 	value,

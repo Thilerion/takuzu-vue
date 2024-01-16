@@ -21,7 +21,9 @@
 <script setup lang="ts">
 import { onBeforeMount, watch, ref, reactive, onBeforeUnmount } from 'vue';
 
-const emit = defineEmits(['toggled']);
+const emit = defineEmits<{
+	toggled: [isOpen: boolean]
+}>();
 const props = defineProps<{
 	alignBelow?: boolean,
 	alignRight?: boolean,

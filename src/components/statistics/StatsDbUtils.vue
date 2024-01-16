@@ -39,7 +39,9 @@ const props = defineProps({
 	}
 })
 const numSolved = toRef(props, 'numSolved');
-const emit = defineEmits(['update-stats']);
+const emit = defineEmits<{
+	'update-stats': []
+}>();
 
 const updateNumSolved = async () => {
 	emit('update-stats');

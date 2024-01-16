@@ -22,7 +22,9 @@ const props = defineProps<{
 	selectedDimensions: BoardShape
 }>();
 
-defineEmits(['select']);
+defineEmits<{
+	select: [BoardShape]
+}>();
 </script>
 
 <style scoped>

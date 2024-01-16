@@ -96,7 +96,9 @@ import type { NavigationFailure } from 'vue-router';
 import type { RecapMessageType } from '@/services/recap-message/types.js';
 const formatTimeMMSS = formatTimeMMSSWithRounding(200);
 
-defineEmits(['exit-to']);
+defineEmits<{
+	'exit-to': [exitToRouteName: 'play-again' | 'statistics' | 'home' | 'replay' | 'new-puzzle']
+}>();
 
 const recapStatsStore = useRecapStatsStore();
 const {

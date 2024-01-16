@@ -69,7 +69,9 @@ withDefaults(defineProps<{
 			['Magic Mouse', 'Black', 'Accesories', '$99']
 		]
 })
-defineEmits(['sort-header']);
+defineEmits<{
+	'sort-header': [columnKey: string]
+}>();
 </script>
 
 <style scoped>

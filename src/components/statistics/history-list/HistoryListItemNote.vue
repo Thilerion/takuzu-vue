@@ -45,7 +45,9 @@ const props = defineProps<{
 	note?: string | null | undefined,
 	id?: string | number
 }>();
-const emit = defineEmits(['save-note']);
+const emit = defineEmits<{
+	'save-note': [note: string | undefined]
+}>();
 
 const unsavedNote = ref<string | null>();
 
@@ -101,6 +103,14 @@ watch(isEditing, (value) => {
 	}
 })
 
+const emitSaveNote = (note?: string | null | undefined) => {
+	if (note == null || note === '') {
+		emit('save-note', undefined);
+	} else {
+		emit('save-note', note);
+	}
+}
+
 const startEditing = async () => {
 	isEditing.value = true;
 	await awaitRaf();
@@ -110,7 +120,8 @@ const saveNote = async () => {
 	isEditing.value = false;
 	await awaitRaf();
 	const hasValue = unsavedNote.value != null && unsavedNote.value !== '';
-	emit('save-note', hasValue ? unsavedNote.value : undefined);
+	const noteSaveValue = hasValue ? unsavedNote.value : undefined;
+	emitSaveNote(noteSaveValue);
 }
 const stopEditingOnBlur = async () => {
 	await awaitTimeout(250);
@@ -121,7 +132,7 @@ const stopEditingOnBlur = async () => {
 const clearNote = async () => {
 	isEditing.value = false;
 	unsavedNote.value = null;
-	emit('save-note', null);
+	emitSaveNote();
 }
 watch(propsNote, (value) => {
 	unsavedNote.value = value;
