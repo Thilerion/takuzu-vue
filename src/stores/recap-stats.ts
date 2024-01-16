@@ -45,7 +45,6 @@ type UIState = {
 	initialized: boolean;
 }
 export type RecapStatsStoreState = PuzzleStatistics & PlayedPuzzleData & ReplayStatistics & PuzzleConfigurationHistory & HistoryTotals & PuzzleConfigurationStatistics & UIState;
-
 export const useRecapStatsStore = defineStore('recapStats', {
 
 	state: (): RecapStatsStoreState => ({

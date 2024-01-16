@@ -3,24 +3,24 @@ const MINUTE = 60 * SECOND;
 const HOUR = 60 * MINUTE;
 // const DAY = 24 * HOUR;
 
-const getSeconds = ms => {
+const getSeconds = (ms: number) => {
 	return Math.floor(ms / SECOND);
 }
-const getNormalizedSeconds = ms => {
+const getNormalizedSeconds = (ms: number) => {
 	return getSeconds(ms) % 60;
 }
-const getMinutes = ms => {
+const getMinutes = (ms: number) => {
 	return Math.floor(ms / MINUTE);
 }
-const getNormalizedMinutes = ms => {
+const getNormalizedMinutes = (ms: number) => {
 	return getMinutes(ms) % 60;
 }
-const getHours = ms => {
+const getHours = (ms: number) => {
 	return Math.floor(ms / HOUR);
 }
-// const getNormalizedHours = ms => getHours(ms) % 24;
+// const getNormalizedHours = (ms: number) => getHours(ms) % 24;
 
-const durationInMinutesSeconds = baseMs => {
+const durationInMinutesSeconds = (baseMs: number) => {
 	const remainderMs = baseMs % 1000;
 	const ms = Math.floor(baseMs - remainderMs);
 
@@ -28,7 +28,7 @@ const durationInMinutesSeconds = baseMs => {
 	const minutes = getMinutes(ms);
 	return { minutes, seconds, remainderMs };
 }
-const durationInHoursMinutesSeconds = baseMs => {
+const durationInHoursMinutesSeconds = (baseMs: number) => {
 	const remainderMs = baseMs % 1000;
 	const ms = Math.floor(baseMs - remainderMs);
 
@@ -38,7 +38,7 @@ const durationInHoursMinutesSeconds = baseMs => {
 	return { hours, minutes, seconds, remainderMs };
 }
 
-export const formatDurationMMSS = (ms, { padFirst = true } = {}) => {
+export const formatDurationMMSS = (ms: number, { padFirst = true } = {}) => {
 	const { minutes, seconds } = durationInMinutesSeconds(ms);
 
 	const formattedSeconds = `${seconds}`.padStart(2, '0');
@@ -48,7 +48,7 @@ export const formatDurationMMSS = (ms, { padFirst = true } = {}) => {
 	
 	return [formattedMinutes, formattedSeconds].join(':');
 }
-export const formatDurationHHMMSS = (ms, { 
+export const formatDurationHHMMSS = (ms: number, { 
 	padFirst = true,
 	emptyHours = true
 } = {}) => {
@@ -67,7 +67,7 @@ export const formatDurationHHMMSS = (ms, {
 		`${seconds}`.padStart(2, '0')
 	].join(':');
 }
-export const formatDurationMMSSss = (ms, {
+export const formatDurationMMSSss = (ms: number, {
 	padFirst = true
 } = {}) => {
 	const roundedToHundredths = Math.ceil(ms / 10) * 10;

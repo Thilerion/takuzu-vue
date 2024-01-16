@@ -54,7 +54,7 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useStatisticsStore } from '@/stores/statistics';
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';

@@ -1,7 +1,6 @@
 import type { BoardExportString, BoardShape, DifficultyKey } from "@/lib/types";
-import { getRandomItem } from "@/utils/array.utils";
+import { getRandomItem } from "@/utils/array.ts.utils";
 import Dexie from "dexie";
-
 
 export interface IPregenPuzzle extends BoardShape {
 	boardStr: BoardExportString,

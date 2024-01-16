@@ -56,3 +56,8 @@ export const cartesian = <T>(sets: (T[] | T)[]): T[][] => {
 export function* generateCartesian<T>(sets: T[][]): Generator<T[]> {
 	yield* cartesianGenerator(...validateCartesianInput(sets));
 }
+
+export const getRandomItem = <T>(arr: ReadonlyArray<T>): T => {
+	const rnd = Math.floor(Math.random() * arr.length);
+	return arr[rnd];
+}
