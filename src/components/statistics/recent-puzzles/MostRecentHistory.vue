@@ -21,9 +21,8 @@
 	</section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useStatisticsStore } from '@/stores/statistics';
-
 import { computed, toRef } from 'vue';
 
 const store = useStatisticsStore();

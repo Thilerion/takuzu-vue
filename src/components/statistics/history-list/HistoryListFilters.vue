@@ -100,21 +100,22 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, inject, toRef, watch } from 'vue';
 
 import Multiselect from '@vueform/multiselect';
 import '@vueform/multiselect/themes/default.css';
+import type { ListFilterUtils } from './useListFilters.js';
 
 
-const props = defineProps({
-	modelValue: Boolean
-})
+const props = defineProps<{
+	modelValue: boolean
+}>()
 const emit = defineEmits(['update', 'update:modelValue']);
 
 const showFilterInputs = toRef(props, 'modelValue');
 
-const { currentFilters, activeFilters, /* filterFns, filterItems, */ setFilter, removeFilter } = inject('filterUtils');
+const { currentFilters, activeFilters, /* filterFns, filterItems, */ setFilter, removeFilter } = inject('filterUtils') as ListFilterUtils;
 
 const hasActiveFilters = computed(() => {
 	return Object.keys(activeFilters.value).length > 0;
@@ -161,14 +162,14 @@ const boardSizeOpts = [
 	'6x10', '8x12', '10x14', '12x16'
 ];
 
-const difficultyFilterValues = computed({
+const difficultyFilterValues = computed<number[]>({
 	get() {
 		if (currentFilters.difficulty?.length !== 2) {
 			return [1, 5];
 		}
-		return currentFilters.difficulty;
+		return [...currentFilters.difficulty];
 	},
-	set(value) {
+	set(value: number[]) {
 		if (value?.length !== 2 || value[0] === 1 && value[1] === 5) {
 			setFilter('difficulty', []);
 		} else {
@@ -181,16 +182,16 @@ const boardSizeFilterValues = computed({
 	get() {
 		return currentFilters.boardSize?.length ? currentFilters.boardSize : [];
 	},
-	set(value) {
-		setFilter('boardSize', value);
+	set(value: readonly string[]) {
+		setFilter('boardSize', [...value]);
 	}
 })
-const removeSizeFromBoardSizeFilters = (size) => {
+const removeSizeFromBoardSizeFilters = (size: string) => {
 	setFilter('boardSize', boardSizeFilterValues.value.filter(val => val !== size));
 }
-const getMultiLabel = (opts) => {
+const getMultiLabel = (opts: { label: string }[]) => {
 	if (opts?.length > 4) return `${opts.length} sizes selected`;
-	const optsSorted = opts.map(o => o.label).sort((a, z) => {
+	const optsSorted = opts.map(o => o.label).sort((a: string, z: string) => {
 		return boardSizeOpts.indexOf(a) - boardSizeOpts.indexOf(z);
 	})
 	return 'Selected: ' + optsSorted.join(', ');

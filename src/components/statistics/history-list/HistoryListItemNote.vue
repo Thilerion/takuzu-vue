@@ -43,7 +43,7 @@ import { computed, onMounted, ref, toRef, watch, type Ref } from 'vue';
 
 const props = defineProps<{
 	note?: string | null | undefined,
-	id: string | number
+	id?: string | number
 }>();
 const emit = defineEmits(['save-note']);
 
@@ -82,7 +82,7 @@ const isEditing = computed({
 		if (!value && editingNoteId.value === props.id) {
 			editingNoteId.value = null;
 		} else if (value) {
-			editingNoteId.value = props.id;
+			editingNoteId.value = props.id ?? null;
 		}
 	}
 })

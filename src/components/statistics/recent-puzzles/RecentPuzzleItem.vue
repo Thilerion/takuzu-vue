@@ -10,13 +10,14 @@
 	</div>
 </template>
 
-<script>
+<script setup lang="ts">
+import type { DifficultyKey } from '@/lib/types.js';
 import { timeFormatter } from '@/utils/date.utils.js';
 import { differenceInCalendarDays } from 'date-fns';
 import { computed, onMounted, ref } from 'vue';
 
 const formatTime = timeFormatter({});
-const dateTimeOpts = {
+const dateTimeOpts: Intl.DateTimeFormatOptions = {
 	// weekday: 'short',
 	year: 'numeric',
 	month: '2-digit',
@@ -24,9 +25,9 @@ const dateTimeOpts = {
 	hour: '2-digit',
 	minute: '2-digit',
 	// second: 'numeric'
-}
-const formatDate = (date) => date.toLocaleString(undefined, dateTimeOpts);
-const formatDateTime = (date) => date.toLocaleTimeString(undefined, {
+};
+const formatDate = (date: Date) => date.toLocaleString(undefined, dateTimeOpts);
+const formatDateTime = (date: Date) => date.toLocaleTimeString(undefined, {
 	hour: '2-digit',
 	minute: '2-digit'
 });
@@ -36,20 +37,18 @@ const rtf = new Intl.RelativeTimeFormat(undefined, {
 	numeric: 'auto',
 	style: 'long'
 })
-const formatRelative = (date, diffDays) => {
+const formatRelative = (date: Date, diffDays: number) => {
 	const d = rtf.format(diffDays, 'days');
 	const time = formatDateTime(date);
 	return d + ' ' + time;
 }
-</script>
 
-<script setup>
-const props = defineProps({
+const props = defineProps<{
 	date: Date,
-	dimensions: String,
-	difficulty: [String, Number],
-	time: Number
-});
+	dimensions: string,
+	difficulty: DifficultyKey,
+	time: number
+}>();
 
 const today = ref(new Date());
 
@@ -60,7 +59,7 @@ onMounted(() => {
 const diffDays = computed(() => differenceInCalendarDays(today.value, props.date));
 
 const d = computed(() => {
-	const date = new Date(props.date * 1);
+	const date = new Date(props.date.valueOf());
 	const h = date.getHours();
 	if (h > 15 && h < 17) {
 		date.setHours(8);

@@ -23,7 +23,7 @@ export type StatsStoreState = {
 	initializedDate: string;
 	isLoading: boolean;
 	historyItems: PuzzleStatisticData[];
-	editingNoteId: string | null;
+	editingNoteId: number | null;
 }
 
 export const useStatisticsStore = defineStore('statistics', {

@@ -38,26 +38,22 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { SimpleBoard } from '@/lib/index.js';
 import { usePuzzleStore } from '@/stores/puzzle';
+import type { VecValueChange } from '@/lib/types.js';
 
-const props = defineProps({
-	rows: Number,
-	columns: Number,
-	gridHeight: String,
-	gridWidth: String,
-	cellSize: {
-		type: Number,
-		required: true
-	},
-	board: {
-		type: Object,
-		required: true
-	},
-	paused: Boolean,
-});
+defineProps<{
+	rows: number,
+	columns: number,
+	gridHeight: string,
+	gridWidth: string,
+	cellSize: string,
+	board: SimpleBoard,
+	paused: boolean,
+}>();
 const puzzleStore = usePuzzleStore();
-const toggleCell = ({ x, y, value }) => puzzleStore.toggle({ x, y, prevValue: value });
+const toggleCell = ({ x, y, value }: VecValueChange) => puzzleStore.toggle({ x, y, prevValue: value });
 const resumeByUser = () => {
 	if (puzzleStore.pausedByUser) {
 		puzzleStore.setPaused(false, { userAction: true });

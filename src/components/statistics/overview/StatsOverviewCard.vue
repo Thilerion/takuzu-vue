@@ -14,23 +14,14 @@
 			class="text-xs text-gray-500"
 			v-if="!!$slots.footer"
 		><slot name="footer"></slot></div>
-
-		<div
-			v-if="false"
-			class="py-2 text-xl text-gray-700 font-medium flex flex-row items-center justify-center gap-1"
-		>{{value}} <div class="bg-green-100 text-green-800 px-2 rounded-full text-center text-xs font-normal" v-if="hasSubValue">{{subValue}}</div></div>
-		<div v-if="false" class="text-xs">{{description}} <small class="text-xs" v-if="hasSubValue">{{subDescription}}</small></div>
 	</section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
-const props = defineProps({
-	value: {
-		type: [String, Number],
-		required: true
-	}
-})
+const props = defineProps<{
+	value: string | number
+}>();
 </script>
 
 <style scoped>

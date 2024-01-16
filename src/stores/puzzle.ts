@@ -275,7 +275,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				x, y, value: prevValue, nextValue: value
 			})
 		},
-		toggle({ x, y, value, prevValue }: PickOptional<VecValueChange, 'prevValue'>) {
+		toggle({ x, y, value, prevValue }: PickOptional<VecValueChange, 'prevValue' | 'value'>) {
 			const previous = prevValue ?? this.board!.grid[y][x];
 
 			if (value == null) {

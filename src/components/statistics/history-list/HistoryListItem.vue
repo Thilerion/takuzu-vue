@@ -61,14 +61,27 @@
 	</div>
 </template>
 
-<script>
-import { computed, ref, toRefs } from 'vue';
-import { awaitTimeout } from '@/utils/delay.utils';
-import { useStatisticsStore } from '@/stores/statistics';
+<script setup lang="ts">
 
-const formatTime = (ms) => formatDurationMMSSss(ms, { padFirst: true });
 
-const dateTimeOpts = {
+import { useMainStore } from '@/stores/main';
+import { usePuzzleStore } from '@/stores/puzzle';
+import { formatDurationMMSSss } from '@/utils/duration.utils';
+import { useRouter } from 'vue-router';
+import type { PuzzleStatisticData } from '@/services/stats/db/models';
+import { toRefs } from 'vue';
+import { computed } from 'vue';
+import { ref } from 'vue';
+import { useStatisticsStore } from '@/stores/statistics.js';
+import { awaitTimeout } from '@/utils/delay.utils.js';
+
+defineOptions({
+	inheritAttrs: false
+})
+
+const formatTime = (ms: number) => formatDurationMMSSss(ms, { padFirst: true });
+
+const dateTimeOpts: Intl.DateTimeFormatOptions = {
 	weekday: 'short',
 	year: 'numeric',
 	month: 'long',
@@ -77,53 +90,17 @@ const dateTimeOpts = {
 	minute: 'numeric',
 	second: 'numeric'
 }
-const formatDate = (date) => date.toLocaleString(undefined, dateTimeOpts);
+const formatDate = (date: Date) => date.toLocaleString(undefined, dateTimeOpts);
 
-export default {
-	inheritAttrs: false
-}
-</script>
-
-<script setup>
-
-
-import { useMainStore } from '@/stores/main';
-import { usePuzzleStore } from '@/stores/puzzle';
-import { formatDurationMMSSss } from '@/utils/duration.utils';
-import { useRouter } from 'vue-router';
-
-const props = defineProps({
-	difficulty: [Number, String],
-	dimensions: String,
-	flags: {
-		type: Object,
-		default: () => ({})
-	},
-	date: Date,
-	timeElapsed: Number,
-
-	id: [Number, String],
-	width: Number,
-	height: Number,
-	initialBoard: String,
-	solution: String,
-	timeRecord: {
-		type: Object
-	},
-	note: {
-		type: [String, null]
-	}
-})
-
+const props = defineProps<PuzzleStatisticData & { timeRecord: null | { current: boolean, first: boolean } }>();
 const emit = defineEmits(['favorite', 'delete', 'save-note']);
-
 const { difficulty, dimensions, flags, date, timeElapsed, width, height } = toRefs(props);
 
 const currentTimeRecord = computed(() => !!props.timeRecord?.current);
 const firstTimeRecord = computed(() => !!props.timeRecord?.first);
 const previousTimeRecord = computed(() => !!props.timeRecord && !currentTimeRecord.value && !firstTimeRecord.value);
 
-const forcedFavorite = ref(null);
+const forcedFavorite = ref<null | boolean>(null);
 const isFavorite = computed(() => {
 	if (forcedFavorite.value != null) return forcedFavorite.value;
 	const favFlag = flags.value?.favorite;
@@ -137,7 +114,7 @@ const toggleFavorite = () => {
 }
 const statsStore = useStatisticsStore();
 const editNote = () => {
-	statsStore.editingNoteId = props.id;
+	statsStore.editingNoteId = props.id ?? null;
 }
 
 const dateFormatted = computed(() => {

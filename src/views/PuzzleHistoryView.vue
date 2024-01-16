@@ -57,7 +57,7 @@ import { useStatisticsStore } from '@/stores/statistics';
 import { storeToRefs } from 'pinia';
 import { ref, computed, watch, onBeforeMount, reactive, toRefs, provide } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useListFilters } from '@/components/statistics/history-list/useListFilters.js';
+import { useListFilters, type ListFilterKey } from '@/components/statistics/history-list/useListFilters.js';
 import { useDebounceFn } from '@vueuse/core';
 import { usePuzzleHistorySorting, type SortType, type SortOptions } from './usePuzzleHistorySorting.js';
 import type { PuzzleStatisticData } from '@/services/stats/db/models.js';
@@ -71,16 +71,19 @@ const statsStore = useStatisticsStore();
 
 const { historyItems: rawHistoryItems, historyItemsWithTimeRecord } = storeToRefs(statsStore);
 
-const getTimeRecordType = (id: number) => {
+export type HistoryItemTimeRecordData = { record: false } | { record: true, current: boolean, first: boolean };
+export type PuzzleHistoryListItem = PuzzleStatisticData & { timeRecord: HistoryItemTimeRecordData };
+
+const getTimeRecordType = (id: number): HistoryItemTimeRecordData => {
 	const { all, current, first } = historyItemsWithTimeRecord.value;
-	if (!all.includes(id)) return { record: false };
+	if (!all.includes(id)) return { record: false as const };
 	const isCurrent = current.includes(id);
 	const isFirst = first.includes(id);
-	return { record: true, current: isCurrent, first: isFirst };
+	return { record: true as const, current: isCurrent, first: isFirst };
 }
 
-const historyItems = computed(() => {
-	const res = rawHistoryItems.value.map(item => {
+const historyItems = computed((): PuzzleHistoryListItem[] => {
+	const res: PuzzleHistoryListItem[] = rawHistoryItems.value.map(item => {
 		const { id } = item;
 		const timeRecord = getTimeRecordType(id!);
 		return { ...item, timeRecord };
@@ -112,7 +115,7 @@ const parseFilterQueryData = (data = {}) => {
 	for (const [key, strVal] of Object.entries(data)) {
 		try {
 			const val = JSON.parse(strVal as string);
-			setFilter(key, val);
+			setFilter(key as ListFilterKey, val);
 
 		} catch(e) {
 			console.warn(e);
@@ -222,15 +225,15 @@ function getFilterQueryFromOptions() {
 }
 
 function getQueryFromFilterAndSortOptions({
-	sortBy, filters, pageSize, page
-}: SortOptions & { filters: unknown }) {
+	sortBy, pageSize, page
+}: SortOptions) {
 	const defaults = getDefaultOptions();
 
 	const query = {
 		page: page === defaults.page ? undefined : page,
 		sortBy: sortBy === defaults.sortBy ? undefined : sortBy,
 		pageSize: pageSize === defaults.pageSize ? undefined : pageSize,
-		...getFilterQueryFromOptions(filters)
+		...getFilterQueryFromOptions()
 	}
 	return query;
 }
