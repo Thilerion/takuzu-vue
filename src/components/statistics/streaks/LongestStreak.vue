@@ -12,22 +12,15 @@
 	</section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { differenceInCalendarDays } from 'date-fns';
 import { computed } from 'vue';
 
-const props = defineProps({
-	length: {
-		type: Number,
-		required: true
-	},
-	from: {
-		type: Date
-	},
-	to: {
-		type: Date
-	}
-})
+const props = defineProps<{
+	length: number,
+	from?: Date,
+	to?: Date
+}>();
 
 const streakLengthClasses = computed(() => {
 	if (props.length >= 28) {
@@ -45,14 +38,14 @@ const streakLengthClasses = computed(() => {
 })
 
 
-function formatDate(d) {
+function formatDate(d: Date) {
 	return d.toLocaleDateString(undefined, {
 		day: 'numeric',
 		month: 'short',
 		year: 'numeric'
 	});
 }
-function formatRelativeDate(diffDays) {
+function formatRelativeDate(diffDays: number) {
 	return new Intl.RelativeTimeFormat(undefined, {
 		localeMatcher: 'best fit',
 		numeric: "auto",
@@ -60,19 +53,20 @@ function formatRelativeDate(diffDays) {
 	}).format(diffDays, 'day');
 }
 
-const fromStr = computed(() => {
+const fromStr = computed((): null | string => {
 	if (!props.from) return null;
 	return formatDate(props.from);
 })
-const diffEndDate = computed(() => {
+const diffEndDate = computed((): number | null => {
+	if (props.to == null) return null;
 	return differenceInCalendarDays(props.to, new Date());
 })
 
-const toStr = computed(() => {
+const toStr = computed((): null | string => {
 	if (!props.to) return null;
-	if (props.length < 3 || Math.abs(diffEndDate.value) > 2) {
+	if (props.length < 3 || Math.abs(diffEndDate.value!) > 2) {
 		return formatDate(props.to);
-	} else return formatRelativeDate(diffEndDate.value);
+	} else return formatRelativeDate(diffEndDate.value!);
 })
 </script>
 

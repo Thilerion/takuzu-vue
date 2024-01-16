@@ -12,7 +12,7 @@ interface StreakLengthNone {
 	from: null,
 	to: null
 }
-type StreakLengthResult = StreakLength | StreakLengthNone;
+export type StreakLengthResult = StreakLength | StreakLengthNone;
 interface CurrentStreakTrue {
 	length: number,
 	from: Date,
@@ -23,7 +23,7 @@ interface CurrentStreakFalse {
 	from: null,
 	active: false
 }
-type CurrentStreakResult = CurrentStreakTrue | CurrentStreakFalse;
+export type CurrentStreakResult = CurrentStreakTrue | CurrentStreakFalse;
 
 const createLongestStreak = (streaks: DateStreaks = []): StreakLengthResult => {
 	if (!streaks || !streaks.length) {

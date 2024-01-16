@@ -26,7 +26,7 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { formatYYYYMMDD } from '@/utils/date.utils.js';
 import { computed, ref, toRef } from 'vue';
 import { importPeek, exportPuzzleHistoryDb, cleanImportPuzzleHistoryDb, importPuzzleHistoryItemsWithVersionUpgrade } from '@/services/stats/db/import-export.js';
@@ -49,7 +49,7 @@ const isExporting = ref(false);
 const isImporting = ref(false);
 const isBusy = computed(() => isExporting.value || isImporting.value);
 
-const downloadBlobAsFile = (blob, baseName = 'puzzle-history') => {
+const downloadBlobAsFile = (blob: Blob, baseName = 'puzzle-history') => {
 	const dateStr = formatYYYYMMDD(Date.now()).replaceAll('-', '');
 	const count = numSolved.value;
 	const verno = StatsDB.db.verno;
@@ -78,15 +78,19 @@ const exportStats = async () => {
 	}
 }
 
-const fileInput = ref(null);
-const processStatsFile = async (ev) => {
-	console.log(ev.target.files);
-	if (ev.target.files.length > 1) {
+const fileInput = ref<HTMLInputElement | null>(null);
+const processStatsFile = async (ev: Event) => {
+	const tg = ev.target as HTMLInputElement;
+	console.log(tg.files);
+	if (tg.files == null) {
+		throw new Error('HTML File element files property is null.');
+	}
+	if (tg.files.length > 1) {
 		return processMultipleStatsFiles(ev);
 	}
 	try {
 		isImporting.value = true;
-		const file = ev.target.files[0];
+		const file = tg.files[0];
 		const r = await importPeek(file);
 		if (r.databaseVersion < StatsDB.db.verno) {
 			await importIntoDatabaseMergeAndUpgrade(file);
@@ -94,30 +98,42 @@ const processStatsFile = async (ev) => {
 			await importIntoDatabase(file);
 		}
 	} catch(e) {
-		window.alert(`An error occurred importing stats...\n${e.message}`);
+		window.alert(`An error occurred importing stats...\n${(e as Error).message}`);
 		console.warn(e);
 	} finally {
 		isImporting.value = false;
-		ev.target.value = '';
+		tg.value = '';
 	}
 }
 
-const processMultipleStatsFiles = async ev => {
+function* eachFileInFilelist(list: FileList): Generator<File> {
+	const num = list.length;
+	for (let i = 0; i < num; i++) {
+		yield list.item(i) as File;
+	}
+}
+
+const processMultipleStatsFiles = async (ev: Event) => {
+	const tg = ev.target as HTMLInputElement;
 	try {
+		const files: FileList = tg.files as FileList;
+		if (!files.length) {
+			throw new Error('FileList is empty.');
+		}
 		isImporting.value = true;
-		for (const file of ev.target.files) {
+		for (const file of eachFileInFilelist(files)) {
 			await processSingleStatFile(file);
 		}
 	} catch(e) {
-		window.alert(`An error occurred importing stats...\n${e.message}`);
+		window.alert(`An error occurred importing stats...\n${(e as Error).message}`);
 		console.warn(e);
 	} finally {
 		isImporting.value = false;
-		ev.target.value = '';
+		tg.value = '';
 	}
 }
 
-const processSingleStatFile = async file => {
+const processSingleStatFile = async (file: File) => {
 	const r = await importPeek(file);
 	if (r.databaseVersion < StatsDB.db.verno) {
 		await importIntoDatabaseMergeAndUpgrade(file);
@@ -134,7 +150,7 @@ const confirmBeforeCleanImport = () => {
 	return !!confirm2;
 }
 
-const importIntoDatabase = async (blob) => {
+const importIntoDatabase = async (blob: Blob) => {
 	if (numSolved.value > 0) {
 		return importIntoDatabaseMergeAndUpgrade(blob);
 	}
@@ -147,14 +163,14 @@ const importIntoDatabase = async (blob) => {
 		// TODO: better message (modal?) that shows umport was successful
 		window.alert('Succesfully imported stats!');
 	} catch(e) {
-		window.alert(`An error occurred importing stats...\n${e.message}`);
+		window.alert(`An error occurred importing stats...\n${(e as Error).message}`);
 	} finally {
 		console.log('running update num solved');
 		updateNumSolved();
 	}
 }
 
-const importIntoDatabaseMergeAndUpgrade = async blob => {
+const importIntoDatabaseMergeAndUpgrade = async (blob: Blob) => {
 	try {
 		const result = await importPuzzleHistoryItemsWithVersionUpgrade(StatsDB.db, blob);
 		console.log(result);
@@ -167,7 +183,7 @@ const importIntoDatabaseMergeAndUpgrade = async blob => {
 }
 
 const importStats = async () => {
-	fileInput.value.click();
+	fileInput.value?.click();
 }
 
 const resetStats = async () => {
@@ -181,7 +197,7 @@ const resetStats = async () => {
 		await StatsDB.clearTable();
 		window.alert('Puzzle statistics and puzzle history have succesfully been reset.');
 	} catch(e) {
-		const str = `[ERROR]: Puzzle statistics and history could not be reset due to error, or something else went wrong: ${e.message}`;
+		const str = `[ERROR]: Puzzle statistics and history could not be reset due to error, or something else went wrong: ${(e as Error).message}`;
 		window.alert(str);
 	} finally {
 		// TODO: update stats?

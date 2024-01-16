@@ -4,22 +4,24 @@
 		<div class="bg-white rounded shadow-lg shadow-gray-600/10 divide-y pt-1" v-if="streaks != null">
 			<StatsHeatmap />
 			<div class="streaks flex flex-row h-fit w-full max-w-xl mx-auto divide-x">
-				<CurrentStreak v-bind="streaks.current" class="streak-container"></CurrentStreak>
-				<LongestStreak v-bind="streaks.longest" class="streak-container"></LongestStreak>
+				<CurrentStreak :active="streaks.current.active" :from="streaks.current.from ?? undefined" :length="streaks.current.length" class="streak-container"></CurrentStreak>
+				<LongestStreak :length="streaks.longest.length" :from="streaks.longest.from ?? undefined" :to="streaks.longest.to ?? undefined" class="streak-container"></LongestStreak>
 			</div>
 			<MostRecentHistory />
 		</div>
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { processDateStreaks } from '@/services/stats/streaks';
-import { computed, inject, toRef } from 'vue';
+import { computed, toRef } from 'vue';
 
 import { useStatisticsStore } from '@/stores/statistics';
+import CurrentStreak from './streaks/CurrentStreak.vue';
+import LongestStreak from './streaks/LongestStreak.vue';
 
-const items = inject('historyItems', () => [], true);
 const statsStore = useStatisticsStore();
+const items = toRef(statsStore, 'historyItems');
 const uniqueDates = toRef(statsStore, 'uniqueDatesPlayed');
 
 const streaks = computed(() => {

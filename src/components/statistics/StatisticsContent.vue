@@ -6,7 +6,7 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useStatisticsStore } from '@/stores/statistics';
 import { provide, toRef } from 'vue';
 

@@ -30,10 +30,9 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useStatisticsStore } from '@/stores/statistics';
 import { computed, toRef } from 'vue';
-
 
 const statsStore = useStatisticsStore();
 
@@ -47,7 +46,7 @@ const totalPlayedTodayStr = computed(() => {
 	}
 	return `${totalPlayedToday.value} puzzle`
 })
-const intlFormat = (num) => {
+const intlFormat = (num: number) => {
 	return new Intl.NumberFormat().format(Math.floor(num * 10)/10);
 }
 const cellsFilled = toRef(statsStore, 'cellsFilled');
@@ -65,7 +64,7 @@ const datesPlayed = computed(() => uniqueDates.value?.length ?? 0);
 
 const timePlayed = toRef(statsStore, 'timePlayed');
 
-const formatDurationAbbr = (time) => {
+const formatDurationAbbr = (time: number) => {
 	const second = 1000;
 	const minute = second * 60;
 	const hour = minute * 60;

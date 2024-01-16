@@ -11,7 +11,7 @@
 	</section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 
 const NO_STREAK = 'no streak';
@@ -30,19 +30,11 @@ const activeClasses = ["border-green-500", "text-green-700/90", "bg-green-400/20
 const inactiveClasses = ["border-gray-500/50", "text-gray-500", "bg-gray-300/10"];
 const warningClasses = ["border-orange-500", "text-orange-700/90", "bg-orange-300/10"];
 
-const props = defineProps({
-	active: {
-		type: Boolean,
-		required: true
-	},
-	from: {
-		type: Date,
-	},
-	length: {
-		type: Number,
-		required: true
-	}
-})
+const props = defineProps<{
+	active: boolean,
+	from?: Date,
+	length: number
+}>();
 
 const currentState = computed(() => {
 	if (props.length === 0) {
