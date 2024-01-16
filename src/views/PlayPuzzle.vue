@@ -4,7 +4,7 @@
 		<GameBoardHeader @close="exitGame" @dropdown-toggled="dropdownToggled" @pause="pause" @resume="resume" />
 		<GameBoardWrapper :ruler-height="rulerSize" :ruler-width="rulerSize" :info-height="'21px'"
 			v-slot="{ width, height, cellSize }">
-			<GameBoard v-if="started && board" :paused="paused" :rows="rows" :columns="columns" :board="board"
+			<GameBoard v-if="started && board" :paused="paused" :rows="rows!" :columns="columns!" :board="board"
 				:grid-height="height" :grid-width="width" :cell-size="cellSize">
 				<template v-slot:puzzle-info>
 					<PuzzleInfo :show-timer="showTimer" :difficulty="difficulty" :progress="progress"

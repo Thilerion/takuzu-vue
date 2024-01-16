@@ -48,7 +48,7 @@ defineProps<{
 	columns: number,
 	gridHeight: string,
 	gridWidth: string,
-	cellSize: string,
+	cellSize: number,
 	board: SimpleBoard,
 	paused: boolean,
 }>();

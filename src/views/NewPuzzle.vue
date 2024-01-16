@@ -236,6 +236,8 @@ async function replayRandom() {
 	const found = await puzzleStore.replayRandomPuzzle({ width, height, difficulty });
 	if (found) {
 		router.push({ name: 'PlayPuzzle', query: { mode: 'replay' } });
+	} else {
+		window.alert('No replayable puzzle found.'); // TODO: alternative to an alert
 	}
 }
 </script>
