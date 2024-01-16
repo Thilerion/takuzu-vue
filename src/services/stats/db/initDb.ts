@@ -24,4 +24,4 @@ db.puzzleHistory.mapToClass(DbHistoryEntry);
 
 persistStorage({ preventPermissionPrompt: true });
 
-export { db };
+export { db, type StatsDB };
