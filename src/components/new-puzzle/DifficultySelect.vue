@@ -22,20 +22,16 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { DifficultyKey } from '@/lib/types.js';
 import { computed, ref, toRef, watch } from 'vue';
 
+type DifficultySelectProps = {
+	labels: Record<DifficultyKey, string>,
+	difficulty: DifficultyKey
+}
 
-const props = defineProps({
-	labels: {
-		type: Object,
-		required: true
-	},
-	difficulty: {
-		type: Number,
-		required: true
-	}
-})
+const props = defineProps<DifficultySelectProps>();
 const emit = defineEmits(['increase', 'decrease']);
 
 const difficulty = toRef(props, 'difficulty');

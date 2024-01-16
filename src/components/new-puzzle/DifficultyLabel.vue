@@ -10,20 +10,14 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { computed, toRefs } from 'vue';
 
-const props = defineProps({
-	stars: {
-		type: Number,
-		required: true
-	},
-	label: {
-		type: String,
-		required: true
-	}
-})
+const props = defineProps<{
+	stars: number,
+	label: string
+}>();
 
 const { stars, label } = toRefs(props);
 

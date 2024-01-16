@@ -28,28 +28,20 @@
 	</BaseButton>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { BoardShape, DifficultyKey } from '@/lib/types.js';
 import { computed } from 'vue';
 
+type StartGameButtonProps = {
+	disabled?: boolean,
+	loading?: boolean,
+	replay?: boolean,
+	difficultyLabel: string,
+	difficultyStars: DifficultyKey,
+	size: BoardShape
+}
 
-
-const props = defineProps({
-	disabled: Boolean,
-	loading: Boolean,
-	replay: Boolean,
-	difficultyLabel: {
-		type: String,
-		required: true
-	},
-	difficultyStars: {
-		type: Number,
-		required: true
-	},
-	size: {
-		type: Object,
-		required: true
-	}
-})
+const props = defineProps<StartGameButtonProps>();
 
 const sizeStr = computed(() => {
 	return `${props.size.width}x${props.size.height}`;
