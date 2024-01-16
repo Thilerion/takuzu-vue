@@ -43,21 +43,26 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { getItemsByDate } from '@/services/stats/dates';
 import { formatBasicSortableDateKey, getMonthNameShort, getWeekdayFromDate, getWeekdayNamesShort, timeFormatter } from '@/utils/date.utils.js';
-import { addDays, differenceInCalendarISOWeeks, eachDayOfInterval, endOfDay, isWithinInterval, startOfDay, subYears } from 'date-fns';
+import { addDays, differenceInCalendarISOWeeks, eachDayOfInterval, endOfDay, isWithinInterval, startOfDay, subYears, type Interval } from 'date-fns';
 import { computed, inject, ref } from 'vue';
 import { calculateScoresByDate, getValueWithinRange, mapScoreToArray } from './heatmap-data.js';
+import { useStatisticsStore } from '@/stores/statistics.js';
+import { toRef, type Ref } from 'vue';
+import type { PuzzleStatisticData } from '@/services/stats/db/models.js';
 
-const historyItems = inject('historyItems', () => [], true);
+const statsStore = useStatisticsStore();
+const historyItems = toRef(statsStore, 'historyItems');
+
 const formatTime = timeFormatter({
 	padMinutes: false
 });
 // heatmap data
 const { interval, numWeeks } = createHeatmapRange();
 
-const itemsByDate = computed(() => {
+const itemsByDate = computed((): Record<string, PuzzleStatisticData[]> => {
 	// cutoff items so none before heatmap interval are processed
 	const heatmapInclusiveInterval = {
 		start: startOfDay(interval.start),
@@ -92,13 +97,13 @@ const allSortedScores = computed(() => {
 	const upperHalf = upTo97.slice(midPoint);
 
 	const minLower = lowerHalf[0].combinedScore;
-	const maxLower = lowerHalf.at(-1).combinedScore;
+	const maxLower = lowerHalf.at(-1)!.combinedScore;
 
 	const minUpper = upperHalf[0].combinedScore;
-	const maxUpper = upperHalf.at(-1).combinedScore;
+	const maxUpper = upperHalf.at(-1)!.combinedScore;
 
-	const a = (score) => score * 0.35;
-	const b = (score) => score * 0.65 + 0.35;
+	const a = (score: number) => score * 0.35;
+	const b = (score: number) => score * 0.65 + 0.35;
 
 	const rescaledLower = lowerHalf.map(obj => {
 		const score2 = getValueWithinRange(minLower, obj.combinedScore, maxLower);
@@ -138,8 +143,8 @@ const squares = computed(() => {
 const weekdays = useWeekdays();
 const months = computed(() => useMonthsList(squares));
 
-const selectedSquare = ref(null);
-const toggleSelectedSquare = (dateStr, square) => {
+const selectedSquare = ref<HeatmapCellData | null>(null);
+const toggleSelectedSquare = (dateStr: string, square: HeatmapCellData) => {
 	if (selectedSquare.value?.dateStr === dateStr) {
 		selectedSquare.value = null;
 	} else {
@@ -159,7 +164,7 @@ const selectedDateValues = computed(() => {
 
 </script>
 
-<script>
+<script lang="ts">
 
 const useWeekdays = () => {
 	const weekdays = getWeekdayNamesShort();
@@ -172,8 +177,8 @@ const useWeekdays = () => {
 	})
 }
 
-const useMonthsList = (squares) => {
-	const res = [];
+const useMonthsList = (squares: Ref<HeatmapCellData[]>) => {
+	const res: { colStart: number, colEnd: number, name: string }[] = [];
 	const foundMonths = new Set();
 
 	squares.value.forEach((sq, idx) => {
@@ -200,7 +205,7 @@ const useMonthsList = (squares) => {
 	return res;
 }
 
-const createHeatmapRange = () => {
+const createHeatmapRange = (): { numWeeks: number, interval: { start: Date, end: Date }} => {
 	const today = startOfDay(new Date());
 	const previousYear = addDays(subYears(today, 1), 1);
 	const numWeeks = differenceInCalendarISOWeeks(today, previousYear);
@@ -216,7 +221,15 @@ const createHeatmapRange = () => {
 	}
 }
 
-const createHeatmapCells = interval => {
+export type HeatmapCellData = {
+	index: number,
+	weekday: number,
+	weekColumn: number,
+	month: string,
+	date: Date,
+	dateStr: string
+}
+const createHeatmapCells = (interval: Interval<Date>): HeatmapCellData[] => {
 	let weekIndex = 0;
 	return eachDayOfInterval(interval).map((date, index) => {
 		const weekday = getWeekdayFromDate(date) - 1;
@@ -236,7 +249,7 @@ const createHeatmapCells = interval => {
 	})
 }
 
-const createHeatmapSquares = (_itemsByDate, { interval }) => {
+const createHeatmapSquares = (_itemsByDate: unknown, { interval }: { interval: Interval<Date> }) => {
 	const cells = createHeatmapCells(interval);
 	return cells;
 }

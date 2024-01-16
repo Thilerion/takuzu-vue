@@ -1,3 +1,5 @@
+import type { PuzzleStatisticData } from "@/services/stats/db/models.js";
+
 const MINUTE = 1000 * 60;
 
 const TIME_RANGE_MIN_BOUNDS = {
@@ -9,12 +11,12 @@ const PLAYED_RANGE_MIN_BOUNDS = {
 	upper: 6
 }
 
-export const mapScoreToArray = (score, arr) => {
+export const mapScoreToArray = <T>(score: number, arr: T[]): T => {
 	const idx = Math.ceil(score * arr.length) - 1;
 	return arr[idx];
 }
 
-export const calculateScoresByDate = (itemsByDate, {
+export const calculateScoresByDate = (itemsByDate: Record<string, PuzzleStatisticData[]>, {
 	timeMinBounds = TIME_RANGE_MIN_BOUNDS,
 	playedMinBounds = PLAYED_RANGE_MIN_BOUNDS,
 } = {}) => {
@@ -26,7 +28,11 @@ export const calculateScoresByDate = (itemsByDate, {
 		timeMinBounds, playedMinBounds
 	});
 
-	const result = {};
+	const result: Record<string, HeatmapDateStats & {
+		playScore: number,
+		timeScore: number,
+		combinedScore: number
+	}> = {};
 
 	for (const [dateStr, { played, time }] of Object.entries(dateStatsByDate)) {
 		const playScore = getValueWithinRange(playedRange.min, played, playedRange.max);
@@ -48,24 +54,27 @@ export const calculateScoresByDate = (itemsByDate, {
 	return result;
 }
 
-const getDateStatsByDate = (itemsByDate) => {
-	const result = {};
+export type HeatmapDateStats = { played: number, time: number };
+export type HeatmapDateStatsDateMap = Record<string, HeatmapDateStats>;
+
+const getDateStatsByDate = (itemsByDate: Record<string, PuzzleStatisticData[]>): Record<string, HeatmapDateStats> => {
+	const result: Record<string, HeatmapDateStats> = {};
 	for (const [dateStr, items] of Object.entries(itemsByDate)) {
 		result[dateStr] = getDateStats(items);
 	}
 	return result;
 }
 
-const getDateStats = (items) => {
+const getDateStats = (items: PuzzleStatisticData[]): HeatmapDateStats => {
 	const played = items.length;
 	const time = items.reduce((acc, val) => acc + val.timeElapsed, 0);
 	return { played, time };
 }
-
-const getPlayedAndTimeRanges = (dateStats, {
+export type HeatmapRange = { min: number, max: number };
+const getPlayedAndTimeRanges = (dateStats: HeatmapDateStats[], {
 	timeMinBounds = TIME_RANGE_MIN_BOUNDS,
 	playedMinBounds = PLAYED_RANGE_MIN_BOUNDS
-} = {}) => {
+} = {}): { timeRange: HeatmapRange, playedRange: HeatmapRange } => {
 	const timeRange = {
 		min: Infinity,
 		max: -Infinity
@@ -74,7 +83,7 @@ const getPlayedAndTimeRanges = (dateStats, {
 		min: Infinity,
 		max: -Infinity
 	};
-	for (const { played, time } of Object.values(dateStats)) {
+	for (const { played, time } of dateStats) {
 
 		timeRange.min = Math.min(timeRange.min, time);
 		timeRange.max = Math.max(timeRange.max, time);
@@ -91,8 +100,8 @@ const getPlayedAndTimeRanges = (dateStats, {
 	return { timeRange, playedRange };
 }
 
-const clamp = (min, value, max) => Math.min(Math.max(value, min), max);
-export const getValueWithinRange = (min, value, max) => {
+const clamp = (min: number, value: number, max: number) => Math.min(Math.max(value, min), max);
+export const getValueWithinRange = (min: number, value: number, max: number) => {
 	return clamp(
 		0,
 		(value - min) / (max - min),
