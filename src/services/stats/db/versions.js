@@ -1,4 +1,4 @@
-import { formatYYYYMMDD } from "@/utils/date.utils.js";
+import { formatYYYYMMDD } from "@/utils/date.utils";
 
 const dbVersions = [
 	{

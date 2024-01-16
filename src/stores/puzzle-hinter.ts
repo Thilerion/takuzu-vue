@@ -79,9 +79,8 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', {
 				this.showNewHint(cacheResult);
 				return;
 			}
-			// TODO: remove cast when puzzleStore is converted to TS
-			const board = puzzleStore.board as unknown as SimpleBoard;
-			const solution = puzzleStore.solution as unknown as SimpleBoard;
+			const board = puzzleStore.board!;
+			const solution = puzzleStore.solution!;
 			const currentHint = this.currentHint;
 			if (currentHint) {
 				const isValid = validateHint(currentHint);

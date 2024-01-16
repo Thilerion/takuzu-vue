@@ -24,7 +24,7 @@ const props = defineProps<{
 	locked: boolean,
 	initialValue: PuzzleValue,
 	value: PuzzleValue,
-	incorrect: boolean | undefined // TODO: not sure about this one
+	incorrect: boolean | undefined
 }>();
 const emit = defineEmits<{
 	toggle: [toggleTarget: Omit<VecValueChange, 'prevValue'>]

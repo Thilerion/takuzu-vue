@@ -35,7 +35,7 @@ export const useCellThemeProvider = ({
 		return true;
 	})
 
-	// TODO: test this computed, may not be correct
+	// TODO: test this computed, may not be correct. Specifically, test themeValue from props/options
 	const cellTheme = computed((): CellTheme => {
 		if (shouldUseLocalThemeValue.value) {
 			const val = unref(themeValue);

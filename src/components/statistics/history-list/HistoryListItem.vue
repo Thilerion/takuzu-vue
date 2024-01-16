@@ -53,8 +53,8 @@
 			<div class="ml-1" v-else-if="previousTimeRecord">Previous time record</div>
 		</div>
 		<HistoryListItemNote
-			:note="note"
-			:id="props.id"
+			:note="item.note"
+			:id="props.item.id"
 			@save-note="(note) => $emit('save-note', note)"
 		/>
 		<div class="h-2"></div>
@@ -68,12 +68,12 @@ import { useMainStore } from '@/stores/main';
 import { usePuzzleStore } from '@/stores/puzzle';
 import { formatDurationMMSSss } from '@/utils/duration.utils';
 import { useRouter } from 'vue-router';
-import type { PuzzleStatisticData } from '@/services/stats/db/models';
-import { toRefs } from 'vue';
-import { computed } from 'vue';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useStatisticsStore } from '@/stores/statistics.js';
 import { awaitTimeout } from '@/utils/delay.utils.js';
+import { toRefs } from '@vueuse/core';
+import type { PuzzleStatisticData } from '@/services/stats/db/models.js';
+import type { HistoryItemTimeRecordData } from '@/views/PuzzleHistoryView.vue';
 
 defineOptions({
 	inheritAttrs: false
@@ -92,13 +92,17 @@ const dateTimeOpts: Intl.DateTimeFormatOptions = {
 }
 const formatDate = (date: Date) => date.toLocaleString(undefined, dateTimeOpts);
 
-const props = defineProps<PuzzleStatisticData & { timeRecord: null | { current: boolean, first: boolean } }>();
+type HistoryListItemProps = {
+	item: PuzzleStatisticData;
+	timeRecord: null | { value: true, current: boolean, first: boolean }
+}
+const props = defineProps<HistoryListItemProps>();
 const emit = defineEmits<{
 	favorite: [val: boolean],
 	delete: [],
 	'save-note': [note: string | undefined]
 }>();
-const { difficulty, dimensions, flags, date, timeElapsed, width, height } = toRefs(props);
+const { difficulty, dimensions, flags, date, timeElapsed, width, height } = toRefs(props.item);
 
 const currentTimeRecord = computed(() => !!props.timeRecord?.current);
 const firstTimeRecord = computed(() => !!props.timeRecord?.first);
@@ -118,7 +122,7 @@ const toggleFavorite = () => {
 }
 const statsStore = useStatisticsStore();
 const editNote = () => {
-	statsStore.editingNoteId = props.id ?? null;
+	statsStore.editingNoteId = props.item.id ?? null;
 }
 
 const dateFormatted = computed(() => {
@@ -150,8 +154,8 @@ const goToPlayPuzzleRoute = () => router.push({ name: 'PlayPuzzle'});
 async function replayPuzzle() {
 	// TODO: SET REPLAY_MODE IN ROUTE, so game board header knows this, etc
 	const boardStrings = {
-		board: props.initialBoard,
-		solution: props.solution
+		board: props.item.initialBoard,
+		solution: props.item.solution
 	};
 	const puzzleStore = usePuzzleStore();
 	await puzzleStore.replayPuzzle({ puzzleConfig: puzzleConfig.value, boardStrings });

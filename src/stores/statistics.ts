@@ -2,7 +2,7 @@ import { getUniqueDatesFromItems } from "@/services/stats/dates";
 import * as StatsDB from "@/services/stats/db/index.js";
 import { PuzzleStatisticData } from "@/services/stats/db/models";
 import { getMostPlayedPuzzleConfigs, getMostPlayedPuzzleSizes } from "@/services/stats/most-played";
-import { formatBasicSortableDateKey } from "@/utils/date.utils.js";
+import { formatBasicSortableDateKey } from "@/utils/date.utils";
 import { isBefore, isToday, subDays } from "date-fns";
 import { defineStore } from "pinia";
 import { reactive } from "vue";

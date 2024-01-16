@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import { DIFFICULTY_LABELS } from '@/config';
-import { timeFormatter } from '@/utils/date.utils.js';
+import { timeFormatter } from '@/utils/date.utils';
 import { computed } from 'vue';
 import type { DifficultyKey, DimensionStr } from '@/lib/types';
 

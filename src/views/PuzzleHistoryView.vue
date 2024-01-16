@@ -37,7 +37,7 @@
 			<transition name="fade" mode="out-in">
 				<div class="list divide-y border-y relative" v-if="shownItems.length"
 					:key="JSON.stringify({ dataOptions })">
-					<HistoryListItem v-for="item in shownItems" :key="item.id" v-bind="item"
+					<HistoryListItem v-for="item in shownItems" :key="item.id" :item="item"
 						:time-record="isTimeRecord(item)" @favorite="(val) => markFavorite(item.id!, val)"
 						@save-note="(note) => saveNote(item.id!, note)"
 						@delete="() => deleteItem(item.id!)"></HistoryListItem>

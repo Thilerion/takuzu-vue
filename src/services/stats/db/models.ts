@@ -1,6 +1,6 @@
 import { dimensionsToBoardType, type BoardType } from "@/config";
 import type { BasicPuzzleConfig, BoardShape } from "@/lib/types.js";
-import { formatYYYYMMDD } from "@/utils/date.utils.js";
+import { formatYYYYMMDD } from "@/utils/date.utils";
 import type { DifficultyKey } from "@/lib/types.js";
 import type { SimpleBoard } from "@/lib/index.js";
 

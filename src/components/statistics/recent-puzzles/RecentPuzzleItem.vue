@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import type { DifficultyKey } from '@/lib/types.js';
-import { timeFormatter } from '@/utils/date.utils.js';
+import { timeFormatter } from '@/utils/date.utils';
 import { differenceInCalendarDays } from 'date-fns';
 import { computed, onMounted, ref } from 'vue';
 

@@ -340,7 +340,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 		async replayPuzzle({
 			puzzleConfig,
 			boardStrings
-		}: { puzzleConfig: BasicPuzzleConfig, boardStrings: { board: BoardExportString | string, solution: BoardExportString | string /*TODO: use correct BoardExportString only*/ } }) {
+		}: { puzzleConfig: BasicPuzzleConfig, boardStrings: { board: BoardExportString, solution: BoardExportString } }) {
 			const board = SimpleBoard.import(boardStrings.board);
 			const initialBoard = board.copy();
 			const solution = SimpleBoard.import(boardStrings.solution);

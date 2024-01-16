@@ -1,5 +1,5 @@
 import { getISODay } from 'date-fns';
-// TODO: types
+// TODO: types, currently uses "any"
 
 export { formatBasicSortableDateKey, formatYYYYMMDD, getDateRange, getDaysAgo, getNextDay, getWeekdayNamesShort, isNextDay, isSameDay } from './date.utilsts';
 

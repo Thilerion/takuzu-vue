@@ -35,14 +35,14 @@ function enter(el: HTMLElement) {
 	const rect = el.getBoundingClientRect();	
 	el.style.width = rect.width + 'px';
 	el.style.position = 'absolute';
-	el.style.visibility = 'hidden'; // TODO: typo fixed, was visbility, does it still work? 12-1-24
+	el.style.visibility = 'hidden';
 	el.style.height = 'auto';
 
 	const height = getComputedStyle(el).height;
 	baseHeight.value = parseFloat(height.slice(0, -2));
 	el.style.width = '';
 	el.style.position = '';
-	el.style.visibility = ''; // TODO: typo fixed, was visbility, does it still work? 12-1-24
+	el.style.visibility = '';
 	el.style.height = '0';
 
 	// force repaint

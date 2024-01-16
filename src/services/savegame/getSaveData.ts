@@ -2,6 +2,8 @@ import { usePuzzleStore } from "@/stores/puzzle";
 import { exportMoveList } from "@/stores/puzzle-history";
 import { getTotalTimeElapsed } from "@/stores/puzzle-timer";
 import type { HistorySaveData, PuzzleSaveData, SaveData, TimerSaveData } from "./types";
+import type { DifficultyKey } from "@/lib/types.js";
+import { isDifficultyKey } from "@/config.js";
 
 export const getSaveData = (): SaveData => {
 	return {
@@ -13,8 +15,9 @@ export const getSaveData = (): SaveData => {
 
 function getSaveDataFromPuzzleStore (): PuzzleSaveData {
 	const puzzleStore = usePuzzleStore();
-	// TODO: 05-07-2022 remove casts when PuzzleStore is typed
-	const { initialBoard, board, solution, width, height, difficulty } = (puzzleStore as unknown as PuzzleSaveData);
+	const { initialBoard, board, solution, width, height, difficulty } = puzzleStore;
+	if (initialBoard == null || board == null || solution == null || width == null || height == null || difficulty == null) throw new Error('PuzzleStore is missing required properties.');
+	if (!isDifficultyKey(difficulty)) throw new Error(`PuzzleStore has invalid difficulty: ${difficulty}`);
 	return { initialBoard, board, solution, width, height, difficulty };
 }
 function getSaveDataFromTimer(): TimerSaveData {
