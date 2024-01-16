@@ -1,9 +1,10 @@
 import { timeFormatter } from "@/utils/date.utils";
-import { RECAP_MSG_TYPES } from "./types";
+import { RECAP_MSG_TYPES, type RecapMessageType } from "./types";
 import { DIFFICULTY_LABELS } from "@/config";
+import type { DifficultyKey } from "@/lib/types.js";
 
 const msToMinSec = timeFormatter({ padMinutes: true });
-const msToSec = ms => {
+const msToSec = (ms: number) => {
 	if (ms <= 100) {
 		return Math.round(ms) / 1000;
 	} else if (ms < 1020) {
@@ -15,14 +16,14 @@ const msToSec = ms => {
 	}
 }
 const validDifficultyStarRatings = Object.keys(DIFFICULTY_LABELS);
-const getDifficultyLabelString = (difficultyStars) => {
+const getDifficultyLabelString = (difficultyStars: DifficultyKey) => {
 	if (!validDifficultyStarRatings.includes(String(difficultyStars))) {
 		console.warn(`Difficulty rating with "${difficultyStars} stars" has no associated label.`);
 		return `${difficultyStars}*`;
 	}
 	return `${DIFFICULTY_LABELS[difficultyStars]}`;
 }
-const formatPercentage = (value, { maxDigits = 0 } = {}) => {
+const formatPercentage = (value: number, { maxDigits = 0 } = {}) => {
 	const opts = {
 		style: 'percent',
 		minimumFractionDigits: 0,
@@ -30,7 +31,7 @@ const formatPercentage = (value, { maxDigits = 0 } = {}) => {
 	}
 	return new Intl.NumberFormat(undefined, opts).format(value);
 }
-const formatOrdinal = (value, locale = 'en-US') => {
+const formatOrdinal = (value: number, locale = 'en-US') => {
 	const pr = new Intl.PluralRules(locale, { type: 'ordinal' });
 
 	const suffixes = new Map([
@@ -45,7 +46,7 @@ const formatOrdinal = (value, locale = 'en-US') => {
 	return `${value}${suffix}`;
 }
 
-export const recapMessageMap = {
+export const recapMessageMap: Record<RecapMessageType, (ctx: any) => string> = { // TODO: any as callback, could be better
 	[RECAP_MSG_TYPES.NOT_ADDED_TO_DB_CHEATS]: () => "Puzzle was not saved in your history, because you used cheats.",
 	[RECAP_MSG_TYPES.FIRST_TOTAL]: () => "You've solved your first puzzle ever!",
 	

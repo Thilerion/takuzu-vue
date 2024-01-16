@@ -1,13 +1,24 @@
+import type { RecapStatsStoreState } from "@/stores/recap-stats.js";
 import { checkImprovementOverPreviousBest, checkIsTimeRecord, createResult, dimensionsString, falseResult, getPercentageFaster, getPercentageSlower, oneOfOrMultipleOf, trueResult } from "./helpers";
 
-export const notAddedToDatabaseCheatsUsed = data => {
+type RecapStatsGetters = {
+	isSavedToDb: boolean,
+	isFavorite: boolean,
+	differencePreviousAverage: number | null,
+	isFirstSolvedWithPuzzleConfig: boolean,
+	isFirstSolvedWithDifficulty: boolean,
+	isFirstSolvedWithSize: boolean,
+}
+export type RecapStatsMessageParam = RecapStatsStoreState & RecapStatsGetters;
+
+export const notAddedToDatabaseCheatsUsed = (data: Pick<RecapStatsMessageParam, 'isSavedToDb' | 'lastPuzzleEntry'>) => {
 	return createResult(
-		!data.isSavedToDb && data.lastPuzzleEntry.flags.cheatsUsed,
+		!data.isSavedToDb && data.lastPuzzleEntry != null && !!data.lastPuzzleEntry.flags.cheatsUsed,
 		{}
 	)
 }
 
-export const firstSolvedTotal = data => {
+export const firstSolvedTotal = (data: Pick<RecapStatsMessageParam, 'totalSolved'>) => {
 	const { totalSolved } = data;
 	return createResult(
 		totalSolved === 1,
@@ -15,8 +26,8 @@ export const firstSolvedTotal = data => {
 	)
 }
 
-export const hardestPuzzleSolved = (data) => {
-	if (!data.isFirstSolvedWithPuzzleConfig) {
+export const hardestPuzzleSolved = (data: RecapStatsMessageParam) => {
+	if (!data.isFirstSolvedWithPuzzleConfig || data.lastPuzzleEntry == null) {
 		return falseResult();
 	}
 	const configsPlayed = data.puzzleConfigsPlayed;
@@ -25,13 +36,16 @@ export const hardestPuzzleSolved = (data) => {
 	const lastDifficulty = data.lastPuzzleEntry.difficulty;
 
 	const hardestPlayed = configsPlayed.at(-1);
+
+	if (hardestPlayed == null) return falseResult();
 	const result = hardestPlayed.width === lastWidth && hardestPlayed.height === lastHeight && hardestPlayed.difficulty === lastDifficulty;
 	return createResult(result);
 }
 
 export const firstOfDifficulty = ({
 	itemsPlayedWithDifficulty, itemsPlayedWithSize, lastPuzzleEntry
-}) => {
+}: RecapStatsMessageParam) => {
+	if (lastPuzzleEntry == null) return falseResult();
 	return createResult(
 		itemsPlayedWithDifficulty === 1 && itemsPlayedWithSize > 1,
 		{ difficulty: lastPuzzleEntry.difficulty }
@@ -41,7 +55,8 @@ export const firstOfSize = ({
 	lastPuzzleEntry,
 	itemsPlayedWithSize,
 	itemsPlayedWithDifficulty
-}) => {
+}: RecapStatsMessageParam) => {
+	if (lastPuzzleEntry == null) return falseResult();
 	const result = itemsPlayedWithSize === 1 && itemsPlayedWithDifficulty > 1;
 	if (!result) return falseResult();
 	const { width, height, difficulty } = lastPuzzleEntry;
@@ -55,7 +70,8 @@ export const firstWithSizeDifficulty = ({
 	lastPuzzleEntry,
 	count,
 	previousCount
-}) => {
+}: RecapStatsMessageParam) => {
+	if (lastPuzzleEntry == null) return falseResult();
 	const result = count === 1 && previousCount === 0;
 	if (!result) return falseResult();
 	const { width, height, difficulty } = lastPuzzleEntry;
@@ -70,7 +86,8 @@ export const isTimeRecord = ({
 	currentTimeElapsed: time,
 	previousBest,
 	best
-}) => {
+}: RecapStatsMessageParam) => {
+	if (time == null || previousBest == null) return falseResult();
 	const isTimeRecord = checkIsTimeRecord({ time, best, previousBest });
 	if (!isTimeRecord) return falseResult();
 	const difference = checkImprovementOverPreviousBest({
@@ -86,7 +103,8 @@ export const isTimeRecord = ({
 export const isLargeTimeRecord = ({
 	count, currentTimeElapsed: time,
 	previousBest, best
-}) => {
+}: RecapStatsMessageParam) => {
+	if (time == null || previousBest == null) return falseResult();
 	if (count < 5 || !checkIsTimeRecord({
 		time, best, previousBest
 	})) return falseResult();
@@ -112,8 +130,8 @@ export const isReplayTimeRecord = ({
 	isReplay,
 	previousPlays,
 	currentTimeElapsed: time
-}) => {
-	if (!isReplay) return falseResult();
+}: RecapStatsMessageParam) => {
+	if (!isReplay || time == null) return falseResult();
 	const bestPreviousTime = Math.min(...previousPlays.map(val => val.timeElapsed));
 	const difference = bestPreviousTime - time;
 	if (difference <= 0) return falseResult();
@@ -130,14 +148,14 @@ export const isAlmostTimeRecordAbsolute = ({
 	count,
 	currentTimeElapsed: time,
 	best
-}) => {
-	if (count < 10) return falseResult();
+}: RecapStatsMessageParam) => {
+	if (count < 10 || time == null) return falseResult();
 	const difference = time - best;
 	const percentageSlower = getPercentageSlower(best, time);
 	return createResult(difference < 800 && percentageSlower < 0.17, { difference, differencePercentage: percentageSlower, time, best });
 }
-export const isAlmostTimeRecordPercentage = data => {
-	if (data.count < 10) return falseResult();
+export const isAlmostTimeRecordPercentage = (data: RecapStatsMessageParam) => {
+	if (data.count < 10 || data.currentTimeElapsed == null) return falseResult();
 	const { currentTimeElapsed: time, best } = data;
 	const difference = time - best;
 	if (difference > 6000) return falseResult();
@@ -149,8 +167,8 @@ export const isAlmostTimeRecordPercentage = data => {
 	});
 }
 
-export const isBetterThanAverage = data => {
-	if (data.count < 3) return falseResult();
+export const isBetterThanAverage = (data: RecapStatsMessageParam) => {
+	if (data.count < 3 || data.previousAverage == null || data.currentTimeElapsed == null) return falseResult();
 	const { currentTimeElapsed: time, previousAverage } = data;
 	const difference = previousAverage - time;
 	return createResult(
@@ -159,8 +177,8 @@ export const isBetterThanAverage = data => {
 	)
 }
 
-export const isMuchBetterThanAverageAbsolute = data => {
-	if (data.count < 3) return falseResult();
+export const isMuchBetterThanAverageAbsolute = (data: RecapStatsMessageParam) => {
+	if (data.count < 3 || data.previousAverage == null || data.currentTimeElapsed == null) return falseResult();
 	const { currentTimeElapsed: time, previousAverage } = data;
 	const difference = previousAverage - time;
 	return createResult(
@@ -169,8 +187,8 @@ export const isMuchBetterThanAverageAbsolute = data => {
 	);
 }
 
-export const isMuchBetterThanAveragePercentage = data => {
-	if (data.count < 5) return falseResult();
+export const isMuchBetterThanAveragePercentage = (data: RecapStatsMessageParam) => {
+	if (data.count < 5 || data.previousAverage == null || data.currentTimeElapsed == null) return falseResult();
 	const { previousAverage, currentTimeElapsed: time } = data;
 
 	const percentageFaster = getPercentageFaster(previousAverage, time);
@@ -183,7 +201,7 @@ export const isMuchBetterThanAveragePercentage = data => {
 export const replayPlaysTotal = ({
 	isReplay,
 	previousPlays,
-}) => {
+}: RecapStatsMessageParam) => {
 	if (!isReplay) return falseResult();
 	const bestPreviousTime = Math.min(
 		...previousPlays.map(item => item.timeElapsed)
@@ -196,7 +214,7 @@ export const replayPlaysTotal = ({
 }
 
 
-export const playsTotal = (data) => {
+export const playsTotal = (data: RecapStatsMessageParam) => {
 	const count = data.totalSolved;
 	const result = oneOfOrMultipleOf(count, {
 		oneOf: [25, 50, 75],
@@ -209,12 +227,12 @@ export const playsTotal = (data) => {
 }
 export const playsTotalWithConfig = ({
 	count, lastPuzzleEntry
-}) => {
+}: RecapStatsMessageParam) => {
 	const result = oneOfOrMultipleOf(count, {
 		oneOf: [10, 20, 30, 40, 50],
 		multipleOf: 25
 	});
-	if (!result) return falseResult();
+	if (!result || lastPuzzleEntry == null) return falseResult();
 	const { width, height, difficulty } = lastPuzzleEntry;
 	return trueResult({
 		count,
@@ -224,7 +242,7 @@ export const playsTotalWithConfig = ({
 	})
 }
 
-export const playsToday = (data) => {
+export const playsToday = (data: RecapStatsMessageParam) => {
 	const count = data.totalSolvedToday;
 	const result = oneOfOrMultipleOf(count, {
 		multipleOf: 5
@@ -236,11 +254,11 @@ export const playsToday = (data) => {
 }
 export const playsTodayWithConfig = ({
 	countToday: count, lastPuzzleEntry
-}) => {
+}: RecapStatsMessageParam) => {
 	const result = oneOfOrMultipleOf(count, {
 		multipleOf: 5
 	})
-	if (!result) return falseResult();
+	if (!result || lastPuzzleEntry == null) return falseResult();
 	const { width, height, difficulty } = lastPuzzleEntry;
 	return trueResult({
 		count,

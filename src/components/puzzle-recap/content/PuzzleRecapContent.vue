@@ -93,6 +93,7 @@ import { formatTimeMMSSWithRounding } from '@/utils/time.utils';
 import { toRefs } from '@vueuse/core';
 import type { DifficultyKey } from '@/lib/types.js';
 import type { NavigationFailure } from 'vue-router';
+import type { RecapMessageType } from '@/services/recap-message/types.js';
 const formatTimeMMSS = formatTimeMMSSWithRounding(200);
 
 defineEmits(['exit-to']);
@@ -132,11 +133,16 @@ const difficultyLabel = computed(() => {
 
 const recapStatsInitialized = computed(() => !!recapStatsStore.initialized);
 
-const recapMessageData = ref();
-const recordMessageData = ref();
+const recapMessageData = ref<{ result: true, type: RecapMessageType, context: Record<string, unknown> } | null>(null);
+const recordMessageData = ref<{ show: false } | { show: true, message: string } | null>(null);
 
 const hasRecordBanner = computed(() => recordMessageData.value?.show);
-const recordMessage = computed(() => hasRecordBanner.value && recordMessageData.value.message);
+const recordMessage = computed(() => {
+	if (!hasRecordBanner.value) return null;
+	// recordMessageData.value.show is true
+	const data = recordMessageData.value as { show: true, message: string };
+	return data.message;
+});
 const recapMessage = ref('');
 
 
@@ -144,7 +150,7 @@ watch(recapStatsInitialized, (value) => {
 	console.log('recap stats initialized: ' + value);
 	try {
 		const result = getRecapMessageType(recapStatsStore);
-		if (result) {
+		if (result && typeof result !== 'number' && 'result' in result && result.result) {
 			recapMessageData.value = result;
 			recordMessageData.value = getRecordMessageData(result, recapStatsStore);
 			const type = result.type;

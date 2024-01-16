@@ -1,6 +1,6 @@
 import { falseResult, pickRandomly } from "./helpers";
-import { firstOfDifficulty, firstOfSize, firstSolvedTotal, firstWithSizeDifficulty, hardestPuzzleSolved, isAlmostTimeRecordAbsolute, isAlmostTimeRecordPercentage, isBetterThanAverage, isLargeTimeRecord, isMuchBetterThanAverageAbsolute, isMuchBetterThanAveragePercentage, isReplayTimeRecord, isTimeRecord, notAddedToDatabaseCheatsUsed, playsToday, playsTodayWithConfig, playsTotal, playsTotalWithConfig, replayPlaysTotal } from "./recap-message-types"
-import { RECAP_MSG_TYPES } from "./types";
+import { firstOfDifficulty, firstOfSize, firstSolvedTotal, firstWithSizeDifficulty, hardestPuzzleSolved, isAlmostTimeRecordAbsolute, isAlmostTimeRecordPercentage, isBetterThanAverage, isLargeTimeRecord, isMuchBetterThanAverageAbsolute, isMuchBetterThanAveragePercentage, isReplayTimeRecord, isTimeRecord, notAddedToDatabaseCheatsUsed, playsToday, playsTodayWithConfig, playsTotal, playsTotalWithConfig, replayPlaysTotal, type RecapStatsMessageParam } from "./recap-message-types"
+import { RECAP_MSG_TYPES, type RecapMessageType } from "./types";
 
 const recapFnsOrdered = [
 	{ type: RECAP_MSG_TYPES.NOT_ADDED_TO_DB_CHEATS, fn: notAddedToDatabaseCheatsUsed },
@@ -37,7 +37,7 @@ const recapFnsOrdered = [
 	],
 ];
 
-export function getRecordMessageData(recapMessageData, recapStats) {
+export function getRecordMessageData(recapMessageData: { type: RecapMessageType }, recapStats: { count: number }): { show: false } | { show: true, message: string } {
 	const { type = RECAP_MSG_TYPES.DEFAULT } = recapMessageData;
 	if (type === RECAP_MSG_TYPES.FIRST_TOTAL) {
 		return {
@@ -45,8 +45,8 @@ export function getRecordMessageData(recapMessageData, recapStats) {
 			message: 'First puzzle solved!'
 		};
 	} else if ([
-		RECAP_MSG_TYPES.TIME_RECORD,
-		RECAP_MSG_TYPES.TIME_RECORD_LARGE
+		RECAP_MSG_TYPES.TIME_RECORD as RecapMessageType,
+		RECAP_MSG_TYPES.TIME_RECORD_LARGE as RecapMessageType
 	].includes(type)) {
 		return {
 			show: true,
@@ -63,31 +63,34 @@ export function getRecordMessageData(recapMessageData, recapStats) {
 	return { show: false };
 }
 
-export function getRecapMessageType(recapStats) {
+export function getRecapMessageType(recapStats: RecapStatsMessageParam): { result: true, type: RecapMessageType, context: Record<string, unknown> } {
 	for (const item of recapFnsOrdered) {
 		if (Array.isArray(item)) {
 			// do all of them, pick one randomly
-			const groupResults = item.map(i => {
+			const groupResults: { result: true, type: RecapMessageType, context: Record<string, unknown> }[] = [];
+			for (const i of item) {
 				const { type, fn } = i;
-				const { result, context } = fn(recapStats);
-				return { result, type, context };
-			}).filter(val => val != null && val.result);
+				const fnRes = fn(recapStats);
+				if (fnRes.result) {
+					groupResults.push({ result: true as const, type, context: fnRes.context! });
+				}
+			}
 			if (groupResults.length) {
-				return pickRandomly(groupResults);
+				return pickRandomly(groupResults) as typeof groupResults[number];
 			}
 		} else {
 			const { type, fn } = item;
-			const { result, context } = fn(recapStats);
-			if (result) {
+			const fnRes = fn(recapStats);
+			if (fnRes.result) {
 				return {
-					result, type, context
+					result: true as const, type, context: fnRes.context!
 				}
 			}
 		}
 	}
 	return {
-		type: RECAP_MSG_TYPES.DEFAULT,
-		result: true,
+		type: RECAP_MSG_TYPES.DEFAULT as RecapMessageType,
+		result: true as const,
 		context: {}
 	}
 }

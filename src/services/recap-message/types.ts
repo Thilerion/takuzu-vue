@@ -31,4 +31,6 @@ export const RECAP_MSG_TYPES = {
 	"PLAYS_CONFIG_TODAY": "PLAYS_CONFIG_TODAY",
 	
     "DEFAULT": "DEFAULT"
-}
+} as const;
+
+export type RecapMessageType = keyof typeof RECAP_MSG_TYPES;
