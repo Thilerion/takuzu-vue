@@ -26,6 +26,9 @@ import PlayPuzzle from '../views/PlayPuzzle.vue';
 import NotFound from '../views/NotFound.vue';
 import { useRouteDocumentTitle } from './useDocumentTitle';
 import { useMetaThemeColor } from './useMetaThemeColor';
+import { usePuzzleStore } from '@/stores/puzzle.js';
+import { useSavedPuzzle } from '@/services/savegame/useSavedGame.js';
+import type { RouteRecordRaw } from 'vue-router';
 
 const routes = [
 	{
@@ -125,6 +128,19 @@ const routes = [
 			title: 'Play Puzzle',
 			usePuzzleKey: true,
 		},
+		beforeEnter: (to, from, next) => {
+			const puzzleStore = usePuzzleStore();
+			if (!puzzleStore.initialized) {
+				const { hasCurrentSavedGame } = useSavedPuzzle();
+				if (hasCurrentSavedGame.value) {
+					puzzleStore.loadSavedPuzzle();
+					return next();
+				}
+				console.warn('No puzzle in store. Redirecting from PlayPuzzle to Create game route');
+				return next({ name: 'NewPuzzleFreePlay', replace: true });
+			}
+			next();
+		},
 		children: [
 			{
 				path: 'settings',
@@ -154,7 +170,7 @@ const routes = [
 		component: () => import('../views/BaseComponentShowcase.vue'),
 		name: 'BaseComponentShowcase'
 	}
-]
+] as const satisfies RouteRecordRaw[];
 
 const router = createRouter({
 	history: createWebHistory(),

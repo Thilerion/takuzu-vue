@@ -46,7 +46,7 @@
 	</div>
 </template>
 
-<script>
+<script setup lang="ts">
 import GameBoard from '@/components/gameboard/GameBoard.vue';
 import GameBoardHeader from '@/components/gameboard/GameBoardHeader.vue';
 import GameBoardWrapper from '@/components/gameboard/GameBoardWrapper.vue';
@@ -60,8 +60,6 @@ import CoordsRuler from '@/components/gameboard/ruler/CoordsRuler.vue';
 
 import { usePuzzleWakeLock } from '@/composables/use-wake-lock';
 
-import { COLUMN, ROW } from '@/lib/constants';
-
 import debounce from 'lodash.debounce';
 import { useSettingsStore } from '@/stores/settings/store';
 import { storeToRefs, mapState } from 'pinia';
@@ -72,235 +70,186 @@ import { useSavedPuzzle } from '@/services/savegame/useSavedGame';
 import { usePuzzleStore } from '@/stores/puzzle';
 import { useMainStore } from '@/stores/main';
 import { useRecapStatsStore } from '@/stores/recap-stats';
-import { rulerType } from '@/stores/settings/options';
+import { rulerType as RULER_TYPE } from '@/stores/settings/options';
 import { usePuzzleAssistanceStore } from '@/stores/assistance/store';
+import { ref } from 'vue';
+import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
+import { onMounted } from 'vue';
+import { onBeforeMount } from 'vue';
+import { onBeforeRouteLeave } from 'vue-router';
+import { onBeforeRouteUpdate } from 'vue-router';
+import { onBeforeUnmount } from 'vue';
+import type { DifficultyKey } from '@/lib/types.js';
 
-export default {
-	components: {
-		GameBoard,
-		GameBoardHeader,
-		GameBoardWrapper,
-		PuzzleControls,
-		PuzzleInfo,
-		OverlayPageTransition,
-		PuzzleRecap,
-		CoordsRuler,
-		CountsRuler,
-		HintWrapper
-	},
-	setup() {
-		const settingsStore = useSettingsStore();
+const settingsStore = useSettingsStore();
 
-		const { showLineInfo, enableWakeLock, showBoardCoordinates, showBoardLineCounts, showRulers, showTimer } = storeToRefs(settingsStore);
+const { showLineInfo, showBoardCoordinates, showBoardLineCounts, showRulers, showTimer } = storeToRefs(settingsStore);
 
-		useRecapStatsStore();
-		const puzzleHistoryStore = usePuzzleHistoryStore();
-		const puzzleHintsStore = usePuzzleHintsStore();
-		const getHint = () => puzzleHintsStore.getHint();
-		const puzzleAssistanceStore = usePuzzleAssistanceStore();
-		const {
-			userCheck: userCheckIncorrectCells,
-			autoFilledBoardCheck
-		} = puzzleAssistanceStore;
+useRecapStatsStore();
+const puzzleHistoryStore = usePuzzleHistoryStore();
+const { canUndo } = storeToRefs(puzzleHistoryStore);
+const puzzleHintsStore = usePuzzleHintsStore();
+const getHint = () => puzzleHintsStore.getHint();
+const puzzleAssistanceStore = usePuzzleAssistanceStore();
+const {
+	userCheck: userCheckErrors,
+	autoFilledBoardCheck: autoCheckErrors
+} = puzzleAssistanceStore;
 
-		const wakeLock = usePuzzleWakeLock();
-		const userIdle = wakeLock.idle;
+// TODO: enable/disable wakeLock (was removed sometime, possibly accidentally)
+const wakeLock = usePuzzleWakeLock();
+const userIdle = wakeLock.idle;
 
-		const { hasCurrentSavedGame, savePuzzleSaveData } = useSavedPuzzle();
+const { hasCurrentSavedGame, savePuzzleSaveData } = useSavedPuzzle();
 
-		const puzzleStore = usePuzzleStore();
+const puzzleStore = usePuzzleStore();
+const {
+	board, initialized, started, paused, finished,
+	rowCounts, colCounts: columnCounts,
+	finishedAndSolved, finishedWithMistakes,
+} = storeToRefs(puzzleStore);
+const rows = computed(() => puzzleStore.height ?? undefined);
+const columns = computed(() => puzzleStore.width ?? undefined);
+const difficulty = computed(() => {
+	return puzzleStore.difficulty as DifficultyKey;
+})
 
-		const pausedByUser = readonly(toRef(puzzleStore, 'pausedByUser'));
-		const pause = () => {
-			puzzleStore.setPaused(true, { userAction: true });
+const pausedByUser = readonly(toRef(puzzleStore, 'pausedByUser'));
+const pause = () => {
+	puzzleStore.setPaused(true, { userAction: true });
+}
+const resume = () => {
+	puzzleStore.setPaused(false, { userAction: true });
+}
+
+watch(userIdle, (isIdle) => {
+	if (isIdle && !puzzleStore.paused) {
+		pause();
+	}
+})
+
+const mainStore = useMainStore();
+const windowHidden = toRef(mainStore.context, 'windowHidden');
+
+const finishedTimeout = ref<null | ReturnType<typeof setInterval>>(null);
+const mistakeCheckTimeout = ref<null | ReturnType<typeof setInterval>>(null);
+const autoSaveInterval = ref<null | ReturnType<typeof setInterval>>(null);
+
+const dropdownOpen = ref(false);
+const settingsOpen = ref(false);
+
+const rulerType = computed(() => {
+	if (showBoardCoordinates.value) return 'coords';
+	else if (showLineInfo.value === RULER_TYPE.COUNT_REMAINING) return 'count-remaining';
+	else if (showLineInfo.value === RULER_TYPE.COUNT_CURRENT) return 'count-current';
+	return null;
+})
+const rulerSize = computed(() => {
+	if (showBoardCoordinates.value) {
+		return '16px';
+	} else if (showBoardLineCounts.value) {
+		return 'cellSize';
+	} else return '0px';
+})
+
+const progress = computed(() => {
+	const base = puzzleStore.progress;
+	const rounded = Math.ceil(base * 100);
+	// prevent progress from being 100 when not every cell is filled
+	if (rounded == 100 && base < 1) return 99;
+	return rounded;
+})
+const boardGrid = computed(() => board.value?.grid);
+const puzzleShouldBePaused = computed(() => {
+	return pausedByUser.value || settingsOpen.value || dropdownOpen.value || windowHidden.value;
+})
+
+const startGame = () => {
+	if (!initialized.value) {
+		console.warn('Cannot start puzzle that is not initialized');
+		return;
+	}
+	if (started.value) {
+		console.warn('Cannot start puzzle that is already started!');
+		return;
+	}
+	puzzleStore.startPuzzle();
+}
+const canSaveGame = () => {
+	return initialized.value && started.value && !finished.value && boardGrid.value != null;
+}
+const saveGame = () => {
+	if (canSaveGame()) {
+		savePuzzleSaveData();
+	}
+}
+const route = useRoute();
+const router = useRouter();
+const exitGame = () => {
+	if (canSaveGame()) {
+		saveGame(); // TODO: unnecessary canSaveGame check
+	}
+	const metaFrom = route.meta.prev;
+	if (metaFrom == null) {
+		router.replace({ name: 'NewPuzzleFreePlay' });
+	} else {
+		router.go(-1);
+	}
+}
+const { undoLastMove: undo, restartPuzzle: restart } = puzzleStore;
+const dropdownToggled = (val: boolean) => dropdownOpen.value = val;
+const finishGame = async () => puzzleStore.finishPuzzle();
+
+const initAutoSave = () => {
+	if (autoSaveInterval.value != null) {
+		console.error('Trying to init autosave, but it is already running. Resetting.');
+		clearInterval(autoSaveInterval.value);
+	}
+	autoSaveInterval.value = globalThis.setInterval(() => {
+		saveGame();
+	}, 1500);
+}
+const stopAutoSave = () => {
+	clearInterval(autoSaveInterval.value!);
+	autoSaveInterval.value = null;
+}
+
+const checkErrors = () => {
+	userCheckErrors();
+}
+
+const debouncedPause = debounce((value: boolean) => {
+	puzzleStore.pauseGame(value);
+}, 150);
+
+onMounted(() => {
+	startGame();
+	initAutoSave();
+})
+onBeforeMount(() => {
+	if (!initialized.value) {
+		if (hasCurrentSavedGame.value) {
+			puzzleStore.loadSavedPuzzle();
+			return;
 		}
-		const resume = () => {
-			puzzleStore.setPaused(false, { userAction: true });
-		}
+		console.warn('No puzzle in store. Redirecting from PlayPuzzle to Create game route');
+		router.replace({ name: 'NewPuzzleFreePlay' });
+	}
+})
+onBeforeUnmount(() => {
+	if (canSaveGame()) {
+		saveGame(); // TODO: unnecessary canSaveGame check
+	}
+	stopAutoSave();
 
-		watch(userIdle, (isIdle) => {
-			if (isIdle && !puzzleStore.paused) {
-				pause();
-			}
-		})
+	clearTimeout(finishedTimeout.value!);
+	clearTimeout(mistakeCheckTimeout.value!);
+})
 
-		const mainStore = useMainStore();
-		const windowHidden = toRef(mainStore.context, 'windowHidden');
-
-
-		return {
-			windowHidden,
-			showLineInfo, showBoardCoordinates, showBoardLineCounts, showRulers,
-			isWakeLockEnabled: computed(() => wakeLock.isActive.value),
-			shouldEnableWakeLock: enableWakeLock, showTimer,
-			puzzleHistoryStore, getHint,
-			userCheckErrors: userCheckIncorrectCells,
-			autoCheckErrors: autoFilledBoardCheck,
-			wakeLock,
-			hasCurrentSavedGame, savePuzzleSaveData,
-			puzzleStore, pause, resume, pausedByUser, userIdle
-		};
-	},
-	data() {
-		return {
-			finishedTimeout: null,
-			mistakeCheckTimeout: null,
-			autoSaveInterval: null,
-
-			rowKey: ROW,
-			columnKey: COLUMN,
-
-			dropdownOpen: false,
-			settingsOpen: false,
-		}
-	},
-	computed: {
-		...mapState(usePuzzleStore, [
-			'board', 'initialBoard',
-			'difficulty',
-			'initialized', 'started', 'paused', 'finished',
-		]),
-		...mapState(usePuzzleStore, {
-			rows: 'height',
-			columns: 'width',
-			rowCounts: 'rowCounts',
-			columnCounts: 'colCounts',
-		}),
-		displayCounts() {
-			if (this.rulerType === 'count-remaining') return this.remainingCounts;
-			if (this.rulerType === 'count-current') return this.currentCounts;
-			return {};
-		},
-		rulerSize() {
-			if (this.showBoardCoordinates) {
-				return '16px';
-			} else if (this.showBoardLineCounts) {
-				return 'cellSize';
-			} else return '0px';
-		},
-		rulerType() {
-			if (this.showBoardCoordinates) return 'coords';
-			if (this.showLineInfo === rulerType.COUNT_REMAINING) return 'count-remaining';
-			if (this.showLineInfo === rulerType.COUNT_CURRENT) return 'count-current';
-			return null;
-		},
-		progress() {
-			const base = this.puzzleStore.progress;
-			const rounded = Math.ceil(base * 100);
-			// prevent progress from being 100 when not every cell is filled
-			if (rounded == 100 && base < 1) return 99;
-			return rounded;
-		},
-		canUndo() {
-			return this.puzzleHistoryStore.canUndo;
-		},
-		finishedAndSolved() {
-			return this.puzzleStore.finishedAndSolved;
-		},
-		finishedWithMistakes() {
-			return this.puzzleStore.finishedWithMistakes;
-		},
-		boardGrid() {
-			return this.board?.grid;
-		},
-		puzzleShouldBePaused() {
-			return this.pausedByUser || this.settingsOpen || this.dropdownOpen || this.windowHidden;
-		}
-	},
-	methods: {
-		startGame() {
-			if (!this.initialized) {
-				console.warn('Cannot start puzzle that is not initialized');
-				return;
-			}
-			if (this.started) {
-				console.warn('Cannot start puzzle that is already started!');
-				return;
-			}
-			this.puzzleStore.startPuzzle();
-		},
-		exitGame() {
-			if (this.canSaveGame()) {
-				this.saveGame();
-			}
-			const metaFrom = this.$route.meta.prev;
-			if (metaFrom == null) {
-				this.$router.replace({ name: 'NewPuzzleFreePlay' });
-			} else {
-				this.$router.go(-1);
-			}
-		},
-		settingsToggled(value) {
-			this.settingsOpen = value;
-		},
-		dropdownToggled(value) {
-			this.dropdownOpen = value;
-		},
-		async finishGame() {
-			// window.alert('Good job! You finished this puzzle.');
-			return this.puzzleStore.finishPuzzle();
-		},
-		undo() {
-			this.puzzleStore.undoLastMove();
-		},
-		restart() {
-			this.puzzleStore.restartPuzzle();
-		},
-		canSaveGame() {
-			return this.initialized && this.started && !this.finished && !!this.boardGrid;
-		},
-		saveGame() {
-			if (this.canSaveGame()) {
-				this.savePuzzleSaveData();
-			}
-		},
-		initAutoSave() {
-			// console.log('init auto save');
-			this.autoSaveInterval = window.setInterval(() => {
-				this.saveGame();
-			}, 1500);
-		},
-		stopAutoSave() {
-			// console.log('stop auto save');
-			clearInterval(this.autoSaveInterval);
-			this.autoSaveInterval = null;
-		},
-		checkErrors() {
-			const boardStr = this.puzzleStore.boardStr;
-			this.userCheckErrors(boardStr);
-		},
-		checkEnableWakeLock() {
-			if (this.wakeLock.isActive.value) {
-				return;
-			}
-			const setting = this.shouldEnableWakeLock;
-
-			if (setting) {
-				this.wakeLock.request();
-			}
-		}
-	},
-	created() {
-		this.debouncedPause = debounce((value) => {
-			this.puzzleStore.pauseGame(value);
-		}, 150);
-	},
-	mounted() {
-		this.startGame();
-		this.initAutoSave();
-	},
-	beforeMount() {
-		const puzzleStore = usePuzzleStore();
-		if (!puzzleStore.initialized) {
-			if (this.hasCurrentSavedGame.value) {
-				this.puzzleStore.loadSavedPuzzle();
-				return;
-			}
-			console.warn('No puzzle in store. Redirecting from PlayPuzzle to Create game route');
-			this.$router.replace({ name: 'NewPuzzleFreePlay' });
-		}
-	},
-	beforeRouteEnter(to, from, next) {
+// TODO: ON BEFORE ROUTE ENTER
+/*
+beforeRouteEnter(to, from, next) {
 		const puzzleStore = usePuzzleStore();
 		if (!puzzleStore.initialized) {
 			const { hasCurrentSavedGame } = useSavedPuzzle();
@@ -313,74 +262,67 @@ export default {
 		}
 		next();
 	},
-	beforeRouteLeave(to, from, next) {
-		const toName = to.name;
-		const prevName = from.meta?.prev?.name;
-		this.puzzleStore.reset();
-		if (toName === prevName && toName === 'Home') {
-			return next({ name: 'NewPuzzleFreePlay' });
-		}
-		next();
-	},
-	beforeRouteUpdate(to, from, next) {
-		if (to.name.includes('settings')) this.settingsOpen = true;
-		else this.settingsOpen = false;
-		next();
-	},
-	beforeUnmount() {
-		if (this.canSaveGame()) {
-			this.saveGame();
-		}
-		this.stopAutoSave();
+*/
 
-		clearTimeout(this.finishedTimeout);
-		clearTimeout(this.mistakeCheckTimeout);
-	},
-	watch: {
-		finishedAndSolved: {
-			handler(newValue, prevValue) {
-				if (newValue) {
-					this.finishedTimeout = window.setTimeout(() => {
-						this.finishGame();
-						this.finishedTimeout = null;
-					}, 600);
-				} else if (prevValue && !newValue) {
-					// no longer correct
-					clearTimeout(this.finishedTimeout);
-					this.finishedTimeout = null;
-				}
-			}
-		},
-		finishedWithMistakes: {
-			handler(newValue) {
-				if (newValue) {
-					this.mistakeCheckTimeout = window.setTimeout(() => {
-						this.mistakeCheckTimeout = null;
-						if (!this.finishedWithMistakes) {
-							return;
-						}
-						this.autoCheckErrors();
-					}, 2000);
-				} else {
-					clearTimeout(this.mistakeCheckTimeout);
-					this.mistakeCheckTimeout = null;
-				}
-			}
-		},
-		puzzleShouldBePaused(newValue, prevValue) {
-			window.setTimeout(() => {
-				if (newValue && !prevValue) {
-					// immediately pause
-					this.debouncedPause(true);
-					this.debouncedPause.flush();
-				} else if (!newValue && prevValue) {
-					// but have a small delay when resuming
-					this.debouncedPause(false);
-				}
-			}, 1000 / 30);
-		},
+onBeforeRouteLeave((to, from, next) => {
+	puzzleStore.reset();
+
+	const toName = to.name;
+	const prevName = from.meta?.prev?.name;
+	if (toName === prevName && toName === 'Home') {
+		return next({ name: 'NewPuzzleFreePlay' }); // TODO: comment, why?
 	}
-};
+	next();
+})
+
+onBeforeRouteUpdate((to, from, next) => {
+	const toName = to?.name;
+	if (typeof toName === 'string' && toName.toLowerCase().includes('settings')) {
+		settingsOpen.value = true;
+	} else settingsOpen.value = false;
+	next();
+})
+
+watch(finishedAndSolved, (newValue, prevValue) => {
+	if (newValue) {
+		finishedTimeout.value = globalThis.setTimeout(() => {
+			finishGame();
+			finishedTimeout.value = null;
+		}, 600);
+	} else if (prevValue && !newValue) {
+		// no longer correctly solved
+		clearTimeout(finishedTimeout.value!);
+		finishedTimeout.value = null;
+	}
+})
+
+watch(finishedWithMistakes, (newValue) => {
+	if (newValue) {
+		mistakeCheckTimeout.value = globalThis.setTimeout(() => {
+			mistakeCheckTimeout.value = null;
+			if (!finishedWithMistakes.value) {
+				return;
+			}
+			autoCheckErrors();
+		}, 2000);
+	} else {
+		clearTimeout(mistakeCheckTimeout.value!);
+		mistakeCheckTimeout.value = null;
+	}
+})
+
+watch(puzzleShouldBePaused, (newValue, prevValue) => {
+	globalThis.setTimeout(() => {
+		if (newValue && !prevValue) {
+			// immediately pause
+			debouncedPause(true);
+			debouncedPause.flush();
+		} else if (!newValue && prevValue) {
+			// but have a small delay when resuming
+			debouncedPause(false);
+		}
+	}, 1000 / 30);
+})
 </script>
 
 <style scoped>

@@ -120,6 +120,7 @@ declare module 'vue' {
     OverlayPageTransition: typeof import('./src/views/transitions/OverlayPageTransition.vue')['default']
     PageHeader: typeof import('./src/components/base/layout/PageHeader.vue')['default']
     PlayPuzzle: typeof import('./src/views/PlayPuzzle.vue')['default']
+    PlayPuzzle2: typeof import('./src/views/PlayPuzzle2.vue')['default']
     PuzzleAnalysis: typeof import('./src/views/analysis/PuzzleAnalysis.vue')['default']
     PuzzleCheckIndicator: typeof import('./src/components/gameboard/PuzzleCheckIndicator.vue')['default']
     PuzzleControls: typeof import('./src/components/gameboard/PuzzleControls.vue')['default']
