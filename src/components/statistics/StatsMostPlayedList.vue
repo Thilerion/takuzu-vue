@@ -50,7 +50,7 @@
 				]"
 				:rows="tableRows"
 				:current-sort="{ key: sortProp, dir: sortDir }"
-				@sort-header="setSortProp"
+				@sort-header="(key: string) => setSortProp(key as keyof TableGroupData | 'size')"
 			/>
 		</div>
 	</div>
@@ -96,14 +96,16 @@ const groupData = computed(() => shownListData.value.groupedData);
 
 const asPercentage = (value: number) => value.toLocaleString(undefined,{style: 'percent', minimumFractionDigits:1, maximumFractionDigits: 1});
 
-type BaseTableDataAcc = Record<string, {
+type BaseTableData = {
 	count: number,
 	time: number,
 	favScore: number
-}>
+}
+type BaseTableDataAcc = Record<string, BaseTableData>;
+
 const baseTableData = computed(() => {
 	return groupData.value.reduce((acc, g) => {
-		if ('difficulty' in g.groupData && Number(g.groupData.difficulty) > 3) return acc; // TODO: uncorrect type, does not know difficulty can be found in groupData
+		if ('difficulty' in g.groupData && Number(g.groupData.difficulty) > 3) return acc; // TODO: incorrect type, does not know difficulty can be found in groupData
 		if (g.key.startsWith('10x16')) return acc;
 		const key = g.key;
 		acc[key] = {
@@ -114,7 +116,7 @@ const baseTableData = computed(() => {
 		return acc;
 	}, {} as BaseTableDataAcc);
 })
-const totals = computed(() => {
+const totals = computed((): BaseTableData => {
 	let count = 0;
 	let time = 0;
 	let favScore = 0;
@@ -125,9 +127,9 @@ const totals = computed(() => {
 	}
 	return { count, time, favScore };
 })
-const sortProp = ref('pCount');
+const sortProp = ref<keyof TableGroupData | 'size'>('pCount');
 const sortDir = ref('desc');
-const setSortProp = (value: string) => {
+const setSortProp = (value: keyof TableGroupData | 'size') => {
 	if (sortProp.value === value) {
 		sortDir.value = sortDir.value === 'desc' ? 'asc' : 'desc';
 	} else {
@@ -135,8 +137,36 @@ const setSortProp = (value: string) => {
 		sortDir.value = 'desc';
 	}
 }
+
+type TableGroupData = { numCells: number;
+	count: number;
+	time: number;
+	pCount: number;
+	pTime: number;
+	favScore: number;
+	pFavScore: number;
+	cells: number;
+	timePer100Cells: number;
+};
+const baseTableDataToTableData = (totals: BaseTableData, groupKey: string, group: BaseTableData): TableGroupData => {
+	const { count: totalCount, time: totalTime, favScore: totalFavScore } = totals;
+	const count = group.count;
+	const time = group.time;
+	const favScore = group.favScore;
+	const pCount = group.count / totalCount;
+	const pTime = group.time / totalTime;
+	const pFavScore = favScore / totalFavScore;
+	
+	const gData = groupData.value.find(val => val.key === groupKey)!.groupData;
+	const numCells = gData.numCells;
+	const cells = count * numCells;
+
+	const timePer100Cells = Math.ceil(time / cells * 100);
+	return { numCells, count, time, pCount, pTime, favScore, pFavScore, cells, timePer100Cells };
+}
+
 const tablePercentages = computed(() => {
-	const result: Record<string, Record<string, number | string>> = {}; // TODO: can be typed better
+	const result: Record<string, TableGroupData> = {};
 	const { count: totalCount, time: totalTime, favScore: totalFavScore } = totals.value;
 	for (const [key, group] of Object.entries(baseTableData.value)) {
 		const count = group.count;
@@ -154,10 +184,9 @@ const tablePercentages = computed(() => {
 
 		result[key] = { numCells, count, time, pCount, pTime, favScore, pFavScore, cells, timePer100Cells };
 	}
-	let sortBy = sortProp.value;
-	if (sortBy === 'size') sortBy = 'numCells';
-	// @ts-ignore
-	return Object.entries(result).sort((a, z) => sortDir.value === 'asc' ? (a[1][sortBy] - z[1][sortBy]) : z[1][sortBy] - a[1][sortBy]);
+	const sortBy = sortProp.value === 'size' ? 'numCells' : sortProp.value as keyof TableGroupData;
+	const res: [groupKey: string, data: TableGroupData][] = Object.entries(result).sort((a, z) => sortDir.value === 'asc' ? (a[1][sortBy] - z[1][sortBy]) : z[1][sortBy] - a[1][sortBy]);
+	return res;
 })
 
 const tableRows = computed(() => {
