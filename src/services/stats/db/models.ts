@@ -1,5 +1,5 @@
 import { dimensionsToBoardType, type BoardType } from "@/config";
-import type { BasicPuzzleConfig, BoardShape } from "@/lib/types.js";
+import type { BasicPuzzleConfig } from "@/lib/types.js";
 import { formatYYYYMMDD } from "@/utils/date.utils";
 import type { DifficultyKey } from "@/lib/types.js";
 import type { SimpleBoard } from "@/lib/index.js";
@@ -19,7 +19,7 @@ export type DbHistoryEntryFlags = {
 	favorite?: boolean | number,
 };
 
-export type FinishedPuzzleState = Omit<DbHistoryEntry, 'initialBoard' | 'solution' | 'timestamp' | 'localDateStr' | 'flags'> & {
+export type FinishedPuzzleState = Omit<DbHistoryEntryData, 'initialBoard' | 'solution' | 'timestamp' | 'localDateStr' | 'flags' | 'id'> & {
 	initialBoard: SimpleBoard,
 	solution: SimpleBoard,
 	assistance: {
@@ -31,7 +31,7 @@ export type FinishedPuzzleState = Omit<DbHistoryEntry, 'initialBoard' | 'solutio
 	flags?: DbHistoryEntryFlags,
 }
 
-export class DbHistoryEntry {
+export class DbHistoryEntry implements DbHistoryEntryData {
 	width: number;
 	height: number;
 	difficulty: DifficultyKey;

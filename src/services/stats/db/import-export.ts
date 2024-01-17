@@ -1,11 +1,12 @@
 import { readJsonFile, writeObjToBlob } from "@/utils/file.utils";
 import Dexie from "dexie";
-import { exportDB, importInto, peakImportFile } from "dexie-export-import";
-import { initVersions } from "./versions.js";
+import { exportDB, importInto, peakImportFile, type ImportOptions, type ExportOptions } from "dexie-export-import";
+import { initVersions } from "./versions";
+import type { StatsDB } from "./initDb.js";
 
 const TEMP_STATS_DB_NAME = 'tempStatsDb';
 
-export async function importPeek(blob) {
+export async function importPeek(blob: Blob) {
 	const importMeta = await peakImportFile(blob);
 	const { data } = importMeta;
 	const { databaseName, databaseVersion, tables } = data;
@@ -20,21 +21,24 @@ export async function importPeek(blob) {
 	return { databaseName, databaseVersion, tables, _importMeta: importMeta };
 }
 
-export function exportPuzzleHistoryDb(db, options = {}) {
+type ExportPuzzleHistoryDbOpts = Partial<Omit<ExportOptions, 'filter'>>;
+type ImportPuzzleHistoryDbOpts = Partial<Omit<ImportOptions, 'chunkSizeBytes' | 'filter'>>;
+
+export function exportPuzzleHistoryDb(db: StatsDB, options: ExportPuzzleHistoryDbOpts = {}) {
 	const mergedOpts = {
 		prettyJson: true,
-		filter: table => table === 'puzzleHistory',
+		filter: (table: string) => table === 'puzzleHistory',
 		...options,
 	}
 	return exportDB(db, mergedOpts);
 }
 
-export async function cleanImportPuzzleHistoryDb(db, blob, options = {}) {
+export async function cleanImportPuzzleHistoryDb(db: StatsDB, blob: Blob, options: ImportPuzzleHistoryDbOpts = {}) {
 	console.warn('WARNING: this function clears the database before importing.');
 
 	const mergedOpts = {
 		acceptVersionDiff: false,
-		filter: table => table === 'puzzleHistory',
+		filter: (table: string) => table === 'puzzleHistory',
 		clearTablesBeforeImport: true,
 		overwriteValues: false,
 		...options,
@@ -45,8 +49,8 @@ export async function cleanImportPuzzleHistoryDb(db, blob, options = {}) {
 
 	try {
 		await db.puzzleHistory.clear();
-		const importResult = await importInto(db, blob, mergedOpts);
-		return importResult ?? true;
+		await importInto(db, blob, mergedOpts);
+		return true;
 	} catch (e) {
 		console.warn('Error during clean import of puzzle history db.');
 		console.error(e);
@@ -54,8 +58,8 @@ export async function cleanImportPuzzleHistoryDb(db, blob, options = {}) {
 	}
 }
 
-async function deleteDatabaseContents(dbName = TEMP_STATS_DB_NAME) {
-	let db = new Dexie(dbName);
+async function deleteDatabaseContents(dbName: string = TEMP_STATS_DB_NAME) {
+	let db: Dexie | undefined = new Dexie(dbName);
 	try {
 		await db.delete();
 		console.log('succesfully deleted database');
@@ -69,8 +73,8 @@ async function deleteDatabaseContents(dbName = TEMP_STATS_DB_NAME) {
 	}
 }
 
-export async function importPuzzleHistoryItemsWithVersionUpgrade(db, blob) {
-	let tempStatsDb;
+export async function importPuzzleHistoryItemsWithVersionUpgrade(db: StatsDB, blob: File) {
+	let tempStatsDb: StatsDB | undefined = undefined;
 
 	try {
 		// just to make sure it doesn't exist
@@ -78,13 +82,13 @@ export async function importPuzzleHistoryItemsWithVersionUpgrade(db, blob) {
 
 		const obj = await readJsonFile(blob);
 		// set database name so it doesn't get imported into the original database
-		obj.data.databaseName = TEMP_STATS_DB_NAME;
+		(obj as any).data.databaseName = TEMP_STATS_DB_NAME;
 
-		const modifiedDbBlob = writeObjToBlob(obj);
+		const modifiedDbBlob = writeObjToBlob(obj as any)!;
 
 		tempStatsDb = await Dexie.import(modifiedDbBlob, {
 			chunkSizeBytes: 1024 * 1024 * 128
-		});
+		}) as StatsDB;
 		await tempStatsDb.close();
 
 		initVersions(tempStatsDb);
@@ -112,7 +116,7 @@ export async function importPuzzleHistoryItemsWithVersionUpgrade(db, blob) {
 	}
 }
 
-async function addImportedItemsToDatabase(db, allItems) {
+async function addImportedItemsToDatabase(db: StatsDB, allItems: any[]) {
 	return db.transaction('rw', db.puzzleHistory, async () => {
 		const currentKeys = new Set(
 			await db.puzzleHistory.toCollection().primaryKeys()
@@ -146,11 +150,11 @@ async function addImportedItemsToDatabase(db, allItems) {
 		// first add items that have id
 		const uniqueAddedIds = await db.puzzleHistory.bulkAdd(itemsToAdd, undefined, {
 			allKeys: true
-		});
+		}) as unknown as number[];
 		// only now add items without id. This is to prevent id-less items from getting an id assigned, that is already present later in the list
 		const newAddedIds = await db.puzzleHistory.bulkAdd(itemsToAddWithoutId, undefined, {
 			allKeys: true
-		});
+		}) as unknown as number[];
 		
 		console.log('done adding items');
 

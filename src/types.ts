@@ -14,3 +14,9 @@ export type PartialExcept<T, K extends keyof T> = Partial<Omit<T, K>> & Pick<T, 
 export function assertUnreachable(value: never): asserts value is never {
 	throw new Error(`Unexpected value: ${value}`);
 }
+
+type NonFunctionKeyNames<T> = Exclude<{
+	[key in keyof T] : T[key] extends Function? never : key;
+  }[keyof T], undefined>;
+   
+export type RemoveFunctions<T> = Pick<T, NonFunctionKeyNames<T>>;

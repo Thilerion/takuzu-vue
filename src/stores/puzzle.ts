@@ -30,7 +30,7 @@ export const PUZZLE_STATUS = {
 export type PuzzleStoreState = {
 	width: number | null,
 	height: number | null,
-	difficulty: number | null,
+	difficulty: number | null | DifficultyKey, // TODO: use DifficultyKey instead of number
 
 	initialBoard: SimpleBoard | null,
 	board: SimpleBoard | null,

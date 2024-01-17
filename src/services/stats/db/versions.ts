@@ -1,4 +1,6 @@
 import { formatYYYYMMDD } from "@/utils/date.utils";
+import type { StatsDB } from "./initDb.js";
+import type { Transaction } from "dexie";
 
 const dbVersions = [
 	{
@@ -13,8 +15,8 @@ const dbVersions = [
 		stores: {
 			puzzleHistory: "++id,[width+height],difficulty,timestamp,localDateStr,timeElapsed,[width+height+difficulty],flags.favorite"
 		},
-		upgrade: tx => {
-			return tx.puzzleHistory.toCollection().modify(upgradeItemFrom2to3);
+		upgrade: (tx: Transaction) => {
+			return (tx as unknown as StatsDB).puzzleHistory.toCollection().modify(upgradeItemFrom2to3);
 		}
 	},
 	{
@@ -26,7 +28,7 @@ const dbVersions = [
 	}
 ].sort((a, b) => a.version - b.version);
 
-function upgradeItemFrom2to3(item) {
+function upgradeItemFrom2to3(item: any) {
 	const { date } = item;
 	delete item.date;
 
@@ -40,7 +42,7 @@ function upgradeItemFrom2to3(item) {
 	item.flags = { ...flags };
 }
 
-export const initVersions = (db, upToVersion = Infinity) => {
+export const initVersions = (db: StatsDB, upToVersion = Infinity) => {
 	for (const versionObj of dbVersions) {
 		const { version, stores, upgrade } = versionObj;
 		if (version > upToVersion) break;
