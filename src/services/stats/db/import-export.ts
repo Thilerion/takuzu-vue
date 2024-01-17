@@ -73,7 +73,7 @@ async function deleteDatabaseContents(dbName: string = TEMP_STATS_DB_NAME) {
 	}
 }
 
-export async function importPuzzleHistoryItemsWithVersionUpgrade(db: StatsDB, blob: File) {
+export async function importPuzzleHistoryItemsWithVersionUpgrade(db: StatsDB, blob: Blob) {
 	let tempStatsDb: StatsDB | undefined = undefined;
 
 	try {
