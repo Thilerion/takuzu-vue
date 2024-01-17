@@ -31,7 +31,7 @@ export class SimpleBoard {
 		const grid: PuzzleGrid = array2d(width, height, EMPTY);
 		return new SimpleBoard(grid);
 	}
-	static fromString(exportedStr: string) {
+	static fromString(exportedStr: BoardString | BoardExportString) {
 		const isExport = isExportString(exportedStr);
 		let width: number;
 		let height: number;
@@ -67,7 +67,7 @@ export class SimpleBoard {
 		}
 		return new SimpleBoard(grid);
 	}
-	static import(str: string) {
+	static import(str: BoardString | BoardExportString) {
 		return SimpleBoard.fromString(str);
 	}
 
@@ -266,7 +266,7 @@ export class SimpleBoard {
 		}).join('\n');
 	}
 	toBoardString(): BoardString {
-		return this.grid.flat().join('');
+		return this.grid.flat().join('') as BoardString;
 	}
 
 	export(): BoardExportString {

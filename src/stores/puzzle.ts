@@ -1,6 +1,6 @@
 import { useSharedPuzzleToggle } from "@/composables/use-puzzle-toggle";
 import { SimpleBoard } from "@/lib";
-import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, AllPuzzleBoardExportStrings } from "@/lib/types";
+import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings } from "@/lib/types";
 import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
 import { getRandomTransformedPuzzle } from "@/lib/helpers/transform";
 import { countLineValues, pickRandom } from "@/lib/utils";
@@ -340,7 +340,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 		async replayPuzzle({
 			puzzleConfig,
 			boardStrings
-		}: { puzzleConfig: BasicPuzzleConfig, boardStrings: Pick<AllPuzzleBoardExportStrings, 'board' | 'solution'> }) {
+		}: { puzzleConfig: BasicPuzzleConfig, boardStrings: BoardAndSolutionBoardStrings }) {
 			const board = SimpleBoard.import(boardStrings.board);
 			const initialBoard = board.copy();
 			const solution = SimpleBoard.import(boardStrings.solution);

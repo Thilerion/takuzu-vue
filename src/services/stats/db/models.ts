@@ -1,5 +1,5 @@
 import { dimensionsToBoardType, type BoardType } from "@/config";
-import type { BasicPuzzleConfig, InitialAndSolutionBoardStrings, InitialAndSolutionBoards } from "@/lib/types.js";
+import type { BasicPuzzleConfig, BoardString, InitialAndSolutionBoardStrings, InitialAndSolutionBoards } from "@/lib/types.js";
 import { formatYYYYMMDD } from "@/utils/date.utils";
 import type { DifficultyKey } from "@/lib/types.js";
 
@@ -32,8 +32,8 @@ export class DbHistoryEntry implements DbHistoryEntryData {
 	difficulty: DifficultyKey;
 	timeElapsed: number;
 	flags: DbHistoryEntryFlags;
-	initialBoard: string;
-	solution: string;
+	initialBoard: BoardString;
+	solution: BoardString;
 	timestamp: number;
 	localDateStr: string;
 	id?: number;
