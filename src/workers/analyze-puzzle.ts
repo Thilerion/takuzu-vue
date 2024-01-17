@@ -1,4 +1,4 @@
-let currentWorker = null;
+let currentWorker: Worker | null = null;
 const hasWorker = () => currentWorker != null;
 
 function initWorker() {
@@ -8,7 +8,7 @@ function initWorker() {
 	}
 	console.log('Initializing analysis worker');
 	const worker = new Worker(
-		new URL('./analyze-puzzle.worker.js', import.meta.url),
+		new URL('./analyze-puzzle.worker.ts', import.meta.url),
 		{ type: 'module' }
 	);
 	currentWorker = worker;
@@ -20,7 +20,7 @@ function destroyWorker() {
 		return;
 	}
 	try {
-		currentWorker.terminate();
+		currentWorker!.terminate();
 	} catch(e) {
 		console.warn(e);
 		console.warn('Error while terminate analyze-puzzle worker');
@@ -28,17 +28,17 @@ function destroyWorker() {
 		currentWorker = null;
 	}
 }
-function send(message) {
+function send(message: unknown) {
 	return new Promise((resolve, reject) => {
 		initReceiver().then(result => {
 			resolve(result);
 		}).catch(err => reject(err));
-		currentWorker.postMessage({ message });
+		currentWorker!.postMessage({ message });
 	})
 }
 function initReceiver() {
 	return new Promise((resolve, reject) => {
-		currentWorker.onmessage = event => {
+		currentWorker!.onmessage = event => {
 			const { data } = event;
 			console.log('Data from analyze-puzzle worker:');
 			console.log({ data });
@@ -53,7 +53,7 @@ function terminate() {
 		if (!hasWorker()) {
 			return true;
 		}
-		currentWorker.terminate();
+		currentWorker!.terminate();
 		currentWorker = null;
 		return true;
 	} catch(e) {

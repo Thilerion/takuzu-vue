@@ -1,7 +1,7 @@
 import { createWorkerResult } from "./WorkerResult";
 const MSG_SOURCE = 'analyze-puzzle';
 
-function runTestTask(success) {
+function runTestTask(success: boolean) {
 	const messageValue = 'Test message: ' + (success ? 'success' : 'error');
 	const message = createWorkerResult(
 		success,
@@ -12,12 +12,12 @@ function runTestTask(success) {
 		postMessage(message);
 	}, 1000);
 }
-function sendUnknownTaskError(receivedMsg) {
+function sendUnknownTaskError(receivedMsg: unknown) {
 	console.warn('Unexpected else statement reached in analysePuzzleWorker');
 	console.warn({ receivedMsg });
 	postMessage(createWorkerResult(false, "Unexpected else statement reached in analysePuzzleWorker, unexpected received message type/command.", MSG_SOURCE));
 }
-function sendCaughtError(event) {
+function sendCaughtError(event: Event | string) {
 	postMessage(createWorkerResult(false, event, MSG_SOURCE));
 }
 
