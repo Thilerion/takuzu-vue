@@ -1,5 +1,5 @@
 import type { SimpleBoard } from "@/lib";
-import type { BoardString, PuzzleBoards, Vec } from "@/lib/types";
+import type { BoardString, BoardAndSolutionBoards, Vec } from "@/lib/types";
 import { defineStore } from "pinia";
 import { usePuzzleStore } from "../puzzle";
 import { markedMistakeFromCellOrString, vecToMark } from "./helpers";
@@ -139,7 +139,7 @@ const getRequiredDataFromPuzzleStore = () => {
 	return { boardStr, board, solution };
 }
 
-const findMistakes = ({ board, solution }: PuzzleBoards): CheckActionResult => {
+const findMistakes = ({ board, solution }: BoardAndSolutionBoards): CheckActionResult => {
 	const { hasMistakes, result } = board.hasIncorrectValues(solution);
 	if (!hasMistakes) return { found: false };
 	return { found: true, cells: result }

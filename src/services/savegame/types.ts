@@ -1,6 +1,5 @@
-import type { SimpleBoard } from "@/lib"
-import type { BasicPuzzleConfig, BoardExportString } from "@/lib/types"
-import type { MoveExport } from "@/stores/puzzle-history"
+import type { AllPuzzleBoards, BasicPuzzleConfig, BoardExportString } from "@/lib/types";
+import type { MoveExport } from "@/stores/puzzle-history";
 
 export interface TimerSaveData {
 	timeElapsed: number
@@ -11,11 +10,7 @@ export interface HistorySaveData {
 export interface PuzzleSaveData extends SaveDataBoard, BasicPuzzleConfig {}
 export interface SaveData extends TimerSaveData, HistorySaveData, PuzzleSaveData {}
 
-export interface SaveDataBoard {
-	board: SimpleBoard,
-	initialBoard: SimpleBoard,
-	solution: SimpleBoard
-}
+export type SaveDataBoard = AllPuzzleBoards;
 export type SaveDataBoardStrings = {
 	[Property in keyof SaveDataBoard]: BoardExportString
 }

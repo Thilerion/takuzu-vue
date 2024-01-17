@@ -42,8 +42,8 @@ export type DimensionStr = `${number}x${number}`;
 export type DifficultyKey = 1 | 2 | 3 | 4 | 5;
 export type PuzzleConfigKey = `${DimensionStr}-${DifficultyKey}`;
 
-export type BoardExportString = Flavor<string, "BoardExportString">;
-export type BoardString = Flavor<string, "Board.toString()">;
+export type BoardExportString = Flavor<string, "Board.export() => WxH;1.01100101...101">;
+export type BoardString = Flavor<string, "Board.toString() => 1.01100101...101">;
 
 export interface BoardShape {
 	width: number,
@@ -53,7 +53,44 @@ export interface BasicPuzzleConfig extends BoardShape {
 	difficulty: DifficultyKey
 }
 
-export interface PuzzleBoards {
-	board: SimpleBoard,
-	solution: SimpleBoard
+
+/*
+	--- BOARD COLLECTION TYPES ---
+*/
+type SimpleBoardToBoardString<T> = T extends SimpleBoard ? BoardString : never;
+type SimpleBoardToBoardExportString<T> = T extends SimpleBoard ? BoardExportString : never;
+type SimpleBoardToBoardOrExportString<T> = T extends SimpleBoard ? (BoardString | BoardExportString) : never;
+type SimpleBoardToGenericBoardString<T> = T extends SimpleBoard ? (string | BoardString) : never;
+type ToBoardStrings<T> = {
+	[Property in keyof T]: SimpleBoardToBoardString<T[Property]>
 }
+type ToBoardExportStrings<T> = {
+	[Property in keyof T]: SimpleBoardToBoardExportString<T[Property]>
+}
+type ToBoardOrExportStrings<T> = {
+	[Property in keyof T]: SimpleBoardToBoardOrExportString<T[Property]>
+}
+type ToGenericBoardStrings<T> = {
+	[Property in keyof T]: SimpleBoardToGenericBoardString<T[Property]>
+}
+
+export type AllPuzzleBoards = {
+	board: SimpleBoard,
+	solution: SimpleBoard,
+	initialBoard: SimpleBoard
+};
+export type AllPuzzleBoardExportStrings = ToBoardExportStrings<AllPuzzleBoards>;
+export type AllPuzzleBoardStrings = ToGenericBoardStrings<AllPuzzleBoards>;
+export type AllPuzzleBoardExportOrBoardStrings = ToBoardOrExportStrings<AllPuzzleBoards>;
+
+export type BoardAndSolutionKeys = 'board' | 'solution';
+export type BoardAndSolutionBoards = Pick<AllPuzzleBoards, BoardAndSolutionKeys>;
+export type BoardAndSolutionBoardExports = Pick<AllPuzzleBoardExportStrings, BoardAndSolutionKeys>;
+export type BoardAndSolutionBoardStrings = Pick<AllPuzzleBoardStrings, BoardAndSolutionKeys>;
+export type BoardAndSolutionExportOrBoardStrings = Pick<AllPuzzleBoardExportOrBoardStrings, BoardAndSolutionKeys>;
+
+export type InitialAndSolutionKeys = 'initialBoard' | 'solution';
+export type InitialAndSolutionBoards = Pick<AllPuzzleBoards, InitialAndSolutionKeys>;
+export type InitialAndSolutionBoardExports = Pick<AllPuzzleBoardExportStrings, InitialAndSolutionKeys>;
+export type InitialAndSolutionBoardStrings = Pick<AllPuzzleBoardStrings, InitialAndSolutionKeys>;
+export type InitialAndSolutionExportOrBoardStrings = Pick<AllPuzzleBoardExportOrBoardStrings, InitialAndSolutionKeys>;

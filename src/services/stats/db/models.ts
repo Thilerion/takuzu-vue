@@ -1,12 +1,9 @@
 import { dimensionsToBoardType, type BoardType } from "@/config";
-import type { BasicPuzzleConfig } from "@/lib/types.js";
+import type { BasicPuzzleConfig, InitialAndSolutionBoardStrings, InitialAndSolutionBoards } from "@/lib/types.js";
 import { formatYYYYMMDD } from "@/utils/date.utils";
 import type { DifficultyKey } from "@/lib/types.js";
-import type { SimpleBoard } from "@/lib/index.js";
 
-export type DbHistoryEntryData = BasicPuzzleConfig & {
-	initialBoard: string,
-	solution: string,
+export type DbHistoryEntryData = BasicPuzzleConfig & InitialAndSolutionBoardStrings & {
 	timeElapsed: number,
 	timestamp: number,
 	localDateStr: string,
@@ -19,9 +16,7 @@ export type DbHistoryEntryFlags = {
 	favorite?: boolean | number,
 };
 
-export type FinishedPuzzleState = Omit<DbHistoryEntryData, 'initialBoard' | 'solution' | 'timestamp' | 'localDateStr' | 'flags' | 'id'> & {
-	initialBoard: SimpleBoard,
-	solution: SimpleBoard,
+export type FinishedPuzzleState = Omit<DbHistoryEntryData, 'initialBoard' | 'solution' | 'timestamp' | 'localDateStr' | 'flags' | 'id'> & InitialAndSolutionBoards & {
 	assistance: {
 		cheatsUsed: boolean,
 	},

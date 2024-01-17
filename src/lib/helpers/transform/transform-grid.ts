@@ -1,5 +1,5 @@
 import { SimpleBoard } from "@/lib";
-import type { PuzzleBoards } from "@/lib/types";
+import type { BoardAndSolutionBoards } from "@/lib/types";
 import { invertPuzzle, transformationFnMap } from "./transformation-fns";
 import type { GenericTransformFn, GridTransformationFnName, GridTransformationId, GridTransformationIdWithInvert, ROPuzzleGrid } from "./types";
 
@@ -28,7 +28,7 @@ export function getTransformedBoard(board: SimpleBoard, transformId: GridTransfo
 }
 export function getTransformedPuzzleBoards({
 	board, solution
-}: PuzzleBoards, transformId: GridTransformationId) {
+}: BoardAndSolutionBoards, transformId: GridTransformationId) {
 	return {
 		board: getTransformedBoard(board, transformId),
 		solution: getTransformedBoard(solution, transformId)

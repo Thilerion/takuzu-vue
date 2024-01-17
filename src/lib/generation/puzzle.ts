@@ -1,5 +1,5 @@
 import type { SimpleBoard } from "../board/Board";
-import type { BasicPuzzleConfig } from "../types";
+import type { BasicPuzzleConfig, BoardAndSolutionBoards } from "../types";
 import { generateBoard } from "./board";
 import { createMaskWithDifficulty } from "./mask";
 import { getOptimalMaskRatio, getMaskQuality } from "./quality";
@@ -24,7 +24,7 @@ interface CreatePuzzleOpts {
 	totalMaxDuration?: number,
 	tryDurations?: number[]
 }
-export function createPuzzle(puzzleConfig: BasicPuzzleConfig, opts: CreatePuzzleOpts = {}): { board: SimpleBoard, solution: SimpleBoard, quality: null | ReturnType<typeof getMaskQuality> } | undefined {
+export function createPuzzle(puzzleConfig: BasicPuzzleConfig, opts: CreatePuzzleOpts = {}): (BoardAndSolutionBoards & { quality: null | ReturnType<typeof getMaskQuality> }) | undefined {
 	const { width, height, difficulty } = puzzleConfig;
 	const {
 		maxTries = 20,
@@ -71,7 +71,7 @@ interface CreateBoardAndMaskOnceOpts extends BasicPuzzleConfig {
 }
 type CreateBoardAndMaskOnceReturns =
 	| { error: string, success: false }
-	| { success: true, board: SimpleBoard, solution: SimpleBoard, quality: null | ReturnType<typeof getMaskQuality>};
+	| ({ success: true, quality: null | ReturnType<typeof getMaskQuality>} & BoardAndSolutionBoards);
 function createBoardAndMaskOnce(opts: CreateBoardAndMaskOnceOpts, maxTime = 1000): CreateBoardAndMaskOnceReturns  {
 	const { width, height, difficulty, optimalMaskedRatio } = opts;
 	const start = performance.now();

@@ -1,4 +1,4 @@
-import type { PuzzleBoards } from "@/lib/types";
+import type { BoardAndSolutionBoards } from "@/lib/types";
 import { pickRandom } from "@/lib/utils";
 import { shuffleCopy } from "@/utils/random.utils";
 import { getBoardShapeType } from "../board-type";
@@ -82,7 +82,7 @@ export const getRandomTransformationId = (type: 'square' | 'odd' | 'rect', opts:
 	throw new Error(`Unexpected type: ${type}`);
 }
 
-export function getRandomTransformedPuzzle(boards: PuzzleBoards, opts?: RandomTransformIdOpts) {
+export function getRandomTransformedPuzzle(boards: BoardAndSolutionBoards, opts?: RandomTransformIdOpts) {
 	const type = getBoardShapeType(boards.board);
 	const id = getRandomTransformationId(type, opts);
 	const { board, solution } = getTransformedPuzzleBoards(boards, id);
