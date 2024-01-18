@@ -2,14 +2,16 @@ import { defineConfig, mergeConfig, configDefaults } from 'vitest/config'
 import viteConfig from './vite.config.js'
 import { fileURLToPath } from 'node:url'
 
-export default mergeConfig(viteConfig as any, defineConfig({
-  test: {
-    environment: 'jsdom',
-    exclude: [...configDefaults.exclude, 'e2e/*'],
-    root: fileURLToPath(new URL('./', import.meta.url)),
-    transformMode: {
-      web: [/\.[jt]sx$/] as RegExp[],
-    },
-    globals: true,
-  } as any
-}))
+// For example merging vite config defined as a function, see: https://github.com/vitest-dev/vitest/pull/3978
+export default defineConfig(configEnv => mergeConfig(
+  viteConfig(configEnv),
+  defineConfig({
+    test: {
+      environment: 'jsdom',
+      exclude: [...configDefaults.exclude, 'e2e/*'],
+      root: fileURLToPath(new URL('./', import.meta.url)),
+      globals: true,
+      // isolate: false, // dangerous
+    }
+  }) as any
+))
