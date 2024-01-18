@@ -5,7 +5,6 @@ import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
 import { getRandomTransformedPuzzle } from "@/lib/helpers/transform";
 import { countLineValues, pickRandom } from "@/lib/utils";
 import { requestPuzzle } from "@/services/create-puzzle";
-import { puzzleHistoryTable } from "@/services/stats/db";
 import { useSavedPuzzle } from "@/services/savegame/useSavedGame";
 import { initPregenWorker } from "@/workers/pregen/index";
 import { defineStore } from "pinia";
@@ -14,7 +13,7 @@ import { usePuzzleHistoryStore } from "./puzzle-history";
 import { usePuzzleTimer } from "./puzzle-timer";
 import { useRecapStatsStore } from "./recap-stats";
 import { usePuzzleAssistanceStore } from "./assistance/store";
-import type { FinishedPuzzleState } from "@/services/stats/db/models.js";
+import { puzzleHistoryTable, type FinishedPuzzleState } from "@/services/db/stats-db/index.js";
 import type { PickOptional } from "@/types.js";
 
 export const PUZZLE_STATUS = {

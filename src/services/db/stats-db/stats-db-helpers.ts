@@ -1,6 +1,6 @@
 import type Dexie from "dexie";
-import { db, type StatsDBTable } from "./initDb.js";
-import { DbHistoryEntry } from "./models.js";
+import { statsDb as db, type StatsDbTableKey } from "./init.js";
+import type { StatsDbHistoryEntry, StatsDbHistoryEntryWithId } from "./models.js";
 
 const clearTableFromDb = (_db: Dexie, table: string) => ((_db as any)[table] as Dexie.Table).clear();
 const addItemToDb = <Item>(_db: Dexie, table: string) => async (item: Item, updateItemId = true) => {
@@ -28,14 +28,14 @@ const deleteItemFromDb = (_db: Dexie, table: string) => async (primaryKey: numbe
 	return await ((_db as any)[table] as Dexie.Table<unknown, number>).delete(primaryKey);
 }
 
-
-export const clearTable = (table: StatsDBTable = 'puzzleHistory') => clearTableFromDb(db, table);
-export const add = addItemToDb<DbHistoryEntry>(db, 'puzzleHistory');
-export const update: (primaryKey: number, modifiedKeys?: Partial<DbHistoryEntry> | Record<string, any>) => Promise<boolean> = updateItemInDb(db, 'puzzleHistory');
-export const put = putItemInDb<DbHistoryEntry>(db, 'puzzleHistory');
+// TODO: add these to the StatsDB class itself
+export const clearTable = (table: StatsDbTableKey = 'puzzleHistory') => clearTableFromDb(db, table);
+export const add = addItemToDb<StatsDbHistoryEntry>(db, 'puzzleHistory');
+export const update: (primaryKey: number, modifiedKeys?: Partial<StatsDbHistoryEntryWithId> | Record<string, any>) => Promise<boolean> = updateItemInDb(db, 'puzzleHistory');
+export const put = putItemInDb<StatsDbHistoryEntry>(db, 'puzzleHistory');
 export const deleteItem = deleteItemFromDb(db, 'puzzleHistory');
 
-export const getCount = (table: StatsDBTable = 'puzzleHistory') => db[table].count();
-export const getAll = async (table: StatsDBTable = 'puzzleHistory') => {
+export const getCount = (table: StatsDbTableKey = 'puzzleHistory') => db[table].count();
+export const getAll = async (table: StatsDbTableKey = 'puzzleHistory') => {
 	return await db[table].toArray();
 }

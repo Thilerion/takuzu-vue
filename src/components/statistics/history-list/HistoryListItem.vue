@@ -72,8 +72,8 @@ import { ref, computed } from 'vue';
 import { useStatisticsStore } from '@/stores/statistics.js';
 import { awaitTimeout } from '@/utils/delay.utils.js';
 import { toRefs } from '@vueuse/core';
-import type { PuzzleStatisticData } from '@/services/stats/db/models.js';
 import type { HistoryItemTimeRecordData } from '@/views/PuzzleHistoryView.vue';
+import type { StatsDbExtendedStatisticDataEntry } from '@/services/db/stats-db/models.js';
 
 defineOptions({
 	inheritAttrs: false
@@ -93,7 +93,7 @@ const dateTimeOpts: Intl.DateTimeFormatOptions = {
 const formatDate = (date: Date) => date.toLocaleString(undefined, dateTimeOpts);
 
 type HistoryListItemProps = {
-	item: PuzzleStatisticData;
+	item: StatsDbExtendedStatisticDataEntry;
 	timeRecord: null | { value: true, current: boolean, first: boolean }
 }
 const props = defineProps<HistoryListItemProps>();

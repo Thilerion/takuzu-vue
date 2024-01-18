@@ -1,6 +1,6 @@
+import { StatsDbExtendedStatisticDataEntry } from "@/services/db/stats-db/models.js";
 import { getUniqueDatesFromItems } from "@/services/stats/dates";
-import * as StatsDB from "@/services/stats/db/index.js";
-import { PuzzleStatisticData } from "@/services/stats/db/models";
+import * as StatsDB from "@/services/db/stats-db";
 import { getMostPlayedPuzzleConfigs, getMostPlayedPuzzleSizes } from "@/services/stats/most-played";
 import { formatBasicSortableDateKey } from "@/utils/date.utils";
 import { isBefore, isToday, subDays } from "date-fns";
@@ -9,7 +9,7 @@ import { reactive } from "vue";
 
 const getPuzzlesSolved = (): Promise<number> => StatsDB.getCount();
 const getAllHistoryItems = () => StatsDB.getAll().then(list => list.map(item => {
-	return new PuzzleStatisticData(item);
+	return new StatsDbExtendedStatisticDataEntry(item);
 }));
 
 export type StatsStoreState = {
@@ -22,7 +22,7 @@ export type StatsStoreState = {
 	initialized: true;
 	initializedDate: string;
 	isLoading: boolean;
-	historyItems: PuzzleStatisticData[];
+	historyItems: StatsDbExtendedStatisticDataEntry[];
 	editingNoteId: number | null;
 }
 
@@ -42,20 +42,20 @@ export const useStatisticsStore = defineStore('statistics', {
 		puzzlesSolved: state => state.historyItems.length,
 		noPuzzlesSolved: state => state.initialized && state.historyItems.length === 0,
 
-		sortedByDate: (state): PuzzleStatisticData[] => [...state.historyItems].sort((a, b) => b.timestamp - a.timestamp),
+		sortedByDate: (state): StatsDbExtendedStatisticDataEntry[] => [...state.historyItems].sort((a, b) => b.timestamp - a.timestamp),
 
 		itemsSolvedToday: state => state.historyItems.filter(item => {
 			const date = item.date ?? new Date(item.timestamp);
 			return isToday(date);
 		}),
-		itemsSolvedPast30Days(): PuzzleStatisticData[] {
+		itemsSolvedPast30Days(): StatsDbExtendedStatisticDataEntry[] {
 			const now = new Date();
 			const daysAgo = subDays(now, 30);
 			const idx = this.sortedByDate.findIndex(item => isBefore(item.date, daysAgo));
 			if (idx <= 0) return [];
 			return this.sortedByDate.slice(0, idx);
 		},
-		itemsSolvedPast90Days(): PuzzleStatisticData[] {
+		itemsSolvedPast90Days(): StatsDbExtendedStatisticDataEntry[] {
 			const now = new Date();
 			const daysAgo = subDays(now, 90);
 			const idx = this.sortedByDate.findIndex(item => isBefore(item.date, daysAgo));
@@ -130,7 +130,7 @@ export const useStatisticsStore = defineStore('statistics', {
 	},
 
 	actions: {
-		setHistoryItems(items: PuzzleStatisticData[]) {
+		setHistoryItems(items: StatsDbExtendedStatisticDataEntry[]) {
 			this.historyItems = reactive(items);
 		},
 		async markFavorite(id: number, value: boolean) {

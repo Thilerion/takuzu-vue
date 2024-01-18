@@ -1,4 +1,4 @@
-import type { PuzzleStatisticData } from "@/services/stats/db/models.js";
+import type { StatsDbExtendedStatisticDataEntry } from "@/services/db/stats-db/models.js";
 
 const MINUTE = 1000 * 60;
 
@@ -16,7 +16,7 @@ export const mapScoreToArray = <T>(score: number, arr: T[]): T => {
 	return arr[idx];
 }
 
-export const calculateScoresByDate = (itemsByDate: Record<string, PuzzleStatisticData[]>, {
+export const calculateScoresByDate = (itemsByDate: Record<string, StatsDbExtendedStatisticDataEntry[]>, {
 	timeMinBounds = TIME_RANGE_MIN_BOUNDS,
 	playedMinBounds = PLAYED_RANGE_MIN_BOUNDS,
 } = {}) => {
@@ -57,7 +57,7 @@ export const calculateScoresByDate = (itemsByDate: Record<string, PuzzleStatisti
 export type HeatmapDateStats = { played: number, time: number };
 export type HeatmapDateStatsDateMap = Record<string, HeatmapDateStats>;
 
-const getDateStatsByDate = (itemsByDate: Record<string, PuzzleStatisticData[]>): Record<string, HeatmapDateStats> => {
+const getDateStatsByDate = (itemsByDate: Record<string, StatsDbExtendedStatisticDataEntry[]>): Record<string, HeatmapDateStats> => {
 	const result: Record<string, HeatmapDateStats> = {};
 	for (const [dateStr, items] of Object.entries(itemsByDate)) {
 		result[dateStr] = getDateStats(items);
@@ -65,7 +65,7 @@ const getDateStatsByDate = (itemsByDate: Record<string, PuzzleStatisticData[]>):
 	return result;
 }
 
-const getDateStats = (items: PuzzleStatisticData[]): HeatmapDateStats => {
+const getDateStats = (items: StatsDbExtendedStatisticDataEntry[]): HeatmapDateStats => {
 	const played = items.length;
 	const time = items.reduce((acc, val) => acc + val.timeElapsed, 0);
 	return { played, time };

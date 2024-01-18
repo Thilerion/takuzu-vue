@@ -1,6 +1,6 @@
 import type { RecapStatsStoreState } from "@/stores/recap-stats.js";
 import { checkImprovementOverPreviousBest, checkIsTimeRecord, createResult, dimensionsString, falseResult, getPercentageFaster, getPercentageSlower, oneOfOrMultipleOf, trueResult } from "./helpers";
-import type { DbHistoryEntry } from "../stats/db/models.js";
+import type { StatsDbHistoryEntry } from "../db/stats-db/models.js";
 
 type RecapStatsGetters = {
 	isSavedToDb: boolean,
@@ -10,8 +10,8 @@ type RecapStatsGetters = {
 	isFirstSolvedWithDifficulty: boolean,
 	isFirstSolvedWithSize: boolean,
 }
-export type PickLastPuzzleEntry<T extends keyof DbHistoryEntry> = Pick<DbHistoryEntry, T>;
-export type RecapStatsMessageParam<BaseKeys extends (keyof RecapStatsStoreState | keyof RecapStatsGetters) = (keyof RecapStatsStoreState | keyof RecapStatsGetters), LPE extends keyof DbHistoryEntry = keyof DbHistoryEntry> = Pick<Omit<RecapStatsStoreState, 'lastPuzzleEntry'> & { lastPuzzleEntry: null | Pick<DbHistoryEntry, LPE> } & RecapStatsGetters, BaseKeys>;
+export type PickLastPuzzleEntry<T extends keyof StatsDbHistoryEntry> = Pick<StatsDbHistoryEntry, T>;
+export type RecapStatsMessageParam<BaseKeys extends (keyof RecapStatsStoreState | keyof RecapStatsGetters) = (keyof RecapStatsStoreState | keyof RecapStatsGetters), LPE extends keyof StatsDbHistoryEntry = keyof StatsDbHistoryEntry> = Pick<Omit<RecapStatsStoreState, 'lastPuzzleEntry'> & { lastPuzzleEntry: null | Pick<StatsDbHistoryEntry, LPE> } & RecapStatsGetters, BaseKeys>;
 
 export const notAddedToDatabaseCheatsUsed = (data: RecapStatsMessageParam<'isSavedToDb' | 'lastPuzzleEntry', 'flags'>) => {
 	return createResult(

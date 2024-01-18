@@ -1,8 +1,12 @@
-import { readJsonFile, writeObjToBlob } from "@/utils/file.utils";
+import { exportDB, peakImportFile, type ExportOptions, type ImportOptions, importInto } from "dexie-export-import";
 import Dexie from "dexie";
-import { exportDB, importInto, peakImportFile, type ImportOptions, type ExportOptions } from "dexie-export-import";
-import { initVersions } from "./versions";
-import type { StatsDB } from "./initDb.js";
+
+import type { StatsDB } from "./init.js";
+import { readJsonFile, writeObjToBlob } from "@/utils/file.utils.js";
+import { initStatsDbVersionUpgrades } from "./versions.js";
+
+export type ExportPuzzleHistoryDbOpts = Partial<Omit<ExportOptions, 'filter'>>;
+export type ImportPuzzleHistoryDbOpts = Partial<Omit<ImportOptions, 'chunkSizeBytes' | 'filter'>>;
 
 const TEMP_STATS_DB_NAME = 'tempStatsDb';
 
@@ -20,9 +24,6 @@ export async function importPeek(blob: Blob) {
 
 	return { databaseName, databaseVersion, tables, _importMeta: importMeta };
 }
-
-type ExportPuzzleHistoryDbOpts = Partial<Omit<ExportOptions, 'filter'>>;
-type ImportPuzzleHistoryDbOpts = Partial<Omit<ImportOptions, 'chunkSizeBytes' | 'filter'>>;
 
 export function exportPuzzleHistoryDb(db: StatsDB, options: ExportPuzzleHistoryDbOpts = {}) {
 	const mergedOpts = {
@@ -91,7 +92,7 @@ export async function importPuzzleHistoryItemsWithVersionUpgrade(db: StatsDB, bl
 		}) as StatsDB;
 		await tempStatsDb.close();
 
-		initVersions(tempStatsDb);
+		initStatsDbVersionUpgrades(tempStatsDb);
 
 		await tempStatsDb.open();
 

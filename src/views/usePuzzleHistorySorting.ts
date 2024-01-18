@@ -1,4 +1,4 @@
-import type { PuzzleStatisticData } from "@/services/stats/db/models.js";
+import type { StatsDbExtendedStatisticDataEntry } from "@/services/db/stats-db/models.js";
 
 export type DateSortable = {
 	date: Date;
@@ -43,7 +43,7 @@ function sortItems<T extends SortableHistoryItem>(items: T[], sortBy: SortType =
 	return items;
 }
 
-function resetCurrentItems<T extends PuzzleStatisticData>(items: T[], { sortBy }: Pick<SortOptions, 'sortBy'>, filterItemsFn: (items: T[]) => T[]): T[] {
+function resetCurrentItems<T extends StatsDbExtendedStatisticDataEntry>(items: T[], { sortBy }: Pick<SortOptions, 'sortBy'>, filterItemsFn: (items: T[]) => T[]): T[] {
 	const sortFn = sortFns[sortBy];
 
 	if (filterItemsFn) {

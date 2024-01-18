@@ -60,7 +60,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useListFilters, type ListFilterKey, type FilterableListItem } from '@/components/statistics/history-list/useListFilters.js';
 import { useDebounceFn } from '@vueuse/core';
 import { usePuzzleHistorySorting, type SortType, type SortOptions } from './usePuzzleHistorySorting.js';
-import type { PuzzleStatisticData } from '@/services/stats/db/models.js';
+import type { StatsDbExtendedStatisticDataEntry } from '@/services/db/stats-db/models.js';
 
 const { getDefaultOptions, resetCurrentItems, sortItems, isSortType } = usePuzzleHistorySorting();
 
@@ -72,7 +72,7 @@ const statsStore = useStatisticsStore();
 const { historyItems: rawHistoryItems, historyItemsWithTimeRecord } = storeToRefs(statsStore);
 
 export type HistoryItemTimeRecordData = { record: false } | { record: true, current: boolean, first: boolean };
-export type PuzzleHistoryListItem = PuzzleStatisticData & { timeRecord: HistoryItemTimeRecordData };
+export type PuzzleHistoryListItem = StatsDbExtendedStatisticDataEntry & { timeRecord: HistoryItemTimeRecordData };
 
 const getTimeRecordType = (id: number): HistoryItemTimeRecordData => {
 	const { all, current, first } = historyItemsWithTimeRecord.value;
@@ -92,7 +92,7 @@ const historyItems = computed((): PuzzleHistoryListItem[] => {
 })
 
 
-const isTimeRecord = (item: PuzzleStatisticData) => {
+const isTimeRecord = (item: StatsDbExtendedStatisticDataEntry) => {
 	const id = item.id!;
 	if (!historyItemsWithTimeRecord.value) return null;
 	const value = historyItemsWithTimeRecord.value.all.includes(id);
@@ -106,7 +106,7 @@ const dataOptions = reactive(getDefaultOptions())
 
 const { page, pageSize } = toRefs(dataOptions);
 
-const currentItems = ref<PuzzleStatisticData[]>([]);
+const currentItems = ref<StatsDbExtendedStatisticDataEntry[]>([]);
 
 const { currentFilters, activeFilters, filterFns, filterItems, setFilter, removeFilter } = useListFilters();
 provide('filterUtils', { currentFilters, activeFilters, filterFns, filterItems, setFilter, removeFilter });

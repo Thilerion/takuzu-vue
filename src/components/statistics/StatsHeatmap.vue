@@ -51,7 +51,7 @@ import { computed, inject, ref } from 'vue';
 import { calculateScoresByDate, getValueWithinRange, mapScoreToArray } from './heatmap-data.js';
 import { useStatisticsStore } from '@/stores/statistics.js';
 import { toRef, type Ref } from 'vue';
-import type { PuzzleStatisticData } from '@/services/stats/db/models.js';
+import type { StatsDbExtendedStatisticDataEntry } from '@/services/db/stats-db/models.js';
 
 const statsStore = useStatisticsStore();
 const historyItems = toRef(statsStore, 'historyItems');
@@ -62,7 +62,7 @@ const formatTime = timeFormatter({
 // heatmap data
 const { interval, numWeeks } = createHeatmapRange();
 
-const itemsByDate = computed((): Record<string, PuzzleStatisticData[]> => {
+const itemsByDate = computed((): Record<string, StatsDbExtendedStatisticDataEntry[]> => {
 	// cutoff items so none before heatmap interval are processed
 	const heatmapInclusiveInterval = {
 		start: startOfDay(interval.start),

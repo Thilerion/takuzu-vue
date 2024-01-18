@@ -1,6 +1,6 @@
-import { DbHistoryEntry as HistoryDbEntry, type FinishedPuzzleState } from "@/services/stats/db/models";
+import { type FinishedPuzzleState, StatsDbHistoryEntry } from "@/services/db/stats-db/models.js";
+import * as StatsDB from '@/services/db/stats-db/index.js';
 import { defineStore } from "pinia";
-import * as StatsDB from "@/services/stats/db/index.js";
 import { startOfDay } from "date-fns";
 import { useMainStore } from "./main";
 import type { BasicPuzzleConfig, DifficultyKey } from "@/lib/types.js";
@@ -21,10 +21,10 @@ type PuzzleStatistics = PuzzleStatisticsBestAverages & PuzzleStatisticsCounts & 
 }
 type ReplayStatistics = {
 	isReplay: boolean | null;
-	previousPlays: HistoryDbEntry[];
+	previousPlays: StatsDbHistoryEntry[];
 }
 type PlayedPuzzleData = {
-	lastPuzzleEntry: HistoryDbEntry | null;
+	lastPuzzleEntry: StatsDbHistoryEntry | null;
 	currentTimeElapsed: number | null;
 }
 type PuzzleConfigurationHistory = {
@@ -113,7 +113,7 @@ export const useRecapStatsStore = defineStore('recapStats', {
 			}
 		},
 
-		setPuzzleEntry({historyEntry}: { historyEntry: HistoryDbEntry }) {
+		setPuzzleEntry({historyEntry}: { historyEntry: StatsDbHistoryEntry }) {
 			this.lastPuzzleEntry = historyEntry;
 		},
 
@@ -134,7 +134,7 @@ export const useRecapStatsStore = defineStore('recapStats', {
 		},
 
 		async addFinishedPuzzleToHistory(puzzleState: FinishedPuzzleState) {
-			const historyEntry = HistoryDbEntry.fromPuzzleState(puzzleState);
+			const historyEntry = StatsDbHistoryEntry.fromPuzzleState(puzzleState);
 
 			if (puzzleState.assistance.cheatsUsed) {
 				const savePuzzleToHistoryIfCheatedFlag = useMainStore().featureToggles.addPuzzleToHistoryWithCheats.isEnabled;
@@ -152,7 +152,7 @@ export const useRecapStatsStore = defineStore('recapStats', {
 			console.log('Puzzle saved to history.');
 			return historyEntryUpdated;
 		},
-		async addFinishedPuzzleToDb(historyEntry: HistoryDbEntry) {
+		async addFinishedPuzzleToDb(historyEntry: StatsDbHistoryEntry) {
 			try {
 				const id = await StatsDB.add(historyEntry, true);
 				if (id && typeof id === 'number') {
@@ -203,7 +203,7 @@ export const useRecapStatsStore = defineStore('recapStats', {
 				return;
 			}
 			const { id, flags: currentFlags } = this.lastPuzzleEntry;
-			const newFlags = { ...currentFlags, favorite: value ? 1 : 0 };
+			const newFlags = { ...currentFlags, favorite: (value ? 1 : 0 as 1 | 0) };
 			try {
 				const success = await StatsDB.update(id, {
 					flags: { ...newFlags }
@@ -224,7 +224,7 @@ export const useRecapStatsStore = defineStore('recapStats', {
 
 });
 
-async function createGameEndStats({ width, height, difficulty, timeElapsed, id, initialBoard }: HistoryDbEntry) {
+async function createGameEndStats({ width, height, difficulty, timeElapsed, id, initialBoard }: StatsDbHistoryEntry) {
 
 	const [
 		puzzleConfigResult,
@@ -375,7 +375,7 @@ async function getPuzzleCountWithSizeOrDifficulty({ width, height, difficulty }:
 	}
 }
 
-function getBestAndAverageTimes({ items, previousItems }: { items: HistoryDbEntry[], previousItems: HistoryDbEntry[] }): PuzzleStatisticsBestAverages {
+function getBestAndAverageTimes({ items, previousItems }: { items: StatsDbHistoryEntry[], previousItems: StatsDbHistoryEntry[] }): PuzzleStatisticsBestAverages {
 	if (!items.length) {
 		return {
 			best: 0,
