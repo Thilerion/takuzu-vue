@@ -1,7 +1,7 @@
 import type { Brand } from "@/lib/types.js";
 
 export type AppBuildMode = 'alpha' | 'beta' | 'test';
-export type BuildDateString = string & { readonly __stringtype__: 'YYMMDDHH+2min_intervals' };
+export type BuildDateString = string & { readonly __stringtype__: '[YY][MM][DD][2min_intervals]' };
 export type PkgVersion = `${number}.${number}.${number}`;
 export type GitRevisionString = Brand<string, 'GitRevisionString'>;
 export type MetadataString = `${GitRevisionString}_${BuildDateString}` | `${AppBuildMode}.${GitRevisionString}_${BuildDateString}`;

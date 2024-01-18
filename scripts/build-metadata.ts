@@ -1,6 +1,5 @@
 import { execSync } from "child_process";
 import type { AppBuildMode, PkgVersion, GitRevisionString, MetadataString, DetailedVersionString, BuildDateString, SemverData } from '../src/services/build-data/types.js';
-import { createBuildDateString } from '../src/services/build-data/buildDateString.js';
 
 export interface BuildVersionDetails {
 	mode: AppBuildMode | null,
@@ -10,6 +9,23 @@ export interface BuildVersionDetails {
 	parsedVersion: SemverData,
 	metadata: MetadataString,
 	detailedVersion: DetailedVersionString
+}
+
+// Creates a BuildDateString. The function that parses the build date string
+// is located within the src/services/build-data folder, along with the types.
+// Those functions are only used in the runtime logic.
+const createBuildDateString = (date = new Date()): BuildDateString => {
+	const yy = `${date.getFullYear()}`.slice(-2);
+	const mm = `${date.getMonth() + 1}`.padStart(2, '0');
+	const dd = `${date.getDate()}`.padStart(2, '0');
+
+	const hours = date.getHours();
+	const minutes = date.getMinutes();
+	// max minutes is 23 hours and 59 minutes = 1439 minutes
+	// so this value is between 0 and (1439 / 2) = 720
+	const minute2SinceMidnight = Math.round((hours * 60 + minutes) / 2);
+	const min2String = `${minute2SinceMidnight}`.padStart(3, '0');
+	return `${yy}${mm}${dd}${min2String}` as BuildDateString;
 }
 
 const getGitRevision = (): GitRevisionString => execSync('git rev-parse --short HEAD').toString().trim() as GitRevisionString;
