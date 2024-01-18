@@ -25,15 +25,17 @@ export function oneOfOrMultipleOf(value: number, {
 	return isMultipleOf(value, multipleOf);
 }
 
-export function falseResult() {
+export type RecapFalseResult = { result: false };
+export type RecapTrueResult<T extends Record<string, unknown> = Record<string, unknown>> = { result: true, context: T };
+export function falseResult(): RecapFalseResult {
 	return { result: false as const };
 }
-export function trueResult(context: Record<string, unknown> = {}) {
+export function trueResult(context: Record<string, unknown> = {}): RecapTrueResult {
 	return { result: true as const, context };
 }
-export function createResult(result: true, context: Record<string, unknown>): { result: true, context: Record<string, unknown> };
-export function createResult(result: false): { result: false };
-export function createResult(result: boolean, context?: Record<string, unknown>): { result: boolean, context?: Record<string, unknown> };
+export function createResult(result: true, context: Record<string, unknown>): RecapTrueResult;
+export function createResult(result: false): RecapFalseResult;
+export function createResult(result: boolean, context?: Record<string, unknown>): RecapFalseResult | RecapTrueResult;
 export function createResult(result: boolean, context?: Record<string, unknown>) {
 	if (result) return trueResult(context);
 	return falseResult();

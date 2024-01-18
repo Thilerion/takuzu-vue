@@ -1,9 +1,9 @@
-import { trueResult } from '@/services/recap-message/helpers';
+import { trueResult, type RecapFalseResult } from '@/services/recap-message/helpers.js';
 import * as recapFn from '@/services/recap-message/recap-message-types.js';
 import { beforeAll, describe, expect, test } from 'vitest';
 
 describe('recap generator functions', () => {
-	let falseResult;
+	let falseResult: RecapFalseResult;
 	beforeAll(() => {
 		falseResult = { result: false };
 	})
@@ -25,7 +25,9 @@ describe('recap generator functions', () => {
 	describe('hardestPuzzleSolved', () => {
 		test('when not first solved with config', () => {
 			expect(recapFn.hardestPuzzleSolved({
-				isFirstPuzzleSolvedWithPuzzleConfig: false
+				isFirstSolvedWithPuzzleConfig: false,
+				lastPuzzleEntry: null,
+				puzzleConfigsPlayed: ['a', 'b', 'c'] as any[]
 			})).toEqual(falseResult);
 		})
 

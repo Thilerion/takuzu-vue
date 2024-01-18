@@ -1,5 +1,6 @@
 import type { RecapStatsStoreState } from "@/stores/recap-stats.js";
 import { checkImprovementOverPreviousBest, checkIsTimeRecord, createResult, dimensionsString, falseResult, getPercentageFaster, getPercentageSlower, oneOfOrMultipleOf, trueResult } from "./helpers";
+import type { DbHistoryEntry } from "../stats/db/models.js";
 
 type RecapStatsGetters = {
 	isSavedToDb: boolean,
@@ -9,16 +10,17 @@ type RecapStatsGetters = {
 	isFirstSolvedWithDifficulty: boolean,
 	isFirstSolvedWithSize: boolean,
 }
-export type RecapStatsMessageParam = RecapStatsStoreState & RecapStatsGetters;
+export type PickLastPuzzleEntry<T extends keyof DbHistoryEntry> = Pick<DbHistoryEntry, T>;
+export type RecapStatsMessageParam<BaseKeys extends (keyof RecapStatsStoreState | keyof RecapStatsGetters) = (keyof RecapStatsStoreState | keyof RecapStatsGetters), LPE extends keyof DbHistoryEntry = keyof DbHistoryEntry> = Pick<Omit<RecapStatsStoreState, 'lastPuzzleEntry'> & { lastPuzzleEntry: null | Pick<DbHistoryEntry, LPE> } & RecapStatsGetters, BaseKeys>;
 
-export const notAddedToDatabaseCheatsUsed = (data: Pick<RecapStatsMessageParam, 'isSavedToDb' | 'lastPuzzleEntry'>) => {
+export const notAddedToDatabaseCheatsUsed = (data: RecapStatsMessageParam<'isSavedToDb' | 'lastPuzzleEntry', 'flags'>) => {
 	return createResult(
 		!data.isSavedToDb && data.lastPuzzleEntry != null && !!data.lastPuzzleEntry.flags.cheatsUsed,
 		{}
 	)
 }
 
-export const firstSolvedTotal = (data: Pick<RecapStatsMessageParam, 'totalSolved'>) => {
+export const firstSolvedTotal = (data: RecapStatsMessageParam<'totalSolved'>) => {
 	const { totalSolved } = data;
 	return createResult(
 		totalSolved === 1,
@@ -26,7 +28,7 @@ export const firstSolvedTotal = (data: Pick<RecapStatsMessageParam, 'totalSolved
 	)
 }
 
-export const hardestPuzzleSolved = (data: RecapStatsMessageParam) => {
+export const hardestPuzzleSolved = (data: RecapStatsMessageParam<'isFirstSolvedWithPuzzleConfig' | 'puzzleConfigsPlayed' | 'lastPuzzleEntry', 'width' | 'height' | 'difficulty'>) => {
 	if (!data.isFirstSolvedWithPuzzleConfig || data.lastPuzzleEntry == null) {
 		return falseResult();
 	}
@@ -44,7 +46,7 @@ export const hardestPuzzleSolved = (data: RecapStatsMessageParam) => {
 
 export const firstOfDifficulty = ({
 	itemsPlayedWithDifficulty, itemsPlayedWithSize, lastPuzzleEntry
-}: RecapStatsMessageParam) => {
+}: RecapStatsMessageParam<'itemsPlayedWithDifficulty' | 'itemsPlayedWithSize' | 'lastPuzzleEntry', 'difficulty'>) => {
 	if (lastPuzzleEntry == null) return falseResult();
 	return createResult(
 		itemsPlayedWithDifficulty === 1 && itemsPlayedWithSize > 1,
@@ -55,7 +57,7 @@ export const firstOfSize = ({
 	lastPuzzleEntry,
 	itemsPlayedWithSize,
 	itemsPlayedWithDifficulty
-}: RecapStatsMessageParam) => {
+}: RecapStatsMessageParam<'itemsPlayedWithSize' | 'itemsPlayedWithDifficulty' | 'lastPuzzleEntry', 'width' | 'height' | 'difficulty'>) => {
 	if (lastPuzzleEntry == null) return falseResult();
 	const result = itemsPlayedWithSize === 1 && itemsPlayedWithDifficulty > 1;
 	if (!result) return falseResult();
