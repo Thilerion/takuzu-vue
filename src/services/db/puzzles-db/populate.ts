@@ -1,5 +1,5 @@
 import { shuffle } from "@/lib/utils";
-import type { IPregenPuzzle } from "./db";
+import type { IPregenPuzzle } from "./models.js";
 
 const createPregenPuzzle = (puzzle: Omit<IPregenPuzzle, 'boardStr' | 'solutionStr'> & { boardStr: string, solutionStr: string }): IPregenPuzzle => {
     return puzzle as IPregenPuzzle;

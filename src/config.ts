@@ -11,7 +11,7 @@ interface IsBoardType<T extends BoardType> { type: T }
 export class BoardPreset {
 	type: BoardType;
 
-	constructor(public width: number, public height: number, public maxDifficulty: number) {
+	constructor(public width: number, public height: number, public maxDifficulty: DifficultyKey) {
 		this.type = dimensionsToBoardType(width, height);
 	}
 
@@ -105,6 +105,7 @@ export const getAllPresetSizeDifficultyCombinations = () => {
 	for (const preset of PRESET_BOARD_SIZES) {
 		const { width, height } = preset;
 		for (let i = 1; i <= preset.maxDifficulty; i++) {
+			if (!isDifficultyKey(i)) throw new Error(`Invalid difficulty key: ${i}`);
 			result.push({ width, height, difficulty: i });
 		}
 	}

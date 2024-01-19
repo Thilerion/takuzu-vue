@@ -15,11 +15,11 @@ class StatsDB extends Dexie implements WithStatsDbTable {
 	constructor() {
 		super('StatsDB');
 		initStatsDbVersionUpgrades(this);
+		this.puzzleHistory.mapToClass(StatsDbHistoryEntry);
 	}
 }
 
 const db = new StatsDB();
-db.puzzleHistory.mapToClass(StatsDbHistoryEntry);
 
 persistStorage({ preventPermissionPrompt: true });
 

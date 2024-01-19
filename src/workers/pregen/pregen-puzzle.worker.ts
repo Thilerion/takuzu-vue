@@ -1,26 +1,13 @@
-// @ts-nocheck nooooo checking here
-import { getAllPresetSizeDifficultyCombinations } from "@/config";
-import { addPuzzle, puzzleDb } from "@/services/puzzles-db/db";
+import { getAllPresetSizeDifficultyCombinations, isDifficultyKey } from "@/config";
+import { puzzleDb } from "@/services/db/puzzles-db/init.js";
 import { awaitTimeout } from "@/utils/delay.utils";
 
 import { createWorkerResult } from "../WorkerResult";
 import { createNewPuzzleWorker } from "../generate-puzzle-v2.js";
+import type { BasicPuzzleConfig, PuzzleConfigKey } from "@/lib/types.js";
 const MSG_SOURCE = 'pregen-puzzles';
 
 const puzzleWorker = createNewPuzzleWorker();
-
-export function sendWorkerMessage(message) {
-	puzzleWorker.postMessage({ message });
-}
-export function initPuzzleWorkerReceiver() {
-	return new Promise((resolve, reject) => {
-		puzzleWorker.onmessage = event => {
-			const { data } = event;
-			if (!data.success) reject(data);
-			else resolve(data);
-		}
-	})
-}
 
 const presets = getAllPresetSizeDifficultyCombinations()
 	.map(({ width, height, difficulty }) => {
@@ -33,8 +20,10 @@ async function findPresetsWithoutPuzzles({ lazy = true, verbose = true, maxDiffi
 		.orderBy('[width+height+difficulty]')
 		.uniqueKeys();
 	
-	const mappedPresetsInDb = presetsInDb.map(([width, height, difficulty]) => {
-		const key = `${width}x${height}-${difficulty}`;
+	const mappedPresetsInDb = presetsInDb.map((preset) => {
+		const [width, height, difficulty] = (preset as any as [number, number, number]);
+		if (!isDifficultyKey(difficulty)) throw new Error(`Invalid difficulty key: ${difficulty}`);
+		const key: PuzzleConfigKey = `${width}x${height}-${difficulty}`;
 		return { key, width, height, difficulty };
 	});
 	
@@ -67,7 +56,7 @@ async function findPresetsWithoutPuzzles({ lazy = true, verbose = true, maxDiffi
 
 		i += 1;
 
-		const nextPreset = missingPresets.pop();
+		const nextPreset = missingPresets.pop()!;
 
 		if (lazy && i > 1) {
 			// prevent fans blowing etc when first opening the page
@@ -99,7 +88,7 @@ async function findPresetsWithoutPuzzles({ lazy = true, verbose = true, maxDiffi
 
 		const { boardStr, solutionStr, width, height, difficulty } = result;
 		numGenerated += 1;
-		await addPuzzle({
+		await puzzleDb.addPuzzle({
 			boardStr, solutionStr, width, height, difficulty
 		});
 	}
@@ -115,7 +104,7 @@ async function findPresetsWithoutPuzzles({ lazy = true, verbose = true, maxDiffi
 	return numGenerated;
 }
 
-export async function generatePuzzleForPreset(preset) {
+export async function generatePuzzleForPreset(preset: BasicPuzzleConfig) {
 	console.log(' requesting for preset');
 	const { width, height, difficulty } = preset;
 	try {
@@ -137,7 +126,11 @@ async function initPuzzlePregen(opts = {}) {
 		postMessage(createWorkerResult(true, result, MSG_SOURCE));
 	} catch (e) {
 		console.error(e);
-		postMessage(createWorkerResult(false, e?.message ?? e, MSG_SOURCE));
+		if (e instanceof Error) {
+			postMessage(createWorkerResult(false, e?.message ?? e, MSG_SOURCE));
+		} else {
+			postMessage(createWorkerResult(false, e, MSG_SOURCE));
+		}
 	}
 }
 

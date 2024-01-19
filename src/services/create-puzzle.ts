@@ -1,6 +1,6 @@
-import type { BasicPuzzleConfig, BoardString } from "@/lib/types";
+import type { BasicPuzzleConfig } from "@/lib/types";
 import { generatePuzzle, type GeneratedPuzzleResult } from "@/workers/generate-puzzle-v2.js";
-import { puzzleDb } from "./puzzles-db/db";
+import { puzzleDb } from "./db/puzzles-db/init.js";
 
 type RequestError<T> = T extends 'reason' ? { success: false, reason: unknown } : T extends 'error' ? { success: false, error: unknown } : never;
 type PuzzleRequestResult<T> = RequestError<T> | { success: true, data: GeneratedPuzzleResult };
