@@ -6,7 +6,7 @@ import { getRandomTransformedPuzzle } from "@/lib/helpers/transform";
 import { countLineValues, pickRandom } from "@/lib/utils";
 import { requestPuzzle } from "@/services/create-puzzle";
 import { useSavedPuzzle } from "@/services/savegame/useSavedGame";
-import { initPregenWorker } from "@/workers/pregen/index";
+import { initPregenPuzzles } from "@/workers/pregen-puzzles/interface.js";
 import { defineStore } from "pinia";
 import { usePuzzleHintsStore } from "./puzzle-hinter";
 import { usePuzzleHistoryStore } from "./puzzle-history";
@@ -314,7 +314,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 					this.setLoading(false);
 
 					window.setTimeout(() => {
-						initPregenWorker();
+						initPregenPuzzles();
 					}, 2000);
 				} else {
 					const { reason } = res;

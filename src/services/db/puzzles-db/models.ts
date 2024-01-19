@@ -20,7 +20,6 @@ export class GeneratedPuzzle implements IPregenPuzzle {
 		difficulty,
 		width, height, populated
 	}: IPregenPuzzle & { populated?: boolean | 0 | 1 }) {
-		console.log({ boardStr, solutionStr });
 		this.boardStr = boardStr;
 		this.solutionStr = solutionStr;
 		this.difficulty = difficulty;

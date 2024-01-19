@@ -1,5 +1,6 @@
 import type { BasicPuzzleConfig } from "@/lib/types";
-import { generatePuzzle, type GeneratedPuzzleResult } from "@/workers/generate-puzzle-v2.js";
+import { generatePuzzle } from "@/workers/generate-puzzle/interface.js"; 
+import type { GeneratedPuzzleResult } from "@/workers/generate-puzzle/worker.js";
 import { puzzleDb } from "./db/puzzles-db/init.js";
 
 type RequestError<T> = T extends 'reason' ? { success: false, reason: unknown } : T extends 'error' ? { success: false, error: unknown } : never;

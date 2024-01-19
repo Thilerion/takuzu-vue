@@ -1,21 +1,24 @@
-import { getAllPresetSizeDifficultyCombinations, isDifficultyKey } from "@/config";
+import { getAllPresetSizeDifficultyCombinations, isDifficultyKey } from "@/config.js";
+import { createNewPuzzleWorker } from "../generate-puzzle/interface.js";
+import { setupWorker } from "../utils/workerSetup.js";
 import { puzzleDb } from "@/services/db/puzzles-db/init.js";
-import { awaitTimeout } from "@/utils/delay.utils";
-
-import { createWorkerResult } from "../WorkerResult";
-import { createNewPuzzleWorker } from "../generate-puzzle-v2.js";
 import type { BasicPuzzleConfig, PuzzleConfigKey } from "@/lib/types.js";
-const MSG_SOURCE = 'pregen-puzzles';
+import { awaitTimeout } from "@/utils/delay.utils.js";
+
+const fns = {
+	"pregen": pregeneratePuzzles
+} as const;
+
+setupWorker(fns);
+
 
 const puzzleWorker = createNewPuzzleWorker();
-
 const presets = getAllPresetSizeDifficultyCombinations()
 	.map(({ width, height, difficulty }) => {
 		const key = `${width}x${height}-${difficulty}`;
 		return { key, width, height, difficulty, numCells: width * height };
 	});
-
-async function findPresetsWithoutPuzzles({ lazy = true, verbose = true, maxDifficulty = 3 } = {}) {
+async function findPresetsWithoutPuzzlesAndGenerateMissing({ lazy = true, verbose = true, maxDifficulty = 3 } = {}) {
 	const presetsInDb = await puzzleDb.puzzles
 		.orderBy('[width+height+difficulty]')
 		.uniqueKeys();
@@ -104,8 +107,8 @@ async function findPresetsWithoutPuzzles({ lazy = true, verbose = true, maxDiffi
 	return numGenerated;
 }
 
-export async function generatePuzzleForPreset(preset: BasicPuzzleConfig) {
-	console.log(' requesting for preset');
+async function generatePuzzleForPreset(preset: BasicPuzzleConfig) {
+	console.log('requesting for preset');
 	const { width, height, difficulty } = preset;
 	try {
 		const { boardStr, solutionStr } = await puzzleWorker.request('single', { width, height, difficulty })
@@ -119,32 +122,14 @@ export async function generatePuzzleForPreset(preset: BasicPuzzleConfig) {
 	}
 }
 
-async function initPuzzlePregen(opts = {}) {
+async function pregeneratePuzzles(): Promise<{ generated: number, done: boolean }> {
+	const numGenerated = await findPresetsWithoutPuzzlesAndGenerateMissing({ lazy: true, verbose: false, maxDifficulty: 3 })
+	// TODO: fn should return if it is done, and if and how many puzzles failed to generate
+	// TODO: pregen could optionally try to generate more than 1 per preset?
+	const result = /* await xxx */ { generated: numGenerated, done: true };
 	
-	try {
-		const result = await findPresetsWithoutPuzzles(opts);
-		postMessage(createWorkerResult(true, result, MSG_SOURCE));
-	} catch (e) {
-		console.error(e);
-		if (e instanceof Error) {
-			postMessage(createWorkerResult(false, e?.message ?? e, MSG_SOURCE));
-		} else {
-			postMessage(createWorkerResult(false, e, MSG_SOURCE));
-		}
-	}
+	return result;
 }
 
-addEventListener('message', event => {
-	const { task } = event.data.message;
-	
-	if (task === 'pregen') {
-		// get list of puzzles (size+diff combis) that need to be generated
-		initPuzzlePregen({
-			lazy: true
-		});
-	} else {
-		console.warn('Could not recognize task for PregenPuzzle worker.');
-		console.warn(event.data);
-		postMessage(createWorkerResult(false, `Unrecognized task: "${task}"`, MSG_SOURCE));
-	}
-})
+export type PregenPuzzlesWorkerFns = typeof fns;
+export type PregenPuzzlesResult = { generated: number, done: boolean };

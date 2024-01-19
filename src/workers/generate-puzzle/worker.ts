@@ -1,8 +1,8 @@
-import type { BasicPuzzleConfig } from "@/lib/types.js";
-import { setupWorker } from "./utils/workerSetup.js";
+import type { BasicPuzzleConfig, BoardExportString } from "@/lib/types.js";
+import { setupWorker } from "../utils/workerSetup.js";
 import { createPuzzle } from "@/lib/index.js";
 
-const generateSinglePuzzle = (data: BasicPuzzleConfig) => {
+const generateSinglePuzzle = (data: BasicPuzzleConfig): GeneratedPuzzleResult => {
 	const { width, height, difficulty } = data;
 	const result = createPuzzle({ width, height, difficulty });
 
@@ -26,3 +26,4 @@ const fns = {
 setupWorker(fns);
 
 export type GenPuzzleWorkerFns = typeof fns;
+export type GeneratedPuzzleResult = { solutionStr: BoardExportString, boardStr: BoardExportString };
