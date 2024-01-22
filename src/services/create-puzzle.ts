@@ -18,10 +18,11 @@ export async function requestPuzzle(puzzleConfig: BasicPuzzleConfig): Promise<Pu
 		const genResult = await generateNewPuzzle(puzzleConfig);
 		if (genResult.success) {
 			return genResult;
+		} else {
+			console.warn({ databaseResultError: dbResult, generateResultError: (genResult as RequestError<'error'>).error });
+			return { success: false, reason: 'Could not retrieve correct puzzle from database, and could not generate new puzzle.' };
 		}
 
-		console.warn({ databaseResultError: dbResult, generateResultError: genResult.error });
-		return { success: false, reason: 'Could not retrieve correct puzzle from database, and could not generate new puzzle.' };
 
 	} catch (e) {
 		console.warn('Unexpected error in requestPuzzle.');

@@ -38,8 +38,8 @@ import type { Hint } from '@/stores/hints/Hint.js';
 import { computed, toRef } from 'vue';
 
 const emit = defineEmits<{
-	hide: [],
-	done: []
+	(e: 'hide'): void;
+	(e: 'done'): void;
 }>();
 const props = defineProps<{
 	hint: Hint
