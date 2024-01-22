@@ -10,7 +10,7 @@ const savedPuzzle = useStorage<SaveGame | null>(SAVE_DATA_STORAGE_KEY, null, loc
 })
 
 const _useSavedPuzzle = () => {
-	const savePuzzle = (saveData: SaveData) => {
+	const savePuzzle = (saveData: SaveData): boolean => {
 		const { moveList, timeElapsed } = saveData;
 		if (!moveList.length || !timeElapsed || timeElapsed < 5000) {
 			// do not save if no moves made and timeElapsed is very low
@@ -30,6 +30,7 @@ const _useSavedPuzzle = () => {
 			width, height, difficulty
 		}
 		savedPuzzle.value = savegame;
+		return true;
 	}
 	const savePuzzleSaveData = () => {
 		const saveData = getSaveData();

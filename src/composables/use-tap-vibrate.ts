@@ -16,10 +16,10 @@ export const useTapVibrate = (opts: UseTapVibrateOpts) => {
 
 	let vibrateTimeout: null | ReturnType<typeof setTimeout> = null;
 
-	const _vibrateFn = () => {
-		return navigator.vibrate(pattern.value);
+	const _vibrateFn = (): void => {
+		navigator.vibrate(pattern.value);
 	}
-	const vibrate = !isSupported ? () => { } : () => {
+	const vibrate = !isSupported ? (): void => { } : (): void => {
 		if (!unref(enabled)) return;
 		const delayMs = unref(delay);
 

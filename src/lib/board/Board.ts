@@ -144,6 +144,8 @@ export class SimpleBoard {
 			return this.assignRow(rowIdToY(lineId), values);
 		} else if (this.isColumnId(lineId)) {
 			return this.assignColumn(columnIdToX(lineId), values);
+		} else {
+			throw new Error(`Invalid lineId ("${lineId}") in Board.assignLine()`);
 		}
 	}
 	_set(x: number, y: number, value: PuzzleValue) {

@@ -13,6 +13,7 @@
 	],
 	"compilerOptions": {
 		"composite": true,
+		"noImplicitReturns": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]

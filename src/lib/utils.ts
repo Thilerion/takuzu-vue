@@ -50,6 +50,8 @@ export const toggleValue = (value: PuzzleValue, oneFirst = false) => {
 		return toggleOrder[1];
 	} else if (value === toggleOrder[1]) {
 		return toggleOrder[2];
+	} else {
+		throw new Error(`Unexpected value: ${value} in toggleValue()`);
 	}
 }
 

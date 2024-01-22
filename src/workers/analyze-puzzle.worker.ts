@@ -21,7 +21,7 @@ function sendCaughtError(event: Event | string) {
 	postMessage(createWorkerResult(false, event, MSG_SOURCE));
 }
 
-addEventListener('message', event => {
+addEventListener('message', (event): void => {
 	const receivedMsg = event?.data?.message ?? {};
 	const { task, /* id, data */ } = receivedMsg;
 
@@ -38,7 +38,7 @@ addEventListener('message', event => {
 			throw new Error('Test error');
 		}
 		case 'test-unhandledrejection': {
-			return new Promise((resolve, reject) => {
+			new Promise((resolve, reject) => {
 				reject('Test unhandled rejection');
 			})
 		}
