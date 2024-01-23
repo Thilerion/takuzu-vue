@@ -4,6 +4,7 @@ import type { FilledLineRecord } from "@/lib/human-solver/types";
 import type { ROPuzzleSymbolLine, Target } from "@/lib/types";
 import { COLUMN, EMPTY, ROW } from "../../constants";
 import { areLinesEqual } from "../../utils";
+import { getRecurringValuesFromPermutations, removeFilledLinesFromPermutations } from "@/lib/solvers/common/EliminationStrategy.js";
 
 type LinePerms = Readonly<ROPuzzleSymbolLine[]>
 
@@ -66,7 +67,7 @@ export default function applyEliminationConstraint(board: SimpleBoard, options: 
 		}
 
 		// filter out duplicate Lines
-		const filteredPermutations: LinePerms = filterOutDuplicateLines(validPermutations, filled);
+		const filteredPermutations: LinePerms = removeFilledLinesFromPermutations(validPermutations, filled).result;
 		// if none: error, no valid possibility for line
 		if (!filteredPermutations || !filteredPermutations.length) {
 			return { error: 'No valid line permutations' };
@@ -129,41 +130,4 @@ function findFilledLines(lines: BoardLine[], enforceUniqueLines = true) {
 
 function getValidLinePermutations(boardLine: BoardLine): LinePerms {
 	return boardLine.validPermutations;
-}
-
-function filterOutDuplicateLines(linePerms: LinePerms, filledLines: BoardLine[] = []): LinePerms {
-	if (!filledLines.length) return [...linePerms];
-	return linePerms.filter((perm) => {
-		const isDuplicate = filledLines.find(l => areLinesEqual(perm, l.values));
-		return isDuplicate == null;
-	})
-}
-
-function getRecurringValuesFromPermutations(boardLine: BoardLine, permutations: LinePerms): Target[] {
-	const { values, length } = boardLine;
-
-	if (permutations.length === 1) {
-		// just use all values in this single permutation
-		return permutations[0].reduce<Target[]>((acc, val, idx) => {
-			if (values[idx] === EMPTY) {
-				const { x, y } = boardLine.getCoords(idx);
-				acc.push({ x, y, value: val });
-			}
-			return acc;
-		}, []);
-	}
-
-	const recurringValues = [];
-	for (let i = 0; i < length; i++) {
-		// for each place in the line, check the values of all permutations
-		if (values[i] !== EMPTY) continue;
-
-		const permValueFirst = permutations[0][i];
-		const isRecurring = permutations.every(otherPermVals => otherPermVals[i] === permValueFirst);
-		if (isRecurring) {
-			const { x, y } = boardLine.getCoords(i);
-			recurringValues.push({ x, y, value: permValueFirst });
-		}
-	}
-	return recurringValues;
 }

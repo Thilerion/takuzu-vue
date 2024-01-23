@@ -1,10 +1,11 @@
 import type { BoardLine } from "../board/BoardLine";
 import { COLUMN, ROW } from "../constants";
 import type { LineArrSymbolPermutations } from "../permutations";
+import { getRecurringValuesFromPermutations, removeFilledLinesFromPermutationsWithSources } from "../solvers/common/EliminationStrategy.js";
 import type { LineId, Target } from "../types";
 import { areLinesEqual } from "../utils";
 import type { FilledLineRecord, ElimTechniqueOpts, HumanTechniqueBoardOnly } from "./types";
-import { createFilterLinesByRemainingValues, getRecurringValuesFromPermutations } from "./utils";
+import { createFilterLinesByRemainingValues } from "./utils";
 
 export type DuplicateLineTechniqueResult = {
 	targets: Target[],
@@ -52,7 +53,7 @@ export function humanSolveDuplicateLine({ board }: HumanTechniqueBoardOnly, {
 		const {
 			result: permsDupesFiltered,
 			sources
-		} = filterOutDuplicateLines(validPerms, filled)
+		} = removeFilledLinesFromPermutationsWithSources(validPerms, filled)
 		console.warn({ permsDupesFiltered, sources });
 		if (!permsDupesFiltered || !permsDupesFiltered.length) {
 			return { error: 'No valid line permutations after potential duplicate lines were removed.' };
@@ -88,23 +89,4 @@ function findFilledLines(lines: BoardLine[]): FilledLineRecord {
 		[ROW]: [],
 		[COLUMN]: []
 	})
-}
-
-function filterOutDuplicateLines(linePerms: LineArrSymbolPermutations, filledLines: BoardLine[]) {
-	if (!filledLines?.length) {
-		return { result: [...linePerms], sources: [] }
-	}
-	
-	const result = [];
-	const sources = [];
-
-	for (const perm of linePerms) {
-		const dupeFound = filledLines.find(l => areLinesEqual(perm, l.values));
-		if (dupeFound) {
-			sources.push(dupeFound.lineId);
-		} else {
-			result.push(perm);
-		}
-	}
-	return { result, sources };
 }

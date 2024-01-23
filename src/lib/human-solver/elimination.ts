@@ -1,7 +1,7 @@
 import type { BoardLine } from "../board/BoardLine";
+import { getRecurringValuesFromPermutations } from "../solvers/common/EliminationStrategy.js";
 import type { LineId, Target } from "../types";
 import type { ElimTechniqueOpts, HumanTechniqueBoardOnly } from "./types";
-import { getRecurringValuesFromPermutations } from "./utils";
 
 export type ElimTechniqueResult = {
 	technique: 'elimination',
