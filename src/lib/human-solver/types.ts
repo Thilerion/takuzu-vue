@@ -4,7 +4,7 @@ import type { BoardAndSolutionBoards } from "../types";
 
 export type ValueRange = [number, number];
 export type HumanTechniquePuzzle = BoardAndSolutionBoards;
-export type HumanTechniqueBoardOnly = Omit<HumanTechniquePuzzle, 'solution'>;
+export type HumanTechniqueBoardOnly = Pick<BoardAndSolutionBoards, 'board'>;
 
 export type ElimTechniqueOpts = { least?: ValueRange, most?: ValueRange };
 

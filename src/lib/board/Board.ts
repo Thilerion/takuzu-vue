@@ -200,7 +200,7 @@ export class SimpleBoard {
 	}
 	*boardLines() {
 		for (const lineId of this.lineIds) {
-			yield new BoardLine(this, lineId);
+			yield BoardLine.fromBoard(this, lineId);
 		}
 	}
 

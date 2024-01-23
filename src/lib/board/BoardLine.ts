@@ -1,69 +1,95 @@
-import { COLUMN, EMPTY, ONE, ROW, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "../constants";
-import { getValidLinePermutations, type LineArrSymbolPermutations } from "../permutations";
-import type { LineId, PuzzleValueCount, PuzzleValueLine, PuzzleValueLineStr, ROPuzzleValueLine, Vec } from "../types";
-import { columnIdToX, countLineValues, isLineIdRow, lineSizeToNumRequired, lineTypeFromLineId, rowIdToY, splitLine } from "../utils";
-import type { SimpleBoard } from "./Board";
+import { EMPTY, ONE, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "../constants.js";
+import { getValidLinePermutations, type LineArrSymbolPermutations } from "../permutations/index.js";
+import type { LineId, PuzzleValueCount, PuzzleValueLine, ROPuzzleValueLine, Vec } from "../types.js";
+import { columnIdToX, countLineValues, isLineIdRow, lineSizeToNumRequired, lineTypeFromLineId, rowIdToY, splitLine } from "../utils.js";
+import type { SimpleBoard } from "./Board.js";
 
 export class BoardLine {
-	type: LineType;
-	index: number;
+	public lineId: LineId;
+	public type: LineType;
+	public index: number;
 
-	private _values: null | PuzzleValueLine = null;
+	private _board: SimpleBoard | null;
+	private _values: PuzzleValueLine | null;
+
 	private _coords: null | Vec[] = null;
 	private _counts: null | PuzzleValueCount = null;
 	private _numRequired: null | Record<PuzzleSymbol, number> = null;
 	private _validPermutations: null | LineArrSymbolPermutations = null;
+	private _remaining: Record<PuzzleSymbol, null | number> = {
+		[ZERO]: null,
+		[ONE]: null
+	}
 	private _least: null | number = null;
 	private _most: null | number = null;
 
-	constructor(
-		private _board: SimpleBoard | null,
-		public lineId: LineId
+	private constructor(
+		boardOrValues: SimpleBoard | PuzzleValueLine,
+		lineId: LineId,
 	) {
+		if (Array.isArray(boardOrValues)) {
+			this._values = boardOrValues;
+			this._board = null;
+		} else {
+			this._board = boardOrValues;
+			this._values = null;
+		}
+
+		this.lineId = lineId;
+
 		this.type = lineTypeFromLineId(this.lineId);
 		this.index = isLineIdRow(lineId) ? rowIdToY(lineId) : columnIdToX(lineId);
 	}
 
-	static fromString(lineStr: string, lineId = 'A') {
-		const line = new BoardLine(null, lineId);
-		line._values = splitLine(lineStr as PuzzleValueLineStr)
-		return line;
+	static fromBoard(board: SimpleBoard, lineId: LineId) {
+		return new BoardLine(board, lineId);
+	}
+	static fromValues(values: PuzzleValueLine, lineId: LineId) {
+		return new BoardLine(values, lineId);
 	}
 
-	// reset all lazy values, set new board property if given
-	reset(board: SimpleBoard | null) {
-		if (board != null) {
-			this._board = board;
+	// reset lazy values, set new values or new board
+	reset(board: SimpleBoard): this;
+	reset(values: PuzzleValueLine): this;
+	reset(boardOrValues: SimpleBoard | PuzzleValueLine): this {
+		if (Array.isArray(boardOrValues)) {
+			this._values = boardOrValues;
+			this._board = null;
+		} else {
+			this._board = boardOrValues;
+			this._values = null;
 		}
-		this._values = null;
 		this._coords = null;
 		this._counts = null;
 		this._numRequired = null;
 		this._validPermutations = null;
+		this._remaining = {
+			[ZERO]: null,
+			[ONE]: null
+		}
 		this._least = null;
 		this._most = null;
 		return this;
 	}
 
-	getCoords(i: number) {
-		const x = this.type === ROW ? i : this.index;
-		const y = this.type === COLUMN ? i : this.index;
-		return { x, y };
-	}
 	get length(): number {
-		if (this._values != null) return this._values.length;
-		if (this._coords != null) return this._coords.length;
 		return this.values.length;
 	}
-
 	get values(): ROPuzzleValueLine {
-		if (this._values == null) {
-			if (this._board == null) {
-				throw new Error('Need board for BoardLine values.');
-			}
-			this._values = this._board.getLine.call(this._board, this.lineId);
+		if (this._values != null) {
+			return this._values;
 		}
+		if (this._board == null) {
+			throw new Error('BoardLine has no values or board');
+		}
+		this._values = this._board.getLine(this.lineId);
 		return this._values;
+	}
+
+	getCoords(i: number): Vec {
+		const x = this.type === 'row' ? i : this.index;
+		const y = this.type === 'column' ? i : this.index;
+		return { x, y };
 	}
 	get coords(): Vec[] {
 		if (this._coords == null) {
@@ -137,11 +163,52 @@ export class BoardLine {
 		this._most = result;
 		return result;
 	}
+	get countRemaining() {
+		const res = {
+			[ZERO]: this._remaining[ZERO] ?? this.getValueRemaining(ZERO),
+			[ONE]: this._remaining[ONE] ?? this.getValueRemaining(ONE)
+		}
+		this._remaining = res;
+		return res;
+	}
 	get leastRem() {
 		return this._least ?? this.getLeastRemaining();
 	}
 	get mostRem() {
 		return this._most ?? this.getMostRemaining();
+	}
+	/**
+	 * Returns the symbol with the least remaining to be placed in this line.
+	 * If the line is filled, returns null.
+	 * If both symbols have the same amount remaining, returns string "both".
+	 */
+	get leastRemSymbol(): PuzzleSymbol | null | "both" {
+		const rem = this.countRemaining;
+		if (rem[ZERO] === 0 && rem[ONE] === 0) return null;
+		else if (rem[ZERO] === rem[ONE]) return "both";
+		else if (rem[ZERO] < rem[ONE]) return ZERO;
+		else return ONE;
+	}
+	/**
+	 * Returns the symbol with the most remaining to be placed in this line.
+	 * If the line is filled, returns null.
+	 * If both symbols have the same amount remaining, returns string "both".
+	 */
+	get mostRemSymbol(): PuzzleSymbol | null | "both" {
+		const rem = this.countRemaining;
+		if (rem[ZERO] === 0 && rem[ONE] === 0) return null;
+		else if (rem[ZERO] === rem[ONE]) return "both";
+		else if (rem[ZERO] < rem[ONE]) return ONE;
+		else return ZERO;
+	}
+
+	isMostRemainingSymbol(value: PuzzleSymbol) {
+		const s = this.mostRemSymbol;
+		return s === 'both' || s === value;
+	}
+	isLeastRemainingSymbol(value: PuzzleSymbol) {
+		const s = this.leastRemSymbol;
+		return s === 'both' || s === value;
 	}
 
 	// STRINGIFY METHODS
