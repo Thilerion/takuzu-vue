@@ -1,11 +1,11 @@
-import { checkTriplesStrategy, type TriplesSubtype } from "../strategies/Triples";
+import { checkTriplesStrategy2 } from "../solvers/common/TriplesStrategy.js";
 import type { Target, Vec } from "../types";
 import type { HumanTechniqueBoardOnly } from "./types";
 
 type DoubleVec = readonly [Vec, Vec];
 export type TriplesTechniqueResult = {
 	technique: 'triples',
-	type: TriplesSubtype,
+	type: 'sandwich' | 'double',
 	targets: Target[],
 	origin: DoubleVec
 }
@@ -14,11 +14,10 @@ export function humanSolveTriples({ board }: HumanTechniqueBoardOnly) {
 
 	for (const threesUnit of board.threesUnits()) {
 		
-		const result = checkTriplesStrategy(threesUnit, { detailed: true });
+		const result = checkTriplesStrategy2(threesUnit);
 
 		if (!result.found) continue;
-
-		const { target, type, origin } = result;
+		const { target, type, origin } = result.data;
 
 		// combine all results with same origin; a double has two target cells
 		const equalResult = results.find(prevResult => {
