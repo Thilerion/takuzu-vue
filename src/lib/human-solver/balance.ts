@@ -1,6 +1,6 @@
 
 import { EMPTY } from "../constants";
-import { checkLineBalanceStrategy } from "../strategies/LineBalance";
+import { checkLineBalanceStrategy2 } from "../solvers/common/LineBalanceStrategy.js";
 import type { LineId, Target } from "../types";
 import type { HumanTechniqueBoardOnly } from "./types";
 
@@ -13,11 +13,11 @@ export function humanSolveBalance({ board }: HumanTechniqueBoardOnly) {
 	const results: BalanceTechniqueResult[] = [];
 	
 	for (const boardLine of board.boardLines()) {
-		const result = checkLineBalanceStrategy(boardLine);
+		const result = checkLineBalanceStrategy2(boardLine);
 
 		if (!result.found) continue;
 
-		const { value } = result;
+		const { value } = result.data;
 		const targets = [];
 
 		for (let i = 0; i < boardLine.length; i++) {
