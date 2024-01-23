@@ -1,9 +1,7 @@
 import type { BoardLine } from "../board/BoardLine";
 import { COLUMN, ROW } from "../constants";
-import type { LineArrSymbolPermutations } from "../permutations";
 import { getRecurringValuesFromPermutations, removeFilledLinesFromPermutationsWithSources } from "../solvers/common/EliminationStrategy.js";
 import type { LineId, Target } from "../types";
-import { areLinesEqual } from "../utils";
 import type { FilledLineRecord, ElimTechniqueOpts, HumanTechniqueBoardOnly } from "./types";
 import { createFilterLinesByRemainingValues } from "./utils";
 

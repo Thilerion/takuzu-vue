@@ -1,7 +1,4 @@
 import type { BoardLine } from "../board/BoardLine";
-import { EMPTY } from "../constants";
-import type { LineArrSymbolPermutations } from "../permutations";
-import type { Target } from "../types";
 import type { ValueRange } from "./types";
 
 export const createFilterLinesByRemainingValues = (leastRange: ValueRange, mostRange: ValueRange) => {

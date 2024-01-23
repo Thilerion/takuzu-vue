@@ -1,5 +1,6 @@
 import { EMPTY, ONE, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "../constants.js";
-import { getValidLinePermutations, type LineArrSymbolPermutations } from "../permutations/index.js";
+import { getValidLinePermutations } from "../permutations/index.js";
+import type { LineArrSymbolPermutations } from "../permutations/types.js";
 import type { LineId, PuzzleValueCount, PuzzleValueLine, ROPuzzleValueLine, Vec } from "../types.js";
 import { columnIdToX, countLineValues, isLineIdRow, lineSizeToNumRequired, lineTypeFromLineId, rowIdToY, splitLine } from "../utils.js";
 import type { SimpleBoard } from "./Board.js";

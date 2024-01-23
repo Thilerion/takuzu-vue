@@ -1,13 +1,11 @@
 import { EMPTY, ONE, ZERO } from "../constants";
 import { memoize } from "../memoize.utils";
-import type { PuzzleValueCount, PuzzleSymbolLineStr, PuzzleValueLine, ROPuzzleSymbolLine, ROPuzzleValueLine, PuzzleSymbolLine } from "../types";
-import { countLineValues, lineSizeToNumRequired, numRequiredOfValue, sortLineValues } from "../utils";
+import type { PuzzleValueCount, PuzzleValueLine, ROPuzzleValueLine, PuzzleSymbolLine } from "../types";
+import { countLineValues, lineSizeToNumRequired, sortLineValues } from "../utils";
 import { validateLine } from "../validate/line";
+import { generateAllValidFilledLines } from "./generate-filled-lines.js";
 import permuteUnique from "./permute";
-
-export type LineArrValuePermutations = ReadonlyArray<ROPuzzleValueLine>;
-export type LineArrSymbolPermutations = ReadonlyArray<ROPuzzleSymbolLine>;
-export type LineStrSymbolPermutations = ReadonlyArray<PuzzleSymbolLineStr>;
+import type { LineArrValuePermutations, LineArrSymbolPermutations } from "./types.js";
 
 const innerGetArrayPermutations = (values: ROPuzzleValueLine): LineArrValuePermutations => {
 	const sortedValues: PuzzleValueLine = sortLineValues(values);
@@ -18,23 +16,7 @@ export const getArrayPermutations = memoize(
 	(lineArr) => lineArr.join('')
 );
 
-const innerGetEmptyLinePermutations = (size: number): LineStrSymbolPermutations => {
-	const num = Math.pow(2, size);
-	const perms: PuzzleSymbolLineStr[] = [];
-	for (let i = 0; i < num; i++) {
-		// convert i to binary value (as string)
-		// which is just 1s and 0s, just like a binary board line
-		const line: PuzzleSymbolLineStr = i.toString(2).padStart(size, '0');
-		perms.push(line);
-	}
-	const maxOne = numRequiredOfValue(size, ONE);
-	const maxZero = numRequiredOfValue(size, ZERO);
-	const validPerms = perms.filter(lineStr => {
-		return validateLine(lineStr, maxZero, maxOne);
-	})
-	return validPerms;
-}
-export const getEmptyLinePermutations = memoize(innerGetEmptyLinePermutations, (size: number) => String(size));
+export const getEmptyLinePermutations = memoize(generateAllValidFilledLines, (size: number) => String(size));
 
 const innerGetLinePermutations = (
 	lineArr: PuzzleValueLine,
@@ -82,6 +64,7 @@ const innerGetValidLinePermutations = (
 	// TODO: different type return value if lineArr (input) is invalid, filteredLinePerms is empty, and thus there are no valid line permutatations
 	return [];
 }
+
 export const getValidLinePermutations = memoize(
 	innerGetValidLinePermutations,
 	(lineArr, _lineCount, maxZero, maxOne) => {
