@@ -1,40 +1,69 @@
 import { COLUMN, ROW, type LineType, type PuzzleValue } from "../constants";
 import type { Vec } from "../types";
+import { isValidPuzzleValue } from "../utils.js";
 import type { SimpleBoard } from "./Board";
 
 export type ThreesCoords = [Vec, Vec, Vec];
 export type ThreesValues = [PuzzleValue, PuzzleValue, PuzzleValue];
+export type ThreesUnitDir = 'h' | 'v';
 
 export class ThreesUnit {
 	id: string;
 	coords: ThreesCoords;
-	private _values: null | ThreesValues = null;
+
+	x: number;
+	y: number;
+	type: LineType;
+
+	private _board: SimpleBoard | null;
+	private _values: ThreesValues | null;
+
+	static dirFromLineType(type: LineType): ThreesUnitDir {
+		return type === 'row' ? 'h' : 'v';
+	}
+	static createId(x: number, y: number, type: LineType) {
+		return `${this.dirFromLineType(type)}-${x},${y}`;
+	}
+
 	constructor(
-		public x: number,
-		public y: number,
-		public type: LineType,
-		private _board: SimpleBoard
+		x: number,
+		y: number,
+		type: LineType,
+		boardOrValues: SimpleBoard | ThreesValues
 	) {
-		this.id = `${type === ROW ? 'h' : 'v'}-${x},${y}`;
+		this.id = ThreesUnit.createId(x, y, type);
+		
+		this.x = x;
+		this.y = y;
+		this.type = type;
+
 		this.coords = [
 			this.getCoords(0),
 			this.getCoords(1),
 			this.getCoords(2),
 		];
+
+		if (Array.isArray(boardOrValues)) {
+			this._values = boardOrValues;
+			this._board = null;
+		} else {
+			this._board = boardOrValues;
+			this._values = null;
+		}
+	}
+
+	static isThreesValues(vals: unknown[]): vals is ThreesValues {
+		if (vals.length !== 3) return false;
+		return vals.every(v => isValidPuzzleValue(v));
 	}
 
 	get values() {
 		if (this._values == null) {
 			this._values = this.coords.map(({ x, y }) => {
-				return this._board.get(x, y);
+				return this._board!.get(x, y);
 			}) as ThreesValues;
-			return this._values;
 		}
 		return this._values;
-	}
-
-	toString() {
-		return this.values.join('');
 	}
 
 	getCoords(i: 0 | 1 | 2) {
@@ -42,8 +71,5 @@ export class ThreesUnit {
 		if (this.type === ROW) coord.x += i;
 		else if (this.type === COLUMN) coord.y += i;
 		return coord;
-	}
-	getAllCoords(): ThreesCoords {
-		return this.coords.map(c => ({ ...c })) as ThreesCoords;
 	}
 }

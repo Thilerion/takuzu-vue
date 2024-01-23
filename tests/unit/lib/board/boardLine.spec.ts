@@ -8,6 +8,7 @@ describe('boardLine', () => {
 	beforeEach(() => {
 		board6x10 = SimpleBoard.import("6x10;........01.1..0......0..01...0....11........1.0.1.1.......11" as BoardExportString);
 	})
+	
 
 	describe('constructor', () => {
 		it('works with a board and a column id', () => {
