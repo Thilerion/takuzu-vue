@@ -12,7 +12,9 @@ export type ApplyEliminationConstraintOpts = {
 	/** Whether to find filled lines on the board, and use those to reduce the search space. Applies to Elim_duplicate constraints. Defaults to true. */
 	useDuplicateLines?: boolean,
 	/** The range of "leastRemaining" to consider; when the max is higher, this strategy will search for harder to find patterns. Defaults to [1, 3] */
-	leastRemainingRange?: [min: number | null, max: number | null]
+	leastRemainingRange?: [min: number | null, max: number | null],
+	/** The maximum amount of empty cells a line can have. Lower numbers reduce effectiveness of this function, but improve performance as a smaller amount of lines need to be checked, and generating completions/permutations of lines with many empty cells is resource-intensive. Defaults to 10. */
+	maxEmptyCells?: number
 }
 
 export function applyEliminationConstraint(
@@ -23,7 +25,8 @@ export function applyEliminationConstraint(
 	const {
 		singleAction = true,
 		useDuplicateLines = true,
-		leastRemainingRange = [1, 3]
+		leastRemainingRange = [1, 3],
+		maxEmptyCells = 10
 	} = options;
 	const minLeast = leastRemainingRange[0] ?? 1;
 	const maxLeast = leastRemainingRange[1] ?? Infinity;
@@ -33,7 +36,8 @@ export function applyEliminationConstraint(
 		board.boardLines(),
 		useDuplicateLines,
 		minLeast,
-		maxLeast
+		maxLeast,
+		maxEmptyCells,
 	);
 
 	for (const boardLine of boardLines) {
@@ -100,11 +104,12 @@ function getFilledLinesAndLinesToProcess(
 	lines: Iterable<BoardLine>,
 	useDuplicateLines: boolean,
 	minLeast: number,
-	maxLeast: number
+	maxLeast: number,
+	maxEmptyCells: number
 ) {
 	const filledLines: Record<LineType, BoardLine[]> = {
-		'row': [],
-		'column': []
+		[ROW]: [],
+		[COLUMN]: []
 	}
 	const linesToProcess: BoardLine[] = [];
 
@@ -117,6 +122,7 @@ function getFilledLinesAndLinesToProcess(
 			continue;
 		}
 		if (bl.numFilled <= 0) continue; // previously was <= 1 which might have been more efficient, but possibly missed some cases for small board sizes
+		if (bl.numEmpty > maxEmptyCells) continue;
 		const leastRem = bl.getLeastRemaining();
 		if (leastRem <= maxLeast && leastRem >= minLeast) {
 			linesToProcess.push(bl);
