@@ -2,7 +2,7 @@ import { EMPTY, ZERO, ONE } from "../constants.js";
 import type { LineArrSymbolPermutations } from "../permutations/types.js";
 import type { PuzzleValueLineStr, PuzzleValueLine, PuzzleValueCount, PuzzleSymbolLineStr, ROPuzzleSymbolLine, PuzzleSymbolLine } from "../types.js";
 import { countLineValues, lineSizeToNumRequired } from "../utils.js";
-import { getUniqueArrayPermutations } from "./permutations.js";
+import { generateUniqueArrayPermutations } from "./permutations.js";
 
 // TODO: if line is completely empty, use generateAllValidFilledLines instead
 function _recurseGenerateValidLineCompletions(
@@ -64,7 +64,8 @@ export function generateValidLineCompletions(
 	const remainingZero = numRequired[ZERO] - lineCount[ZERO];
 
 	if (remainingOne < 0 || remainingZero < 0) {
-		throw new Error('No valid permutations, line is invalid and has no solution');
+		// throw new Error('No valid permutations, line is invalid and has no solution');
+		return [];
 	}
 
 	const resInner = _recurseGenerateValidLineCompletions(
@@ -79,6 +80,7 @@ export function generateValidLineCompletions(
 
 /**
  * Get all possible ways to completely fill a (partially filled) line, without checking for validity.
+ * Resulting lines may be invalid, but they do have the correct amount of 0s and 1s.
  */
 export function generateAllLineCompletions(
 	lineArr: PuzzleValueLine,
@@ -94,7 +96,7 @@ export function generateAllLineCompletions(
 	// values to insert into lineArr in place of EMPTY
 	const valuesToPlace: PuzzleSymbolLine = [...Array(remainingZero).fill(ZERO), ...Array(remainingOne).fill(ONE)];
 
-	const valuePermutations = getUniqueArrayPermutations(valuesToPlace) as LineArrSymbolPermutations; // cast because input was PuzzleSymbolLine, so can only contain symbols
+	const valuePermutations = generateUniqueArrayPermutations(valuesToPlace) as LineArrSymbolPermutations; // cast because input was PuzzleSymbolLine, so can only contain symbols
 	const result = valuePermutations.map(valuePerm => {
 		const toInsert = [...valuePerm]; // insert at places where lineArr has EMPTY
 		const mapped = lineArr.map(origVal => {
