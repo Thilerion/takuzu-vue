@@ -1,4 +1,4 @@
-import { EMPTY, ZERO, ONE } from "../constants.js";
+import { EMPTY, ZERO, ONE, type PuzzleSymbol } from "../constants.js";
 import type { LineArrSymbolPermutations } from "../permutations/types.js";
 import type { PuzzleValueLineStr, PuzzleValueLine, PuzzleValueCount, PuzzleSymbolLineStr, ROPuzzleSymbolLine, PuzzleSymbolLine } from "../types.js";
 import { countLineValues, lineSizeToNumRequired } from "../utils.js";
@@ -56,10 +56,12 @@ function _recurseGenerateValidLineCompletions(
  */
 export function generateValidLineCompletions(
 	lineArr: PuzzleValueLine,
-	_lineCount?: PuzzleValueCount
+	_lineCount?: PuzzleValueCount,
+	_numRequired?: Record<PuzzleSymbol, number>
 ): LineArrSymbolPermutations {
-	const lineCount = _lineCount ?? countLineValues(lineArr);
-	const numRequired = lineSizeToNumRequired(lineArr.length);
+	const lineCount = _lineCount ?? countLineValues(lineArr);	
+	const numRequired = _numRequired ?? lineSizeToNumRequired(lineArr.length);
+
 	const remainingOne = numRequired[ONE] - lineCount[ONE];
 	const remainingZero = numRequired[ZERO] - lineCount[ZERO];
 

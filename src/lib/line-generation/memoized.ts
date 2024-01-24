@@ -1,8 +1,13 @@
+import { ONE, ZERO, type PuzzleSymbol } from "../constants.js";
 import { memoize } from "../memoize.utils.js";
 import { generateAllLineCompletions, generateValidLineCompletions } from "./completions.js";
 import { generateValidLinesOfSize } from "./lines-of-size.js";
 import { generateUniqueArrayPermutations } from "./permutations.js";
 
+const stringifyOptionalNumReq = (numReq: undefined | Record<PuzzleSymbol, number>): string => {
+	if (numReq == null) return '';
+	return `-${numReq[ZERO]}-${numReq[ONE]}`;
+}
 
 /**
  * 
@@ -19,7 +24,7 @@ export const getUniqueArrayPermutations = memoize(
  */
 export const getValidLinesOfSize = memoize(
 	generateValidLinesOfSize,
-	(size: number) => String(size)
+	(size: number, numRequired) => `${size}${numRequired ? stringifyOptionalNumReq(numRequired) : ''}`
 );
 
 /**
@@ -37,5 +42,10 @@ export const getAllLineCompletions = memoize(
  */
 export const getValidLineCompletions = memoize(
 	generateValidLineCompletions,
-	(lineArr) => lineArr.join('')
+	(lineArr, _counts, numRequired) => {
+		let str = lineArr.join('');
+		if (numRequired == null) return str;
+		str += stringifyOptionalNumReq(numRequired);
+		return str;
+	}
 );
