@@ -1,8 +1,8 @@
 import { EMPTY, ONE, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "../constants.js";
-import { getValidLinePermutations } from "../permutations/index.js";
+import { getValidLineCompletions } from "../line-generation/memoized.js";
 import type { LineArrSymbolPermutations } from "../permutations/types.js";
 import type { LineId, PuzzleValueCount, PuzzleValueLine, ROPuzzleValueLine, Vec } from "../types.js";
-import { columnIdToX, countLineValues, isLineIdRow, lineSizeToNumRequired, lineTypeFromLineId, rowIdToY, splitLine } from "../utils.js";
+import { columnIdToX, countLineValues, isLineIdRow, lineSizeToNumRequired, lineTypeFromLineId, rowIdToY } from "../utils.js";
 import type { SimpleBoard } from "./Board.js";
 
 export class BoardLine {
@@ -121,9 +121,7 @@ export class BoardLine {
 	get validPermutations(): LineArrSymbolPermutations {
 		if (this._validPermutations == null) {
 			const { values, counts, numRequired } = this;
-			const maxZero = numRequired[ZERO];
-			const maxOne = numRequired[ONE];
-			const validPerms = getValidLinePermutations([...values], counts, maxZero, maxOne);
+			const validPerms = getValidLineCompletions([...values], counts, numRequired);
 			if (!validPerms) {
 				this._validPermutations = [];
 			} else {

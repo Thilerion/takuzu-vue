@@ -1,6 +1,6 @@
 import { SimpleBoard } from "../board/Board";
 import { COLUMN, ROW, type LineType } from "../constants";
-import { getEmptyLinePermutations } from "../permutations/index";
+import { getValidLinesOfSize } from "../line-generation/memoized.js";
 import { selectValue } from "../solver/selection";
 import Solver from "../solver/Solver";
 import type { SolverConfig } from "../solver/types";
@@ -51,7 +51,7 @@ class BoardGenerator {
 		this.initialFillSize = Math.min(this.width, this.height);
 		this.initialFillType = this.width === this.initialFillSize ? ROW : COLUMN;
 		
-		this.possibleLines = getEmptyLinePermutations(this.initialFillSize);
+		this.possibleLines = getValidLinesOfSize(this.initialFillSize);
 	}
 
 	public start() {

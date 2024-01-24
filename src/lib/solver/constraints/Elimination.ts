@@ -60,7 +60,7 @@ export default function applyEliminationConstraint(board: SimpleBoard, options: 
 		const filled = filledLines[boardLine.type];
 
 		// get line permutations (valid)
-		const validPermutations: LinePerms = getValidLinePermutations(boardLine);
+		const validPermutations: LinePerms = boardLine.validPermutations;
 		// if none: error, no valid possibility for line
 		if (!validPermutations || !validPermutations.length) {
 			return { error: 'No valid line permutations' };
@@ -126,8 +126,4 @@ function findFilledLines(lines: BoardLine[], enforceUniqueLines = true) {
 	}
 
 	return filled;
-}
-
-function getValidLinePermutations(boardLine: BoardLine): LinePerms {
-	return boardLine.validPermutations;
 }

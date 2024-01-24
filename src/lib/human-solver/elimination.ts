@@ -26,7 +26,7 @@ export function humanSolveElimination({ board }: HumanTechniqueBoardOnly, {
 
 	for (const boardLine of filteredLines) {
 
-		const validPermutations = getValidLinePermutations(boardLine);
+		const validPermutations = boardLine.validPermutations
 		// if none: error, no valid possibility for line
 		if (!validPermutations || !validPermutations.length) {
 			return { error: 'No valid line permutations' };
@@ -46,9 +46,4 @@ export function humanSolveElimination({ board }: HumanTechniqueBoardOnly, {
 	}
 
 	return results;
-}
-
-
-function getValidLinePermutations(boardLine: BoardLine) {
-	return boardLine.validPermutations;
 }
