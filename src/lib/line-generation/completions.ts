@@ -1,8 +1,8 @@
 import { EMPTY, ZERO, ONE, type PuzzleSymbol } from "../constants.js";
-import type { LineArrSymbolPermutations } from "../permutations/types.js";
 import type { PuzzleValueLineStr, PuzzleValueLine, PuzzleValueCount, PuzzleSymbolLineStr, ROPuzzleSymbolLine, PuzzleSymbolLine } from "../types.js";
 import { countLineValues, lineSizeToNumRequired } from "../utils.js";
 import { generateUniqueArrayPermutations } from "./permutations.js";
+import type { LineArrSymbolPermutations } from "./types.js";
 
 // TODO: if line is completely empty, use generateAllValidFilledLines instead
 function _recurseGenerateValidLineCompletions(

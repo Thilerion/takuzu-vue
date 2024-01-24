@@ -1,6 +1,6 @@
 import { EMPTY, ONE, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "../constants.js";
 import { getValidLineCompletions } from "../line-generation/memoized.js";
-import type { LineArrSymbolPermutations } from "../permutations/types.js";
+import type { LineArrSymbolPermutations } from "../line-generation/types.js";
 import type { LineId, PuzzleValueCount, PuzzleValueLine, ROPuzzleValueLine, Vec } from "../types.js";
 import { columnIdToX, countLineValues, isLineIdRow, lineSizeToNumRequired, lineTypeFromLineId, rowIdToY } from "../utils.js";
 import type { SimpleBoard } from "./Board.js";
