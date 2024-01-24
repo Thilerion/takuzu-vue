@@ -16,6 +16,20 @@ export type ApplyEliminationConstraintOpts = {
 	/** The maximum amount of empty cells a line can have. Lower numbers reduce effectiveness of this function, but improve performance as a smaller amount of lines need to be checked, and generating completions/permutations of lines with many empty cells is resource-intensive. Defaults to 10. */
 	maxEmptyCells?: number
 }
+const defaultOptions: Required<ApplyEliminationConstraintOpts> = {
+	singleAction: true,
+	useDuplicateLines: true,
+	leastRemainingRange: [1, 3],
+	maxEmptyCells: 10
+}
+const mergeAndValidateOptions = (opts: ApplyEliminationConstraintOpts): Omit<Required<ApplyEliminationConstraintOpts>, 'leastRemainingRange'> & { leastRemainingRange: [number, number ]} => {
+	const baseLeastRemainingRange = opts.leastRemainingRange ?? defaultOptions.leastRemainingRange;
+	const minLeast = baseLeastRemainingRange[0] ?? 1;
+	const maxLeast = baseLeastRemainingRange[1] ?? Infinity;
+	const leastRemainingRange = [minLeast, maxLeast] as [number, number];
+	if (minLeast > maxLeast) throw new Error(`minLeast (${minLeast}) cannot be greater than maxLeast (${maxLeast})`);
+	return { ...defaultOptions, ...opts, leastRemainingRange };
+}
 
 export function applyEliminationConstraint(
 	board: SimpleBoard,
@@ -23,16 +37,14 @@ export function applyEliminationConstraint(
 ): ConstraintResult {
 	let changed = false;
 	const {
-		singleAction = true,
-		useDuplicateLines = true,
-		leastRemainingRange = [1, 3],
-		maxEmptyCells = 10
-	} = options;
-	const minLeast = leastRemainingRange[0] ?? 1;
-	const maxLeast = leastRemainingRange[1] ?? Infinity;
-	if (minLeast > maxLeast) throw new Error(`minLeast (${minLeast}) cannot be greater than maxLeast (${maxLeast})`);
+		singleAction,
+		useDuplicateLines,
+		leastRemainingRange,
+		maxEmptyCells
+	} = mergeAndValidateOptions(options);
+	const [minLeast, maxLeast] = leastRemainingRange;
 
-	const { filledLines, boardLines } = getFilledLinesAndLinesToProcess(
+	const { filledLines, boardLines } = categorizeBoardLines(
 		board.boardLines(),
 		useDuplicateLines,
 		minLeast,
@@ -63,7 +75,7 @@ export function applyEliminationConstraint(
 		changed = true;
 
 		// apply target here, tracking the changed row and column indices, so the boardLines can be reset
-		const { changedRows, changedCols } = applyTargetsAndTrackChangedLines(board, targets);
+		const { changedRows, changedCols } = applyTargetsAndTrackChanges(board, targets);
 		// now reset the lines where one or more values were changed
 		// TODO: maybe a BoardLine.update() method would be better
 		for (const otherLine of boardLines) {
@@ -89,7 +101,7 @@ function applyTargets(board: SimpleBoard, targets: Target[]): void {
 		board.assign(x, y, value);
 	}
 }
-function applyTargetsAndTrackChangedLines(board: SimpleBoard, targets: Target[]) {
+function applyTargetsAndTrackChanges(board: SimpleBoard, targets: Target[]) {
 	const changedRows = new Set<number>();
 	const changedCols = new Set<number>();
 	for (const { x, y, value } of targets) {
@@ -100,7 +112,7 @@ function applyTargetsAndTrackChangedLines(board: SimpleBoard, targets: Target[])
 	return { changedRows, changedCols };
 }
 
-function getFilledLinesAndLinesToProcess(
+function categorizeBoardLines(
 	lines: Iterable<BoardLine>,
 	useDuplicateLines: boolean,
 	minLeast: number,
@@ -131,11 +143,11 @@ function getFilledLinesAndLinesToProcess(
 
 	return {
 		filledLines,
-		boardLines: sortedBoardLinesByDifficulty(linesToProcess)
+		boardLines: sortLinesByPriority(linesToProcess)
 	}
 }
 
-function sortedBoardLinesByDifficulty(lines: readonly BoardLine[]): BoardLine[] {
+function sortLinesByPriority(lines: readonly BoardLine[]): BoardLine[] {
 	return [...lines].sort((a: BoardLine, b: BoardLine) => {
 		// chance for a result is largest when difference between the lines of least and most is largest
 		// and we want the easiest results first, especially if "singleAction" is true
