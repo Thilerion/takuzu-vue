@@ -1,7 +1,4 @@
-/*
-	Function works on 1 BoardLine, and accepts, optioanlly, a list of filledLines which to exclude from the line permutations.
-	It then gets valid perms, removes those that are equal to a filled line, gets recurring values, and returns those values.
-*/
+
 
 import type { BoardLine } from "@/lib/board/BoardLine.js";
 import type { SolverStrategyResult } from "./types.js";
@@ -14,7 +11,10 @@ export type EliminationStrategyResult = SolverStrategyResult<{
 	targets: Target[]
 }>;
 
-// TODO: EliminationStrategyResult should include a SolverStrategyInvalidError type, which is returned when the board is deemed invalid, as error
+/*
+	Function works on 1 BoardLine, and accepts, optioanlly, a list of filledLines which to exclude from the line permutations.
+	It then gets valid perms, removes those that are equal to a filled line, gets recurring values, and returns those values.
+*/
 export const checkEliminationStrategy = (boardLine: BoardLine, filledLines?: BoardLine[]): EliminationStrategyResult => {
 	// Check if the line is already completely filled. If so, the strategy does not apply, and we return early.
 	if (boardLine.isFilled) return { found: false } as const;
@@ -22,12 +22,20 @@ export const checkEliminationStrategy = (boardLine: BoardLine, filledLines?: Boa
 	// Retrieve all (valid) possibilities for this line, when filling empty cells with symbols.
 	const perms = boardLine.validPermutations;
 	// If there are none, the board (or line) is invalid.
-	if (!perms || !perms.length) return { found: false } as const;
+	if (!perms || !perms.length) return {
+		found: false,
+		error: 'No valid permutations found',
+		invalid: true
+	}
 
 	// Duplicate lines are not allowed, so we filter out any permutations that are equal to an already filled line if any are given.
 	const filteredPerms = filledLines == null ? perms : removeFilledLinesFromPermutations(perms, filledLines).result;
 	// If none are left, the board (or line) is invalid.
-	if (!filteredPerms.length) return { found: false } as const;
+	if (!filteredPerms.length) return {
+		found: false,
+		error: 'No valid permutations remaining after removing filled lines',
+		invalid: true
+	}
 
 	// Determine the recurring values (targets) from the filtered permutations. These are values that are consistent across all permutations.
 	const targets = getRecurringValuesFromPermutations(boardLine, filteredPerms);
@@ -37,7 +45,11 @@ export const checkEliminationStrategy = (boardLine: BoardLine, filledLines?: Boa
 	return { found: true, data: { targets } };
 }
 
-export function removeFilledLinesFromPermutations(perms: LineArrSymbolPermutations, filledLines: BoardLine[]): { result: ROPuzzleSymbolLine[] } {
+/**
+ * Removes lines from the perms array that are also in the filledLines array, as duplicate lines are not allowed.
+ * Returns the original perms array if no filledLines are given (marked as readonly).
+ */
+export function removeFilledLinesFromPermutations(perms: LineArrSymbolPermutations, filledLines: BoardLine[]): { result: LineArrSymbolPermutations } {
 	if (!filledLines.length) return { result: [...perms] };
 	const result = perms.filter((perm) => {
 		const isDuplicate = filledLines.find(l => areLinesEqual(perm, l.values));
