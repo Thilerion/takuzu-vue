@@ -6,7 +6,7 @@ import type { ConstraintResult } from "./types.js";
 import type { Target } from "@/lib/types.js";
 
 
-export type ApplyEliminationConstraintOpts = {
+export type ApplyEliminationConstraintOptsParam = {
 	/** Whether to stop after applying to a single line. Defaults to true. */
 	singleAction?: boolean,
 	/** Whether to find filled lines on the board, and use those to reduce the search space. Applies to Elim_duplicate constraints. Defaults to true. */
@@ -16,13 +16,14 @@ export type ApplyEliminationConstraintOpts = {
 	/** The maximum amount of empty cells a line can have. Lower numbers reduce effectiveness of this function, but improve performance as a smaller amount of lines need to be checked, and generating completions/permutations of lines with many empty cells is resource-intensive. Defaults to 10. */
 	maxEmptyCells?: number
 }
-const defaultOptions: Required<ApplyEliminationConstraintOpts> = {
+type ApplyEliminationConstraintValidatedOpts = Omit<Required<ApplyEliminationConstraintOptsParam>, 'leastRemainingRange'> & { leastRemainingRange: [number, number ]};
+const defaultOptions: Required<ApplyEliminationConstraintOptsParam> = {
 	singleAction: true,
 	useDuplicateLines: true,
 	leastRemainingRange: [1, 3],
 	maxEmptyCells: 10
 }
-const mergeAndValidateOptions = (opts: ApplyEliminationConstraintOpts): Omit<Required<ApplyEliminationConstraintOpts>, 'leastRemainingRange'> & { leastRemainingRange: [number, number ]} => {
+const mergeAndValidateOptions = (opts: ApplyEliminationConstraintOptsParam): ApplyEliminationConstraintValidatedOpts => {
 	const baseLeastRemainingRange = opts.leastRemainingRange ?? defaultOptions.leastRemainingRange;
 	const minLeast = baseLeastRemainingRange[0] ?? 1;
 	const maxLeast = baseLeastRemainingRange[1] ?? Infinity;
@@ -33,7 +34,7 @@ const mergeAndValidateOptions = (opts: ApplyEliminationConstraintOpts): Omit<Req
 
 export function applyEliminationConstraint(
 	board: SimpleBoard,
-	options: ApplyEliminationConstraintOpts = {}
+	options: ApplyEliminationConstraintOptsParam = {}
 ): ConstraintResult {
 	let changed = false;
 	const {
@@ -53,38 +54,20 @@ export function applyEliminationConstraint(
 	);
 
 	for (const boardLine of boardLines) {
-		const filled = filledLines[boardLine.type];
-
-		const strategyResult = checkEliminationStrategy(boardLine, filled);
-		if (!strategyResult.found && strategyResult.invalid) {
-			const { error } = strategyResult;
-			return { changed: false, error };
+		const singleResult = applyEliminationConstraintOnSingleLine(board, boardLine, filledLines, singleAction);
+		if ('error' in singleResult) {
+			return { changed: false, error: singleResult.error };
 		}
-
-		if (!strategyResult.found) {
-			continue;
-		}
-
-		const { targets } = strategyResult.data;
-
+		if (!singleResult.changed) continue;
 		if (singleAction) {
-			applyTargets(board, targets);
 			return { changed: true };
 		}
-
 		changed = true;
 
-		// apply target here, tracking the changed row and column indices, so the boardLines can be reset
-		const { changedRows, changedCols } = applyTargetsAndTrackChanges(board, targets);
+		// track the changed row and column indices, so the boardLines can be reset
 		// now reset the lines where one or more values were changed
-		// TODO: maybe a BoardLine.update() method would be better
-		for (const otherLine of boardLines) {
-			if (otherLine.type === ROW && changedRows.has(otherLine.index)) {
-				otherLine.reset(board);
-			} else if (otherLine.type === COLUMN && changedCols.has(otherLine.index)) {
-				otherLine.reset(board);
-			}
-		}
+		// TODO: maybe a BoardLine.update(x, y, value) method would be better
+		updateBoardLinesWithChanges(boardLines, board, singleResult.changedLines!);
 
 		// if the current line is now completely filled, add it to the filled lines
 		if (boardLine.isFilled && useDuplicateLines) {
@@ -96,20 +79,46 @@ export function applyEliminationConstraint(
 	return { changed };
 }
 
+function updateBoardLinesWithChanges(lines: BoardLine[], board: SimpleBoard, changes: { row: number, column: number }[]) {
+	const changedRows = new Set<number>([...changes.map(l => l.row)]);
+	const changedCols = new Set<number>([...changes.map(l => l.column)]);
+	for (const line of lines) {
+		if (line.type === ROW && changedRows.has(line.index)) {
+			line.reset(board);
+		} else if (line.type === COLUMN && changedCols.has(line.index)) {
+			line.reset(board);
+		}
+	}
+}
+
+function applyEliminationConstraintOnSingleLine(
+	board: SimpleBoard,
+	boardLine: BoardLine,
+	filledLines: Record<LineType, BoardLine[]>,
+	trackChanges: boolean
+): { error: string } | { changed: false } | { changed: true, changedLines: ({ row: number, column: number }[]) | null } {
+	const filled = filledLines[boardLine.type];
+    const strategyResult = checkEliminationStrategy(boardLine, filled);
+    if (!strategyResult.found && strategyResult.invalid) {
+        return { error: strategyResult.error };
+    }
+
+    if (!strategyResult.found) return { changed: false };
+
+    const { targets } = strategyResult.data;
+    applyTargets(board, targets);
+
+	if (trackChanges) {
+		return { changed: true, changedLines: targets.map(t => ({ row: t.y, column: t.x })) };
+	} else {
+		return { changed: true, changedLines: null };
+	}
+}
+
 function applyTargets(board: SimpleBoard, targets: Target[]): void {
 	for (const { x, y, value } of targets) {
 		board.assign(x, y, value);
 	}
-}
-function applyTargetsAndTrackChanges(board: SimpleBoard, targets: Target[]) {
-	const changedRows = new Set<number>();
-	const changedCols = new Set<number>();
-	for (const { x, y, value } of targets) {
-		board.assign(x, y, value);
-		changedRows.add(y);
-		changedCols.add(x);
-	}
-	return { changedRows, changedCols };
 }
 
 function categorizeBoardLines(
