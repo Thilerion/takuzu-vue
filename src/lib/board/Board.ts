@@ -1,5 +1,5 @@
 import { COLUMN, EMPTY, ONE, ROW, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "../constants";
-import type { ColumnId, IterableBoardLineString, LineId, BoardExportString, PuzzleGrid, RowId, Vec, BoardString } from "../types";
+import type { ColumnId, IterableBoardLineString, LineId, BoardExportString, PuzzleGrid, RowId, Vec, BoardString, Target } from "../types";
 import { array2d, cloneArray2d, columnIdToX, deducePuzzleDimensionsFromLength, generateColumnIds, generateRowIds, getCoordsForBoardSize, isExportString, isLineIdColumn, isLineIdRow, isValidCellDigit, lineSizeToNumRequired, parseExportString, rowIdToY, shuffle } from "../utils";
 import { validateBoard } from "../validate/board";
 import { BoardLine } from "./BoardLine";
@@ -147,6 +147,10 @@ export class SimpleBoard {
 		} else {
 			throw new Error(`Invalid lineId ("${lineId}") in Board.assignLine()`);
 		}
+	}
+	assignTarget(tg: Target): this {
+		const { x, y, value } = tg;
+		return this.assign(x, y, value);
 	}
 	_set(x: number, y: number, value: PuzzleValue) {
 		this.grid[y][x] = value;
