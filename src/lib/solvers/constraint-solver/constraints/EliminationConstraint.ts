@@ -32,25 +32,32 @@ const mergeAndValidateOptions = (opts: ApplyEliminationConstraintOptsParam): App
 	return { ...defaultOptions, ...opts, leastRemainingRange };
 }
 
+type ApplyEliminationConstraintDeps = {
+	categorizeLine: CategorizeBoardLineFn,
+	sortLinesByPriority: typeof defaultSortLinesByPriority
+}
+
 export function applyEliminationConstraint(
 	board: SimpleBoard,
-	options: ApplyEliminationConstraintOptsParam = {}
+	options: ApplyEliminationConstraintOptsParam = {},
+	deps: Partial<ApplyEliminationConstraintDeps> = {}
 ): ConstraintResult {
 	let changed = false;
+	const mergedOpts = mergeAndValidateOptions(options);
 	const {
 		singleAction,
 		useDuplicateLines,
-		leastRemainingRange,
-		maxEmptyCells
-	} = mergeAndValidateOptions(options);
-	const [minLeast, maxLeast] = leastRemainingRange;
+	} = mergedOpts;
+
+	const {
+		categorizeLine = categorizeBoardLine,
+		sortLinesByPriority = defaultSortLinesByPriority
+	} = deps;
 
 	const { filledLines, boardLines } = categorizeBoardLines(
 		board.boardLines(),
-		useDuplicateLines,
-		minLeast,
-		maxLeast,
-		maxEmptyCells,
+		mergedOpts,
+		{ categorizeLine, sort: sortLinesByPriority }
 	);
 
 	for (const boardLine of boardLines) {
@@ -121,12 +128,32 @@ function applyTargets(board: SimpleBoard, targets: Target[]): void {
 	}
 }
 
+export type BoardLineCategory = 'filled' | 'process' | 'skip';
+export type CategorizeBoardLineFn = (line: BoardLine, opts: ApplyEliminationConstraintValidatedOpts) => BoardLineCategory;
+const categorizeBoardLine: CategorizeBoardLineFn = (
+	line: BoardLine,
+	opts: ApplyEliminationConstraintValidatedOpts
+) => {
+	if (line.isFilled) {
+		if (opts.useDuplicateLines) {
+			return 'filled';
+		}
+		return 'skip';
+	}
+	if (line.numFilled <= 0) return 'skip'; // previously was <= 1 which might have been more efficient, but possibly missed some cases for small board sizes
+	else if (line.numEmpty > opts.maxEmptyCells) return 'skip';
+	const leastRem = line.getLeastRemaining();
+	const [minLeast, maxLeast] = opts.leastRemainingRange;
+	if (leastRem <= maxLeast && leastRem >= minLeast) {
+		return 'process';
+	}
+	return 'skip';
+}
+
 function categorizeBoardLines(
 	lines: Iterable<BoardLine>,
-	useDuplicateLines: boolean,
-	minLeast: number,
-	maxLeast: number,
-	maxEmptyCells: number
+	opts: ApplyEliminationConstraintValidatedOpts,
+	deps: { categorizeLine: CategorizeBoardLineFn, sort: typeof defaultSortLinesByPriority }
 ) {
 	const filledLines: Record<LineType, BoardLine[]> = {
 		[ROW]: [],
@@ -135,28 +162,30 @@ function categorizeBoardLines(
 	const linesToProcess: BoardLine[] = [];
 
 	for (const bl of lines) {
-		if (bl.isFilled) {
-			if (useDuplicateLines) {
-				const lineType = bl.type;
-				filledLines[lineType].push(bl);
+		const category = deps.categorizeLine(bl, opts);
+		switch(category) {
+			case 'filled':
+				filledLines[bl.type].push(bl);
+				break;
+			case 'process':
+				linesToProcess.push(bl);
+				break;
+			case 'skip':
+				break;
+			default: {
+				const x: never = category;
+				throw new Error(`Unknown category (${x}) for board line in applyEliminationConstraint`);
 			}
-			continue;
-		}
-		if (bl.numFilled <= 0) continue; // previously was <= 1 which might have been more efficient, but possibly missed some cases for small board sizes
-		if (bl.numEmpty > maxEmptyCells) continue;
-		const leastRem = bl.getLeastRemaining();
-		if (leastRem <= maxLeast && leastRem >= minLeast) {
-			linesToProcess.push(bl);
 		}
 	}
 
 	return {
 		filledLines,
-		boardLines: sortLinesByPriority(linesToProcess)
+		boardLines: deps.sort(linesToProcess)
 	}
 }
 
-function sortLinesByPriority(lines: readonly BoardLine[]): BoardLine[] {
+function defaultSortLinesByPriority(lines: readonly BoardLine[]): BoardLine[] {
 	return [...lines].sort((a: BoardLine, b: BoardLine) => {
 		// chance for a result is largest when difference between the lines of least and most is largest
 		// and we want the easiest results first, especially if "singleAction" is true
