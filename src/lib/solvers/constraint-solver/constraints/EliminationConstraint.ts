@@ -6,6 +6,14 @@ import type { ConstraintResult } from "./types.js";
 import type { Target } from "@/lib/types.js";
 import { mergeAndValidateElimConstraintOpts, type CategorizeBoardLineFn, categorizeBoardLine, type PrioritySortBoardLinesFn, defaultSortLinesByPriority } from "./elimination.helpers.js";
 
+/*
+	ApplyEliminationConstraint function consists of 3 steps:
+	1. Validate and merge options with defaults
+	2. Gather boardLines, assign categories (skip, process, or filled), and sort by priority
+	3. Apply the elimination strategy to each boardLine
+		3a. If singleAction is true, stop after the first boardLine that has changed
+		3b. If singleAction is false, continue to the next boardLine after updating the boardLines that were changed by the actions of this line
+*/
 
 export type ApplyEliminationConstraintOptsParam = {
 	/** Whether to stop after applying to a single line. Defaults to true. */
@@ -20,7 +28,8 @@ export type ApplyEliminationConstraintOptsParam = {
 export type ApplyEliminationConstraintValidatedOpts = Omit<Required<ApplyEliminationConstraintOptsParam>, 'leastRemainingRange'> & { leastRemainingRange: [number, number ]};
 
 type ApplyEliminationConstraintDeps = {
-	categorizeLine: CategorizeBoardLineFn,
+	gatherBoardLines: (board: SimpleBoard) => Iterable<BoardLine>,
+	assignLineCategory: CategorizeBoardLineFn,
 	sortLinesByPriority: PrioritySortBoardLinesFn
 }
 type BoardLineChanges = Record<LineType, Set<number>>;
@@ -38,14 +47,15 @@ export function applyEliminationConstraint(
 	} = mergedOpts;
 
 	const {
-		categorizeLine = categorizeBoardLine,
+		gatherBoardLines,
+		assignLineCategory = categorizeBoardLine,
 		sortLinesByPriority = defaultSortLinesByPriority
 	} = deps;
 
 	const { filledLines, boardLines } = categorizeBoardLines(
-		board.boardLines(),
+		gatherBoardLines?.(board) ?? board.boardLines(),
 		mergedOpts,
-		{ categorizeLine, sort: sortLinesByPriority }
+		{ assignLineCategory, sort: sortLinesByPriority }
 	);
 
 	for (const boardLine of boardLines) {
@@ -141,7 +151,7 @@ function applyTargets(board: SimpleBoard, targets: Target[]): void {
 export function categorizeBoardLines(
 	lines: Iterable<BoardLine>,
 	opts: ApplyEliminationConstraintValidatedOpts,
-	deps: { categorizeLine: CategorizeBoardLineFn, sort: PrioritySortBoardLinesFn }
+	deps: { assignLineCategory: CategorizeBoardLineFn, sort: PrioritySortBoardLinesFn }
 ) {
 	const filledLines: Record<LineType, BoardLine[]> = {
 		[ROW]: [],
@@ -150,7 +160,7 @@ export function categorizeBoardLines(
 	const linesToProcess: BoardLine[] = [];
 
 	for (const bl of lines) {
-		const category = deps.categorizeLine(bl, opts);
+		const category = deps.assignLineCategory(bl, opts);
 		switch(category) {
 			case 'filled':
 				filledLines[bl.type].push(bl);

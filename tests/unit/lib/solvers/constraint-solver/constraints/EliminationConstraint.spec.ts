@@ -28,9 +28,9 @@ describe('applyEliminationConstraint', () => {
 	afterEach(() => {
 		vi.restoreAllMocks();
 	})
-	describe('helper functions', () => {
+	describe('helper functions/dependencies', () => {
 		describe('categorizeBoardLines dependencies', () => {
-			it('calls the categorizeLine dependency for each line in boardLines', () => {
+			it('calls the assignLineCategory dependency for each line in boardLines', () => {
 				const boardLines = [
 					BoardLine.fromValues(
 						splitToPuzzleValueLine('001....1.0'),
@@ -42,9 +42,9 @@ describe('applyEliminationConstraint', () => {
 					)
 				];
 				
-				const categorizeLine = vi.fn((() => 'skip') as CategorizeBoardLineFn);
+				const assignLineCategory = vi.fn((() => 'skip') as CategorizeBoardLineFn);
 				const sort = vi.fn(mockableSortNone);
-				const deps = { categorizeLine, sort };
+				const deps = { assignLineCategory, sort };
 
 				const opts = {} as ApplyEliminationConstraintValidatedOpts;
 
@@ -59,19 +59,19 @@ describe('applyEliminationConstraint', () => {
 					boardLines: []
 				})
 
-				// categorizeLine gets called for each boardLine, with the line and the resolved options
-				expect(categorizeLine).toHaveBeenCalledTimes(2);
-				expect(categorizeLine.mock.calls[0]).toEqual([
+				// assignLineCategory gets called for each boardLine, with the line and the resolved options
+				expect(assignLineCategory).toHaveBeenCalledTimes(2);
+				expect(assignLineCategory.mock.calls[0]).toEqual([
 					boardLines[0],
 					opts
 				])
-				expect(categorizeLine.mock.calls[1]).toEqual([
+				expect(assignLineCategory.mock.calls[1]).toEqual([
 					boardLines[1],
 					opts
 				])
 			})
 
-			it('uses the sort dependency to sort the "lines to process" as categorized by the categorizeLine dependency', () => {
+			it('uses the sort dependency to sort the "lines to process" as categorized by the assignLineCategory dependency', () => {
 				const boardLines = [
 					BoardLine.fromValues(
 						splitToPuzzleValueLine('....'),
@@ -90,14 +90,14 @@ describe('applyEliminationConstraint', () => {
 						'D'
 					)
 				];
-				const categorizeLine = vi.fn((() => 'process') as CategorizeBoardLineFn);
+				const assignLineCategory = vi.fn((() => 'process') as CategorizeBoardLineFn);
 				const sort = vi.fn((a: BoardLine, b: BoardLine) => {
 					// sorts in reverse order
 					const idA = a.lineId.charCodeAt(0);
 					const idB = b.lineId.charCodeAt(0);
 					return idB - idA;
 				})
-				const deps = { categorizeLine, sort };
+				const deps = { assignLineCategory, sort };
 				const opts = {} as ApplyEliminationConstraintValidatedOpts;
 
 				const res = categorizeBoardLines(
@@ -135,9 +135,9 @@ describe('applyEliminationConstraint', () => {
 						'1'
 					),
 				];
-				const categorizeLine = vi.fn((() => 'filled') as CategorizeBoardLineFn);
+				const assignLineCategory = vi.fn((() => 'filled') as CategorizeBoardLineFn);
 				const sort = vi.fn(mockableSortNone);
-				const deps = { categorizeLine, sort };
+				const deps = { assignLineCategory, sort };
 				const opts = {} as ApplyEliminationConstraintValidatedOpts;
 
 				const res = categorizeBoardLines(
@@ -166,6 +166,32 @@ describe('applyEliminationConstraint', () => {
 
 			test.todo('priority sort sorts by difference in leastRemaining, then by difference in mostRemaining');
 		})
+
+		test('gatherBoardLines dependency is used, regardless of which board is passed into the function itself', () => {
+			const board = SimpleBoard.empty(4, 4); // would return 8 empty lines, and no result would be found
+			const gatherBoardLines = vi.fn(() => [BoardLine.fromValues(
+				splitToPuzzleValueLine('11.0'), // a result WOULD be found here
+				'A'
+			)])
+			const assignLineCategory = vi.fn((() => 'process') as CategorizeBoardLineFn);
+			// Note: There will be a problem when lines get reset after a value was assigned to them, as the cached values will be incorrect after they have received the board values
+			const deps = { gatherBoardLines, assignLineCategory };
+			const opts: ApplyEliminationConstraintOptsParam = {
+				singleAction: false,
+				useDuplicateLines: false,
+			}
+			const result = applyEliminationConstraint(board, opts, deps);
+			expect(gatherBoardLines).toHaveBeenCalledTimes(1);
+			expect(gatherBoardLines).toHaveBeenCalledWith(board);
+			expect(assignLineCategory).toHaveBeenCalledTimes(1);
+			expect(assignLineCategory).toHaveBeenCalledWith(
+				expect.objectContaining({
+					lineId: 'A'
+				}),
+				expect.anything()
+			)
+			expect(result).toEqual({ changed: true });
+		})
 	})
 
 	describe('applyEliminationConstraint', () => {
@@ -186,8 +212,8 @@ describe('applyEliminationConstraint', () => {
 				leastRemainingRange: [0, Infinity],
 				maxEmptyCells: Infinity
 			}
-			const categorizeLine: CategorizeBoardLineFn = () => 'skip'; // skips all so no lines to process
-			const deps = { categorizeLine };
+			const assignLineCategory: CategorizeBoardLineFn = () => 'skip'; // skips all so no lines to process
+			const deps = { assignLineCategory };
 
 			expect(applyEliminationConstraint(board, opts, deps)).toEqual({
 				changed: false
@@ -203,8 +229,8 @@ describe('applyEliminationConstraint', () => {
 				leastRemainingRange: [0, Infinity],
 				maxEmptyCells: Infinity
 			}
-			const categorizeLine: CategorizeBoardLineFn = () => 'process'; // processes all lines
-			const deps = { categorizeLine };
+			const assignLineCategory: CategorizeBoardLineFn = () => 'process'; // processes all lines
+			const deps = { assignLineCategory };
 
 			const res = applyEliminationConstraint(board, opts, deps);
 			expect(res).toEqual({
@@ -352,7 +378,8 @@ describe('applyEliminationConstraint', () => {
 		it.todo('correctly updates the boardLines, when an applied strategy result affects other boardLines');
 
 		it.todo('does not account for filledLines if "useDuplicateLines" option is set to false');
-		it('correctly updates the filledLines, and accounts for them in the next iterations, when an applied strategy result affects other boardLines', () => {
+
+		it('correctly updates the filledLines with the processed line, and accounts for them in the next iterations, when an applied strategy result affects other boardLines', () => {
 			const grid = [
 				'....',
 				'101.', // gets processed first, then added to filledLines, so the rest get called with filledLines[ROW].length === 1
@@ -393,5 +420,9 @@ describe('applyEliminationConstraint', () => {
 				})]	
 			); // second call has row B in its filledLines, as it has now become a filled line
 		})
+
+		it.todo('Not yet implemented; correctly updates the filledLines with other lines that became filled, when an applied strategy result affects other boardLines');
 	})
+
+	describe.todo('applyEliminationConstraint end results');
 })
