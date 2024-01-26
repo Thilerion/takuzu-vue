@@ -6,7 +6,7 @@ import type { ConstraintResult } from "./types.js";
 
 export type ApplyLineBalanceConstraintOpts = {
 	/** Whether to stop after applying to a single line. Defaults to true. */
-	singleAction?: boolean
+	singleAction: boolean
 }
 export type ApplyLineBalanceConstraintDeps = {
 	/** The function to use to gather the boardLines to check. Defaults to `board.boardLines()` */
@@ -15,10 +15,10 @@ export type ApplyLineBalanceConstraintDeps = {
 
 export function applyLineBalanceConstraint(
 	board: SimpleBoard,
-	opts: ApplyLineBalanceConstraintOpts = {},
+	opts: ApplyLineBalanceConstraintOpts = { singleAction: true },
 	deps: Partial<ApplyLineBalanceConstraintDeps> = {}
 ): ConstraintResult {
-	const { singleAction = false } = opts;
+	const { singleAction } = opts;
 	let changed = false;
 
 	const boardLines = deps.gatherBoardLines ?? (board => board.boardLines());

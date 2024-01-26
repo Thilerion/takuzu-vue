@@ -17,7 +17,7 @@ import { mergeAndValidateElimConstraintOpts, type CategorizeBoardLineFn, categor
 
 export type ApplyEliminationConstraintOptsParam = {
 	/** Whether to stop after applying to a single line. Defaults to true. */
-	singleAction?: boolean,
+	singleAction: boolean,
 	/** Whether to find filled lines on the board, and use those to reduce the search space. Applies to Elim_duplicate constraints. Defaults to true. */
 	useDuplicateLines?: boolean,
 	/** The range of "leastRemaining" to consider; when the max is higher, this strategy will search for harder to find patterns. Defaults to [1, 3] */
@@ -36,7 +36,7 @@ type BoardLineChanges = Record<LineType, Set<number>>;
 
 export function applyEliminationConstraint(
 	board: SimpleBoard,
-	options: ApplyEliminationConstraintOptsParam = {},
+	options: ApplyEliminationConstraintOptsParam = { singleAction: true },
 	deps: Partial<ApplyEliminationConstraintDeps> = {}
 ): ConstraintResult {
 	let changed = false;

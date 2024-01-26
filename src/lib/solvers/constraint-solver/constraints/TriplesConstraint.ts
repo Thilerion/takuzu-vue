@@ -5,7 +5,7 @@ import type { ThreesUnit } from "@/lib/board/ThreesUnit.js";
 
 export type ApplyTriplesConstraintOpts = {
 	/** Whether to stop after finding a single result and applying it. Defaults to FALSE (as opposed to the other constraint functions). */
-	singleAction?: boolean,
+	singleAction: boolean,
 }
 export type ApplyTriplesConstraintDeps = {
 	/** The function to use to gather the ThreesUnits to check. Defaults to `board.threesUnits()` */
@@ -14,10 +14,10 @@ export type ApplyTriplesConstraintDeps = {
 
 export function applyTriplesConstraint(
 	board: SimpleBoard,
-	opts: ApplyTriplesConstraintOpts = {},
+	opts: ApplyTriplesConstraintOpts = { singleAction: false },
 	deps: Partial<ApplyTriplesConstraintDeps> = {}
 ): ConstraintResult {
-	const { singleAction = false } = opts;
+	const { singleAction } = opts;
 	let changed = false;
 
 	const threesUnits = deps.gatherThreesUnits ?? (board => board.threesUnits());
