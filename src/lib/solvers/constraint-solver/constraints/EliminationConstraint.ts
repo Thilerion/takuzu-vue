@@ -23,6 +23,7 @@ type ApplyEliminationConstraintDeps = {
 	categorizeLine: CategorizeBoardLineFn,
 	sortLinesByPriority: PrioritySortBoardLinesFn
 }
+type BoardLineChanges = Record<LineType, Set<number>>;
 
 export function applyEliminationConstraint(
 	board: SimpleBoard,
@@ -59,7 +60,6 @@ export function applyEliminationConstraint(
 		changed = true;
 
 		// Update (or reset) the (cached values of) each BoardLine that was changed by the assigned values
-		// TODO: maybe a BoardLine.update(x, y, value) method would be better
 		if (lineRes.changedLines) {
 			updateBoardLinesWithChanges(boardLines, board, lineRes.changedLines);
 		} else {
@@ -67,6 +67,7 @@ export function applyEliminationConstraint(
 		}
 
 		// if the current line is now completely filled, add it to the filled lines
+		// TODO: maybe also update filledLines in the other direction; if this is a row with multiple values placed in this step, the columns in which those were placed could also have become a filled line
 		if (boardLine.isFilled && useDuplicateLines) {
 			filledLines[boardLine.type] = [
 				...filledLines[boardLine.type],
@@ -83,7 +84,7 @@ function applyEliminationConstraintOnSingleLine(
 	boardLine: BoardLine,
 	filledLines: Record<LineType, BoardLine[]>,
 	trackChanges: boolean
-): { error: string } | { changed: false } | { changed: true, changedLines: ({ row: number, column: number }[]) | null } {
+): { error: string } | { changed: false } | { changed: true, changedLines: (BoardLineChanges) | null } {
 	const filled = filledLines[boardLine.type];
     const strategyResult = checkEliminationStrategy(boardLine, filled);
     if (!strategyResult.found && strategyResult.invalid) {
@@ -96,7 +97,15 @@ function applyEliminationConstraintOnSingleLine(
     applyTargets(board, targets);
 
 	if (trackChanges) {
-		return { changed: true, changedLines: targets.map(t => ({ row: t.y, column: t.x })) };
+		const changedLines = targets.reduce((acc, val) => {
+			acc[ROW].add(val.y);
+			acc[COLUMN].add(val.x);
+			return acc;
+		}, { [ROW]: new Set<number>(), [COLUMN]: new Set<number>() } as BoardLineChanges);
+		return { 
+			changed: true, 
+			changedLines 
+		};
 	} else {
 		return { changed: true, changedLines: null };
 	}
@@ -105,15 +114,17 @@ function applyEliminationConstraintOnSingleLine(
 /**
  * Reset (the cached values in) all BoardLines that have changed, based on the given changes.
  * TODO: maybe a BoardLine.update(x, y, value) method would be better
- * TODO: filledLines should also be updated 
+ * TODO: filledLines should also be updated
  */
 function updateBoardLinesWithChanges(
 	lines: BoardLine[],
 	board: SimpleBoard,
-	changes: { row: number, column: number }[]
+	changes: BoardLineChanges
 ): void {
-	const changedRows = new Set<number>([...changes.map(l => l.row)]);
-	const changedCols = new Set<number>([...changes.map(l => l.column)]);
+	const {
+		[ROW]: changedRows,
+		[COLUMN]: changedCols
+	} = changes;
 	for (const line of lines) {
 		if (line.type === ROW && changedRows.has(line.index)) {
 			line.reset(board);
