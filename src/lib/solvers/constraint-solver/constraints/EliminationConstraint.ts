@@ -21,7 +21,7 @@ export type ApplyEliminationConstraintValidatedOpts = Omit<Required<ApplyElimina
 
 type ApplyEliminationConstraintDeps = {
 	categorizeLine: CategorizeBoardLineFn,
-	sortLinesByPriority: typeof defaultSortLinesByPriority
+	sortLinesByPriority: PrioritySortBoardLinesFn
 }
 
 export function applyEliminationConstraint(
@@ -48,26 +48,31 @@ export function applyEliminationConstraint(
 	);
 
 	for (const boardLine of boardLines) {
-		const singleResult = applyEliminationConstraintOnSingleLine(board, boardLine, filledLines, !singleAction);
-		if ('error' in singleResult) {
-			return { changed: false, error: singleResult.error };
+		const lineRes = applyEliminationConstraintOnSingleLine(board, boardLine, filledLines, !singleAction);
+		if ('error' in lineRes) {
+			return { changed: false, error: lineRes.error };
 		}
-		if (!singleResult.changed) continue;
+		if (!lineRes.changed) continue;
 		if (singleAction) {
 			return { changed: true };
 		}
 		changed = true;
 
-		// track the changed row and column indices, so the boardLines can be reset
-		// now reset the lines where one or more values were changed
+		// Update (or reset) the (cached values of) each BoardLine that was changed by the assigned values
 		// TODO: maybe a BoardLine.update(x, y, value) method would be better
-		updateBoardLinesWithChanges(boardLines, board, singleResult.changedLines!);
+		if (lineRes.changedLines) {
+			updateBoardLinesWithChanges(boardLines, board, lineRes.changedLines);
+		} else {
+			throw new Error('No changed lines in result, but singleAction was false...')
+		}
 
 		// if the current line is now completely filled, add it to the filled lines
 		if (boardLine.isFilled && useDuplicateLines) {
-			filledLines[boardLine.type].push(boardLine);
+			filledLines[boardLine.type] = [
+				...filledLines[boardLine.type],
+				boardLine
+			]
 		}
-		// continue with loop
 	}
 
 	return { changed };
@@ -97,10 +102,18 @@ function applyEliminationConstraintOnSingleLine(
 	}
 }
 
-function updateBoardLinesWithChanges(lines: BoardLine[], board: SimpleBoard, changes: { row: number, column: number }[]) {
+/**
+ * Reset (the cached values in) all BoardLines that have changed, based on the given changes.
+ * TODO: maybe a BoardLine.update(x, y, value) method would be better
+ * TODO: filledLines should also be updated 
+ */
+function updateBoardLinesWithChanges(
+	lines: BoardLine[],
+	board: SimpleBoard,
+	changes: { row: number, column: number }[]
+): void {
 	const changedRows = new Set<number>([...changes.map(l => l.row)]);
 	const changedCols = new Set<number>([...changes.map(l => l.column)]);
-	console.log('changedRows', changedRows);
 	for (const line of lines) {
 		if (line.type === ROW && changedRows.has(line.index)) {
 			line.reset(board);
@@ -114,7 +127,7 @@ function applyTargets(board: SimpleBoard, targets: Target[]): void {
 	targets.forEach(tg => board.assignTarget(tg));
 }
 
-function categorizeBoardLines(
+export function categorizeBoardLines(
 	lines: Iterable<BoardLine>,
 	opts: ApplyEliminationConstraintValidatedOpts,
 	deps: { categorizeLine: CategorizeBoardLineFn, sort: PrioritySortBoardLinesFn }
