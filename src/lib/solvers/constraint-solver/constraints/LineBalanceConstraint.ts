@@ -5,38 +5,36 @@ import type { BoardLine } from "@/lib/board/BoardLine.js";
 import type { ConstraintResult } from "./types.js";
 
 export type ApplyLineBalanceConstraintOpts = {
-	/** Whether to stop after applying to a single line */
+	/** Whether to stop after applying to a single line. Defaults to true. */
 	singleAction?: boolean
 }
+export type ApplyLineBalanceConstraintDeps = {
+	/** The function to use to gather the boardLines to check. Defaults to `board.boardLines()` */
+	gatherBoardLines?: (board: SimpleBoard) => Iterable<BoardLine>,
+}
 
-export function applyLineBalanceConstraints(
+export function applyLineBalanceConstraint(
 	board: SimpleBoard,
-	options: ApplyLineBalanceConstraintOpts = {}
+	opts: ApplyLineBalanceConstraintOpts = {},
+	deps: Partial<ApplyLineBalanceConstraintDeps> = {}
 ): ConstraintResult {
+	const { singleAction = false } = opts;
 	let changed = false;
-	const singleAction = options.singleAction ?? false;
 
-	for (const boardLine of board.boardLines()) {
+	const boardLines = deps.gatherBoardLines ?? (board => board.boardLines());
+
+	for (const boardLine of boardLines(board)) {
 		const res = checkLineBalanceStrategy2(boardLine);
-		if (!res.found) continue;
+		if (res.found) {
+			const { value } = res.data;
+			// TODO: use Board.assignLine()? or Board.fillLine()?
+			const lineValues = boardLine.values.map(v => v === EMPTY ? value : v);
+			board.assignLine(boardLine.lineId, lineValues);
+			changed = true;
 
-		const { value } = res.data;
-		// TODO: use Board.assignLine()? or Board.fillEmptyWith()?
-		fillEmptyCellsWithValue(board, boardLine, value);
-		changed = true;
-		
-		if (singleAction) return { changed: true };
-		else changed = true;
+			if (singleAction) return { changed };
+		}
 	}
 
 	return { changed };
-}
-
-const fillEmptyCellsWithValue = (board: SimpleBoard, line: BoardLine, value: PuzzleSymbol) => {
-	for (let i = 0; i < line.length; i++) {
-		if (line.values[i] === EMPTY) {
-			const { x, y } = line.coords[i];
-			board.assign(x, y, value);
-		}
-	}
 }
