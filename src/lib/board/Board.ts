@@ -1,7 +1,8 @@
 import { COLUMN, EMPTY, ONE, ROW, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "../constants";
-import type { ColumnId, IterableBoardLineString, LineId, BoardExportString, PuzzleGrid, RowId, Vec, BoardString, Target } from "../types";
-import { array2d, cloneArray2d, columnIdToX, deducePuzzleDimensionsFromLength, generateColumnIds, generateRowIds, getCoordsForBoardSize, isExportString, isLineIdColumn, isLineIdRow, isValidCellDigit, lineSizeToNumRequired, parseExportString, rowIdToY, shuffle } from "../utils";
+import type { ColumnId, IterableBoardLineString, LineId, BoardExportString, PuzzleGrid, RowId, Vec, BoardString, Target, BoardShape } from "../types";
+import { array2d, cloneArray2d, columnIdToX, getCoordsForBoardSize, isLineIdColumn, isLineIdRow, isPuzzleValueLineStr, isValidCellDigit, isValidPuzzleValue, lineSizeToNumRequired, rowIdToY, shuffle } from "../utils";
 import { validateBoard } from "../validate/board";
+import { generateColumnIds, generateRowIds, getImportBoardStringData } from "./Board.helpers.js";
 import { BoardLine } from "./BoardLine";
 import { ThreesUnit } from "./ThreesUnit";
 
@@ -31,22 +32,9 @@ export class SimpleBoard {
 		const grid: PuzzleGrid = array2d(width, height, EMPTY);
 		return new SimpleBoard(grid);
 	}
-	static fromString(exportedStr: BoardString | BoardExportString) {
-		const isExport = isExportString(exportedStr);
-		let width: number;
-		let height: number;
-		let boardStr: string;
-		if (isExport) {
-			const parsed = parseExportString(exportedStr);
-			width = parsed.width;
-			height = parsed.height;
-			boardStr = parsed.boardStr;
-		} else {
-			const dims = deducePuzzleDimensionsFromLength(exportedStr.length);
-			width = dims.width;
-			height = dims.height;
-			boardStr = exportedStr;
-		}
+
+	static fromString(exportedStr: BoardString | BoardExportString, dims?: BoardShape) {
+		const { width, height, boardStr } = getImportBoardStringData(exportedStr, dims);
 		if (boardStr.length < width * height) {
 			throw new Error(`Unexpected boardStr size, smaller than board dimensions (str len: ${boardStr.length}, dimensions: ${width}x${height}=${width * height})`);
 		}
@@ -67,8 +55,54 @@ export class SimpleBoard {
 		}
 		return new SimpleBoard(grid);
 	}
-	static import(str: BoardString | BoardExportString) {
-		return SimpleBoard.fromString(str);
+	// TODO: accept an optional width/height, to bypass deducePuzzleDimensions
+	static import(str: BoardString | BoardExportString, dims?: BoardShape) {
+		return SimpleBoard.fromString(str, dims);
+	}
+	// TODO: accept an optional width/height, to bypass deducePuzzleDimensions
+	static fromArrayOfLines(arr: string[]) {
+		// validate that every value is a PuzzleValue, or every item in array is a PuzzleValueLine
+		const isValid = arr.every(l => isPuzzleValueLineStr(l));
+		if (!isValid) {
+			throw new Error('Cannot parse array of lines, not all values are PuzzleValues');
+		}
+		return this.fromString(arr.join('') as BoardString);
+	}
+
+	/**
+	 * Parses a 2d array of strings, numbers, or null/undefined into a Board
+	 * Null, undefined, empty string, and " " values are treated as empty cells
+	 * The string "1" and number 1 are treated as ONE
+	 * The string "0" and number 0 are treated as ZERO
+	 */
+	static from2dArray(arr2: (string | number | null | undefined)[][]) {
+		const grid: PuzzleGrid = [];
+		for (const inputRow of arr2) {
+			const row: PuzzleValue[] = [];
+			for (const inputVal of inputRow) {
+				if (typeof inputVal === 'string') {
+					if (isValidPuzzleValue(inputVal)) {
+						row.push(inputVal);
+					} else if (inputVal === ' ' || inputVal === '') {
+						row.push(EMPTY);
+					} else {
+						throw new Error(`Cannot parse ["${inputVal}"] as a PuzzleValue`);
+					}
+				} else if (typeof inputVal === 'number') {
+					if (inputVal === 1 || inputVal === 0) {
+						row.push(`${inputVal}`);
+					} else {
+						throw new Error(`Cannot parse [${inputVal}] as a PuzzleValue`);
+					}
+				} else if (inputVal == null) {
+					row.push(EMPTY);
+				} else {
+					throw new Error(`Cannot parse [${inputVal}] as a PuzzleValue`);
+				}
+			}
+			grid.push(row);
+		}
+		return new SimpleBoard(grid);
 	}
 
 	get(x: number, y: number): PuzzleValue {

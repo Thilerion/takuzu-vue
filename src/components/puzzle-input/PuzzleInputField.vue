@@ -16,8 +16,8 @@
 </template>
 
 <script setup>
+import { isExportString } from '@/lib/board/Board.helpers.js';
 import { ONE, ZERO } from '@/lib/constants';
-import { isExportString } from '@/lib/utils';
 import { computed, ref, toRef } from 'vue';
 
 const props = defineProps({
