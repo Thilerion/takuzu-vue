@@ -48,7 +48,7 @@ export function applyEliminationConstraint(
 	);
 
 	for (const boardLine of boardLines) {
-		const singleResult = applyEliminationConstraintOnSingleLine(board, boardLine, filledLines, singleAction);
+		const singleResult = applyEliminationConstraintOnSingleLine(board, boardLine, filledLines, !singleAction);
 		if ('error' in singleResult) {
 			return { changed: false, error: singleResult.error };
 		}
@@ -73,18 +73,6 @@ export function applyEliminationConstraint(
 	return { changed };
 }
 
-function updateBoardLinesWithChanges(lines: BoardLine[], board: SimpleBoard, changes: { row: number, column: number }[]) {
-	const changedRows = new Set<number>([...changes.map(l => l.row)]);
-	const changedCols = new Set<number>([...changes.map(l => l.column)]);
-	for (const line of lines) {
-		if (line.type === ROW && changedRows.has(line.index)) {
-			line.reset(board);
-		} else if (line.type === COLUMN && changedCols.has(line.index)) {
-			line.reset(board);
-		}
-	}
-}
-
 function applyEliminationConstraintOnSingleLine(
 	board: SimpleBoard,
 	boardLine: BoardLine,
@@ -106,6 +94,19 @@ function applyEliminationConstraintOnSingleLine(
 		return { changed: true, changedLines: targets.map(t => ({ row: t.y, column: t.x })) };
 	} else {
 		return { changed: true, changedLines: null };
+	}
+}
+
+function updateBoardLinesWithChanges(lines: BoardLine[], board: SimpleBoard, changes: { row: number, column: number }[]) {
+	const changedRows = new Set<number>([...changes.map(l => l.row)]);
+	const changedCols = new Set<number>([...changes.map(l => l.column)]);
+	console.log('changedRows', changedRows);
+	for (const line of lines) {
+		if (line.type === ROW && changedRows.has(line.index)) {
+			line.reset(board);
+		} else if (line.type === COLUMN && changedCols.has(line.index)) {
+			line.reset(board);
+		}
 	}
 }
 
