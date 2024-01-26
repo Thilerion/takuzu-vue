@@ -1,5 +1,5 @@
 import type { SimpleBoard } from "@/lib/index.js"
-import { checkLineBalanceStrategy2 } from "../../common/LineBalanceStrategy.js";
+import { checkLineBalanceStrategy } from "../../common/LineBalanceStrategy.js";
 import { EMPTY, type PuzzleSymbol } from "@/lib/constants.js";
 import type { BoardLine } from "@/lib/board/BoardLine.js";
 import type { ConstraintResult } from "./types.js";
@@ -24,7 +24,7 @@ export function applyLineBalanceConstraint(
 	const boardLines = deps.gatherBoardLines ?? (board => board.boardLines());
 
 	for (const boardLine of boardLines(board)) {
-		const res = checkLineBalanceStrategy2(boardLine);
+		const res = checkLineBalanceStrategy(boardLine);
 		if (res.found) {
 			const { value } = res.data;
 			// TODO: use Board.assignLine()? or Board.fillLine()?

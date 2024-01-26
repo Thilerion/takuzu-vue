@@ -8,7 +8,7 @@ export type TriplesStrategyResult = SolverStrategyResult<{
 	value: PuzzleSymbol,
 }>;
 
-export const checkLineBalanceStrategy2 = (boardLine: BoardLine): TriplesStrategyResult => {
+export const checkLineBalanceStrategy = (boardLine: BoardLine): TriplesStrategyResult => {
 	if (boardLine.isFilled) return { found: false } as const;
 
 	const {

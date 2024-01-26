@@ -12,7 +12,7 @@ export type TriplesStrategyResult = SolverStrategyResult<{
 	origin: readonly [Vec, Vec]
 }>;
 
-export const checkTriplesStrategy2 = (unit: Pick<ThreesUnit, 'values' | 'coords'>): SolverStrategyResult<{
+export const checkTriplesStrategy = (unit: Pick<ThreesUnit, 'values' | 'coords'>): SolverStrategyResult<{
 	type: 'sandwich' | 'double',
 	target: Target,
 	origin: readonly [Vec, Vec]

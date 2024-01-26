@@ -1,4 +1,4 @@
-import { checkTriplesStrategy2 } from "../solvers/common/TriplesStrategy.js";
+import { checkTriplesStrategy } from "../solvers/common/TriplesStrategy.js";
 import type { Target, Vec } from "../types";
 import type { HumanTechniqueBoardOnly } from "./types";
 
@@ -14,7 +14,7 @@ export function humanSolveTriples({ board }: HumanTechniqueBoardOnly) {
 
 	for (const threesUnit of board.threesUnits()) {
 		
-		const result = checkTriplesStrategy2(threesUnit);
+		const result = checkTriplesStrategy(threesUnit);
 
 		if (!result.found) continue;
 		const { target, type, origin } = result.data;

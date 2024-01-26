@@ -28,9 +28,9 @@ describe('applyLineBalanceConstraint', () => {
 		expect(res).toEqual({ changed: true });
 	});
 
-	it('correctly assigns the results of checkLineBalanceStrategy2 to the board', () => {
+	it('correctly assigns the results of checkLineBalanceStrategy to the board', () => {
 		const board = SimpleBoard.empty(4, 4);
-		vi.spyOn(lineBalStratModule, 'checkLineBalanceStrategy2')
+		vi.spyOn(lineBalStratModule, 'checkLineBalanceStrategy')
 			.mockReturnValueOnce({ found: true, data: { value: ZERO } })
 			.mockReturnValueOnce({ found: true, data: { value: ONE } })
 			.mockReturnValue({ found: false }); // would make the first two lines be assigned 0000, and 1111
@@ -59,7 +59,7 @@ describe('applyLineBalanceConstraint', () => {
 	it('returns { changed: true } after the first successful application if singleAction is true', () => {
 		const board = SimpleBoard.empty(4, 4);
 		// potentialy finds a result twice, but if singleAction is true, it should stop after the first
-		const stratMock = vi.spyOn(lineBalStratModule, 'checkLineBalanceStrategy2')
+		const stratMock = vi.spyOn(lineBalStratModule, 'checkLineBalanceStrategy')
 			.mockReturnValueOnce({ found: false })
 			.mockReturnValueOnce({ found: true, data: { value: ZERO } })
 			.mockReturnValueOnce({ found: true, data: { value: ONE } })
@@ -75,7 +75,7 @@ describe('applyLineBalanceConstraint', () => {
 	it('returns { changed: true } after all lines have been checked, and at least one had a result, if singleAction is false', () => {
 		const board = SimpleBoard.empty(4, 4);
 		// finds a result twice
-		const stratMock = vi.spyOn(lineBalStratModule, 'checkLineBalanceStrategy2')
+		const stratMock = vi.spyOn(lineBalStratModule, 'checkLineBalanceStrategy')
 			.mockReturnValueOnce({ found: false })
 			.mockReturnValueOnce({ found: true, data: { value: ZERO } })
 			.mockReturnValueOnce({ found: true, data: { value: ONE } })
@@ -89,7 +89,7 @@ describe('applyLineBalanceConstraint', () => {
 
 	it('returns { changed: false } if no successful application was found', () => {
 		const board = SimpleBoard.empty(4, 4);
-		vi.spyOn(lineBalStratModule, 'checkLineBalanceStrategy2')
+		vi.spyOn(lineBalStratModule, 'checkLineBalanceStrategy')
 			.mockReturnValue({ found: false });
 
 		const resSingle = applyLineBalanceConstraint(board, {

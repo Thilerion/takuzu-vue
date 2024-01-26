@@ -1,5 +1,5 @@
 import type { SimpleBoard } from "@/lib/index.js";
-import { checkTriplesStrategy2 } from "../../common/TriplesStrategy.js";
+import { checkTriplesStrategy } from "../../common/TriplesStrategy.js";
 import type { ConstraintResult } from "./types.js";
 import type { ThreesUnit } from "@/lib/board/ThreesUnit.js";
 
@@ -23,7 +23,7 @@ export function applyTriplesConstraint(
 	const threesUnits = deps.gatherThreesUnits ?? (board => board.threesUnits());
 
 	for (const threesUnit of threesUnits(board)) {
-		const res = checkTriplesStrategy2(threesUnit);
+		const res = checkTriplesStrategy(threesUnit);
 		if (res.found) {
 			const { target } = res.data;
 			board.assignTarget(target);

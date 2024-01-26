@@ -28,7 +28,7 @@ describe('applyTriplesConstraint', () => {
 	});
 
 	it('uses the checkTriplesStrategy function to check each threesUnit', () => {
-		const mockedTriplesStrat = vi.spyOn(triplesStratModule, 'checkTriplesStrategy2');
+		const mockedTriplesStrat = vi.spyOn(triplesStratModule, 'checkTriplesStrategy');
 		const board = SimpleBoard.empty(4, 4);
 		const numThreesUnits = [...board.threesUnits()].length;
 
@@ -39,11 +39,11 @@ describe('applyTriplesConstraint', () => {
 		expect(mockedTriplesStrat).toHaveBeenCalledTimes(numThreesUnits);
 	});
 
-	it('applies the result of checkTriplesStrategy2 to the board, and returns { changed: true }', () => {
+	it('applies the result of checkTriplesStrategy to the board, and returns { changed: true }', () => {
 		const board = SimpleBoard.empty(4, 4);
 		const assignSpy = vi.spyOn(board, 'assignTarget');
 		const mockedTriplesStrat = vi
-			.spyOn(triplesStratModule, 'checkTriplesStrategy2')
+			.spyOn(triplesStratModule, 'checkTriplesStrategy')
 			.mockReturnValueOnce({
 				found: true,
 				data: {
@@ -82,7 +82,7 @@ describe('applyTriplesConstraint', () => {
 		const assignSpy = vi.spyOn(board, 'assignTarget');
 		// potentially returns two "found" results, but because singleAction is true, should only be called twice
 		const mockedTriplesStrat = vi
-			.spyOn(triplesStratModule, 'checkTriplesStrategy2')
+			.spyOn(triplesStratModule, 'checkTriplesStrategy')
 			.mockReturnValueOnce({
 				found: false // first call, no result
 			})

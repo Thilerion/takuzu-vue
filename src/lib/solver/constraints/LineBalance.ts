@@ -1,6 +1,6 @@
 import type { SimpleBoard } from "@/lib/board/Board";
 import { EMPTY } from "../../constants";
-import { checkLineBalanceStrategy2 } from "@/lib/solvers/common/LineBalanceStrategy.js";
+import { checkLineBalanceStrategy } from "@/lib/solvers/common/LineBalanceStrategy.js";
 
 export type ApplyLineBalanceConstraintOpts = { singleAction?: boolean };
 export default function applyLineBalanceConstraint(board: SimpleBoard, options: ApplyLineBalanceConstraintOpts = {}) {
@@ -9,7 +9,7 @@ export default function applyLineBalanceConstraint(board: SimpleBoard, options: 
 	const { singleAction = false } = options;
 
 	for (const boardLine of board.boardLines()) {
-		const res = checkLineBalanceStrategy2(boardLine);
+		const res = checkLineBalanceStrategy(boardLine);
 
 		if (!res.found) continue;
 		const { value } = res.data;
