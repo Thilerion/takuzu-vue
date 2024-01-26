@@ -53,8 +53,7 @@ export class ThreesUnit {
 	}
 
 	static isThreesValues(vals: unknown[]): vals is ThreesValues {
-		if (vals.length !== 3) return false;
-		return vals.every(v => isValidPuzzleValue(v));
+		return vals.length === 3 && vals.every(v => isValidPuzzleValue(v));
 	}
 
 	get values() {
