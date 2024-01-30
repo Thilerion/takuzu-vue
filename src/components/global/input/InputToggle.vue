@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { reverse } from 'dns';
+import { toRef } from 'vue';
 
 const props = withDefaults(defineProps<{
 	id: string,
@@ -25,6 +25,7 @@ const props = withDefaults(defineProps<{
 	reverse: false,
 	small: false
 })
+const reverse = toRef(props, 'reverse');
 
 
 const inlineClasses = [
