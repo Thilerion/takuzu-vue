@@ -2,20 +2,21 @@ import { describe, expect, test } from "vitest";
 import { SimpleBoard } from "@/lib";
 import { validateBoard, findRuleConflicts } from '@/lib/validate/board';
 import { ruleConflictTypes } from "@/lib/validate/types";
+import type { BoardExportString } from "@/lib/types.js";
 
 describe('validate board functions', () => {
 	test('incomplete square valid board', () => {
-		const b = SimpleBoard.import("6x6;0..0..10.1101..1010.1.01..01101..0.1");
+		const b = SimpleBoard.import("6x6;0..0..10.1101..1010.1.01..01101..0.1" as BoardExportString);
 		expect(validateBoard(b, true)).toBe(true);
 	})
 
 	test('complete rectangular valid board', () => {
-		const b = SimpleBoard.import("6x10;101010110010010101101001100110010110011001101100010011001101");
+		const b = SimpleBoard.import("6x10;101010110010010101101001100110010110011001101100010011001101" as BoardExportString);
 		expect(validateBoard(b, true)).toBe(true);
 	})
 
 	test('incomplete square invalid board with duplicate row', () => {
-		const b = SimpleBoard.import("4x4;1010........1010");
+		const b = SimpleBoard.import("4x4;1010........1010" as BoardExportString);
 		expect(validateBoard(b, true)).toBe(false);
 		expect(validateBoard(b, false)).toBe(true);
 	})
@@ -27,7 +28,7 @@ describe('validate board functions', () => {
 			"0...",
 			"1001"
 		]
-		const str = `4x4;${grid.join('')}`
+		const str = `4x4;${grid.join('')}` as BoardExportString;
 		const b = SimpleBoard.import(str);
 		expect(validateBoard(b, true)).toBe(true);
 		expect(validateBoard(b, false)).toBe(true);
@@ -46,19 +47,19 @@ describe('validate board functions', () => {
 			'111...',
 			'......'
 		].join('');
-		const strA = `6x4;${gridA}`;
-		const strB = `6x4;${gridB}`;
+		const strA = `6x4;${gridA}` as BoardExportString;
+		const strB = `6x4;${gridB}` as BoardExportString;
 		expect(validateBoard(SimpleBoard.import(strA))).toBe(true);
 		expect(validateBoard(SimpleBoard.import(strB))).toBe(false);
 	})
 
 	test('invalid because of max per line violation', () => {
-		const str = '4x4;.0.......0...0..';
+		const str = '4x4;.0.......0...0..' as BoardExportString;
 		expect(validateBoard(SimpleBoard.import(str))).toBe(false);
 	})
 
 	test('invalid because a line matches more than 1 other line', () => {
-		const str = '6x6;101010......101010............101010';
+		const str = '6x6;101010......101010............101010' as BoardExportString;
 		expect(validateBoard(SimpleBoard.import(str))).toBe(false);
 	})
 })
@@ -71,7 +72,7 @@ describe('findRuleConflicts()', () => {
 			'111...',
 			'......'
 		].join('');
-		const str = `6x4;${grid}`;
+		const str = `6x4;${grid}` as BoardExportString;
 		const b = SimpleBoard.import(str);
 		expect(findRuleConflicts(b, true)).toMatchInlineSnapshot(`
 			[
@@ -98,7 +99,7 @@ describe('findRuleConflicts()', () => {
 	})
 
 	test('finds symbol count violation', () => {
-		const str = '4x4;.0.......0...0..';
+		const str = '4x4;.0.......0...0..' as BoardExportString;
 		const b = SimpleBoard.import(str);
 		expect(findRuleConflicts(b, true)).toMatchInlineSnapshot(`
 			[
@@ -114,7 +115,7 @@ describe('findRuleConflicts()', () => {
 	})
 
 	test('finds duplicate line violation if enabled', () => {
-		const b = SimpleBoard.import("4x4;1010........1010");
+		const b = SimpleBoard.import("4x4;1010........1010" as BoardExportString);
 		expect(findRuleConflicts(b, false)).toEqual([]);
 		expect(findRuleConflicts(b, true)).toMatchInlineSnapshot(`
 			[
@@ -137,13 +138,13 @@ describe('findRuleConflicts()', () => {
 			"0...",
 			"1001"
 		]
-		const str = `4x4;${grid.join('')}`
+		const str = `4x4;${grid.join('')}` as BoardExportString;
 		const b = SimpleBoard.import(str);
 		expect(findRuleConflicts(b, true)).toEqual([]);
 	})
 
 	test('can find multiple types of rule violations', () => {
-		const b = SimpleBoard.import("6x6;......110010....0.00..00....0.110010");
+		const b = SimpleBoard.import("6x6;......110010....0.00..00....0.110010" as BoardExportString);
 		const result = findRuleConflicts(b, true);
 		for (const conflictType of ruleConflictTypes) {
 			expect(result.find(c => c.type === conflictType)).toBeTruthy();
@@ -190,7 +191,7 @@ describe('findRuleConflicts()', () => {
 	})
 
 	test('can find violation where a row is duplicated more than once', () => {
-		const str = '6x6;101010......101010............101010';
+		const str = '6x6;101010......101010............101010' as BoardExportString;
 		const b = SimpleBoard.import(str);
 		const result = findRuleConflicts(b, true);
 		expect(result).toHaveLength(1);

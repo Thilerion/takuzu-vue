@@ -1,4 +1,5 @@
 import { SimpleBoard } from "@/lib/index.js"
+import type { BoardExportString, BoardString } from "@/lib/types.js"
 
 describe('Board class', () => {
 	describe('constructors', () => {
@@ -105,8 +106,85 @@ describe('Board class', () => {
 		})
 
 		describe('.import()/.fromString()', () => {
-			describe.todo('with BoardExportString');
-			describe.todo('with BoardString, with/without added dimensions');
+			describe('with BoardExportString', () => {
+				it('works', () => {
+					const str = '4x4;1010....1.0..0.1' as BoardExportString;
+					const board = SimpleBoard.import(str);
+					expect(board).toMatchObject({
+						width: 4,
+						height: 4
+					})
+					const asExported = board.export();
+					expect(asExported).toBe(str);
+				})
+			});
+
+			describe('with BoardString', () => {
+				it('correctly creates a Board from a string of 1s, 0s, and .s', () => {
+					const str = '1010....1.0..0.1' as BoardString;
+					const board = SimpleBoard.fromString(str);
+					expect(board).toMatchObject({
+						width: 4,
+						height: 4
+					})
+					const asBoardString = board.toBoardString();
+					expect(asBoardString).toBe(str);
+				})
+
+				it('correctly deduces the board shape/dimensions', () => {
+					const strA = '.'.repeat(4 * 4) as BoardString;
+					expect(SimpleBoard.fromString(strA)).toMatchObject({
+						width: 4,
+						height: 4
+					})
+					const strB = '.'.repeat(11 * 11) as BoardString;
+					expect(SimpleBoard.fromString(strB)).toMatchObject({
+						width: 11,
+						height: 11
+					})
+					const strC = '.'.repeat(6 * 10) as BoardString;
+					expect(SimpleBoard.fromString(strC)).toMatchObject({
+						width: 6,
+						height: 10
+					})
+				})
+
+				it('uses the given width/height if provided, but gives an error if inconsistent with boardStr length', () => {
+					const str2x4 = '.'.repeat(2 * 4) as BoardString;
+
+					// throws, as 2x4 is an unknown board size
+					expect(() => SimpleBoard.fromString(str2x4))
+						.toThrowErrorMatchingInlineSnapshot(`[Error: Cannot deduce correct puzzle size from this length (8)]`);
+					// works if dimensions are given
+					expect(SimpleBoard.fromString(str2x4, { width: 2, height: 4})).toMatchObject({
+						width: 2,
+						height: 4
+					})
+					// throws if dimensions are given that don't match the boardStr length
+					expect(() => SimpleBoard.fromString(str2x4, { width: 4, height: 4}))
+						.toThrowErrorMatchingInlineSnapshot(`[Error: Unexpected boardStr size, smaller than board dimensions (str len: 8, dimensions: 4x4=16)]`);
+				})
+
+				it('accepts any character, treats 0 and 1 as the puzzle symbols, everything else as EMPTY', () => {
+					const str = [
+						'1010',
+						'22!x',
+						'....',
+						'1.0.'
+					].join('') as BoardString;
+					const board = SimpleBoard.fromString(str);
+					expect(board).toMatchObject({
+						width: 4,
+						height: 4
+					})
+					expect(board.grid).toEqual([
+						['1', '0', '1', '0'],
+						['.', '.', '.', '.'],
+						['.', '.', '.', '.'],
+						['1', '.', '0', '.']
+					])
+				})
+			});
 		});
 
 	})
