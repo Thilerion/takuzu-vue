@@ -37,6 +37,7 @@ import { usePuzzleAssistanceStore } from '@/stores/assistance/store.js';
 import { useCellThemeProvider } from '../puzzleboard/useCellThemeProvider.js';
 import { CellThemeTypes } from '@/stores/settings/options.js';
 import { useStaticGridCellData } from './composables/useGridCellData.js';
+import { usePuzzleTapVibrate } from './composables/usePuzzleTapVibrate.js';
 
 const props = defineProps<{
 	board: SimpleBoard,
@@ -44,31 +45,18 @@ const props = defineProps<{
 	columns: number,
 	paused: boolean
 }>();
+const { rows, columns } = toRefs(props);
 
 const emit = defineEmits<{
 	(e: 'toggle-cell', val: Omit<VecValueChange, "prevValue">): void
 }>();
 
 // VIBRATION SETTING AND COMPOSABLE
-const settingsStore = useSettingsStore();
-const { vibrationEnabled: shouldEnableVibration, vibrationStrength: vibrationStrengthSetting } = storeToRefs(settingsStore);
-const numCells = computed(() => props.rows * props.columns);
-// TODO: calculate delay in settingsStore? Or in TapVibrate composable?
-const delay = computed(() => {
-	if (numCells.value > (12 * 11)) {
-		return 15;
-	} else if (numCells.value > (9 * 8)) {
-		return 5;
-	} else return 0;
-})
-const {
-	vibrate,
-} = useTapVibrate({ pattern: vibrationStrengthSetting, delay: delay, enable: shouldEnableVibration });
+const { vibrate } = usePuzzleTapVibrate(rows, columns);
 
 // GRID CELL DATA
 const puzzleStore = usePuzzleStore();
 const initialGrid = computed((): PuzzleGrid | undefined => puzzleStore.initialBoard?.grid);
-const { rows, columns } = toRefs(props);
 const staticCellData = useStaticGridCellData(rows, columns, initialGrid);
 const grid = computed((): PuzzleGrid => props.board.grid);
 const incorrectCellKeys = computed((): Record<XYKey, boolean> => {
