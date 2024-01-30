@@ -39,6 +39,7 @@
 </template>
 
 <script setup lang="ts">
+import PuzzleGrid from './PuzzleGrid.vue';
 import type { SimpleBoard } from '@/lib/index.js';
 import { usePuzzleStore } from '@/stores/puzzle';
 import type { VecValueChange } from '@/lib/types.js';
@@ -53,7 +54,7 @@ defineProps<{
 	paused: boolean,
 }>();
 const puzzleStore = usePuzzleStore();
-const toggleCell = ({ x, y, value }: VecValueChange) => puzzleStore.toggle({ x, y, prevValue: value });
+const toggleCell = ({ x, y, value }: Omit<VecValueChange, 'prevValue'>) => puzzleStore.toggle({ x, y, prevValue: value });
 const resumeByUser = () => {
 	if (puzzleStore.pausedByUser) {
 		puzzleStore.setPaused(false, { userAction: true });
