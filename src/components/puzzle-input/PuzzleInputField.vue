@@ -15,8 +15,8 @@
 	>
 </template>
 
-<script setup>
-import { isExportString } from '@/lib/board/Board.helpers.js';
+<script setup lang="ts">
+import { isExportString } from '@/lib/board/Board.helpers';
 import { ONE, ZERO } from '@/lib/constants';
 import { computed, ref, toRef } from 'vue';
 
@@ -28,7 +28,7 @@ const props = defineProps({
 	}
 })
 const mv = toRef(props, 'modelValue');
-const emit = defineEmits(['update:modelValue', 'skip-focus', 'set-multiple', 'import-export-string']);
+const emit = defineEmits(['update:modelValue', 'set-multiple', 'import-export-string']);
 const inputValue = computed({
 	get() {
 		const v = mv.value;
@@ -49,16 +49,17 @@ const inputValue = computed({
 	}
 })
 
-const el = ref(null);
+const el = ref<null | HTMLElement>(null);
 defineExpose({ el });
 
 const hasCellValue = computed(() => inputValue.value !== '' && inputValue.value !== null);
 
-const handleInputChange = (ev) => {
+const handleInputChange = (ev: InputEvent) => {
 	if (typeof ev.data === 'string') {
 		if (ev.inputType === 'insertText' && (ev.data === '1' || ev.data === '0' || ev.data === ' ' || ev.data === '.')) {
-			inputValue.value = ev.data;
-			const next = document.querySelector(`[data-index="${props.index + 1}"] input[type="text"]`);
+			const v = ev.data === ' ' ? '' : ev.data === '.' ? '' : ev.data;
+			inputValue.value = v;
+			const next = document.querySelector(`[data-index="${props.index + 1}"] input[type="text"]`) as HTMLInputElement | null;
 			next?.focus?.();
 			ev.preventDefault();
 			return;

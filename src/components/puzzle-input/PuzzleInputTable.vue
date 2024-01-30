@@ -50,27 +50,23 @@
 </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { Vec } from '@/lib/types.js';
 import { useElementSize } from '@vueuse/core';
 import { computed, ref } from 'vue';
+import type { PuzzleInputGrid } from './types.js';
 
 
-const props = defineProps({
-	grid: {
-		validator(value) {
-			return Array.isArray(value) && Array.isArray(value[0]);
-		},
-		required: true
-	}
-})
-
+const props = defineProps<{
+	grid: PuzzleInputGrid
+}>();
 
 const width = computed(() => props.grid[0].length);
 const height = computed(() => props.grid.length);
 const aspectRatio = computed(() => height.value / width.value);
 
-const tableWrapperEl = ref(null);
-const tableEl = ref(null);
+const tableWrapperEl = ref<null | HTMLElement>(null);
+const tableEl = ref<null | HTMLElement>(null);
 const { width: wrapperWidth } = useElementSize(tableWrapperEl, { width: window.innerWidth - 28, height: (window.innerWidth - 10) * aspectRatio.value }, { box: 'content-box' });
 const { width: elWidth } = useElementSize(tableEl, { width: window.innerWidth - 28, height: (window.innerWidth - 10) * aspectRatio.value }, { box: 'content-box' });
 
@@ -108,7 +104,7 @@ const centerXStart = computed(() => {
 const centerYStart = computed(() => {
 	return isEven.value ? Math.floor(centerY.value) : null;
 })
-const getMiddleLineClasses = ({ x, y }) => {
+const getMiddleLineClasses = ({ x, y }: Vec) => {
 	if (isOdd.value) {
 		if (x === centerX.value || y === centerY.value) {
 			return ['bg-slate-100'];
@@ -122,6 +118,8 @@ const getMiddleLineClasses = ({ x, y }) => {
 			list.push('border-b-2', 'border-b-slate-800');
 		}
 		return list;
+	} else {
+		throw new Error('Not odd and not even???!?!?')
 	}
 }
 </script>

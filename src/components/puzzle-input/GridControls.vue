@@ -7,16 +7,16 @@
 		<div class="flex flex-row gap-x-4">
 			<div class="flex flex-col">
 				<label for="widthInput">Width</label>
-				<input type="number" :value="width" @change="setWidth($event.target.value)" name="width" id="widthInput" min="4" max="16" class="p-2 text-sm min-w-[3.5rem] min-h-8 rounded border-gray-400">
+				<input type="number" :value="width" @change="setWidth(($event.target as HTMLInputElement).valueAsNumber)" name="width" id="widthInput" min="4" max="16" class="p-2 text-sm min-w-[3.5rem] min-h-8 rounded border-gray-400">
 			</div>
 			<div class="self-end py-2">x</div>
 			<div class="flex flex-col">
 				<label for="heightInput">Height</label>
-				<input type="number" :value="height" @change="setHeight($event.target.value)" name="height" id="heightInput" min="4" max="16" class="p-2 text-sm min-w-[3.5rem] min-h-[2rem] rounded border-gray-400 disabled:text-gray-600 disabled:bg-gray-100 disabled:border-gray-400/70" :disabled="forceSquareGrid">
+				<input type="number" :value="height" @change="setHeight(($event.target as HTMLInputElement).valueAsNumber)" name="height" id="heightInput" min="4" max="16" class="p-2 text-sm min-w-[3.5rem] min-h-[2rem] rounded border-gray-400 disabled:text-gray-600 disabled:bg-gray-100 disabled:border-gray-400/70" :disabled="forceSquareGrid">
 			</div>
 		</div>
 		<label class="py-2 inline-flex items-center gap-x-2 text-sm">
-			<input type="checkbox" name="squareGrid" id="squareGridToggle" @input="setSquareGridToggle($event.target.checked)" :checked="forceSquareGrid">
+			<input type="checkbox" name="squareGrid" id="squareGridToggle" @input="setSquareGridToggle(($event.target as HTMLInputElement).checked)" :checked="forceSquareGrid">
 			Force square grid
 		</label>
 		<div class="flex flex-row gap-2">
@@ -31,7 +31,7 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted, ref, toRef } from 'vue';
 
 
@@ -41,16 +41,10 @@ const emit = defineEmits([
 	'update:modelValue'
 ])
 
-const props = defineProps({
-	modelValue: {
-		type: Object,
-		required: true
-	},
-	gridExists: {
-		type: Boolean,
-		required: true
-	}
-})
+const props = defineProps<{
+	modelValue: { width: number, height: number, forceSquareGrid: boolean },
+	gridExists: boolean
+}>();
 
 const expanded = ref(true);
 onMounted(() => {
@@ -60,8 +54,8 @@ onMounted(() => {
 })
 
 const config = toRef(props, 'modelValue');
-const updateConfig = (changes = {}) => {
-	const newConfig = {
+const updateConfig = (changes: Partial<{width: number, height: number, forceSquareGrid: boolean}> = {}) => {
+	const newConfig: { width: number, height: number, forceSquareGrid: boolean } = {
 		...config.value,
 		...changes
 	}
@@ -95,9 +89,9 @@ const forceSquareGrid = computed({
 })
 
 
-const setWidth = (value) => {
+const setWidth = (value: number) => {
 	value = Math.min(Math.max(value, 4), 16);
-	const changes = {
+	const changes: Partial<{width: number, height: number, forceSquareGrid: boolean}> = {
 		width: value
 	}
 	if (forceSquareGrid.value) {
@@ -108,9 +102,9 @@ const setWidth = (value) => {
 	}
 	updateConfig(changes);
 }
-const setHeight = (value) => {
+const setHeight = (value: number) => {
 	value = Math.min(Math.max(value, 4), 16);
-	const changes = {
+	const changes: Partial<{width: number, height: number, forceSquareGrid: boolean}> = {
 		height: value
 	}
 	if (value % 2 === 1) {
@@ -120,8 +114,8 @@ const setHeight = (value) => {
 	updateConfig(changes);
 }
 
-const setSquareGridToggle = (value) => {
-	const changes = {
+const setSquareGridToggle = (value: boolean) => {
+	const changes: Partial<{width: number, height: number, forceSquareGrid: boolean}> = {
 		forceSquareGrid: value
 	}
 	if (value) {

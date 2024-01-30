@@ -1,22 +1,25 @@
 import { SimpleBoard } from "@/lib";
 import { EMPTY, ONE, ZERO } from "@/lib/constants";
 import { quickSolve } from "@/lib/solver";
+import type { BoardShape, PuzzleGrid, PuzzleValueLine } from "@/lib/types.js";
 import { count } from "@/lib/utils";
 import { useDebounceFn } from "@vueuse/core";
-import { computed, reactive, ref, toRefs, watch } from "vue";
+import { computed, reactive, ref, toRefs, watch, type Ref } from "vue";
+import type { PuzzleInputGrid } from "./types.js";
 
 const MAX_MASK_RATIO = 0.9;
 
-export const usePuzzleInputSolvable = (gridRef, isValidGridRef, dimensionsRef) => {
+export const usePuzzleInputSolvable = (gridRef: Ref<PuzzleInputGrid | null>, isValidGridRef: Ref<boolean>, dimensionsRef: Ref<BoardShape>) => {
 	const maxSolutions = ref(200);
+	const isValidGrid = (gridRef: Ref<PuzzleInputGrid | null>): gridRef is Ref<PuzzleInputGrid> => !!isValidGridRef.value;
 
 	const numCells = computed(() => (dimensionsRef.value.width ?? 0) * (dimensionsRef.value.height ?? 0));
 
-	const parsedGrid = computed(() => {
-		if (!isValidGridRef.value) return [];
-		const grid = [];
+	const parsedGrid = computed((): PuzzleGrid => {
+		if (!isValidGrid(gridRef)) return [];
+		const grid: PuzzleGrid = [];
 		for (const gridRow of gridRef.value) {
-			const row = [];
+			const row: PuzzleValueLine = [];
 			for (const value of gridRow) {
 				if (value === ONE || value === ZERO) {
 					row.push(value);
@@ -36,15 +39,15 @@ export const usePuzzleInputSolvable = (gridRef, isValidGridRef, dimensionsRef) =
 
 	const maskRatio = computed(() => {
 		if (!isValidGridRef.value) return null;
-		return numEmpty.value / numCells.value;
+		return numEmpty.value! / numCells.value;
 	})
 
 	const shouldRunSolver = computed(() => {
-		return isValidGridRef.value && maskRatio.value < MAX_MASK_RATIO;
+		return isValidGridRef.value && maskRatio.value! < MAX_MASK_RATIO;
 	})
 
 	const data = reactive({
-		solutions: 0,
+		solutions: 0 as null | number,
 		solvable: false,
 		validPuzzle: false,
 		validInput: shouldRunSolver,

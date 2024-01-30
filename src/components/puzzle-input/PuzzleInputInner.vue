@@ -1,7 +1,7 @@
 <template>
 	<main class="pt-4 gap-y-4 grid bleed-grid-4 v-grid-bleed text-sm">
 		<GridControls class="bg-white rounded px-4 pt-4 pb-2 shadow" @reset="resetGridValues"
-			@set-dimensions="(w, h) => updatePuzzleGridBase(w, h)"
+			@set-dimensions="(w: number, h: number) => updatePuzzleGridBase(w, h)"
 			:grid-exists="puzzleGridBase != null && puzzleGridBase?.[0] != null" v-model="config" />
 
 		<div class="bg-white rounded px-1 py-4 shadow full-bleed" v-if="isValidPuzzleGrid">
@@ -11,25 +11,27 @@
 					Use toggle input mode
 				</label>
 			</div>
-			<PuzzleInputTable v-if="isValidPuzzleGrid" :grid="puzzleGridBase"
-				@set-value="({ x, y, value }) => puzzleGridBase[y][x] = value">
+			<PuzzleInputTable v-if="isValidPuzzleGrid" :grid="puzzleGridBase!"
+				@set-value="({ x, y, value }) => puzzleGridBase![y][x] = value">
 				<template v-slot="{ x, y, index }">
-					<PuzzleInputField v-model="puzzleGridBase[y][x]"
-						@skip-focus="(val) => skipFocusFrom(val, { x, y, index })"
-						@set-multiple="(val) => setMultipleValuesFromString(val, { x, y, index })"
+					<PuzzleInputField v-model="puzzleGridBase![y][x]"
+						@set-multiple="(val) => setMultipleValuesFromString(val, { index })"
 						@import-export-string="importExportString" inputmode="numeric" enterkeyhint="next"
-						:ref="(el) => setRef(el, { x, y, index })" :index="index" :disabled="toggleInputMode" :class="{
-							'bg-blue-100': puzzleGridBase[y][x] === '0',
-							'bg-red-100': puzzleGridBase[y][x] === '1',
+						:ref="(el) => setRef(el as (InstanceType<typeof PuzzleInputField> | null), { index })" :index="index" :disabled="toggleInputMode" :class="{
+							'bg-blue-100': puzzleGridBase![y][x] === '0',
+							'bg-red-100': puzzleGridBase![y][x] === '1',
 						}" />
 					<button class="absolute top-0 left-0 z-20 w-full h-full touch-manipulation"
-						@click="toggleValue(x, y, index)" v-if="toggleInputMode"></button>
+						@click="toggleValue(x, y)" v-if="toggleInputMode"></button>
 				</template>
 			</PuzzleInputTable>
 
 			<div class="my-2">
-				<InputValidityDisplay v-if="puzzleGridBase != null" v-bind="inputSolutionsDataRaw"
-					:max-solutions="maxSolutions" />
+				<InputValidityDisplay
+					v-if="puzzleGridBase != null"
+					v-bind="inputSolutionsDataRaw"
+					:max-solutions="maxSolutions"
+				/>
 			</div>
 
 			<div class="my-2 px-0.5">
@@ -82,11 +84,10 @@
 	</main>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, onBeforeUpdate, ref } from 'vue';
 
-
-import { EMPTY, ONE, ZERO } from '@/lib/constants';
+import { EMPTY, ONE, ZERO, type PuzzleValue } from '@/lib/constants';
 import { useSharedPuzzleToggle } from '@/composables/use-puzzle-toggle';
 
 import { refAutoReset, toReactive, useLocalStorage } from '@vueuse/core';
@@ -94,10 +95,14 @@ import { puzzleGridToString, shortenPuzzleString } from '@/components/puzzle-inp
 import { chunk } from '@/utils/array.ts.utils';
 
 import { usePuzzleInputSolvable } from '@/components/puzzle-input/usePuzzleInputSolvable';
+import { parseExportString } from '@/lib/board/Board.helpers.js';
+import type { BoardExportString, BoardShape } from '@/lib/types.js';
+import type { PuzzleInputGrid, PuzzleInputValue } from './types.js';
+import PuzzleInputField from './PuzzleInputField.vue';
 
-import { parseExportString } from '@/lib/utils';
-
-const config = useLocalStorage('takuzu_puzzle-input-config', {
+const config = useLocalStorage<{
+	width: number, height: number, forceSquareGrid: boolean
+}>('takuzu_puzzle-input-config', {
 	width: 10,
 	height: 10,
 	forceSquareGrid: false
@@ -108,14 +113,14 @@ const config = useLocalStorage('takuzu_puzzle-input-config', {
 
 const width = computed(() => puzzleGridBase.value?.[0]?.length ?? 0);
 const height = computed(() => puzzleGridBase.value?.length ?? 0);
-const gridDimensions = computed(() => {
+const gridDimensions = computed((): BoardShape => {
 	return {
 		width: width.value,
 		height: height.value
 	}
 })
 
-const puzzleGridBase = useLocalStorage('takuzu_puzzle-input-grid', [], {
+const puzzleGridBase = useLocalStorage<null | PuzzleInputGrid>('takuzu_puzzle-input-grid', [], {
 	deep: true,
 	writeDefaults: false,
 	serializer: {
@@ -162,7 +167,7 @@ const isValidPuzzleGrid = computed(() => {
 })
 const showPuzzleStrings = ref(false);
 
-const puzzleStringsEl = ref(null);
+const puzzleStringsEl = ref<null | HTMLElement>(null);
 const scrollToPuzzleStrings = () => {
 	const el = puzzleStringsEl.value;
 	el?.scrollIntoView?.({
@@ -173,7 +178,7 @@ const puzzleGridStrLong = computed(() => {
 	if (!isValidPuzzleGrid.value) return '';
 	const grid = puzzleGridBase.value;
 	const dimensions = { width: config.value.width, height: config.value.height };
-	return puzzleGridToString(grid, dimensions, { shorten: false });
+	return puzzleGridToString(grid!, dimensions, { shorten: false });
 })
 const puzzleGridStrShort = computed(() => {
 	if (!isValidPuzzleGrid.value) return '';
@@ -227,7 +232,7 @@ const gapSize = computed(() => {
 	return '1px';
 })
 
-const indexToXY = (index) => {
+const indexToXY = (index: number) => {
 	const x = index % width.value;
 	const y = Math.floor(index / width.value);
 	return { x, y };
@@ -235,26 +240,27 @@ const indexToXY = (index) => {
 
 const toggleInputMode = ref(false);
 
-const createEmptyPuzzleGrid = (width, height) => {
+const createEmptyPuzzleGrid = (width: number, height: number) => {
 	const w = width ?? config.value.width;
 	const h = height ?? config.value.height;
 	return Array(h).fill(null).map(() => Array(w).fill(''));
 }
-const resetGridValues = (width, height) => {
+const resetGridValues = (width: number, height: number) => {
 	const w = width ?? config.value.width;
 	const h = height ?? config.value.height;
 	const grid = createEmptyPuzzleGrid(w, h);
 	puzzleGridBase.value = grid;
 }
 const { toggle } = useSharedPuzzleToggle();
-const toggleValue = (x, y) => {
-	let current = puzzleGridBase.value[y][x];
-	if (current !== ONE && current !== ZERO) {
-		current = EMPTY;
+const toggleValue = (x: number, y: number) => {
+	if (puzzleGridBase.value == null) {
+		throw new Error('Cannot toggle value on "null" PuzzleGridBase');
 	}
-	let value = toggle(current);
-	if (value === EMPTY) value = '';
-	puzzleGridBase.value[y][x] = value;
+	let current: PuzzleInputValue = puzzleGridBase.value[y][x];
+	let currentValue: PuzzleValue = (current !== ONE && current !== ZERO) ? EMPTY : current;
+
+	let value = toggle(currentValue);
+	puzzleGridBase.value[y][x] = (value === EMPTY ? '' : value);
 }
 
 const updatePuzzleGridBase = (w = width.value, h = height.value) => {
@@ -284,38 +290,21 @@ const updatePuzzleGridBase = (w = width.value, h = height.value) => {
 	puzzleGridBase.value = arrCopy;
 }
 
-const els = ref([]);
+const els = ref<HTMLElement[]>([]);
 onBeforeUpdate(() => {
 	els.value = [];
 })
-const setRef = (el, { index }) => {
-	const el2 = el?.el;
+const setRef = (el: InstanceType<typeof PuzzleInputField> | null, { index }: { index: number }) => {
+	if (el == null) {
+		els.value = [];
+		return;
+	}
+	const el2: HTMLElement | null = el?.el;
 	if (!el2) return;
 	els.value[index] = el2;
 }
 
-const skipFocusFrom = (amount, { x, y, index }) => {
-	const focusTo = index + amount;
-	const emptyAmount = amount - 1;
-	for (let gy = y, i = 0; gy < height.value; gy++) {
-		for (let gx = x; gx < width.value; gx++, i++) {
-
-			if (i <= emptyAmount) {
-				puzzleGridBase.value[gy][gx] = '';
-				console.log('setting empty');
-
-
-			}
-			if (i === emptyAmount) {
-				const el = els.value[focusTo];
-				el?.focus?.();
-				return;
-			}
-		}
-	}
-}
-
-const isMultipleEmptyValues = (str) => {
+const isMultipleEmptyValues = (str: string) => {
 	if (str.length < 1) return false;
 	const num = parseInt(str, 10);
 	if (Number.isNaN(num) || !num || num <= 1) {
@@ -324,13 +313,13 @@ const isMultipleEmptyValues = (str) => {
 	return num;
 }
 
-const setValueWithIndex = (value, index) => {
+const setValueWithIndex = (value: PuzzleInputValue, index: number) => {
 	const { x, y } = indexToXY(index);
 	if (x >= width.value || y >= height.value) return;
-	puzzleGridBase.value[y][x] = value;
+	puzzleGridBase.value![y][x] = value;
 }
 
-const setFocusToCell = (idx, currentIdx) => {
+const setFocusToCell = (idx: number, currentIdx: number) => {
 	const el = els.value[idx];
 	if (!el) {
 		if (currentIdx != null) {
@@ -342,8 +331,7 @@ const setFocusToCell = (idx, currentIdx) => {
 	el.focus();
 }
 
-const setMultipleValuesFromString = (values = '', { index }) => {
-	console.log({ values })
+const setMultipleValuesFromString = (values: string[] = [], { index }: { index: number }) => {
 	const parsedValues = values.flatMap(v => {
 		if (v === ONE || v === ZERO) {
 			return v;
@@ -367,9 +355,9 @@ const { maxSolutions, ...inputSolutionsData } = usePuzzleInputSolvable(puzzleGri
 
 const inputSolutionsDataRaw = toReactive(inputSolutionsData);
 
-const importExportString = (str) => {
+const importExportString = (str: BoardExportString | string) => {
 	try {
-		const { width, height, boardStr } = parseExportString(str);
+		const { width, height, boardStr } = parseExportString(str as BoardExportString);
 		config.value.width = width;
 		config.value.height = height;
 		resetGridValues(width, height);

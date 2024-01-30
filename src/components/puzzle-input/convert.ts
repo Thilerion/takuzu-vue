@@ -1,7 +1,10 @@
-import { EMPTY, ONE, ZERO } from "@/lib/constants";
-import { chunk } from "@/utils/array.ts.utils";
+import { EMPTY, ONE, ZERO } from "@/lib/constants.js";
+import type { BoardShape } from "@/lib/types.js";
+import { chunk } from "@/utils/array.ts.utils.js";
+import type { PuzzleInputGrid } from "./types.js";
 
-export const puzzleStringToGrid = (str, dimensions) => {
+// TODO: better type for str
+export const puzzleStringToGrid = (str: string, dimensions: BoardShape) => {
 	if (dimensions == null) throw new Error('Puzzle string to grid requires dimensions.');
 	const expandedStr = expandPuzzleString(str, dimensions);
 	const { width, height } = dimensions;
@@ -15,7 +18,11 @@ export const puzzleStringToGrid = (str, dimensions) => {
 	return chunked;
 }
 
-export const puzzleGridToString = (arr2, { width, height }, opts = {}) => {
+export type PuzzleGridToStringOpts = {
+	shorten?: boolean;
+	padEnd?: boolean;
+}
+export const puzzleGridToString = (arr2: PuzzleInputGrid, { width, height }: BoardShape, opts: PuzzleGridToStringOpts = {}) => {
 	let str = '';
 	for (let y = 0; y < height; y++) {
 		for (let x = 0; x < width; x++) {
@@ -33,7 +40,8 @@ export const puzzleGridToString = (arr2, { width, height }, opts = {}) => {
 	return str;
 }
 
-export const expandPuzzleString = (str, dimensions) => {
+// TODO: better type for str
+export const expandPuzzleString = (str: string, dimensions: BoardShape) => {
 	let expanded = '';
 	for (const ch of str) {
 		if (ch === ZERO || ch === ONE || ch === EMPTY) {
@@ -59,7 +67,8 @@ export const expandPuzzleString = (str, dimensions) => {
 	return expanded;
 }
 
-export const shortenPuzzleString = (str, { width, height }, { padEnd = false } = {}) => {
+// TODO: better type for str
+export const shortenPuzzleString = (str: string, { width, height }: BoardShape, { padEnd = false } = {}) => {
 	let shortened = '';
 	let currentEmptySequence = 0;
 	let i = 0;
@@ -98,7 +107,7 @@ export const shortenPuzzleString = (str, { width, height }, { padEnd = false } =
 	}
 	return shortened;
 }
-export function toSingleDigitSequence(num) {
+export function toSingleDigitSequence(num: number) {
 	if (num < 10 && num > 1) {
 		return `${num}`;
 	} else if (num === 1) {

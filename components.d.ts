@@ -60,6 +60,7 @@ declare module 'vue' {
     IconBxBxsStarHalf: typeof import('~icons/bx/bxs-star-half')['default']
     IconBxBxStar: typeof import('~icons/bx/bx-star')['default']
     IconFxemojiTrophy: typeof import('~icons/fxemoji/trophy')['default']
+    IconGgDebug: typeof import('~icons/gg/debug')['default']
     IconGrommetIconsPauseFill: typeof import('~icons/grommet-icons/pause-fill')['default']
     IconHeroiconsOutlineClipboardCopy: typeof import('~icons/heroicons-outline/clipboard-copy')['default']
     IconHisLightBulb: typeof import('~icons/heroicons-solid/light-bulb')['default']

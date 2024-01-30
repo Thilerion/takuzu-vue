@@ -12,29 +12,18 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 
-const props = defineProps({
-	dir: {
-		required: true,
-		validator(val) {
-			return ['up', 'down', 'left', 'right'].includes(val);
-		}
-	},
-	size: {
-		type: String,
-		default: '6px'
-	},
-	color: {
-		type: String,
-		default: 'currentColor'
-	}
-})
+const props = withDefaults(defineProps<{
+	dir: 'up' | 'down' | 'left' | 'right',
+	size?: string,
+	color?: string
+}>(), { size: '6px', color: 'currentColor'});
 
 const axis = computed(() => {
-	if (props.dir === 'up' || props.dir === 'down') return 'vertical';
-	return 'horizontal';
+	if (props.dir === 'up' || props.dir === 'down') return 'vertical' as const;
+	return 'horizontal' as const;
 })
 
 </script>

@@ -22,30 +22,25 @@
 	
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 import { asPercentage } from '@/utils/number.utils';
 
-const props = defineProps({
-	solutions: {
-		required: true,
-		validator(value) {
-			return (typeof value === 'number') || value === null;
-		}
-	},
-	validInput: Boolean,
-	validPuzzle: Boolean,
-	maskRatio: Number,
-	solvable: Boolean,
-	maxSolutions: Number
-})
+const props = defineProps<{
+	solutions: number | null,
+	validInput?: boolean,
+	validPuzzle?: boolean,
+	maskRatio: number | null,
+	solvable?: boolean,
+	maxSolutions: number
+}>();
 
 const isRunning = computed(() => {
 	return props.validInput && props.solutions != null;
 })
 
 const displayNumSolutions = computed(() => {
-	if (props.solutions >= props.maxSolutions) {
+	if (props.solutions != null && props.solutions! >= props.maxSolutions) {
 		return `${props.solutions}+`;
 	} else if (props.solutions == null || props.solutions == Infinity) {
 		return `${props.maxSolutions}+`;
