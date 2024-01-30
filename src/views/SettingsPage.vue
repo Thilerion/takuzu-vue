@@ -58,20 +58,20 @@
 						</div>
 					</div>
 					<div class="px-2 flex items-center h-14">
-						<InputToggle2
+						<InputToggle
 							class="!m-0"
 							id="wakeLockToggle"
 							small
 							v-model="enableWakeLock"
-						>Keep screen active while playing</InputToggle2>
+						>Keep screen active while playing</InputToggle>
 					</div>
 					<div class="px-2 flex items-center h-14">
-						<InputToggle2
+						<InputToggle
 							class="!m-0"
 							small
 							id="timerToggle"
 							v-model="showTimer"
-						>Show timer</InputToggle2>
+						>Show timer</InputToggle>
 					</div>
 					<VibrationSetting
 						class="px-2 pt-4"

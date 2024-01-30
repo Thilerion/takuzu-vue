@@ -1,13 +1,13 @@
 <template>
 	<div>
 		<WarningMsg v-if="!isSupported">Your device does not support vibration for this app.</WarningMsg>
-		<InputToggle2 small v-model="enableVibration" id="vibrationEnabled">
+		<InputToggle small v-model="enableVibration" id="vibrationEnabled">
 			<span class="setting-subheading">Vibrate when toggling cells</span>
-		</InputToggle2>
+		</InputToggle>
 		<div class="mt-3" :class="{'disabled': !enableVibration}">
 			<label for="vibrationStrength" class="mb-1 setting-subheading">Vibration strength <span class="text-xs text-gray-500 dark:text-slate-300">{{vibrationStrengthPercentage}}</span></label>
 			<div class="flex gap-2">
-				<InputRange2
+				<InputRange
 					:min="0"
 					:max="vibrationOptsLength - 1"
 					:step="1"

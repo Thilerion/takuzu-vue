@@ -4,7 +4,7 @@
 			<div>
 			<div class="divide-y bg-blue-100/0">
 				<div class="py-2 px-2">
-					<InputToggle2 v-model="favoritesOnly" id="favoritesOnlyToggle" class="mb-0 w-full font-medium">Favorites only</InputToggle2>
+					<InputToggle v-model="favoritesOnly" id="favoritesOnlyToggle" class="mb-0 w-full font-medium">Favorites only</InputToggle>
 				</div>
 
 				<div class="py-2 px-2">

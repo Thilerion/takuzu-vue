@@ -58,11 +58,7 @@
 			<h2 class="text-xl mb-6 pb-1 font-medium border-b self-stretch">Form inputs</h2>
 			<div class="flex flex-col gap-y-4">
 				<div>
-					<InputToggle v-model="input1Value" inline id="input-1-value" />
-					<label for="input-1-value" class="ml-2">value is: {{input1Value}}</label>
-				</div>
-				<div>
-					<InputToggle2 small v-model="input1Value" inline id="input-2-value" />
+					<InputToggle small v-model="input1Value" inline id="input-2-value" />
 					<label for="input2-value" class="ml-2">value is: {{input1Value}}</label>
 				</div>
 				<div>
@@ -71,7 +67,7 @@
 				</div>
 				<div>
 					<label for="componentRange" class="w-full flex justify-between items-center">Component range <span class="text-xs">({{componentRangeValue}})</span></label>
-					<InputRange2 id="componentRange" v-model="componentRangeValue" min="0" max="100" step="5" />
+					<InputRange id="componentRange" v-model="componentRangeValue" min="0" max="100" step="5" />
 				</div>
 			</div>
 		</div>
