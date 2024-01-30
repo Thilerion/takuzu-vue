@@ -1,7 +1,7 @@
 <template>
 	<div class="how-to-play flex flex-col pb-4">
-		<PageHeader class="flex-shrink-0">How to play</PageHeader>
-		<div class="content">
+		<PageHeader class="flex-shrink-0 relative z-10" :elevated="true /* TODO: set to false when tabs are implemented */">How to play</PageHeader>
+		<div class="content" v-if="false">
 			<div class="content-grid grid gap-4 items-start justify-start">
 				<div class="block">
 					<h2>Rules</h2>
@@ -99,6 +99,7 @@
 				</div>
 			</div>
 		</div>
+		<HowToPlayOverview v-else class="bg-white relative z-0 px-8 pt-6" />
 	</div>
 </template>
 
