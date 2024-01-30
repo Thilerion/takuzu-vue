@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useCellThemeProvider, type UseCellThemeConfig } from './useCellThemeProvider';
+import { type UseCellThemeConfig, useCellThemeProvider } from '../composables/useCellThemeProvider.js';
 
 const props = defineProps<{
 	config: UseCellThemeConfig

@@ -1,12 +1,14 @@
-// @ts-c
 import { useSettingsStore } from "@/stores/settings/store"
 import { CellThemeTypes } from "@/stores/settings/options";
 import { cellThemeTypeMap, type CellTheme, type CellThemeType } from "@/stores/settings/types";
 import { storeToRefs } from "pinia";
 import { computed, inject, provide, unref } from "vue";
-import FastPuzzleCellColored from "../gameboard/cell/FastPuzzleCellColored.vue";
-import FastPuzzleCellSymbol from "../gameboard/cell/FastPuzzleCellSymbol.vue";
 import type { Ref } from "vue";
+import { defineAsyncComponent } from "vue";
+
+const ColoredPuzzleCellComp = defineAsyncComponent(() => import('../cell/FastPuzzleCellColored.vue'));
+const SymbolPuzzleCellComp = defineAsyncComponent(() => import('../cell/FastPuzzleCellSymbol.vue'));
+const FallbackPuzzleCellComp = defineAsyncComponent(() => import('../cell/FastPuzzleCellFallback.vue'));
 
 export type UseCellThemeThemeValue = {
 	theme: CellTheme,
@@ -50,11 +52,13 @@ export const useCellThemeProvider = ({
 	const cellComponent = computed(() => {
 		switch (cellThemeType.value) {
 			case CellThemeTypes.COLORED_TILES:
-				return FastPuzzleCellColored;
+				return ColoredPuzzleCellComp;
 			case CellThemeTypes.SYMBOLS:
-				return FastPuzzleCellSymbol;
-			default:
-				throw new Error(`Cell theme type "${cellThemeType.value}" does not have a matching cell component.`);
+				return SymbolPuzzleCellComp;
+			default: {
+				console.error(`Cell theme type "${cellThemeType.value}" does not have a matching cell component.`);
+				return FallbackPuzzleCellComp;
+			}
 		}
 	})
 

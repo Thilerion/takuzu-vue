@@ -10,14 +10,11 @@
 			:incorrect="incorrectCellKeys[xyKey]"
 		>
 			<template v-slot="{ value, locked, incorrect }">
-				<FastPuzzleCellColored
-					v-if="cellThemeType === CellThemeTypes.COLORED_TILES"
+				<component
+					v-if="cellComponent != null"
+					:is="cellComponent"
 					v-bind="{ value, locked, incorrect }"
-				/>
-				<FastPuzzleCellSymbol
-					v-else-if="cellThemeType === CellThemeTypes.SYMBOLS"
-					v-bind="{ value, locked, incorrect }"
-				/>
+				></component>
 				<div v-else>{{ value }}</div>
 			</template>
 		</FastPuzzleCellWrapper>
@@ -26,18 +23,14 @@
 </template>
 
 <script setup lang="ts">
-import { useTapVibrate } from '@/composables/use-tap-vibrate.js';
 import type { SimpleBoard } from '@/lib/index.js';
 import type { PuzzleGrid, VecValueChange, XYKey } from '@/lib/types.js';
 import { usePuzzleStore } from '@/stores/puzzle.js';
-import { useSettingsStore } from '@/stores/settings/store.js';
-import { storeToRefs } from 'pinia';
 import { computed, toRef, toRefs } from 'vue';
 import { usePuzzleAssistanceStore } from '@/stores/assistance/store.js';
-import { useCellThemeProvider } from '../puzzleboard/useCellThemeProvider.js';
-import { CellThemeTypes } from '@/stores/settings/options.js';
 import { useStaticGridCellData } from './composables/useGridCellData.js';
 import { usePuzzleTapVibrate } from './composables/usePuzzleTapVibrate.js';
+import { useCellThemeProvider } from './composables/useCellThemeProvider.js';
 
 const props = defineProps<{
 	board: SimpleBoard,
@@ -72,7 +65,7 @@ const incorrectMarkedCells = toRef(puzzleAssistanceStore, 'markedMistakes');
 
 // CELL THEME
 const cellThemeProvidedData = useCellThemeProvider();
-const { classes: cellThemeClasses, attrs: cellThemeAttrs, cellThemeType } = cellThemeProvidedData;
+const { classes: cellThemeClasses, attrs: cellThemeAttrs, cellComponent } = cellThemeProvidedData;
 
 // CELL METHODS
 const onCellClick = (val: Omit<VecValueChange, "prevValue">) => {

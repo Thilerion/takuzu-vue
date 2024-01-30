@@ -36,10 +36,10 @@ const BinarySymbols = {
 </script>
 
 <script setup lang="ts">
-import { useCellThemeProvider } from "@/components/puzzleboard/useCellThemeProvider";
 import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
 import { CellThemes } from "@/stores/settings/options";
 import { computed, toRefs } from "vue";
+import { useCellThemeProvider } from "../composables/useCellThemeProvider.js";
 
 const props = defineProps<{
 	value: PuzzleValue,
