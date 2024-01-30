@@ -4,10 +4,11 @@
 		:class="[valueClass, { locked }, shadeClass]"
 	>
 		<transition name="cell-color" mode="in-out">
-			<div v-if="value === '0'" key="0" class="color-0"></div>
-			<div v-else-if="value === '1'" key="1" class="color-1"></div>
+			<div v-if="value === '0'" key="0" class="color-0 cell-inner-color"></div>
+			<div v-else-if="value === '1'" key="1" class="color-1 cell-inner-color"></div>
 		</transition>
 		<div class="incorrect-mark" v-if="incorrect"></div>
+		<div class="highlight-mark" v-if="highlighted"></div>
 	</div>
 </template>
 
@@ -18,7 +19,8 @@ import { computed, toRefs } from "vue";
 const props = defineProps<{
 	value: PuzzleValue,
 	locked: boolean,
-	incorrect: boolean | undefined
+	incorrect: boolean | undefined,
+	highlighted?: boolean // TODO: highlight style for colored cell
 }>()
 
 const { value, locked, incorrect } = toRefs(props);
@@ -35,7 +37,6 @@ const valueClass = computed(() => `value-${valueStr.value}`);
 	@apply overflow-hidden relative pointer-events-none text-center;
 	@apply w-full h-full;
 	@apply bg-gray-125 dark:bg-slate-800;	
-	/* contain: strict; */
 }
 .cell > * {
 	border-radius: var(--cell-rounding);
@@ -104,5 +105,9 @@ const valueClass = computed(() => `value-${valueStr.value}`);
              rgba(0,0,0,1) 50%,
              rgba(0,0,0,0) calc(50% + 0.8px),
              rgba(0,0,0,0) 100%);
+}
+
+.highlight-mark {
+	@apply w-[3px] h-[3px] rounded-full bg-black/50 absolute left-[4px] top-[4px] z-10;
 }
 </style>

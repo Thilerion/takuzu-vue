@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="cell"
-		:class="[{ locked, incorrect: !!incorrect }]"
+		:class="[{ locked, incorrect: !!incorrect, highlighted: !!highlighted }]"
 	>
 			<template v-if="symbolType === CellThemes.CLASSIC">
 				<transition name="cell-symbol">
@@ -44,7 +44,8 @@ import { useCellThemeProvider } from "../composables/useCellThemeProvider.js";
 const props = defineProps<{
 	value: PuzzleValue,
 	locked: boolean,
-	incorrect: boolean | undefined
+	incorrect: boolean | undefined,
+	highlighted?: boolean
 }>()
 
 const { value, locked, incorrect } = toRefs(props);
@@ -73,6 +74,9 @@ const symbolValue = computed(() => symbolMap.value[value.value]);
 }
 .cell.incorrect {
 	@apply bg-red-400 bg-opacity-20 ring-1 ring-inset ring-red-900 ring-opacity-40;
+}
+.cell.highlighted {
+	@apply bg-blue-400/20 ring-1 ring-inset ring-blue-400/60;
 }
 .cell > *, .cell {
 	border-radius: var(--cell-rounding);
