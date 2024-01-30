@@ -5,29 +5,28 @@
 	}]">
 		<div class="toggle-text"><slot /></div>
 		<div class="relative">
-			<input class="sr-only" type="checkbox" :id="id" :checked="modelValue" @change="$emit('update:modelValue', $event.target.checked)">
+			<input class="sr-only" type="checkbox" :id="id" :checked="modelValue" @change="$emit('update:modelValue', ($event.target as HTMLInputElement).checked)">
 			<div class="toggle-bg"></div>
 		</div>
 	</label>
 </template>
 
-<script setup>
-const props = defineProps({
-	id: {
-		type: String,
-		required: true
-	},
-	modelValue: {
-		type: Boolean
-	},
-	inline: {
-		type: Boolean
-	},
-	reverse: {
-		type: Boolean
-	},
-	small: Boolean
+<script setup lang="ts">
+import { reverse } from 'dns';
+
+const props = withDefaults(defineProps<{
+	id: string,
+	modelValue: boolean,
+	inline?: boolean,
+	reverse?: boolean,
+	small?: boolean
+}>(), {
+	inline: false,
+	reverse: false,
+	small: false
 })
+
+
 const inlineClasses = [
 	'inline-flex', 'w-auto'
 ];

@@ -23,32 +23,25 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 
-const props = defineProps({
-	length: {
-		type: Number,
-		required: true
-	},
-	pageSize: {
-		type: Number,
-		default: 10
-	},
-	modelValue: {
-		type: Number,
-		required: true
-	}
-})
+const props = withDefaults(defineProps<{
+	length: number,
+	pageSize?: number,
+	modelValue: number
+}>(), { pageSize: 10 });
+
+
 const emit = defineEmits(['update:modelValue']);
 
-const showingItems = computed(() => {
+const showingItems = computed((): [start: number, end: number] => {
 	const start = props.pageSize * props.modelValue;
 	const end = Math.min(start + props.pageSize - 1, props.length - 1);
 	return [start, end];
 })
 const displayShowingItems = computed(() => {
-	if (props.length === 0) return [0, 0];
+	if (props.length === 0) return `0-0`;
 	return `${showingItems.value[0] + 1}-${showingItems.value[1] + 1}`;
 })
 
@@ -60,11 +53,11 @@ const maxPage = computed(() => {
 })
 
 
-const goToPage = (value) => {
+const goToPage = (value: number) => {
 	const newPage = Math.max(0, Math.min(maxPage.value, value));
 	emit('update:modelValue', newPage);
 }
-const changePage = (increment) => {
+const changePage = (increment: number) => {
 	const newPage = Math.max(0, Math.min(maxPage.value, props.modelValue + increment));
 	emit('update:modelValue', newPage);
 }
