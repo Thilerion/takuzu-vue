@@ -14,9 +14,14 @@
 			<li>For example, in a 4x4 grid, each row and column should contain two 1s and two 0s.</li>
 			<li>Correct: <PuzzleRowExample values="10101100" /></li>
 			<li>Incorrect: <PuzzleRowExample values="10101101" :incorrect="[0, 2, 4, 5, 7]" /></li>
+			<li><HowToPlayExampleCells
+					:values="('10'.split('') as PuzzleValueLine)"
+					:incorrect="[0, 2, 3]"
+					:highlight="[1]"
+				/></li>
 		</ul>
 
-		<h3 class="rule-heading">Maximum Two Consecutive Symbols</h3>
+		<h3 class="rule-heading">Max Two Consecutive</h3>
 		<ul>
 			<li>No more than two of the same number can be next to or under each other.</li>
 			<li>This means you cannot have three consecutive 1s or 0s in any row or column.</li>
@@ -64,6 +69,10 @@
 </template>
 
 <script setup lang="ts">
+import type { PuzzleValueLine } from '@/lib/types.js';
+import { ref } from 'vue';
+
+const showExampleOne = ref(false);
 </script>
 
 <style scoped>

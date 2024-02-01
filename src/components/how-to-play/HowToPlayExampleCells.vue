@@ -1,13 +1,12 @@
 <template>
 	<div
-		class="inline-grid grid-rows-1 grid-flow-col gap-1"
+		class="flex flex-nowrap max-w-full w-full gap-1"
 		:style="{
 			'--cell-rounding': '0.375rem',
-			'--cell-size': '1rem'
 		}"
 	>
 		<div 
-			class="aspect-square w-10"
+			class="aspect-square flex-auto min-w-4 max-w-16"
 			v-for="(value, idx) in values"
 			:key="idx"
 		>
@@ -15,7 +14,8 @@
 				:is="cellComponent"
 				:value="value"
 				:locked="false"
-				:incorrect="true"
+				:incorrect="incorrect.includes(idx)"
+				:highlighted="highlight.includes(idx)"
 			/>				
 		</div>
 	</div>
@@ -25,9 +25,14 @@
 import type { PuzzleValueLine } from '@/lib/types.js';
 import { useCellThemeProvider } from '../gameboard/composables/useCellThemeProvider.js';
 
-const props = defineProps<{
-	values: PuzzleValueLine
-}>();
+const props = withDefaults(defineProps<{
+	values: PuzzleValueLine,
+	incorrect?: number[], // array of indices of incorrect values
+	highlight?: number[], // array of indices of highlighted values
+}>(), {
+	incorrect: () => ([]),
+	highlight: () => ([]),
+});
 
 const { cellComponent } = useCellThemeProvider();
 </script>
