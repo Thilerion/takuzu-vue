@@ -8,8 +8,8 @@
 
 <script setup lang="ts">
 import { computed, ref, toRefs } from 'vue';
-import { useResizeObserver } from '@vueuse/core';
 import { usePuzzleStore } from '@/stores/puzzle';
+import { useThrottledElementSizeObserver } from './composables/useThrottledElementSizeObserver.js';
 
 const props = withDefaults(defineProps<{
 	rulerHeight: string,
@@ -29,25 +29,19 @@ const pStore = usePuzzleStore();
 const rows = computed(() => pStore.height!);
 const columns = computed(() => pStore.width!);
 
-// use sensible defaults
-const width = ref(Math.floor(window.screen.availWidth * 0.98));
-const height = ref(window.screen.availHeight - 40);
-
-useResizeObserver(container, (entries) => {
-	try {
-		const el = entries[0];
-		if (el.contentBoxSize) {
-			const { inlineSize, blockSize } = el.contentBoxSize[0];
-			width.value = inlineSize;
-			height.value = blockSize;
-		} else {
-			width.value = el.contentRect.width;
-			height.value = el.contentRect.height;
-		}
-	} catch (e) {
-		console.warn('Error in resize observer entries');
+const elDimensions = useThrottledElementSizeObserver(
+	container,
+	{
+		delay: 500,
+		leading: false,
+		trailing: true
+	},
+	// use sensible defaults
+	{
+		width: Math.floor(window.screen.availWidth * 0.98),
+		height: window.screen.availHeight - 40
 	}
-})
+);
 
 const rowsWithRuler = computed(() => {
 	if (rulerHeight.value === 'cellSize') {
@@ -93,8 +87,8 @@ const unavailableWidth = computed(() => {
 	}, 0)
 })
 
-const maxWidth = computed(() => width.value - unavailableWidth.value);
-const maxHeight = computed(() => height.value - unavailableHeight.value);
+const maxWidth = computed(() => elDimensions.value.width - unavailableWidth.value);
+const maxHeight = computed(() => elDimensions.value.height - unavailableHeight.value);
 
 const puzzleGridDimensions = computed(() => {
 	const heightA = maxWidth.value / aspectRatio.value;
