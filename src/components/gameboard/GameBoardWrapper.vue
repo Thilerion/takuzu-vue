@@ -1,6 +1,10 @@
 <template>
 	<div class="main justify-center items-center relative" ref="container">
-		<div class="puzzle-wrapper" :class="[`cell-size-${gridGapSizing}`]">
+		<div
+			class="puzzle-wrapper"
+			:class="[`cell-size-${cellSizeCategory}`]"
+			v-show="validElDimensions"
+		>
 			<slot v-bind="puzzleGridDimensions" />
 		</div>
 	</div>
@@ -33,15 +37,14 @@ const elDimensions = useThrottledElementSizeObserver(
 	container,
 	{
 		delay: 500,
-		leading: false,
+		leading: true,
 		trailing: true
-	},
-	// use sensible defaults
-	{
-		width: Math.floor(window.screen.availWidth * 0.98),
-		height: window.screen.availHeight - 40
 	}
 );
+const validElDimensions = computed(() => {
+	const { width, height } = elDimensions.value;
+	return width > 0 && height > 0;
+})
 
 const rowsWithRuler = computed(() => {
 	if (rulerHeight.value === 'cellSize') {
@@ -113,7 +116,8 @@ const puzzleGridDimensions = computed(() => {
 	return { width: w + "px", height: h + "px", cellSize };
 })
 
-const gridGapSizing = computed(() => {
+export type CellSizeCategory = 'xs' | 's' | 'm' | 'l' | 'xl';
+const cellSizeCategory = computed((): CellSizeCategory => {
 	const { cellSize } = puzzleGridDimensions.value;
 	if (cellSize <= 26) {
 		return "xs";
