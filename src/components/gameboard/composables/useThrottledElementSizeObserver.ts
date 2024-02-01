@@ -1,7 +1,7 @@
 import { useResizeObserver, type MaybeComputedElementRef, type MaybeElement, throttledRef } from "@vueuse/core";
 import { ref, type Ref } from "vue";
 
-type ElementDimensions = { width: number, height: number };
+export type ElementDimensions = { width: number, height: number };
 type UseThrottledElementSizeObserverThrottleOpts = {
 	delay: number,
 	leading: boolean,
