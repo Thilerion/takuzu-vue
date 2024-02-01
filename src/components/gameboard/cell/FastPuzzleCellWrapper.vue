@@ -85,6 +85,7 @@ button.cell-wrapper::after {
 	button.cell-wrapper::before {
 		content: '';
 		@apply w-full h-full absolute z-10 pointer-events-none inset-0 border-2 opacity-0 box-border border-black;
+		border-radius: calc(var(--cell-rounding) + 0.5px);
 		will-change: opacity;
 		transition: opacity 0.2s ease;
 	}
