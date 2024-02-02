@@ -1,5 +1,5 @@
 <template>
-	<div class="puzzle-grid" :class="[cellThemeClasses]" v-bind="cellThemeAttrs">
+	<div class="puzzle-grid">
 		<FastPuzzleCellWrapper
 			v-for="{ listKey, key: xyKey, x, y, initialValue, locked } in staticCellData"
 			:key="listKey"
@@ -30,7 +30,7 @@ import { computed, toRef, toRefs } from 'vue';
 import { usePuzzleAssistanceStore } from '@/stores/assistance/store.js';
 import { useStaticGridCellData } from './composables/useGridCellData.js';
 import { usePuzzleTapVibrate } from './composables/usePuzzleTapVibrate.js';
-import { injectCellThemeData } from './composables/useCellThemeProvider.js';
+import { initGlobalCellThemeProvider } from './composables/useCellThemeProvider.js';
 
 const props = defineProps<{
 	board: SimpleBoard,
@@ -65,10 +65,8 @@ const incorrectMarkedCells = toRef(puzzleAssistanceStore, 'markedMistakes');
 
 // CELL THEME
 const {
-	attrs: cellThemeAttrs,
-	classes: cellThemeClasses,
 	cellComponent
-} = injectCellThemeData();
+} = initGlobalCellThemeProvider();
 
 // CELL METHODS
 const onCellClick = (val: Omit<VecValueChange, "prevValue">) => {

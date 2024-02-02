@@ -1,7 +1,10 @@
 <template>
 	<div
 		class="cell"
-		:class="[{ locked, incorrect: !!incorrect, highlighted: !!highlighted }]"
+		:class="[
+			{ locked, incorrect: !!incorrect, highlighted: !!highlighted },
+			themeClasses
+		]"
 	>
 			<template v-if="symbolType === CellThemes.CLASSIC">
 				<transition name="cell-symbol">
@@ -50,7 +53,7 @@ const props = defineProps<{
 
 const { value, locked, incorrect } = toRefs(props);
 
-const { theme: symbolType } = injectCellThemeData();
+const { theme: symbolType, classes: themeClasses } = injectCellThemeData();
 
 const symbolMap = computed(() => {
 	if (symbolType.value === CellThemes.CLASSIC) return BinarySymbols;
@@ -111,20 +114,17 @@ const symbolValue = computed(() => symbolMap.value[value.value]);
 	@apply relative box-border w-full h-full flex;
 	padding: 2px;
 }
-</style>
 
-<style>
-/* TODO: set these classes locally, as they can now incorrectly overwrite each other when local cellThemes are defined */
-.cell-theme-binary .cell-symbol-value {
+.cell-theme-binary.cell .cell-symbol-value {
 	@apply font-number;
 	--base-size: calc(100cqmin - 4px);
 }
-.cell-theme-tictactoe .cell-symbol-value {
+.cell-theme-tictactoe.cell .cell-symbol-value {
 	@apply font-sans;
 	--base-size: calc(90cqmin + 4px - 1vmin);
 	font-size: calc(var(--base-size) * 0.9);
 }
-.cell-theme-tictactoe .cell {
+.cell-theme-tictactoe.cell {
 	@apply flex items-center justify-center overflow-hidden;
 	--font-size: 48px;
 	--base-pad: clamp(1px, 10cqmin, 57px);

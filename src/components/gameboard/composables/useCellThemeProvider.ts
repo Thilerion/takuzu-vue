@@ -18,7 +18,6 @@ type InternalCellThemeProviderData = {
 	theme: Ref<CellTheme>;
 	type: Ref<CellThemeType>;
 	cellComponent: ComputedRef<typeof ColoredPuzzleCellComp | typeof SymbolPuzzleCellComp | typeof FallbackPuzzleCellComp>;
-	attrs: ComputedRef<Record<string, string>>;
 	classes: ComputedRef<string[]>;
 }
 export type CellThemeProviderData = Omit<InternalCellThemeProviderData, 'theme' | 'type'> & {
@@ -45,12 +44,6 @@ function createCellThemeComputedData(theme: Ref<CellTheme>, type: Ref<CellThemeT
 			}
 		}
 	})
-	const attrs = computed(() => {
-		return {
-			'data-cell-theme': theme.value,
-			'data-cell-theme-type': type.value
-		}
-	})
 	const classes = computed(() => {
 		return [
 			`cell-theme-${theme.value}`,
@@ -58,7 +51,7 @@ function createCellThemeComputedData(theme: Ref<CellTheme>, type: Ref<CellThemeT
 		]
 	});
 
-	return { cellComponent, attrs, classes };
+	return { cellComponent, classes };
 }
 
 export const initGlobalCellThemeProvider = (): CellThemeProviderData => {
