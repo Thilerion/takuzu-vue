@@ -6,7 +6,7 @@
 		}"
 	>
 		<div 
-			class="aspect-square flex-auto min-w-4 max-w-16"
+			class="aspect-square flex-auto min-w-4 max-w-16 example-cell"
 			v-for="(value, idx) in values"
 			:key="idx"
 		>
@@ -38,5 +38,8 @@ const { cellComponent } = useCellThemeProvider();
 </script>
 
 <style scoped>
-
+.example-cell {
+	container-type: size;
+	--base-cell-size: 100cqmin;
+}
 </style>
