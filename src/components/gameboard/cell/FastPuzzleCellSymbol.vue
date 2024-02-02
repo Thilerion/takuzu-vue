@@ -39,7 +39,7 @@ const BinarySymbols = {
 import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
 import { CellThemes } from "@/stores/settings/options";
 import { computed, toRefs } from "vue";
-import { useCellThemeProvider } from "../composables/useCellThemeProvider.js";
+import { injectCellThemeData } from "../composables/useCellThemeProvider.js";
 
 const props = defineProps<{
 	value: PuzzleValue,
@@ -50,7 +50,7 @@ const props = defineProps<{
 
 const { value, locked, incorrect } = toRefs(props);
 
-const { cellTheme: symbolType } = useCellThemeProvider();
+const { theme: symbolType } = injectCellThemeData();
 
 const symbolMap = computed(() => {
 	if (symbolType.value === CellThemes.CLASSIC) return BinarySymbols;
@@ -114,6 +114,7 @@ const symbolValue = computed(() => symbolMap.value[value.value]);
 </style>
 
 <style>
+/* TODO: set these classes locally, as they can now incorrectly overwrite each other when local cellThemes are defined */
 .cell-theme-binary .cell-symbol-value {
 	@apply font-number;
 	--base-size: calc(100cqmin - 4px);

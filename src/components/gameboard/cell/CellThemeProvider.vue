@@ -3,20 +3,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { type UseCellThemeConfig, useCellThemeProvider } from '../composables/useCellThemeProvider.js';
+import { useLocalCellThemeProvider, type LocalCellThemeConfig } from '../composables/useCellThemeProvider.js';
 
 const props = defineProps<{
-	config: UseCellThemeConfig
+	config: LocalCellThemeConfig
 }>();
 
-const { cellThemeType, cellTheme, attrs, classes, cellComponent } = useCellThemeProvider(props.config);
+const themeData = useLocalCellThemeProvider(props.config);
+const { attrs, classes } = themeData;
 
-const themeData = computed(() => ({
-	theme: cellTheme.value,
-	themeType: cellThemeType.value,
-	cellComponent: cellComponent.value
-}))
 </script>
 
 <style scoped>

@@ -1,8 +1,6 @@
 <template>
 	<div
 		class="prose prose-sm md:prose lg:prose-lg xl:prose-xl mx-auto p-4 how-to-play-overview"
-		:class="[cellThemeClasses]"
-		v-bind="cellThemeAttrs"
 	>
 		<p>Welcome to Takuzu! This puzzle type, also known as a binary puzzle, is a delightful blend of logic and strategy.
 			Perfect for puzzle enthusiasts and newcomers alike, it offers a unique mental challenge. Our guide is here to
@@ -139,12 +137,8 @@
 
 <script setup lang="ts">
 import type { PuzzleValueLine } from '@/lib/types.js';
-import { useCellThemeProvider } from '../gameboard/composables/useCellThemeProvider.js';
 import SymbolDisplay from './PuzzleSymbolDisplay.vue';
 import { ONE, ZERO } from '@/lib/constants.js';
-
-const { classes: cellThemeClasses, attrs: cellThemeAttrs } = useCellThemeProvider();
-
 </script>
 
 <style scoped>

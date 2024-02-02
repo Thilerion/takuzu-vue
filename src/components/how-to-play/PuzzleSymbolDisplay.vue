@@ -4,16 +4,16 @@
 
 <script setup lang="ts">
 import { ZERO, type PuzzleSymbol, ONE } from '@/lib/constants.js';
-import { useCellThemeProvider } from '../gameboard/composables/useCellThemeProvider.js';
 import { computed } from 'vue';
 import { useDynamicPuzzleSymbolString } from './useDynamicPuzzleSymbolString.js';
+import { injectCellThemeData } from '../gameboard/composables/useCellThemeProvider.js';
 
 const props = defineProps<{
 	v: PuzzleSymbol,
 	mult?: boolean // plural
 }>();
 
-const { cellTheme, cellThemeType } = useCellThemeProvider();
+const { theme: cellTheme, type: cellThemeType } = injectCellThemeData();
 
 const isColored = computed(() => cellThemeType.value === 'coloredTiles');
 const colorClasses = computed(() => {

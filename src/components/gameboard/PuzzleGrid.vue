@@ -30,7 +30,7 @@ import { computed, toRef, toRefs } from 'vue';
 import { usePuzzleAssistanceStore } from '@/stores/assistance/store.js';
 import { useStaticGridCellData } from './composables/useGridCellData.js';
 import { usePuzzleTapVibrate } from './composables/usePuzzleTapVibrate.js';
-import { useCellThemeProvider } from './composables/useCellThemeProvider.js';
+import { injectCellThemeData } from './composables/useCellThemeProvider.js';
 
 const props = defineProps<{
 	board: SimpleBoard,
@@ -64,8 +64,11 @@ const puzzleAssistanceStore = usePuzzleAssistanceStore();
 const incorrectMarkedCells = toRef(puzzleAssistanceStore, 'markedMistakes');
 
 // CELL THEME
-const cellThemeProvidedData = useCellThemeProvider();
-const { classes: cellThemeClasses, attrs: cellThemeAttrs, cellComponent } = cellThemeProvidedData;
+const {
+	attrs: cellThemeAttrs,
+	classes: cellThemeClasses,
+	cellComponent
+} = injectCellThemeData();
 
 // CELL METHODS
 const onCellClick = (val: Omit<VecValueChange, "prevValue">) => {
