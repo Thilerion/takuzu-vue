@@ -10,6 +10,9 @@ export type GridPaddingRefs = Record<keyof Vec, Ref<string>>;
 const MIN_CELL_SIZE = 14;
 const MAX_CELL_SIZE = 80;
 
+// TODO: grid padding should be a number, not a pxString, as it will never be used as a string
+// TODO: other dimensions/sizes should be of type: number | 'cellSize', not just a string
+// TODO: reduce possible over-reliance on intermediate computed values, which are always dependent on each other
 export const useDynamicPuzzleGridSize = (
 	availableSize: Ref<ElementDimensions>,
 	puzzleSize: GridPuzzleShapeRefs,
@@ -30,10 +33,6 @@ export const useDynamicPuzzleGridSize = (
 	const columnsWithRuler = computed(() => {
 		if (rulerWidth.value === 'cellSize') return columns.value + 1;
 		return columns.value;
-	})
-	// TODO: does this need to be a separate computed value?
-	const aspectRatio = computed(() => {
-		return columnsWithRuler.value / rowsWithRuler.value;
 	})
 
 	const unavailableHeight = computed(() => {
@@ -71,7 +70,9 @@ export const useDynamicPuzzleGridSize = (
 	const puzzleGridDimensions = computed(() => {
 		let cellSize: number;
 
-		const potentialHeightFromMaxWidth = maxWidth.value / aspectRatio.value;
+		const aspectRatio = columnsWithRuler.value / rowsWithRuler.value;
+
+		const potentialHeightFromMaxWidth = maxWidth.value / aspectRatio;
 		if (potentialHeightFromMaxWidth < maxHeight.value) {
 			// entire available width can be used, so the cellSize should be based on the available width
 			cellSize = clamp(
@@ -81,7 +82,7 @@ export const useDynamicPuzzleGridSize = (
 			);
 		} else {
 			// entire available height can be used, so cellSize should be based on available height
-			const potentialWidthFromMaxHeight = maxHeight.value * aspectRatio.value;
+			const potentialWidthFromMaxHeight = maxHeight.value * aspectRatio;
 			cellSize = clamp(
 				MIN_CELL_SIZE,
 				Math.floor(potentialWidthFromMaxHeight / columnsWithRuler.value),
