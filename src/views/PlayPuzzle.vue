@@ -1,11 +1,30 @@
 <template>
 	<div class="play-puzzle fixed box-border overflow-auto inset-0 flex flex-col z-20 text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-white"
 		:class="{ 'puzzle-paused': paused, 'puzzle-finished': finished }">
-		<GameBoardHeader @close="exitGame" @dropdown-toggled="dropdownToggled" @pause="pause" @resume="resume" />
-		<GameBoardWrapper :ruler-height="rulerSize" :ruler-width="rulerSize" :info-height="'21px'"
-			v-slot="{ width, height, cellSize }">
-			<GameBoard v-if="started && board" :paused="paused" :rows="rows!" :columns="columns!" :board="board"
-				:grid-height="height" :grid-width="width" :cell-size="cellSize">
+		<GameBoardHeader
+			@close="exitGame"
+			@dropdown-toggled="dropdownToggled"
+			@pause="pause"
+			@resume="resume"
+		/>
+		<GameBoardWrapper
+			:ruler-height="rulerSize"
+			:ruler-width="rulerSize"
+			:info-height="21"
+			:padding-x="4"
+			:padding-y="6"
+			v-slot="{ width, height, cellSize }"
+		>
+			<GameBoard
+				v-if="started && board"
+				:paused="paused"
+				:rows="rows!"
+				:columns="columns!"
+				:board="board"
+				:grid-height="height"
+				:grid-width="width"
+				:cell-size="cellSize"
+			>
 				<template v-slot:puzzle-info>
 					<PuzzleInfo :show-timer="showTimer" :difficulty="difficulty" :progress="progress"
 						:has-border="showRulers" />
@@ -28,9 +47,15 @@
 		</GameBoardWrapper>
 
 		<div class="footer2 h-32 w-full relative">
-			<PuzzleControls :can-undo="canUndo" :paused="paused" @undo="undo" @restart="restart" @check="checkErrors"
-				@get-hint="getHint" />
-			<HintWrapper></HintWrapper>
+			<PuzzleControls
+				:can-undo="canUndo"
+				:paused="paused"
+				@undo="undo"
+				@restart="restart"
+				@check="checkErrors"
+				@get-hint="getHint"
+			/>
+			<HintWrapper />
 		</div>
 
 		<router-view v-slot="{ Component }">
@@ -62,7 +87,7 @@ import { usePuzzleWakeLock } from '@/composables/use-wake-lock';
 
 import debounce from 'lodash.debounce';
 import { useSettingsStore } from '@/stores/settings/store';
-import { storeToRefs, mapState } from 'pinia';
+import { storeToRefs } from 'pinia';
 import { usePuzzleHistoryStore } from '@/stores/puzzle-history';
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter';
 import { computed, readonly, toRef, watch } from 'vue';
@@ -147,10 +172,10 @@ const rulerType = computed(() => {
 })
 const rulerSize = computed(() => {
 	if (showBoardCoordinates.value) {
-		return '16px';
+		return 16; //16px
 	} else if (showBoardLineCounts.value) {
 		return 'cellSize';
-	} else return '0px';
+	} else return null;
 })
 
 const progress = computed(() => {

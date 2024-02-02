@@ -4,8 +4,8 @@
 		:class="[valueClass, { locked }, shadeClass]"
 	>
 		<transition name="cell-color" mode="in-out">
-			<div v-if="value === '0'" key="0" class="color-0 cell-inner-color"></div>
-			<div v-else-if="value === '1'" key="1" class="color-1 cell-inner-color"></div>
+			<div v-if="value === ZERO" key="0" class="cell-color-bg color-0 cell-inner-color"></div>
+			<div v-else-if="value === ONE" key="1" class="cell-color-bg color-1 cell-inner-color"></div>
 		</transition>
 		<div class="incorrect-mark" v-if="incorrect"></div>
 		<div class="highlight-mark" v-if="highlighted"></div>
@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { EMPTY, type PuzzleValue } from "@/lib/constants";
+import { EMPTY, ZERO, type PuzzleValue, ONE } from "@/lib/constants";
 import { computed, toRefs } from "vue";
 
 const props = defineProps<{
@@ -55,7 +55,7 @@ const valueClass = computed(() => `value-${valueStr.value}`);
 	z-index: 1;
 }
 
-.color-0, .color-1 {
+.cell-color-bg {
 	@apply w-full h-full absolute;
 }
 .shade-0 .color-0 {

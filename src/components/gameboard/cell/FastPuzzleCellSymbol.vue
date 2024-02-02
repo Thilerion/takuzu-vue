@@ -66,9 +66,8 @@ const symbolValue = computed(() => symbolMap.value[value.value]);
 	@apply overflow-hidden relative pointer-events-none flex;
 	@apply w-full h-full;
 	@apply bg-gray-125 text-gray-700 dark:bg-slate-800 dark:text-gray-150;
-	/* contain: strict; */
-	--base-cell-size: calc(var(--cell-size) - var(--grid-gap));
 }
+
 .cell.locked {
 	@apply bg-gray-150 dark:bg-slate-775;
 }
@@ -94,8 +93,6 @@ const symbolValue = computed(() => symbolMap.value[value.value]);
 }
 .cell-symbol-value {
 	--font-size: clamp(16px, var(--base-size), 48px);
-	/* font-size: var(--font-size); */
-	/* line-height: var(--line-height); */
 }
 .number-icon {
 	@apply pointer-events-none w-full h-full m-auto;
@@ -119,20 +116,20 @@ const symbolValue = computed(() => symbolMap.value[value.value]);
 <style>
 .cell-theme-binary .cell-symbol-value {
 	@apply font-number;
-	--base-size: calc(var(--base-cell-size) - 4px);
-	--line-height: calc(var(--base-size) * 1.25);
+	--base-size: calc(100cqmin - 4px);
 }
 .cell-theme-tictactoe .cell-symbol-value {
 	@apply font-sans;
-	--base-size: calc(var(--base-cell-size) - 6px);
-	--line-height: calc(var(--base-size) * 1.01);
+	--base-size: calc(90cqmin + 4px - 1vmin);
 	font-size: calc(var(--base-size) * 0.9);
 }
 .cell-theme-tictactoe .cell {
 	@apply flex items-center justify-center overflow-hidden;
 	--font-size: 48px;
-	--base-pad: calc(var(--base-cell-size) / 10);
-	padding: clamp(1px, var(--base-pad), 57px);
+	--base-pad: clamp(1px, 10cqmin, 57px);
+	--top-pad-shift: clamp(1px, 3cqh, var(--base-pad) * 0.5);
+	padding: var(--base-pad);
+	padding-top: calc(var(--base-pad) + var(--top-pad-shift));
 	width: 100%;
 	height: 100%;
 }

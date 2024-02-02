@@ -1,6 +1,10 @@
 <template>
 	<div class="main justify-center items-center relative" ref="container">
-		<div class="puzzle-wrapper" :class="[`cell-size-${gridGapSizing}`]">
+		<div
+			class="puzzle-wrapper"
+			:class="[`cell-size-${cellSizeCategory}`]"
+			v-show="validElDimensions"
+		>
 			<slot v-bind="puzzleGridDimensions" />
 		</div>
 	</div>
@@ -8,118 +12,62 @@
 
 <script setup lang="ts">
 import { computed, ref, toRefs } from 'vue';
-import { useResizeObserver } from '@vueuse/core';
 import { usePuzzleStore } from '@/stores/puzzle';
+import { useThrottledElementSizeObserver } from './composables/useThrottledElementSizeObserver.js';
+import { useDynamicPuzzleGridSize } from './composables/useDynamicPuzzleGridSize.js';
 
 const props = withDefaults(defineProps<{
-	rulerHeight: string,
-	rulerWidth: string,
-	infoHeight: string,
-	paddingX?: string,
-	paddingY?: string
+	rulerHeight: number | 'cellSize' | null, // number: px value, cellSize for equal to cellSize, null for hidden
+	rulerWidth: number | 'cellSize' | null,
+	infoHeight: number | 'cellSize' | null,
+	paddingX?: number,
+	paddingY?: number
 }>(), {
-	paddingX: "4px",
-	paddingY: "6px"
+	paddingX: 4,
+	paddingY: 6
 });
 
 const { rulerHeight, rulerWidth, infoHeight, paddingX, paddingY } = toRefs(props);
 
-const container = ref(null);
-const pStore = usePuzzleStore();
-const rows = computed(() => pStore.height!);
-const columns = computed(() => pStore.width!);
+const container = ref<HTMLElement | null>(null);
+const puzzleStore = usePuzzleStore();
+const rows = computed(() => puzzleStore.height!);
+const columns = computed(() => puzzleStore.width!);
 
-// use sensible defaults
-const width = ref(Math.floor(window.screen.availWidth * 0.98));
-const height = ref(window.screen.availHeight - 40);
-
-useResizeObserver(container, (entries) => {
-	try {
-		const el = entries[0];
-		if (el.contentBoxSize) {
-			const { inlineSize, blockSize } = el.contentBoxSize[0];
-			width.value = inlineSize;
-			height.value = blockSize;
-		} else {
-			width.value = el.contentRect.width;
-			height.value = el.contentRect.height;
-		}
-	} catch (e) {
-		console.warn('Error in resize observer entries');
+const elDimensions = useThrottledElementSizeObserver(
+	container,
+	{
+		delay: 500,
+		leading: true,
+		trailing: true
 	}
+);
+const validElDimensions = computed(() => {
+	const { width, height } = elDimensions.value;
+	return width > 0 && height > 0;
 })
 
-const rowsWithRuler = computed(() => {
-	if (rulerHeight.value === 'cellSize') {
-		return rows.value + 1;
+const { puzzleGridDimensions } = useDynamicPuzzleGridSize(
+	elDimensions,
+	{
+		width: columns,
+		height: rows
+	},
+	{
+		width: rulerWidth,
+		height: rulerHeight,
+	},
+	{
+		height: infoHeight
+	},
+	{
+		x: paddingX,
+		y: paddingY
 	}
-	return rows.value;
-})
-const columnsWithRuler = computed(() => {
-	if (rulerWidth.value === 'cellSize') {
-		return columns.value + 1;
-	}
-	return columns.value;
-})
+);
 
-const aspectRatio = computed(() => {
-	return columnsWithRuler.value / rowsWithRuler.value;
-})
-
-function getPxValue(str = '0px'): number {
-	const int = parseInt(str.replace('px', ''));
-	return Number.isNaN(int) ? 0 : int;
-}
-
-const unavailableHeight = computed(() => {
-	return [
-		rulerHeight.value,
-		infoHeight.value,
-		paddingY.value,
-		paddingY.value
-	].reduce((total, pxVal) => {
-		if (pxVal === 'cellSize') return total;
-		return total + getPxValue(pxVal);
-	}, 0)
-})
-const unavailableWidth = computed(() => {
-	return [
-		rulerWidth.value,
-		paddingX.value,
-		paddingX.value
-	].reduce((total, pxVal) => {
-		if (pxVal === 'cellSize') return total;
-		return total + getPxValue(pxVal);
-	}, 0)
-})
-
-const maxWidth = computed(() => width.value - unavailableWidth.value);
-const maxHeight = computed(() => height.value - unavailableHeight.value);
-
-const puzzleGridDimensions = computed(() => {
-	const heightA = maxWidth.value / aspectRatio.value;
-	if (heightA < maxHeight.value) {
-		let cellSize = Math.floor(heightA / rowsWithRuler.value);
-		if (cellSize < 12)
-			cellSize = 12;
-		if (cellSize > 80)
-			cellSize = 80;
-		const w = cellSize * columns.value;
-		const h = cellSize * rows.value;
-		return { width: w + "px", height: h + "px", cellSize };
-	}
-	const widthB = maxHeight.value * aspectRatio.value;
-	let cellSize = Math.floor(widthB / columnsWithRuler.value);
-	if (cellSize < 12)
-		cellSize = 12;
-	if (cellSize > 80)
-		cellSize = 80;
-	const w = cellSize * columns.value;
-	const h = cellSize * rows.value;
-	return { width: w + "px", height: h + "px", cellSize };
-})
-
-const gridGapSizing = computed(() => {
+export type CellSizeCategory = 'xs' | 's' | 'm' | 'l' | 'xl';
+const cellSizeCategory = computed((): CellSizeCategory => {
 	const { cellSize } = puzzleGridDimensions.value;
 	if (cellSize <= 26) {
 		return "xs";
@@ -140,8 +88,6 @@ const gridGapSizing = computed(() => {
 	@apply flex-1 flex flex-col;
 	overflow: hidden;
 
-	--unavail-height: v-bind(unavailableHeight);
-	--unavail-width: v-bind(unavailableWidth);
 	--rows: v-bind(rows);
 	--columns: v-bind(columns);
 	--aspect-ratio: calc(var(--columns) / var(--rows));
