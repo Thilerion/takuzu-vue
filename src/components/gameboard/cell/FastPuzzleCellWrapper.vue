@@ -72,6 +72,8 @@ const handleCellToggle = () => {
 <style>
 .cell-wrapper {
 	contain: strict;
+	container-type: size;
+	--base-cell-size: 100cqmin;
 }
 
 button.cell-wrapper::after {
@@ -81,6 +83,7 @@ button.cell-wrapper::after {
 	will-change: opacity;
 	transition: opacity 0.5s cubic-bezier(.97,.25,.16,.71) .6s;
 }
+/* Todo: hover and pointer fine? What is the purpose of this again? */
 @media (hover:hover) and (pointer: fine) {
 	button.cell-wrapper::before {
 		content: '';
