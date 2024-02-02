@@ -14,3 +14,5 @@ export const formatOrdinal = (value: number, locale = 'en-US') => {
 	const suffix = suffixes.get(rule);
 	return `${value}${suffix}`;
 }
+
+export const clamp = (min: number, value: number, max: number) => Math.min(Math.max(value, min), max);

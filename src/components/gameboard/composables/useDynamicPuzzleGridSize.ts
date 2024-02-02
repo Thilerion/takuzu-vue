@@ -1,17 +1,16 @@
 import { computed, type Ref } from "vue";
 import type { ElementDimensions } from "./useThrottledElementSizeObserver.js";
 import type { Vec } from "@/lib/types.js";
+import { clamp } from "@/utils/number.utils.js";
 
 export type GridPuzzleShapeRefs = Record<'width' | 'height', Ref<number>>;
-export type GridRulerSizeRefs = Record<'width' | 'height', Ref<'cellSize' | string>>;
-export type GridInfobarSizeRefs = Record<'height', Ref<string>>;
-export type GridPaddingRefs = Record<keyof Vec, Ref<string>>;
+export type GridRulerSizeRefs = Record<'width' | 'height', Ref<'cellSize' | number | null>>;
+export type GridInfobarSizeRefs = Record<'height', Ref<'cellSize' | number | null>>;
+export type GridPaddingRefs = Record<keyof Vec, Ref<number>>;
 
 const MIN_CELL_SIZE = 14;
 const MAX_CELL_SIZE = 80;
 
-// TODO: grid padding should be a number, not a pxString, as it will never be used as a string
-// TODO: other dimensions/sizes should be of type: number | 'cellSize', not just a string
 // TODO: reduce possible over-reliance on intermediate computed values, which are always dependent on each other
 export const useDynamicPuzzleGridSize = (
 	availableSize: Ref<ElementDimensions>,
@@ -37,29 +36,24 @@ export const useDynamicPuzzleGridSize = (
 
 	const unavailableHeight = computed(() => {
 		let result = 0;
-		if (paddingY.value !== 'cellSize') {
-			const paddingNum = convertPxToNumber(paddingY.value);
-			result += (paddingNum * 2); // padding is calculated twice, once for top and once for bottom
+		if (paddingY.value) {
+			result += (paddingY.value * 2); // padding is calculated twice, once for top and once for bottom
 		}
-		if (rulerHeight.value !== 'cellSize') {
-			const rulerNum = convertPxToNumber(rulerHeight.value);
-			result += rulerNum;
+		if (typeof rulerHeight.value === 'number') {
+			result += rulerHeight.value;
 		}
-		if (infoHeight.value !== 'cellSize') {
-			const infobarNum = convertPxToNumber(infoHeight.value);
-			result += infobarNum;
+		if (typeof infoHeight.value === 'number') {
+			result += infoHeight.value;
 		}
 		return result;
 	})
 	const unavailableWidth = computed(() => {
 		let result = 0;
-		if (paddingX.value !== 'cellSize') {
-			const paddingNum = convertPxToNumber(paddingX.value);
-			result += (paddingNum * 2); // padding is calculated twice, once for left and once for right
+		if (paddingX.value) {
+			result += (paddingX.value * 2); // padding is calculated twice, once for top and once for bottom
 		}
-		if (rulerWidth.value !== 'cellSize') {
-			const rulerNum = convertPxToNumber(rulerWidth.value);
-			result += rulerNum;
+		if (typeof rulerWidth.value === 'number') {
+			result += rulerWidth.value;
 		}
 		return result;
 	})
@@ -95,16 +89,4 @@ export const useDynamicPuzzleGridSize = (
 	})
 
 	return { puzzleGridDimensions };
-}
-
-function convertPxToNumber(pxString: string, fallback?: number): number {
-	const result = parseInt(pxString, 10);
-	if (Number.isNaN(result)) {
-		if (fallback == null) throw new Error(`Invalid input: ${pxString} is not a valid pixel value`);
-		return fallback;
-	}
-	return result;
-}
-function clamp(min: number, value: number, max: number): number {
-	return Math.min(Math.max(value, min), max);
 }

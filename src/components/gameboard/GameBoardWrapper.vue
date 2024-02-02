@@ -17,14 +17,14 @@ import { useThrottledElementSizeObserver } from './composables/useThrottledEleme
 import { useDynamicPuzzleGridSize } from './composables/useDynamicPuzzleGridSize.js';
 
 const props = withDefaults(defineProps<{
-	rulerHeight: string,
-	rulerWidth: string,
-	infoHeight: string,
-	paddingX?: string,
-	paddingY?: string
+	rulerHeight: number | 'cellSize' | null, // number: px value, cellSize for equal to cellSize, null for hidden
+	rulerWidth: number | 'cellSize' | null,
+	infoHeight: number | 'cellSize' | null,
+	paddingX?: number,
+	paddingY?: number
 }>(), {
-	paddingX: "4px",
-	paddingY: "6px"
+	paddingX: 4,
+	paddingY: 6
 });
 
 const { rulerHeight, rulerWidth, infoHeight, paddingX, paddingY } = toRefs(props);
