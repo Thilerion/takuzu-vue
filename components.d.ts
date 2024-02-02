@@ -149,6 +149,7 @@ declare module 'vue' {
     RecentPuzzleItem: typeof import('./src/components/statistics/recent-puzzles/RecentPuzzleItem.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ScrollToTop: typeof import('./src/components/base/ScrollToTop.vue')['default']
     SettingsPage: typeof import('./src/views/SettingsPage.vue')['default']
     StarIcon: typeof import('./src/components/global/StarIcon.vue')['default']
     StartGameButton: typeof import('./src/components/new-puzzle/StartGameButton.vue')['default']
