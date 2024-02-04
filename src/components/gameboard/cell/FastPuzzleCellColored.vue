@@ -38,7 +38,7 @@ const valueClass = computed(() => `value-${valueStr.value}`);
 	@apply w-full h-full;
 	@apply bg-gray-125 dark:bg-slate-800;	
 }
-.cell > * {
+.cell > *, .cell {
 	border-radius: var(--cell-rounding);
 }
 
