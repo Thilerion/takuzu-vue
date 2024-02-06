@@ -3,18 +3,20 @@
 		<button
 			@click="$emit('increment-debug-mode')"
 			:disabled="debugMode"
-			class="w-full h-full flex flex-row items-center text-start"
+			class="app-v-btn w-full h-full grid text-start gap-x-8 justify-start content-evenly"
 		>
-			<div class="h-full min-w-fit flex flex-col justify-evenly text-start mr-5">
-				<div>App version</div>
-				<div v-if="shownPrevAppVersion" class="text-xs text-gray-800/50">Previous version</div>
-			</div>
 			<div
-				class="inline-flex flex-col h-full justify-evenly min-w-0"
-			>
-				<div class="text-ellipsis">{{shownCurAppVersion[0]}}<span class="text-[0.875em] opacity-80 ml-px">+{{shownCurAppVersion[1]}}</span></div>
-				<div v-if="shownPrevAppVersion" class="text-xs text-gray-800/50 text-ellipsis">{{shownPrevAppVersion}}</div>
-			</div>
+				class="col-start-1 col-end-2 row-start-1 row-end-2"
+			>App version</div>
+
+			<div
+				class="text-ellipsis col-start-2 row-start-1 row-end-2"
+			>{{shownCurAppVersion[0]}}<span class="text-[0.875em] opacity-80 ml-px">+{{shownCurAppVersion[1]}}</span></div>
+
+			<template v-if="shownPrevAppVersion">
+				<div class="text-xs text-gray-800/50 col-start-1 col-end-2 row-start-2">Previous version</div>			
+				<div class="text-xs text-gray-800/50 text-ellipsis col-start-2 row-start-2">{{shownPrevAppVersion}}</div>
+			</template>
 		</button>
 	</BasicLinkListItem>
 </template>
@@ -54,5 +56,7 @@ const shownPrevAppVersion = computed(() => {
 </script>
 
 <style scoped>
-
+.app-v-btn {
+	grid-template-columns: auto auto;
+}
 </style>
