@@ -6,6 +6,8 @@ import type { ComputedRef, InjectionKey } from "vue";
 import type { MaybeRef } from "vue";
 import type { Ref } from "vue";
 import { readonly } from "vue";
+import { watchEffect } from "vue";
+import { shallowRef } from "vue";
 import { unref } from "vue";
 import { inject, provide } from "vue";
 import { computed, defineAsyncComponent } from "vue";
@@ -17,7 +19,7 @@ const FallbackPuzzleCellComp = defineAsyncComponent(() => import('../cell/FastPu
 type InternalCellThemeProviderData = {
 	theme: Ref<CellTheme>;
 	type: Ref<CellThemeType>;
-	cellComponent: ComputedRef<typeof ColoredPuzzleCellComp | typeof SymbolPuzzleCellComp | typeof FallbackPuzzleCellComp>;
+	cellComponent: Readonly<Ref<typeof ColoredPuzzleCellComp | typeof SymbolPuzzleCellComp | typeof FallbackPuzzleCellComp>>;
 	classes: ComputedRef<string[]>;
 }
 export type CellThemeProviderData = Omit<InternalCellThemeProviderData, 'theme' | 'type'> & {
@@ -66,10 +68,18 @@ export const initGlobalCellThemeProvider = (): CellThemeProviderData => {
 		cellTheme: globalCellTheme,
 		cellThemeType: globalCellThemeType
 	} = storeToRefs(settingsStore);
+
+	const { classes, cellComponent: computedCellComponent } = createCellThemeComputedData(globalCellTheme, globalCellThemeType);
+	const cellComponent = shallowRef(computedCellComponent.value);
+	watchEffect(() => {
+		cellComponent.value = computedCellComponent.value;
+	})
+
 	const data = {
 		theme: readonly(globalCellTheme),
 		type: readonly(globalCellThemeType),
-		...createCellThemeComputedData(globalCellTheme, globalCellThemeType)
+		classes,
+		cellComponent: readonly(cellComponent)
 	};
 	provide(key, data);
 	provide(isInjectedKey, true);
