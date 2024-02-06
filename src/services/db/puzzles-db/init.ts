@@ -80,7 +80,7 @@ export async function initPregeneratedPuzzles(
 ) {
 	const count = await puzzleDb.puzzles.count();
 	if (count > 0) {
-		console.log('Starting pregen worker.');
+		// console.log('Starting pregen worker.');
 		return new Promise((resolve) => {
 			window.setTimeout(() => {
 				initPregenPuzzles();

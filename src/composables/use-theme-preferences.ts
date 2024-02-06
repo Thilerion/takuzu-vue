@@ -61,7 +61,7 @@ export const useInitThemePreferenceProvider = (): BaseThemeProvidedData => {
 	const baseThemeIsAuto = computed(() => baseThemeUserPref.value === 'auto');
 
 	watchEffect(() => {
-		console.log(`Color theme changed to: "${baseTheme.value}"`);
+		// console.log(`Color theme changed to: "${baseTheme.value}"`);
 		setBaseThemeAttrs(baseTheme.value);
 	})
 

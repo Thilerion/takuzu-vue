@@ -36,6 +36,6 @@ export function initSettingsPersistence() {
 			console.error(e);
 		}
 	})
-	console.log('Subscribed to settings state.');
+	// console.log('Subscribed to settings state.');
 	return store;
 }

@@ -19,7 +19,7 @@ export const useMetaThemeColor = ({
 	const color: Ref<string> = ref(initialColor);
   
 	const setCurrentThemeColor = (value: string) => {
-		console.log('Setting theme color to:', value);
+		// console.log('Setting theme color to:', value);
 		metaEl!.setAttribute('content', value);
 		color.value = value;
 	};

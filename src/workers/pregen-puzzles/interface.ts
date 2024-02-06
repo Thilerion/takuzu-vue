@@ -23,7 +23,9 @@ export async function initPregenPuzzles(): Promise<{ generated: number, done: bo
 
 	const result = await pregenWorker.request('pregen');
 	if (result.done) {
-		console.log('Pregen was successful. Amount generated:', result.generated);
+		if (result.generated > 0) {
+			console.log('Pregen was successful. Amount generated:', result.generated);
+		}
 		return { ...result, pending: false as const };
 	} else {
 		console.warn('Pregen has not succesfully finished generating all required puzzles. Amount generated:', result.generated);
