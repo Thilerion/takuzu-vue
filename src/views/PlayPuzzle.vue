@@ -98,14 +98,13 @@ import { useRecapStatsStore } from '@/stores/recap-stats';
 import { rulerType as RULER_TYPE } from '@/stores/settings/options';
 import { usePuzzleAssistanceStore } from '@/stores/assistance/store';
 import { ref } from 'vue';
-import { useRoute } from 'vue-router';
-import { useRouter } from 'vue-router';
 import { onMounted } from 'vue';
 import { onBeforeMount } from 'vue';
-import { onBeforeRouteLeave } from 'vue-router';
-import { onBeforeRouteUpdate } from 'vue-router';
+import { onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router';
 import { onBeforeUnmount } from 'vue';
 import type { DifficultyKey } from '@/lib/types.js';
+import { useGoBackOrReplaceTo } from '@/router/useGoBackOrReplaceTo.js';
+import { useRouter } from 'vue-router';
 
 const settingsStore = useSettingsStore();
 
@@ -209,18 +208,13 @@ const saveGame = () => {
 		savePuzzleSaveData();
 	}
 }
-const route = useRoute();
-const router = useRouter();
+
+const goBackToNewPuzzle = useGoBackOrReplaceTo({ name: 'NewPuzzleFreePlay' });
 const exitGame = () => {
 	if (canSaveGame()) {
 		saveGame(); // TODO: unnecessary canSaveGame check
 	}
-	const metaFrom = route.meta.prev;
-	if (metaFrom == null) {
-		router.replace({ name: 'NewPuzzleFreePlay' });
-	} else {
-		router.go(-1);
-	}
+	goBackToNewPuzzle();
 }
 const { undoLastMove: undo, restartPuzzle: restart } = puzzleStore;
 const dropdownToggled = (val: boolean) => dropdownOpen.value = val;
@@ -252,6 +246,7 @@ onMounted(() => {
 	startGame();
 	initAutoSave();
 })
+const router = useRouter();
 onBeforeMount(() => {
 	if (!initialized.value) {
 		if (hasCurrentSavedGame.value) {

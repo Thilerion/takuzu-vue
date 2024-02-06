@@ -7,9 +7,11 @@
 		}
 	]">
 		<div class="header-group side left">
-			<IconBtn v-if="hasBackButton" @click="close" name="md-arrowback">
-				<icon-mdi-arrow-left v-if="hasBackButton" />
-				<icon-mdi-close v-else-if="hasCloseButton" />
+			<IconBtn v-if="hasBackButton" @click="back">
+				<icon-mdi-arrow-left />
+			</IconBtn>
+			<IconBtn v-else-if="hasCloseButton" @click="close">
+				<icon-mdi-close />
 			</IconBtn>
 		</div>
 		<div class="header-group flex justify-center items-center flex-1">
@@ -27,8 +29,9 @@
 </template>
 
 <script setup lang="ts">
+import { useGoBackOrReplaceTo } from '@/router/useGoBackOrReplaceTo.js';
 import { computed, useAttrs } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 
 export interface Props {
 	closeBtn?: boolean,
@@ -48,8 +51,6 @@ const emit = defineEmits<{
 }>();
 
 const route = useRoute();
-const router = useRouter();
-
 const hasBackButton = computed(() => {
 	if (props.hideBack) return false;
 	if (route?.meta?.noBackButton) return false;
@@ -69,12 +70,11 @@ const close = () => {
 	if (hasOnCloseAttr.value) {
 		emit('close');
 		return;
-	}
-	if (route?.meta?.prev != null) {
-		router.go(-1);
-	} else {
-		router.replace({ name: 'Home' });
-	}
+	}	
+}
+const goBackHome = useGoBackOrReplaceTo({ name: 'Home' });
+const back = () => {
+	return goBackHome();
 }
 
 const mergedElevated = computed(() => {
