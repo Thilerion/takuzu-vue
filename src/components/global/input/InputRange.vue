@@ -13,23 +13,33 @@ import { computed, toRefs } from 'vue';
 
 const props = withDefaults(defineProps<{
 	modelValue: number | string,
-	min?: number,
-	max?: number
+	min?: number | string,
+	max?: number | string
 }>(), {
 	min: 0,
 	max: 100
 });
 
-const { modelValue, min, max } = toRefs(props);
-const emit = defineEmits(['update:modelValue', 'input']);
 
+const { modelValue, min, max } = toRefs(props);
+
+const propAsInt = (val: number | string): number => {
+	if (typeof val === 'string') {
+		const num = parseInt(val, 10);
+		if (Number.isNaN(num)) throw new Error('Prop as string cannot be parsed as number');
+		return num;
+	}
+	return val;
+}
+const minInt = computed(() => propAsInt(props.min));
+const maxInt = computed(() => propAsInt(props.max));
 const mvAsNumber = computed(() => typeof modelValue.value === 'number' ? modelValue.value : Number(modelValue.value));
+
+const emit = defineEmits(['update:modelValue', 'input']);
 
 const rangePercentage = computed(() => {
 	const value = mvAsNumber.value;
-	const minInt = min.value * 1;
-	const maxInt = max.value * 1;
-	return (value - minInt) / (maxInt - minInt);
+	return (value - minInt.value) / (maxInt.value - minInt.value);
 })
 const setTrackBackground = (ev: InputEvent) => {
 	emit('update:modelValue', (ev.target as HTMLInputElement).value); // or valueAsNumber?
