@@ -1,8 +1,12 @@
 import { shuffle } from "@/lib/utils";
 import type { IPregenPuzzle } from "./models.js";
+import type { BoardExportString } from "@/lib/types.js";
 
-const createPregenPuzzle = (puzzle: Omit<IPregenPuzzle, 'boardStr' | 'solutionStr'> & { boardStr: string, solutionStr: string }): IPregenPuzzle => {
-    return puzzle as IPregenPuzzle;
+const createPregenPuzzle = <T extends {
+    boardStr: string,
+    solutionStr: string,
+}>(puzzle: T): Omit<T, 'boardStr' | 'solutionStr'> & { boardStr: BoardExportString, solutionStr: BoardExportString } => {
+    return puzzle as any as Omit<T, 'boardStr' | 'solutionStr'> & { boardStr: BoardExportString, solutionStr: BoardExportString };
 }
 
 const pregeneratedPuzzles: IPregenPuzzle[] = shuffle(([
