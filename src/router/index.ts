@@ -108,11 +108,17 @@ const routes = [
 		path: '/help',
 		name: 'HowToPlay',
 		component: HowToPlay,
+		meta: {
+			title: 'How to Play'
+		}
 	},
 	{
 		path: '/help/tutorial',
 		name: 'Tutorial',
 		component: TutorialPage,
+		meta: {
+			title: 'Tutorial'
+		}
 	},
 	{
 		path: '/play',
@@ -173,7 +179,10 @@ const routes = [
 	{
 		path: '/showcase',
 		component: () => import('../views/BaseComponentShowcase.vue'),
-		name: 'BaseComponentShowcase'
+		name: 'BaseComponentShowcase',
+		meta: {
+			title: 'Component Showcase'
+		}
 	}
 ] as const satisfies RouteRecordRaw[];
 
