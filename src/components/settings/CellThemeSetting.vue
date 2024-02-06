@@ -1,6 +1,40 @@
 <template>
 	<div class="mt-2 flex items-center gap-x-2 max-w-md sm:px-0 sm:mx-0 mx-auto">
-		<label class="flex flex-1 items-center cell-theme-box" :class="{selected: cellTheme === CellThemes.CLASSIC}">
+		<label
+			v-for="(theme) in CellThemes"
+			:key="theme"
+			:class="{ selected: cellTheme === theme }"
+			class="flex flex-1 items-center cell-theme-box"
+		>
+		<div class="example" :class="[`cell-theme-${theme}`]">
+			<CellThemeProvider :config="{ theme }" v-slot="{ cellComponent }">
+				<div class="w-6 h-6 relative cell-example-wrapper">
+					<component
+					:is="cellComponent"
+					value="0"
+					class="zero"
+				></component>
+				</div>
+				<div class="w-6 h-6 relative cell-example-wrapper">
+					<component
+					:is="cellComponent"
+					value="1"
+					class="one"
+				></component>
+				</div>
+			</CellThemeProvider>
+		</div>
+		<input
+			class="radio"
+			type="radio"
+			name="radio-cell-theme"
+			v-model="cellTheme"
+			:value="theme"
+		>
+		<span class="label">{{ theme }}</span>
+		</label>
+		<template v-if="false">
+		<label class="flex flex-1 items-center cell-theme-box" :class="{selected: cellTheme === 'classic'}">
 			<div class="example cell-theme-01">
 				<div class="zero">0</div>
 				<div class="one">1</div>
@@ -48,6 +82,7 @@
 				<div class="one"></div>
 			</div>
 		</label>
+	</template>
 	</div>
 </template>
 
@@ -55,6 +90,9 @@
 import { CellThemes } from '@/stores/settings/options';
 import type { CellTheme } from '@/stores/settings/types.js';
 import { computed } from 'vue';
+import { initGlobalCellThemeProvider } from '../gameboard/composables/useCellThemeProvider.js';
+
+initGlobalCellThemeProvider();
 
 const props = defineProps<{
 	modelValue: CellTheme
@@ -91,9 +129,16 @@ const cellTheme = computed({
 	@apply bg-white dark:bg-slate-700/40 text-gray-500 shadow-transparent shadow-lg;
 }
 
+.cell-example-wrapper {
+	contain: strict;
+	container-type: size;
+	--base-cell-size: 100cqmin;
+}
+
 .cell-theme-box > .example {
 	grid-area: cell;
-	@apply flex mx-auto;
+	@apply flex mx-auto gap-x-1;
+	--cell-rounding: 2px;
 }
 .example > .one, .example > .zero {
 	@apply w-6 h-6 justify-center items-center text-center my-1 rounded bg-gray-50 dark:bg-slate-600 overflow-hidden text-gray-800 dark:text-gray-200;
@@ -114,11 +159,14 @@ const cellTheme = computed({
 	grid-area: label;
 	@apply text-xs text-gray-800 mt-1 text-center truncate dark:text-white;
 }
+.cell-theme-blue-red .one, .cell-theme-blue-red .zero {
+	border: none;
+}
 
-.cell-theme-01 {
+/* .cell-theme-01, .cell-theme-binary {
 	@apply font-number;
 }
-.cell-theme-OX {
+.cell-theme-OX, .cell-theme-tictactoe {
 	@apply font-sans font-bold;
 }
 .cell-theme-blue-red {
@@ -129,5 +177,5 @@ const cellTheme = computed({
 }
 .cell-theme-blue-red .zero {
 	@apply dark:bg-cell-blue-secondary bg-cell-blue-primary border-0;
-}
+} */
 </style>

@@ -46,8 +46,8 @@ import { injectCellThemeData } from "../composables/useCellThemeProvider.js";
 
 const props = defineProps<{
 	value: PuzzleValue,
-	locked: boolean,
-	incorrect: boolean | undefined,
+	locked?: boolean,
+	incorrect?: boolean,
 	highlighted?: boolean
 }>()
 

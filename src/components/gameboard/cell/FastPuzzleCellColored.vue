@@ -18,12 +18,12 @@ import { computed, toRefs } from "vue";
 
 const props = defineProps<{
 	value: PuzzleValue,
-	locked: boolean,
-	incorrect: boolean | undefined,
+	locked?: boolean,
+	incorrect?: boolean,
 	highlighted?: boolean // TODO: highlight style for colored cell
 }>()
 
-const { value, locked, incorrect } = toRefs(props);
+const { value } = toRefs(props);
 
 const shade = Math.floor(Math.random() * 5);
 const shadeClass = `shade-${shade}`;
