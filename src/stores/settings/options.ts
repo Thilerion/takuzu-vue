@@ -17,6 +17,7 @@ export const CellThemes = {
 	TICTACTOE: 'tictactoe',
 	BLUE_RED: 'blue-red'
 } as const satisfies Record<string, CellTheme>;
+
 export const CheckButtonOption = {
 	DISABLED: 'disabled',
 	RULE_VIOLATIONS: 'ruleViolations',

@@ -24,6 +24,7 @@ declare module 'vue' {
     BottomNavIcon: typeof import('./src/components/base/layout/BottomNavIcon.vue')['default']
     CellThemeProvider: typeof import('./src/components/gameboard/cell/CellThemeProvider.vue')['default']
     CellThemeSetting: typeof import('./src/components/settings/CellThemeSetting.vue')['default']
+    CellThemeSettingExamples: typeof import('./src/components/settings/CellThemeSettingExamples.vue')['default']
     ContinueButton: typeof import('./src/components/ContinueButton.vue')['default']
     CoordsRuler: typeof import('./src/components/gameboard/ruler/CoordsRuler.vue')['default']
     CountsRuler: typeof import('./src/components/gameboard/ruler/CountsRuler.vue')['default']
