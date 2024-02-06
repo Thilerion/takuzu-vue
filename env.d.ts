@@ -21,5 +21,7 @@ interface ImportMeta {
 }
 
 declare global {
-  const __BUILD_VERSION_DETAILS__: import('./scripts/build-metadata').BuildVersionDetails;
+  import type { BuildVersionDetails } from "scripts/build-metadata.js";
+  const __BUILD_VERSION_DETAILS__: BuildVersionDetails;
 }
+export {};
