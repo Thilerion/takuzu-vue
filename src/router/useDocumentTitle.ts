@@ -1,14 +1,14 @@
 import { ref, watch } from "vue";
 import type { RouteLocationNormalized } from "vue-router";
+
 export type UseRouteDocumentTitleOpts = {
-	defaultTitle?: string;
-	titlePrefix?: string;
+	defaultTitle: string;
+	titlePrefix: string;
 };
 
-
 export const useRouteDocumentTitle = ({
-	defaultTitle = 'Takuzu',
-	titlePrefix = '',
+	defaultTitle,
+	titlePrefix,
 }: UseRouteDocumentTitleOpts) => {
 	const title = ref(document.title);
 
@@ -19,11 +19,19 @@ export const useRouteDocumentTitle = ({
 	const updateTitleWithRouteMeta = (to: RouteLocationNormalized) => {
 		const metaTitle = to.meta?.title;
 
-		let newTitle = metaTitle ? `${titlePrefix}${metaTitle}` : null;
-
-		if (!!newTitle && newTitle !== title.value) {
-			title.value = newTitle;
+		if (metaTitle === '') {
+			// use base title, probably Home route
+			title.value = defaultTitle;
+			return;
+		} else if (metaTitle == null) {
+			// previously would do nothing here, which means previous route's title would persist
+			// however, because route.meta is merged from parent to child in current Vue Router version, this means we should use the default title here
+			title.value = defaultTitle;
+			return;
 		}
+
+		const newTitle = `${titlePrefix}${metaTitle}`;
+		title.value = newTitle;
 	}
 
 	watch(title, (newTitle, prevTitle) => {

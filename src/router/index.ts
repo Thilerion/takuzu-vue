@@ -37,6 +37,7 @@ const routes = [
 		component: MainPage,
 		meta: {
 			metaThemeColor: 'white',
+			title: '', // use base title
 		},
 		children: [
 			{
@@ -44,7 +45,8 @@ const routes = [
 				name: 'Home',
 				component: HomePage,
 				meta: {
-					metaThemeColor: '#4DBA87'
+					metaThemeColor: '#4DBA87',
+					title: '', // use base title
 				}
 			},
 			{
@@ -145,7 +147,10 @@ const routes = [
 			{
 				path: 'settings',
 				name: 'PlayPuzzle.settings',
-				component: SettingsPage
+				component: SettingsPage,
+				meta: {
+					title: 'Play Puzzle - Settings'
+				}
 			}
 		]
 	},
