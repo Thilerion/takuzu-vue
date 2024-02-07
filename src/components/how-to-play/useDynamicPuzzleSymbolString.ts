@@ -1,4 +1,5 @@
 import { ZERO, type PuzzleSymbol } from "@/lib/constants.js";
+import { isValidPuzzleValue } from "@/lib/utils.js";
 import type { CellTheme, CellThemeType } from "@/stores/settings/types.js";
 import type { Ref } from "vue";
 import { computed } from "vue";
@@ -18,7 +19,7 @@ const getTictactoeString = (val: PuzzleSymbol, multiple?: boolean) => {
 }
 
 export const useDynamicPuzzleSymbolString = (theme: Ref<CellTheme>, themeType: Ref<CellThemeType>) => {
-	let display = computed(() => {
+	let displaySymbol = computed(() => {
 		switch(theme.value) {
 			case 'blue-red': return getBlueRedString;
 			case 'classic': return getClassicString;
@@ -30,9 +31,23 @@ export const useDynamicPuzzleSymbolString = (theme: Ref<CellTheme>, themeType: R
 			}
 		}
 	})
+	const displayCellType = computed(() => {
+		switch(themeType.value) {
+			case 'symbols': return (multiple?: boolean) => {
+				if (multiple) return 'symbols';
+				return 'symbol';
+			}
+			case 'coloredTiles': return (multiple?: boolean) => {
+				if (multiple) return 'color tiles';
+				return 'color';
+			}
+		}
+	})
 
-	const $p = (symbol: PuzzleSymbol, multiple = false) => {
-		return display.value(symbol, multiple);
+	const $p = (symbol: PuzzleSymbol | 'symbol', multiple = false) => {
+		if (isValidPuzzleValue(symbol)) return displaySymbol.value(symbol, multiple);
+		else if (symbol === 'symbol') return displayCellType.value(multiple);
+		else return symbol;
 	}
 	return { $p };
 }
