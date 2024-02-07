@@ -1,18 +1,19 @@
 <template>
 	<div>
 		<WarningMsg v-if="!isSupported">Your device does not support vibration for this app.</WarningMsg>
-		<InputToggle small v-model="enableVibration" id="vibrationEnabled">
+		<InputToggle small v-model="enableVibrationToggleValue" id="vibrationEnabled">
 			<span class="setting-subheading">Vibrate when toggling cells</span>
 		</InputToggle>
 		<div class="mt-3" :class="{'disabled': !enableVibration}">
 			<label for="vibrationStrength" class="mb-1 setting-subheading">Vibration strength <span class="text-xs text-gray-500 dark:text-slate-300">{{vibrationStrengthPercentage}}</span></label>
 			<div class="flex gap-2">
 				<InputRange
-					:min="0"
-					:max="vibrationOptsLength - 1"
+					min="0"
+					:max="sliderMax"
 					:step="1"
 					id="vibrationStrength"
-					v-model="vibrationStrengthModel"
+					:model-value="vibrationStrengthIdx"
+					@update:model-value="setVibrationStrength"
 					class="w-full flex-1"
 				/>
 				<BaseButton @click="vibrate" class="flex-0 w-14 text-sm !py-1 !px-0 !font-normal">Test</BaseButton>
@@ -26,60 +27,47 @@ import { useTapVibrate } from '@/composables/use-tap-vibrate';
 import { useSettingsStore } from '@/stores/settings/store';
 import { validVibrationStrengths } from '@/stores/settings/options';
 import { storeToRefs } from 'pinia';
-import { computed, ref, toRef } from 'vue';
-
-
-
-const vibrationOptsLength = validVibrationStrengths.length;
-const inputDurationMap = new Map(
-	validVibrationStrengths.map((val, idx) => {
-		return [String(idx) as `${number}`, val];
-	})
-)
-const durationInputValueMap = new Map([...inputDurationMap].map(val => [...val].reverse() as [typeof validVibrationStrengths[number], `${number}`]));
+import { computed } from 'vue';
 
 const settingsStore = useSettingsStore();
-const pattern = toRef(settingsStore, 'vibrationStrength');
+const { enableVibration, vibrationStrength } = storeToRefs(settingsStore);
 const { vibrate, isSupported } = useTapVibrate({
-	pattern,
+	pattern: vibrationStrength,
 	delay: 0,
 	enable: true
 })
-const { enableVibration, vibrationStrength } = storeToRefs(settingsStore);
+const sliderMax = validVibrationStrengths.length - 1;
 
-
-const vibrationSliderValue = ref<`${number}`>(durationInputValueMap.get(vibrationStrength.value) ?? '0');
-
-const vibrationStrengthPercentage = computed(() => {
-	const inputValue = typeof vibrationSliderValue.value === 'string' ? parseInt(vibrationSliderValue.value) : vibrationSliderValue.value;
-	return `${inputValue / 5 * 100}%`;
+const vibrationStrengthIdx = computed(() => {
+	return validVibrationStrengths.indexOf(vibrationStrength.value);
 })
-
-const setVibrationStrength = (value: `${number}`) => {
-	vibrationSliderValue.value = value;
-
-	const duration = inputDurationMap.get(value) ?? 0;
-
-	if (duration <= 0) {
-		enableVibration.value = false;
-	} else {
-		enableVibration.value = true;
-	}
-
+const setVibrationStrength = (val: string | number) => {
+	const idx = typeof val === 'number' ? val : parseInt(val);
+	const duration = validVibrationStrengths[idx];
 	vibrationStrength.value = duration;
-	globalThis.setTimeout(() => {
+
+	enableVibration.value = duration > 0;
+
+	setTimeout(() => {
 		vibrate();
 	}, 0);
 }
 
-const vibrationStrengthModel = computed({
-	get() {
-		return vibrationSliderValue.value;
-	},
-	set(value) {
-		setVibrationStrength(value);
-	}
+const vibrationStrengthPercentage = computed(() => {
+	return `${vibrationStrengthIdx.value / 5 * 100}%`;
 })
+
+const enableVibrationToggleValue = computed({
+	get: () => enableVibration.value,
+	set: (val: boolean) => {
+		// if vibration is enabled through the toggle, but strength is set to 0, set strength to lowest possible enabled value
+		if (val && vibrationStrengthIdx.value === 0) {
+			vibrationStrength.value = validVibrationStrengths[1];
+		}
+		enableVibration.value = val;
+	}
+});
+
 </script>
 
 <style scoped>

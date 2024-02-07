@@ -160,6 +160,7 @@ declare module 'vue' {
     StatsOverviewCard: typeof import('./src/components/statistics/overview/StatsOverviewCard.vue')['default']
     TutorialPage: typeof import('./src/views/TutorialPage.vue')['default']
     VibrationSetting: typeof import('./src/components/settings/VibrationSetting.vue')['default']
+    VibrationSetting2: typeof import('./src/components/settings/VibrationSetting2.vue')['default']
     WarningMsg: typeof import('./src/components/global/WarningMsg.vue')['default']
   }
 }
