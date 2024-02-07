@@ -5,7 +5,7 @@ import { storeToRefs } from "pinia";
 import type { ComputedRef, InjectionKey } from "vue";
 import type { MaybeRef } from "vue";
 import type { Ref } from "vue";
-import { readonly } from "vue";
+import { markRaw, readonly } from "vue";
 import { watchEffect } from "vue";
 import { shallowRef } from "vue";
 import { unref } from "vue";
@@ -33,19 +33,20 @@ export type LocalCellThemeConfig = {
 const key = Symbol() as InjectionKey<InternalCellThemeProviderData>;
 const isInjectedKey = Symbol() as InjectionKey<boolean>;
 
-function createCellThemeComputedData(theme: Ref<CellTheme>, type: Ref<CellThemeType>) {
-	const cellComponent = computed(() => {
-		switch (type.value) {
-			case CellThemeTypes.COLORED_TILES:
-				return ColoredPuzzleCellComp;
-			case CellThemeTypes.SYMBOLS:
-				return SymbolPuzzleCellComp;
-			default: {
-				console.error(`Cell theme type "${type.value}" does not have a matching cell component.`);
-				return FallbackPuzzleCellComp;
-			}
+function getCellComponent(themeType: Ref<CellThemeType>) {
+	switch (themeType.value) {
+		case CellThemeTypes.COLORED_TILES:
+			return markRaw(ColoredPuzzleCellComp);
+		case CellThemeTypes.SYMBOLS:
+			return markRaw(SymbolPuzzleCellComp);
+		default: {
+			console.error(`Cell theme type "${themeType.value}" does not have a matching cell component.`);
+			return markRaw(FallbackPuzzleCellComp);
 		}
-	})
+	}
+}
+
+function createCellThemeComputedData(theme: Ref<CellTheme>, type: Ref<CellThemeType>) {
 	const classes = computed(() => {
 		return [
 			`cell-theme-${theme.value}`,
@@ -53,7 +54,7 @@ function createCellThemeComputedData(theme: Ref<CellTheme>, type: Ref<CellThemeT
 		]
 	});
 
-	return { cellComponent, classes };
+	return { classes };
 }
 
 export const initGlobalCellThemeProvider = (): CellThemeProviderData => {
@@ -69,10 +70,10 @@ export const initGlobalCellThemeProvider = (): CellThemeProviderData => {
 		cellThemeType: globalCellThemeType
 	} = storeToRefs(settingsStore);
 
-	const { classes, cellComponent: computedCellComponent } = createCellThemeComputedData(globalCellTheme, globalCellThemeType);
-	const cellComponent = shallowRef(computedCellComponent.value);
+	const { classes } = createCellThemeComputedData(globalCellTheme, globalCellThemeType);
+	const cellComponent = shallowRef(getCellComponent(globalCellThemeType));
 	watchEffect(() => {
-		cellComponent.value = computedCellComponent.value;
+		cellComponent.value = getCellComponent(globalCellThemeType);
 	})
 
 	const data = {
@@ -99,14 +100,20 @@ export const injectCellThemeData = (): CellThemeProviderData => {
 // Merges the injected data with a locally set theme, provides it for its children, and returns it.
 export const useLocalCellThemeProvider = (conf: LocalCellThemeConfig): CellThemeProviderData => {
 	const injectedData = injectCellThemeData();
-
 	const localTheme = computed(() => unref(conf.theme));
 	const localType = computed(() => cellThemeTypeMap[localTheme.value]);
+	const { classes } = createCellThemeComputedData(localTheme, localType);
+	const cellComponent = shallowRef(getCellComponent(localType));
+	watchEffect(() => {
+		cellComponent.value = getCellComponent(localType);
+	})
+	
 	const localData = {
 		...injectedData,
 		theme: localTheme,
 		type: localType,
-		...createCellThemeComputedData(localTheme, localType)
+		classes,
+		cellComponent: readonly(cellComponent)
 	};
 
 	provide(key, localData);
