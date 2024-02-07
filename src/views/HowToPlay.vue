@@ -13,7 +13,7 @@
 import { initGlobalCellThemeProvider } from '@/components/gameboard/composables/useCellThemeProvider.js';
 import { ref } from 'vue';
 
-const pageEl = ref<HTMLElement>();
+const pageEl = ref<HTMLElement | null>(null);
 
 initGlobalCellThemeProvider();
 </script>

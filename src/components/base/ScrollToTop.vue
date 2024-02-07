@@ -11,8 +11,8 @@
 		leave-to-class="transform opacity-0"
 		>
 			<button
-				v-if="y > 100"
-				class="p-2 w-[4.5rem] h-[4.5rem] pointer-events-auto"
+				v-show="showBtn"
+				class="p-2 w-[4.5rem] h-[4.5rem] pointer-events-auto transition-opacity"
 				@click="scrollToTop"
 			><div
 				class="flex items-center justify-center text-gray-600 rounded-full bg-white/70 border aspect-square w-full h-full"
@@ -22,18 +22,40 @@
 </template>
 
 <script setup lang="ts">
-import { useScroll } from '@vueuse/core';
+import { computed, onBeforeUnmount, ref } from 'vue';
+import { watch } from 'vue';
 import ArrowUp from '~icons/material-symbols/keyboard-arrow-up';
 
 const props = defineProps<{
-	el: HTMLElement | null | undefined
+	el: HTMLElement | null
 }>();
 
-const { x, y } = useScroll(props.el, { behavior: 'smooth' });
+const y = ref(0);
+const scrollHandler = (ev: Event) => {
+	y.value = (ev.target as HTMLElement).scrollTop;
+}
+watch(() => props.el, (maybeEl) => {
+	if (maybeEl != null) {
+		maybeEl.addEventListener('scroll', scrollHandler);
+		y.value = maybeEl.scrollTop;
+	}
+}, { immediate: true });
+
+onBeforeUnmount(() => {
+	if (props.el != null) {
+		props.el.removeEventListener('scroll', scrollHandler);
+	}
+})
+
 const scrollToTop = () => {
 	console.log('scroll to top')
-	y.value = 0;
+	props.el!.scrollTo({
+		top: 0,
+		behavior: 'smooth'
+	})
 }
+
+const showBtn = computed(() => y.value > 100);
 
 </script>
 
