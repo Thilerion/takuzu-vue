@@ -1,26 +1,27 @@
 <template>
-	<nav class="mb-4 bg-white">
-		<button
-			class="px-4 py-2"
-			:class="{
-				'border-b-2 border-b-red-400': selectedTab === idx
-			}"
-			v-for="(label, idx) in tabLabels"
-			:key="label"
-			@click="$emit('update:selected-tab', idx)"
-		>{{ label }}</button>
+	<nav class="mb-4 bg-white flex gap-x-2">
+		<router-link
+			class="px-3 py-2 inline-block"
+			exact-active-class="border-b-2 border-b-red-400"
+			v-for="tab in tabs"
+			:to="{ name: tab.routeName }"
+			:key="tab.label"
+		>{{ tab.label }}</router-link>
 	</nav>
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
-	selectedTab: number,
-	tabLabels: string[]
-}>();
+const tabs = [
+	{
+		label: 'Overview and Rules',
+		routeName: 'OverviewAndRules'
+	},
+	{
+		label: 'Basic Techniques',
+		routeName: 'BasicTechniques'
+	}
+];
 
-const emit = defineEmits<{
-	(e: 'update:selected-tab', value: number): void
-}>();
 </script>
 
 <style scoped>

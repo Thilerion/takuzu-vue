@@ -110,7 +110,19 @@ const routes = [
 		component: HowToPlay,
 		meta: {
 			title: 'How to Play'
-		}
+		},
+		children: [
+			{
+				path: '',
+				name: 'OverviewAndRules',
+				component: () => import('@/components/how-to-play/HowToPlayOverview.vue'),
+			},
+			{
+				path: 'techniques',
+				name: 'BasicTechniques',
+				component: () => import('@/components/how-to-play/BasicTechniques.vue'),
+			}
+		]
 	},
 	{
 		path: '/help/tutorial',
