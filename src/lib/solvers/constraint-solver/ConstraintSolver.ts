@@ -6,7 +6,7 @@ import { applyLineBalanceConstraint } from "./constraints/LineBalanceConstraint.
 import { applyEliminationConstraint } from "./constraints/EliminationConstraint.js";
 
 type ConstraintSolverStatus = 'running' | 'finished' | 'error' | 'idle';
-type ConstraintSolverConfParam = {
+export type ConstraintSolverConfParam = {
 	constraints?: ConstraintSolverConstraintsCollection,
 }
 
@@ -56,13 +56,13 @@ export class ConstraintSolver {
 				return {
 					solvable: true,
 					numSolutions: solver.solutionsFound.length,
-					solutions: [] as never[],
+					solutions: solver.solutionsFound,
 				}
 			} else {
 				return {
-					solvable: true,
-					numSolutions: solver.solutionsFound.length,
-					solutions: solver.solutionsFound,
+					solvable: false,
+					numSolutions: 0,
+					solutions: [],
 				}
 			}
 		} else {
