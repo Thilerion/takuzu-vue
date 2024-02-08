@@ -15,7 +15,7 @@ export function applyFirstConstraintFn(board: SimpleBoard, fns: ConstraintSolver
 }
 
 /** Keep applying the constraint fns to the board. After each applied change, restart at the first (easiest) constraint again. */
-export function applyContraintFnsWhileChangesFound(board: SimpleBoard, fns: ConstraintSolverConstraintsCollection): ConstraintResult {
+export function applyConstraintFnsWhileChangesFound(board: SimpleBoard, fns: ConstraintSolverConstraintsCollection): ConstraintResult {
 	let result = applyFirstConstraintFn(board, fns);
 	while (result.changed) {
 		result = applyFirstConstraintFn(board, fns);
