@@ -24,6 +24,7 @@ export class ConstraintSolver {
 
 	private status: ConstraintSolverStatus = 'idle';
 	private errorReason: string | null = null;
+	// TODO: private result, which is what the run() function returns, and what getResults() returns
 
 	private readonly solutionsFound: SimpleBoard[] = [];
 
@@ -47,13 +48,22 @@ export class ConstraintSolver {
 			return {
 				solvable: false,
 				numSolutions: 0,
+				solutions: [],
 				error: solver.errorReason!,
 			}
 		} else if (solver.isDone) {
-			return {
-				solvable: true,
-				numSolutions: solver.solutionsFound.length,
-				solutions: solver.solutionsFound,
+			if (solver.hasFoundSolutions) {
+				return {
+					solvable: true,
+					numSolutions: solver.solutionsFound.length,
+					solutions: [] as never[],
+				}
+			} else {
+				return {
+					solvable: true,
+					numSolutions: solver.solutionsFound.length,
+					solutions: solver.solutionsFound,
+				}
 			}
 		} else {
 			// should not happen, status here is "idle" or "running" which is strange
@@ -69,6 +79,9 @@ export class ConstraintSolver {
 	}
 	get isRunning() {
 		return this.status === 'running';
+	}
+	get hasFoundSolutions() {
+		return this.solutionsFound.length > 0;
 	}
 	private setErrorStatus(reason: string) {
 		this.status = 'error';

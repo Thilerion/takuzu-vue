@@ -20,6 +20,7 @@ export type ConstraintSolverResultSolvable = {
 export type ConstraintSolverResultUnsolvable = {
 	solvable: false,
 	numSolutions: 0,
+	solutions: never[],
 	finalBoard?: SimpleBoard, // at the moment the solver could not find any more solutions
 	error?: string,
 }
