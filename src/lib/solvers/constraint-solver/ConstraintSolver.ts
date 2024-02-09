@@ -119,6 +119,65 @@ export class ConstraintSolver {
 			throw new Error(`Unexpected status after Solver.run(); status is "${solver.status}" while it could only be error or finished.`);
 		}
 	}
+	/**
+	 * Runs the solver, checking if the input puzzle has one, single, unique solution.
+	 * If DFS is enabled, this means that it checks that there *is* a solution, and that there are not too many.
+	 * If DFS is disabled, it checks that there *is* a solution that can be found with the given constraints.
+	 * Automatically sets the amount of solutions to search for.
+	 */
+	static hasSingleUniqueSolution(
+		board: SimpleBoard,
+		opts: Omit<ConstraintSolverOpts, 'maxSolutions'>
+	): { success: true, solver: ConstraintSolver, solution: SimpleBoard } | { success: false, solver: ConstraintSolver } {
+		const maxSolutions = opts.dfs?.enabled ? 2 : 1;
+		const mergedOpts = {
+			...opts,
+			maxSolutions,
+		}
+		const solver = new ConstraintSolver(board, mergedOpts).start();
+		const results = solver.getResults();
+
+		if (results.numSolutions === 1) {
+			return {
+				solver,
+				success: true,
+				solution: results.solutions[0],
+			}
+		} else {
+			return {
+				solver,
+				success: false,
+			}
+		}
+	}
+	/**
+	 * Runs the solver using DFS and a static list of constraints, and returns the amount of solutions the puzzle has (by default up to 200 solutions).
+	 * Allows for settings timeout options, and a maximum amount of solutions to search for.
+	 * Prioritizes speed, without regard for the techniques used to get to a solution, so this is not suitable for generating puzzles/masks or checking difficulty.
+	 * Useful when you just want to know how many solutions a puzzle has.
+	 */
+	static findAmountOfSolutions(
+		board: SimpleBoard,
+		opts: {
+			// default DFS options, without enabled as it is permanently enabled here
+			dfs?: Omit<NonNullable<ConstraintSolverOpts['dfs']>, 'enabled'>,
+			// optionally set maxSolutions to search for, defaults to 200
+			maxSolutions?: number,
+		}
+	): number {
+		const mergedOpts: ConstraintSolverOpts = {
+			// TODO: determine combination of options to find a large amount of solutions in the least amount of time
+			// TODO: is it faster to use constraints, or is it faster to use DFS only? And, is it faster to use solely a single constraint such as elimination?
+			constraints: getDefaultConstraintFns(),
+			maxSolutions: opts.maxSolutions ?? 200,
+			dfs: {
+				enabled: true,
+				...opts.dfs,
+			}
+		}
+		const results = ConstraintSolver.run(board, mergedOpts);
+		return results.numSolutions;
+	}
 
 	get isFinished() {
 		return this.status === 'finished';
