@@ -7,6 +7,7 @@ import { applyEliminationConstraint } from "./constraints/EliminationConstraint.
 import type { ConstraintResult } from "./constraints/types.js";
 import { OPPOSITE_SYMBOL_MAP, type PuzzleSymbol } from "@/lib/constants.js";
 import type { DeepReadonly } from "vue";
+import { selectCellStrategies, selectValueStrategies } from "./selection/index.js";
 
 type ConstraintSolverStatus = 'running' | 'finished' | 'idle';
 export type ConstraintSolverBaseConf = {
@@ -20,8 +21,8 @@ export type ConstraintSolverDfsConf = {
 	throwAfterTimeout?: boolean,
 } | {
 	enabled: true,
-	selectCell: SolverSelectCellFn, // TODO: also allow name of strategies
-	selectValue: SolverSelectValueFn,
+	selectCell?: SolverSelectCellFn, // TODO: also allow name of strategies
+	selectValue?: SolverSelectValueFn,
 	timeout: number | null,
 	throwAfterTimeout?: boolean,
 }
@@ -41,7 +42,13 @@ const getDefaultConstraintFns = (): ConstraintSolverConstraintsCollection => {
 
 export class ConstraintSolver {
 	private readonly constraints: ConstraintSolverConstraintsCollection;
-	readonly dfsOpts: ConstraintSolverDfsConf;
+	readonly dfsOpts: {
+		enabled: boolean,
+		selectCell: SolverSelectCellFn,
+		selectValue: SolverSelectValueFn,
+		timeout?: number | null,
+		throwAfterTimeout?: boolean,
+	};
 	readonly maxSolutions: number;
 	private readonly initialBoard: SimpleBoard;
 
@@ -64,7 +71,12 @@ export class ConstraintSolver {
 			maxSolutions
 		} = conf;
 
-		this.dfsOpts = { ...dfsOpts };
+		this.dfsOpts = {
+			// set defaults for selectCell and selectValue, without any randomization as defaults
+			selectCell: selectCellStrategies.firstEmpty,
+			selectValue: selectValueStrategies.leastConstraining,
+			...dfsOpts
+		};
 		this.maxSolutions = maxSolutions;
 
 		if (maxSolutions > 1 && !dfsOpts.enabled) {

@@ -254,4 +254,21 @@ describe('ConstraintSolver', () => {
 			expect(() => ConstraintSolver.run(board, conf)).toThrowErrorMatchingInlineSnapshot(`[Error: Stopped ConstraintSolver due to timeout.]`);
 		})
 	})
+
+	describe('finding all possible solutions to a puzzle (long test cases)', () => {
+		test('finds all solutions for an empty 4x4 board, and there are no duplicate solutions', () => {
+			const board = SimpleBoard.empty(4, 4);
+			const result = ConstraintSolver.run(board, { maxSolutions: Infinity, dfs: {
+				enabled: true,
+				timeout: null
+			} });
+			// 6 different rows in a 4x4 board, each first row generates 12 possible end solutions, so 6*12 = 72
+			expect(result.numSolutions).toBe(72);
+
+			// all found solutions are unique
+			const solutions = result.solutions.map(b => b.export());
+			const uniqueSolutions = new Set(solutions);
+			expect(uniqueSolutions.size).toBe(solutions.length);
+		})
+	})
 })
