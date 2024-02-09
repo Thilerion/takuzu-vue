@@ -38,3 +38,5 @@ export function applyLineBalanceConstraint(
 
 	return { changed };
 }
+
+export const applyLineBalanceConstraintWithOpts = (opts: ApplyLineBalanceConstraintOpts) => (board: SimpleBoard) => applyLineBalanceConstraint(board, opts);

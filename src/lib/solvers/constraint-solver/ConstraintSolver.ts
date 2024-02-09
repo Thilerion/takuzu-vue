@@ -1,15 +1,27 @@
 import type { SimpleBoard } from "@/lib/index.js";
-import type { ConstraintSolverConstraintsCollection, ConstraintSolverResult, SolverSelectCellFn, SolverSelectValueFn } from "./types.js";
+import type { ConstraintSolverConstraintsCollection, SolverSelectCellFn, SolverSelectValueFn } from "./types.js";
 import { applyConstraintFnsWhileChangesFound } from "./helpers.js";
-import { applyTriplesConstraint } from "./constraints/TriplesConstraint.js";
-import { applyLineBalanceConstraint } from "./constraints/LineBalanceConstraint.js";
-import { applyEliminationConstraint } from "./constraints/EliminationConstraint.js";
+import { applyTriplesConstraintWithOpts } from "./constraints/TriplesConstraint.js";
+import { applyLineBalanceConstraintWithOpts } from "./constraints/LineBalanceConstraint.js";
+import { applyEliminationConstraintWithOpts } from "./constraints/EliminationConstraint.js";
 import type { ConstraintResult } from "./constraints/types.js";
 import { OPPOSITE_SYMBOL_MAP, type PuzzleSymbol } from "@/lib/constants.js";
 import type { DeepReadonly } from "vue";
 import { selectCellStrategies, selectValueStrategies, type SelectCellStrategyName, type SelectValueStrategyName } from "./selection/index.js";
 
 type ConstraintSolverStatus = 'running' | 'finished' | 'idle';
+export type ConstraintSolverResultSolvable = {
+	solvable: true,
+	numSolutions: number, // >= 1
+	solutions: SimpleBoard[]
+}
+export type ConstraintSolverResultUnsolvable = {
+	solvable: false,
+	numSolutions: 0,
+	solutions: never[],
+	finalBoard?: SimpleBoard, // at the moment the solver could not find any more solutions
+}
+export type ConstraintSolverResult = ConstraintSolverResultSolvable | ConstraintSolverResultUnsolvable;
 
 export type ConstraintSolverOpts = {
 	constraints?: ConstraintSolverConstraintsCollection,
@@ -43,21 +55,24 @@ type ConstraintSolverInternalCtorOpts = Omit<Required<ConstraintSolverOpts>, 'df
 
 const getDefaultConstraintFns = (): ConstraintSolverConstraintsCollection => {
 	return [
-		applyTriplesConstraint,
-		applyLineBalanceConstraint,
-		applyEliminationConstraint, // TODO: what are the default min/max least remaining values and other opts?
+		applyTriplesConstraintWithOpts({ singleAction: false }),
+		applyLineBalanceConstraintWithOpts({ singleAction: false }),
+		applyEliminationConstraintWithOpts({ singleAction: true, leastRemainingRange: [1, 3], useDuplicateLines: true }), // TODO: debatable if useDuplicateLines should default to true
 	]
 }
 
 export class ConstraintSolver {
-	private readonly constraints: ConstraintSolverConstraintsCollection;
-	readonly dfsOpts: ConstraintSolverInternalDfsOpts;
+	// options, and initialBoard
+	readonly constraints: ConstraintSolverConstraintsCollection;
+	readonly dfsOpts: Readonly<ConstraintSolverInternalDfsOpts>;
 	readonly maxSolutions: number;
-	private readonly initialBoard: SimpleBoard;
+	readonly initialBoard: SimpleBoard;
 
+	// current solver status, publicly accessible through getters
 	private status: ConstraintSolverStatus = 'idle';
-	private _results: ConstraintSolverResult | null = null;
 
+	// results and solutions found, publicly accessible through getResults()
+	private _results: ConstraintSolverResult | null = null;
 	private readonly solutionsFound: SimpleBoard[] = [];
 
 	// timeout state
@@ -73,17 +88,20 @@ export class ConstraintSolver {
 			maxSolutions,
 			dfs: dfsOpts,
 		} = this.mergeConfig(conf);
+
 		this.constraints = constraints;
 		this.maxSolutions = maxSolutions;
 		this.dfsOpts = dfsOpts;
 
+		// There can never be more than 1 solution if backtracking/DFS is not enabled.
 		if (maxSolutions > 1 && !dfsOpts.enabled) {
-			throw new Error('maxSolutions > 1 requires backtracking to be enabled');
+			throw new Error('Using "maxSolutions > 1" requires DFS to be enabled!');
 		}
 
 		this.initialBoard = board.copy();
 	}
 
+	/** Simple run the solver, and returns the results. Requires a value for maxSolutions. */
 	static run(board: SimpleBoard, conf: ConstraintSolverOpts): ConstraintSolverResult {
 		const solver = new ConstraintSolver(board, conf);
 		solver.start();

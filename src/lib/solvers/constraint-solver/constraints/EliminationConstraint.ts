@@ -89,6 +89,8 @@ export function applyEliminationConstraint(
 	return { changed };
 }
 
+export const applyEliminationConstraintWithOpts = (opts: ApplyEliminationConstraintOptsParam) => (board: SimpleBoard) => applyEliminationConstraint(board, opts);
+
 function applyEliminationConstraintOnSingleLine(
 	board: SimpleBoard,
 	boardLine: BoardLine,

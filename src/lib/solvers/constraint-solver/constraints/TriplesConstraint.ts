@@ -34,3 +34,5 @@ export function applyTriplesConstraint(
 	}
 	return { changed };
 }
+
+export const applyTriplesConstraintWithOpts = (opts: ApplyTriplesConstraintOpts) => (board: SimpleBoard) => applyTriplesConstraint(board, opts);
