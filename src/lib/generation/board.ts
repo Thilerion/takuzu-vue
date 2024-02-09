@@ -1,22 +1,12 @@
 import { SimpleBoard } from "../board/Board";
 import { COLUMN, ROW, type LineType } from "../constants";
 import { getValidLinesOfSize } from "../line-generation/memoized.js";
-import { selectValue } from "../solver/selection";
-import Solver from "../solver/Solver";
-import type { SolverConfig } from "../solver/types";
+import { ConstraintSolver } from "../solvers/constraint-solver/ConstraintSolver.js";
 import type { PuzzleSymbolLineStr } from "../types";
 import { pickRandom, splitLine } from "../utils";
 
 export function generateBoard(width: number, height: number, maxAttempts = 5) {
 	return new BoardGenerator(width, height, maxAttempts).start();
-}
-
-const baseSolverConf = {
-	maxSolutions: 1,
-	timeoutDuration: 500,
-	throwAfterTimeout: false,
-	selectValue: selectValue.random,
-	disableBacktracking: false,
 }
 
 const getMaxSolverDuration = (width: number, height: number) => {
@@ -31,7 +21,6 @@ class BoardGenerator {
 	private readonly initialFillSize: number;
 	private readonly initialFillType: LineType;
 	private readonly possibleLines: ReadonlyArray<PuzzleSymbolLineStr>;
-	solverConfig: SolverConfig;
 
 	constructor(
 		public width: number,
@@ -39,11 +28,6 @@ class BoardGenerator {
 		public maxAttempts = 5
 	) {
 		this.maxSolverDuration = getMaxSolverDuration(width, height);
-
-		this.solverConfig = {
-			...baseSolverConf,
-			timeoutDuration: this.maxSolverDuration,
-		}
 
 		// initial fill of either rows or columns, depending on which is smaller
 		// starting with smaller is better (Math.min instead of Math.max)
@@ -61,10 +45,19 @@ class BoardGenerator {
 				// TODO: remove this check if it always works
 				throw new Error('Board is not valid after the initial fill during board/solution generation???');
 			}
-
-			const solutions = Solver.run(board, this.solverConfig);
-			if (solutions && solutions.length) {
-				return solutions[0];
+			const solverResult = ConstraintSolver.run(board, {
+				maxSolutions: 1,
+				dfs: {
+					enabled: true,
+					selectCell: 'fewestEmptyPeers',
+					selectValue: 'random',
+					timeout: this.maxSolverDuration,
+					throwAfterTimeout: false
+				},
+				// constraints: use default constraints, so omit here
+			})
+			if (solverResult.numSolutions > 0) {
+				return solverResult.solutions[0];
 			}
 		}
 		console.error('Board could not be generated in time / maxAttempts reached.');
