@@ -3,14 +3,89 @@ import { ConstraintSolver, type ConstraintSolverConfParam } from "@/lib/solvers/
 import { applyEliminationConstraint } from "@/lib/solvers/constraint-solver/constraints/EliminationConstraint.js";
 import { applyLineBalanceConstraint } from "@/lib/solvers/constraint-solver/constraints/LineBalanceConstraint.js";
 import { applyTriplesConstraint } from "@/lib/solvers/constraint-solver/constraints/TriplesConstraint.js";
+import { selectCellStrategies, selectValueStrategies } from "@/lib/solvers/constraint-solver/selection/index.js";
 import type { BoardExportString } from "@/lib/types.js";
 
 describe('ConstraintSolver', () => {
+	describe('with backtracking only', () => {
+		const getSolverConf = (max: number = Infinity): ConstraintSolverConfParam => ({
+			constraints: [],
+			maxSolutions: max,
+			dfs: { 
+				enabled: true,
+				selectCell: selectCellStrategies.firstEmpty,
+				selectValue: selectValueStrategies.leastConstraining
+			}
+		})
+
+		it('should solve a small puzzle with a single solution', () => {
+			const gridArr = [
+				'1..1',
+				'1...',
+				'..0.',
+				'....'
+			]
+			const board = SimpleBoard.fromArrayOfLines(gridArr);
+			const result = ConstraintSolver.run(board, getSolverConf());
+			expect(result.solutions.length).toBe(1);
+			expect(result.solutions[0].grid.map(r => r.join(''))).toEqual([
+				'1001',
+				'1010',
+				'0101',
+				'0110'
+			])
+		})
+
+		it('should not find a solution if the input board does not have a valid solution', () => {
+			const board = SimpleBoard.fromArrayOfLines([
+				'1..1',
+				'1..1',
+				'....',
+				'....'
+			])
+			const result = ConstraintSolver.run(board, getSolverConf());
+			expect(result.solutions.length).toBe(0);
+		})
+
+		it('finds multiple solutions if there are multiple valid solutions', () => {
+			const board = SimpleBoard.fromArrayOfLines([
+				'1001',
+				'0110',
+				'....',
+				'....'
+			])
+			const result = ConstraintSolver.run(board, getSolverConf());
+			expect(result.solutions.length).toBe(4);
+
+			const solutions = result.solutions.map(b => b.export());
+			expect(new Set(solutions).size).toBe(4); // all solutions found are unique
+		})
+
+		it('stops after reaching maxSolutions, even if there are more to be found', () => {
+			const board = SimpleBoard.fromArrayOfLines([
+				'1001',
+				'0110',
+				'....',
+				'....'
+			])
+			expect(ConstraintSolver.run(board, getSolverConf()).numSolutions).toBe(4);
+
+			// has 4 solutions. If maxSolutions is set to 2, the result should have 2 solutions
+			const conf = {
+				...getSolverConf(),
+				maxSolutions: 2
+			}
+			expect(ConstraintSolver.run(board, conf).numSolutions).toBe(2);
+		})
+	})
+
 	describe('without backtracking, with specific constraints', () => {
 		const getSolverConf = (
 			constraintFns: ConstraintSolverConfParam['constraints']
 		): ConstraintSolverConfParam => ({
-			constraints: constraintFns
+			constraints: constraintFns,
+			maxSolutions: 1,
+			dfs: { enabled: false }
 		})
 
 		test('should solve a puzzle with triples only', () => {

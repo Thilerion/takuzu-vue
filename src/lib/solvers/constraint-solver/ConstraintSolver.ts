@@ -1,25 +1,43 @@
 import type { SimpleBoard } from "@/lib/index.js";
-import type { ConstraintSolverConstraintsCollection, ConstraintSolverResult } from "./types.js";
+import type { ConstraintSolverConstraintsCollection, ConstraintSolverResult, SolverSelectCellFn, SolverSelectValueFn } from "./types.js";
 import { applyConstraintFnsWhileChangesFound } from "./helpers.js";
 import { applyTriplesConstraint } from "./constraints/TriplesConstraint.js";
 import { applyLineBalanceConstraint } from "./constraints/LineBalanceConstraint.js";
 import { applyEliminationConstraint } from "./constraints/EliminationConstraint.js";
+import type { ConstraintResult } from "./constraints/types.js";
+import { OPPOSITE_SYMBOL_MAP, type PuzzleSymbol } from "@/lib/constants.js";
 
 type ConstraintSolverStatus = 'running' | 'finished' | 'error' | 'idle';
+export type ConstraintSolverBaseConf = {
+	constraints: ConstraintSolverConstraintsCollection,
+}
+export type ConstraintSolverDfsConf = {
+	enabled: false,
+	selectCell?: SolverSelectCellFn,
+	selectValue?: SolverSelectValueFn,
+} | {
+	enabled: true,
+	selectCell: SolverSelectCellFn, // TODO: also allow name of strategies
+	selectValue: SolverSelectValueFn,
+}
 export type ConstraintSolverConfParam = {
 	constraints?: ConstraintSolverConstraintsCollection,
+	dfs?: ConstraintSolverDfsConf,
+	maxSolutions: number,
 }
 
 const getDefaultConstraintFns = (): ConstraintSolverConstraintsCollection => {
 	return [
 		applyTriplesConstraint,
 		applyLineBalanceConstraint,
-		applyEliminationConstraint
+		applyEliminationConstraint, // TODO: what are the default min/max least remaining values and other opts?
 	]
 }
 
 export class ConstraintSolver {
 	private readonly constraints: ConstraintSolverConstraintsCollection;
+	readonly dfsOpts: ConstraintSolverDfsConf;
+	readonly maxSolutions: number;
 	private readonly initialBoard: SimpleBoard;
 
 	private status: ConstraintSolverStatus = 'idle';
@@ -33,15 +51,21 @@ export class ConstraintSolver {
 		conf: ConstraintSolverConfParam
 	) {
 		const { 
-			constraints = getDefaultConstraintFns()
+			constraints = getDefaultConstraintFns(),
+			dfs: dfsOpts = { enabled: false },
+			maxSolutions
 		} = conf;
 
+		this.dfsOpts = dfsOpts;
+		this.maxSolutions = maxSolutions;
 		this.constraints = constraints;
 		this.initialBoard = board.copy();
 	}
 
 	static run(board: SimpleBoard, conf?: ConstraintSolverConfParam): ConstraintSolverResult {
-		const solver = new ConstraintSolver(board, conf ?? {});
+		const solver = new ConstraintSolver(board, conf ?? {
+			maxSolutions: 1,
+		});
 		solver.start();
 
 		if (solver.status === 'error') {
@@ -87,6 +111,9 @@ export class ConstraintSolver {
 		this.status = 'error';
 		this.errorReason = reason;
 	}
+	private setFinishedStatus() {
+		this.status = 'finished';
+	}
 
 	start() {
 		if (this.isDone || this.isRunning) {
@@ -98,8 +125,8 @@ export class ConstraintSolver {
 
 		const board = this.initialBoard.copy();
 		const constraintRes = this.solveWithConstraints(board);
+
 		if (constraintRes.error != null) {
-			// TODO: set error reason
 			// can not be solved due to some error; probably invalid initial board or otherwise unsolvable board
 			this.setErrorStatus(constraintRes.error);
 			return;
@@ -107,16 +134,72 @@ export class ConstraintSolver {
 
 		if (board.isSolved()) {
 			this.solutionsFound.push(board);
-			this.status = 'finished';
+			this.setFinishedStatus();
 			return;
 		}
 
-		// can not find solution (at least with just these constraint fns)
-		this.status = 'finished';
+		// start dfs if enabled, beacuse no solution found yet
+		if (this.dfsOpts.enabled) {
+			this.dfs(board);
+			if (this.isDone) return;
+			this.setFinishedStatus();
+			return;
+		} else {
+			// otherwise, can not find solution (at least with just these constraint fns)
+			this.setFinishedStatus();
+			return;
+		}		
+	}
+
+	private dfs(board: SimpleBoard): void {
+		// cases where dfs should stop; TODO: timeout reached
+		if (this.isDone) return;
+		if (this.solutionsFound.length >= this.maxSolutions) {
+			this.setFinishedStatus();
+			return;
+		}
+		// cases where this particular path should stop
+		if (!board.isValid()) return;
+		if (board.isFilled()) {
+			this.solutionsFound.push(board);
+			return;
+		}
+
+		const cell = this.dfsOpts.selectCell!(board);
+		if (cell == null) {
+			// no cell found; this path is invalid
+			return;
+		}
+		const { x, y } = cell;
+		const initialValue = this.dfsOpts.selectValue!(board, x, y);
+		const resultBoardA = this.dfsAssignAndSolveWithConstraints(board.copy(), x, y, initialValue);
+		if (resultBoardA) {
+			this.dfs(resultBoardA);
+		}
+
+		const otherValue = OPPOSITE_SYMBOL_MAP[initialValue];
+		const resultBoardB = this.dfsAssignAndSolveWithConstraints(board.copy(), x, y, otherValue);
+		if (resultBoardB) {
+			this.dfs(resultBoardB);
+		}
 		return;
 	}
 
-	private solveWithConstraints(board: SimpleBoard) {
+	/** Returns the board if should continue search with this board, else returns false if should break from this path. */
+	private dfsAssignAndSolveWithConstraints(
+		board: SimpleBoard,
+		x: number,
+		y: number,
+		value: PuzzleSymbol
+	): SimpleBoard | false {
+		const result = this.solveWithConstraints(board.assign(x, y, value));
+		if (result.error != null) {
+			return false; // invalid board, do not continue searching in this path
+		}
+		return board;
+	}
+
+	private solveWithConstraints(board: SimpleBoard): ConstraintResult {
 		const result = applyConstraintFnsWhileChangesFound(board, this.constraints);
 		return result;
 	}
