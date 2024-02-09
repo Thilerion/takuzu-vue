@@ -9,6 +9,8 @@ import { OPPOSITE_SYMBOL_MAP, type PuzzleSymbol } from "@/lib/constants.js";
 import type { DeepReadonly } from "vue";
 import { selectCellStrategies, selectValueStrategies, type SelectCellStrategyName, type SelectValueStrategyName } from "./selection/index.js";
 
+const DEFAULT_TIMEOUT = 2000; // safety measure, can be overridden by user
+
 type ConstraintSolverStatus = 'running' | 'finished' | 'idle';
 export type ConstraintSolverResultSolvable = {
 	solvable: true,
@@ -23,17 +25,21 @@ export type ConstraintSolverResultUnsolvable = {
 }
 export type ConstraintSolverResult = ConstraintSolverResultSolvable | ConstraintSolverResultUnsolvable;
 
+export type ConstraintSolverDfsTimeoutOpts = {
+	timeout: number | null,
+	throwAfterTimeout: boolean,
+}
+export type ConstraintSolverDfsSelectionOpts = {
+	selectCell: SolverSelectCellFn | SelectCellStrategyName,
+	selectValue: SolverSelectValueFn | SelectValueStrategyName,
+}
 export type ConstraintSolverOpts = {
 	constraints?: ConstraintSolverConstraintsCollection,
 	maxSolutions: number,
 	/** Dfs option defaults to { enabled: false } if not provided */
 	dfs?: {
 		enabled: boolean,
-		selectCell?: SolverSelectCellFn | SelectCellStrategyName,
-		selectValue?: SolverSelectValueFn | SelectValueStrategyName,
-		timeout?: number | null,
-		throwAfterTimeout?: boolean,
-	},
+	} & Partial<ConstraintSolverDfsTimeoutOpts> & Partial<ConstraintSolverDfsSelectionOpts>
 }
 type ConstraintSolverInternalDfsOpts = {
 	enabled: false,
@@ -45,7 +51,7 @@ type ConstraintSolverInternalDfsOpts = {
 	enabled: true,
 	selectCell: SolverSelectCellFn,
 	selectValue: SolverSelectValueFn,
-	timeout?: number | null,
+	timeout: number | null,
 	throwAfterTimeout?: boolean,
 }
 
@@ -79,7 +85,7 @@ export class ConstraintSolver {
 	private startTime: number | null = null;
 	private endTime: number | null = null;
 
-	private constructor(
+	constructor(
 		board: SimpleBoard,
 		conf: ConstraintSolverOpts
 	) {
@@ -163,10 +169,10 @@ export class ConstraintSolver {
 		return { ...this._results };
 	}
 
-	start() {
+	private start(): this {
 		if (this.isFinished || this.isRunning) {
 			console.error(`Should not start ConstraintSolver when status is "${this.status}"!`);
-			return;
+			return this;
 		}
 
 		this.status = 'running';
@@ -181,29 +187,29 @@ export class ConstraintSolver {
 		if (constraintRes.error != null) {
 			// can not be solved due to some error; probably invalid initial board or otherwise unsolvable board
 			this.setFinishedStatus();
-			return;
+			return this;
 		}
 
 		const boardStatus = this.getBoardStatus(board);
 		if (boardStatus === 'solved') {
 			this.solutionsFound.push(board);
 			this.setFinishedStatus();
-			return;
+			return this;
 		} else if (boardStatus === 'invalid') {
 			this.setFinishedStatus();
-			return;
+			return this;
 		}
 
 		// start dfs if enabled, beacuse no solution found yet
 		if (this.dfsOpts.enabled) {
 			this.dfs(board);
-			if (this.isFinished) return;
+			if (this.isFinished) return this;
 			this.setFinishedStatus();
-			return;
+			return this;
 		} else {
 			// otherwise, can not find solution (at least with just these constraint fns)
 			this.setFinishedStatus();
-			return;
+			return this;
 		}		
 	}
 
@@ -282,7 +288,7 @@ export class ConstraintSolver {
 			...userConf.dfs,
 			...getSelectionFunctionsFromOpts(userConf.dfs),
 			enabled: true,
-			timeout: userConf.dfs.timeout ?? null
+			timeout: userConf.dfs.timeout ?? DEFAULT_TIMEOUT,
 		}
 		return {
 			constraints: userConf.constraints ?? getDefaultConstraintFns(),
