@@ -19,7 +19,6 @@ describe('generateBoard', () => {
 				boards.add(board.toString());
 			}
 			if (boards.size >= 72) {
-				console.log(i);
 				break;
 			};
 		}

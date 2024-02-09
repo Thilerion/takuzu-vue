@@ -116,7 +116,7 @@ export class ConstraintSolver {
 			return solver.getResults();
 		} else {
 			// should not happen, status here is "idle" or "running" which is strange
-			throw new Error(`Unexpected status after Solver.run(); status is "${solver.status}" while it could only be error or finished.`);
+			throw new Error(`Unexpected status after ConstraintSolver.run(); status is "${solver.status}" while it could only be error or finished.`);
 		}
 	}
 	/**

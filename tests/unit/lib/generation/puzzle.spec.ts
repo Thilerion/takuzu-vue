@@ -1,7 +1,9 @@
-import { createPuzzle } from '@/lib/index.js';
+import { getMaskValidatorsForPuzzleConfig } from '@/lib/generation/mask-validation.js';
+import { SimpleBoard, createPuzzle } from '@/lib/index.js';
 import { ConstraintSolver } from '@/lib/solvers/constraint-solver/ConstraintSolver.js';
 import { applyLineBalanceConstraintWithOpts } from '@/lib/solvers/constraint-solver/constraints/LineBalanceConstraint.js';
 import { applyTriplesConstraintWithOpts } from '@/lib/solvers/constraint-solver/constraints/TriplesConstraint.js';
+import type { BoardString } from '@/lib/types.js';
 import seedrandom from 'seedrandom';
 
 describe('createPuzzle', () => {
