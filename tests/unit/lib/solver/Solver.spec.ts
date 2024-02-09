@@ -79,7 +79,7 @@ describe("Solver", () => {
 	})
 
 	describe('without backtracking, with specific constraints', () => {
-		const getSolverConf = (
+		const solverConf = (
 			constraintFns: SolverConfig['constraintFns']
 		): SolverConfig => ({
 			disableBacktracking: true,
@@ -100,7 +100,7 @@ describe("Solver", () => {
 				'.1.1..',
 				'1..0.0'
 			]); // this board can be solved using just triples strat: pairs/doubles and sandwiches
-			const conf = getSolverConf([applyTriplesConstraint]);
+			const conf = solverConf([applyTriplesConstraint]);
 			const result = Solver.run(board, conf);
 			expect(result).toHaveLength(1);
 			expect(result[0].toBoardString()).toBe([
@@ -122,7 +122,7 @@ describe("Solver", () => {
 				'0.0.01',
 				'.0101.'
 			]) // board can be solved using just line balance strat
-			const conf = getSolverConf([applyLineBalanceConstraint]);
+			const conf = solverConf([applyLineBalanceConstraint]);
 			const result = Solver.run(board, conf);
 			expect(result).toHaveLength(1);
 			expect(result[0].toBoardString()).toBe([
@@ -145,9 +145,9 @@ describe("Solver", () => {
 				'1..0.0'
 			]);
 
-			const confBalanceOnly = getSolverConf([applyLineBalanceConstraint]);
-			const confTriplesOnly = getSolverConf([applyTriplesConstraint]);
-			const confBoth = getSolverConf([applyTriplesConstraint, applyLineBalanceConstraint]);
+			const confBalanceOnly = solverConf([applyLineBalanceConstraint]);
+			const confTriplesOnly = solverConf([applyTriplesConstraint]);
+			const confBoth = solverConf([applyTriplesConstraint, applyLineBalanceConstraint]);
 
 			// can be solved with triples technique
 			expect(Solver.run(boardRequiresTriples, confTriplesOnly)).toHaveLength(1);
@@ -166,9 +166,9 @@ describe("Solver", () => {
 				'0.0.01',
 				'.0101.'
 			])
-			const confBalanceOnly = getSolverConf([applyLineBalanceConstraint]);
-			const confTriplesOnly = getSolverConf([applyTriplesConstraint]);
-			const confBoth = getSolverConf([applyTriplesConstraint, applyLineBalanceConstraint]);
+			const confBalanceOnly = solverConf([applyLineBalanceConstraint]);
+			const confTriplesOnly = solverConf([applyTriplesConstraint]);
+			const confBoth = solverConf([applyTriplesConstraint, applyLineBalanceConstraint]);
 
 			// can be solved with balance technique
 			expect(Solver.run(boardRequiresBalance, confBalanceOnly)).toHaveLength(1);
@@ -183,8 +183,8 @@ describe("Solver", () => {
 			const boardOdd = SimpleBoard.import('7x7;.1...............0..01......0...0..101....0.....0' as BoardExportString);
 			const boardRect = SimpleBoard.import('6x10;.1....01...1101010100101011010.1001.10.10.0....10....01..0.1' as BoardExportString);
 
-			const confEasy = getSolverConf([applyTriplesConstraint, applyLineBalanceConstraint]);
-			const confWithElim12 = getSolverConf([
+			const confEasy = solverConf([applyTriplesConstraint, applyLineBalanceConstraint]);
+			const confWithElim12 = solverConf([
 				applyTriplesConstraint, applyLineBalanceConstraint,
 				(board: SimpleBoard) => applyEliminationConstraint(board, { minLeast: 1, maxLeast: 2 })
 			])

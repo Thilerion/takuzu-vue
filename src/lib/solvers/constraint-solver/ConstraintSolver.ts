@@ -46,7 +46,7 @@ export class ConstraintSolver {
 	private readonly initialBoard: SimpleBoard;
 
 	private status: ConstraintSolverStatus = 'idle';
-	// TODO: private result, which is what the run() function returns, and what getResults() returns
+	private _results: ConstraintSolverResult | null = null;
 
 	private readonly solutionsFound: SimpleBoard[] = [];
 
@@ -66,6 +66,11 @@ export class ConstraintSolver {
 
 		this.dfsOpts = { ...dfsOpts };
 		this.maxSolutions = maxSolutions;
+
+		if (maxSolutions > 1 && !dfsOpts.enabled) {
+			throw new Error('maxSolutions > 1 requires backtracking to be enabled');
+		}
+
 		this.constraints = constraints;
 		this.initialBoard = board.copy();
 	}
@@ -77,19 +82,7 @@ export class ConstraintSolver {
 		solver.start();
 
 		if (solver.isFinished) {
-			if (solver.hasFoundSolutions) {
-				return {
-					solvable: true,
-					numSolutions: solver.solutionsFound.length,
-					solutions: solver.solutionsFound,
-				}
-			} else {
-				return {
-					solvable: false,
-					numSolutions: 0,
-					solutions: [],
-				}
-			}
+			return solver.getResults();
 		} else {
 			// should not happen, status here is "idle" or "running" which is strange
 			throw new Error(`Unexpected status after Solver.run(); status is "${solver.status}" while it could only be error or finished.`);
@@ -122,6 +115,26 @@ export class ConstraintSolver {
 			return true;
 		}
 		return false;
+	}
+	getResults(): ConstraintSolverResult {
+		if (!this.isFinished) {
+			throw new Error('ConstraintSolver has not finished yet');
+		} else if (this._results == null) {
+			if (this.hasFoundSolutions) {
+				this._results = {
+					solvable: true,
+					numSolutions: this.solutionsFound.length,
+					solutions: this.solutionsFound,
+				}
+			} else {
+				this._results = {
+					solvable: false,
+					numSolutions: 0,
+					solutions: [],
+				}
+			}
+		}
+		return { ...this._results };
 	}
 
 	start() {
