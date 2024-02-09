@@ -1,5 +1,5 @@
 import { SimpleBoard } from "@/lib/index.js";
-import { ConstraintSolver, type ConstraintSolverConfParam } from "@/lib/solvers/constraint-solver/ConstraintSolver.js";
+import { ConstraintSolver, type ConstraintSolverOpts } from "@/lib/solvers/constraint-solver/ConstraintSolver.js";
 import { applyEliminationConstraint } from "@/lib/solvers/constraint-solver/constraints/EliminationConstraint.js";
 import { applyLineBalanceConstraint } from "@/lib/solvers/constraint-solver/constraints/LineBalanceConstraint.js";
 import { applyTriplesConstraint } from "@/lib/solvers/constraint-solver/constraints/TriplesConstraint.js";
@@ -8,7 +8,7 @@ import type { BoardExportString } from "@/lib/types.js";
 
 describe('ConstraintSolver', () => {
 	describe('with backtracking only', () => {
-		const getSolverConf = (max: number = Infinity): ConstraintSolverConfParam => ({
+		const getSolverConf = (max: number = Infinity): ConstraintSolverOpts => ({
 			constraints: [],
 			maxSolutions: max,
 			dfs: {
@@ -82,8 +82,8 @@ describe('ConstraintSolver', () => {
 
 	describe('without backtracking, with specific constraints', () => {
 		const getSolverConf = (
-			constraintFns: ConstraintSolverConfParam['constraints']
-		): ConstraintSolverConfParam => ({
+			constraintFns: ConstraintSolverOpts['constraints']
+		): ConstraintSolverOpts => ({
 			constraints: constraintFns,
 			maxSolutions: 1,
 			dfs: { enabled: false }
@@ -214,7 +214,7 @@ describe('ConstraintSolver', () => {
 	describe('with backtracking, and timeout enabled', () => {
 		it('stops after timeout is reached, even when there are more solutions to be found', () => {
 			const board = SimpleBoard.empty(6, 6); // has a lot of solutions
-			const getConf = (timeout: number | null): ConstraintSolverConfParam => ({
+			const getConf = (timeout: number | null): ConstraintSolverOpts => ({
 				constraints: [],
 				maxSolutions: 500,
 				dfs: {
@@ -239,7 +239,7 @@ describe('ConstraintSolver', () => {
 		})
 
 		it('throws an error if timeout is reached, and throwAfterTimeout is enabled', () => {
-			const conf: ConstraintSolverConfParam = {
+			const conf: ConstraintSolverOpts = {
 				constraints: [],
 				maxSolutions: 500,
 				dfs: {

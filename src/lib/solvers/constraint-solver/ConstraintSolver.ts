@@ -7,29 +7,38 @@ import { applyEliminationConstraint } from "./constraints/EliminationConstraint.
 import type { ConstraintResult } from "./constraints/types.js";
 import { OPPOSITE_SYMBOL_MAP, type PuzzleSymbol } from "@/lib/constants.js";
 import type { DeepReadonly } from "vue";
-import { selectCellStrategies, selectValueStrategies } from "./selection/index.js";
+import { selectCellStrategies, selectValueStrategies, type SelectCellStrategyName, type SelectValueStrategyName } from "./selection/index.js";
 
 type ConstraintSolverStatus = 'running' | 'finished' | 'idle';
-export type ConstraintSolverBaseConf = {
-	constraints: ConstraintSolverConstraintsCollection,
+
+export type ConstraintSolverOpts = {
+	constraints?: ConstraintSolverConstraintsCollection,
+	maxSolutions: number,
+	/** Dfs option defaults to { enabled: false } if not provided */
+	dfs?: {
+		enabled: boolean,
+		selectCell?: SolverSelectCellFn | SelectCellStrategyName,
+		selectValue?: SolverSelectValueFn | SelectValueStrategyName,
+		timeout?: number | null,
+		throwAfterTimeout?: boolean,
+	},
 }
-export type ConstraintSolverDfsConf = {
+type ConstraintSolverInternalDfsOpts = {
 	enabled: false,
-	selectCell?: SolverSelectCellFn,
-	selectValue?: SolverSelectValueFn,
-	timeout?: number | null,
-	throwAfterTimeout?: boolean,
+	selectCell?: null,
+	selectValue?: null,
+	timeout?: null,
+	throwAfterTimeout?: false | null,
 } | {
 	enabled: true,
-	selectCell?: SolverSelectCellFn, // TODO: also allow name of strategies
-	selectValue?: SolverSelectValueFn,
-	timeout: number | null,
+	selectCell: SolverSelectCellFn,
+	selectValue: SolverSelectValueFn,
+	timeout?: number | null,
 	throwAfterTimeout?: boolean,
 }
-export type ConstraintSolverConfParam = {
-	constraints?: ConstraintSolverConstraintsCollection,
-	dfs?: ConstraintSolverDfsConf,
-	maxSolutions: number,
+
+type ConstraintSolverInternalCtorOpts = Omit<Required<ConstraintSolverOpts>, 'dfs'> & {
+	dfs: ConstraintSolverInternalDfsOpts,
 }
 
 const getDefaultConstraintFns = (): ConstraintSolverConstraintsCollection => {
@@ -42,13 +51,7 @@ const getDefaultConstraintFns = (): ConstraintSolverConstraintsCollection => {
 
 export class ConstraintSolver {
 	private readonly constraints: ConstraintSolverConstraintsCollection;
-	readonly dfsOpts: {
-		enabled: boolean,
-		selectCell: SolverSelectCellFn,
-		selectValue: SolverSelectValueFn,
-		timeout?: number | null,
-		throwAfterTimeout?: boolean,
-	};
+	readonly dfsOpts: ConstraintSolverInternalDfsOpts;
 	readonly maxSolutions: number;
 	private readonly initialBoard: SimpleBoard;
 
@@ -63,34 +66,26 @@ export class ConstraintSolver {
 
 	private constructor(
 		board: SimpleBoard,
-		conf: ConstraintSolverConfParam
+		conf: ConstraintSolverOpts
 	) {
-		const { 
-			constraints = getDefaultConstraintFns(),
-			dfs: dfsOpts = { enabled: false, timeout: null, throwAfterTimeout: false },
-			maxSolutions
-		} = conf;
-
-		this.dfsOpts = {
-			// set defaults for selectCell and selectValue, without any randomization as defaults
-			selectCell: selectCellStrategies.firstEmpty,
-			selectValue: selectValueStrategies.leastConstraining,
-			...dfsOpts
-		};
+		const {
+			constraints,
+			maxSolutions,
+			dfs: dfsOpts,
+		} = this.mergeConfig(conf);
+		this.constraints = constraints;
 		this.maxSolutions = maxSolutions;
+		this.dfsOpts = dfsOpts;
 
 		if (maxSolutions > 1 && !dfsOpts.enabled) {
 			throw new Error('maxSolutions > 1 requires backtracking to be enabled');
 		}
 
-		this.constraints = constraints;
 		this.initialBoard = board.copy();
 	}
 
-	static run(board: SimpleBoard, conf?: ConstraintSolverConfParam): ConstraintSolverResult {
-		const solver = new ConstraintSolver(board, conf ?? {
-			maxSolutions: 1,
-		});
+	static run(board: SimpleBoard, conf: ConstraintSolverOpts): ConstraintSolverResult {
+		const solver = new ConstraintSolver(board, conf);
 		solver.start();
 
 		if (solver.isFinished) {
@@ -116,7 +111,7 @@ export class ConstraintSolver {
 	private get timeoutEnabled() {
 		return this.dfsOpts.enabled && this.dfsOpts.timeout != null;
 	}
-	private checkTimeoutReached() {
+	private handleTimeoutCheck() {
 		if (!this.timeoutEnabled) return false;
 		if (performance.now() >= this.endTime!) {
 			this.setFinishedStatus();
@@ -128,6 +123,7 @@ export class ConstraintSolver {
 		}
 		return false;
 	}
+	
 	getResults(): ConstraintSolverResult {
 		if (!this.isFinished) {
 			throw new Error('ConstraintSolver has not finished yet');
@@ -209,7 +205,7 @@ export class ConstraintSolver {
 		}
 
 		// another case where dfs should stop, but placed after possibly adding the current solution (would be wasteful otherwise)
-		if (this.checkTimeoutReached()) {
+		if (this.handleTimeoutCheck()) {
 			return;
 		}
 
@@ -260,4 +256,47 @@ export class ConstraintSolver {
 		if (board.isFilled()) return 'solved';
 		return 'unsolved';
 	}
+
+	private mergeConfig(userConf: ConstraintSolverOpts): ConstraintSolverInternalCtorOpts {
+		const dfs: ConstraintSolverInternalDfsOpts = (userConf.dfs == null || !userConf.dfs.enabled) ? {
+			enabled: false
+		} : {
+			...userConf.dfs,
+			...getSelectionFunctionsFromOpts(userConf.dfs),
+			enabled: true,
+			timeout: userConf.dfs.timeout ?? null
+		}
+		return {
+			constraints: userConf.constraints ?? getDefaultConstraintFns(),
+			maxSolutions: userConf.maxSolutions,
+			dfs,
+		}
+	}
+}
+
+function getSelectionFunctionsFromOpts(opts: NonNullable<ConstraintSolverOpts['dfs']>) {
+	let selectCell: SolverSelectCellFn;
+	if (typeof opts.selectCell === 'string' && selectCellStrategies[opts.selectCell] != null) {
+		selectCell = selectCellStrategies[opts.selectCell];
+	} else if (typeof opts.selectCell === 'function') {
+		selectCell = opts.selectCell;
+	} else {
+		// default to "firstEmpty"; important to default to a deterministic strategy, without randomization
+		selectCell = selectCellStrategies.firstEmpty;
+	}
+
+	let selectValue: SolverSelectValueFn;
+	if (typeof opts.selectValue === 'string' && selectValueStrategies[opts.selectValue] != null) {
+		selectValue = selectValueStrategies[opts.selectValue];
+	} else if (typeof opts.selectValue === 'function') {
+		selectValue = opts.selectValue;
+	} else {
+		// default to "leastConstraining"; important to default to a deterministic strategy, without randomization
+		selectValue = selectValueStrategies.leastConstraining;
+	}
+
+	return {
+		selectCell,
+		selectValue,
+	};
 }
