@@ -210,4 +210,48 @@ describe('ConstraintSolver', () => {
 			expect(ConstraintSolver.run(boardRect, confEasy).solutions).toHaveLength(0);
 		})
 	})
+
+	describe('with backtracking, and timeout enabled', () => {
+		it('stops after timeout is reached, even when there are more solutions to be found', () => {
+			const board = SimpleBoard.empty(6, 6); // has a lot of solutions
+			const getConf = (timeout: number | null): ConstraintSolverConfParam => ({
+				constraints: [],
+				maxSolutions: 500,
+				dfs: {
+					enabled: true,
+					selectCell: selectCellStrategies.firstEmpty,
+					selectValue: selectValueStrategies.leastConstraining,
+					timeout
+				}
+			})
+			// without timeout, finds all solutions (or up to 500)
+			const startA = performance.now();
+			expect(ConstraintSolver.run(board, getConf(null)).numSolutions).toBe(500);
+			const durationA = performance.now() - startA;
+			expect(durationA).toBeGreaterThan(100); // took 470ms on my machine, so expect it to be at least 100ms
+
+
+			// with short timeout, will not find all (or 500) solutions
+			const start = performance.now();
+			expect(ConstraintSolver.run(board, getConf(10)).numSolutions).toBeLessThan(50);
+			const duration = performance.now() - start;
+			expect(duration).toBeLessThan(20);
+		})
+
+		it('throws an error if timeout is reached, and throwAfterTimeout is enabled', () => {
+			const conf: ConstraintSolverConfParam = {
+				constraints: [],
+				maxSolutions: 500,
+				dfs: {
+					enabled: true,
+					selectCell: selectCellStrategies.firstEmpty,
+					selectValue: selectValueStrategies.leastConstraining,
+					timeout: 10,
+					throwAfterTimeout: true
+				}
+			}
+			const board = SimpleBoard.empty(6, 6);
+			expect(() => ConstraintSolver.run(board, conf)).toThrowErrorMatchingInlineSnapshot(`[Error: Stopped ConstraintSolver due to timeout.]`);
+		})
+	})
 })
