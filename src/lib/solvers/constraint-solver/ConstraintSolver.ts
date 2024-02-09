@@ -6,8 +6,9 @@ import { applyLineBalanceConstraint } from "./constraints/LineBalanceConstraint.
 import { applyEliminationConstraint } from "./constraints/EliminationConstraint.js";
 import type { ConstraintResult } from "./constraints/types.js";
 import { OPPOSITE_SYMBOL_MAP, type PuzzleSymbol } from "@/lib/constants.js";
+import type { DeepReadonly } from "vue";
 
-type ConstraintSolverStatus = 'running' | 'finished' | 'error' | 'idle';
+type ConstraintSolverStatus = 'running' | 'finished' | 'idle';
 export type ConstraintSolverBaseConf = {
 	constraints: ConstraintSolverConstraintsCollection,
 }
@@ -41,7 +42,6 @@ export class ConstraintSolver {
 	private readonly initialBoard: SimpleBoard;
 
 	private status: ConstraintSolverStatus = 'idle';
-	private errorReason: string | null = null;
 	// TODO: private result, which is what the run() function returns, and what getResults() returns
 
 	private readonly solutionsFound: SimpleBoard[] = [];
@@ -68,14 +68,7 @@ export class ConstraintSolver {
 		});
 		solver.start();
 
-		if (solver.status === 'error') {
-			return {
-				solvable: false,
-				numSolutions: 0,
-				solutions: [],
-				error: solver.errorReason!,
-			}
-		} else if (solver.isDone) {
+		if (solver.isFinished) {
 			if (solver.hasFoundSolutions) {
 				return {
 					solvable: true,
@@ -98,25 +91,18 @@ export class ConstraintSolver {
 	get isFinished() {
 		return this.status === 'finished';
 	}
-	get isDone() {
-		return this.status === 'finished' || this.status === 'error';
-	}
 	get isRunning() {
 		return this.status === 'running';
 	}
 	get hasFoundSolutions() {
 		return this.solutionsFound.length > 0;
 	}
-	private setErrorStatus(reason: string) {
-		this.status = 'error';
-		this.errorReason = reason;
-	}
 	private setFinishedStatus() {
 		this.status = 'finished';
 	}
 
 	start() {
-		if (this.isDone || this.isRunning) {
+		if (this.isFinished || this.isRunning) {
 			console.error(`Should not start ConstraintSolver when status is "${this.status}"!`);
 			return;
 		}
@@ -128,12 +114,16 @@ export class ConstraintSolver {
 
 		if (constraintRes.error != null) {
 			// can not be solved due to some error; probably invalid initial board or otherwise unsolvable board
-			this.setErrorStatus(constraintRes.error);
+			this.setFinishedStatus();
 			return;
 		}
 
-		if (board.isSolved()) {
+		const boardStatus = this.getBoardStatus(board);
+		if (boardStatus === 'solved') {
 			this.solutionsFound.push(board);
+			this.setFinishedStatus();
+			return;
+		} else if (boardStatus === 'invalid') {
 			this.setFinishedStatus();
 			return;
 		}
@@ -141,7 +131,7 @@ export class ConstraintSolver {
 		// start dfs if enabled, beacuse no solution found yet
 		if (this.dfsOpts.enabled) {
 			this.dfs(board);
-			if (this.isDone) return;
+			if (this.isFinished) return;
 			this.setFinishedStatus();
 			return;
 		} else {
@@ -153,14 +143,15 @@ export class ConstraintSolver {
 
 	private dfs(board: SimpleBoard): void {
 		// cases where dfs should stop; TODO: timeout reached
-		if (this.isDone) return;
+		if (this.isFinished) return;
 		if (this.solutionsFound.length >= this.maxSolutions) {
 			this.setFinishedStatus();
 			return;
 		}
 		// cases where this particular path should stop
-		if (!board.isValid()) return;
-		if (board.isFilled()) {
+		const boardStatus = this.getBoardStatus(board);
+		if (boardStatus === 'invalid') return;
+		else if (boardStatus === 'solved') {
 			this.solutionsFound.push(board);
 			return;
 		}
@@ -172,13 +163,13 @@ export class ConstraintSolver {
 		}
 		const { x, y } = cell;
 		const initialValue = this.dfsOpts.selectValue!(board, x, y);
-		const resultBoardA = this.dfsAssignAndSolveWithConstraints(board.copy(), x, y, initialValue);
+		const resultBoardA = this.dfsGetNextState(board, x, y, initialValue);
 		if (resultBoardA) {
 			this.dfs(resultBoardA);
 		}
 
 		const otherValue = OPPOSITE_SYMBOL_MAP[initialValue];
-		const resultBoardB = this.dfsAssignAndSolveWithConstraints(board.copy(), x, y, otherValue);
+		const resultBoardB = this.dfsGetNextState(board, x, y, otherValue);
 		if (resultBoardB) {
 			this.dfs(resultBoardB);
 		}
@@ -186,21 +177,30 @@ export class ConstraintSolver {
 	}
 
 	/** Returns the board if should continue search with this board, else returns false if should break from this path. */
-	private dfsAssignAndSolveWithConstraints(
-		board: SimpleBoard,
+	private dfsGetNextState(
+		board: DeepReadonly<SimpleBoard>,
 		x: number,
 		y: number,
 		value: PuzzleSymbol
 	): SimpleBoard | false {
-		const result = this.solveWithConstraints(board.assign(x, y, value));
+		const boardCopy = board.copy();
+		const result = this.solveWithConstraints(boardCopy.assign(x, y, value));
 		if (result.error != null) {
 			return false; // invalid board, do not continue searching in this path
 		}
-		return board;
+		return boardCopy;
 	}
 
 	private solveWithConstraints(board: SimpleBoard): ConstraintResult {
 		const result = applyConstraintFnsWhileChangesFound(board, this.constraints);
 		return result;
+	}
+
+	private getBoardStatus(board: SimpleBoard): 'invalid' | 'solved' | 'unsolved' {
+		if (!board.isValid()) return 'invalid';
+		
+		// board is valid, and if also filled, then it is solved
+		if (board.isFilled()) return 'solved';
+		return 'unsolved';
 	}
 }
