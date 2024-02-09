@@ -1,6 +1,6 @@
 import { SimpleBoard } from "@/lib";
 import { EMPTY, ONE, ZERO } from "@/lib/constants";
-import { quickSolve } from "@/lib/solver";
+import { ConstraintSolver } from "@/lib/solvers/constraint-solver/ConstraintSolver.js";
 import type { BoardShape, PuzzleGrid, PuzzleValueLine } from "@/lib/types.js";
 import { count } from "@/lib/utils";
 import { useDebounceFn } from "@vueuse/core";
@@ -56,11 +56,16 @@ export const usePuzzleInputSolvable = (gridRef: Ref<PuzzleInputGrid | null>, isV
 
 	const runSolver = useDebounceFn(async (grid) => {
 		const board = new SimpleBoard(grid);
-		const {
-			solvable, validPuzzle, results: solutionsArray
-		} = await quickSolve(board, { backtracking: true, solutions: maxSolutions.value });
-		const numSolutions = solutionsArray.length;
-		Object.assign(data, { solvable, validPuzzle, solutions: numSolutions });
+		// TODO: quickSolve in worker
+		const solveResult = await ConstraintSolver.findAmountOfSolutions(
+			board,
+			{ 
+				maxSolutions: maxSolutions.value
+			}
+		);
+		const solvable = solveResult > 0;
+		const validPuzzle = solveResult === 1;
+		Object.assign(data, { solvable, validPuzzle, solutions: solveResult });
 	}, 300, { maxWait: 2000 });
 
 	watch([shouldRunSolver, parsedGrid], ([shouldRun, grid]) => {
