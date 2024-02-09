@@ -16,10 +16,14 @@ export type ConstraintSolverDfsConf = {
 	enabled: false,
 	selectCell?: SolverSelectCellFn,
 	selectValue?: SolverSelectValueFn,
+	timeout?: number | null,
+	throwAfterTimeout?: boolean,
 } | {
 	enabled: true,
 	selectCell: SolverSelectCellFn, // TODO: also allow name of strategies
 	selectValue: SolverSelectValueFn,
+	timeout: number | null,
+	throwAfterTimeout?: boolean,
 }
 export type ConstraintSolverConfParam = {
 	constraints?: ConstraintSolverConstraintsCollection,
@@ -46,17 +50,21 @@ export class ConstraintSolver {
 
 	private readonly solutionsFound: SimpleBoard[] = [];
 
+	// timeout state
+	private startTime: number | null = null;
+	private endTime: number | null = null;
+
 	private constructor(
 		board: SimpleBoard,
 		conf: ConstraintSolverConfParam
 	) {
 		const { 
 			constraints = getDefaultConstraintFns(),
-			dfs: dfsOpts = { enabled: false },
+			dfs: dfsOpts = { enabled: false, timeout: null, throwAfterTimeout: false },
 			maxSolutions
 		} = conf;
 
-		this.dfsOpts = dfsOpts;
+		this.dfsOpts = { ...dfsOpts };
 		this.maxSolutions = maxSolutions;
 		this.constraints = constraints;
 		this.initialBoard = board.copy();
@@ -100,6 +108,21 @@ export class ConstraintSolver {
 	private setFinishedStatus() {
 		this.status = 'finished';
 	}
+	private get timeoutEnabled() {
+		return this.dfsOpts.enabled && this.dfsOpts.timeout != null;
+	}
+	private checkTimeoutReached() {
+		if (!this.timeoutEnabled) return false;
+		if (performance.now() >= this.endTime!) {
+			this.setFinishedStatus();
+			if (this.dfsOpts.throwAfterTimeout) {
+				throw new Error('Stopped ConstraintSolver due to timeout.');
+			}
+			console.warn('Stopped ConstraintSolver due to timeout.');
+			return true;
+		}
+		return false;
+	}
 
 	start() {
 		if (this.isFinished || this.isRunning) {
@@ -108,6 +131,10 @@ export class ConstraintSolver {
 		}
 
 		this.status = 'running';
+		if (this.timeoutEnabled) {
+			this.startTime = performance.now();
+			this.endTime = this.startTime + this.dfsOpts.timeout!;
+		}
 
 		const board = this.initialBoard.copy();
 		const constraintRes = this.solveWithConstraints(board);
@@ -142,9 +169,9 @@ export class ConstraintSolver {
 	}
 
 	private dfs(board: SimpleBoard): void {
-		// cases where dfs should stop; TODO: timeout reached
+		// cases where dfs should stop;
 		if (this.isFinished) return;
-		if (this.solutionsFound.length >= this.maxSolutions) {
+		else if (this.solutionsFound.length >= this.maxSolutions) {
 			this.setFinishedStatus();
 			return;
 		}
@@ -153,6 +180,11 @@ export class ConstraintSolver {
 		if (boardStatus === 'invalid') return;
 		else if (boardStatus === 'solved') {
 			this.solutionsFound.push(board);
+			return;
+		}
+
+		// another case where dfs should stop, but placed after possibly adding the current solution (would be wasteful otherwise)
+		if (this.checkTimeoutReached()) {
 			return;
 		}
 

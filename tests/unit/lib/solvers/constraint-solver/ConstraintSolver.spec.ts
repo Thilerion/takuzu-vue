@@ -11,10 +11,11 @@ describe('ConstraintSolver', () => {
 		const getSolverConf = (max: number = Infinity): ConstraintSolverConfParam => ({
 			constraints: [],
 			maxSolutions: max,
-			dfs: { 
+			dfs: {
 				enabled: true,
 				selectCell: selectCellStrategies.firstEmpty,
-				selectValue: selectValueStrategies.leastConstraining
+				selectValue: selectValueStrategies.leastConstraining,
+				timeout: null,
 			}
 		})
 
