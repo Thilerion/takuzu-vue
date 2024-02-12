@@ -12,6 +12,9 @@ export default defineConfig(configEnv => mergeConfig(
       root: fileURLToPath(new URL('./', import.meta.url)),
       globals: true,
       // isolate: false, // dangerous
+      benchmark: {
+        reporters: ['verbose']
+      }
     }
   }) as any
 ))

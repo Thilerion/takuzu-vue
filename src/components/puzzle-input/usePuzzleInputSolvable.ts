@@ -63,9 +63,9 @@ export const usePuzzleInputSolvable = (gridRef: Ref<PuzzleInputGrid | null>, isV
 				maxSolutions: maxSolutions.value
 			}
 		);
-		const solvable = solveResult > 0;
-		const validPuzzle = solveResult === 1;
-		Object.assign(data, { solvable, validPuzzle, solutions: solveResult });
+		const { numSolutions: solutions, solvable } = solveResult;
+		const validPuzzle = solutions === 1;
+		Object.assign(data, { solvable, validPuzzle, solutions });
 	}, 300, { maxWait: 2000 });
 
 	watch([shouldRunSolver, parsedGrid], ([shouldRun, grid]) => {

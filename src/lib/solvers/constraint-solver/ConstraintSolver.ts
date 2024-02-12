@@ -164,11 +164,20 @@ export class ConstraintSolver {
 			// optionally set maxSolutions to search for, defaults to 200
 			maxSolutions?: number,
 		}
-	): number {
+	): { numSolutions: number, solvable: boolean } {
+		/*
+			See ConstraintSolver.benchmark.ts for benchmarks for a combination of options.
+			Using EliminationConstraint with DFS is, by far, the fastest way to find a large amount of solutions.
+			TODO: maybe there is another, faster or better way, when the maskRatio is very low or very high, or when a board is very large.
+		*/
 		const mergedOpts: ConstraintSolverOpts = {
-			// TODO: determine combination of options to find a large amount of solutions in the least amount of time
-			// TODO: is it faster to use constraints, or is it faster to use DFS only? And, is it faster to use solely a single constraint such as elimination?
-			constraints: getDefaultConstraintFns(),
+			constraints: [
+				applyEliminationConstraintWithOpts({
+					leastRemainingRange: [0, 10],
+					singleAction: false,
+					maxEmptyCells: Infinity
+				})
+			],
 			maxSolutions: opts.maxSolutions ?? 200,
 			dfs: {
 				enabled: true,
@@ -176,7 +185,10 @@ export class ConstraintSolver {
 			}
 		}
 		const results = ConstraintSolver.run(board, mergedOpts);
-		return results.numSolutions;
+		const {
+			numSolutions, solvable
+		} = results;
+		return { numSolutions, solvable };
 	}
 
 	get isFinished() {
