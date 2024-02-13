@@ -85,6 +85,30 @@ describe('findUniqueLinesRuleViolations()', () => {
 		expect(result[0].incorrectCells).toHaveLength(2 + 4);
 	});
 
+	test('returns a violation if multiple lines are the same as one correct filled line, when the correct filled line is not the first line the function encounters during iteration', () => {
+		const solution = SimpleBoard.fromArrayOfLines([
+			'1010',
+			'0110',
+			'1001',
+			'0101'
+		]);
+		const board = SimpleBoard.fromArrayOfLines([
+			'1001',
+			'....',
+			'1001',
+			'1001'
+		]);
+		const result = findUniqueLinesRuleViolations(() => board.boardLines(), solution);
+		expect(result).toHaveLength(1);
+		expect(result[0]).toMatchObject({
+			type: 'uniqueLines',
+			correctLine: 'C',
+			lines: ['C', 'A', 'D'],
+			incorrectLines: ['A', 'D'],
+		});
+		expect(result[0].incorrectCells).toHaveLength(4);
+	});
+
 	test('returns multiple violations for both rows and columns if there are any', () => {
 		const solution = SimpleBoard.fromArrayOfLines([
 			'010101',

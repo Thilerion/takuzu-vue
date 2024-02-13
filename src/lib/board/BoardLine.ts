@@ -2,7 +2,7 @@ import { EMPTY, ONE, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } 
 import { getValidLineCompletions } from "../line-generation/memoized.js";
 import type { LineArrSymbolPermutations } from "../line-generation/types.js";
 import type { LineId, PuzzleValueCount, PuzzleValueLine, ROPuzzleValueLine, Vec } from "../types.js";
-import { columnIdToX, countLineValues, isLineIdRow, lineSizeToNumRequired, lineTypeFromLineId, rowIdToY } from "../utils.js";
+import { areLinesEqual, columnIdToX, countLineValues, isLineIdRow, lineSizeToNumRequired, lineTypeFromLineId, rowIdToY } from "../utils.js";
 import type { SimpleBoard } from "./Board.js";
 
 export class BoardLine {
@@ -138,6 +138,16 @@ export class BoardLine {
 	}
 	get isFilled() {
 		return this.numEmpty === 0;
+	}
+
+	/** Returns true if the cell values in the current BoardLine are exactly the same as in the other BoardLine or values array. */
+	equalsValues(other: BoardLine | PuzzleValueLine) {
+		const otherValues = Array.isArray(other) ? other : other.values;
+		return areLinesEqual(this.values, otherValues);
+	}
+	/** Returns true if the cell values and the lineId in both BoardLines are exactly the same. */
+	equalsStrict(other: BoardLine) {
+		return this.lineId === other.lineId && this.equalsValues(other);
 	}
 
 	getValueCount(value: PuzzleValue) {

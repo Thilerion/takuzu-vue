@@ -52,9 +52,7 @@ function createRuleViolationFromGroup(
 ): UniqueLinesRuleViolation | null {
 	// find the line in the group that is correct according to the solution
 	const correctLine = group.find(line => {
-		const solutionLine = solutionLines.find(l => l.lineId === line.lineId)!;
-		if (solutionLine.toString() === line.toString()) return true;
-		return false;
+		return solutionLines.some(sl => sl.equalsStrict(line))
 	});
 	if (!correctLine) {
 		// there is no unique line rule violation, just simply mistakes in these lines that happen to now be equal to each other
@@ -101,12 +99,10 @@ function groupEqualLines(
 
 		const curGroup: BoardLine[] = [line];
 		visitedLines.add(line.lineId);
-		const lineStr = line.toString();
 
 		for (const otherLine of filledLines) {
 			if (visitedLines.has(otherLine.lineId)) continue;
-			const otherStr = otherLine.toString();
-			if (lineStr === otherStr) {
+			if (line.equalsValues(otherLine)) {
 				curGroup.push(otherLine);
 				visitedLines.add(otherLine.lineId);
 			}
