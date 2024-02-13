@@ -1,6 +1,6 @@
 import { ONE, ZERO } from "@/lib/constants.js";
 import { SimpleBoard } from "@/lib/index.js";
-import { findMaxConsecutiveRuleViolations } from "@/lib/mistakes/max-consecutive-violation.js";
+import { findMaxConsecutiveRuleViolations } from "@/lib/mistakes/violations/max-consecutive-violation.js";
 import type { BoardExportString } from "@/lib/types.js";
 
 describe('findMaxConsecutiveRuleViolations()', () => {

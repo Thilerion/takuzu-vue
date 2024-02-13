@@ -1,5 +1,5 @@
 import { SimpleBoard } from "@/lib/index.js";
-import { findBalancedLinesRuleViolations } from "@/lib/mistakes/balanced-line-violation.js";
+import { findBalancedLinesRuleViolations } from "@/lib/mistakes/violations/balanced-line-violation.js";
 import type { BoardExportString } from "@/lib/types.js";
 
 describe('findBalancedLinesRuleViolations()', () => {

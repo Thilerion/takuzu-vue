@@ -1,5 +1,5 @@
 import { SimpleBoard } from "@/lib/index.js";
-import { findUniqueLinesRuleViolations } from "@/lib/mistakes/unique-lines-violation.js";
+import { findUniqueLinesRuleViolations } from "@/lib/mistakes/violations/unique-lines-violation.js";
 
 describe('findUniqueLinesRuleViolations()', () => {
 	test('returns an empty array when there are no violations ', () => {
