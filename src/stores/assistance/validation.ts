@@ -26,6 +26,7 @@ export const usePuzzleValidationStore = defineStore('puzzleValidation', {
 
 	actions: {
 		userCheck() {
+			// TODO: implement check action: ruleViolations (currently only checks for incorrectValues)
 			this.userChecks += 1;
 
 			const data = getRequiredDataFromPuzzleStore();
