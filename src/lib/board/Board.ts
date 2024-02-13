@@ -1,4 +1,5 @@
 import { COLUMN, EMPTY, ONE, ROW, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "../constants";
+import { findIncorrectValuesFromSolution, type FoundIncorrectValue } from "../mistakes/incorrect-values.js";
 import type { ColumnId, IterableBoardLineString, LineId, BoardExportString, PuzzleGrid, RowId, Vec, BoardString, Target, BoardShape } from "../types";
 import { array2d, cloneArray2d, columnIdToX, getCoordsForBoardSize, isLineIdColumn, isLineIdRow, isPuzzleValueLineStr, isValidCellDigit, isValidPuzzleValue, lineSizeToNumRequired, rowIdToY, shuffle } from "../utils";
 import { validateBoard } from "../validate/board";
@@ -201,7 +202,7 @@ export class SimpleBoard {
 			yield this.get(x, y);
 		}
 	}
-	*cells({ skipFilled = false, skipEmpty = false, shuffled = false } = {}) {
+	*cells({ skipFilled = false, skipEmpty = false, shuffled = false }: CellsIteratorOptions = {}) {
 		for (const coords of this.cellCoords({ shuffled })) {
 			const { x, y } = coords;
 			const cellValue = this.get(x, y);
@@ -271,19 +272,10 @@ export class SimpleBoard {
 	// compare values to a solutionBoard
 	// does not check for "rule violations", only compares to the solution
 	hasIncorrectValues(solutionBoard: SimpleBoard): IncorrectCheckReturnValue {
-		const incorrectValueCells = [];
-		for (const cell of this.cells({ skipEmpty: true })) {
-			const { x, y, value } = cell;
-			if (solutionBoard.get(x, y) !== value) {
-				incorrectValueCells.push({ x, y });
-			}
-		}
-		const hasMistakes = incorrectValueCells.length > 0;
-		if (hasMistakes) {
-			return { hasMistakes: true, result: incorrectValueCells };
-		} else {
-			return { hasMistakes: false, result: null }
-		}
+		const origResult = findIncorrectValuesFromSolution({ board: this, solution: solutionBoard });
+		if (origResult.hasMistakes) {
+			return { hasMistakes: true, result: origResult.results };
+		} else return { hasMistakes: false, result: null };
 	}
 	// checks if the board is solved by comparing to the solutionBoard
 	equalsSolution(solutionBoard: SimpleBoard) {
@@ -320,6 +312,11 @@ interface IncorrectCheckNoMistakesResult {
 }
 interface IncorrectCheckMistakesResult {
 	hasMistakes: true,
-	result: Vec[]
+	result: FoundIncorrectValue[]
 }
 export type IncorrectCheckReturnValue = IncorrectCheckMistakesResult | IncorrectCheckNoMistakesResult;
+export type CellsIteratorOptions = {
+	skipFilled?: boolean,
+	skipEmpty?: boolean,
+	shuffled?: boolean
+}
