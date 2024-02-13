@@ -1,7 +1,7 @@
 import { EMPTY, ONE, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "../constants.js";
 import { getValidLineCompletions } from "../line-generation/memoized.js";
 import type { LineArrSymbolPermutations } from "../line-generation/types.js";
-import type { LineId, PuzzleValueCount, PuzzleValueLine, ROPuzzleValueLine, Vec } from "../types.js";
+import type { LineId, PuzzleValueCount, PuzzleValueLine, ROPuzzleValueLine, Target, Vec, VecValue } from "../types.js";
 import { areLinesEqual, columnIdToX, countLineValues, isLineIdRow, lineSizeToNumRequired, lineTypeFromLineId, rowIdToY } from "../utils.js";
 import type { SimpleBoard } from "./Board.js";
 
@@ -237,5 +237,17 @@ export class BoardLine {
 			}
 		});
 		return diff;
+	}
+
+	*eachCell(): Generator<VecValue, void, undefined> {
+		for (let i = 0; i < this.length; i++) {
+			yield { value: this.values[i], ...this.getCoords(i) };
+		}
+	}
+	*eachValue(): Generator<PuzzleValue, void, undefined> {
+		yield* this.values;
+	}
+	*eachCoord(): Generator<Vec, void, undefined> {
+		yield* this.coords;
 	}
 }
