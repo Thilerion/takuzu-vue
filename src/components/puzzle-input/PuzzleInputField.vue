@@ -1,14 +1,14 @@
 <template>
 	<input
 		type="text"
-		:value="inputValue"
+		:value="computedInputValue"
 		class="w-full border-0 p-1 m-0 aspect-square h-full text-center"
 
-		@input="handleInputChange"
+		@input="handleInputChange($event as InputEvent)"
 		@keydown="handleKeydown"
 		@keydown.delete="handleCellDelete"
 		@focus="handleFocus"
-		@blur="handleBlur"
+		@blur="handleBlur($event as FocusEvent)"
 		@paste="handlePaste"
 
 		ref="el"
@@ -16,49 +16,44 @@
 </template>
 
 <script setup lang="ts">
+// TODO: fix types, updating/setting/conversion of (input) values, choose which values are allowed, etc.
 import { isExportString } from '@/lib/board/Board.helpers';
-import { ONE, ZERO } from '@/lib/constants';
+import { ONE, ZERO, type PuzzleSymbol } from '@/lib/constants';
 import { computed, ref, toRef } from 'vue';
 
-const props = defineProps({
-	modelValue: [String, Number],
-	index: {
-		type: Number,
-		required: true
-	}
-})
+const props = defineProps<{
+	modelValue: string | number,
+	index: number
+}>();
 const mv = toRef(props, 'modelValue');
 const emit = defineEmits(['update:modelValue', 'set-multiple', 'import-export-string']);
-const inputValue = computed({
-	get() {
-		const v = mv.value;
-		if (v === ZERO || v === ONE) return v;
-		return '';
-	},
-	set(value) {
-		if (value === ZERO || value === ONE) {
-			emit('update:modelValue', value);
-			el.value.value = value;
-		} else if (value === null || value === ' ' || value === '') {
-			emit('update:modelValue', '');
-			el.value.value = null;
-		} else {
-			emit('update:modelValue', '');
-			el.value.value = null;
-		}
-	}
+
+const computedInputValue = computed((): PuzzleSymbol | '' => {
+	const v = props.modelValue;
+	if (v === ZERO || v === ONE) return v;
+	return '';
 })
 
-const el = ref<null | HTMLElement>(null);
+const el = ref<null | HTMLInputElement>(null);
 defineExpose({ el });
 
-const hasCellValue = computed(() => inputValue.value !== '' && inputValue.value !== null);
+const updateInputValue = (str: PuzzleSymbol | ' ' | '' | null | string) => {
+	if (str === ZERO || str === ONE) {
+		emit('update:modelValue', str);
+		el.value!.value = str;
+	} else {
+		emit('update:modelValue', '');
+		el.value!.value = '';
+	}
+}
+
+const hasCellValue = computed(() => computedInputValue.value !== '' && computedInputValue.value !== null);
 
 const handleInputChange = (ev: InputEvent) => {
 	if (typeof ev.data === 'string') {
 		if (ev.inputType === 'insertText' && (ev.data === '1' || ev.data === '0' || ev.data === ' ' || ev.data === '.')) {
 			const v = ev.data === ' ' ? '' : ev.data === '.' ? '' : ev.data;
-			inputValue.value = v;
+			updateInputValue(v);
 			const next = document.querySelector(`[data-index="${props.index + 1}"] input[type="text"]`) as HTMLInputElement | null;
 			next?.focus?.();
 			ev.preventDefault();
@@ -69,17 +64,17 @@ const handleInputChange = (ev: InputEvent) => {
 				emit('set-multiple', [`${num}`]);
 			}
 		}
-		inputValue.value = '';
+		updateInputValue('');
 	} else if (ev.inputType?.startsWith?.('delete') && ev.data == null) {
-		inputValue.value = null;
+		updateInputValue(null);
 	}	
 }
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => { };
 const handleKeydown = noop;
 const handleFocus = noop;
-const handlePaste = (ev) => {
-	const data = (ev.clipboardData ?? window.clipboardData)?.getData('text') ?? '';
+const handlePaste = (ev: ClipboardEvent) => {
+	const data = ev.clipboardData?.getData('text') ?? '';
 	if (data.length === 0) {
 		return;
 	} else if (isExportString(data)) {
@@ -90,17 +85,18 @@ const handlePaste = (ev) => {
 		emit('set-multiple', data.split(''));		
 	}
 }
-const handleBlur = (ev) => {
-	if (ev.target.value?.length > 1) {
-		const value = ev.target.value.at(-1);
-		inputValue.value = value;
-		ev.target.value = value;
+const handleBlur = (ev: FocusEvent) => {
+	const tg = ev.target as HTMLInputElement;
+	if (tg.value?.length > 1) {
+		const value = tg.value.at(-1)!;
+		updateInputValue(value);
+		tg.value = value;
 	}
 }
-const handleCellDelete = (ev) => {
-	inputValue.value = '';
-	if (!hasCellValue.value || inputValue.value === ' ') {
-		const prev = document.querySelector(`[data-index="${props.index - 1}"] input[type="text"]`);
+const handleCellDelete = (ev: Event) => {
+	updateInputValue('');
+	if (!hasCellValue.value) {
+		const prev = document.querySelector<HTMLInputElement>(`[data-index="${props.index - 1}"] input[type="text"]`);
 		prev?.focus?.();
 		if (!hasCellValue.value) {
 			ev.preventDefault();

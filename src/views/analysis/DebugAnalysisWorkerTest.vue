@@ -16,7 +16,7 @@
 				<div class="min-h-[5rem] rounded bg-red-100 text-red-900 flex items-center justify-start px-4 py-2">{{messageError}}</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import * as analyzePuzzleWorker from '@/workers/analyze-puzzle';
 import { onMounted, onUnmounted, ref } from 'vue';
 
@@ -28,11 +28,11 @@ const isActiveDelayed = ref(false);
 const awaitTimeout = (length = 200) => {
 	return new Promise((resolve) => {
 		window.setTimeout(() => {
-			resolve();
+			resolve(undefined);
 		}, length);
 	})
 }
-const sendMessage = async (message) => {
+const sendMessage = async <T>(message: T): Promise<any> => {
 	if (isActive.value) return;
 	let done = false;
 	isActive.value = true;
@@ -46,11 +46,11 @@ const sendMessage = async (message) => {
 		awaitTimeout().then(() => {
 			if (!done) isActiveDelayed.value = true;
 		})
-		messageResults.value = await result;
+		messageResults.value = (await result) as any;
 		return result;
 	} catch(e) {
 		done = true;
-		messageError.value = e;
+		messageError.value = e as any;
 	} finally {
 		isActive.value = false;
 		isActiveDelayed.value = false;
@@ -69,7 +69,7 @@ const sendUnhandledRejectionMessage = () => {
 	sendMessage({ task: 'test-unhandledrejection'});
 }
 const sendEmptyMessage = () => {
-	sendMessage();
+	sendMessage(undefined);
 }
 
 onMounted(() => {
@@ -84,9 +84,9 @@ onUnmounted(() => {
 .t-fade-enter-active {
 	transition: opacity 0.05s ease;
 }
-.t-fade-leave-active {
+/*.t-fade-leave-active {
 	
-}
+}*/
 .t-fade-enter-from, .t-fade-leave-to {
 	opacity: 0;
 }
