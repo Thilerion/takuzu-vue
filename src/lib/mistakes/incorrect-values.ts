@@ -1,10 +1,6 @@
 import type { PuzzleSymbol } from "@/lib/constants.js";
-import type { BoardAndSolutionBoards, Vec } from "@/lib/types.js";
-
-export type FoundIncorrectValue = Vec & {
-	current: PuzzleSymbol;
-	correctValue: PuzzleSymbol;
-};
+import type { BoardAndSolutionBoards } from "@/lib/types.js";
+import type { FoundIncorrectValue } from "./types.js";
 
 export function* incorrectValuesFromSolution(
 	{ board, solution }: BoardAndSolutionBoards

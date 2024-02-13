@@ -217,4 +217,15 @@ export class BoardLine {
 	toFullString() {
 		return `${this.lineId}:${this.toString()}`;
 	}
+
+	diff(other: BoardLine | PuzzleValueLine): (Vec & { values: [PuzzleValue, PuzzleValue] })[] {
+		const otherValues = Array.isArray(other) ? other : other.values;
+		const diff: (Vec & { values: [PuzzleValue, PuzzleValue] })[] = [];
+		this.values.forEach((val, i) => {
+			if (val !== otherValues[i]) {
+				diff.push({ ...this.coords[i], values: [val, otherValues[i]] });
+			}
+		});
+		return diff;
+	}
 }
