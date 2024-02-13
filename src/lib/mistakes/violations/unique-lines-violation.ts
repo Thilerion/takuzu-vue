@@ -1,8 +1,8 @@
-import { BoardLine } from "../board/BoardLine.js";
-import type { PuzzleSymbol } from "../constants.js";
-import type { SimpleBoard } from "../index.js";
-import type { LineId } from "../types.js";
-import type { FoundIncorrectValue, UniqueLinesRuleViolation } from "./types.js";
+import type { BoardLine } from "@/lib/board/BoardLine.js";
+import type { PuzzleSymbol } from "@/lib/constants.js";
+import type { SimpleBoard } from "@/lib/index.js";
+import type { LineId } from "@/lib/types.js";
+import type { UniqueLinesRuleViolation, FoundIncorrectValue } from "../types.js";
 
 export function findUniqueLinesRuleViolations(
 	boardOrGetBoardLines: SimpleBoard | (() => Iterable<BoardLine>),

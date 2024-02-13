@@ -1,8 +1,8 @@
-import type { BoardLine } from "../board/BoardLine.js";
-import { ZERO, ONE, type PuzzleSymbol } from "../constants.js";
-import type { SimpleBoard } from "../index.js";
-import type { Target } from "../types.js";
-import type { FoundIncorrectValue, MaxConsecutiveRuleViolation } from "./types.js";
+import type { BoardLine } from "@/lib/board/BoardLine.js";
+import { ZERO, ONE, type PuzzleSymbol } from "@/lib/constants.js";
+import type { SimpleBoard } from "@/lib/index.js";
+import type { Target } from "@/lib/types.js";
+import type { MaxConsecutiveRuleViolation, FoundIncorrectValue } from "../types.js";
 
 const threeInARowRegex = new RegExp(`${ZERO}{3,}|${ONE}{3,}`, 'g');
 
