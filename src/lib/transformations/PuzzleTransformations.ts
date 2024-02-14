@@ -115,9 +115,13 @@ export class PuzzleTransformations {
 		return undefined;
 	}
 
-	public getRandomTransformationKey(opts: { skip?: TransformationKey[] } = {}): TransformationKey {
+	// if no transformations are skipped, then it will always return a key
+	public getRandomTransformationKey(): TransformationKey;
+	public getRandomTransformationKey(opts: { skip: TransformationKey[] }): TransformationKey | null;
+	public getRandomTransformationKey(opts: { skip?: TransformationKey[] } = {}): TransformationKey | null {
 		const { skip = [] } = opts;
 		const filteredKeys = [...this.transformations.keys()].filter(key => !skip.includes(key));
+		if (filteredKeys.length === 0) return null;
 		return pickRandom(filteredKeys);
 	}
 

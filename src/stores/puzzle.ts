@@ -15,6 +15,7 @@ import { usePuzzleAssistanceStore } from "./assistance/store";
 import { puzzleHistoryTable, type FinishedPuzzleState } from "@/services/db/stats-db/index.js";
 import type { PickOptional } from "@/types.js";
 import { PuzzleTransformations } from "@/lib/transformations/PuzzleTransformations.js";
+import type { TransformationKey } from "@/lib/transformations/types.js";
 
 export const PUZZLE_STATUS = {
 	'NONE': 'NONE',
@@ -36,7 +37,10 @@ export type PuzzleStoreState = {
 	solution: SimpleBoard | null,
 	solutionBoardStr: string | null,
 
-	puzzleTransformations: PuzzleTransformations | null,
+	transformations: null | {
+		previous: TransformationKey[],
+		handler: PuzzleTransformations,
+	},
 
 	numCells: number | null,
 	initialEmpty: number | null,
@@ -69,7 +73,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 		solution: null,
 		solutionBoardStr: null,
 
-		puzzleTransformations: null,
+		transformations: null,
 
 		numCells: null,
 		initialEmpty: null,
@@ -459,16 +463,39 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			const { deleteSavedPuzzle } = useSavedPuzzle();
 			deleteSavedPuzzle();
 
-			if (this.puzzleTransformations == null) {
+			if (this.transformations == null) {
 				// initialize puzzleTransformations class first
-				this.puzzleTransformations = new PuzzleTransformations(this.initialBoard!.grid);
+				this.transformations = {
+					previous: [],
+					handler: new PuzzleTransformations(this.initialBoard!.grid)
+				}
+				// set current transformation key in previous array
+				this.transformations.previous.push(
+					this.transformations.handler.getTransformationKeyOfGrid(this.initialBoard!.grid)!
+				)
 			}
-			const currentKey = this.puzzleTransformations.getTransformationKeyOfGrid(this.initialBoard!.grid)!;
-			const randomKey = this.puzzleTransformations.getRandomTransformationKey({ skip: [currentKey] });
+			const currentKey = this.transformations.handler.getTransformationKeyOfGrid(this.initialBoard!.grid)!;
+			// set current transformation key in previous array
+			this.transformations.previous.push(
+				currentKey
+			)
+
+			// keep previous transformations array at max length of 5
+			while (this.transformations.previous.length > 5) {
+				this.transformations.previous.shift();
+			}
+
+			let randomKey = this.transformations.handler.getRandomTransformationKey({ skip: [...this.transformations.previous] });
+			if (randomKey == null) {
+				// try again without previous transformations, which will not return null
+				randomKey = this.transformations.handler.getRandomTransformationKey();
+			}
 
 			const transformResult = this
-				.puzzleTransformations
+				.transformations
+				.handler
 				.getSynchronizedTransformedBoard([this.solution!], randomKey);
+
 			const board = transformResult.self;
 			const initialBoard = transformResult.self.copy();
 			const [solution] = transformResult.others;
