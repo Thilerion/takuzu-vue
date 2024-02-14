@@ -302,6 +302,10 @@ export class SimpleBoard {
 		return this.grid.flat().join('') as BoardString;
 	}
 
+	static gridToBoardString(grid: PuzzleGrid) {
+		return grid.flat().join('') as BoardString;
+	}
+
 	export(): BoardExportString {
 		return `${this.width}x${this.height};${this.toBoardString()}` as BoardExportString;
 	}
