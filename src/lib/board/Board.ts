@@ -35,6 +35,10 @@ export class SimpleBoard {
 		return new SimpleBoard(grid);
 	}
 
+	static fromGrid(grid: PuzzleGrid) {
+		return new SimpleBoard(cloneArray2d(grid));
+	}
+
 	static fromString(exportedStr: BoardString | BoardExportString, dims?: BoardShape) {
 		const { width, height, boardStr } = getImportBoardStringData(exportedStr, dims);
 		if (boardStr.length < width * height) {

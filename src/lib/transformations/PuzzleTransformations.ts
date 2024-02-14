@@ -1,6 +1,7 @@
 import { type BoardShapeType, getBoardShapeTypeFromGrid } from "../helpers/board-type.js";
 import { SimpleBoard } from "../index.js";
 import type { BoardExportString, BoardString, PuzzleGrid } from "../types.js";
+import { pickRandom } from "../utils.js";
 import { createCombinedTransformationFn } from "./base-transformations.js";
 import { squareBoardTransformationConfigs, rectBoardTransformationConfigs, oddBoardTransformationConfigs, getTransformationKey, getTransformationConfigFromKey } from "./helpers.js";
 import type { TransformationKey, BaseTransformationConfig, RotationTransform, FlipTransform, SymbolInversionTransform } from "./types.js";
@@ -58,6 +59,20 @@ export class PuzzleTransformations {
 		const config = getTransformationConfigFromKey(key);
 		return this.applyTransformation(grid, config);
 	}
+	static applyTransformationToBoard(board: SimpleBoard, config: BaseTransformationConfig): SimpleBoard {
+		const grid = PuzzleTransformations.applyTransformation(board.grid, config);
+		return SimpleBoard.fromGrid(grid);
+	}
+	getSynchronizedTransformedBoard(boards: SimpleBoard[], key: TransformationKey): { self: SimpleBoard, others: SimpleBoard[] } {
+		const config = getTransformationConfigFromKey(key);
+		const self = this.getTransformedBoardByKey(key)!;
+
+		const others = boards.map(board => {
+			return PuzzleTransformations.applyTransformationToBoard(board, config);
+		});
+
+		return { self, others };
+	}
 
 	public getAllTransformations(): ReadonlyMap<TransformationKey, BoardString> {
 		return this.transformations;
@@ -98,6 +113,12 @@ export class PuzzleTransformations {
 			}
 		}
 		return undefined;
+	}
+
+	public getRandomTransformationKey(opts: { skip?: TransformationKey[] } = {}): TransformationKey {
+		const { skip = [] } = opts;
+		const filteredKeys = [...this.transformations.keys()].filter(key => !skip.includes(key));
+		return pickRandom(filteredKeys);
 	}
 
 	private subRot(a: RotationTransform, b: RotationTransform): RotationTransform {

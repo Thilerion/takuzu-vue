@@ -2,7 +2,6 @@ import { useSharedPuzzleToggle } from "@/composables/use-puzzle-toggle";
 import { SimpleBoard } from "@/lib";
 import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings } from "@/lib/types";
 import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
-import { getRandomTransformedPuzzle } from "@/lib/helpers/transform";
 import { countLineValues, pickRandom } from "@/lib/utils";
 import { requestPuzzle } from "@/services/create-puzzle";
 import { useSavedPuzzle } from "@/services/savegame/useSavedGame";
@@ -15,6 +14,7 @@ import { useRecapStatsStore } from "./recap-stats";
 import { usePuzzleAssistanceStore } from "./assistance/store";
 import { puzzleHistoryTable, type FinishedPuzzleState } from "@/services/db/stats-db/index.js";
 import type { PickOptional } from "@/types.js";
+import { PuzzleTransformations } from "@/lib/transformations/PuzzleTransformations.js";
 
 export const PUZZLE_STATUS = {
 	'NONE': 'NONE',
@@ -35,6 +35,8 @@ export type PuzzleStoreState = {
 	board: SimpleBoard | null,
 	solution: SimpleBoard | null,
 	solutionBoardStr: string | null,
+
+	puzzleTransformations: PuzzleTransformations | null,
 
 	numCells: number | null,
 	initialEmpty: number | null,
@@ -66,6 +68,8 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 		board: null,
 		solution: null,
 		solutionBoardStr: null,
+
+		puzzleTransformations: null,
 
 		numCells: null,
 		initialEmpty: null,
@@ -455,13 +459,20 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			const { deleteSavedPuzzle } = useSavedPuzzle();
 			deleteSavedPuzzle();
 
-			const transformResult = getRandomTransformedPuzzle({
-				board: this.initialBoard!.copy(),
-				solution: this.solution!.copy(),
-			})
-			const { board, solution } = transformResult;
+			if (this.puzzleTransformations == null) {
+				// initialize puzzleTransformations class first
+				this.puzzleTransformations = new PuzzleTransformations(this.initialBoard!.grid);
+			}
+			const currentKey = this.puzzleTransformations.getTransformationKeyOfGrid(this.initialBoard!.grid)!;
+			const randomKey = this.puzzleTransformations.getRandomTransformationKey({ skip: [currentKey] });
 
-			const initialBoard = board.copy();
+			const transformResult = this
+				.puzzleTransformations
+				.getSynchronizedTransformedBoard([this.solution!], randomKey);
+			const board = transformResult.self;
+			const initialBoard = transformResult.self.copy();
+			const [solution] = transformResult.others;
+
 			this.setAllBoards({ board, solution, initialBoard });
 
 			const puzzleHistory = usePuzzleHistoryStore();
