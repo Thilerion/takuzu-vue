@@ -4,6 +4,10 @@ export const getTransformationKey = ([rot, flip, invert]: BaseTransformationConf
 	return `${rot}_${flip}_${invert}` as const satisfies TransformationKey;
 }
 
+export function getTransformationConfigFromKey<K extends TransformationKey>(key: K): K extends `${infer R}_${infer F}_${infer I}` ? [R, F, I] : BaseTransformationConfig {
+	return key.split('_') as any;
+}
+
 const createTransformationConfigs = (
 	r: readonly RotationTransform[],
 	f: readonly FlipTransform[],

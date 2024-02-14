@@ -2,7 +2,7 @@ import { type BoardShapeType, getBoardShapeTypeFromGrid } from "../helpers/board
 import { SimpleBoard } from "../index.js";
 import type { BoardExportString, BoardString, PuzzleGrid } from "../types.js";
 import { createCombinedTransformationFn } from "./base-transformations.js";
-import { squareBoardTransformationConfigs, rectBoardTransformationConfigs, oddBoardTransformationConfigs, getTransformationKey } from "./helpers.js";
+import { squareBoardTransformationConfigs, rectBoardTransformationConfigs, oddBoardTransformationConfigs, getTransformationKey, getTransformationConfigFromKey } from "./helpers.js";
 import type { TransformationKey, BaseTransformationConfig, RotationTransform, FlipTransform, SymbolInversionTransform } from "./types.js";
 
 export class PuzzleTransformations {
@@ -23,7 +23,7 @@ export class PuzzleTransformations {
 
 		const tempTransformations: Partial<Record<TransformationKey, PuzzleGrid>> = this.generateAllTransformations(inputGrid);
 		const [canonicalKey] = this.identifyCanonicalForm(tempTransformations);
-		this.transformations = this.efficientGetTransformationsFromCanonicalForm(
+		this.transformations = this.getTransformationsFromCanonicalForm(
 			canonicalKey,
 			tempTransformations,
 		)
@@ -49,6 +49,14 @@ export class PuzzleTransformations {
 			isCanonical,
 			transformationKey
 		}
+	}
+	static applyTransformation(grid: PuzzleGrid, config: BaseTransformationConfig): PuzzleGrid {
+		const transformationFn = createCombinedTransformationFn(config);
+        return transformationFn(grid);
+	}
+	static applyTransformationKey(grid: PuzzleGrid, key: TransformationKey): PuzzleGrid {
+		const config = getTransformationConfigFromKey(key);
+		return this.applyTransformation(grid, config);
 	}
 
 	public getAllTransformations(): ReadonlyMap<TransformationKey, BoardString> {
@@ -98,7 +106,7 @@ export class PuzzleTransformations {
 		const resInt = (aInt - bInt + 360) % 360;
 		return `rot${resInt}` as RotationTransform;
 	}
-	private efficientGetTransformationsFromCanonicalForm(
+	private getTransformationsFromCanonicalForm(
 		canonicalKey: TransformationKey,
 		tempTransformations: Partial<Record<TransformationKey, PuzzleGrid>>,
 	): Map<TransformationKey, BoardString> {
@@ -125,24 +133,12 @@ export class PuzzleTransformations {
 		return result;
 	}
 
-	private getTransformationsFromCanonicalForm(
-		canonicalForm: BoardString,
-	): Map<TransformationKey, BoardString> {
-		const result = new Map<TransformationKey, BoardString>();
-		const grid = SimpleBoard.fromString(canonicalForm).grid;
-		const record = this.generateAllTransformations(grid);
-		for (const [key, grid] of Object.entries(record)) {
-			result.set(key as TransformationKey, SimpleBoard.gridToBoardString(grid));
-		}
-		return result;
-	}
-
 	private generateAllTransformations(grid: PuzzleGrid): Partial<Record<TransformationKey, PuzzleGrid>> {
 		const configs = this.getTransformationConfigs();
 		const result: Partial<Record<TransformationKey, PuzzleGrid>> = {};
         configs.forEach(config => {
             const key = getTransformationKey(config);
-			const transformedGrid = this.applyTransformation(grid, config);
+			const transformedGrid = PuzzleTransformations.applyTransformation(grid, config);
 			result[key] = transformedGrid;
         });
 		return result;
@@ -159,10 +155,7 @@ export class PuzzleTransformations {
                 throw new Error(`Unsupported board type: ${this.boardShapeType}`);
         }
 	}
-	private applyTransformation(grid: PuzzleGrid, config: BaseTransformationConfig): PuzzleGrid {
-		const transformationFn = createCombinedTransformationFn(config);
-        return transformationFn(grid);
-	}
+
 	private identifyCanonicalForm(transformations: Partial<Record<TransformationKey, PuzzleGrid>>): [TransformationKey, BoardString] {
 		const entries = Object.entries(transformations) as [TransformationKey, PuzzleGrid][];
 		const boardStringEntries = entries.map(([key, grid]) => {
