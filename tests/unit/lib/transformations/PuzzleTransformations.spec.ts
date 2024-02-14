@@ -75,6 +75,18 @@ describe('PuzzleTransformations class', () => {
 		expect(resultA).toEqual(resultC);
 	})
 
+	test('the input grid does not get mutated', () => {
+		const grid = SimpleBoard.fromArrayOfLines([
+			'0011',
+			'....',
+			'1...',
+			'0101'
+		]).grid;
+		const origGrid = JSON.parse(JSON.stringify(grid));
+		const _result = new PuzzleTransformations(grid);
+		expect(grid).toEqual(origGrid);
+	})
+
 	describe('number of transformations', () => {
 		test('rect grid: 8 different transformations', () => {
 			const puzzle = SimpleBoard.fromString('6x10;...0....1..1...0...11........01...1.......0..0.0..1.........' as BoardExportString);

@@ -1,13 +1,14 @@
 import { type BoardShapeType, getBoardShapeTypeFromGrid } from "../helpers/board-type.js";
 import { SimpleBoard } from "../index.js";
-import type { BoardString, PuzzleGrid } from "../types.js";
+import type { BoardExportString, BoardString, PuzzleGrid } from "../types.js";
 import { createCombinedTransformationFn } from "./base-transformations.js";
 import { squareBoardTransformationConfigs, rectBoardTransformationConfigs, oddBoardTransformationConfigs, getTransformationKey } from "./helpers.js";
-import { rotationValues, type BaseTransformationConfig, type FlipTransform, type RotationTransform, type SymbolInversionTransform, type TransformationKey } from "./types.js";
+import type { TransformationKey, BaseTransformationConfig, RotationTransform, FlipTransform, SymbolInversionTransform } from "./types.js";
 
 export class PuzzleTransformations {
     private transformations: Map<TransformationKey, BoardString>;
     private boardShapeType: BoardShapeType;
+	public readonly canonicalForm: BoardString;
 
 	constructor(inputGrid: PuzzleGrid) {
 		this.boardShapeType = getBoardShapeTypeFromGrid(inputGrid);
@@ -21,16 +22,35 @@ export class PuzzleTransformations {
 		// 5. store reordered transformations in this.transformations
 
 		const tempTransformations: Partial<Record<TransformationKey, PuzzleGrid>> = this.generateAllTransformations(inputGrid);
-		const [canonicalKey, canonicalForm] = this.identifyCanonicalForm(tempTransformations);
+		const [canonicalKey] = this.identifyCanonicalForm(tempTransformations);
 		this.transformations = this.efficientGetTransformationsFromCanonicalForm(
 			canonicalKey,
 			tempTransformations,
 		)
+		this.canonicalForm = this.transformations.get('rot0_noFlip_noInvert')!;;
 	}
 
-	get canonicalForm(): BoardString {
-		return this.transformations.get('rot0_noFlip_noInvert')!;
+	static fromBoard(board: SimpleBoard): PuzzleTransformations {
+		return new PuzzleTransformations(board.grid);
 	}
+	static fromString(str: BoardString | BoardExportString): PuzzleTransformations {
+		const board = SimpleBoard.fromString(str);
+		return new PuzzleTransformations(board.grid);
+	}
+
+	static getTransformationKeyFromPuzzleGrid(grid: PuzzleGrid): {
+		isCanonical: boolean,
+		transformationKey: TransformationKey
+	} {
+		const instance = new PuzzleTransformations(grid);
+		const isCanonical = instance.isCanonicalForm(grid);
+		const transformationKey = instance.getTransformationKeyOfGrid(grid)!;
+		return {
+			isCanonical,
+			transformationKey
+		}
+	}
+
 	public getAllTransformations(): ReadonlyMap<TransformationKey, BoardString> {
 		return this.transformations;
 	}
@@ -38,9 +58,20 @@ export class PuzzleTransformations {
 	public getTransformationByKey(key: TransformationKey): BoardString | undefined {
 		return this.transformations.get(key);
 	}
+	public getTransformedBoardByKey(key: TransformationKey): SimpleBoard | undefined {
+		const boardString = this.getTransformationByKey(key);
+		if (boardString === undefined) {
+			return undefined;
+		}
+		return SimpleBoard.fromString(boardString);
+	}
 	public getTransformationByConfig(config: BaseTransformationConfig): BoardString | undefined {
 		const key = getTransformationKey(config);
 		return this.getTransformationByKey(key);
+	}
+	public getTransformedBoardByConfig(config: BaseTransformationConfig): SimpleBoard | undefined {
+		const key = getTransformationKey(config);
+		return this.getTransformedBoardByKey(key);		
 	}
 	public isCanonicalForm(gridOrBoardString: PuzzleGrid | BoardString): boolean {
 		const boardString = typeof gridOrBoardString === 'string' ? gridOrBoardString : SimpleBoard.gridToBoardString(gridOrBoardString);
