@@ -1,8 +1,104 @@
 import { SimpleBoard } from "@/lib/index.js"
 import { PuzzleTransformations } from "@/lib/transformations/PuzzleTransformations.js";
+import type { TransformationKey } from "@/lib/transformations/types.js";
 import type { BoardExportString, BoardString } from "@/lib/types.js";
 
 describe('PuzzleTransformations class', () => {
+	describe('symmetries', () => {
+		it('hasSymmetries() returns true for a grid that has a symmetry along the x or y axis', () => {
+			const gridA = SimpleBoard.fromArrayOfLines([
+				'1..1',
+				'1..1',
+				'....',
+				'....'
+			]).grid;
+			const resultA = new PuzzleTransformations(gridA);
+			expect(resultA.hasSymmetries()).toBe(true);
+		})
+		test('getSymmetricalTransformationKeys() returns the transformation groups that result in the same board', () => {
+			const gridA = SimpleBoard.fromArrayOfLines([
+				'1..1',
+				'1..1',
+				'....',
+				'....'
+			]).grid;
+			const resultA = new PuzzleTransformations(gridA);
+			const symmKeyGroups = resultA.getSymmetricalTransformationKeys();
+			expect(symmKeyGroups).toHaveLength(8); // normally 16 different, divided by 2 because of symmetry
+			expect(symmKeyGroups).toMatchInlineSnapshot(`
+				[
+				  [
+				    "rot0_flip_invertSymbols",
+				    "rot180_noFlip_invertSymbols",
+				  ],
+				  [
+				    "rot0_flip_noInvert",
+				    "rot180_noFlip_noInvert",
+				  ],
+				  [
+				    "rot0_noFlip_invertSymbols",
+				    "rot180_flip_invertSymbols",
+				  ],
+				  [
+				    "rot0_noFlip_noInvert",
+				    "rot180_flip_noInvert",
+				  ],
+				  [
+				    "rot270_flip_invertSymbols",
+				    "rot270_noFlip_invertSymbols",
+				  ],
+				  [
+				    "rot270_flip_noInvert",
+				    "rot270_noFlip_noInvert",
+				  ],
+				  [
+				    "rot90_flip_invertSymbols",
+				    "rot90_noFlip_invertSymbols",
+				  ],
+				  [
+				    "rot90_flip_noInvert",
+				    "rot90_noFlip_noInvert",
+				  ],
+				]
+			`);
+		})
+		test('getSymmetricalTransformationKeys() returns all keys when there are no symmetries', () => {
+			const grid = SimpleBoard.fromArrayOfLines([
+				'10.1',
+				'..1.',
+				'0..0',
+				'11.0'
+			]).grid;
+			const result = new PuzzleTransformations(grid);
+			expect(result.hasSymmetries()).toBe(false);
+			const symmKeyGroups = result.getSymmetricalTransformationKeys();
+			const allKeys = result.getValidTransformationKeys();
+			expect(symmKeyGroups).toHaveLength(16);
+			expect(symmKeyGroups).toEqual(allKeys.map(k => [k]));
+		})
+		test('getRandomUniqueTransformationKey() always returns a key that is not symmetrical with any previously returned key, and correctly skips symmetrical keys as well', () => {
+			const grid = SimpleBoard.fromArrayOfLines([
+				'1..1',
+				'1..1',
+				'1..1',
+				'1..1'
+			]).grid;
+			const result = new PuzzleTransformations(grid);
+			expect(result.hasSymmetries()).toBe(true);
+			// only 4 unique transformations: invert yes / no, rotate 90 / 270
+			expect(result.getSymmetricalTransformationKeys()).toHaveLength(4); // x and y symmetries
+
+			const randomKeyResults = new Set<TransformationKey>();
+			// it will not return more than 4 unique keys
+			for (let i = 0; i < 50; i++) {
+				const key = result.getRandomUniqueTransformationKey();
+				expect(key).not.toBe(null);
+				randomKeyResults.add(key!);
+			}
+			expect(randomKeyResults.size).toBe(4);
+		})
+	})
+
 	test('square grid: the results are the same when inputting a grid to when a transformed version of that grid is created', () => {
 		const puzzleA = SimpleBoard.fromArrayOfLines([
 			'0011',

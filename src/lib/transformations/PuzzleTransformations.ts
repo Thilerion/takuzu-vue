@@ -115,14 +115,67 @@ export class PuzzleTransformations {
 		return undefined;
 	}
 
-	// if no transformations are skipped, then it will always return a key
-	public getRandomTransformationKey(): TransformationKey;
-	public getRandomTransformationKey(opts: { skip: TransformationKey[] }): TransformationKey | null;
+	public getValidTransformationKeys(): TransformationKey[] {
+		return [...this.transformations.keys()];
+	}
+	public getAllTransformationBoardStrings(): BoardString[] {
+		return [...this.transformations.values()];
+	}
+	public getAllUniqueTransformationBoardStrings(): BoardString[] {
+		return [...new Set(this.getAllTransformationBoardStrings())];
+	}
+	public amountOfTransformations(): number {
+		return this.transformations.size;
+	}
+	public amountOfUniqueTransformations(): number {
+		return this.getAllUniqueTransformationBoardStrings().length;
+	}
+	/**
+	 * Checks whether the board has "symmetries",
+	 * i.e. if there are multiple transformations that result in the same board.
+	 * While not *strictly* a symmetrical board, a board that is identical after symbols are inverted can be considered symmetrical.
+	 */
+	public hasSymmetries(): boolean {
+		return this.getAllUniqueTransformationBoardStrings().length < this.amountOfTransformations();
+	}
+	public getSymmetricalTransformationKeys(): TransformationKey[][] {
+		const uniqueBoardStrings = this.getAllUniqueTransformationBoardStrings();
+		const result: TransformationKey[][] = [];
+		for (const boardString of uniqueBoardStrings) {
+			const group: TransformationKey[] = [];
+			for (const [key, value] of this.transformations) {
+				if (value === boardString) {
+					group.push(key);
+				}
+			}
+			result.push(group);
+		}
+		return result;
+	}
+
 	public getRandomTransformationKey(opts: { skip?: TransformationKey[] } = {}): TransformationKey | null {
 		const { skip = [] } = opts;
-		const filteredKeys = [...this.transformations.keys()].filter(key => !skip.includes(key));
+		const filteredKeys = this.getValidTransformationKeys().filter(key => !skip.includes(key));
 		if (filteredKeys.length === 0) return null;
 		return pickRandom(filteredKeys);
+	}
+	/**
+	 * Returns a random TransformationKey valid for the current puzzle.
+	 * It will never return two keys that produce the same board by checking the symmetrical groups and always picking one from those.
+	 */
+	public getRandomUniqueTransformationKey(opts: { skip?: TransformationKey[] } = {}): TransformationKey | null {
+		const symmGroups = this.getSymmetricalTransformationKeys();
+		const { skip = [] } = opts;
+		// filters out groups that contain any of the keys in skip
+		const filteredGroups = symmGroups.filter(group => {
+			return group.every(key => !skip.includes(key));
+		})
+		if (filteredGroups.length === 0) {
+			return null;
+		}
+		const group = pickRandom(filteredGroups);
+		// always return the first key in the group, to stay consistent
+		return group[0];
 	}
 
 	private subRot(a: RotationTransform, b: RotationTransform): RotationTransform {

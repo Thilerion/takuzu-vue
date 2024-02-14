@@ -16,6 +16,7 @@ import { puzzleHistoryTable, type FinishedPuzzleState } from "@/services/db/stat
 import type { PickOptional } from "@/types.js";
 import { PuzzleTransformations } from "@/lib/transformations/PuzzleTransformations.js";
 import type { TransformationKey } from "@/lib/transformations/types.js";
+import { getRandomPuzzleTransformationOnRestart } from "./composables/useRandomPuzzleTransformation.js";
 
 export const PUZZLE_STATUS = {
 	'NONE': 'NONE',
@@ -463,42 +464,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			const { deleteSavedPuzzle } = useSavedPuzzle();
 			deleteSavedPuzzle();
 
-			if (this.transformations == null) {
-				// initialize puzzleTransformations class first
-				this.transformations = {
-					previous: [],
-					handler: new PuzzleTransformations(this.initialBoard!.grid)
-				}
-				// set current transformation key in previous array
-				this.transformations.previous.push(
-					this.transformations.handler.getTransformationKeyOfGrid(this.initialBoard!.grid)!
-				)
-			}
-			const currentKey = this.transformations.handler.getTransformationKeyOfGrid(this.initialBoard!.grid)!;
-			// set current transformation key in previous array
-			this.transformations.previous.push(
-				currentKey
-			)
-
-			// keep previous transformations array at max length of 5
-			while (this.transformations.previous.length > 5) {
-				this.transformations.previous.shift();
-			}
-
-			let randomKey = this.transformations.handler.getRandomTransformationKey({ skip: [...this.transformations.previous] });
-			if (randomKey == null) {
-				// try again without previous transformations, which will not return null
-				randomKey = this.transformations.handler.getRandomTransformationKey();
-			}
-
-			const transformResult = this
-				.transformations
-				.handler
-				.getSynchronizedTransformedBoard([this.solution!], randomKey);
-
-			const board = transformResult.self;
-			const initialBoard = transformResult.self.copy();
-			const [solution] = transformResult.others;
+			const {	board, solution, initialBoard } = getRandomPuzzleTransformationOnRestart();
 
 			this.setAllBoards({ board, solution, initialBoard });
 
