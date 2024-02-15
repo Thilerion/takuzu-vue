@@ -1,21 +1,24 @@
-import { useSharedPuzzleToggle } from "@/composables/use-puzzle-toggle";
-import { SimpleBoard } from "@/lib";
-import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings } from "@/lib/types";
-import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
-import { countLineValues, pickRandom } from "@/lib/utils";
-import { fetchAndPreparePuzzle } from "@/services/create-puzzle";
-import { useSavedPuzzle } from "@/services/savegame/useSavedGame";
 import { defineStore } from "pinia";
+// Services
+import { useSavedPuzzle } from "@/services/savegame/useSavedGame";
+import { fetchAndPreparePuzzle } from "@/services/create-puzzle";
+import { puzzleHistoryTable, type FinishedPuzzleState } from "@/services/db/stats-db/index.js";
+import { useSharedPuzzleToggle } from "@/composables/use-puzzle-toggle";
+import { getRandomPuzzleTransformationOnRestart } from "./composables/useRandomPuzzleTransformation.js";
+// Other stores
 import { usePuzzleHintsStore } from "./puzzle-hinter";
 import { usePuzzleHistoryStore } from "./puzzle-history";
 import { usePuzzleTimer } from "./puzzle-timer";
 import { useRecapStatsStore } from "./recap-stats";
 import { usePuzzleAssistanceStore } from "./assistance/store";
-import { puzzleHistoryTable, type FinishedPuzzleState } from "@/services/db/stats-db/index.js";
-import type { PickOptional } from "@/types.js";
+// Lib imports and misc.
+import { SimpleBoard } from "@/lib";
+import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings } from "@/lib/types";
+import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
+import { countLineValues, pickRandom } from "@/lib/utils";
 import { PuzzleTransformations } from "@/lib/transformations/PuzzleTransformations.js";
 import type { TransformationKey } from "@/lib/transformations/types.js";
-import { getRandomPuzzleTransformationOnRestart } from "./composables/useRandomPuzzleTransformation.js";
+import type { PickOptional } from "@/types.js";
 
 export type PuzzleStatus = 'none' | 'loading' | 'error_loading' | 'playing' | 'paused' | 'finished'; 
 export type PuzzleStoreState = {
