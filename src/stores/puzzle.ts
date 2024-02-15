@@ -3,9 +3,8 @@ import { SimpleBoard } from "@/lib";
 import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings } from "@/lib/types";
 import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
 import { countLineValues, pickRandom } from "@/lib/utils";
-import { requestPuzzle } from "@/services/create-puzzle";
+import { fetchAndPreparePuzzle } from "@/services/create-puzzle";
 import { useSavedPuzzle } from "@/services/savegame/useSavedGame";
-import { initPregenPuzzles } from "@/workers/pregen-puzzles/interface.js";
 import { defineStore } from "pinia";
 import { usePuzzleHintsStore } from "./puzzle-hinter";
 import { usePuzzleHistoryStore } from "./puzzle-history";
@@ -282,31 +281,15 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 
 		async createPuzzle({ width, height, difficulty }: BasicPuzzleConfig) {
 			this.loading = true;
-
 			try {
-				const res = await requestPuzzle({ width, height, difficulty });
-				const { success } = res;
-				if (success) {
-					const { data } = res;
-					const { boardStr, solutionStr } = data;
-					const board = SimpleBoard.import(boardStr);
-					const solution = SimpleBoard.import(solutionStr);
-					const initialBoard = board.copy();
-
-					this.setAllBoards({ board, solution, initialBoard });
-					this.loading = false;
-
-					window.setTimeout(() => {
-						initPregenPuzzles();
-					}, 2000);
-				} else {
-					const { reason } = res;
-					throw new Error(reason as any); // TODO: remove cast
-				}
-			} catch (e) {
+				const {
+					board, solution, initialBoard
+				} = await fetchAndPreparePuzzle({ width, height, difficulty });				
+				this.setAllBoards({ board, solution, initialBoard });
+			} finally {
 				this.loading = false;
-				throw e;
 			}
+			// catch error in caller, which also sets creationError property
 		},
 		async initPuzzle(puzzleConfig: BasicPuzzleConfig) {
 			try {

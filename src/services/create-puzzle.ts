@@ -1,12 +1,31 @@
-import type { BasicPuzzleConfig } from "@/lib/types";
+import type { AllPuzzleBoards, BasicPuzzleConfig } from "@/lib/types";
 import { generatePuzzle } from "@/workers/generate-puzzle/interface.js"; 
 import type { GeneratedPuzzleResult } from "@/workers/generate-puzzle/worker.js";
 import { puzzleDb } from "./db/puzzles-db/init.js";
+import { SimpleBoard } from "@/lib/index.js";
+import { initPregenPuzzles } from "@/workers/pregen-puzzles/interface.js";
 
-type RequestError<T> = T extends 'reason' ? { success: false, reason: unknown } : T extends 'error' ? { success: false, error: unknown } : never;
+type RequestError<T> = T extends 'reason' ? { success: false, reason: string } : T extends 'error' ? { success: false, error: unknown } : never;
 type PuzzleRequestResult<T> = RequestError<T> | { success: true, data: GeneratedPuzzleResult };
 
-export async function requestPuzzle(puzzleConfig: BasicPuzzleConfig): Promise<PuzzleRequestResult<'reason'>> {
+export async function fetchAndPreparePuzzle(config: BasicPuzzleConfig): Promise<AllPuzzleBoards> {
+	const res = await requestPuzzle(config);
+	if (!res.success) throw new Error(res.reason);
+	const { boardStr, solutionStr } = res.data;
+	const board = SimpleBoard.import(boardStr);
+	const solution = SimpleBoard.import(solutionStr);
+	const initialBoard = board.copy();
+	// generate new puzzles in worker, to keep enough puzzles stored in database for when a user requests a new puzzle
+	window.setTimeout(() => {
+		initPregenPuzzles();
+	}, 2000);
+	return {
+		board,
+		solution,
+		initialBoard
+	}
+}
+async function requestPuzzle(puzzleConfig: BasicPuzzleConfig): Promise<PuzzleRequestResult<'reason'>> {
 	console.log('PUZZLE REQUESTED');
 	try {
 		const dbResult = await retrievePuzzleFromDatabase(puzzleConfig);
@@ -27,7 +46,9 @@ export async function requestPuzzle(puzzleConfig: BasicPuzzleConfig): Promise<Pu
 	} catch (e) {
 		console.warn('Unexpected error in requestPuzzle.');
 		console.error(e);
-		return { success: false, reason: e };
+		if (typeof e === 'string') return { success: false, reason: e };
+		else if (e instanceof Error) return { success: false, reason: e.message };
+		throw e;
 	}	
 }
 
