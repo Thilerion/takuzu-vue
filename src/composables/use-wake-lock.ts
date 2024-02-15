@@ -1,4 +1,4 @@
-import { PUZZLE_STATUS, usePuzzleStore } from "@/stores/puzzle";
+import { usePuzzleStore } from "@/stores/puzzle";
 import { useSettingsStore } from '@/stores/settings/store';
 import { useWakeLock, useIdle } from "@vueuse/core";
 import { computed, onMounted, onUnmounted, provide, ref, toRef, watch } from "vue";
@@ -19,7 +19,7 @@ export const usePuzzleWakeLock = ({ pauseAfter = 1.5 * MINUTE } = {}) => {
 	})
 
 	const shouldEnableWakeLock = computed(() => {
-		return settingsStore.enableWakeLock && playStatus.value === PUZZLE_STATUS.PLAYING;
+		return settingsStore.enableWakeLock && playStatus.value === 'playing';
 	})
 	const requestWakeLock = () => {
 		if (shouldEnableWakeLock.value) {

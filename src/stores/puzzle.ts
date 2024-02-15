@@ -18,16 +18,7 @@ import { PuzzleTransformations } from "@/lib/transformations/PuzzleTransformatio
 import type { TransformationKey } from "@/lib/transformations/types.js";
 import { getRandomPuzzleTransformationOnRestart } from "./composables/useRandomPuzzleTransformation.js";
 
-export const PUZZLE_STATUS = {
-	'NONE': 'NONE',
-	'LOADING': 'LOADING',
-	'ERROR_LOADING': 'ERROR_LOADING',
-	'INITIALIZED': 'INITIALIZED',
-	'PLAYING': 'PLAYING',
-	'PAUSED': 'PAUSED',
-	'FINISHED': 'FINISHED'
-}
-
+export type PuzzleStatus = 'none' | 'loading' | 'error_loading' | 'playing' | 'paused' | 'finished'; 
 export type PuzzleStoreState = {
 	width: number | null,
 	height: number | null,
@@ -118,19 +109,19 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			return progress;
 		},
 
-		status: state => {
+		status: (state): PuzzleStatus => {
 			if (!state.initialized) {
-				if (state.loading) return PUZZLE_STATUS.LOADING;
-				else if (state.creationError) return PUZZLE_STATUS.ERROR_LOADING;
-				else return PUZZLE_STATUS.NONE;
+				if (state.loading) return 'loading';
+				else if (state.creationError) return 'error_loading';
+				else return 'none';
 			}
 			// is initialized
 			if (state.finished) {
-				return PUZZLE_STATUS.FINISHED;
+				return 'finished';
 			} else if (state.paused) {
-				return PUZZLE_STATUS.PAUSED;
+				return 'paused';
 			} else if (state.board != null) {
-				return PUZZLE_STATUS.PLAYING;
+				return 'playing';
 			}
 			throw new Error('Unrecognized Puzzle status??!');
 		}
