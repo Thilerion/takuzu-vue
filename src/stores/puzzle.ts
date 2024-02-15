@@ -437,37 +437,22 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 
 		loadSavedPuzzle() {
 			this.reset();
-			const { savedPuzzle: currentSaved } = useSavedPuzzle();
-			const saveData = currentSaved.value;
+			const { getParsedSavedPuzzle } = useSavedPuzzle();
+			const saveData = getParsedSavedPuzzle();
 			if (saveData == null) {
 				throw new Error('No saved puzzle found!');
 			}
-			// import moveList
-			const { moveList } = saveData;
-			const { width, height, difficulty } = saveData;
-			this.setPuzzleConfig({ width, height, difficulty });
+			this.setPuzzleConfig(saveData.config);
 
 			// set time elapsed
 			const { timeElapsed } = saveData;
 			const timer = usePuzzleTimer();
 			timer.setInitialTimeElapsed(timeElapsed);
-			// commit('timer/setInitialTimeElapsed', timeElapsed);
-			// start timer?
 
-			const { initialBoard, solution, board } = saveData;
-
-			const initialBoard2 = SimpleBoard.fromString(initialBoard);
-			const board2 = SimpleBoard.fromString(board);
-			const solution2 = SimpleBoard.fromString(solution);
-			this.setAllBoards({
-				initialBoard: initialBoard2,
-				board: board2,
-				solution: solution2
-			})
+			this.setAllBoards(saveData.boards)
 
 			const puzzleHistory = usePuzzleHistoryStore();
-			puzzleHistory.importMoveHistory([...moveList]);
-
+			puzzleHistory.importMoveHistory([...saveData.moveList]);
 
 			this.initialized = true;
 		},

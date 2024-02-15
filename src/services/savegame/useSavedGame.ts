@@ -3,6 +3,7 @@ import { createSharedComposable, StorageSerializers, useStorage } from "@vueuse/
 import { readonly } from "vue";
 import type { SaveData, SaveGame } from "./types";
 import { getSaveData } from "./getSaveData";
+import { SimpleBoard } from "@/lib/index.js";
 const SAVE_DATA_STORAGE_KEY = 'takuzu_saved-game';
 
 const savedPuzzle = useStorage<SaveGame | null>(SAVE_DATA_STORAGE_KEY, null, localStorage, {
@@ -57,13 +58,37 @@ const _useSavedPuzzle = () => {
 		return true;
 	})
 
+	const getCurrentSavedPuzzle = (): SaveGame | null => {
+		if (savedPuzzle.value == null) return null;
+		return {
+			...savedPuzzle.value
+		}
+	}
+	const getParsedSavedPuzzle = () => {
+		const data = getCurrentSavedPuzzle();
+		if (data == null) return null;
+		const { width, height, difficulty, initialBoard, board, solution, moveList, timeElapsed } = data;
+		return {
+			config: { width, height, difficulty },
+			boards: {
+			initialBoard: SimpleBoard.fromString(initialBoard),
+			board: SimpleBoard.fromString(board),
+			solution: SimpleBoard.fromString(solution),
+			},
+			moveList,
+			timeElapsed,
+		};
+	}
+
 	return {
 		savedPuzzle: readonly(savedPuzzle),
 		hasCurrentSavedGame,
 		loadPuzzle,
 		deleteSavedPuzzle,
 		savePuzzle,
-		savePuzzleSaveData
+		savePuzzleSaveData,
+		getCurrentSavedPuzzle,
+		getParsedSavedPuzzle,
 	}
 }
 
