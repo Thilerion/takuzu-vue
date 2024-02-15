@@ -34,7 +34,6 @@ export type PuzzleStoreState = {
 		handler: PuzzleTransformations,
 	},
 
-	numCells: number | null,
 	initialEmpty: number | null,
 
 	rowCounts: Record<PuzzleValue, number>[],
@@ -67,7 +66,6 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 
 		transformations: null,
 
-		numCells: null,
 		initialEmpty: null,
 
 		rowCounts: [],
@@ -139,7 +137,6 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			this.width = width;
 			this.height = height;
 			this.difficulty = difficulty;
-			this.numCells = width * height;
 		},
 		setAllBoards({ board, solution, initialBoard }: AllPuzzleBoards) {
 			this.board = board;
