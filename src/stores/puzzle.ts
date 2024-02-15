@@ -151,12 +151,11 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			this.gridCounts = calculateGridCounts(board);
 			this.initialEmpty = [...initialBoard.cells({ skipFilled: true })].length;
 		},
-		refreshLineCounts() {
+		/** Refresh line and grid counts, after multiple changes to the board at once, instead of manually adding and subtracting after each change. */
+		refreshCounts() {
 			const { rowCounts, colCounts } = calculateLineCounts(this.board!);
-			this.$patch({ rowCounts, colCounts });
-		},
-		refreshGridCounts() {
-			this.gridCounts = calculateGridCounts(this.board!);
+			const gridCounts = calculateGridCounts(this.board!);
+			this.$patch({ rowCounts, colCounts, gridCounts });
 		},
 		reset() {
 			if (this.board != null && !this.initialized && !!this.board && !this.creationError) {
@@ -170,15 +169,6 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			usePuzzleAssistanceStore().reset();
 
 			this.$reset();
-		},
-		setInitialized(val = true) {
-			this.initialized = val;
-		},
-		setStarted(val = true) {
-			this.started = val;
-		},
-		setFinished(val = true) {
-			this.finished = val;
 		},
 		setPaused(val: boolean, { userAction = false } = {}) {
 			if (userAction) {
@@ -195,9 +185,6 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				hintStore.hide();
 			}
 
-		},
-		setCheatUsed() {
-			this.cheatsUsed = true;
 		},
 
 		_updateGridCount(value: PuzzleValue, prev: PuzzleValue) {
@@ -239,8 +226,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			for (const move of moves) {
 				this._setValue(move, false);
 			}
-			this.refreshLineCounts();
-			this.refreshGridCounts();
+			this.refreshCounts();
 			usePuzzleAssistanceStore().resetMarkedMistakes();
 			const puzzleHintsStore = usePuzzleHintsStore();
 			if (puzzleHintsStore.showHint) {
@@ -295,7 +281,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 		},
 
 		async createPuzzle({ width, height, difficulty }: BasicPuzzleConfig) {
-			this.setLoading(true);
+			this.loading = true;
 
 			try {
 				const res = await requestPuzzle({ width, height, difficulty });
@@ -308,7 +294,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 					const initialBoard = board.copy();
 
 					this.setAllBoards({ board, solution, initialBoard });
-					this.setLoading(false);
+					this.loading = false;
 
 					window.setTimeout(() => {
 						initPregenPuzzles();
@@ -318,7 +304,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 					throw new Error(reason as any); // TODO: remove cast
 				}
 			} catch (e) {
-				this.setLoading(false);
+				this.loading = false;
 				throw e;
 			}
 		},
@@ -326,7 +312,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			try {
 				this.setPuzzleConfig(puzzleConfig);
 				await this.createPuzzle(puzzleConfig);
-				this.setInitialized(true);
+				this.initialized = true;
 			} catch (e) {
 				this.reset();
 				this.setCreationError(true);
@@ -401,26 +387,15 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			this.reset();
 			this.setPuzzleConfig({ width, height, difficulty });
 			this.setAllBoards({ board, solution, initialBoard });
-			this.setInitialized(true);
+			this.initialized = true;
 		},
 		async finishPuzzle() {
-			this.setFinished(true);
+			this.finished = true;
 			const timer = usePuzzleTimer();
 			timer.pause();
 
 			const timeElapsed = timer.timeElapsed;
-			/* const checkData = {
-				...usePuzzleAssistanceStore().checkAssistanceData
-			}
-			const hintAssistanceData = usePuzzleHintsStore().hintAssistanceData;
-			const state = { ...this.$state }; */
-			// const finishedPuzzleState: FinishedPuzzleState = {
-			// 	...state, timeElapsed, assistance: {
-			// 		// checkData,
-			// 		// hintData: hintAssistanceData,
-			// 		cheatsUsed: this.cheatsUsed
-			// 	}
-			// };
+			// TODO: assistance from assistance store, with "checkData" etc
 			const finishedPuzzleState: FinishedPuzzleState = {
 				width: this.width as number,
 				height: this.height as number,
@@ -469,7 +444,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			if (!this.initialized) throw new Error('Cannot start uninitialized game!');
 			if (this.started) throw new Error('Cannot start a game that already has started !');
 
-			this.setStarted(true);
+			this.started = true;
 			const timer = usePuzzleTimer();
 			timer.start();
 		},
@@ -508,8 +483,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			puzzleHistory.importMoveHistory([...moveList]);
 
 
-			this.setInitialized(true);
-
+			this.initialized = true;
 		},
 	}
 })

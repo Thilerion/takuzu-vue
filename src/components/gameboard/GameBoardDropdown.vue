@@ -73,7 +73,7 @@ const puzzleStore = usePuzzleStore();
 const {
 	board,
 } = storeToRefs(puzzleStore);
-const setCheatUsed = () => puzzleStore.setCheatUsed();
+const setCheatUsed = () => puzzleStore.cheatsUsed = true;
 
 const mainStore = useMainStore();
 const debugModeEnabled = toRef(mainStore, 'debugMode');
