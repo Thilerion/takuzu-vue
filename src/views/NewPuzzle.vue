@@ -233,10 +233,11 @@ async function replayRandom() {
 	const { width, height } = selectedDimensions.value;
 	const difficulty = selectedDifficulty.value;
 
-	const found = await puzzleStore.replayRandomPuzzle({ width, height, difficulty });
-	if (found) {
+	try {
+		const found = await puzzleStore.replayRandomPuzzle({ width, height, difficulty });
+		if (!found) throw new Error('Could not retrieve replay puzzle.');
 		router.push({ name: 'PlayPuzzle', query: { mode: 'replay' } });
-	} else {
+	} catch {
 		window.alert('No replayable puzzle found.'); // TODO: alternative to an alert
 	}
 }

@@ -1,10 +1,10 @@
 import { defineStore } from "pinia";
 // Services
 import { useSavedPuzzle } from "@/services/savegame/useSavedGame";
-import { fetchAndPreparePuzzle } from "@/services/create-puzzle";
-import { puzzleHistoryTable, type FinishedPuzzleState } from "@/services/db/stats-db/index.js";
+import { fetchAndPreparePuzzle, fetchRandomReplayablePuzzle } from "@/services/fetch-puzzle.js";
 import { useSharedPuzzleToggle } from "@/composables/use-puzzle-toggle";
 import { getRandomPuzzleTransformationOnRestart } from "./composables/useRandomPuzzleTransformation.js";
+import type { FinishedPuzzleState } from "@/services/db/stats-db/models.js";
 // Other stores
 import { usePuzzleHintsStore } from "./puzzle-hinter";
 import { usePuzzleHistoryStore } from "./puzzle-history";
@@ -13,10 +13,10 @@ import { useRecapStatsStore } from "./recap-stats";
 import { usePuzzleAssistanceStore } from "./assistance/store";
 // Lib imports and misc.
 import { SimpleBoard } from "@/lib";
-import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings } from "@/lib/types";
 import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
-import { countLineValues, pickRandom } from "@/lib/utils";
+import { countLineValues } from "@/lib/utils";
 import { PuzzleTransformations } from "@/lib/transformations/PuzzleTransformations.js";
+import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings } from "@/lib/types";
 import type { TransformationKey } from "@/lib/transformations/types.js";
 import type { PickOptional } from "@/types.js";
 
@@ -317,52 +317,14 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				board, solution, initialBoard
 			})
 		},
-		async replayRandomPuzzle({
-			width, height, difficulty
-		}: BasicPuzzleConfig) {
-			const previousPlays = await puzzleHistoryTable.where('[width+height+difficulty]').equals([width, height, difficulty]).toArray();
-			if (!previousPlays.length) return false;
-
-			const timestamp = Date.now();
-			const second = 1000;
-			const minute = 60 * second;
-			const hour = 60 * minute;
-			const fourHours = hour * 4;
-
-			const recentlyPlayedBoards: string[] = previousPlays.filter((val: any) => {
-				const timeDiff: number = timestamp - val.timestamp;
-				if (timeDiff < fourHours) return true;
-				return false;
-			}).map((val: any): string => val.initialBoard);
-
-			const initialBoards: string[] = previousPlays.map((val: any): string => val.initialBoard);
-			const uniquePreviousBoards = [
-				...new Set(initialBoards)
-			].filter(initialBoardStr => {
-				// filter out all recently played boards
-				return !recentlyPlayedBoards.includes(initialBoardStr)
-			});
-
-			if (!uniquePreviousBoards.length) {
-				console.log('Found boards, but none that were not recently played.');
+		async replayRandomPuzzle(puzzleConfig: BasicPuzzleConfig): Promise<boolean> {			
+			const fetchedRandomPuzzle = await fetchRandomReplayablePuzzle(puzzleConfig);
+			if (fetchedRandomPuzzle == null) {
 				return false;
 			}
-
-			const randomBoard = pickRandom(uniquePreviousBoards);
-
-			const randomPuzzle = previousPlays.find((val: { initialBoard: string }) => val.initialBoard === randomBoard);
-			if (randomPuzzle == null) {
-				// TODO: is this check needed? when can it fail and why?
-				throw new Error('Could not find random puzzle from previous plays.');
-			}
-			const boardStrings = {
-				board: randomPuzzle.initialBoard,
-				solution: randomPuzzle.solution
-			}
-			const puzzleConfig = { width, height, difficulty };
 			await this.replayPuzzle({
 				puzzleConfig,
-				boardStrings
+				boardStrings: fetchedRandomPuzzle
 			})
 			return true;
 		},
