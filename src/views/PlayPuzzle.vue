@@ -3,7 +3,7 @@
 		:class="{ 'puzzle-paused': paused, 'puzzle-finished': finished }">
 		<GameBoardHeader
 			@close="exitGame"
-			@dropdown-toggled="dropdownToggled"
+			@dropdown-toggled="onDropdownToggled"
 			@pause="manualPauseGame"
 			@resume="manualResumeGame"
 		/>
@@ -27,19 +27,19 @@
 			>
 				<template v-slot:puzzle-info>
 					<PuzzleInfo :show-timer="showTimer" :difficulty="difficulty" :progress="progress"
-						:has-border="showRulers" />
+						:has-border="rulerType != null" />
 				</template>
 				<template v-slot:ruler-rows>
 					<CoordsRuler v-if="rulerType === 'coords'" line-type="rows"
 						:line-ids="board.rowIds" />
-					<CountsRuler v-else-if="showRulers"
+					<CountsRuler v-else-if="rulerType === 'count-current' || rulerType === 'count-remaining'"
 						:count-type="rulerType === 'count-remaining' ? 'remaining' : 'current'" line-type="rows"
 						:cell-size="cellSize" />
 				</template>
 				<template v-slot:ruler-columns>
 					<CoordsRuler v-if="rulerType === 'coords'" line-type="columns"
 						:line-ids="board.columnIds" />
-					<CountsRuler v-else-if="showRulers"
+					<CountsRuler v-else-if="rulerType === 'count-current' || rulerType === 'count-remaining'"
 						:count-type="rulerType === 'count-remaining' ? 'remaining' : 'current'" line-type="columns"
 						:cell-size="cellSize" />
 				</template>
@@ -85,13 +85,9 @@ import CoordsRuler from '@/components/gameboard/ruler/CoordsRuler.vue';
 
 import { usePuzzleWakeLock } from '@/composables/use-wake-lock';
 
-import { useSettingsStore } from '@/stores/settings/store';
 import { storeToRefs } from 'pinia';
-import { computed, toRef, watch, type Ref, onBeforeMount, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue';
-import { useSavedPuzzle } from '@/services/savegame/useSavedGame';
-import { useMainStore } from '@/stores/main';
+import { computed, watch, onBeforeMount, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue';
 import { useRecapStatsStore } from '@/stores/recap-stats';
-import { rulerType as RULER_TYPE } from '@/stores/settings/options';
 import { usePuzzleAssistanceStore } from '@/stores/assistance/store';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from 'vue-router';
 import type { DifficultyKey } from '@/lib/types.js';
@@ -100,10 +96,28 @@ import { usePuzzlePauseResume } from '@/stores/puzzle/usePuzzlePauseResume.js';
 import { usePuzzleHistoryStore } from '@/stores/puzzle/history-store.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { usePuzzleHintsStore } from '@/stores/hints/store.js';
+import { usePlayPuzzleUiState } from './usePlayPuzzleUiState.js';
+import { usePlayPuzzleSaveHandler } from './usePlayPuzzleSaveHandler.js';
 
-const settingsStore = useSettingsStore();
+const { 
+	windowHidden,
+	rulerType,
+	rulerSize,
+	showTimer,
+	onDropdownToggled,
+	setSettingsOpen,
 
-const { showLineInfo, showBoardCoordinates, showBoardLineCounts, showRulers, showTimer } = storeToRefs(settingsStore);
+	dropdownOpen,
+	settingsOpen,
+} = usePlayPuzzleUiState();
+
+const {
+	hasCurrentSavedGame,
+	saveGame,
+
+	initAutoSave,
+	stopAutoSave,
+} = usePlayPuzzleSaveHandler();
 
 useRecapStatsStore();
 const puzzleHistoryStore = usePuzzleHistoryStore();
@@ -120,8 +134,6 @@ const {
 const {
 	idle: userIdle,
 } = usePuzzleWakeLock();
-
-const { hasCurrentSavedGame, savePuzzleSaveData } = useSavedPuzzle();
 
 const puzzleStore = usePuzzleStore();
 const {
@@ -142,29 +154,8 @@ watch(userIdle, (isIdle) => {
 	}
 })
 
-const mainStore = useMainStore();
-const windowHidden = toRef(mainStore.context, 'windowHidden');
-
 const finishedTimeout = ref<null | ReturnType<typeof setInterval>>(null);
 const mistakeCheckTimeout = ref<null | ReturnType<typeof setInterval>>(null);
-const autoSaveInterval = ref<null | ReturnType<typeof setInterval>>(null);
-
-const dropdownOpen = ref(false);
-const settingsOpen = ref(false);
-
-const rulerType = computed(() => {
-	if (showBoardCoordinates.value) return 'coords';
-	else if (showLineInfo.value === RULER_TYPE.COUNT_REMAINING) return 'count-remaining';
-	else if (showLineInfo.value === RULER_TYPE.COUNT_CURRENT) return 'count-current';
-	return null;
-})
-const rulerSize = computed(() => {
-	if (showBoardCoordinates.value) {
-		return 16; //16px
-	} else if (showBoardLineCounts.value) {
-		return 'cellSize';
-	} else return null;
-})
 
 const progress = computed(() => {
 	const base = puzzleStore.progress;
@@ -173,7 +164,6 @@ const progress = computed(() => {
 	if (rounded == 100 && base < 1) return 99;
 	return rounded;
 })
-const boardGrid = computed(() => board.value?.grid);
 
 const puzzleShouldBeAutoPaused = computed(() => {
 	return settingsOpen.value || dropdownOpen.value || windowHidden.value;
@@ -210,39 +200,14 @@ const startGame = () => {
 	}
 	puzzleStore.startPuzzle();
 }
-const canSaveGame = () => {
-	return initialized.value && started.value && !finished.value && boardGrid.value != null;
-}
-const saveGame = () => {
-	if (canSaveGame()) {
-		savePuzzleSaveData();
-	}
-}
 
 const goBackToNewPuzzle = useGoBackOrReplaceTo({ name: 'NewPuzzleFreePlay' });
 const exitGame = () => {
-	if (canSaveGame()) {
-		saveGame(); // TODO: unnecessary canSaveGame check
-	}
+	saveGame();
 	goBackToNewPuzzle();
 }
 const { undoLastMove: undo, restartPuzzle: restart } = puzzleStore;
-const dropdownToggled = (val: boolean) => dropdownOpen.value = val;
 const finishGame = async () => puzzleStore.finishPuzzle();
-
-const initAutoSave = () => {
-	if (autoSaveInterval.value != null) {
-		console.error('Trying to init autosave, but it is already running. Resetting.');
-		clearInterval(autoSaveInterval.value);
-	}
-	autoSaveInterval.value = globalThis.setInterval(() => {
-		saveGame();
-	}, 1500);
-}
-const stopAutoSave = () => {
-	clearInterval(autoSaveInterval.value!);
-	autoSaveInterval.value = null;
-}
 
 const checkErrors = () => {
 	userCheckErrors();
@@ -264,9 +229,7 @@ onBeforeMount(() => {
 	}
 })
 onBeforeUnmount(() => {
-	if (canSaveGame()) {
-		saveGame(); // TODO: unnecessary canSaveGame check
-	}
+	saveGame();
 	stopAutoSave();
 
 	clearTimeout(finishedTimeout.value!);
@@ -286,9 +249,8 @@ onBeforeRouteLeave((to, from, next) => {
 
 onBeforeRouteUpdate((to, from, next) => {
 	const toName = to?.name;
-	if (typeof toName === 'string' && toName.toLowerCase().includes('settings')) {
-		settingsOpen.value = true;
-	} else settingsOpen.value = false;
+	const settingsShouldBeOpen = typeof toName === 'string' && toName.toLowerCase().includes('settings');
+	setSettingsOpen(settingsShouldBeOpen);
 	next();
 })
 
