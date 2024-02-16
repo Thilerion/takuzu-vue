@@ -205,7 +205,7 @@ watch([selectedDimensions, selectedDifficulty], (value) => {
 })
 
 const puzzleStore = usePuzzleStore();
-const puzzleIsLoading = computed(() => puzzleStore.loading);
+const puzzleIsLoading = computed(() => puzzleStore.status === 'loading');
 const resetGame = () => puzzleStore.reset();
 
 const router = useRouter();
@@ -224,7 +224,9 @@ async function createGame() {
 		await puzzleStore.initPuzzle({ width, height, difficulty });
 		router.push({ name: 'PlayPuzzle' });
 	} catch(e) {
+		// TODO: puzzleStore.creationError is now true, display a warning of some kind
 		console.warn(e);
+		window.alert('An error occured while trying to generate a puzzle.')
 	}			
 }
 
@@ -238,7 +240,8 @@ async function replayRandom() {
 		if (!found) throw new Error('Could not retrieve replay puzzle.');
 		router.push({ name: 'PlayPuzzle', query: { mode: 'replay' } });
 	} catch {
-		window.alert('No replayable puzzle found.'); // TODO: alternative to an alert
+		// TODO: puzzleStore.creationError is now true, display a warning of some kind (better than windows.alert at least)
+		window.alert('No replayable puzzle found.');
 	}
 }
 </script>

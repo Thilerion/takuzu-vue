@@ -274,15 +274,22 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			})
 		},
 		async replayRandomPuzzle(puzzleConfig: BasicPuzzleConfig): Promise<boolean> {			
-			const fetchedRandomPuzzle = await fetchRandomReplayablePuzzle(puzzleConfig);
-			if (fetchedRandomPuzzle == null) {
-				return false;
-			}
-			await this.replayPuzzle({
-				puzzleConfig,
-				boardStrings: fetchedRandomPuzzle
-			})
-			return true;
+			try {
+				const fetchedRandomPuzzle = await fetchRandomReplayablePuzzle(puzzleConfig);
+				if (fetchedRandomPuzzle == null) {
+					return false;
+				}
+				await this.replayPuzzle({
+					puzzleConfig,
+					boardStrings: fetchedRandomPuzzle
+				})
+				return true;
+			} catch (e) {
+				console.warn('Could not replay random puzzle.');
+				this.reset();
+				this.setCreationError(true);
+				throw e;
+			}			
 		},
 		loadPuzzle({
 			width, height, difficulty,
@@ -301,11 +308,11 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			const timeElapsed = timer.timeElapsed;
 			// TODO: assistance from assistance store, with "checkData" etc
 			const finishedPuzzleState: FinishedPuzzleState = {
-				width: this.width as number,
-				height: this.height as number,
+				width: this.width!,
+				height: this.height!,
 				difficulty: this.difficulty as DifficultyKey,
-				initialBoard: this.initialBoard as SimpleBoard,
-				solution: this.solution as SimpleBoard,
+				initialBoard: this.initialBoard!,
+				solution: this.solution!,
 				timeElapsed,
 				assistance: {
 					cheatsUsed: this.cheatsUsed
@@ -354,6 +361,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 		},
 
 		loadSavedPuzzle() {
+			// TODO: a savedPuzzle should have the "replay mode" persisted
 			this.reset();
 			const { getParsedSavedPuzzle } = useSavedPuzzle();
 			const saveData = getParsedSavedPuzzle();
