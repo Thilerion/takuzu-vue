@@ -116,9 +116,10 @@ const {
 	autoFilledBoardCheck: autoCheckErrors
 } = puzzleAssistanceStore;
 
-// TODO: enable/disable wakeLock (was removed sometime, possibly accidentally)
-const wakeLock = usePuzzleWakeLock();
-const userIdle: Ref<boolean> = wakeLock.idle;
+// Start UsePuzzleWakeLock composable, immediately initializes wakeLock if enabled in settings.
+const {
+	idle: userIdle,
+} = usePuzzleWakeLock();
 
 const { hasCurrentSavedGame, savePuzzleSaveData } = useSavedPuzzle();
 

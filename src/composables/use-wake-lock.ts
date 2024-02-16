@@ -16,42 +16,35 @@ export const usePuzzleWakeLock = ({ pauseAfter = 1.5 * MINUTE } = {}) => {
 	const hasActivated = ref(isActive.value);
 	watch(isActive, (value) => {
 		hasActivated.value = value;
+	}, {
+		flush: 'sync'
 	})
 
 	const shouldEnableWakeLock = computed(() => {
-		return settingsStore.enableWakeLock && playStatus.value === 'playing';
+		return settingsStore.enableWakeLock && playStatus.value === 'playing' && !idle.value;
 	})
 	const requestWakeLock = () => {
-		if (shouldEnableWakeLock.value) {
-			// console.log('Requesting wake lock.');
+		if (shouldEnableWakeLock.value && !hasActivated.value) {
 			request?.('screen');
 		}
 	}
 
 	const releaseWakeLock = () => {
-		// console.log('Releasing wake lock.');
 		if (!isActive.value || !hasActivated.value) {
 			return;
 		}
 		// needed because release is not instantly shown in "isActive"
 		hasActivated.value = false;
-		release()
+		release?.()
 			.catch(() => {
 				console.warn('Could not release wake lock.');
 			});
 	}
 
-	watch(idle, (isIdle) => {
-		if (isIdle) {
-			releaseWakeLock();
-		} else {
-			requestWakeLock();
-		}
-	})
 	watch(shouldEnableWakeLock, (curr) => {
 		if (curr) requestWakeLock();
 		else if (!curr) releaseWakeLock();
-	})
+	}, { immediate: true });
 
 	onMounted(() => {
 		requestWakeLock();
