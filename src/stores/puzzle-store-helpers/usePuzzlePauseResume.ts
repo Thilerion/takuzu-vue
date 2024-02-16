@@ -24,9 +24,9 @@ export const usePuzzlePauseResume = createSharedComposable(() => {
 		store.pausedManually = true;
 	}
 	const manualResumeGame = () => {
-		if (!store.pausedManually) return;
-	
+		// manual resume should also clear automatic pause if it is still active (for instance due to idle time)
 		store.pausedManually = false;
+		store.pausedAutomatically = false;
 	}
 	const toggleManualPause = () => {
 		if (store.pausedManually) {
