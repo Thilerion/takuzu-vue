@@ -8,7 +8,7 @@
 					v-if="showHint && currentHint != null"
 					:hint="currentHint"
 					@done="puzzleHintsStore.removeHint"
-					@hide="puzzleHintsStore.hide"
+					@hide="hide"
 				></PuzzleHint>
 		</transition>
 	</div>
@@ -16,10 +16,28 @@
 
 <script setup lang="ts">
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter';
+import { usePuzzleStore } from '@/stores/puzzle.js';
 import { storeToRefs } from 'pinia';
+import { watchEffect } from 'vue';
 
 const puzzleHintsStore = usePuzzleHintsStore();
 const { showHint, currentHint } = storeToRefs(puzzleHintsStore);
+const { hide } = puzzleHintsStore;
+
+const puzzleStore = usePuzzleStore();
+watchEffect(() => {
+	if (puzzleStore.paused) {
+		hide();
+		return;
+	}
+})
+puzzleStore.$onAction(({
+	name
+}) => {
+	// hide the hint if a value is set on the board
+	if (name === '_setValue' && showHint.value) hide();
+})
+
 </script>
 
 <style scoped>

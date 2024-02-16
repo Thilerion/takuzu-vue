@@ -1,6 +1,5 @@
 import { createSharedComposable } from "@vueuse/core";
-import { computed, watchEffect } from "vue";
-import { usePuzzleHintsStore } from "../puzzle-hinter.js";
+import { watchEffect } from "vue";
 import { usePuzzleTimer } from "../puzzle-timer.js";
 import { usePuzzleStore } from "../puzzle.js";
 import { toRef } from "vue";
@@ -46,17 +45,11 @@ export const usePuzzlePauseResume = createSharedComposable(() => {
 	const anyPaused = toRef(store, 'paused');
 
 	const timerStore = usePuzzleTimer();
-	const hintStore = usePuzzleHintsStore();
 	watchEffect(() => {
 		if (anyPaused.value && timerStore.running) {
 			timerStore.pause();
 		} else if (!anyPaused.value && !timerStore.running) {
 			timerStore.resume();
-		}
-
-		// TODO: do this inside the hint component instead
-		if (anyPaused.value) {
-			hintStore.hide();
 		}
 	})
 

@@ -28,7 +28,7 @@ export type PuzzleStoreState = {
 	initialBoard: SimpleBoard | null,
 	board: SimpleBoard | null,
 	solution: SimpleBoard | null,
-	solutionBoardStr: string | null,
+	solutionBoardStr: BoardString | null,
 
 	transformations: null | {
 		previous: TransformationKey[],
@@ -194,10 +194,6 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			}
 			this.refreshCounts();
 			usePuzzleAssistanceStore().resetMarkedMistakes();
-			const puzzleHintsStore = usePuzzleHintsStore();
-			if (puzzleHintsStore.showHint) {
-				usePuzzleHintsStore().hide();
-			}
 		},
 		setValue({ x, y, value, prevValue }: PickOptional<VecValueChange, 'prevValue'>) {
 			if (!prevValue) {
@@ -205,10 +201,6 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			} else this._setValue({ x, y, value, prevValue });
 
 			usePuzzleAssistanceStore().removeFromMarkedMistakes({ x, y });
-			const puzzleHintsStore = usePuzzleHintsStore();
-			if (puzzleHintsStore.showHint) {
-				usePuzzleHintsStore().hide();
-			}
 		},
 		makeMove({ x, y, value, prevValue }: PickOptional<VecValueChange, 'prevValue'>) {
 			if (!prevValue) {

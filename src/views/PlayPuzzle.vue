@@ -89,7 +89,7 @@ import { useSettingsStore } from '@/stores/settings/store';
 import { storeToRefs } from 'pinia';
 import { usePuzzleHistoryStore } from '@/stores/puzzle-history';
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter';
-import { computed, toRef, watch } from 'vue';
+import { computed, toRef, watch, type Ref } from 'vue';
 import { useSavedPuzzle } from '@/services/savegame/useSavedGame';
 import { usePuzzleStore } from '@/stores/puzzle';
 import { useMainStore } from '@/stores/main';
@@ -124,7 +124,7 @@ const {
 
 // TODO: enable/disable wakeLock (was removed sometime, possibly accidentally)
 const wakeLock = usePuzzleWakeLock();
-const userIdle = wakeLock.idle;
+const userIdle: Ref<boolean> = wakeLock.idle;
 
 const { hasCurrentSavedGame, savePuzzleSaveData } = useSavedPuzzle();
 
