@@ -154,6 +154,7 @@ declare module 'vue' {
     PuzzleRecapRecordBanner: typeof import('./src/components/puzzle-recap/content/PuzzleRecapRecordBanner.vue')['default']
     PuzzleRecapTimeScore: typeof import('./src/components/puzzle-recap/content/PuzzleRecapTimeScore.vue')['default']
     PuzzleRecapWrapper: typeof import('./src/components/puzzle-recap/PuzzleRecapWrapper.vue')['default']
+    PuzzleRecapWrapper2: typeof import('./src/components/puzzle-recap/PuzzleRecapWrapper2.vue')['default']
     PuzzleStatisticsTable: typeof import('./src/views/PuzzleStatisticsTable.vue')['default']
     PuzzleSymbolDisplay: typeof import('./src/components/how-to-play/PuzzleSymbolDisplay.vue')['default']
     PuzzleTools: typeof import('./src/views/PuzzleTools.vue')['default']
