@@ -19,13 +19,13 @@
 				<icon-ic-baseline-pause v-if="!paused" />
 				<icon-ic-baseline-play-arrow v-else />
 			</IconBtn>
-			<GameBoardDropdown
+			<GameBoardHeaderDropdown
 				@open-settings="openSettings"
 				@dropdown-toggled="dropdownToggled"
 			/>
 		</div>
 	</header>
-	<PuzzleProgressBar
+	<GameBoardHeaderProgressBar
 		v-show="puzzleStore.started"
 		:progress-ratio="puzzleStore.progress"
 		:error="puzzleStore.finishedWithMistakes"

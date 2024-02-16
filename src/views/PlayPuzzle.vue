@@ -60,7 +60,7 @@
 				@check="puzzleAssistanceStore.userCheck"
 				@get-hint="puzzleHintsStore.getHint"
 			/>
-			<HintWrapper />
+			<PuzzleHintWrapper />
 		</div>
 
 		<router-view v-slot="{ Component }">
@@ -83,7 +83,7 @@ import GameBoardWrapper from '@/components/gameboard/GameBoardWrapper.vue';
 import PuzzleControls from '@/components/gameboard/PuzzleControls.vue';
 import PuzzleInfo from '@/components/gameboard/PuzzleInfo.vue';
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
-import HintWrapper from '@/components/gameboard/hints/HintWrapper.vue';
+import PuzzleHintWrapper from '@/components/gameboard/hints/PuzzleHintWrapper.vue';
 import PuzzleRecap from '@/components/puzzle-recap/PuzzleRecap.vue';
 import CountsRuler from '@/components/gameboard/ruler/CountsRuler.vue';
 import CoordsRuler from '@/components/gameboard/ruler/CoordsRuler.vue';
