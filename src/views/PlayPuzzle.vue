@@ -26,7 +26,7 @@
 				:cell-size="cellSize"
 			>
 				<template v-slot:puzzle-info>
-					<PuzzleInfo :show-timer="showTimer" :difficulty="(difficulty as DifficultyKey)" :progress="progress"
+					<PuzzleInfo :show-timer="showTimer" :difficulty="(difficulty as DifficultyKey)" :progress="progressPercentage"
 						:has-border="rulerType != null" />
 				</template>
 				<template v-slot:ruler-rows>
@@ -50,8 +50,8 @@
 			<PuzzleControls
 				:can-undo="puzzleHistoryStore.canUndo"
 				:paused="paused"
-				@undo="undo"
-				@restart="restart"
+				@undo="puzzleStore.undoLastMove"
+				@restart="puzzleStore.restartPuzzle"
 				@check="puzzleAssistanceStore.userCheck"
 				@get-hint="puzzleHintsStore.getHint"
 			/>
@@ -84,9 +84,8 @@ import CountsRuler from '@/components/gameboard/ruler/CountsRuler.vue';
 import CoordsRuler from '@/components/gameboard/ruler/CoordsRuler.vue';
 
 import { usePuzzleWakeLock } from '@/composables/use-wake-lock';
-
 import { storeToRefs } from 'pinia';
-import { computed, watch, onBeforeMount, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
 import { useRecapStatsStore } from '@/stores/recap-stats';
 import { usePuzzleAssistanceStore } from '@/stores/assistance/store';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from 'vue-router';
@@ -99,6 +98,7 @@ import { usePuzzleHintsStore } from '@/stores/hints/store.js';
 import { usePlayPuzzleUiState } from './usePlayPuzzleUiState.js';
 import { usePlayPuzzleSaveHandler } from './usePlayPuzzleSaveHandler.js';
 import { usePlayPuzzleAutoPause } from './usePlayPuzzleAutoPause.js';
+import { useGameCompletion } from './usePlayPuzzleCompletion.js';
 
 const { 
 	windowHidden,
@@ -130,24 +130,25 @@ usePlayPuzzleAutoPause(
 );
 const { manualPauseGame, manualResumeGame } = usePuzzlePauseResume();
 
-// initialize required stores
+// Setup watchers for puzzle completion
+const { clearCompletionCheckTimeouts } = useGameCompletion();
+
+// initialize required stores and router
 useRecapStatsStore();
 const puzzleHistoryStore = usePuzzleHistoryStore();
 const puzzleHintsStore = usePuzzleHintsStore();
 const puzzleAssistanceStore = usePuzzleAssistanceStore();
 const puzzleStore = usePuzzleStore();
+const router = useRouter();
 
 const {
 	board, initialized, started, paused, finished,
-	finishedAndSolved, finishedWithMistakes,
 	height: rows, width: columns,
 	difficulty
 } = storeToRefs(puzzleStore);
 
-const finishedTimeout = ref<null | ReturnType<typeof setInterval>>(null);
-const mistakeCheckTimeout = ref<null | ReturnType<typeof setInterval>>(null);
-
-const progress = computed(() => {
+// Display the progress as, rounded and as percentage, while preventing it from being 100% if the puzzle is not yet solved.
+const progressPercentage = computed(() => {
 	const base = puzzleStore.progress;
 	const rounded = Math.ceil(base * 100);
 	// prevent progress from being 100 when not every cell is filled
@@ -167,19 +168,17 @@ const startGame = () => {
 	puzzleStore.startPuzzle();
 }
 
-const goBackToNewPuzzle = useGoBackOrReplaceTo({ name: 'NewPuzzleFreePlay' });
+const goBackToNewPuzzleRoute = useGoBackOrReplaceTo({ name: 'NewPuzzleFreePlay' });
 const exitGame = () => {
 	saveGame();
-	goBackToNewPuzzle();
+	goBackToNewPuzzleRoute();
 }
-const { undoLastMove: undo, restartPuzzle: restart } = puzzleStore;
-const finishGame = async () => puzzleStore.finishPuzzle();
 
+// MOUNT/UNMOUNT HANDLERS
 onMounted(() => {
 	startGame();
 	initAutoSave();
 })
-const router = useRouter();
 onBeforeMount(() => {
 	if (!initialized.value) {
 		if (hasCurrentSavedGame.value) {
@@ -193,11 +192,10 @@ onBeforeMount(() => {
 onBeforeUnmount(() => {
 	saveGame();
 	stopAutoSave();
-
-	clearTimeout(finishedTimeout.value!);
-	clearTimeout(mistakeCheckTimeout.value!);
+	clearCompletionCheckTimeouts();
 })
 
+// NAVIGATION GUARDS
 onBeforeRouteLeave((to, from, next) => {
 	puzzleStore.reset();
 
@@ -214,35 +212,6 @@ onBeforeRouteUpdate((to, from, next) => {
 	const settingsShouldBeOpen = typeof toName === 'string' && toName.toLowerCase().includes('settings');
 	setSettingsOpen(settingsShouldBeOpen);
 	next();
-})
-
-watch(finishedAndSolved, (newValue, prevValue) => {
-	if (newValue) {
-		finishedTimeout.value = globalThis.setTimeout(() => {
-			finishGame();
-			finishedTimeout.value = null;
-		}, 600);
-	} else if (prevValue && !newValue) {
-		// no longer correctly solved
-		clearTimeout(finishedTimeout.value!);
-		finishedTimeout.value = null;
-	}
-})
-
-watch(finishedWithMistakes, (newValue) => {
-	if (newValue) {
-		mistakeCheckTimeout.value = globalThis.setTimeout(() => {
-			mistakeCheckTimeout.value = null;
-			if (!finishedWithMistakes.value) {
-				return;
-			}
-			// autoCheckErrors
-			puzzleAssistanceStore.autoFilledBoardCheck();
-		}, 2000);
-	} else {
-		clearTimeout(mistakeCheckTimeout.value!);
-		mistakeCheckTimeout.value = null;
-	}
 })
 </script>
 
