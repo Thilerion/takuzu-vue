@@ -19,6 +19,7 @@
 				'width': gridWidth,
 				'height': gridHeight,
 			}"
+			:initial-grid="puzzleStore.initialBoard!.grid"
 			@toggle-cell="toggleCell"
 		/>
 
@@ -41,7 +42,7 @@
 <script setup lang="ts">
 import PuzzleGrid from './PuzzleGrid.vue';
 import type { SimpleBoard } from '@/lib/index.js';
-import type { VecValueChange } from '@/lib/types.js';
+import type { VecValue } from '@/lib/types.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { usePuzzlePauseResume } from '@/stores/puzzle/usePuzzlePauseResume.js';
 
@@ -55,7 +56,7 @@ defineProps<{
 	paused: boolean,
 }>();
 const puzzleStore = usePuzzleStore();
-const toggleCell = ({ x, y, value }: Omit<VecValueChange, 'prevValue'>) => puzzleStore.toggle({ x, y, prevValue: value });
+const toggleCell = ({ x, y, value }: VecValue) => puzzleStore.toggle({ x, y, prevValue: value });
 const { manualResumeGame } = usePuzzlePauseResume();
 const resumeByUser = () => {
 	console.log('resume by user');

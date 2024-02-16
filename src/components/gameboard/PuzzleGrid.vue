@@ -24,32 +24,30 @@
 
 <script setup lang="ts">
 import type { SimpleBoard } from '@/lib/index.js';
-import type { PuzzleGrid, VecValueChange, XYKey } from '@/lib/types.js';
+import type { PuzzleGrid, VecValue, XYKey } from '@/lib/types.js';
 import { computed, toRef, toRefs } from 'vue';
 import { usePuzzleAssistanceStore } from '@/stores/assistance/store.js';
 import { useStaticGridCellData } from './composables/useGridCellData.js';
 import { usePuzzleTapVibrate } from './composables/usePuzzleTapVibrate.js';
 import { initGlobalCellThemeProvider } from './composables/useCellThemeProvider.js';
-import { usePuzzleStore } from '@/stores/puzzle/store.js';
 
 const props = defineProps<{
 	board: SimpleBoard,
 	rows: number,
 	columns: number,
-	paused: boolean
+	paused: boolean,
+	initialGrid: PuzzleGrid,
 }>();
-const { rows, columns } = toRefs(props);
+const { rows, columns, initialGrid } = toRefs(props);
 
 const emit = defineEmits<{
-	(e: 'toggle-cell', val: Omit<VecValueChange, "prevValue">): void
+	(e: 'toggle-cell', val: VecValue): void
 }>();
 
 // VIBRATION SETTING AND COMPOSABLE
 const { vibrate } = usePuzzleTapVibrate(rows, columns);
 
 // GRID CELL DATA
-const puzzleStore = usePuzzleStore();
-const initialGrid = computed((): PuzzleGrid | undefined => puzzleStore.initialBoard?.grid);
 const staticCellData = useStaticGridCellData(rows, columns, initialGrid);
 const grid = computed((): PuzzleGrid => props.board.grid);
 const incorrectCellKeys = computed((): Record<XYKey, boolean> => {
@@ -69,7 +67,7 @@ const {
 } = initGlobalCellThemeProvider();
 
 // CELL METHODS
-const onCellClick = (val: Omit<VecValueChange, "prevValue">) => {
+const onCellClick = (val: VecValue) => {
 	if (props.paused) return;
 	vibrate();
 	emit('toggle-cell', val);
