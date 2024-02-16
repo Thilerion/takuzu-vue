@@ -34,7 +34,6 @@
     "date-fns": "^3.2.0",
     "dexie": "^3.2.4",
     "dexie-export-import": "^4.0.7",
-    "lodash.debounce": "^4.0.8",
     "pinia": "^2.1.7",
     "vue": "^3.4.7",
     "vue-router": "^4.2.5"

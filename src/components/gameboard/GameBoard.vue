@@ -43,6 +43,7 @@ import PuzzleGrid from './PuzzleGrid.vue';
 import type { SimpleBoard } from '@/lib/index.js';
 import { usePuzzleStore } from '@/stores/puzzle';
 import type { VecValueChange } from '@/lib/types.js';
+import { usePuzzlePauseResume } from '@/stores/puzzle-store-helpers/usePuzzlePauseResume.js';
 
 defineProps<{
 	rows: number,
@@ -55,10 +56,10 @@ defineProps<{
 }>();
 const puzzleStore = usePuzzleStore();
 const toggleCell = ({ x, y, value }: Omit<VecValueChange, 'prevValue'>) => puzzleStore.toggle({ x, y, prevValue: value });
+const { manualResumeGame } = usePuzzlePauseResume();
 const resumeByUser = () => {
-	if (puzzleStore.pausedByUser) {
-		puzzleStore.setPaused(false, { userAction: true });
-	}
+	console.log('resume by user');
+	manualResumeGame();
 }
 </script>
 
@@ -73,7 +74,6 @@ const resumeByUser = () => {
 }
 
 .pause-overlay {
-	/* TODO: Pointer-events-none must be pointer-events-auto to prevent cell clicking */
 	grid-area: puzzle-grid;
 	@apply relative z-10 pointer-events-none bg-gray-100 text-gray-400 grid place-items-center text-4xl;
 	border-radius: var(--cell-rounding);

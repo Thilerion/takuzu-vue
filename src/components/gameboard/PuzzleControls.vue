@@ -1,5 +1,5 @@
 <template>
-	<div class="puzzle-controls" :class="{'paused': puzzleStore.paused}">
+	<div class="puzzle-controls" :class="{'paused': paused}">
 		<div class="control-btns">
 
 			<IconBtnText
@@ -60,15 +60,12 @@
 </template>
 
 <script setup lang="ts">
-import type { SimpleBoard } from '@/lib';
-import { usePuzzleStore } from '@/stores/puzzle';
 import { useSettingsStore } from '@/stores/settings/store';
 import { computed } from 'vue';
 
-const props = defineProps<{
-	canUndo?: boolean,
-	board?: SimpleBoard,
-	paused?: boolean
+defineProps<{
+	canUndo: boolean,
+	paused: boolean
 }>();
 
 const emit = defineEmits<{
@@ -80,7 +77,6 @@ const emit = defineEmits<{
 
 const settingsStore = useSettingsStore();
 const checkButtonEnabled = computed(() => settingsStore.checkButton !== 'disabled');
-const puzzleStore = usePuzzleStore();
 </script>
 
 <style scoped>

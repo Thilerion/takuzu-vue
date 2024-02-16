@@ -4,8 +4,8 @@
 		<GameBoardHeader
 			@close="exitGame"
 			@dropdown-toggled="dropdownToggled"
-			@pause="pause"
-			@resume="resume"
+			@pause="manualPauseGame"
+			@resume="manualResumeGame"
 		/>
 		<GameBoardWrapper
 			:ruler-height="rulerSize"
@@ -85,12 +85,11 @@ import CoordsRuler from '@/components/gameboard/ruler/CoordsRuler.vue';
 
 import { usePuzzleWakeLock } from '@/composables/use-wake-lock';
 
-import debounce from 'lodash.debounce';
 import { useSettingsStore } from '@/stores/settings/store';
 import { storeToRefs } from 'pinia';
 import { usePuzzleHistoryStore } from '@/stores/puzzle-history';
 import { usePuzzleHintsStore } from '@/stores/puzzle-hinter';
-import { computed, readonly, toRef, watch } from 'vue';
+import { computed, toRef, watch } from 'vue';
 import { useSavedPuzzle } from '@/services/savegame/useSavedGame';
 import { usePuzzleStore } from '@/stores/puzzle';
 import { useMainStore } from '@/stores/main';
@@ -105,6 +104,8 @@ import { onBeforeUnmount } from 'vue';
 import type { DifficultyKey } from '@/lib/types.js';
 import { useGoBackOrReplaceTo } from '@/router/useGoBackOrReplaceTo.js';
 import { useRouter } from 'vue-router';
+import { watchEffect } from 'vue';
+import { usePuzzlePauseResume } from '@/stores/puzzle-store-helpers/usePuzzlePauseResume.js';
 
 const settingsStore = useSettingsStore();
 
@@ -139,17 +140,11 @@ const difficulty = computed(() => {
 	return puzzleStore.difficulty as DifficultyKey;
 })
 
-const pausedByUser = readonly(toRef(puzzleStore, 'pausedByUser'));
-const pause = () => {
-	puzzleStore.setPaused(true, { userAction: true });
-}
-const resume = () => {
-	puzzleStore.setPaused(false, { userAction: true });
-}
+const { manualPauseGame, manualResumeGame, autoPauseGame, autoResumeGame } = usePuzzlePauseResume();
 
 watch(userIdle, (isIdle) => {
-	if (isIdle && !puzzleStore.paused) {
-		pause();
+	if (isIdle) {
+		autoPauseGame();
 	}
 })
 
@@ -185,8 +180,29 @@ const progress = computed(() => {
 	return rounded;
 })
 const boardGrid = computed(() => board.value?.grid);
-const puzzleShouldBePaused = computed(() => {
-	return pausedByUser.value || settingsOpen.value || dropdownOpen.value || windowHidden.value;
+
+const puzzleShouldBeAutoPaused = computed(() => {
+	return settingsOpen.value || dropdownOpen.value || windowHidden.value;
+})
+let autoResumeDelayTimeout: ReturnType<typeof setTimeout> | null = null;
+watchEffect(() => {
+	if (puzzleShouldBeAutoPaused.value) {
+		if (autoResumeDelayTimeout != null) {
+			clearTimeout(autoResumeDelayTimeout);
+			autoResumeDelayTimeout = null;
+		}
+		autoPauseGame();
+	} else {
+		// auto-resume after small delay
+		// this also prevents a "resume" from occuring when transitioning from dropdownOpen to settingsOpen
+		if (autoResumeDelayTimeout != null) {
+			// debounce
+			clearTimeout(autoResumeDelayTimeout);
+		}
+		autoResumeDelayTimeout = setTimeout(() => {
+			autoResumeGame();
+		}, 250);
+	}
 })
 
 const startGame = () => {
@@ -238,10 +254,6 @@ const checkErrors = () => {
 	userCheckErrors();
 }
 
-const debouncedPause = debounce((value: boolean) => {
-	puzzleStore.pauseGame(value);
-}, 150);
-
 onMounted(() => {
 	startGame();
 	initAutoSave();
@@ -266,23 +278,6 @@ onBeforeUnmount(() => {
 	clearTimeout(finishedTimeout.value!);
 	clearTimeout(mistakeCheckTimeout.value!);
 })
-
-// TODO: ON BEFORE ROUTE ENTER
-/*
-beforeRouteEnter(to, from, next) {
-		const puzzleStore = usePuzzleStore();
-		if (!puzzleStore.initialized) {
-			const { hasCurrentSavedGame } = useSavedPuzzle();
-			if (hasCurrentSavedGame.value) {
-				puzzleStore.loadSavedPuzzle();
-				return next();
-			}
-			console.warn('No puzzle in store. Redirecting from PlayPuzzle to Create game route');
-			return next({ name: 'NewPuzzleFreePlay', replace: true });
-		}
-		next();
-	},
-*/
 
 onBeforeRouteLeave((to, from, next) => {
 	puzzleStore.reset();
@@ -329,19 +324,6 @@ watch(finishedWithMistakes, (newValue) => {
 		clearTimeout(mistakeCheckTimeout.value!);
 		mistakeCheckTimeout.value = null;
 	}
-})
-
-watch(puzzleShouldBePaused, (newValue, prevValue) => {
-	globalThis.setTimeout(() => {
-		if (newValue && !prevValue) {
-			// immediately pause
-			debouncedPause(true);
-			debouncedPause.flush();
-		} else if (!newValue && prevValue) {
-			// but have a small delay when resuming
-			debouncedPause(false);
-		}
-	}, 1000 / 30);
 })
 </script>
 

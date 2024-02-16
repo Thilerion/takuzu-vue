@@ -33,7 +33,6 @@ import { usePuzzleStore } from '@/stores/puzzle';
 import { computed, ref, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-
 import { storeToRefs } from 'pinia';
 
 const emit = defineEmits<{

@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 import { useSavedPuzzle } from "@/services/savegame/useSavedGame";
 import { fetchAndPreparePuzzle, fetchRandomReplayablePuzzle } from "@/services/fetch-puzzle.js";
 import { useSharedPuzzleToggle } from "@/composables/use-puzzle-toggle";
-import { getRandomPuzzleTransformationOnRestart } from "./composables/useRandomPuzzleTransformation.js";
+import { getRandomPuzzleTransformationOnRestart } from "./puzzle-store-helpers/useRandomPuzzleTransformation.js";
 import type { FinishedPuzzleState } from "@/services/db/stats-db/models.js";
 // Other stores
 import { usePuzzleHintsStore } from "./puzzle-hinter";
@@ -46,9 +46,10 @@ export type PuzzleStoreState = {
 
 	initialized: boolean,
 	started: boolean,
-	paused: boolean,
-	pausedByUser: boolean,
 	finished: boolean,
+
+	pausedManually: boolean,
+	pausedAutomatically: boolean,
 
 	loading: boolean,
 	creationError: boolean
@@ -80,9 +81,11 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 		// play/ui state
 		initialized: false,
 		started: false,
-		paused: false,
-		pausedByUser: false,
 		finished: false,
+
+		// new "paused" state
+		pausedManually: false,
+		pausedAutomatically: false,
 
 		// game creation state/errors
 		loading: false,
@@ -108,19 +111,19 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			const progress = 1 - (currentEmpty / initialEmpty);
 			return progress;
 		},
-
-		status: (state): PuzzleStatus => {
-			if (!state.initialized) {
-				if (state.loading) return 'loading';
-				else if (state.creationError) return 'error_loading';
+		paused: state => state.pausedManually || state.pausedAutomatically,
+		status(): PuzzleStatus {
+			if (!this.initialized) {
+				if (this.loading) return 'loading';
+				else if (this.creationError) return 'error_loading';
 				else return 'none';
 			}
 			// is initialized
-			if (state.finished) {
+			if (this.finished) {
 				return 'finished';
-			} else if (state.paused) {
+			} else if (this.paused) {
 				return 'paused';
-			} else if (state.board != null) {
+			} else if (this.board != null) {
 				return 'playing';
 			}
 			throw new Error('Unrecognized Puzzle status??!');
@@ -172,23 +175,6 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 
 			this.$reset();
 		},
-		setPaused(val: boolean, { userAction = false } = {}) {
-			if (userAction) {
-				this.paused = val;
-				this.pausedByUser = val;
-			} else {
-				this.paused = val;
-				if (!val) {
-					this.pausedByUser = false;
-				}
-			}
-			if (val) {
-				const hintStore = usePuzzleHintsStore();
-				hintStore.hide();
-			}
-
-		},
-
 		_updateGridCount(value: PuzzleValue, prev: PuzzleValue) {
 			this.gridCounts[value] += 1;
 			this.gridCounts[prev] -= 1;
@@ -206,15 +192,6 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				this._updateGridCount(value, prevValue);
 				this._updateLineCount(x, y, value, prevValue);
 			}
-		},
-
-		// original actions
-		pauseGame(value = true) {
-			this.setPaused(value);
-			const timer = usePuzzleTimer();
-			if (value) {
-				timer.pause();
-			} else timer.resume();
 		},
 		setMultipleValues(changeList: VecValueChange[] = []) {
 			const moves = changeList.map(move => {
