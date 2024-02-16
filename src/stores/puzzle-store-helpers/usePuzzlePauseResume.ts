@@ -54,11 +54,9 @@ export const usePuzzlePauseResume = createSharedComposable(() => {
 			timerStore.resume();
 		}
 
+		// TODO: do this inside the hint component instead
 		if (anyPaused.value) {
-			console.log('any paused');
 			hintStore.hide();
-		} else {
-			console.log('all resumed');
 		}
 	})
 

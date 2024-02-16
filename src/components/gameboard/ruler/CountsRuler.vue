@@ -17,6 +17,8 @@ import { COLUMN, ONE, ROW, ZERO, type PuzzleValue } from '@/lib/constants';
 import { usePuzzleStore } from '@/stores/puzzle';
 import { watchDebounced } from '@vueuse/core';
 import { computed, onBeforeMount, ref, toRefs } from 'vue';
+import { useLineCounts } from './useLineCounts.js';
+import type { LineCounts } from '@/lib/types.js';
 
 export type RulerCellValueCountData = {
 	current: number,
@@ -28,11 +30,16 @@ export type RulerCountType = 'remaining' | 'current';
 
 const props = defineProps<{
 	lineType: 'rows' | 'columns',
-	counts: Record<PuzzleValue, number>[],
 	countType: RulerCountType,
 	cellSize: number
-}>()
-const { counts, countType } = toRefs(props);
+}>();
+
+const allCounts = useLineCounts();
+const counts = computed((): LineCounts => {
+	return props.lineType === 'rows' ? allCounts.rowCounts.value! : allCounts.colCounts.value!;
+})
+
+const { countType } = toRefs(props);
 const puzzleStore = usePuzzleStore();
 const numRequired = computed(() => {
 	return puzzleStore.board?.numRequired;
@@ -42,8 +49,8 @@ const lineRequired = computed(() => {
 	const values = numRequired.value?.[key];
 	if (!values) {
 		return [
-			Math.floor(props.counts.length / 2),
-			Math.ceil(props.counts.length / 2),
+			Math.floor(counts.value.length / 2),
+			Math.ceil(counts.value.length / 2),
 		]
 	}
 	const { [ZERO]: zero, [ONE]: one } = values;

@@ -14,9 +14,8 @@ import { usePuzzleAssistanceStore } from "./assistance/store";
 // Lib imports and misc.
 import { SimpleBoard } from "@/lib";
 import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
-import { countLineValues } from "@/lib/utils";
 import { PuzzleTransformations } from "@/lib/transformations/PuzzleTransformations.js";
-import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings } from "@/lib/types";
+import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings, GridCounts, LineCounts } from "@/lib/types";
 import type { TransformationKey } from "@/lib/transformations/types.js";
 import type { PickOptional } from "@/types.js";
 
@@ -38,9 +37,7 @@ export type PuzzleStoreState = {
 
 	initialEmpty: number | null,
 
-	rowCounts: Record<PuzzleValue, number>[],
-	colCounts: Record<PuzzleValue, number>[],
-	gridCounts: Record<PropertyKey, number>, // TODO: type gridCounts
+	gridCounts: GridCounts,
 
 	cheatsUsed: boolean,
 
@@ -71,9 +68,11 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 
 		initialEmpty: null,
 
-		rowCounts: [],
-		colCounts: [],
-		gridCounts: {},
+		gridCounts: {
+			[ZERO]: 0,
+			[ONE]: 0,
+			[EMPTY]: 0
+		},
 
 		// state for recap/puzzleHistory/stats
 		cheatsUsed: false,
@@ -149,18 +148,13 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			this.initialBoard = initialBoard;
 			this.solutionBoardStr = solution.toString();
 
-			const { rowCounts, colCounts } = calculateLineCounts(board);
-			this.rowCounts = rowCounts;
-			this.colCounts = colCounts;
-
 			this.gridCounts = calculateGridCounts(board);
 			this.initialEmpty = [...initialBoard.cells({ skipFilled: true })].length;
 		},
-		/** Refresh line and grid counts, after multiple changes to the board at once, instead of manually adding and subtracting after each change. */
+		/** Refresh grid counts, after multiple changes to the board at once, instead of manually adding and subtracting after each change. */
 		refreshCounts() {
-			const { rowCounts, colCounts } = calculateLineCounts(this.board!);
 			const gridCounts = calculateGridCounts(this.board!);
-			this.$patch({ rowCounts, colCounts, gridCounts });
+			this.$patch({ gridCounts });
 		},
 		reset() {
 			if (this.board != null && !this.initialized && !!this.board && !this.creationError) {
@@ -179,18 +173,11 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			this.gridCounts[value] += 1;
 			this.gridCounts[prev] -= 1;
 		},
-		_updateLineCount(x: number, y: number, value: PuzzleValue, prev: PuzzleValue) {
-			this.rowCounts[y][value] += 1;
-			this.rowCounts[y][prev] -= 1;
-			this.colCounts[x][value] += 1;
-			this.colCounts[x][prev] -= 1;
-		},
 
 		_setValue({ x, y, value, prevValue }: VecValueChange, updateCounts = true) {
 			this.board!.assign(x, y, value);
 			if (updateCounts) {
 				this._updateGridCount(value, prevValue);
-				this._updateLineCount(x, y, value, prevValue);
 			}
 		},
 		setMultipleValues(changeList: VecValueChange[] = []) {
@@ -397,20 +384,6 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 		},
 	}
 })
-
-// whenever the board object changes, recheck line counts
-function calculateLineCounts(board: SimpleBoard): { rowCounts: Record<PuzzleValue, number>[], colCounts: Record<PuzzleValue, number>[] } {
-	const rowCounts = board.grid.map(row => {
-		return countLineValues(row);
-	})
-	const colCounts = [];
-	for (let x = 0; x < board.width; x++) {
-		const col = board.getColumn(x);
-		const count = countLineValues(col);
-		colCounts.push(count);
-	}
-	return { rowCounts, colCounts };
-}
 
 function calculateGridCounts(board: SimpleBoard): Record<PuzzleValue, number> {
 	const counts = { [ONE]: 0, [ZERO]: 0, [EMPTY]: 0 };

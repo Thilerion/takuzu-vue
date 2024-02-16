@@ -34,14 +34,14 @@
 						:line-ids="board.rowIds" />
 					<CountsRuler v-else-if="showRulers"
 						:count-type="rulerType === 'count-remaining' ? 'remaining' : 'current'" line-type="rows"
-						:counts="rowCounts" :cell-size="cellSize" />
+						:cell-size="cellSize" />
 				</template>
 				<template v-slot:ruler-columns>
 					<CoordsRuler v-if="rulerType === 'coords'" line-type="columns"
 						:line-ids="board.columnIds" />
 					<CountsRuler v-else-if="showRulers"
 						:count-type="rulerType === 'count-remaining' ? 'remaining' : 'current'" line-type="columns"
-						:counts="columnCounts" :cell-size="cellSize" />
+						:cell-size="cellSize" />
 				</template>
 			</GameBoard>
 		</GameBoardWrapper>
@@ -131,7 +131,6 @@ const { hasCurrentSavedGame, savePuzzleSaveData } = useSavedPuzzle();
 const puzzleStore = usePuzzleStore();
 const {
 	board, initialized, started, paused, finished,
-	rowCounts, colCounts: columnCounts,
 	finishedAndSolved, finishedWithMistakes,
 } = storeToRefs(puzzleStore);
 const rows = computed(() => puzzleStore.height ?? undefined);
