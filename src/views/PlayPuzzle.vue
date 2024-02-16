@@ -26,7 +26,7 @@
 				:cell-size="cellSize"
 			>
 				<template v-slot:puzzle-info>
-					<PuzzleInfo :show-timer="showTimer" :difficulty="difficulty" :progress="progress"
+					<PuzzleInfo :show-timer="showTimer" :difficulty="(difficulty as DifficultyKey)" :progress="progress"
 						:has-border="rulerType != null" />
 				</template>
 				<template v-slot:ruler-rows>
@@ -48,12 +48,12 @@
 
 		<div class="footer2 h-32 w-full relative">
 			<PuzzleControls
-				:can-undo="canUndo"
+				:can-undo="puzzleHistoryStore.canUndo"
 				:paused="paused"
 				@undo="undo"
 				@restart="restart"
-				@check="checkErrors"
-				@get-hint="getHint"
+				@check="puzzleAssistanceStore.userCheck"
+				@get-hint="puzzleHintsStore.getHint"
 			/>
 			<HintWrapper />
 		</div>
@@ -86,7 +86,7 @@ import CoordsRuler from '@/components/gameboard/ruler/CoordsRuler.vue';
 import { usePuzzleWakeLock } from '@/composables/use-wake-lock';
 
 import { storeToRefs } from 'pinia';
-import { computed, watch, onBeforeMount, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue';
+import { computed, watch, onBeforeMount, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRecapStatsStore } from '@/stores/recap-stats';
 import { usePuzzleAssistanceStore } from '@/stores/assistance/store';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from 'vue-router';
@@ -98,6 +98,7 @@ import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { usePuzzleHintsStore } from '@/stores/hints/store.js';
 import { usePlayPuzzleUiState } from './usePlayPuzzleUiState.js';
 import { usePlayPuzzleSaveHandler } from './usePlayPuzzleSaveHandler.js';
+import { usePlayPuzzleAutoPause } from './usePlayPuzzleAutoPause.js';
 
 const { 
 	windowHidden,
@@ -119,40 +120,29 @@ const {
 	stopAutoSave,
 } = usePlayPuzzleSaveHandler();
 
+// Start UsePuzzleWakeLock composable, immediately initializes wakeLock if enabled in settings.
+const { idle: userIdle } = usePuzzleWakeLock();
+
+// setup auto-pause and auto-resume watchers
+usePlayPuzzleAutoPause(
+	{ windowHidden, dropdownOpen, settingsOpen, userIdle },
+	{ autoResumeDelay: 250 }
+);
+const { manualPauseGame, manualResumeGame } = usePuzzlePauseResume();
+
+// initialize required stores
 useRecapStatsStore();
 const puzzleHistoryStore = usePuzzleHistoryStore();
-const { canUndo } = storeToRefs(puzzleHistoryStore);
 const puzzleHintsStore = usePuzzleHintsStore();
-const getHint = () => puzzleHintsStore.getHint();
 const puzzleAssistanceStore = usePuzzleAssistanceStore();
-const {
-	userCheck: userCheckErrors,
-	autoFilledBoardCheck: autoCheckErrors
-} = puzzleAssistanceStore;
-
-// Start UsePuzzleWakeLock composable, immediately initializes wakeLock if enabled in settings.
-const {
-	idle: userIdle,
-} = usePuzzleWakeLock();
-
 const puzzleStore = usePuzzleStore();
+
 const {
 	board, initialized, started, paused, finished,
 	finishedAndSolved, finishedWithMistakes,
+	height: rows, width: columns,
+	difficulty
 } = storeToRefs(puzzleStore);
-const rows = computed(() => puzzleStore.height ?? undefined);
-const columns = computed(() => puzzleStore.width ?? undefined);
-const difficulty = computed(() => {
-	return puzzleStore.difficulty as DifficultyKey;
-})
-
-const { manualPauseGame, manualResumeGame, autoPauseGame, autoResumeGame } = usePuzzlePauseResume();
-
-watch(userIdle, (isIdle) => {
-	if (isIdle) {
-		autoPauseGame();
-	}
-})
 
 const finishedTimeout = ref<null | ReturnType<typeof setInterval>>(null);
 const mistakeCheckTimeout = ref<null | ReturnType<typeof setInterval>>(null);
@@ -163,30 +153,6 @@ const progress = computed(() => {
 	// prevent progress from being 100 when not every cell is filled
 	if (rounded == 100 && base < 1) return 99;
 	return rounded;
-})
-
-const puzzleShouldBeAutoPaused = computed(() => {
-	return settingsOpen.value || dropdownOpen.value || windowHidden.value;
-})
-let autoResumeDelayTimeout: ReturnType<typeof setTimeout> | null = null;
-watchEffect(() => {
-	if (puzzleShouldBeAutoPaused.value) {
-		if (autoResumeDelayTimeout != null) {
-			clearTimeout(autoResumeDelayTimeout);
-			autoResumeDelayTimeout = null;
-		}
-		autoPauseGame();
-	} else {
-		// auto-resume after small delay
-		// this also prevents a "resume" from occuring when transitioning from dropdownOpen to settingsOpen
-		if (autoResumeDelayTimeout != null) {
-			// debounce
-			clearTimeout(autoResumeDelayTimeout);
-		}
-		autoResumeDelayTimeout = setTimeout(() => {
-			autoResumeGame();
-		}, 250);
-	}
 })
 
 const startGame = () => {
@@ -208,10 +174,6 @@ const exitGame = () => {
 }
 const { undoLastMove: undo, restartPuzzle: restart } = puzzleStore;
 const finishGame = async () => puzzleStore.finishPuzzle();
-
-const checkErrors = () => {
-	userCheckErrors();
-}
 
 onMounted(() => {
 	startGame();
@@ -274,7 +236,8 @@ watch(finishedWithMistakes, (newValue) => {
 			if (!finishedWithMistakes.value) {
 				return;
 			}
-			autoCheckErrors();
+			// autoCheckErrors
+			puzzleAssistanceStore.autoFilledBoardCheck();
 		}, 2000);
 	} else {
 		clearTimeout(mistakeCheckTimeout.value!);
