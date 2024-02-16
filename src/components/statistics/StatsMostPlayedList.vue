@@ -1,8 +1,6 @@
 <template>
 	<div class="mb-4 gap-y-4 grid v-grid-bleed bleed-grid-4">
 		<div class="text-sm">
-			<!-- <div class="text-base">Shown items:</div> -->
-
 			<h3>Group by:</h3>
 			<div class="py-2">
 				<div class="pl-1.5 pr-4 py-1.5 inline-flex flex-row items-center gap-2 rounded-full bg-gray-200 radio-wrapper mr-2" :class="{checked: itemType === 'puzzleConfig'}">
@@ -37,7 +35,6 @@
 
 		</div>
 		<div class="mb-4 full-bleed" v-if="true">
-			<!-- <h3 class="font-medium text-lg px-4 pb-2">List</h3> -->
 			<BaseTable
 				:columns="[
 					{ label: 'Size', sortable: !!mergeDifficulties, key: 'size' },

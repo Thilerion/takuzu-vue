@@ -4,9 +4,6 @@
 		class="pointer-events-none"
 		:show="shouldShow"
 	>
-		<!-- <template #banner>
-			Hi!
-		</template> -->
 		<template #content>
 			<PuzzleRecapContent
 				@exit-to="exitTo"

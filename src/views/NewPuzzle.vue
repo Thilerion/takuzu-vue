@@ -14,8 +14,6 @@
 						<IconBtn @click="toggle"><icon-ic-baseline-more-vert /></IconBtn>
 					</template>
 					<template #content>
-						<!-- <BaseDropdownItem @click="replayRandom">Replay random with selected settings
-						</BaseDropdownItem> -->
 						<BaseDropdownItem v-if="debugModeEnabled">
 							<label class="flex items-center">
 								<input type="checkbox" v-model="computedAutoReplayMode">

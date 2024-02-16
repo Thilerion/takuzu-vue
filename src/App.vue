@@ -2,7 +2,6 @@
 	<div
 		class="root"
 	>
-		<!-- TODO: transition for MainPage <-> OverlayPage -->
 		<router-view v-slot="{ Component, route }">
 			<OverlayPageTransition show>
 				<component :is="Component" :key="route.meta.usePuzzleKey ? puzzleKey : undefined" />

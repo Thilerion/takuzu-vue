@@ -31,7 +31,6 @@
 						@click="resumeByUser"
 					><icon-grommet-icons-pause-fill class="opacity-80" /></button>
 					<div class="flex-auto pause-label-wrapper uppercase mb-2 py-2">Paused</div>
-					<!-- <div class="flex-auto restart-label">Click to continue</div> -->
 				</div>
 			</div>
 		</transition>
@@ -97,9 +96,6 @@ const resumeByUser = () => {
 	@apply opacity-80 font-light;
 	letter-spacing: 0.15em;
 	font-size: clamp(20px, 10vmin, 60px);
-}
-.restart-label {
-	@apply text-base;
 }
 
 .puzzle-info-wrapper {

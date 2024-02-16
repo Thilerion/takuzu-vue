@@ -11,11 +11,9 @@
 				@banner-after-enter="bannerAfterEnter"
 				@close="emit('close')"
 				class="z-10"
-			><slot name="banner"/></PuzzleRecapBanner>
+			/>
 			<transition name="t-backdrop">
-				<div v-if="showBackdrop" class="backdrop inset-0 w-full h-full absolute z-0 opacity-90">
-				</div>
-
+				<div v-if="showBackdrop" class="backdrop inset-0 w-full h-full absolute z-0 opacity-90"></div>
 			</transition>
 			<div class="absolute w-full h-full inset-0 z-20 p-6 flex justify-center items-center">
 				<PuzzleRecapModalTransition>

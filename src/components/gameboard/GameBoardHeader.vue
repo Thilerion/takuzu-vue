@@ -11,7 +11,6 @@
 					class="px-1"
 				>x</span>{{rows}}
 			</div>
-			<!-- <span class="font-medium tracking-wide text-xl">{{columns}} x {{rows}}</span> -->
 			<div v-if="isReplayMode" class="absolute inset-x-0 bottom-1 text-xs text-gray-500 tracking-wide">Replay</div>
 		</div>
 		<div class="flex flex-row w-1/3 justify-end">
