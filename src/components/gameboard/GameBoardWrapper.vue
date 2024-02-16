@@ -12,9 +12,9 @@
 
 <script setup lang="ts">
 import { computed, ref, toRefs } from 'vue';
-import { usePuzzleStore } from '@/stores/puzzle';
 import { useThrottledElementSizeObserver } from './composables/useThrottledElementSizeObserver.js';
 import { useDynamicPuzzleGridSize } from './composables/useDynamicPuzzleGridSize.js';
+import { usePuzzleStore } from '@/stores/puzzle/store.js';
 
 const props = withDefaults(defineProps<{
 	rulerHeight: number | 'cellSize' | null, // number: px value, cellSize for equal to cellSize, null for hidden

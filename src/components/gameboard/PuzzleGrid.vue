@@ -25,12 +25,12 @@
 <script setup lang="ts">
 import type { SimpleBoard } from '@/lib/index.js';
 import type { PuzzleGrid, VecValueChange, XYKey } from '@/lib/types.js';
-import { usePuzzleStore } from '@/stores/puzzle.js';
 import { computed, toRef, toRefs } from 'vue';
 import { usePuzzleAssistanceStore } from '@/stores/assistance/store.js';
 import { useStaticGridCellData } from './composables/useGridCellData.js';
 import { usePuzzleTapVibrate } from './composables/usePuzzleTapVibrate.js';
 import { initGlobalCellThemeProvider } from './composables/useCellThemeProvider.js';
+import { usePuzzleStore } from '@/stores/puzzle/store.js';
 
 const props = defineProps<{
 	board: SimpleBoard,

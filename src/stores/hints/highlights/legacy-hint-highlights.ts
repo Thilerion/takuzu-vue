@@ -1,10 +1,10 @@
 import { extent } from "@/utils/data-analysis.utils";
 import { HINT_TYPE, Hint } from "../Hint";
 import { HIGHLIGHT_TYPES, hintHighlightFromType, HIGHLIGHT_LEVELS } from "./highlight";
-import { usePuzzleStore } from "@/stores/puzzle";
 import type { SimpleBoard } from "@/lib/index.js";
-import type { HintAreaHighlight, HintCellHighlight, HintHighlight, HintLineHighlight } from "./types.js";
+import type { HintAreaHighlight, HintCellHighlight, HintLineHighlight } from "./types.js";
 import type { LineId, Vec } from "@/lib/types.js";
+import { usePuzzleStore } from "@/stores/puzzle/store.js";
 
 export const createHighlightsFromLegacyHint = (hint: Hint, board: SimpleBoard) => {
 	switch (hint.type) {

@@ -1,9 +1,9 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { createHighlightsFromLegacyHint } from "./hints/highlights/legacy-hint-highlights";
-import type { Hint } from "./hints/Hint.js";
-import type { HintHighlight } from "./hints/highlights/types.js";
-import { usePuzzleStore } from "./puzzle.js";
+import type { Hint } from "../hints/Hint.js";
+import { usePuzzleStore } from "../puzzle/store.js";
+import { createHighlightsFromLegacyHint } from "./highlights/legacy-hint-highlights.js";
+import type { HintHighlight } from "./highlights/types.js";
 
 export const useHintHighlightsStore = defineStore('hintHighlights', () => {
 	const visible = ref(false);

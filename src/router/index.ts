@@ -19,15 +19,15 @@ import SettingsPage from '../views/SettingsPage.vue';
 
 // NESTED PAGES / OVERLAY PAGES
 import FreePlay from '../views/NewPuzzle.vue';
-
 import PlayPuzzle from '../views/PlayPuzzle.vue';
 
 // 404 Page
 import NotFound from '../views/NotFound.vue';
+
 import { useRouteDocumentTitle } from './useDocumentTitle';
 import { useMetaThemeColor } from './useMetaThemeColor';
-import { usePuzzleStore } from '@/stores/puzzle.js';
 import { useSavedPuzzle } from '@/services/savegame/useSavedGame.js';
+import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import type { RouteRecordRaw } from 'vue-router';
 
 const routes = [

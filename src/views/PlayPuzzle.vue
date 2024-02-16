@@ -87,11 +87,8 @@ import { usePuzzleWakeLock } from '@/composables/use-wake-lock';
 
 import { useSettingsStore } from '@/stores/settings/store';
 import { storeToRefs } from 'pinia';
-import { usePuzzleHistoryStore } from '@/stores/puzzle-history';
-import { usePuzzleHintsStore } from '@/stores/puzzle-hinter';
 import { computed, toRef, watch, type Ref, onBeforeMount, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue';
 import { useSavedPuzzle } from '@/services/savegame/useSavedGame';
-import { usePuzzleStore } from '@/stores/puzzle';
 import { useMainStore } from '@/stores/main';
 import { useRecapStatsStore } from '@/stores/recap-stats';
 import { rulerType as RULER_TYPE } from '@/stores/settings/options';
@@ -99,7 +96,10 @@ import { usePuzzleAssistanceStore } from '@/stores/assistance/store';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from 'vue-router';
 import type { DifficultyKey } from '@/lib/types.js';
 import { useGoBackOrReplaceTo } from '@/router/useGoBackOrReplaceTo.js';
-import { usePuzzlePauseResume } from '@/stores/puzzle-store-helpers/usePuzzlePauseResume.js';
+import { usePuzzlePauseResume } from '@/stores/puzzle/usePuzzlePauseResume.js';
+import { usePuzzleHistoryStore } from '@/stores/puzzle/history-store.js';
+import { usePuzzleStore } from '@/stores/puzzle/store.js';
+import { usePuzzleHintsStore } from '@/stores/hints/store.js';
 
 const settingsStore = useSettingsStore();
 

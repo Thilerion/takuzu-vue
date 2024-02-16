@@ -1,9 +1,9 @@
 import type { SimpleBoard } from "@/lib";
 import type { BoardString, BoardAndSolutionBoards, Vec } from "@/lib/types";
 import { defineStore } from "pinia";
-import { usePuzzleStore } from "../puzzle";
 import { markedMistakeFromCellOrString, vecToMark } from "./helpers";
 import type { CheckActionResult, CurrentCheck, MarkedMistake } from "./types";
+import { usePuzzleStore } from "../puzzle/store.js";
 
 export const usePuzzleValidationStore = defineStore('puzzleValidation', {
 	state: () => ({

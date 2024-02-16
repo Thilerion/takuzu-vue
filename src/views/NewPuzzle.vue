@@ -92,11 +92,11 @@ import { DIFFICULTY_LABELS, PRESET_BOARD_SIZES, isDifficultyKey } from '@/config
 import { computed, ref, toRef, watch, watchEffect } from 'vue';
 
 import { useRouter } from 'vue-router';
-import { usePuzzleStore } from '@/stores/puzzle'
 import { useMainStore } from '@/stores/main';
 import { useSavedPuzzle } from '@/services/savegame/useSavedGame';
 import { useNewPuzzleSetupSelection } from '@/components/new-puzzle/useNewPuzzleSetupSelection';
 import type { BoardShape, DifficultyKey } from '@/lib/types.js';
+import { usePuzzleStore } from '@/stores/puzzle/store.js';
 
 const { hasCurrentSavedGame } = useSavedPuzzle();
 // display warning message if creating a new game will overwrite the currently saved puzzle

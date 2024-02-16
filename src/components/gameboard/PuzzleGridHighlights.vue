@@ -20,11 +20,11 @@
 </template>
 
 <script setup lang="ts">
-import { useHintHighlightsStore } from '@/stores/highlight-store';
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 import { HIGHLIGHT_TYPES } from '@/stores/hints/highlights/highlight';
 import type { HintAreaHighlight, HintCellHighlight, HintHighlight, HintLineHighlight } from '@/stores/hints/highlights/types.js';
+import { useHintHighlightsStore } from '@/stores/hints/highlights-store.js';
 
 
 const hintHighlightsStore = useHintHighlightsStore();

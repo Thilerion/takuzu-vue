@@ -54,7 +54,6 @@
 
 <script setup lang="ts">
 import { useMainStore } from '@/stores/main.js';
-import { usePuzzleStore } from '@/stores/puzzle.js';
 import { useSettingsStore } from '@/stores/settings/store.js';
 import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
@@ -62,9 +61,10 @@ import { toRef } from 'vue';
 import BaseDropdown from '../global/dropdown/BaseDropdown.vue';
 import { shuffle } from '@/lib/utils.js';
 import { awaitRaf, awaitTimeout } from '@/utils/delay.utils.js';
-import { usePuzzleTimer } from '@/stores/puzzle-timer.js';
 import { humanSolveTriples } from '@/lib/human-solver/triples.js';
 import { EMPTY } from '@/lib/constants.js';
+import { usePuzzleStore } from '@/stores/puzzle/store.js';
+import { usePuzzleTimer } from '@/stores/puzzle/timer-store.js';
 
 const settingsStore = useSettingsStore();
 const showTimer = toRef(settingsStore, 'showTimer');

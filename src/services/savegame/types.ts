@@ -1,5 +1,5 @@
 import type { AllPuzzleBoardExportStrings, AllPuzzleBoards, BasicPuzzleConfig } from "@/lib/types";
-import type { MoveExport } from "@/stores/puzzle-history";
+import type { MoveExport } from "@/stores/puzzle/history-store.js";
 
 export interface TimerSaveData {
 	timeElapsed: number

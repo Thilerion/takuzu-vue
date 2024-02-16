@@ -1,7 +1,7 @@
 import { createSharedComposable } from "@vueuse/core";
 import { watchEffect, toRef } from "vue";
-import { usePuzzleTimer } from "../puzzle-timer.js";
-import { usePuzzleStore } from "../puzzle.js";
+import { usePuzzleStore } from "./store.js";
+import { usePuzzleTimer } from "./timer-store.js";
 
 export const usePuzzlePauseResume = createSharedComposable(() => {
 	const store = usePuzzleStore();

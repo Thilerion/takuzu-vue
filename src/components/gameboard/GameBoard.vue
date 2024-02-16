@@ -41,9 +41,9 @@
 <script setup lang="ts">
 import PuzzleGrid from './PuzzleGrid.vue';
 import type { SimpleBoard } from '@/lib/index.js';
-import { usePuzzleStore } from '@/stores/puzzle';
 import type { VecValueChange } from '@/lib/types.js';
-import { usePuzzlePauseResume } from '@/stores/puzzle-store-helpers/usePuzzlePauseResume.js';
+import { usePuzzleStore } from '@/stores/puzzle/store.js';
+import { usePuzzlePauseResume } from '@/stores/puzzle/usePuzzlePauseResume.js';
 
 defineProps<{
 	rows: number,

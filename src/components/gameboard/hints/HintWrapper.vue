@@ -15,8 +15,8 @@
 </template>
 
 <script setup lang="ts">
-import { usePuzzleHintsStore } from '@/stores/puzzle-hinter';
-import { usePuzzleStore } from '@/stores/puzzle.js';
+import { usePuzzleHintsStore } from '@/stores/hints/store.js';
+import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { storeToRefs } from 'pinia';
 import { watchEffect } from 'vue';
 

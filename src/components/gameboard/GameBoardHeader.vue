@@ -29,11 +29,10 @@
 </template>
 
 <script setup lang="ts">
-import { usePuzzleStore } from '@/stores/puzzle';
 import { computed, ref, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-
 import { storeToRefs } from 'pinia';
+import { usePuzzleStore } from '@/stores/puzzle/store.js';
 
 const emit = defineEmits<{
 	close: [],

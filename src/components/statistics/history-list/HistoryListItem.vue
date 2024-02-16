@@ -65,15 +65,14 @@
 
 
 import { useMainStore } from '@/stores/main';
-import { usePuzzleStore } from '@/stores/puzzle';
 import { formatDurationMMSSss } from '@/utils/duration.utils';
 import { useRouter } from 'vue-router';
 import { ref, computed } from 'vue';
 import { useStatisticsStore } from '@/stores/statistics.js';
 import { awaitTimeout } from '@/utils/delay.utils.js';
 import { toRefs } from '@vueuse/core';
-import type { HistoryItemTimeRecordData } from '@/views/PuzzleHistoryView.vue';
 import type { StatsDbExtendedStatisticDataEntry } from '@/services/db/stats-db/models.js';
+import { usePuzzleStore } from '@/stores/puzzle/store.js';
 
 defineOptions({
 	inheritAttrs: false

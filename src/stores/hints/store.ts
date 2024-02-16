@@ -1,10 +1,10 @@
-import { Hint } from "./hints/Hint.js";
-import { validateHint } from "./hints/index.js";
+import type { BoardString } from "@/lib/types.js";
 import { defineStore } from "pinia";
-import { usePuzzleStore } from "./puzzle.js";
-import { useHintHighlightsStore } from "./highlight-store.js";
-import type { BoardString } from "@/lib/types";
-import { searchForHint } from "./hints/search";
+import type { Hint } from "../hints/Hint.js";
+import { validateHint } from "../hints/helpers.js";
+import { searchForHint } from "../hints/search.js";
+import { usePuzzleStore } from "../puzzle/store.js";
+import { useHintHighlightsStore } from "./highlights-store.js";
 
 export const usePuzzleHintsStore = defineStore('puzzleHints', {
 

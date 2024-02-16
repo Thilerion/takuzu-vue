@@ -3,14 +3,14 @@ import { defineStore } from "pinia";
 import { useSavedPuzzle } from "@/services/savegame/useSavedGame";
 import { fetchAndPreparePuzzle, fetchRandomReplayablePuzzle } from "@/services/fetch-puzzle.js";
 import { useSharedPuzzleToggle } from "@/composables/use-puzzle-toggle";
-import { getRandomPuzzleTransformationOnRestart } from "./puzzle-store-helpers/useRandomPuzzleTransformation.js";
+import { getRandomPuzzleTransformationOnRestart } from "./useRandomPuzzleTransformation.js";
 import type { FinishedPuzzleState } from "@/services/db/stats-db/models.js";
 // Other stores
-import { usePuzzleHintsStore } from "./puzzle-hinter";
-import { usePuzzleHistoryStore } from "./puzzle-history";
-import { usePuzzleTimer } from "./puzzle-timer";
-import { useRecapStatsStore } from "./recap-stats";
-import { usePuzzleAssistanceStore } from "./assistance/store";
+import { usePuzzleHintsStore } from "../hints/store.js";
+import { usePuzzleHistoryStore } from "./history-store.js";
+import { usePuzzleTimer } from "./timer-store.js";
+import { useRecapStatsStore } from "../recap-stats";
+import { usePuzzleAssistanceStore } from "../assistance/store";
 // Lib imports and misc.
 import { SimpleBoard } from "@/lib";
 import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
@@ -88,7 +88,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 
 		// game creation state/errors
 		loading: false,
-		creationError: false
+		creationError: false,
 	}),
 
 	getters: {
@@ -162,6 +162,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				return;
 			}
 
+			// reset all sub-stores
 			usePuzzleTimer().reset();
 			usePuzzleHistoryStore().reset();
 			usePuzzleHintsStore().reset();

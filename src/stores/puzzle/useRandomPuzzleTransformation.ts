@@ -1,8 +1,8 @@
 import type { AllPuzzleBoards } from "@/lib/types.js";
-import { usePuzzleStore } from "../puzzle.js";
 import { PuzzleTransformations } from "@/lib/transformations/PuzzleTransformations.js";
 import type { BaseTransformationConfig, TransformationKey } from "@/lib/transformations/types.js";
 import { getTransformationConfigFromKey, getTransformationKey } from "@/lib/transformations/helpers.js";
+import { usePuzzleStore } from "./store.js";
 
 export const getRandomPuzzleTransformationOnRestart = (): AllPuzzleBoards => {
 	const store = usePuzzleStore();

@@ -7,8 +7,8 @@
 </template>
 
 <script setup lang="ts">
-import { usePuzzleStore } from '@/stores/puzzle';
-import { usePuzzleTimer } from '@/stores/puzzle-timer';
+import { usePuzzleStore } from '@/stores/puzzle/store.js';
+import { usePuzzleTimer } from '@/stores/puzzle/timer-store.js';
 import { timeFormatter } from '@/utils/date.utils';
 import { computed, onBeforeUnmount, onMounted, ref, toRef } from 'vue';
 

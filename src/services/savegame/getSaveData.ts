@@ -1,9 +1,8 @@
-import { usePuzzleStore } from "@/stores/puzzle";
-import { exportMoveList } from "@/stores/puzzle-history";
-import { getTotalTimeElapsed } from "@/stores/puzzle-timer";
 import type { HistorySaveData, PuzzleSaveData, SaveData, TimerSaveData } from "./types";
-import type { DifficultyKey } from "@/lib/types.js";
 import { isDifficultyKey } from "@/config.js";
+import { exportMoveList } from "@/stores/puzzle/history-store.js";
+import { usePuzzleStore } from "@/stores/puzzle/store.js";
+import { getTotalTimeElapsed } from "@/stores/puzzle/timer-store.js";
 
 export const getSaveData = (): SaveData => {
 	return {

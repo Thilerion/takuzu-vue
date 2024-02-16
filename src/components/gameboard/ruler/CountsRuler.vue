@@ -14,11 +14,11 @@
 
 <script setup lang="ts">
 import { COLUMN, ONE, ROW, ZERO, type PuzzleValue } from '@/lib/constants';
-import { usePuzzleStore } from '@/stores/puzzle';
 import { watchDebounced } from '@vueuse/core';
 import { computed, onBeforeMount, ref, toRefs } from 'vue';
 import { useLineCounts } from './useLineCounts.js';
 import type { LineCounts } from '@/lib/types.js';
+import { usePuzzleStore } from '@/stores/puzzle/store.js';
 
 export type RulerCellValueCountData = {
 	current: number,
