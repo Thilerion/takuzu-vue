@@ -8,12 +8,13 @@
 		>{{difficulty}}* {{difficultyLabel}}</div>
 
 		<PuzzleInfoTimer
+			:puzzle-paused="puzzlePaused"
 			v-if="showTimer"
 		/>
 
 		<div
 			class="progress text-right whitespace-nowrap"
-		>Progress:<div class="progress-percentage">{{progress}}</div>%</div>
+		>Progress:<div class="progress-percentage">{{progressPercentage}}</div>%</div>
 
 	</div>
 </template>
@@ -22,15 +23,21 @@
 import { DIFFICULTY_LABELS } from '@/config';
 import { computed } from 'vue';
 
-export interface Props {
-	showTimer?: boolean,
+const props = defineProps<{
+	showTimer: boolean,
 	difficulty: keyof typeof DIFFICULTY_LABELS,
-	progress?: number,
-	hasBorder?: boolean
-}
+	progressRatio: number,
+	hasBorder: boolean,
+	puzzlePaused: boolean
+}>();
 
-const props = withDefaults(defineProps<Props>(), {
-	progress: -1
+// Display the progress as, rounded and as percentage, while preventing it from being 100% if the puzzle is not yet solved.
+const progressPercentage = computed(() => {
+	const base = props.progressRatio;
+	const rounded = Math.ceil(base * 100);
+	// prevent progress from being 100 when not every cell is filled
+	if (rounded == 100 && base < 1) return 99;
+	return rounded;
 })
 
 const difficultyLabel = computed(() => DIFFICULTY_LABELS[props.difficulty]);

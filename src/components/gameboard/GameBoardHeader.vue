@@ -25,7 +25,11 @@
 			/>
 		</div>
 	</header>
-	<PuzzleProgressBar v-show="puzzleStore.started" />
+	<PuzzleProgressBar
+		v-show="puzzleStore.started"
+		:progress-ratio="puzzleStore.progress"
+		:error="puzzleStore.finishedWithMistakes"
+	/>
 </template>
 
 <script setup lang="ts">

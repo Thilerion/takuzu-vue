@@ -2,8 +2,8 @@
 	<div
 		class="progress-wrapper"
 		:class="{ 
-			error: finishedWithMistakes,
-			finished
+			error: props.error,
+			finished: finished,
 		}"
 	>
 		<div
@@ -13,18 +13,15 @@
 </template>
 
 <script setup lang="ts">
-import { usePuzzleStore } from '@/stores/puzzle/store.js';
-import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 
-const puzzleStore = usePuzzleStore();
-const {
-	finishedWithMistakes,
-	boardFilled: finished,
-	progress
-} = storeToRefs(puzzleStore);
+const props = defineProps<{
+	progressRatio: number,
+	error: boolean, // if finished but has mistakes
+}>();
 
-const cappedProgress = computed(() => Math.max(progress.value, 0.005));
+const finished = computed(() => props.progressRatio >= 0.999);
+const cappedProgress = computed(() => Math.max(props.progressRatio, 0.005));
 </script>
 
 <style scoped>

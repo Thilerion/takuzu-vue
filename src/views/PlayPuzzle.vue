@@ -26,8 +26,13 @@
 				:cell-size="cellSize"
 			>
 				<template v-slot:puzzle-info>
-					<PuzzleInfo :show-timer="showTimer" :difficulty="(difficulty as DifficultyKey)" :progress="progressPercentage"
-						:has-border="rulerType != null" />
+					<PuzzleInfo
+						:show-timer="showTimer"
+						:difficulty="(difficulty as DifficultyKey)"
+						:progress-ratio="puzzleStore.progress"
+						:has-border="rulerType != null"
+						:puzzle-paused="puzzleStore.paused"
+					/>
 				</template>
 				<template v-slot:ruler-rows>
 					<CoordsRuler v-if="rulerType === 'coords'" line-type="rows"
@@ -85,7 +90,7 @@ import CoordsRuler from '@/components/gameboard/ruler/CoordsRuler.vue';
 
 import { usePuzzleWakeLock } from '@/composables/use-wake-lock';
 import { storeToRefs } from 'pinia';
-import { computed, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
+import { onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
 import { useRecapStatsStore } from '@/stores/recap-stats';
 import { usePuzzleAssistanceStore } from '@/stores/assistance/store';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from 'vue-router';
@@ -146,15 +151,6 @@ const {
 	height: rows, width: columns,
 	difficulty
 } = storeToRefs(puzzleStore);
-
-// Display the progress as, rounded and as percentage, while preventing it from being 100% if the puzzle is not yet solved.
-const progressPercentage = computed(() => {
-	const base = puzzleStore.progress;
-	const rounded = Math.ceil(base * 100);
-	// prevent progress from being 100 when not every cell is filled
-	if (rounded == 100 && base < 1) return 99;
-	return rounded;
-})
 
 const startGame = () => {
 	if (!initialized.value) {

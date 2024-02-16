@@ -1,21 +1,21 @@
 <template>
 	<div
 		class="timer text-center"
-		:class="{'animate-flicker': paused}"
+		:class="{'animate-flicker': puzzlePaused}"
 	><span class="minutes">{{minutes}}</span>:<span class="seconds">{{seconds}}</span>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { usePuzzleTimer } from '@/stores/puzzle/timer-store.js';
 import { timeFormatter } from '@/utils/date.utils';
 import { computed, onBeforeUnmount, onMounted, ref, toRef } from 'vue';
 
-const puzzleTimer = usePuzzleTimer();
-const puzzleStore = usePuzzleStore();
-const paused = toRef(puzzleStore, 'paused');
+defineProps<{
+	puzzlePaused: boolean
+}>();
 
+const puzzleTimer = usePuzzleTimer();
 const formatTime = timeFormatter({ padMinutes: false });
 
 const totalTime = ref(0);
