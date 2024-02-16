@@ -36,53 +36,21 @@
 </template>
 
 <script setup lang="ts">
-import { useRecapStatsStore } from '@/stores/recap-stats.js';
-import { toRef, computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { usePuzzleRecapModalActions } from './usePuzzleRecapModalAction.js';
+import { usePuzzleRecapTransitionTimings } from './usePuzzleRecapTransitionTimings.js';
+import { toRef } from 'vue';
 
 const props = defineProps<{
-	finished: boolean
-}>()
+	show: boolean
+}>();
+const shouldShow = toRef(props, 'show');
 
-const finished = toRef(props, 'finished');
-
-const recapStatsStore = useRecapStatsStore();
-
-const modalShown = toRef(recapStatsStore, 'modalShown');
-const shouldShow = computed(() => {
-	return finished.value && modalShown.value;
-})
-
-const showBanner = ref(false);
-const showBackdrop = ref(false);
-const showContent = ref(false);
-
-watch(shouldShow, (value) => {
-	if (value) {
-		nextTick(() => showBanner.value = true);
-	} else {
-		showBanner.value = false;
-		showBackdrop.value = false;
-		showContent.value = false;
-	}
-}, { immediate: true });
-
-onMounted(() => showBanner.value = true);
-
-onBeforeUnmount(() => {
-	clearTimeout(bannerAfterEnterTimeout!);
-	bannerAfterEnterTimeout = null;
-})
-
-let bannerAfterEnterTimeout: ReturnType<typeof setTimeout> | null = null;
-const bannerAfterEnter = () => {
-	clearTimeout(bannerAfterEnterTimeout!);
-	bannerAfterEnterTimeout = globalThis.setTimeout(() => {
-		showBackdrop.value = true;
-		showBanner.value = false;
-		showContent.value = true;
-	}, 300);
-}
+const {
+	showBanner, showBackdrop, showContent,
+	bannerAfterEnter
+} = usePuzzleRecapTransitionTimings({
+	enabled: shouldShow
+});
 
 const { exitTo } = usePuzzleRecapModalActions();
 </script>

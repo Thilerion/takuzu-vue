@@ -72,7 +72,7 @@
 			</OverlayPageTransition>
 		</router-view>
 
-		<PuzzleRecap :finished="finished"></PuzzleRecap>
+		<PuzzleRecap :show="finished && recapStatsStore.modalShown" />
 	</div>
 </template>
 
@@ -139,7 +139,7 @@ const { manualPauseGame, manualResumeGame } = usePuzzlePauseResume();
 const { clearCompletionCheckTimeouts } = useGameCompletion();
 
 // initialize required stores and router
-useRecapStatsStore();
+const recapStatsStore = useRecapStatsStore(); // should be initialized to keep state active until puzzle is finished
 const puzzleHistoryStore = usePuzzleHistoryStore();
 const puzzleHintsStore = usePuzzleHintsStore();
 const puzzleAssistanceStore = usePuzzleAssistanceStore();
