@@ -1,7 +1,6 @@
-export * from './stats-db-helpers.js';
 export { 
 	// statsDb,
-	statsDb as db, // TODO: remove this; it was the original name under which it was exported
+	statsDb,
 	puzzleHistoryTable,
 
 	type StatsDB,

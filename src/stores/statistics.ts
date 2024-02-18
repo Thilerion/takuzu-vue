@@ -1,13 +1,13 @@
+import { statsDb } from "@/services/db/stats-db";
 import { StatsDbExtendedStatisticDataEntry } from "@/services/db/stats-db/models.js";
-import * as StatsDB from "@/services/db/stats-db/index.js";
 import { isToday } from "date-fns";
 import { defineStore } from "pinia";
 import { reactive } from "vue";
-import { getUniqueDatesFromItems } from "@/services/stats/dates.js";
 import { formatBasicSortableDateKey } from "@/utils/date.utils.js";
+import { getUniqueDatesFromItems } from "@/services/stats/dates";
 
-const getPuzzlesSolved = (): Promise<number> => StatsDB.getCount();
-const getAllHistoryItems = () => StatsDB.getAll().then(list => list.map(item => {
+const getPuzzlesSolved = (): Promise<number> => statsDb.getTotalSolved();
+const getAllHistoryItems = () => statsDb.getAll().then(list => list.map(item => {
 	return new StatsDbExtendedStatisticDataEntry(item);
 }));
 
@@ -62,7 +62,7 @@ export const useStatisticsStore = defineStore('statistics', {
 		},
 		async markFavorite(id: number, value: boolean) {
 			const dbVal = value ? 1 : 0;
-			const success = await StatsDB.update(id, {
+			const success = await statsDb.updateItem(id, {
 				'flags.favorite': dbVal
 			});
 			if (success) {
@@ -78,7 +78,7 @@ export const useStatisticsStore = defineStore('statistics', {
 			return success;
 		},
 		async saveNote(id: number, note: string | undefined) {
-			const success = await StatsDB.update(id, {
+			const success = await statsDb.updateItem(id, {
 				note
 			});
 			if (success) {
@@ -96,7 +96,7 @@ export const useStatisticsStore = defineStore('statistics', {
 				console.warn('No item found with this id. Cannot delete it.');
 				return;
 			}
-			await StatsDB.deleteItem(id);
+			await statsDb.deleteEntry(id);
 			this.historyItems.splice(idx, 1);
 		},
 		setInitialized(value: boolean) {

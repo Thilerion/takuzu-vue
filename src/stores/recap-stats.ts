@@ -1,9 +1,9 @@
-import { type FinishedPuzzleState, StatsDbHistoryEntry } from "@/services/db/stats-db/models.js";
-import * as StatsDB from '@/services/db/stats-db/index.js';
+import { type FinishedPuzzleState, StatsDbHistoryEntry, type StatsDbHistoryEntryWithId } from "@/services/db/stats-db/models.js";
 import { defineStore } from "pinia";
 import { startOfDay } from "date-fns";
 import { useMainStore } from "./main";
 import type { BasicPuzzleConfig, DifficultyKey } from "@/lib/types.js";
+import { statsDb } from "@/services/db/stats-db";
 
 type PuzzleStatisticsBestAverages = {
 	best: number;
@@ -152,21 +152,19 @@ export const useRecapStatsStore = defineStore('recapStats', {
 			console.log('Puzzle saved to history.');
 			return historyEntryUpdated;
 		},
-		async addFinishedPuzzleToDb(historyEntry: StatsDbHistoryEntry) {
+		async addFinishedPuzzleToDb(historyEntry: StatsDbHistoryEntry): Promise<StatsDbHistoryEntryWithId | StatsDbHistoryEntry> {
 			try {
-				const id = await StatsDB.add(historyEntry, true);
-				if (id && typeof id === 'number') {
-					historyEntry.id = id;
-					return historyEntry;
-				} else {
+				const id = await statsDb.addEntry(historyEntry, true);
+				if (id == null || typeof id !== 'number') {
 					console.error('Did not receive a correct id after saving history entry.');
 					console.warn({ id });
-					return historyEntry; // TODO: should I return it here?
+					return historyEntry as StatsDbHistoryEntry; // TODO: should I return it here?
 				}
+				return historyEntry as StatsDbHistoryEntryWithId;
 			} catch (e) {
 				console.error(e);
 				console.warn('Could not save history entry!');
-				return historyEntry;
+				return historyEntry as StatsDbHistoryEntry;
 			}
 		},
 
@@ -180,7 +178,7 @@ export const useRecapStatsStore = defineStore('recapStats', {
 			}
 			const { id } = this.lastPuzzleEntry;
 			try {
-				const success = await StatsDB.update(id, {
+				const success = await statsDb.updateItem(id, {
 					note: note ?? undefined
 				});
 				if (success) {
@@ -205,7 +203,7 @@ export const useRecapStatsStore = defineStore('recapStats', {
 			const { id, flags: currentFlags } = this.lastPuzzleEntry;
 			const newFlags = { ...currentFlags, favorite: (value ? 1 : 0 as 1 | 0) };
 			try {
-				const success = await StatsDB.update(id, {
+				const success = await statsDb.updateItem(id, {
 					flags: { ...newFlags }
 				});
 				if (success) {
@@ -286,7 +284,7 @@ async function createGameEndStats({ width, height, difficulty, timeElapsed, id, 
 }
 
 async function getItemsWithSameInitialBoard({initialBoard, id}: { initialBoard: string, id?: number }) {
-	const previousPlays = await StatsDB.puzzleHistoryTable.where({
+	const previousPlays = await statsDb.puzzleHistory.where({
 		initialBoard
 	}).filter(item => id == null || item.id !== id).toArray();
 
@@ -296,28 +294,33 @@ async function getItemsWithSameInitialBoard({initialBoard, id}: { initialBoard: 
 
 async function getTotalSolved(): Promise<HistoryTotals & PuzzleConfigurationHistory> {
 	try {
-		const totalSolved = await StatsDB.getCount();
-		const sizes = await StatsDB.puzzleHistoryTable.orderBy('[width+height]').uniqueKeys();
-		const difficulties = await StatsDB.puzzleHistoryTable.orderBy('difficulty').uniqueKeys();
-		const sizeAndDifficulties = await StatsDB.puzzleHistoryTable.orderBy('[width+height+difficulty]').uniqueKeys();
-
 		const startOfToday = startOfDay(Date.now());
 		const startOfTodayTimestamp = startOfToday.getTime();
 
-		const totalSolvedToday = await StatsDB.puzzleHistoryTable.where('timestamp').above(startOfTodayTimestamp).count();
+		const results = await Promise.all([
+			statsDb.getTotalSolved(),
+			statsDb.getUniquePlayedSizes(),
+			statsDb.getUniquePlayedDifficulties(),
+			statsDb.getUniquePlayedPuzzleConfigs(),
+			statsDb.getTotalSolvedAfterDate(startOfTodayTimestamp)
+		])
 
-		const sizesPlayed = (sizes as unknown as [number, number][]).map(([width, height]) => {
-			const cells = width * height;
-			return { width, height, cells };
-		}).sort((a, b) => {
+		const [totalSolved, sizes, difficulties, sizeAndDifficulties, totalSolvedToday] = results;
+		console.log(results);
+
+		const sizesPlayed = sizes.map((shape) => ({
+			width: shape.width,
+			height: shape.height,
+			cells: shape.width * shape.height
+		})).sort((a, b) => {
 			return a.cells - b.cells;
 		});
-		const difficultiesPlayed = ([...difficulties] as DifficultyKey[]).sort((a, b) => {
+		const difficultiesPlayed = [...difficulties].sort((a, b) => {
 			return a - b;
 		})
-		const puzzleConfigsPlayed = (sizeAndDifficulties as unknown as [number, number, DifficultyKey][]).map(([width, height, difficulty]) => {
-			const cells = width * height;
-			return { width, height, difficulty, cells };
+		const puzzleConfigsPlayed = sizeAndDifficulties.map((conf) => {
+			const cells = conf.width * conf.height;
+			return { ...conf, cells };
 		}).sort((a, b) => {
 			const byDiff = a.difficulty - b.difficulty;
 			if (byDiff !== 0) return byDiff;
@@ -345,7 +348,7 @@ async function getTotalSolved(): Promise<HistoryTotals & PuzzleConfigurationHist
 
 async function getPuzzlesPlayedWithPuzzleConfig({ width, height, difficulty, id }: BasicPuzzleConfig & { id?: number}) {
 	try {
-		const items = await StatsDB.puzzleHistoryTable
+		const items = await statsDb.puzzleHistory
 			.where('[width+height+difficulty]')
 			.equals([width, height, difficulty])
 			.sortBy('timeElapsed');
@@ -362,8 +365,8 @@ async function getPuzzlesPlayedWithPuzzleConfig({ width, height, difficulty, id 
 
 async function getPuzzleCountWithSizeOrDifficulty({ width, height, difficulty }: BasicPuzzleConfig): Promise<PuzzleConfigurationStatistics> {
 	try {
-		const sizeCount = StatsDB.puzzleHistoryTable.where('[width+height]').equals([width, height]).count();
-		const difficultyCount = StatsDB.puzzleHistoryTable.where('difficulty').equals(difficulty).count();
+		const sizeCount = statsDb.puzzleHistory.where('[width+height]').equals([width, height]).count();
+		const difficultyCount = statsDb.puzzleHistory.where('difficulty').equals(difficulty).count();
 		
 		return {
 			itemsPlayedWithSize: await sizeCount,
