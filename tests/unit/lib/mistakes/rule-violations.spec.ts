@@ -1,5 +1,8 @@
+import { ONE, ZERO } from "@/lib/constants";
 import { SimpleBoard } from "@/lib/index.js";
 import { findRuleViolations } from "@/lib/mistakes/rule-violations.js";
+import type { BoardExportString } from "@/lib/types";
+import exp from "constants";
 
 describe('findRuleViolations()', () => {
 	it('finds nothing with a correct board', () => {
@@ -83,5 +86,21 @@ describe('findRuleViolations()', () => {
 
 		const uniqueLinesViolations = violations.filter(v => v.type === 'uniqueLines');
 		expect(uniqueLinesViolations).toHaveLength(1);
+	})
+
+	it('find correct maxConsecutive rule violation, with the proper incorrect cells', () => {
+		// 19-2-24: fixed a bug where the board instead of the solution was passed as solution
+		const board = SimpleBoard.fromString('6x6;...........1...00.....0..1.....111..' as BoardExportString);
+		const solution = SimpleBoard.fromString('6x6;100110010011101001101100010110011001' as BoardExportString);
+		const result = findRuleViolations({ board, solution });
+		expect(result.results).toHaveLength(1);
+		expect(result.results[0].type).toBe('maxConsecutive');
+		expect(result.results[0].incorrectCells).toHaveLength(1);
+		expect(result.results[0].incorrectCells[0]).toEqual({
+			x: 3,
+			y: 5,
+			current: ONE,
+			correctValue: ZERO
+		})
 	})
 })

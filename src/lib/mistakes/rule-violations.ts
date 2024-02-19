@@ -29,11 +29,11 @@ export function findRuleViolations(
 	
 	results.push(
 		// find maxConsecutive rule violations
-		...findMaxConsecutiveRuleViolations(getBoardLines, board),
+		...findMaxConsecutiveRuleViolations(getBoardLines, solution),
 		// find balancedLines rule violations
-		...findBalancedLinesRuleViolations(getBoardLines, board),
+		...findBalancedLinesRuleViolations(getBoardLines, solution),
 		// find uniqueLines rule violations
-		...findUniqueLinesRuleViolations(getBoardLines, board)
+		...findUniqueLinesRuleViolations(getBoardLines, solution)
 	)
 	
 	// Possible that no results were found when the incorrect values cannot easily be attributed to a rule violation.
