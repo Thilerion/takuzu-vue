@@ -7,6 +7,10 @@ import type { SteppedHint } from "./stepped-hint/types.js";
 import { BalanceSteppedHint } from "./stepped-hint/BalanceHint.js";
 import { humanBalanceTechnique } from "@/lib/solvers/human-solver/techniques/BalanceTechnique.js";
 import { humanTriplesTechnique } from "@/lib/solvers/human-solver/techniques/TriplesTechnique.js";
+import { findRuleViolations } from "@/lib/mistakes/rule-violations";
+import { findIncorrectValuesFromSolution } from "@/lib/mistakes/incorrect-values";
+import type { FoundIncorrectValue, RuleViolation } from "@/lib/mistakes/types";
+import type { XYKey } from "@/lib/types";
 
 export const searchForHint = (
 	board: SimpleBoard,
@@ -34,15 +38,50 @@ function searchForMistakesHint(board: SimpleBoard, solution: SimpleBoard): Hint 
 		// 1b: is all incorrect values are due to rule violations, show ruleViolation hint
 		// 1c: if not all incorrect due to RV, are no RV at all, show IncorrectValue hint
 	const {
-		hasMistakes,
-		result: incorrectValues
-	} = board.hasIncorrectValues(solution);
+		hasIncorrectValues,
+		hasRuleViolations,
+		results: ruleViolationResults,
+	} = findRuleViolations({ board, solution });
 
-	if (hasMistakes) {
-		const hint = createHint(HINT_TYPE.MISTAKE, incorrectValues);
-		return hint;
+	if (!hasIncorrectValues) return null;
+
+	const { results: incorrectValues } = findIncorrectValuesFromSolution({ board, solution });
+
+	if (!hasRuleViolations) {
+		return createHint(HINT_TYPE.MISTAKE, incorrectValues);
 	}
-	return null;
+	// check if all incorrect values are due to rule violations
+	return getRuleViolationOrIncorrectValueHint(incorrectValues, ruleViolationResults);
+}
+
+function getRuleViolationOrIncorrectValueHint(
+	incorrectValues: FoundIncorrectValue[],
+	ruleViolations: RuleViolation[],
+) {
+	// if all incorrect values are due to rule violations, return rule violation hint
+	// else, if any incorrect values are not due to rule violations, return incorrect value hint
+
+	const ruleViolationIncorrectCells = new Set<XYKey>();
+
+	for (const violation of ruleViolations) {
+		for (const cell of violation.incorrectCells) {
+			const key: XYKey = `${cell.x},${cell.y}`;
+			ruleViolationIncorrectCells.add(key);
+		}
+	}
+
+	if (incorrectValues.every(cell => {
+		const key: XYKey = `${cell.x},${cell.y}`;
+		return ruleViolationIncorrectCells.has(key);
+	})) {
+		// all incorrect values are due to rule violation, so return rule violation hint
+		// TODO: implement RuleViolationHint
+		console.warn('SHOULD RETURN RULE VIOLATION HINT NOW, BUT NOT IMPLEMENTED YET.');
+		return createHint(HINT_TYPE.MISTAKE, incorrectValues);
+	} else {
+		console.log('A true mistake/incorrect values hint here');
+		return createHint(HINT_TYPE.MISTAKE, incorrectValues);
+	}
 }
 
 function searchForHumanStrategyHint(board: SimpleBoard) {
