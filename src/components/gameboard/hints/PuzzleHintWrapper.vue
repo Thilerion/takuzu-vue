@@ -10,10 +10,12 @@
 					@done="puzzleHintsStore.removeHint"
 					@hide="hide"
 				></PuzzleHint>
-				<PuzzleHintBase v-else-if="renderableSteppedHint">
-					<template #title>Stepped hint: TODO</template>
-					<template #message>A stepped hint component has not yet been implemented.</template>
-				</PuzzleHintBase>
+				<PuzzleHintStepped
+					v-else-if="renderableSteppedHint"
+					:hint="renderableSteppedHint"
+					:show="showHint"
+					@hide="hide"
+				/>
 		</transition>
 	</div>
 </template>
@@ -37,7 +39,8 @@ const renderableLegacyHint = computed((): null | Hint => {
 	return null;
 })
 const renderableSteppedHint = computed((): null | SteppedHint => {
-	if (showHint.value && currentHint.value != null && !currentHint.value.isLegacyHint && currentHint.value.isSteppedHint) {
+	// Note: gets rendered even if showHint is false
+	if (currentHint.value != null && !currentHint.value.isLegacyHint && currentHint.value.isSteppedHint) {
 		return currentHint.value;
 	}
 	return null;

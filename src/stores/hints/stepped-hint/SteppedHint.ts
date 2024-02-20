@@ -14,7 +14,7 @@ const nextHintId = (() => {
 })();
 
 // set certain cells in puzzleStore to a certain value, with or without adding to history, or adding to history as batch?
-type HintStepOnCallback = (
+export type HintStepOnCallback = (
 	ctx: BoardAndSolutionBoards,
 	actions: {
 		toggle: ReturnType<typeof usePuzzleStore>['toggle'],

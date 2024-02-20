@@ -35,8 +35,13 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 		if (currentHint.value == null) {
 			throw new Error('Cannot show hint as there is no current hint set. Will hide hint and highlights instead.');
 		}
-		const hintHighlightsStore = useHintHighlightsStore();
-		hintHighlightsStore.show();
+		if (currentHint.value.isLegacyHint) {
+			const hintHighlightsStore = useHintHighlightsStore();
+			hintHighlightsStore.show();
+		} else {
+			// handled from component for stepped hints
+			// console.log('Cannot show stepped hint highlight from store.');
+		}
 		showHint.value = true;
 	}
 	const showCurrentHintIfAvailable = () => {
@@ -46,8 +51,13 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 		showCurrentHint();
 	}
 	const hideCurrentHint = () => {
-		const hintHighlightsStore = useHintHighlightsStore();
-		hintHighlightsStore.hide();
+		if (currentHint.value != null && currentHint.value.isLegacyHint) {
+			const hintHighlightsStore = useHintHighlightsStore();
+			hintHighlightsStore.hide();
+		} else if (currentHint.value != null && currentHint.value.isSteppedHint) {
+			// handled from component for stepped hints
+			// console.log('Cannot hide stepped hint highlight from store.');
+		}
 		showHint.value = false;
 	}
 	const removeCurrentHint = () => {
@@ -66,7 +76,8 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 			const hintHighlightsStore = useHintHighlightsStore();
 			hintHighlightsStore.setFromHint(hint);
 		} else {
-			console.warn('Setting highlights for stepped hint is not yet implemented?');
+			// do not set highlights for stepped hint from here, it is handled by onShow/onHide etc callbacks in hint from the component
+			// console.warn('Setting highlights for stepped hint is not yet implemented?');
 		}
 	}
 	const setCachedHint = (hint: Hint | SteppedHint | null) => {
@@ -78,7 +89,8 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 		} else if (hint.isLegacyHint) {
 			hintHighlightsStore.setFromHint(hint);
 		} else if (hint.isSteppedHint) {
-			console.warn('Setting highlights for stepped hint is not yet implemented?');
+			// handle from component for stepped hints
+			// console.warn('Setting highlights for stepped hint is not yet implemented?');
 		}
 		if (!cache.value.has(currentBoardStr.value)) {
 			throw new Error('Setting cached hint, but it is not in cache. This should not happen.');
