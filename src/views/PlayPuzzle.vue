@@ -30,23 +30,35 @@
 						:show-timer="showTimer"
 						:difficulty="(difficulty as DifficultyKey)"
 						:progress-ratio="puzzleStore.progress"
-						:has-border="rulerType != null"
+						:has-border="showRulers"
 						:puzzle-paused="puzzleStore.paused"
 					/>
 				</template>
 				<template v-slot:ruler-rows>
-					<CoordsRuler v-if="rulerType === 'coords'" line-type="rows"
-						:line-ids="board.rowIds" />
-					<CountsRuler v-else-if="rulerType === 'count-current' || rulerType === 'count-remaining'"
-						:count-type="rulerType === 'count-remaining' ? 'remaining' : 'current'" line-type="rows"
-						:cell-size="cellSize" />
+					<CoordsRuler 
+						v-if="rulerComponentType === 'coords'"
+						line-type="rows"
+						:line-ids="board.rowIds"
+					/>
+					<CountsRuler
+						v-else-if="rulerComponentType === 'count'"
+						:count-type="rulerCountType!"
+						line-type="rows"
+						:cell-size="cellSize"
+					/>
 				</template>
 				<template v-slot:ruler-columns>
-					<CoordsRuler v-if="rulerType === 'coords'" line-type="columns"
-						:line-ids="board.columnIds" />
-					<CountsRuler v-else-if="rulerType === 'count-current' || rulerType === 'count-remaining'"
-						:count-type="rulerType === 'count-remaining' ? 'remaining' : 'current'" line-type="columns"
-						:cell-size="cellSize" />
+					<CoordsRuler
+						v-if="rulerComponentType === 'coords'"
+						line-type="columns"
+						:line-ids="board.columnIds"
+					/>
+					<CountsRuler
+						v-else-if="rulerComponentType === 'count'"
+						:count-type="rulerCountType!"
+						line-type="columns"
+						:cell-size="cellSize"
+					/>
 				</template>
 			</GameBoard>
 		</GameBoardWrapper>
@@ -107,7 +119,9 @@ import { useGameCompletion } from './usePlayPuzzleCompletion.js';
 
 const { 
 	windowHidden,
-	rulerType,
+	showRulers,
+	rulerComponentType,
+	rulerCountType,
 	rulerSize,
 	showTimer,
 	onDropdownToggled,

@@ -6,13 +6,13 @@ export type ValidVibrationStrength = typeof validVibrationStrengths[number];
 export type RulerType = 'coords' | 'remainingCount' | 'currentCount' | '';
 
 export const cellThemeTypeMap = {
-	'classic': 'symbols' as const,
-	'tictactoe': 'symbols' as const,
-	'blue-red': 'coloredTiles' as const
-}
+	'classic': 'symbols',
+	'tictactoe': 'symbols',
+	'blue-red': 'coloredTiles'
+} as const satisfies Record<CellTheme, CellThemeType>;
 
-export type CellTheme = keyof typeof cellThemeTypeMap;
-export type CellThemeType = typeof cellThemeTypeMap[CellTheme];
+export type CellTheme = 'classic' | 'tictactoe' | 'blue-red';
+export type CellThemeType = 'symbols' | 'coloredTiles';
 export type CellThemeTypeMap = typeof cellThemeTypeMap;
 
 export type CheckButtonOption = 'disabled' | 'ruleViolations' | 'incorrectValues';

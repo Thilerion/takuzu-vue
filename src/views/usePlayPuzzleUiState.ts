@@ -13,23 +13,22 @@ export const usePlayPuzzleUiState = () => {
 	const settingsOpen = ref(false);
 
 	const windowHidden = computed(() => mainStore.context.windowHidden);
-	const { showLineInfo, showRulers, showTimer } = storeToRefs(settingsStore);
+	const { showLineInfo, showRulers, rulerComponentType, showTimer } = storeToRefs(settingsStore);
 	
 	// Ruler settings
-	const rulerType = computed(() => {
-		if (!showRulers.value) return null;
-		if (showLineInfo.value === 'coords') return 'coords';
-		else if (showLineInfo.value === 'remainingCount') return 'count-remaining';
-		else if (showLineInfo.value === 'currentCount') return 'count-current';
-		else return null;
+	const rulerCountType = computed(() => {
+		if (rulerComponentType.value !== 'count') return null;
+		if (showLineInfo.value === 'remainingCount') return 'remaining';
+		else if (showLineInfo.value === 'currentCount') return 'current';
+		else throw new Error('Unexpected ruler type; cannot determine count type.');
 	})
 	const rulerSize = computed(() => {
 		if (!showRulers.value) return null;
-		if (rulerType.value === 'coords') {
+		if (rulerComponentType.value === 'coords') {
 			return 16; // 16px
-		} else if (rulerType.value?.startsWith('count')) {
+		} else if (rulerComponentType.value === 'count') {
 			return 'cellSize';
-		} else if (rulerType.value === null) {
+		} else if (rulerComponentType.value === null) {
 			return null;
 		} else {
 			throw new Error('Unexpected ruler type; cannot determine rulerSize.');
@@ -41,7 +40,9 @@ export const usePlayPuzzleUiState = () => {
 
 	return {
 		windowHidden,
-		rulerType,
+		showRulers,
+		rulerComponentType,
+		rulerCountType,
 		rulerSize,
 		showTimer,
 		onDropdownToggled,

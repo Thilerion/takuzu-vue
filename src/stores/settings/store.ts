@@ -3,6 +3,7 @@ import { toRaw } from "vue";
 import { getDefaultSettings, loadSettings, saveSettings } from "./settings-ls";
 import { cellThemeTypeMap, type SettingsState } from "./types";
 
+export type RulerComponentType = 'coords' | 'count' | null;
 
 export const useSettingsStore = defineStore('settings', {
 	state: loadSettings,
@@ -10,9 +11,18 @@ export const useSettingsStore = defineStore('settings', {
 	getters: {
 		vibrationEnabled: state => state.enableVibration,
 		cellThemeType: state => cellThemeTypeMap[state.cellTheme],
-		showBoardCoordinates: state => state.showLineInfo === 'coords',
-		showBoardLineCounts: state => state.showLineInfo === 'currentCount' || state.showLineInfo === 'remainingCount',
-		showRulers: state => state.showLineInfo !== '' && state.showLineInfo !== null,
+
+		rulerComponentType: (state): RulerComponentType => {
+			switch(state.showLineInfo) {
+				case 'coords': return 'coords';
+				case 'remainingCount': return 'count';
+				case 'currentCount': return 'count';
+				default: return null;
+			}			
+		},
+		showRulers(): boolean {
+			return this.rulerComponentType !== null;
+		},
 	},
 	actions: {
 		saveToStorage() {

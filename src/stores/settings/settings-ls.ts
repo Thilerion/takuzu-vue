@@ -2,7 +2,7 @@ import type { SettingsState } from "./types";
 
 export const SETTINGS_STORAGE_KEY = 'takuzu-settings';
 
-const DEFAULT_SETTINGS = Object.freeze({
+const DEFAULT_SETTINGS: Readonly<SettingsState> = Object.freeze({
 	showLineInfo: 'remainingCount',
 	enableWakeLock: true,
 	showTimer: true,
