@@ -63,7 +63,7 @@ export class Hint {
 		this.validator = () => false;
 	}
 
-	get isLegacyHint() {
+	get isLegacyHint(): true {
 		return true;
 	}
 
