@@ -19,11 +19,12 @@ export const useHintHighlightsStore = defineStore('hintHighlights', () => {
 			visible.value = true;
 		}
 	}
-	const displayFromHint = (hint: Hint) => {
+	const setFromHint = (hint: Hint) => {
+		// without setting to visible
 		if (hint.isLegacyHint) {
 			const puzzleStore = usePuzzleStore();
 			const highlights: HintHighlight[] = createHighlightsFromLegacyHint(hint, puzzleStore.board!) ?? [];
-			setHighlights(highlights, { setVisible: true });
+			setHighlights(highlights, { setVisible: false });
 			return;
 		} else {
 			console.warn('This is a new type of hint that should be able to display its own highlights. Therefore, calling displayFromHint is not necessary.');
@@ -44,11 +45,15 @@ export const useHintHighlightsStore = defineStore('hintHighlights', () => {
 			currentHighlights.value = [...highlights];
 			if (setVisible) {
 				visible.value = true;
+			} else {
+				visible.value = false;
 			}
 		} else {
 			currentHighlights.value = [];
 			if (visible.value) {
 				console.warn('Current highlights are unset, so will now automatically hide the highlights.');
+				visible.value = false;
+			} else {
 				visible.value = false;
 			}
 		}
@@ -63,7 +68,6 @@ export const useHintHighlightsStore = defineStore('hintHighlights', () => {
 
 		show, hide,
 		clear, reset: clear,
-		displayFromHint,
-		setHighlights
+		setFromHint,
 	}
 });

@@ -5,143 +5,154 @@ import { validateHint } from "../hints/helpers.js";
 import { searchForHint } from "../hints/search.js";
 import { usePuzzleStore } from "../puzzle/store.js";
 import { useHintHighlightsStore } from "./highlights-store.js";
+import { computed, reactive, ref } from "vue";
+import { readonly } from "vue";
 
-export const usePuzzleHintsStore = defineStore('puzzleHints', {
+export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
+	// state
+	const showHint = ref(false);
+	const current = reactive({
+		hint: null,
+		boardStr: null
+	} as {
+		hint: null, boardStr: null | BoardString
+	} | { hint: Hint, boardStr: BoardString });
+	const cache = ref(new Map<BoardString, (null | Hint)>());
+	const currentHint = computed(() => current.hint);
 
-	state: () => ({
-		showHint: false,
-		currentHint: null as null | Hint,
-		currentHintValidForBoardStr: null as null | BoardString,
+	// Note: does not include a requested hint that was not found, and does not include for how many different boards a hint was requested
+	const uniqueHintsRequested = computed(() => {
+		const uniqueHintIds = new Set<number>();
+		for (const hint of cache.value.values()) {
+			if (hint != null) uniqueHintIds.add(hint.id);
+		}
+		return uniqueHintIds.size;
+	})
+	// TODO: assistanceData used for stats/saved game; amount of hints requested, types, actions executed, etc
 
-		cache: new Map<BoardString, (null | Hint)>()
-	}),
+	const currentBoardStr = computed(() => usePuzzleStore().boardStr!);
 
-	getters: {
-		baseHintsRequested: state => state.cache.size,
-		hintAssistanceData(): { amountRequested: number } {
-			const amountRequested = this.baseHintsRequested;
-			return { amountRequested };
-		},
-	},
-	
-	actions: {
-		hide() {
-			const hintHighlightsStore = useHintHighlightsStore();
-			hintHighlightsStore.hide();
+	const showCurrentHint = () => {
+		if (currentHint.value == null) {
+			throw new Error('Cannot show hint as there is no current hint set. Will hide hint and highlights instead.');
+		}
+		const hintHighlightsStore = useHintHighlightsStore();
+		hintHighlightsStore.show();
+		showHint.value = true;
+	}
+	const showCurrentHintIfAvailable = () => {
+		if (currentHint.value == null) {
+			hideCurrentHint();
+		}
+		showCurrentHint();
+	}
+	const hideCurrentHint = () => {
+		const hintHighlightsStore = useHintHighlightsStore();
+		hintHighlightsStore.hide();
+		showHint.value = false;
+	}
+	const removeCurrentHint = () => {
+		current.hint = null;
+		current.boardStr = null;
+		showHint.value = false;
+		const hintHighlightsStore = useHintHighlightsStore();
+		hintHighlightsStore.clear();
+	}
 
-			if (!this.showHint) {
-				return;
-			}
-			this.showHint = false;
-		},
-		show() {
-			if (this.currentHint == null) {
-				console.warn('Cannot show hint as there is no current hint set. Will hide hint and highlights instead.');
-				return this.hide();
-			}
-
-			const hintHighlightsStore = useHintHighlightsStore();
-			hintHighlightsStore.show();
-			this.showHint = true;
-		},
-		removeHint() {
-			this.currentHint = null;
-			this.currentHintValidForBoardStr = null;
-			this.showHint = false;
-			const hintHighlightsStore = useHintHighlightsStore();
+	const setNewHint = (hint: Hint) => {
+		current.hint = hint;
+		current.boardStr = currentBoardStr.value;
+		_addToCache(hint, currentBoardStr.value);
+		const hintHighlightsStore = useHintHighlightsStore();
+		hintHighlightsStore.setFromHint(hint);
+	}
+	const setCachedHint = (hint: Hint | null) => {
+		current.hint = hint;
+		current.boardStr = currentBoardStr.value;
+		const hintHighlightsStore = useHintHighlightsStore();
+		if (hint == null) {
 			hintHighlightsStore.clear();
-		},
-		showNewHint(hint: Hint) {
-			this.currentHint = hint;
-			this.currentHintValidForBoardStr = usePuzzleStore().boardStr! ?? null;
-			this.showHint = true;
-			const hintHighlightsStore = useHintHighlightsStore();
-			hintHighlightsStore.displayFromHint(hint);
-		},
+		} else {
+			hintHighlightsStore.setFromHint(hint);
+		}
+		if (!cache.value.has(currentBoardStr.value)) {
+			throw new Error('Setting cached hint, but it is not in cache. This should not happen.');
+		}
+	}
+	const setNoHintAvailable = () => {
+		current.hint = null;
+		current.boardStr = currentBoardStr.value;
+		_addToCache(null, currentBoardStr.value);
+		const hintHighlightsStore = useHintHighlightsStore();
+		hintHighlightsStore.clear();
+	}
 
-		// original mutations
-		reset() {
-			this.$reset();
-			const hintHighlightsStore = useHintHighlightsStore();
-			hintHighlightsStore.reset();
-		},
-		
-		// original actions
-		getHint() {
-			const puzzleStore = usePuzzleStore();
-			const boardStr = puzzleStore.boardStr!;
-
-			// First, check if there is a cached hint for this board state
-			// If so, show it, to prevent undoing and redoing from showing a different hint
-			if (this.showCachedHintIfValid(boardStr)) {
-				return;
-			}
-
-			// Else, check if there is an active currentHint set.
-			// If so, check if it is still valid for the current board state. If not, removeHint and continue.
-			const board = puzzleStore.board!;
-			const solution = puzzleStore.solution!;
-			if (this.validateCurrentHint()) {
-				this.show();
-				return;
-			}
-
-			const hint = searchForHint(board, solution);
-			this.setHint(hint);
-		},
-
-		validateCurrentHint(): boolean {
-			const currentHint = this.currentHint;
-			if (!currentHint) return false;
-
-			const isValid = validateHint(currentHint);
-			if (isValid) {
-				console.log('Hint is still valid. Showing it now.');
-				return true;
-			} else {
-				console.log('Hint is no longer valid. Will remove it and generate a new hint.');
-				this.removeHint();
-				return false;
-			}
-		},
-		showCachedHintIfValid(boardStr: BoardString): boolean {
-			const cacheResult = this.cache.get(boardStr);
-			if (!cacheResult) {
-				return false;
-			}
-			if (this.currentHint != null && this.currentHintValidForBoardStr === boardStr) {
-				this.show();
-				return true;
-			} else {
-				this.showNewHint(cacheResult);
-				return true;
-			}
-		},
-
-		setHint(hint: Hint | null) {
-			if (hint == null) {
-				console.log('SetHint was called without a hint; seems like there are no valid hints (found) for this board state.');
-				this.removeHint();
-				this.addNoHintAvailableToCache();
-				return;
-			}
-
-			console.log('setting hint');
-			console.log({ hint });
-
-			this.showNewHint(hint);
-			this.addHintToCache({ hint });
-		},
-
-		addHintToCache({
-			hint, boardStr
-		}: { hint: Hint, boardStr?: BoardString }) {
-			const _boardStr: BoardString = boardStr ?? usePuzzleStore().boardStr!;
-			this.cache.set(_boardStr, hint);
-		},
-		addNoHintAvailableToCache(boardStr?: BoardString) {
-			this.cache.set(boardStr ?? usePuzzleStore().boardStr!, null);
+	/** Check if a hint currently set, but not (completely) executed, is still valid for a possibly changed board. */
+	const validateAndShowCurrentHint = (): boolean => {
+		// if valid, but not in cache, display hint and ALSO add to cache with current boardStr
+		if (currentHint.value == null) return false;
+		if (current.boardStr === currentBoardStr.value) {
+			// It is still valid, as the board has not changed
+			showCurrentHint();
+			return true;
+		}
+		const isValid = validateHint(currentHint.value);
+		if (isValid) {
+			setNewHint(currentHint.value); // also adds to cache
+			return true;
+		} else {
+			// hint is no longer valid, so unset it and return false
+			removeCurrentHint();
+			return false;
 		}
 	}
 
+	const getHint = () => {
+		// Set cachedHint (or no hint) if current boardStr is set in cache, then show it
+		if (cache.value.has(currentBoardStr.value)) {
+			const cachedHint = cache.value.get(currentBoardStr.value)!;
+			setCachedHint(cachedHint);
+			showCurrentHintIfAvailable(); // as there is a possibility that the cached value is null
+			return;
+		}
+		// Else, check currentHint validity, and show if it is valid. If now valid, remove it and continue.
+		if (validateAndShowCurrentHint()) {
+			return;
+		}
+		// Else, search for new hint
+		const hint = searchForHint(usePuzzleStore().board!, usePuzzleStore().solution!);
+		if (hint != null) {
+			setNewHint(hint);
+			showCurrentHint();
+			return;
+		} else {
+			setNoHintAvailable();
+			hideCurrentHint();
+		}
+	}
+
+	const reset = () => {
+		showHint.value = false;
+		current.hint = null;
+		current.boardStr = null;
+		cache.value = new Map();
+		const hintHighlightsStore = useHintHighlightsStore();
+		hintHighlightsStore.reset();	
+	}
+
+	const _addToCache = (hint: Hint | null, boardStr: BoardString) => {
+		cache.value.set(boardStr, hint);
+	}
+	
+	return {
+		currentHint, showHint,
+
+		getHint,
+		reset,
+		hide: hideCurrentHint,
+		removeHint: removeCurrentHint,
+
+		_cache: readonly(cache),
+		uniqueHintsRequested,
+	}
 })
