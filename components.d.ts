@@ -133,6 +133,7 @@ declare module 'vue' {
     PuzzleGridHighlightItem: typeof import('./src/components/gameboard/PuzzleGridHighlightItem.vue')['default']
     PuzzleGridHighlights: typeof import('./src/components/gameboard/PuzzleGridHighlights.vue')['default']
     PuzzleHint: typeof import('./src/components/gameboard/hints/PuzzleHint.vue')['default']
+    PuzzleHintBase: typeof import('./src/components/gameboard/hints/PuzzleHintBase.vue')['default']
     PuzzleHintWrapper: typeof import('./src/components/gameboard/hints/PuzzleHintWrapper.vue')['default']
     PuzzleHistoryView: typeof import('./src/views/PuzzleHistoryView.vue')['default']
     PuzzleInfo: typeof import('./src/components/gameboard/PuzzleInfo.vue')['default']

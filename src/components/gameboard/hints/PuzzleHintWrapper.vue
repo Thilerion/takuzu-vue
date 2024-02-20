@@ -10,19 +10,10 @@
 					@done="puzzleHintsStore.removeHint"
 					@hide="hide"
 				></PuzzleHint>
-				<div
-					v-else-if="renderableSteppedHint"
-					class="z-50 absolute bottom-0 pointer-events-none hint w-full inset-x-0 h-full flex items-end"
-				>
-					<div
-						class="hint-inner
-						max-h-32
-						bg-white dark:bg-slate-700 text-slate-900 dark:text-white
-						w-full text-sm flex flex-col
-						pointer-events-auto flex-1 min-h-[6.5rem]
-						"
-					>Stepped hint: TODO</div>
-				</div>
+				<PuzzleHintBase v-else-if="renderableSteppedHint">
+					<template #title>Stepped hint: TODO</template>
+					<template #message>A stepped hint component has not yet been implemented.</template>
+				</PuzzleHintBase>
 		</transition>
 	</div>
 </template>
