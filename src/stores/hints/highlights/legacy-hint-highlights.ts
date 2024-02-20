@@ -22,7 +22,7 @@ export const createHighlightsFromLegacyHint = (hint: Hint, board: SimpleBoard) =
 	}
 }
 
-function createLegacyTriplesHintHighlights(hint: Hint): HintAreaHighlight[] {
+export function createLegacyTriplesHintHighlights(hint: Pick<Hint, 'source'>): HintAreaHighlight[] {
 	const source = hint.source as Vec[];
 	const xValues = source.map(v => v.x);
 	const yValues = source.map(v => v.y);

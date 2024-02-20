@@ -3,6 +3,7 @@ import { columnIdToX, getLineDataFromId, rowIdToY } from "@/lib/utils";
 import type { HighlightLevel, HighlightType, HintAreaHighlight, HintCellHighlight, HintHighlight, HintLineHighlight } from "./types.js";
 import type { ColumnId, LineId, RowId, Vec } from "@/lib/types.js";
 import type { SimpleBoard } from "@/lib/index.js";
+import { extent } from "@/utils/data-analysis.utils.js";
 
 // can be shown as multiple colors; ie a duplicate line hint may want to show the possible duplicate lines as a different color than the target line
 export const HIGHLIGHT_LEVELS = {
@@ -57,6 +58,24 @@ const AreaHighlight = ({ start, end }: Pick<HintAreaHighlight, 'start' | 'end'>,
 		start,
 		end
 	}
+}
+
+export const createAreaHighlightAroundCells = (
+	cells: Vec[],
+	level: HighlightLevel = defaultLevel
+): HintAreaHighlight => {
+	const xValues = cells.map(v => v.x);
+	const yValues = cells.map(v => v.y);
+
+	const [minX, maxX] = extent(xValues);
+	const [minY, maxY] = extent(yValues);
+	const start = {
+		x: minX, y: minY
+	};
+	const end = {
+		x: maxX, y: maxY
+	}
+	return AreaHighlight({ start, end}, level);
 }
 
 export function hintHighlightFromType(
