@@ -2,11 +2,12 @@ import { SimpleBoard } from "@/lib";
 import { createHint } from "./helpers";
 import { HINT_TYPE, Hint } from "./Hint";
 import { humanSolveBalance, humanSolveDuplicateLine, humanSolveElimination, humanSolveTriples } from "@/lib/human-solver";
+import { TriplesSteppedHint, type SteppedHint } from "./stepped-hint/SteppedHint.js";
 
 export const searchForHint = (
 	board: SimpleBoard,
 	solution: SimpleBoard,
-): Hint | null => {
+): Hint | SteppedHint | null => {
 
 	// Step 1: check for incorrect values
 	const mistakeHint = searchForMistakesHint(board, solution);
@@ -45,7 +46,7 @@ function searchForHumanStrategyHint(board: SimpleBoard) {
 	const triplesHumanResult = humanSolveTriples({ board });
 	if (triplesHumanResult && triplesHumanResult.length) {
 		const triplesHints = triplesHumanResult.map(triplesResult => {
-			return createHint(HINT_TYPE.TRIPLES, triplesResult);
+			return new TriplesSteppedHint(triplesResult);
 		})
 		
 		const sortedHints = triplesHints.sort((a, b) => {

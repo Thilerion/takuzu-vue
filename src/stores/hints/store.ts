@@ -5,8 +5,9 @@ import { validateHint } from "../hints/helpers.js";
 import { searchForHint } from "../hints/search.js";
 import { usePuzzleStore } from "../puzzle/store.js";
 import { useHintHighlightsStore } from "./highlights-store.js";
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, type ComputedRef } from "vue";
 import { readonly } from "vue";
+import type { SteppedHint } from "./stepped-hint/SteppedHint.js";
 
 export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 	// state
@@ -14,11 +15,9 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 	const current = reactive({
 		hint: null,
 		boardStr: null
-	} as {
-		hint: null, boardStr: null | BoardString
-	} | { hint: Hint, boardStr: BoardString });
-	const cache = ref(new Map<BoardString, (null | Hint)>());
-	const currentHint = computed(() => current.hint);
+	} as { hint: Hint | SteppedHint | null, boardStr: BoardString | null });
+	const cache = ref(new Map<BoardString, (null | Hint | SteppedHint)>());
+	const currentHint = computed(() => current.hint as null | Hint | SteppedHint);
 
 	// Note: does not include a requested hint that was not found, and does not include for how many different boards a hint was requested
 	const uniqueHintsRequested = computed(() => {
@@ -59,21 +58,27 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 		hintHighlightsStore.clear();
 	}
 
-	const setNewHint = (hint: Hint) => {
+	const setNewHint = (hint: Hint | SteppedHint) => {
 		current.hint = hint;
 		current.boardStr = currentBoardStr.value;
 		_addToCache(hint, currentBoardStr.value);
-		const hintHighlightsStore = useHintHighlightsStore();
-		hintHighlightsStore.setFromHint(hint);
+		if (hint.isLegacyHint) {
+			const hintHighlightsStore = useHintHighlightsStore();
+			hintHighlightsStore.setFromHint(hint);
+		} else {
+			console.warn('Setting highlights for stepped hint is not yet implemented?');
+		}
 	}
-	const setCachedHint = (hint: Hint | null) => {
+	const setCachedHint = (hint: Hint | SteppedHint | null) => {
 		current.hint = hint;
 		current.boardStr = currentBoardStr.value;
 		const hintHighlightsStore = useHintHighlightsStore();
 		if (hint == null) {
 			hintHighlightsStore.clear();
-		} else {
+		} else if (hint.isLegacyHint) {
 			hintHighlightsStore.setFromHint(hint);
+		} else if (hint.isSteppedHint) {
+			console.warn('Setting highlights for stepped hint is not yet implemented?');
 		}
 		if (!cache.value.has(currentBoardStr.value)) {
 			throw new Error('Setting cached hint, but it is not in cache. This should not happen.');
@@ -96,7 +101,10 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 			showCurrentHint();
 			return true;
 		}
-		const isValid = validateHint(currentHint.value);
+
+		const h = currentHint.value;
+		const isValid = validateHint(h);
+
 		if (isValid) {
 			setNewHint(currentHint.value); // also adds to cache
 			return true;
@@ -104,13 +112,13 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 			// hint is no longer valid, so unset it and return false
 			removeCurrentHint();
 			return false;
-		}
+		}		
 	}
 
 	const getHint = () => {
 		// Set cachedHint (or no hint) if current boardStr is set in cache, then show it
 		if (cache.value.has(currentBoardStr.value)) {
-			const cachedHint = cache.value.get(currentBoardStr.value)!;
+			const cachedHint = (cache.value.get(currentBoardStr.value) ?? null) as null | Hint | SteppedHint;
 			setCachedHint(cachedHint);
 			showCurrentHintIfAvailable(); // as there is a possibility that the cached value is null
 			return;
@@ -140,7 +148,7 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 		hintHighlightsStore.reset();	
 	}
 
-	const _addToCache = (hint: Hint | null, boardStr: BoardString) => {
+	const _addToCache = (hint: Hint | SteppedHint | null, boardStr: BoardString) => {
 		cache.value.set(boardStr, hint);
 	}
 	

@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AbstractPuzzleHint: typeof import('./src/components/gameboard/hints/AbstractPuzzleHint.vue')['default']
     AppTitle: typeof import('./src/components/AppTitle.vue')['default']
     AppVersionDisplay: typeof import('./src/components/settings/AppVersionDisplay.vue')['default']
     BaseButton: typeof import('./src/components/base/BaseButton.vue')['default']
@@ -156,6 +157,7 @@ declare module 'vue' {
     PuzzleRecapWrapper: typeof import('./src/components/puzzle-recap/PuzzleRecapWrapper.vue')['default']
     PuzzleRecapWrapper2: typeof import('./src/components/puzzle-recap/PuzzleRecapWrapper2.vue')['default']
     PuzzleStatisticsTable: typeof import('./src/views/PuzzleStatisticsTable.vue')['default']
+    PuzzleSteppedHint: typeof import('./src/components/gameboard/hints/PuzzleSteppedHint.vue')['default']
     PuzzleSymbolDisplay: typeof import('./src/components/how-to-play/PuzzleSymbolDisplay.vue')['default']
     PuzzleTools: typeof import('./src/views/PuzzleTools.vue')['default']
     PwaInstallNotification: typeof import('./src/components/home/PwaInstallNotification.vue')['default']
