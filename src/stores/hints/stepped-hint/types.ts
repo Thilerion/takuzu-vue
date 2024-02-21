@@ -1,6 +1,8 @@
 import type { BoardAndSolutionBoards } from "@/lib/types.js";
 import type { usePuzzleStore } from "@/stores/puzzle/store.js";
 import type { useHintHighlightsStore } from "../highlights-store.js";
+import type { HintHighlight } from "../highlights/types.js";
+import type { Ref } from "vue";
 
 export type SteppedHintType = 'ruleViolation' | 'incorrectValues' | 'triples' | 'balance' | 'elimination' | 'elimDuplicate';
 export type HintStepEventCallbackCtxParam = BoardAndSolutionBoards;
@@ -9,6 +11,8 @@ export type HintStepEventCallbackActionsParam = {
 	makeMove: ReturnType<typeof usePuzzleStore>['makeMove'],
 	removeHighlights: () => void,
 	setHighlights: ReturnType<typeof useHintHighlightsStore>['setHighlights'],
+	currentHighlights: Ref<HintHighlight[]>,
+	showHighlights: () => void,
 	hideHighlights: () => void,
 }
 export type HintStepEventCallback = (

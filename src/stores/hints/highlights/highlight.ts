@@ -77,6 +77,12 @@ export const createAreaHighlightAroundCells = (
 	}
 	return AreaHighlight({ start, end}, level);
 }
+export const createCellHighlight = (
+	vec: Vec,
+	level: HighlightLevel = defaultLevel
+) => {
+	return CellHighlight(vec, level);
+}
 
 export function hintHighlightFromType(
 	hlType: typeof HIGHLIGHT_TYPES.CELL,

@@ -3,6 +3,7 @@ import { usePuzzleStore } from "../puzzle/store.js";
 import { useHintHighlightsStore } from "./highlights-store.js";
 import type { ReadonlyRefOrGetter } from "@vueuse/core";
 import type { HintStep, HintStepEventCallback, HintStepEvent, HintStepEventCallbackActionsParam, HintStepEventCallbackCtxParam } from "./stepped-hint/types.js";
+import { toRef } from "vue";
 
 export const useSteppedHintEvents = (
 	stepRef: ReadonlyRefOrGetter<HintStep | null | undefined>
@@ -14,11 +15,14 @@ export const useSteppedHintEvents = (
 	}));
 
 	const highlightsStore = useHintHighlightsStore();
+	const currentHighlights = toRef(highlightsStore, 'currentHighlights');
 
 	const actions = computed((): HintStepEventCallbackActionsParam => ({
 		hideHighlights: highlightsStore.hide,
 		removeHighlights: highlightsStore.clear,
 		setHighlights: highlightsStore.setHighlights,
+		currentHighlights,
+		showHighlights: highlightsStore.show,
 		makeMove: puzzleStore.makeMove,
 	}));
 

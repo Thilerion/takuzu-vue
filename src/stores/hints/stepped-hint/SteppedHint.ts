@@ -1,8 +1,8 @@
 import { EMPTY } from "@/lib/constants.js";
 import type { TriplesTechniqueResult } from "@/lib/solvers/human-solver/techniques/TriplesTechnique.js";
 import type { BoardAndSolutionBoards, Vec, VecValue } from "@/lib/types.js";
-import { HIGHLIGHT_LEVELS, createAreaHighlightAroundCells } from "../highlights/highlight.js";
-import type { HintStepFinal, HintStepIntermediate, SteppedHintType } from "./types.js";
+import { HIGHLIGHT_LEVELS, createAreaHighlightAroundCells, createCellHighlight } from "../highlights/highlight.js";
+import type { HintStepEventCallbackActionsParam, HintStepFinal, HintStepIntermediate, SteppedHintType } from "./types.js";
 
 const nextHintId = (() => {
 	let id = 0;
@@ -44,7 +44,6 @@ abstract class BaseSteppedHint {
 	abstract validate(boardAndSolution: BoardAndSolutionBoards): boolean;
 }
 
-// TODO: add intermediate steps
 export class TriplesSteppedHint extends BaseSteppedHint {
 	readonly subType: 'double' | 'sandwich';
 	readonly source: [Vec, Vec]; // the pair of cells that resulted in this hint, for instance: the pair of cells in one symbol that resulted in the cells adjacent to be the opposite symbol
@@ -53,52 +52,56 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 	readonly type = 'triples' as const;
 
 	constructor(data: TriplesTechniqueResult, id?: number) {
-		const { targets, origin, type } = data;
+		const { targets, origin, type: subType } = data;
 
 		super(id);		
 
-		this.subType = type;
+		this.subType = subType;
 		this.source = [...origin];
 		this.targets = [...targets];
 
-		this.steps = [{
-			actionLabel: 'Next',
+		// The first step displays the type of the hint, and has an action that locates it.
+		// This action displays the source of the hint as a highlight.
+		const firstStep: HintStepIntermediate = {
+			actionLabel: 'Locate',
 			index: 0,
-			message: 'Test step 1',
-			onShow: () => {
-				console.log('show step 1');
+			// TODO: if many triples hints found, replace message with There are multiple pairs and/or sandwiches on the board.
+			message: `There is a ${this.subType} somewhere on the board.`,
+			onNext: (ctx, { setHighlights }) => {
+				TriplesSteppedHint.setSourceHighlight(this.source, { setHighlights });
 			},
-			onHide: () => {
-				console.log('hide step 1');
-			},
-			onNext: () => {
-				console.log('on next step 1 (going to step 2)');
-			}
-		}, {
-			actionLabel: 'Next 2',
+		}
+		// The second step explains the hint, and has an action that locates the target(s).
+		// If going back to the first step, the source highlight is removed.
+		// If going forward to the third step, the target highlights are added to the currently shown source highlight.
+		const secondStep: HintStepIntermediate = {
+			actionLabel: `Locate`,
 			index: 1,
-			message: 'Test step 2',
-			onShow: () => {
-				console.log('show step 2');
+			message: 'Three of the same [symbol] cannot be next to each other. This can be prevented by placing the [opposite symbol].',
+			onShow: (ctx, { showHighlights }) => {
+				showHighlights();
 			},
-			onHide: () => {
-				console.log('hide step 2');
+			onPrev: (ctx, { removeHighlights }) => {
+				removeHighlights();
 			},
-			onNext: () => {
-				console.log('on next step 2 (going to step 3)');
+			onHide: (ctx, { hideHighlights }) => {
+				hideHighlights();
 			},
-			onPrev: () => {
-				console.log('on prev step 2 (going to step 1)');
-			}
-		}, {
+			onNext: (ctx, { currentHighlights }) => {
+				TriplesSteppedHint.addTargetsHighlights(this.targets, { currentHighlights });
+			},
+		}
+		// The final step further explains the hint, and has an action that sets the target(s) to the opposite (correct) symbol.
+		// If going back to the second step, the target highlights are removed, while the source highlight is kept.
+		const finalStep: HintStepFinal = {
 			actionLabel: 'Execute',
 			index: 1,
-			message: `There is a ${type} somewhere on the board.`,
-			onShow: (ctx, { setHighlights }) => {
-				const highlights = [
-					createAreaHighlightAroundCells(this.source, HIGHLIGHT_LEVELS.PRIMARY)
-				];
-				setHighlights(highlights, { setVisible: true });
+			message: this.subType === 'double' ? `Two equal symbols are next to each other. That means the surrounding cell${this.targets.length > 1 ? 's' : ''} must be the opposite symbol.` : `An empty cell is surrounded by two of the same symbol. To prevent three of the same symbol in a row, the empty cell must be the opposite symbol.`,
+			onShow: (ctx, { showHighlights }) => {
+				showHighlights();
+			},
+			onPrev: (ctx, { currentHighlights }) => {
+				TriplesSteppedHint.removeTargetsHighlights({ currentHighlights });
 			},
 			onHide: (ctx, { hideHighlights }) => {
 				hideHighlights();
@@ -112,7 +115,9 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 					}
 				}
 			}
-		}]
+		}
+
+		this.steps = [firstStep, secondStep, finalStep];
 	}
 
 	validate({ board, solution }: BoardAndSolutionBoards) {
@@ -122,6 +127,27 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 		if (this.targets.every(({ x, y }) => board.get(x, y) !== EMPTY)) return false;
 		if (this.source.some(({ x, y }) => board.get(x, y) !== solution.get(x, y))) return false;
 		return true;
+	}
+
+	static setSourceHighlight(source: [Vec, Vec], { setHighlights }: Pick<HintStepEventCallbackActionsParam, 'setHighlights'>) {
+		const highlights = [
+			createAreaHighlightAroundCells(source, HIGHLIGHT_LEVELS.PRIMARY),
+		];
+		setHighlights(highlights, { setVisible: true });
+	}
+	static addTargetsHighlights(
+		targets: Vec[],
+		{ currentHighlights }: Pick<HintStepEventCallbackActionsParam, 'currentHighlights'>
+	) {
+		const highlights = targets.map(vec => {
+			return createCellHighlight(vec, HIGHLIGHT_LEVELS.SECONDARY);
+		});
+		currentHighlights.value.push(...highlights);
+	}
+	static removeTargetsHighlights(
+		{ currentHighlights }: Pick<HintStepEventCallbackActionsParam, 'currentHighlights'>
+	) {
+		currentHighlights.value = currentHighlights.value.filter(h => h.level !== HIGHLIGHT_LEVELS.SECONDARY);
 	}
 }
 

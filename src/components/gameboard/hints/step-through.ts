@@ -21,28 +21,29 @@ export const useStepThroughSteppedHint = (
 
 	const nextStep = async () => {
 		if (isFinalStep.value) return;
-		// TODO: should onHide also be called?
 		stepEvents.value.onNext();
-		stepEvents.value.onHide();
 		stepIdx.value++;
 		await nextTick();
 		stepEvents.value.onShow();
 	}
 	const prevStep = async () => {
 		if (isFirstStep.value) return;
-		// TODO: should onHide also be called?
 		stepEvents.value.onPrev();
-		stepEvents.value.onHide();
 		stepIdx.value--;
 		await nextTick();
 		stepEvents.value.onShow();
 	}
 	const gotoStep = async (idx: number) => {
 		if (idx < 0 || idx >= hint.value.steps.length) return;
-		stepEvents.value.onHide();
-		stepIdx.value = idx;
-		await nextTick();
-		stepEvents.value.onShow();
+		if (idx < stepIdx.value) {
+			while (idx !== stepIdx.value) {
+				await prevStep();
+			}
+		} else if (idx > stepIdx.value) {
+			while (idx !== stepIdx.value) {
+				await nextStep();
+			}
+		}
 	}
 
 	const resetStep = () => {
