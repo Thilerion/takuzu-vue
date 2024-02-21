@@ -62,8 +62,37 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 		this.targets = [...targets];
 
 		this.steps = [{
-			actionLabel: 'Execute',
+			actionLabel: 'Next',
 			index: 0,
+			message: 'Test step 1',
+			onShow: () => {
+				console.log('show step 1');
+			},
+			onHide: () => {
+				console.log('hide step 1');
+			},
+			onNext: () => {
+				console.log('on next step 1 (going to step 2)');
+			}
+		}, {
+			actionLabel: 'Next 2',
+			index: 1,
+			message: 'Test step 2',
+			onShow: () => {
+				console.log('show step 2');
+			},
+			onHide: () => {
+				console.log('hide step 2');
+			},
+			onNext: () => {
+				console.log('on next step 2 (going to step 3)');
+			},
+			onPrev: () => {
+				console.log('on prev step 2 (going to step 1)');
+			}
+		}, {
+			actionLabel: 'Execute',
+			index: 1,
 			message: `There is a ${type} somewhere on the board.`,
 			onShow: (ctx, { setHighlights }) => {
 				const highlights = [

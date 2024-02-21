@@ -5,18 +5,15 @@
 		<template #buttons>
 			<button
 				:disabled="isFirstStep"
+				@click="prevStep"
 			>Prev</button>
-			<button
-				:disabled="isFinalStep"
-			>Next</button>
-			<button @click="stepEvents.onFinish">{{ curStep.actionLabel }}</button>
+			<button @click="onAction">{{ curStep.actionLabel }}</button>
 		</template>
 	</PuzzleHintBase>
 </template>
 
 <script setup lang="ts">
 import type { SteppedHint } from '@/stores/hints/stepped-hint/SteppedHint.js';
-import { useSteppedHintEvents } from '@/stores/hints/useSteppedHintEvents.js';
 import { toRef, watch } from 'vue';
 import { useStepThroughSteppedHint } from './step-through.js';
 
@@ -30,16 +27,23 @@ const props = defineProps<{
 }>()
 const hint = toRef(props, 'hint');
 
-const { stepIdx, curStep, isFirstStep, isFinalStep } = useStepThroughSteppedHint(
+const { stepIdx, curStep, isFirstStep, isFinalStep, nextStep, prevStep, stepEvents } = useStepThroughSteppedHint(
 	hint
 );
 
-const { stepEvents } = useSteppedHintEvents(curStep);
+const onAction = () => {
+	if (isFinalStep.value) {
+		stepEvents.value.onFinish();
+	} else {
+		nextStep();
+	}
+}
 
 watch(() => props.show, (val, prev) => {
 	if (val && !prev) {
 		stepEvents.value.onShow();
 	} else if (!val && prev) {
+		// if hidden, which can also happen with onFinish(), also trigger onHide()
 		stepEvents.value.onHide();
 	}
 }, { immediate: true });
