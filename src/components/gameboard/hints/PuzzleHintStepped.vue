@@ -1,7 +1,7 @@
 <template>
 	<PuzzleHintBase @hide="$emit('hide')" v-show="show" :step="stepIdx">
-		<template #title>Stepped hint: TODO</template>
-		<template #message>{{ curStep.message }}</template>
+		<template #title>{{ title }}<small class="text-sm opacity-80 ml-[0.5ch]" v-if="subtitle">{{ subtitle }}</small></template>
+		<template #message>{{ stepMessage }}</template>
 		<template #buttons>
 			<button
 				:disabled="isFirstStep"
@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { toRef, watch } from 'vue';
+import { computed, toRef, watch } from 'vue';
 import { useStepThroughSteppedHint } from './step-through.js';
 import type { SteppedHint } from '@/stores/hints/stepped-hint/types.js';
 
@@ -37,6 +37,49 @@ const hint = toRef(props, 'hint');
 const { stepIdx, curStep, isFirstStep, isFinalStep, nextStep, prevStep, stepEvents } = useStepThroughSteppedHint(
 	hint
 );
+
+const stepMessage = computed((): string => {
+	const val = curStep.value.message;
+	return (typeof val === 'string') ? val : val();
+})
+const subtitle = computed((): string | null => {
+	const type = hint.value.type;
+	switch(type) {
+		case 'triples': {
+			return hint.value.subType;
+		}
+		case 'balance': {
+			return null;
+		}
+		default: {
+			const x: never = type;
+			return null;
+		}
+	}
+})
+const title = computed(() => {
+	const type = hint.value.type;
+	let base: string;
+	switch(type) {
+		case 'triples': {
+			base = 'Triples';
+			break;
+		}
+		case 'balance': {
+			base = 'Balanced Lines';
+			break;
+		}
+		default: {
+			const x: never = type;
+			base = 'Hint';
+			break;
+		}
+	}
+	if (subtitle.value != null) {
+		base += ':';
+	} 
+	return base;
+})
 
 const onAction = () => {
 	if (isFinalStep.value) {

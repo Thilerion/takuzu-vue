@@ -24,7 +24,7 @@ export type HintStepEventCallback = (
 
 type BaseHintStepData = {
 	actionLabel: string,
-	message: string,
+	message: string | (() => string),
 	index: number,
 	// TODO: secondary actions? for instance, with mistakes, the primary action is fix all, and the secondary action might be revert to last correct boardState
 }

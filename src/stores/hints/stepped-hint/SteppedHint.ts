@@ -1,9 +1,5 @@
-import { EMPTY } from "@/lib/constants.js";
-import type { TriplesTechniqueResult } from "@/lib/solvers/human-solver/techniques/TriplesTechnique.js";
-import type { BoardAndSolutionBoards, Vec, VecValue } from "@/lib/types.js";
-import { HIGHLIGHT_LEVELS, createAreaHighlightAroundCells, createCellHighlight } from "../highlights/highlight.js";
-import type { HintStepEventCallbackActionsParam, HintStepFinal, HintStepIntermediate, SteppedHintType } from "./types.js";
-import type { TriplesSteppedHint } from "./TriplesHint.js";
+import type { BoardAndSolutionBoards } from "@/lib/types.js";
+import type { HintStepIntermediate, HintStepFinal, SteppedHintType } from "./types.js";
 
 const nextHintId = (() => {
 	let id = 0;
@@ -18,10 +14,6 @@ export abstract class BaseSteppedHint {
 	abstract readonly steps: HintStepsData;
 	abstract readonly type: SteppedHintType;
 	readonly id: number;
-	
-	// TODO: implement title, subtitle inside component itself
-	readonly title?: string;
-	readonly subtitle?: string;
 	
 	constructor(
 		id?: number
