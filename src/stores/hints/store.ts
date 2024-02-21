@@ -119,6 +119,7 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 
 		if (isValid) {
 			setNewHint(currentHint.value); // also adds to cache
+			showCurrentHint();
 			return true;
 		} else {
 			// hint is no longer valid, so unset it and return false

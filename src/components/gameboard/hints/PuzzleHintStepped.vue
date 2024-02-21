@@ -1,5 +1,5 @@
 <template>
-	<PuzzleHintBase @hide="$emit('hide')">
+	<PuzzleHintBase @hide="$emit('hide')" v-show="show">
 		<template #title>Stepped hint: TODO</template>
 		<template #message>A stepped hint component has not yet been implemented.</template>
 	</PuzzleHintBase>
