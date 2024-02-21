@@ -1,6 +1,6 @@
 import { usePuzzleStore } from "../puzzle/store.js";
 import { hintGenerators, HINT_TYPE, Hint } from "./Hint";
-import type { SteppedHint } from "./stepped-hint/SteppedHint.js";
+import type { SteppedHint } from "./stepped-hint/types.js";
 
 export type HintTypeDataMap = {
 	[K in keyof typeof hintGenerators]: Parameters<typeof hintGenerators[K]>[0]

@@ -1,4 +1,4 @@
-import type { SteppedHint } from "@/stores/hints/stepped-hint/SteppedHint.js";
+import type { SteppedHint } from "@/stores/hints/stepped-hint/types.js";
 import { useSteppedHintEvents } from "@/stores/hints/useSteppedHintEvents.js";
 import { computed, nextTick, ref, watch, type Ref } from "vue";
 

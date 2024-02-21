@@ -83,6 +83,13 @@ export const createCellHighlight = (
 ) => {
 	return CellHighlight(vec, level);
 }
+export const createLineHighlight = (
+	lineId: LineId,
+	level: HighlightLevel = defaultLevel,
+	board: SimpleBoard
+) => {
+	return LineHighlight({ lineId }, level, board);
+}
 
 export function hintHighlightFromType(
 	hlType: typeof HIGHLIGHT_TYPES.CELL,

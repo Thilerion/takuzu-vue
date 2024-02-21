@@ -1,8 +1,12 @@
 import { SimpleBoard } from "@/lib";
 import { createHint } from "./helpers";
 import { HINT_TYPE, Hint } from "./Hint";
-import { humanSolveBalance, humanSolveDuplicateLine, humanSolveElimination, humanSolveTriples } from "@/lib/human-solver";
-import { TriplesSteppedHint, type SteppedHint } from "./stepped-hint/SteppedHint.js";
+import { humanSolveDuplicateLine, humanSolveElimination } from "@/lib/human-solver";
+import { TriplesSteppedHint } from "./stepped-hint/TriplesHint.js";
+import type { SteppedHint } from "./stepped-hint/types.js";
+import { BalanceSteppedHint } from "./stepped-hint/BalanceHint.js";
+import { humanBalanceTechnique } from "@/lib/solvers/human-solver/techniques/BalanceTechnique.js";
+import { humanTriplesTechnique } from "@/lib/solvers/human-solver/techniques/TriplesTechnique.js";
 
 export const searchForHint = (
 	board: SimpleBoard,
@@ -43,7 +47,7 @@ function searchForMistakesHint(board: SimpleBoard, solution: SimpleBoard): Hint 
 
 function searchForHumanStrategyHint(board: SimpleBoard) {
 	// TRIPLES STRATEGY
-	const triplesHumanResult = humanSolveTriples({ board });
+	const triplesHumanResult = humanTriplesTechnique({ board });
 	if (triplesHumanResult && triplesHumanResult.length) {
 		const triplesHints = triplesHumanResult.map(triplesResult => {
 			return new TriplesSteppedHint(triplesResult);
@@ -60,9 +64,9 @@ function searchForHumanStrategyHint(board: SimpleBoard) {
 		return hint;
 	}
 	// BALANCE HINT
-	const balanceHintResult = humanSolveBalance({ board });
+	const balanceHintResult = humanBalanceTechnique({ board });
 	if (balanceHintResult && balanceHintResult.length) {
-		const hint = createHint(HINT_TYPE.BALANCE, balanceHintResult[0]);
+		const hint = new BalanceSteppedHint(balanceHintResult[0]);
 		return hint;
 	}
 	// ELIMINATION HINT

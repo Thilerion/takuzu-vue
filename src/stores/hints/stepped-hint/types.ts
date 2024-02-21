@@ -3,6 +3,8 @@ import type { usePuzzleStore } from "@/stores/puzzle/store.js";
 import type { useHintHighlightsStore } from "../highlights-store.js";
 import type { HintHighlight } from "../highlights/types.js";
 import type { Ref } from "vue";
+import type { TriplesSteppedHint } from "./TriplesHint.js";
+import type { BalanceSteppedHint } from "./BalanceHint.js";
 
 export type SteppedHintType = 'ruleViolation' | 'incorrectValues' | 'triples' | 'balance' | 'elimination' | 'elimDuplicate';
 export type HintStepEventCallbackCtxParam = BoardAndSolutionBoards;
@@ -44,3 +46,5 @@ type GetEventKeys<Obj> = keyof {
 	[K in keyof Obj as K extends `on${infer _Rest}` ? K : never]: K;
 };
 export type HintStepEvent = GetEventKeys<Required<HintStepIntermediate> & Required<HintStepFinal>>;
+
+export type SteppedHint = TriplesSteppedHint | BalanceSteppedHint;

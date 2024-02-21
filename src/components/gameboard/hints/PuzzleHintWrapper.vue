@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import type { Hint } from '@/stores/hints/Hint.js';
-import type { SteppedHint } from '@/stores/hints/stepped-hint/SteppedHint.js';
+import type { SteppedHint } from '@/stores/hints/stepped-hint/types.js';
 import { usePuzzleHintsStore } from '@/stores/hints/store.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { storeToRefs } from 'pinia';
