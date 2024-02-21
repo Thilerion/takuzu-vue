@@ -66,7 +66,7 @@ export const useHintHighlightsStore = defineStore('hintHighlights', () => {
 	return {
 		visible, currentHighlights,
 
-		show, hide,
+		show, hide, setHighlights,
 		clear, reset: clear,
 		setFromHint,
 	}

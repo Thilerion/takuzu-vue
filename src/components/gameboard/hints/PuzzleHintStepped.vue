@@ -6,9 +6,9 @@
 </template>
 
 <script setup lang="ts">
-import type { HintStepOnCallback, SteppedHint } from '@/stores/hints/stepped-hint/SteppedHint.js';
-import { usePuzzleStore } from '@/stores/puzzle/store.js';
-import { computed, ref, toRef, watch, watchEffect } from 'vue';
+import type { SteppedHint } from '@/stores/hints/stepped-hint/SteppedHint.js';
+import { useSteppedHintEvents } from '@/stores/hints/useSteppedHintEvents.js';
+import { computed, ref, toRef, watch } from 'vue';
 
 const emit = defineEmits<{
 	(e: 'hide'): void;
@@ -23,33 +23,13 @@ const hint = toRef(props, 'hint');
 const curStepIdx = ref(0);
 const curStep = computed(() => hint.value.steps[curStepIdx.value]);
 
-const puzzleStore = usePuzzleStore();
-const hintStepCallback = computed((): Parameters<HintStepOnCallback> => {
-	const board = puzzleStore.board!;
-	const solution = puzzleStore.solution!;
-	const ctx = { board, solution };
-	return [
-		ctx,
-		{
-			hideHighlights: () => {},
-			setHighlights: () => {},
-			toggle: () => {}
-		}
-	]
-})
-
-const onShow = computed(() => {
-	return curStep.value.onShow;
-})
-const onHide = computed(() => {
-	return curStep.value.onHide;
-})
+const { stepEvents } = useSteppedHintEvents(curStep);
 
 watch(() => props.show, (val, prev) => {
 	if (val && !prev) {
-		onShow.value?.(...hintStepCallback.value);
+		stepEvents.value.onShow();
 	} else if (!val && prev) {
-		onHide.value?.(...hintStepCallback.value);
+		stepEvents.value.onHide();
 	}
 }, { immediate: true });
 </script>

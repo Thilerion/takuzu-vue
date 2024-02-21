@@ -2,9 +2,8 @@ import { EMPTY } from "@/lib/constants.js";
 import type { TriplesTechniqueResult } from "@/lib/solvers/human-solver/techniques/TriplesTechnique.js";
 import type { BoardAndSolutionBoards, Vec, VecValue } from "@/lib/types.js";
 import type { usePuzzleStore } from "@/stores/puzzle/store.js";
-import type { HintHighlight } from "../highlights/types.js";
-import { createLegacyTriplesHintHighlights } from "../highlights/legacy-hint-highlights.js";
 import { HIGHLIGHT_LEVELS, createAreaHighlightAroundCells } from "../highlights/highlight.js";
+import type { useHintHighlightsStore } from "../highlights-store.js";
 
 export type HintV2Type = 'ruleViolation' | 'incorrectValues' | 'triples' | 'balance' | 'elimination' | 'elimDuplicate';
 
@@ -18,7 +17,8 @@ export type HintStepOnCallback = (
 	ctx: BoardAndSolutionBoards,
 	actions: {
 		toggle: ReturnType<typeof usePuzzleStore>['toggle'],
-		setHighlights: (highlights: HintHighlight[]) => void,
+		removeHighlights: () => void,
+		setHighlights: ReturnType<typeof useHintHighlightsStore>['setHighlights'],
 		hideHighlights: () => void, // TODO: maybe option to only hide certain highlights, ie those created by this hint?
 	},
 ) => void;
@@ -28,15 +28,21 @@ type BaseHintStep = {
 	actionLabel: string;
 	index: number; // for easy ordering, checking which step this step is
 	onNext?: HintStepOnCallback;
+	onFinish?: undefined;
 }
 type HintStepIntermediate = BaseHintStep & {
 	onShow?: HintStepOnCallback;
 	onHide?: HintStepOnCallback;
 }
-type HintStepFinal = HintStepIntermediate & {
+type HintStepFinal = Omit<HintStepIntermediate, 'onFinish'> & {
 	// onFinish is called when the final actionButton is clicked, which performs all actions and "finishes" the hint
 	onFinish: HintStepOnCallback;
 }
+export type HintStep = HintStepIntermediate | HintStepFinal;
+type GetEventKeys<Obj> = keyof {
+	[K in keyof Obj as K extends `on${infer _Rest}` ? K : never]: K;
+};
+export type HintStepEvent = GetEventKeys<Required<HintStepIntermediate> & Required<HintStepFinal>>;
 type HintStepsData = [...HintStepIntermediate[], HintStepFinal];
 
 abstract class BaseSteppedHint {
@@ -97,12 +103,13 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 				const highlights = [
 					createAreaHighlightAroundCells(this.source, HIGHLIGHT_LEVELS.PRIMARY)
 				];
-				setHighlights(highlights);
+				setHighlights(highlights, { setVisible: true });
 			},
 			onHide: (ctx, { hideHighlights }) => {
 				hideHighlights();
 			},
-			onFinish: (ctx, { toggle }) => {
+			onFinish: (ctx, { toggle, removeHighlights }) => {
+				removeHighlights();
 				for (const { x, y, value } of this.targets) {
 					const boardValue = ctx.board.get(x, y);
 					if (boardValue !== EMPTY) return;
@@ -114,7 +121,7 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 
 	validate({ board, solution }: BoardAndSolutionBoards) {
 		console.log('validating stepped triples hint');
-		if (board.hasIncorrectValues(solution)) return false;
+		if (board.hasIncorrectValues(solution).hasMistakes) return false;
 		// in the case of a "triples" hint, it is only still valid if all source cells are the same, and at least one of the target cells is empty
 		if (this.targets.every(({ x, y }) => board.get(x, y) !== EMPTY)) return false;
 		if (this.source.some(({ x, y }) => board.get(x, y) !== solution.get(x, y))) return false;
