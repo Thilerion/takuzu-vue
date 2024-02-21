@@ -25,6 +25,7 @@ import { useStepThroughSteppedHint } from './step-through.js';
 import type { SteppedHint } from '@/stores/hints/stepped-hint/types.js';
 import { useDynamicPuzzleSymbolString } from '@/components/dynamic-symbols/useDynamicPuzzleSymbolString.js';
 import { initGlobalCellThemeProvider } from '../composables/useCellThemeProvider.js';
+import { useSteppedHintMessage } from './stepped-hint-message.js';
 
 const emit = defineEmits<{
 	(e: 'hide'): void;
@@ -42,10 +43,21 @@ const { stepIdx, curStep, isFirstStep, isFinalStep, nextStep, prevStep, stepEven
 
 const themeData = initGlobalCellThemeProvider();
 const { $p } = useDynamicPuzzleSymbolString(themeData.theme, themeData.type);
+
+const { message } = useSteppedHintMessage(hint, stepIdx, $p);
+
 const stepMessage = computed((): string => {
+	if (message.value != null) {
+		console.log('using composable message');
+		return message.value;
+	}
 	const val = curStep.value.message;
-	const message = (typeof val === 'string') ? val : val($p);
-	return message;
+	if (val == null) {
+		console.error('UseSteppedHintMessage gave no message, but there is no message embedded in SteppedHint either.');
+		return '';
+	}
+	const embeddedMessage = (typeof val === 'string') ? val : val($p);
+	return embeddedMessage;
 })
 const subtitle = computed((): string | null => {
 	const type = hint.value.type;

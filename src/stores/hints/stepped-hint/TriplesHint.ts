@@ -31,7 +31,6 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 			actionLabel: 'Locate',
 			index: 0,
 			// TODO: if many triples hints found, replace message with There are multiple pairs and/or sandwiches on the board.
-			message: `There is a ${this.subType} somewhere on the board.`,
 			onNext: (ctx, { setHighlights }) => {
 				TriplesSteppedHint.setSourceHighlight(this.source, { setHighlights });
 			},
@@ -42,7 +41,6 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 		const secondStep: HintStepIntermediate = {
 			actionLabel: `Locate`,
 			index: 1,
-			message: ($p) => `Three ${$p(this.sourceSymbol, true)} cannot be next to each other. Therefore, the adjacent ${this.targets.length > 1 ? 'cells' : 'cell'} can only possibly be one ${$p('symbol', false)}.`,
 			onShow: (ctx, { showHighlights }) => {
 				showHighlights();
 			},
@@ -61,17 +59,6 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 		const finalStep: HintStepFinal = {
 			actionLabel: 'Execute',
 			index: 2,
-			message: ($p) => {
-				const SYMBOLS = $p('symbol', true);
-				const SYMBOL = $p('symbol', false);
-				const TARGET = $p(this.targetSymbol, this.targets.length > 1);
-				const SOURCES = $p(this.sourceSymbol, true);
-				if (this.subType === 'double') {
-					return `Two equal ${SYMBOLS} (${SOURCES}) are next to each other. That means the surrounding cell${this.targets.length > 1 ? 's' : ''} must be ${TARGET}.`;
-				} else {
-					return `An empty cell is surrounded by two of the same ${SYMBOL}. To prevent three of the same ${SYMBOLS} in a row, the empty cell must be ${TARGET}.`;
-				}
-			},
 			onShow: (ctx, { showHighlights }) => {
 				showHighlights();
 			},

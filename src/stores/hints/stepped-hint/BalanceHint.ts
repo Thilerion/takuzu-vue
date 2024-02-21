@@ -31,7 +31,6 @@ export class BalanceSteppedHint extends BaseSteppedHint {
 		const firstStep: HintStepIntermediate = {
 			actionLabel: 'Locate',
 			index: 0,
-			message: `There is a ${this.lineType} on the board that can be balanced.`,
 			onNext: (ctx, { setHighlights }) => {
 				const highlights = [createLineHighlight(
 					this.lineId,
@@ -45,8 +44,6 @@ export class BalanceSteppedHint extends BaseSteppedHint {
 		const secondStep: HintStepIntermediate = {
 			actionLabel: 'Next',
 			index: 1,
-			// TODO: support handling odd-sized boards in this mesasge
-			message: `This ${this.lineType} requires an equal amount of each symbol, and all ${this.filledSymbol}s have been placed.`,
 			onShow: (ctx, { showHighlights }) => {
 				showHighlights();
 			},
@@ -68,7 +65,6 @@ export class BalanceSteppedHint extends BaseSteppedHint {
 		const finalStep: HintStepFinal = {
 			actionLabel: 'Execute',
 			index: 2,
-			message: `To balance this ${this.lineType} (so that an equal number of each symbol are placed), ${this.missingSymbol}s must be placed in ${this.targets.length > 1 ? 'these empty cells' : 'this empty cell'}.`,
 			onShow: (ctx, { showHighlights }) => {
 				showHighlights();
 			},

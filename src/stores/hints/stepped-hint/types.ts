@@ -25,7 +25,8 @@ export type HintStepEventCallback = (
 
 type BaseHintStepData = {
 	actionLabel: string,
-	message: string | ((toDynamicString: ToDynamicPuzzleString) => string),
+	// TODO: get messages from component instead of storing them here
+	message?: string | ((toDynamicString: ToDynamicPuzzleString) => string),
 	index: number,
 	// TODO: secondary actions? for instance, with mistakes, the primary action is fix all, and the secondary action might be revert to last correct boardState
 }
