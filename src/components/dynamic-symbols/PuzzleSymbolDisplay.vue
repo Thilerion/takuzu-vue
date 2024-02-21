@@ -5,8 +5,8 @@
 <script setup lang="ts">
 import { ZERO, type PuzzleSymbol, ONE } from '@/lib/constants.js';
 import { computed } from 'vue';
-import { useDynamicPuzzleSymbolString } from './useDynamicPuzzleSymbolString.js';
 import { injectCellThemeData } from '../gameboard/composables/useCellThemeProvider.js';
+import { useDynamicPuzzleSymbolString } from './useDynamicPuzzleSymbolString.js';
 
 const props = defineProps<{
 	v: PuzzleSymbol,

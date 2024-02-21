@@ -1,6 +1,6 @@
-import { EMPTY } from "@/lib/constants.js";
+import { EMPTY, OPPOSITE_SYMBOL_MAP, type PuzzleSymbol } from "@/lib/constants.js";
 import type { TriplesTechniqueResult } from "@/lib/human-solver/triples.js";
-import type { Vec, VecValue, BoardAndSolutionBoards } from "@/lib/types.js";
+import type { Vec, VecValue, BoardAndSolutionBoards, Target } from "@/lib/types.js";
 import { createAreaHighlightAroundCells, HIGHLIGHT_LEVELS, createCellHighlight } from "../highlights/highlight.js";
 import type { HintStepIntermediate, HintStepFinal, HintStepEventCallbackActionsParam } from "./types.js";
 import { BaseSteppedHint } from "./SteppedHint.js";
@@ -8,9 +8,11 @@ import { BaseSteppedHint } from "./SteppedHint.js";
 export class TriplesSteppedHint extends BaseSteppedHint {
 	readonly subType: 'double' | 'sandwich';
 	readonly source: [Vec, Vec]; // the pair of cells that resulted in this hint, for instance: the pair of cells in one symbol that resulted in the cells adjacent to be the opposite symbol
-	readonly targets: VecValue[]; // the cells and values that are affected by this hint, that can be set
+	readonly targets: Target[]; // the cells and values that are affected by this hint, that can be set
 	readonly steps: [...HintStepIntermediate[], HintStepFinal];
 	readonly type = 'triples' as const;
+	readonly sourceSymbol: PuzzleSymbol;
+	readonly targetSymbol: PuzzleSymbol;
 
 	constructor(data: TriplesTechniqueResult, id?: number) {
 		const { targets, origin, type: subType } = data;
@@ -20,6 +22,8 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 		this.subType = subType;
 		this.source = [...origin];
 		this.targets = [...targets];
+		this.targetSymbol = this.targets[0].value;
+		this.sourceSymbol = OPPOSITE_SYMBOL_MAP[this.targetSymbol];
 
 		// The first step displays the type of the hint, and has an action that locates it.
 		// This action displays the source of the hint as a highlight.
@@ -38,7 +42,7 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 		const secondStep: HintStepIntermediate = {
 			actionLabel: `Locate`,
 			index: 1,
-			message: 'Three of the same [symbol] cannot be next to each other. This can be prevented by placing the [opposite symbol].',
+			message: ($p) => `Three ${$p(this.sourceSymbol, true)} cannot be next to each other. Therefore, the adjacent ${this.targets.length > 1 ? 'cells' : 'cell'} can only possibly be one ${$p('symbol', false)}.`,
 			onShow: (ctx, { showHighlights }) => {
 				showHighlights();
 			},
@@ -57,7 +61,17 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 		const finalStep: HintStepFinal = {
 			actionLabel: 'Execute',
 			index: 2,
-			message: this.subType === 'double' ? `Two equal symbols are next to each other. That means the surrounding cell${this.targets.length > 1 ? 's' : ''} must be the opposite symbol.` : `An empty cell is surrounded by two of the same symbol. To prevent three of the same symbol in a row, the empty cell must be the opposite symbol.`,
+			message: ($p) => {
+				const SYMBOLS = $p('symbol', true);
+				const SYMBOL = $p('symbol', false);
+				const TARGET = $p(this.targetSymbol, this.targets.length > 1);
+				const SOURCES = $p(this.sourceSymbol, true);
+				if (this.subType === 'double') {
+					return `Two equal ${SYMBOLS} (${SOURCES}) are next to each other. That means the surrounding cell${this.targets.length > 1 ? 's' : ''} must be ${TARGET}.`;
+				} else {
+					return `An empty cell is surrounded by two of the same ${SYMBOL}. To prevent three of the same ${SYMBOLS} in a row, the empty cell must be ${TARGET}.`;
+				}
+			},
 			onShow: (ctx, { showHighlights }) => {
 				showHighlights();
 			},

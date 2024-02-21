@@ -5,6 +5,7 @@ import type { HintHighlight } from "../highlights/types.js";
 import type { Ref } from "vue";
 import type { TriplesSteppedHint } from "./TriplesHint.js";
 import type { BalanceSteppedHint } from "./BalanceHint.js";
+import type { ToDynamicPuzzleString } from "@/components/dynamic-symbols/useDynamicPuzzleSymbolString.js";
 
 export type SteppedHintType = 'ruleViolation' | 'incorrectValues' | 'triples' | 'balance' | 'elimination' | 'elimDuplicate';
 export type HintStepEventCallbackCtxParam = BoardAndSolutionBoards;
@@ -24,7 +25,7 @@ export type HintStepEventCallback = (
 
 type BaseHintStepData = {
 	actionLabel: string,
-	message: string | (() => string),
+	message: string | ((toDynamicString: ToDynamicPuzzleString) => string),
 	index: number,
 	// TODO: secondary actions? for instance, with mistakes, the primary action is fix all, and the secondary action might be revert to last correct boardState
 }

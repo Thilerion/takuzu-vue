@@ -18,6 +18,8 @@ const getTictactoeString = (val: PuzzleSymbol, multiple?: boolean) => {
 	return str;
 }
 
+export type ToDynamicPuzzleString = (v: PuzzleSymbol | 'symbol', multiple?: boolean) => string;
+
 export const useDynamicPuzzleSymbolString = (theme: Ref<CellTheme>, themeType: Ref<CellThemeType>) => {
 	let displaySymbol = computed(() => {
 		switch(theme.value) {
@@ -44,7 +46,7 @@ export const useDynamicPuzzleSymbolString = (theme: Ref<CellTheme>, themeType: R
 		}
 	})
 
-	const $p = (symbol: PuzzleSymbol | 'symbol', multiple = false) => {
+	const $p: ToDynamicPuzzleString = (symbol: PuzzleSymbol | 'symbol', multiple = false) => {
 		if (isValidPuzzleValue(symbol)) return displaySymbol.value(symbol, multiple);
 		else if (symbol === 'symbol') return displayCellType.value(multiple);
 		else return symbol;

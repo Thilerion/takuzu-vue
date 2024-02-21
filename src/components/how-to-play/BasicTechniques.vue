@@ -43,9 +43,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useDynamicPuzzleSymbolString } from './useDynamicPuzzleSymbolString.js';
 import { injectCellThemeData } from '../gameboard/composables/useCellThemeProvider.js';
-import SymbolDisplay from './PuzzleSymbolDisplay.vue';
+import { useDynamicPuzzleSymbolString } from '../dynamic-symbols/useDynamicPuzzleSymbolString.js';
 
 const { theme: cellTheme, type: cellThemeType } = injectCellThemeData();
 const { $p } = useDynamicPuzzleSymbolString(

@@ -137,7 +137,6 @@
 
 <script setup lang="ts">
 import type { PuzzleValueLine } from '@/lib/types.js';
-import SymbolDisplay from './PuzzleSymbolDisplay.vue';
 import { ONE, ZERO } from '@/lib/constants.js';
 </script>
 

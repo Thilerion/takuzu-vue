@@ -23,6 +23,8 @@
 import { computed, toRef, watch } from 'vue';
 import { useStepThroughSteppedHint } from './step-through.js';
 import type { SteppedHint } from '@/stores/hints/stepped-hint/types.js';
+import { useDynamicPuzzleSymbolString } from '@/components/dynamic-symbols/useDynamicPuzzleSymbolString.js';
+import { initGlobalCellThemeProvider } from '../composables/useCellThemeProvider.js';
 
 const emit = defineEmits<{
 	(e: 'hide'): void;
@@ -38,9 +40,12 @@ const { stepIdx, curStep, isFirstStep, isFinalStep, nextStep, prevStep, stepEven
 	hint
 );
 
+const themeData = initGlobalCellThemeProvider();
+const { $p } = useDynamicPuzzleSymbolString(themeData.theme, themeData.type);
 const stepMessage = computed((): string => {
 	const val = curStep.value.message;
-	return (typeof val === 'string') ? val : val();
+	const message = (typeof val === 'string') ? val : val($p);
+	return message;
 })
 const subtitle = computed((): string | null => {
 	const type = hint.value.type;
