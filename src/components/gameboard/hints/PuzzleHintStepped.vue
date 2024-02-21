@@ -1,5 +1,5 @@
 <template>
-	<PuzzleHintBase @hide="$emit('hide')" v-show="show">
+	<PuzzleHintBase @hide="$emit('hide')" v-show="show" :step="stepIdx">
 		<template #title>Stepped hint: TODO</template>
 		<template #message>{{ curStep.message }}</template>
 		<template #buttons>
