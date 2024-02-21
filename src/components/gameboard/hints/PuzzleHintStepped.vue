@@ -48,16 +48,10 @@ const { message } = useSteppedHintMessage(hint, stepIdx, $p);
 
 const stepMessage = computed((): string => {
 	if (message.value != null) {
-		console.log('using composable message');
 		return message.value;
 	}
-	const val = curStep.value.message;
-	if (val == null) {
-		console.error('UseSteppedHintMessage gave no message, but there is no message embedded in SteppedHint either.');
-		return '';
-	}
-	const embeddedMessage = (typeof val === 'string') ? val : val($p);
-	return embeddedMessage;
+	console.error('UseSteppedHintMessage gave no message.');
+	return '';
 })
 const subtitle = computed((): string | null => {
 	const type = hint.value.type;
