@@ -37,7 +37,7 @@ const props = defineProps<{
 }>()
 const hint = toRef(props, 'hint');
 
-const { stepIdx, curStep, isFirstStep, isFinalStep, nextStep, prevStep, stepEvents } = useStepThroughSteppedHint(
+const { stepIdx, curStep, isFirstStep, isFinalStep, nextStep, prevStep, resetStep, stepEvents } = useStepThroughSteppedHint(
 	hint
 );
 
@@ -101,6 +101,8 @@ const title = computed(() => {
 const onAction = () => {
 	if (isFinalStep.value) {
 		stepEvents.value.onFinish();
+		// reset step, so when the actions are undone, and the hint is shown again, we start again at the first step
+		resetStep();
 	} else {
 		nextStep();
 	}
