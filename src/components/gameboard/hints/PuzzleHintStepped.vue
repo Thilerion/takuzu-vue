@@ -6,8 +6,15 @@
 			<button
 				:disabled="isFirstStep"
 				@click="prevStep"
-			>Prev</button>
-			<button @click="onAction">{{ curStep.actionLabel }}</button>
+				class="text-sm text-slate-700 bg-white border-r min-w-fit w-24 py-1 flex-grow max-w-[27%] disabled:text-slate-400 disabled:bg-slate-50"
+			><span class="mr-[1ch]">&#x3C;</span>Back</button>
+			<div class="flex-1">
+				<!-- Space for secondary actions, or [Learn more] button, etc -->
+			</div>
+			<button
+				@click="onAction"
+				class="text-sm flex-grow text-slate-700 bg-white border-l min-w-fit w-24 py-1 max-w-[27%]"
+			>{{ curStep.actionLabel }}<span v-if="!isFinalStep" class="ml-[1ch]">&#x3E;</span></button>
 		</template>
 	</PuzzleHintBase>
 </template>

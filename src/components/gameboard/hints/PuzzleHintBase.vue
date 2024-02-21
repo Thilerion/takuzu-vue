@@ -2,6 +2,7 @@
 <div class="hint w-full inset-x-0 bottom-0 h-full flex items-end">
 	<section
 		class="hint-inner
+		pt-2
 		max-h-32
 		bg-white dark:bg-slate-700 text-slate-900 dark:text-white
 		w-full text-sm flex flex-col
@@ -26,7 +27,7 @@
 		</div>
 		<div class="min-h-fit sticky bottom-0 mt-0.5 flex h-9 items-stretch border-t w-full">
 			<transition name="stepchange" mode="out-in">
-				<div :key="step">
+				<div :key="step" class="min-h-fit flex h-9 items-stretch w-full">
 					<slot name="buttons">Default slotted buttons / footer</slot>				
 				</div>
 			</transition>
