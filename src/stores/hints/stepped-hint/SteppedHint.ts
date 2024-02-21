@@ -78,8 +78,9 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 				removeHighlights();
 				for (const { x, y, value } of this.targets) {
 					const boardValue = ctx.board.get(x, y);
-					if (boardValue !== EMPTY) return;
-					makeMove({ x, y, value });
+					if (boardValue === EMPTY) {
+						makeMove({ x, y, value });
+					}
 				}
 			}
 		}]
