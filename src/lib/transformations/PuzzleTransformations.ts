@@ -64,6 +64,7 @@ export class PuzzleTransformations {
 		return SimpleBoard.fromGrid(grid);
 	}
 	getSynchronizedTransformedBoard(boards: SimpleBoard[], key: TransformationKey): { self: SimpleBoard, others: SimpleBoard[] } {
+		// TODO: this returns incorrect results, probably due to the canonical form of a board with empty cells not being the same as the canonical form of its solution	
 		const config = getTransformationConfigFromKey(key);
 		const self = this.getTransformedBoardByKey(key)!;
 

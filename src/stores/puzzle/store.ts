@@ -18,6 +18,7 @@ import { PuzzleTransformations } from "@/lib/transformations/PuzzleTransformatio
 import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings, GridCounts, LineCounts } from "@/lib/types";
 import type { TransformationKey } from "@/lib/transformations/types.js";
 import type { PickOptional } from "@/types.js";
+import { ConstraintSolver } from "@/lib/solvers/constraint-solver/ConstraintSolver.js";
 
 export type PuzzleStatus = 'none' | 'loading' | 'error_loading' | 'playing' | 'paused' | 'finished'; 
 export type PuzzleStoreState = {
@@ -341,7 +342,26 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 
 			const {	board, solution, initialBoard } = getRandomPuzzleTransformationOnRestart();
 
-			this.setAllBoards({ board, solution, initialBoard });
+			if (board.hasIncorrectValues(solution).hasMistakes) {
+				// TODO: a hacky fix, should fix getRandomPuzzleTransformationOnRestart instead
+				console.warn('Puzzle has mistakes after restart. This should not happen!');
+				const solverRes = ConstraintSolver.run(
+					initialBoard.copy(),
+					{
+						maxSolutions: 1,
+						dfs: {
+							enabled: false
+						}
+					}
+				);
+
+				this.setAllBoards({ board, solution: solverRes.solutions[0], initialBoard });
+				if (board.hasIncorrectValues(solverRes.solutions[0]).hasMistakes) {
+					throw new Error('Puzzle has mistakes after restart, and after re-solving. This should never happen.');
+				}
+			} else {
+				this.setAllBoards({ board, solution, initialBoard });
+			}
 
 			const puzzleHistory = usePuzzleHistoryStore();
 			puzzleHistory.reset();
