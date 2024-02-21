@@ -20,11 +20,13 @@ type BaseHintStepData = {
 	actionLabel: string,
 	message: string,
 	index: number,
+	// TODO: secondary actions? for instance, with mistakes, the primary action is fix all, and the secondary action might be revert to last correct boardState
 }
 type BaseHintStepEvents = {
 	onShow?: HintStepEventCallback,
 	onHide?: HintStepEventCallback,
 	onNext?: HintStepEventCallback,
+	onPrev?: HintStepEventCallback,
 }
 export type HintStepIntermediate = BaseHintStepData & BaseHintStepEvents & {
 	onFinish?: undefined;

@@ -29,5 +29,9 @@ export const useStepThroughSteppedHint = (
 		stepIdx.value = idx;
 	}
 
-	return { stepIdx, curStep, isFirstStep, isFinalStep, nextStep, prevStep, gotoStep };
+	return { 
+		stepIdx, curStep,
+		isFirstStep, isFinalStep,
+		nextStep, prevStep, gotoStep
+	};
 }

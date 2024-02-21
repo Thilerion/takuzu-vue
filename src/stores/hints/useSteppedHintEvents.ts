@@ -43,6 +43,7 @@ export const useSteppedHintEvents = (
 			onShow: createEventHandler('onShow'),
 			onHide: createEventHandler('onHide'),
 			onNext: createEventHandler('onNext'),
+			onPrev: createEventHandler('onPrev'),
 			onFinish: createEventHandler('onFinish'),
 		}
 		return handlers;

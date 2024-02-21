@@ -1,7 +1,7 @@
 <template>
 	<PuzzleHintBase @hide="$emit('hide')" v-show="show">
 		<template #title>Stepped hint: TODO</template>
-		<template #message>A stepped hint component has not yet been implemented.</template>
+		<template #message>{{ curStep.message }}</template>
 		<template #buttons>
 			<button
 				:disabled="isFirstStep"
@@ -9,7 +9,7 @@
 			<button
 				:disabled="isFinalStep"
 			>Next</button>
-			<button @click="stepEvents.onFinish">Execute</button>
+			<button @click="stepEvents.onFinish">{{ curStep.actionLabel }}</button>
 		</template>
 	</PuzzleHintBase>
 </template>
@@ -30,7 +30,7 @@ const props = defineProps<{
 }>()
 const hint = toRef(props, 'hint');
 
-const { curStep, isFirstStep, isFinalStep } = useStepThroughSteppedHint(
+const { stepIdx, curStep, isFirstStep, isFinalStep } = useStepThroughSteppedHint(
 	hint
 );
 
