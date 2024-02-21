@@ -1,55 +1,21 @@
 import { EMPTY } from "@/lib/constants.js";
 import type { TriplesTechniqueResult } from "@/lib/solvers/human-solver/techniques/TriplesTechnique.js";
 import type { BoardAndSolutionBoards, Vec, VecValue } from "@/lib/types.js";
-import type { usePuzzleStore } from "@/stores/puzzle/store.js";
 import { HIGHLIGHT_LEVELS, createAreaHighlightAroundCells } from "../highlights/highlight.js";
-import type { useHintHighlightsStore } from "../highlights-store.js";
-
-export type HintV2Type = 'ruleViolation' | 'incorrectValues' | 'triples' | 'balance' | 'elimination' | 'elimDuplicate';
+import type { HintStepFinal, HintStepIntermediate, SteppedHintType } from "./types.js";
 
 const nextHintId = (() => {
 	let id = 0;
 	return () => id++;
 })();
 
-// set certain cells in puzzleStore to a certain value, with or without adding to history, or adding to history as batch?
-export type HintStepOnCallback = (
-	ctx: BoardAndSolutionBoards,
-	actions: {
-		toggle: ReturnType<typeof usePuzzleStore>['toggle'],
-		removeHighlights: () => void,
-		setHighlights: ReturnType<typeof useHintHighlightsStore>['setHighlights'],
-		hideHighlights: () => void, // TODO: maybe option to only hide certain highlights, ie those created by this hint?
-	},
-) => void;
-
-type BaseHintStep = {
-	message: string;
-	actionLabel: string;
-	index: number; // for easy ordering, checking which step this step is
-	onNext?: HintStepOnCallback;
-	onFinish?: undefined;
-}
-type HintStepIntermediate = BaseHintStep & {
-	onShow?: HintStepOnCallback;
-	onHide?: HintStepOnCallback;
-}
-type HintStepFinal = Omit<HintStepIntermediate, 'onFinish'> & {
-	// onFinish is called when the final actionButton is clicked, which performs all actions and "finishes" the hint
-	onFinish: HintStepOnCallback;
-}
-export type HintStep = HintStepIntermediate | HintStepFinal;
-type GetEventKeys<Obj> = keyof {
-	[K in keyof Obj as K extends `on${infer _Rest}` ? K : never]: K;
-};
-export type HintStepEvent = GetEventKeys<Required<HintStepIntermediate> & Required<HintStepFinal>>;
 type HintStepsData = [...HintStepIntermediate[], HintStepFinal];
 
 abstract class BaseSteppedHint {
 	// A variable amount of "intermediate" steps, and one required final step. For example, a hint might have no steps per se (such as the old, legacy hint type),
 	// so the standard hint would be part of the final step.
 	abstract readonly steps: HintStepsData;
-	abstract readonly type: HintV2Type;
+	abstract readonly type: SteppedHintType;
 	readonly id: number;
 	
 	// TODO: implement title, subtitle inside component itself
@@ -108,12 +74,12 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 			onHide: (ctx, { hideHighlights }) => {
 				hideHighlights();
 			},
-			onFinish: (ctx, { toggle, removeHighlights }) => {
+			onFinish: (ctx, { makeMove, removeHighlights }) => {
 				removeHighlights();
 				for (const { x, y, value } of this.targets) {
 					const boardValue = ctx.board.get(x, y);
 					if (boardValue !== EMPTY) return;
-					toggle({ x, y, value });
+					makeMove({ x, y, value });
 				}
 			}
 		}]

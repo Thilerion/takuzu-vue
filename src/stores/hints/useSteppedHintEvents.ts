@@ -1,28 +1,28 @@
 import { computed, toValue } from "vue";
 import { usePuzzleStore } from "../puzzle/store.js";
-import type { HintStep, HintStepEvent, HintStepOnCallback } from "./stepped-hint/SteppedHint.js";
 import { useHintHighlightsStore } from "./highlights-store.js";
 import type { ReadonlyRefOrGetter } from "@vueuse/core";
+import type { HintStep, HintStepEventCallback, HintStepEvent, HintStepEventCallbackActionsParam, HintStepEventCallbackCtxParam } from "./stepped-hint/types.js";
 
 export const useSteppedHintEvents = (
 	stepRef: ReadonlyRefOrGetter<HintStep | null | undefined>
 ) => {
 	const puzzleStore = usePuzzleStore();
-	const ctx = computed((): Parameters<HintStepOnCallback>[0] => ({
+	const ctx = computed((): HintStepEventCallbackCtxParam => ({
 		board: puzzleStore.board!,
 		solution: puzzleStore.solution!,
 	}));
 
 	const highlightsStore = useHintHighlightsStore();
 
-	const actions = computed((): Parameters<HintStepOnCallback>[1] => ({
+	const actions = computed((): HintStepEventCallbackActionsParam => ({
 		hideHighlights: highlightsStore.hide,
 		removeHighlights: highlightsStore.clear,
 		setHighlights: highlightsStore.setHighlights,
-		toggle: () => {}
+		makeMove: puzzleStore.makeMove,
 	}));
 
-	const params = computed((): Parameters<HintStepOnCallback> => {
+	const params = computed((): Parameters<HintStepEventCallback> => {
 		return [
 			ctx.value,
 			actions.value
