@@ -15,13 +15,6 @@
 	</div>
 </template>
 
-<script lang="ts">
-const HL_TYPES: HighlightType[] = Object.keys(HIGHLIGHT_TYPES) as HighlightType[];
-const HL_LEVELS: HighlightLevel[] = Object.keys(HIGHLIGHT_LEVELS) as HighlightLevel[];
-
-export default { HL_TYPES, HL_LEVELS };
-</script>
-
 <script setup lang="ts">
 import type { BoardShape, Vec } from '@/lib/types.js';
 import { HIGHLIGHT_LEVELS, HIGHLIGHT_TYPES } from '@/stores/hints/highlights/highlight';
@@ -100,7 +93,7 @@ const gridAreaStyle = computed(() => {
 	--inner-opacity: 0.7;
 	--inner-half-opacity: 0.4;
 	--inner-pulse-speed: 1.4s;
-	--inner-pulse-delay: 0.5s;
+	--inner-pulse-delay: 0.25s;
 }
 
 .hl-cell {
