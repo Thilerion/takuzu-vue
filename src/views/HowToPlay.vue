@@ -3,7 +3,11 @@
 		class="how-to-play flex flex-col pb-4"
 		ref="pageEl"
 	>
-		<PageHeader class="flex-shrink-0 relative z-10" :elevated="false">How to play</PageHeader>
+		<PageHeader
+			class="flex-shrink-0 relative z-10"
+			:elevated="false"
+			:back-options="{ type: 'force', prevRouteName: 'Home' }"
+		>How to play</PageHeader>
 		<div>
 			<HowToPlayTabsList
 				class="shadow-sm"

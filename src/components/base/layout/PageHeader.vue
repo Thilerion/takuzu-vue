@@ -37,13 +37,26 @@ export interface Props {
 	hideBack?: boolean,
 	small?: boolean,
 	transparent?: boolean,
-	elevated?: '' | boolean | null
+	elevated?: '' | boolean | null,
+	backOptions?: {
+		// go(-1) if there is a prev route, else replace with fallbackRoute
+		type: 'simple',
+		fallbackRouteName: string,
+	} | string | {
+		// force going to a specific route, either by go(-1) if meta.prev.name === prevRoute.name, or replace if no meta.prev, or push if meta.prev is a different route
+		type: 'force',
+		prevRouteName: string
+	}
 }
 
 const props = withDefaults(defineProps<Props>(), {
 	small: true,
 	transparent: false,
-	elevated: null
+	elevated: null,
+	backOptions: () => ({
+		type: 'simple',
+		fallbackRouteName: 'Home'
+	}),
 });
 const emit = defineEmits<{
 	(e: 'close'): void
@@ -73,13 +86,41 @@ const close = () => {
 }
 
 const router = useRouter();
-const back = () => {
-	if (route.meta?.prev == null) {
-		router.replace({ name: 'Home' })
-	} else if (route.meta?.prev.name !== 'Home') {
-		router.push({ name: 'Home' });
+const backSimple = (name: string) => {
+	const prevRoute = route.meta?.prev;
+	if (prevRoute == null) {
+		router.replace({ name })
+	} else {
+		router.go(-1);
+	}
+}
+const backForcedTo = (name: string) => {
+	const metaPrev = route.meta?.prev;
+	if (metaPrev == null) {
+		router.replace({ name })
+	} else if (metaPrev.name !== name) {
+		router.push({ name });
 	} else {
 		router.go(-1);		
+	}
+}
+const back = () => {
+	const opts = (typeof props.backOptions === 'string') ? {
+		type: 'simple' as const,
+		fallbackRouteName: props.backOptions
+	} : props.backOptions;
+	const type = opts.type;
+	if (type === 'simple') {
+		backSimple(opts.fallbackRouteName);
+		return;
+	} else if (type === 'force') {
+		backForcedTo(opts.prevRouteName);
+		return;
+	} else {
+		const x: never = type;
+		console.error(`Invalid backOptions type: ${x}. Defaulting to "simple".`);
+		backSimple("Home");
+		return;
 	}
 }
 

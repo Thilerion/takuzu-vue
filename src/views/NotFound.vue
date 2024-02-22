@@ -1,6 +1,8 @@
 <template>
 	<div>
-		<PageHeader>Page not found</PageHeader>	
+		<PageHeader
+			hide-back
+		>Page not found</PageHeader>	
 		<p>You will now be redirected to the main menu...</p>
 	</div>
 </template>

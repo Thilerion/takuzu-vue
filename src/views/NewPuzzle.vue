@@ -3,7 +3,12 @@
 		class="fixed top-0 h-vh w-screen overflow-y-auto overflow-x-hidden"
 		id="new-puzzle-page"
 	>
-		<PageHeader :transparent="false" elevated small>
+		<PageHeader
+			:transparent="false"
+			elevated
+			small
+			:back-options="{ type: 'force', prevRouteName: 'Home' }"
+		>
 			<template #default>New Puzzle</template>
 			<template #right v-if="debugModeEnabled">
 				<BaseDropdown

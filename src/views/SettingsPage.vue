@@ -5,6 +5,7 @@
 			:elevated="true"
 			:transparent="false"
 			:hide-back="hideBack"
+			back-options="Home"
 		>
 			<template #default>Settings</template>
 			<template #right>

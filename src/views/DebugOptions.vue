@@ -4,6 +4,7 @@
 			small
 			:elevated="true"
 			:transparent="false"
+			back-options="Settings"
 		>Debug Options</PageHeader>
 		<div class="flex-1 text-center flex flex-col">
 			<DebugMenu
