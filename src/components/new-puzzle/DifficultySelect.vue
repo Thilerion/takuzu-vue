@@ -4,8 +4,8 @@
 	>
 		<button
 			@click="$emit('decrease')"
-			class="arrow-left z-10"
-		><icon-ic-baseline-keyboard-arrow-left :style="{'font-size': '24px'}"/></button>
+			class="arrow-left z-10 arrow-btn"
+		><IconBtn class="arrow-btn-inner" el="div"><icon-ic-baseline-keyboard-arrow-left :style="{'font-size': '24px'}"/></IconBtn></button>
 		<div class="label h-16 relative z-0 mt-1">
 			<transition :name="transitionName">
 				<DifficultyLabel
@@ -17,8 +17,10 @@
 		</div>
 		<button
 			@click="$emit('increase')"
-			class="arrow-right z-10"
-		><icon-ic-baseline-keyboard-arrow-right :style="{'font-size': '24px'}"/></button>
+			class="arrow-right z-10 arrow-btn"
+		>
+			<IconBtn class="arrow-btn-inner" el="div"><icon-ic-baseline-keyboard-arrow-right :style="{'font-size': '24px'}"/></IconBtn>
+		</button>
 	</div>
 </template>
 
@@ -77,13 +79,15 @@ watch(difficulty, (cur, prev) => {
 	grid-column: 1 / span 2;
 	grid-row: 1 / span 2;
 	align-self: stretch;
-	@apply pl-2;
 }
 .arrow-right {
 	grid-column: 4 / span 2;
 	grid-row: 1 / span 2;
 	align-self: stretch;
-	@apply pr-2;
+}
+
+.arrow-btn {
+	@apply p-2;
 }
 
 .arrow-left > * {
@@ -110,10 +114,11 @@ watch(difficulty, (cur, prev) => {
 }
 
 .difficulty-select {
-	--base-dist: 30%;
-	--base-large-dist: 80%;
+	container-type: inline-size;
+	--base-dist: 26cqw;
+	--base-large-dist: 45cqw;
 
-	--dist: clamp(1.5rem, var(--base-dist), 6rem);
+	--dist: clamp(1.5rem, var(--base-dist), 10rem);
 	--large-dist: clamp(3rem, var(--base-large-dist), 500px);
 }
 

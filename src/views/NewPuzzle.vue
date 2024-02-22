@@ -30,7 +30,7 @@
 		>
 			<div>
 				<h2 class="text-base font-medium mb-1 dark:text-slate-100 text-gray-700/90 ml-4 tracking-wide">Difficulty</h2>
-				<div class="content-block px-4 difficulty-select">
+				<div class="content-block p-0">
 					<DifficultySelect
 						@decrease="decreaseDifficulty"
 						@increase="increaseDifficulty"
@@ -42,7 +42,7 @@
 			<div>
 				<h2 class="text-base font-medium mb-1 text-gray-700/90 dark:text-slate-100 ml-4 tracking-wide">Board size</h2>
 				<div
-					class="content-block flex-shrink-0 rounded shadow-sm px-4"
+					class="content-block py-4 flex-shrink-0 rounded shadow-sm px-4"
 				>
 					<div class="mb-1 font-medium text-sm text-gray-500">Normal</div>
 					<PuzzleDimensionsBlock
@@ -66,21 +66,31 @@
 			</div>
 		</div>
 
-		<div class="w-full bg-gray-50 border-t dark:bg-slate-800 dark:border-slate-700 border-gray-200 px-4 pt-2 space-y-2 footer-wrapper sticky bottom-0">
+		<div
+			class="w-full bg-gray-50 border-t dark:bg-slate-800 dark:border-slate-700 border-gray-200 px-4 pt-2 space-y-2 footer-wrapper sticky bottom-0"
+			:class="{ 'pt-4': !hasCurrentSavedGame }"
+		>
 			<div v-if="hasCurrentSavedGame" class="text-xs text-orange-700 dark:text-red-400">
 				<p>Starting a new puzzle will overwrite your current puzzle in progress.</p>
 			</div>
-			<StartGameButton
-				class="first:mt-4"
-				@click="startGame"
+			<div class="flex gap-x-4 w-full">
+				<BaseButton
+					class="flex-shrink min-w-min overflow-hidden text-sm"
+					v-if="hasCurrentSavedGame && false /* TODO: implement continue button here */"
+				><span class="">Load save</span></BaseButton>
+				<StartGameButton
+					class="flex-1"
+					@start="startGame"
 
-				:size="selectedDimensions"
-				:difficulty-label="selectedDifficultyLabel"
-				:difficulty-stars="selectedDifficulty"
-				:disabled="disableStartButton"
-				:loading="puzzleIsLoading"
-				:replay="debugAutoReplayModeEnabled"
-			/>
+					:size="selectedDimensions"
+					:difficulty-label="selectedDifficultyLabel"
+					:difficulty-stars="selectedDifficulty"
+					:disabled="disableStartButton"
+					:loading="puzzleIsLoading"
+					:replay="debugAutoReplayModeEnabled"
+				/>
+			</div>
+			
 		</div>
 	</div>
 </template>
@@ -246,10 +256,7 @@ async function replayRandom() {
 
 <style scoped>
 .content-block {
-	@apply bg-white py-4 shadow rounded dark:bg-slate-800;
-}
-.difficulty-select {
-	@apply py-0;
+	@apply bg-white shadow rounded dark:bg-slate-800;
 }
 .footer-wrapper {
 	padding-bottom: max(env(safe-area-inset-bottom) + 0.5rem, 1rem);

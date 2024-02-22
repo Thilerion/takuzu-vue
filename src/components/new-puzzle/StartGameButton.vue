@@ -1,5 +1,6 @@
 <template>
 	<BaseButton
+		@click="$emit('start')"
 		:disabled="disabled || loading"
 		class="btn-primary h-16 relative w-full mx-auto shadow disabled:shadow-none"
 	>
@@ -40,6 +41,10 @@ type StartGameButtonProps = {
 	difficultyStars: DifficultyKey,
 	size: BoardShape
 }
+
+defineEmits<{
+	(e: 'start'): void
+}>();
 
 const props = defineProps<StartGameButtonProps>();
 
