@@ -20,6 +20,7 @@
 				'height': gridHeight,
 			}"
 			:initial-grid="puzzleStore.initialBoard!.grid"
+			:marked-mistakes="assistStore.markedMistakes"
 			@toggle-cell="toggleCell"
 		/>
 
@@ -42,6 +43,7 @@
 import PuzzleGrid from './PuzzleGrid.vue';
 import type { SimpleBoard } from '@/lib/index.js';
 import type { VecValue } from '@/lib/types.js';
+import { usePuzzleAssistanceStore } from '@/stores/assistance/store.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { usePuzzlePauseResume } from '@/stores/puzzle/usePuzzlePauseResume.js';
 
@@ -61,6 +63,8 @@ const resumeByUser = () => {
 	console.log('resume by user');
 	manualResumeGame();
 }
+
+const assistStore = usePuzzleAssistanceStore();
 </script>
 
 <style scoped>

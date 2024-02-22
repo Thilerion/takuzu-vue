@@ -27,7 +27,7 @@ const BALANCE_HINT_MESSAGE: HintMessageFnArray<BalanceSteppedHint> = [
 	},
 	(hint, $p) => {
 		// TODO: handle odd-sized boards in this message
-		return `To balance this ${hint.lineType} (so that an equal number of each ${$p('symbol')} are placed), ${$p(hint.missingSymbol, hint.targets.length > 1)} must be placed in ${hint.targets.length > 1 ? 'these empty cells' : 'this empty cell'}.`
+		return `To balance this ${hint.lineType} (so that an equal number of each ${$p('symbol')} are placed), ${hint.targets.length === 1 ? 'a ' : ''}${$p(hint.missingSymbol, hint.targets.length > 1)} must be placed in ${hint.targets.length > 1 ? 'these empty cells' : 'this empty cell'}.`
 	}
 ] 
 

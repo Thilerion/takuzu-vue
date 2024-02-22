@@ -25,8 +25,7 @@
 <script setup lang="ts">
 import type { SimpleBoard } from '@/lib/index.js';
 import type { PuzzleGrid, VecValue, XYKey } from '@/lib/types.js';
-import { computed, toRef, toRefs } from 'vue';
-import { usePuzzleAssistanceStore } from '@/stores/assistance/store.js';
+import { computed, toRefs } from 'vue';
 import { useStaticGridCellData } from './composables/useGridCellData.js';
 import { usePuzzleTapVibrate } from './composables/usePuzzleTapVibrate.js';
 import { initGlobalCellThemeProvider } from './composables/useCellThemeProvider.js';
@@ -37,6 +36,7 @@ const props = defineProps<{
 	columns: number,
 	paused: boolean,
 	initialGrid: PuzzleGrid,
+	markedMistakes: `${number},${number}`[]
 }>();
 const { rows, columns, initialGrid } = toRefs(props);
 
@@ -51,15 +51,11 @@ const { vibrate } = usePuzzleTapVibrate(rows, columns);
 const staticCellData = useStaticGridCellData(rows, columns, initialGrid);
 const grid = computed((): PuzzleGrid => props.board.grid);
 const incorrectCellKeys = computed((): Record<XYKey, boolean> => {
-	return incorrectMarkedCells.value.reduce((acc, xykey) => {
+	return props.markedMistakes.reduce((acc, xykey) => {
 		acc[xykey] = true;
 		return acc;
 	}, {} as Record<XYKey, boolean>);
 })
-
-// MARKED CELLS (INCORRECT VALUES ON GRID)
-const puzzleAssistanceStore = usePuzzleAssistanceStore();
-const incorrectMarkedCells = toRef(puzzleAssistanceStore, 'markedMistakes');
 
 // CELL THEME
 const {
