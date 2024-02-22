@@ -70,14 +70,24 @@
 			class="w-full bg-gray-50 border-t dark:bg-slate-800 dark:border-slate-700 border-gray-200 px-4 pt-2 space-y-2 footer-wrapper sticky bottom-0"
 			:class="{ 'pt-4': !hasCurrentSavedGame }"
 		>
-			<div v-if="hasCurrentSavedGame" class="text-xs text-orange-700 dark:text-red-400">
+			<div v-if="hasCurrentSavedGame" class="text-xs text-orange-700 dark:text-red-400 text-end">
 				<p>Starting a new puzzle will overwrite your current puzzle in progress.</p>
 			</div>
 			<div class="flex gap-x-4 w-full">
+				<router-link
+					custom
+					v-slot="{ href, navigate }"
+					:to="{ name: 'PlayPuzzle' }"
+				>
 				<BaseButton
-					class="flex-shrink min-w-min overflow-hidden text-sm"
-					v-if="hasCurrentSavedGame && false /* TODO: implement continue button here */"
+					elevated
+					element="a"
+					:href="href"
+					@click="navigate"
+					class="flex items-center flex-shrink min-w-min overflow-hidden text-sm"
+					v-if="hasCurrentSavedGame"
 				><span class="">Load save</span></BaseButton>
+				</router-link>
 				<StartGameButton
 					class="flex-1"
 					@start="startGame"
@@ -221,6 +231,10 @@ const router = useRouter();
 async function startGame() {
 	if (debugAutoReplayModeEnabled.value) return replayRandom();
 	return createGame();
+}
+
+function continueSavedGame() {
+	router.push({ name: 'PlayPuzzle' })
 }
 
 async function createGame() {
