@@ -3,35 +3,16 @@
 		<PageHeader
 			:back-options="{ type: 'force', prevRouteName: 'Statistics' }"
 		>Puzzle history</PageHeader>
+
 		<div class="content flex-1 flex flex-col gap-2 pt-4">
 			<div class="select-inputs text-sm" ref="anchorEl">
-				<div class="flex justify-between items-center pb-4 px-2">
-
-					<label
-						class="text-sm flex flex-row items-center gap-3"
-						><span>Per page:</span>
-						<select
-							:value="pageSize" @change="(ev) => setPageSize(parseInt((ev.target as HTMLSelectElement).value) * 1)"
-							class="form-select text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-1 text-sm">
-							<option :value="15">15</option>
-							<option :value="30">30</option>
-							<option :value="50">50</option>
-							<option :value="100">100</option>
-						</select>
-					</label>
-
-					<BaseButton @click="toggleShowFilters" :class="{ 'btn-primary': showFilters }"><span
-							v-if="showFilters">Hide filters</span><span v-else>Show filters</span></BaseButton>
-				</div>
-				<label class="text-sm flex flex-row items-center px-2 pb-4"><span>Sort by:</span>
-						<select :value="dataOptions.sortBy" @change="changeSortHandler"
-							class="form-select text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-1 text-sm">
-							<option value="newest">Newest first</option>
-							<option value="oldest">Oldest first</option>
-							<option value="fastestTime">Fastest time solved</option>
-							<option value="slowestTime">Slowest time solved</option>
-						</select>
-					</label>
+				<HistoryListDisplayOptions
+					:sort-type="dataOptions.sortBy"
+					:page-size="dataOptions.pageSize"
+					v-model:showFilters="showFilters"
+					@change-sort-type="changeSort"
+					@change-page-size="setPageSize"
+				/>
 				<HistoryListFilters v-model="showFilters" />
 			</div>
 			<BasePagination :modelValue="page" @update:modelValue="setActivePage" :length="currentItems?.length ?? 0"
@@ -49,6 +30,7 @@
 				<div class="py-4 text-lg px-8 text-center" key="none" v-else>You haven't played any puzzles yet!</div>
 			</transition>
 		</div>
+
 		<BasePagination :modelValue="page" @update:modelValue="setActivePage" :length="currentItems?.length ?? 0"
 			:page-size="pageSize" />
 	</div>
@@ -59,19 +41,23 @@ import { useStatisticsStore } from '@/stores/statistics';
 import { storeToRefs } from 'pinia';
 import { ref, computed, watch, onBeforeMount, reactive, toRefs, provide } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useListFilters, type ListFilterKey, type FilterableListItem } from '@/components/statistics/history-list/useListFilters.js';
+import { useListFilters, type ListFilterKey } from '@/components/statistics/history-list/useListFilters.js';
 import { useDebounceFn } from '@vueuse/core';
 import { usePuzzleHistorySorting, type SortType, type SortOptions } from './usePuzzleHistorySorting.js';
 import type { StatsDbExtendedStatisticDataEntry } from '@/services/db/stats-db/models.js';
 
-const { getDefaultOptions, resetCurrentItems, sortItems, isSortType } = usePuzzleHistorySorting();
+const statsStore = useStatisticsStore();
+const route = useRoute();
+const router = useRouter();
 
 const showFilters = ref(false);
-const toggleShowFilters = () => showFilters.value = !showFilters.value;
-
-const statsStore = useStatisticsStore();
-
 const { historyItems: rawHistoryItems } = storeToRefs(statsStore);
+
+const { getDefaultOptions, resetCurrentItems, sortItems, isSortType } = usePuzzleHistorySorting();
+
+const dataOptions = reactive(getDefaultOptions())
+const { page, pageSize } = toRefs(dataOptions);
+const currentItems = ref<StatsDbExtendedStatisticDataEntry[]>([]);
 
 function getHistoryItemsWithTimeRecord(sortedByDate: typeof rawHistoryItems.value): {
 	first: number[];
@@ -131,7 +117,6 @@ const historyItems = computed((): PuzzleHistoryListItem[] => {
 	return res;
 })
 
-
 const isTimeRecord = (item: StatsDbExtendedStatisticDataEntry) => {
 	const id = item.id!;
 	if (!historyItemsWithTimeRecord.value) return null;
@@ -141,12 +126,6 @@ const isTimeRecord = (item: StatsDbExtendedStatisticDataEntry) => {
 	const first = value && historyItemsWithTimeRecord.value.first.includes(id);
 	return { value, current, first };
 }
-
-const dataOptions = reactive(getDefaultOptions())
-
-const { page, pageSize } = toRefs(dataOptions);
-
-const currentItems = ref<StatsDbExtendedStatisticDataEntry[]>([]);
 
 const { currentFilters, activeFilters, filterFns, filterItems, setFilter, removeFilter } = useListFilters();
 provide('filterUtils', { currentFilters, activeFilters, filterFns, filterItems, setFilter, removeFilter });
@@ -200,17 +179,16 @@ const setPageSize = (value: number) => {
 }
 
 
-const changeSort = (sortType: SortType) => {
+const changeSort = (sortType: string) => {
+	if (!isSortType(sortType)) {
+		console.error(`Value ${sortType} is not a valid SortType!`);
+		return;
+	}
+	console.log(`Change sort from ${dataOptions.sortBy} to ${sortType}`);
 	if (sortType === dataOptions.sortBy) return;
 	setActivePage(0);
 	dataOptions.sortBy = sortType;
 	currentItems.value = sortItems(currentItems.value, sortType);
-}
-const changeSortHandler = (ev: Event) => {
-	const tg = ev.target as HTMLSelectElement;
-	const val = tg.value;
-	if (!isSortType(val)) return;
-	changeSort(val);
 }
 
 const updateFilteredItems = () => {
@@ -219,8 +197,6 @@ const updateFilteredItems = () => {
 }
 
 watch(activeFilters, useDebounceFn(updateFilteredItems, 800, { maxWait: 5000 }));
-
-// TODO: set router query on dataOptions change
 
 const anchorEl = ref<HTMLElement | null>(null);
 watch(() => dataOptions.page, (value, prev) => {
@@ -232,8 +208,7 @@ watch(() => dataOptions.page, (value, prev) => {
 		})
 	}
 })
-const route = useRoute();
-const router = useRouter();
+
 watch([dataOptions, activeFilters], ([value]) => {
 	const query = getQueryFromFilterAndSortOptions(value);
 	const routePath = route.path;
@@ -302,7 +277,7 @@ function getQueryFromFilterAndSortOptions({
 	@apply font-bold;
 }
 
-.select-inputs label>span:first-child {
+:deep(.select-inputs label>span:first-child) {
 	@apply w-20;
 }
 </style>

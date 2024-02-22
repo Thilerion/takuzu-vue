@@ -50,6 +50,7 @@ declare module 'vue' {
     GameBoardWrapper: typeof import('./src/components/gameboard/GameBoardWrapper.vue')['default']
     GameModeDimensionsButton: typeof import('./src/components/new-puzzle/GameModeDimensionsButton.vue')['default']
     GridControls: typeof import('./src/components/puzzle-input/GridControls.vue')['default']
+    HistoryListDisplayOptions: typeof import('./src/components/statistics/history-list/HistoryListDisplayOptions.vue')['default']
     HistoryListFilterDifficulty: typeof import('./src/components/statistics/history-list/HistoryListFilterDifficulty.vue')['default']
     HistoryListFilters: typeof import('./src/components/statistics/history-list/HistoryListFilters.vue')['default']
     HistoryListItem: typeof import('./src/components/statistics/history-list/HistoryListItem.vue')['default']
