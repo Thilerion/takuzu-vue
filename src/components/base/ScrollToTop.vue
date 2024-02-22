@@ -57,6 +57,10 @@ const scrollToTop = () => {
 
 const showBtn = computed(() => y.value > 100);
 
+defineExpose({
+	y
+})
+
 </script>
 
 <style scoped>
