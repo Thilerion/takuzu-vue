@@ -29,9 +29,8 @@
 </template>
 
 <script setup lang="ts">
-import { useGoBackOrReplaceTo } from '@/router/useGoBackOrReplaceTo.js';
 import { computed, useAttrs } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 export interface Props {
 	closeBtn?: boolean,
@@ -72,9 +71,16 @@ const close = () => {
 		return;
 	}	
 }
-const goBackHome = useGoBackOrReplaceTo({ name: 'Home' });
+
+const router = useRouter();
 const back = () => {
-	return goBackHome();
+	if (route.meta?.prev == null) {
+		router.replace({ name: 'Home' })
+	} else if (route.meta?.prev.name !== 'Home') {
+		router.push({ name: 'Home' });
+	} else {
+		router.go(-1);		
+	}
 }
 
 const mergedElevated = computed(() => {

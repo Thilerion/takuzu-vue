@@ -1,12 +1,12 @@
 import { useRoute, useRouter, type RouteLocationNormalizedLoaded, type RouteLocationRaw, type Router } from "vue-router";
 
-export const useGoBackOrReplaceTo = (to: RouteLocationRaw) => {
+export const useGoBackOrReplaceTo = (to: { name: string }) => {
 	const router = useRouter();
 	const route = useRoute();
 	return () => goBackOrReplaceTo(to, router, route);
 }
 
-const goBackOrReplaceTo = (to: RouteLocationRaw, router: Router, route: RouteLocationNormalizedLoaded) => {
+const goBackOrReplaceTo = (to: { name: string }, router: Router, route: RouteLocationNormalizedLoaded) => {
 	/* if (route.meta?.prev == null) {
 		router.replace(to);
 	} else {
@@ -20,6 +20,8 @@ const goBackOrReplaceTo = (to: RouteLocationRaw, router: Router, route: RouteLoc
 	} */
 	if (route.meta?.prev == null) {
 		router.replace(to);
+	} else if (route.meta?.prev.name !== to.name) {
+		router.push(to);
 	} else {
 		router.go(-1);
 	}
