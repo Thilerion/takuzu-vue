@@ -32,11 +32,17 @@
 
 <script setup lang="ts">
 import { useStatisticsStore } from '@/stores/statistics';
-import { computed, toRef } from 'vue';
+import { storeToRefs } from 'pinia';
+import { computed } from 'vue';
 
 const statsStore = useStatisticsStore();
+const { 
+	puzzlesSolved: totalPlayed,
+	uniqueDatesPlayed: uniqueDates,
+	timePlayed,
+	cellsFilled
+} = storeToRefs(statsStore);
 
-const totalPlayed = toRef(statsStore, 'puzzlesSolved');
 const totalPlayedToday = computed(() => {
 	return statsStore.itemsSolvedToday.length;
 })
@@ -49,7 +55,6 @@ const totalPlayedTodayStr = computed(() => {
 const intlFormat = (num: number) => {
 	return new Intl.NumberFormat().format(Math.floor(num * 10)/10);
 }
-const cellsFilled = toRef(statsStore, 'cellsFilled');
 const abbrCellsFilled = computed(() => {
 	const value = cellsFilled.value;
 	if (value < 10000) {
@@ -59,10 +64,7 @@ const abbrCellsFilled = computed(() => {
 	} else return intlFormat(value / 1000000) + 'M';
 })
 
-const uniqueDates = toRef(statsStore, 'uniqueDatesPlayed');
 const datesPlayed = computed(() => uniqueDates.value?.length ?? 0);
-
-const timePlayed = toRef(statsStore, 'timePlayed');
 
 const formatDurationAbbr = (time: number) => {
 	const second = 1000;

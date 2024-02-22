@@ -59,25 +59,32 @@ import { useStatisticsStore } from '@/stores/statistics';
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 import { formatDurationHHMMSS } from '@/utils/duration.utils';
+import { getMostPlayedPuzzleConfigs, getMostPlayedPuzzleSizes } from '@/services/stats/most-played.js';
 
 const statsStore = useStatisticsStore();
 
 const {
-	summariesByDimensionsAllTime,
-	summariesByPuzzleConfigsAllTime,
+	sortedByDate,
 } = storeToRefs(statsStore);
 
+const summarizedByDimensions = computed(() => {
+	return getMostPlayedPuzzleSizes(sortedByDate.value);
+})
+const summarizedByPuzzleConfigs = computed(() => {
+	return getMostPlayedPuzzleConfigs(sortedByDate.value);
+})
+
 const mostPlayedPuzzleSize = computed(() => {
-	return summariesByDimensionsAllTime.value.byPlayed[0];
+	return summarizedByDimensions.value.byPlayed[0];
 })
 const longestPlaytimePuzzleSize = computed(() => {
-	return summariesByDimensionsAllTime.value.byPlaytime[0];
+	return summarizedByDimensions.value.byPlaytime[0];
 })
 const mostPlayedPuzzleConfig = computed(() => {
-	return summariesByPuzzleConfigsAllTime.value.byPlayed[0];
+	return summarizedByPuzzleConfigs.value.byPlayed[0];
 })
 const longestPlaytimePuzzleConfig = computed(() => {
-	return summariesByPuzzleConfigsAllTime.value.byPlaytime[0];
+	return summarizedByPuzzleConfigs.value.byPlaytime[0];
 })
 
 </script>

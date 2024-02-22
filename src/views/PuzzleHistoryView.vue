@@ -69,7 +69,45 @@ const toggleShowFilters = () => showFilters.value = !showFilters.value;
 
 const statsStore = useStatisticsStore();
 
-const { historyItems: rawHistoryItems, historyItemsWithTimeRecord } = storeToRefs(statsStore);
+const { historyItems: rawHistoryItems } = storeToRefs(statsStore);
+
+function getHistoryItemsWithTimeRecord(sortedByDate: typeof rawHistoryItems.value): {
+	first: number[];
+	current: number[];
+	all: number[];
+} {
+	const items = sortedByDate;
+
+	const iterationTimeRecord = new Map();
+	const currentRecords = new Map();
+	const firstTimes = [];
+	const withTimeRecord = [];
+
+	for (let i = items.length - 1; i >= 0; i--) {
+		const item = items[i];
+		const { puzzleConfigKey, timeElapsed } = item;
+
+		if (!iterationTimeRecord.has(puzzleConfigKey)) {
+			iterationTimeRecord.set(puzzleConfigKey, timeElapsed);
+			firstTimes.push(item.id!);
+		}
+		const prev = iterationTimeRecord.get(puzzleConfigKey);
+		if (timeElapsed < prev) {
+			withTimeRecord.push(item.id!);
+			iterationTimeRecord.set(puzzleConfigKey, timeElapsed);
+			currentRecords.set(puzzleConfigKey, item.id!);
+		}
+	}
+
+	return {
+		first: firstTimes,
+		current: [...currentRecords.values()],
+		all: [...new Set([...firstTimes, ...withTimeRecord])]
+	}
+}
+const historyItemsWithTimeRecord = computed(() => {
+	return getHistoryItemsWithTimeRecord(rawHistoryItems.value);
+})
 
 export type HistoryItemTimeRecordData = { record: false } | { record: true, current: boolean, first: boolean };
 export type PuzzleHistoryListItem = StatsDbExtendedStatisticDataEntry & { timeRecord: HistoryItemTimeRecordData };

@@ -1,7 +1,28 @@
+import { subDays, isBefore } from "date-fns";
+
 type BaseItem = {
 	localDateStr: string
 }
 type BaseItemWithDate = BaseItem & { date: Date };
+
+export function itemsSolvedSinceDaysAgo<T extends { date: Date; }>(
+	itemsByDate: T[],
+	daysAgo: number,
+	opts: { isSorted: boolean; } = { isSorted: false }
+): T[] {
+	const now = new Date();
+	const daysAgoDate = subDays(now, daysAgo);
+	if (opts.isSorted) {
+		const idx = itemsByDate.findIndex(item => isBefore(item.date, daysAgoDate));
+		if (idx <= 0) {
+			// no items are older than the given days ago, so all items are within the range
+			return itemsByDate;
+		}
+		return itemsByDate.slice(0, idx);
+	} else {
+		return itemsByDate.filter(item => isBefore(item.date, daysAgoDate));
+	}
+}
 
 export function getUniqueDatesFromItems(historyItems: BaseItem[] = []): BaseItemWithDate[] {
 	if (!historyItems.length) return [];

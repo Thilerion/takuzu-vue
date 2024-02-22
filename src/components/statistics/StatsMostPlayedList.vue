@@ -59,6 +59,10 @@ import { computed, onBeforeMount, ref, watch } from 'vue';
 import { formatTimeMMSSWithRounding } from '@/utils/time.utils';
 import { useStorage } from '@vueuse/core';
 import BaseTable from '@/components/global/table/BaseTable.vue'
+import { subDays, isBefore } from 'date-fns';
+import { getMostPlayedPuzzleConfigs, getMostPlayedPuzzleSizes } from '@/services/stats/most-played.js';
+import type { StatsDbExtendedStatisticDataEntry } from '@/services/db/stats-db/models.js';
+import { itemsSolvedSinceDaysAgo } from '@/services/stats/dates.js';
 const formatTime = formatTimeMMSSWithRounding(200);
 
 const statsStore = useStatisticsStore();
@@ -67,26 +71,51 @@ onBeforeMount(() => {
 	statsStore.initialize();
 })
 
-
-const listType = useStorage('takuzu_most-played-list-type', 'recent30Days', sessionStorage);
-const itemType = useStorage('takuzu_most-played-item-type', 'puzzleConfig', sessionStorage);
+type MostPlayedListType = 'allTime' | 'recent30Days' | 'recent90Days';
+type MostPlayedItemType = 'size' | 'puzzleConfig';
+const listType = useStorage<MostPlayedListType>('takuzu_most-played-list-type', 'recent30Days', sessionStorage);
+const itemType = useStorage<MostPlayedItemType>('takuzu_most-played-item-type', 'puzzleConfig', sessionStorage);
 
 const mergeDifficulties = computed(() => {
 	return itemType.value === 'size';
 })
 
-const shownListData = computed(() => {
+const itemsSolvedInDateRange = computed(() => {
 	switch(listType.value) {
 		case 'allTime':
-			return itemType.value === 'size' ? statsStore.summariesByDimensionsAllTime : statsStore.summariesByPuzzleConfigsAllTime;
-		case 'recent30Days':
-			return itemType.value === 'size' ? statsStore.summariesByDimensions30Days : statsStore.summariesByPuzzleConfigs30Days;
-		case 'recent90Days':
-			return itemType.value === 'size' ? statsStore.summariesByDimensions90Days : statsStore.summariesByPuzzleConfigs90Days;
-		default:
-			console.warn('Unknown list data type. Showing allTime played.');
-			return itemType.value === 'size' ? statsStore.summariesByDimensionsAllTime : statsStore.summariesByPuzzleConfigsAllTime;
+			return statsStore.sortedByDate;
+		case 'recent30Days': {
+			return itemsSolvedSinceDaysAgo(
+				statsStore.sortedByDate,
+				30,
+				{ isSorted: true }
+			);
+		}			
+		case 'recent90Days': {
+			return itemsSolvedSinceDaysAgo(
+				statsStore.sortedByDate,
+				90,
+				{ isSorted: true }
+			);
+		}			
+		default: {
+			const x: never = listType.value;
+			console.warn(`Unknown list data type (${x}). Showing none.`);
+			return [];
+		}
 	}
+})
+
+const summarizeByDimensions = (items: StatsDbExtendedStatisticDataEntry[]) => {
+	return getMostPlayedPuzzleSizes(items);
+}
+const summarizeByConfigs = (items: StatsDbExtendedStatisticDataEntry[]) => {
+	return getMostPlayedPuzzleConfigs(items);
+}
+
+const shownListData = computed(() => {
+	const summarizeFn = itemType.value === 'size' ? summarizeByDimensions : summarizeByConfigs;
+	return summarizeFn(itemsSolvedInDateRange.value);
 })
 
 const groupData = computed(() => shownListData.value.groupedData);
