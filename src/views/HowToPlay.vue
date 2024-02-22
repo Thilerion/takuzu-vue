@@ -11,7 +11,7 @@
 			<div
 				class="bg-white rounded-t-lg relative z-0 shadow-sm mb-6"
 			>
-				<router-view class="px-8 py-4" />
+				<router-view class="py-4" />
 			</div>
 		</div>
 		<ScrollToTop :el="pageEl" />

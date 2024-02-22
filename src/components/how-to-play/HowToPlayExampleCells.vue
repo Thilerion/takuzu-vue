@@ -6,7 +6,7 @@
 		}"
 	>
 		<div 
-			class="aspect-square flex-auto min-w-4 max-w-16 example-cell"
+			class="aspect-square flex-auto min-w-4 max-w-12 example-cell"
 			v-for="(value, idx) in values"
 			:key="idx"
 		>

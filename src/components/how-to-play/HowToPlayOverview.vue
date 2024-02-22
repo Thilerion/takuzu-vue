@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="prose prose-sm md:prose lg:prose-lg xl:prose-xl mx-auto how-to-play-overview"
+		class="prose prose-sm md:prose lg:prose-lg xl:prose-xl mx-auto how-to-play-overview px-8"
 	>
 		<p>Welcome to Takuzu! This puzzle type, also known as a binary puzzle, is a delightful blend of logic and strategy.
 			Perfect for puzzle enthusiasts and newcomers alike, it offers a unique mental challenge. Our guide is here to
@@ -68,57 +68,21 @@
 		<ul>
 			<li>Each row and each column must be unique.</li>
 			<li>No two rows can be the same, and no two columns can be the same.</li>
-			<HowToPlayExample label="The first row here looks similar to the second row:">
+			<HowToPlayExample label="This 4x4 puzzle is incorrect, as two rows are the same:">
 				<template #examples>
 					<HowToPlayExampleCells
-						:values="('1.0.'.split('') as PuzzleValueLine)"
-						:highlight="[1, 3]"
+						:values="('1001'.split('') as PuzzleValueLine)"
+						:incorrect="[0, 1, 2, 3]"
 					/>
 					<HowToPlayExampleCells
 						:values="('1001'.split('') as PuzzleValueLine)"
-						:highlight="[1, 3]"
+						:incorrect="[0, 1, 2, 3]"
 					/>
 					<HowToPlayExampleCells
 						:values="('0110'.split('') as PuzzleValueLine)"
-						class="opacity-40"
 					/>
 					<HowToPlayExampleCells
 						:values="('0.1.'.split('') as PuzzleValueLine)"
-						class="opacity-40"
-					/>
-					<div class="my-1">It can only be filled in one way to prevent two duplicate rows:</div>
-					<HowToPlayExampleCells
-						:values="('1100'.split('') as PuzzleValueLine)"
-						:highlight="[1, 3]"
-					/>
-					<HowToPlayExampleCells
-						:values="('1001'.split('') as PuzzleValueLine)"
-						:highlight="[1, 3]"
-					/>
-					<HowToPlayExampleCells
-						:values="('0110'.split('') as PuzzleValueLine)"
-						class="opacity-40"
-					/>
-					<HowToPlayExampleCells
-						:values="('0.1.'.split('') as PuzzleValueLine)"
-						class="opacity-40"
-					/>
-					<div class="my-1">In the same fashion, the last two rows can only be filled one way. The following would be incorrect, as the last two rows are now the same:</div>
-					<HowToPlayExampleCells
-						:values="('1100'.split('') as PuzzleValueLine)"
-						class="opacity-40"
-					/>
-					<HowToPlayExampleCells
-						:values="('1001'.split('') as PuzzleValueLine)"
-						class="opacity-40"
-					/>
-					<HowToPlayExampleCells
-						:values="('0110'.split('') as PuzzleValueLine)"
-						:incorrect="[1, 3]"
-					/>
-					<HowToPlayExampleCells
-						:values="('0110'.split('') as PuzzleValueLine)"
-						:incorrect="[1, 3]"
 					/>
 				</template>
 			</HowToPlayExample>

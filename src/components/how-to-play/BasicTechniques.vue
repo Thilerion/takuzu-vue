@@ -1,9 +1,9 @@
 <template>
-	<div class="prose prose-sm md:prose lg:prose-lg xl:prose-xl mx-auto p-4 basic-techniques-page">
+	<div class="prose prose-sm md:prose lg:prose-lg xl:prose-xl mx-auto py-4 px-0 basic-techniques-page relative">
 		<h2>Basic Techniques</h2>
 		<p>Below, we've outlined some fundamental strategies to help you navigate through the puzzles with ease.</p>
 
-		<div class="techniques">
+		<div class="techniques breakout">
 			<h3>Identifying Pairs and Sandwiches</h3>
 			<p>A direct application of the "max two consecutive" rule is to avoid forming triplets within the puzzle grid.
 			</p>
@@ -13,7 +13,7 @@
 				vertically, this forms a "pair." The cells immediately adjacent to this pair must be filled with the
 				other {{ valueTypeDisplay }} to prevent creating a sequence of three identical {{ valueTypeDisplayPlural
 				}} (a triplet).</p>
-			<HowToPlayExample el="span" label="" class="w-min">
+			<HowToPlayExample el="div" label="" class="border-y breakout px-8 py-4">
 				<template #examples>
 					<HowToPlayExampleCells :values="('.00.'.split('') as PuzzleValueLine)" />
 					<span class="">Becomes:</span>
@@ -25,7 +25,7 @@
 			<p>A "sandwich" occurs when an empty cell is flanked by two identical {{ valueTypeDisplayPlural }}. This setup
 				mandates that the empty cell, effectively the "filling" of the sandwich, be filled with the other {{
 					valueTypeDisplay }} to avoid the formation of triplets.</p>
-			<HowToPlayExample el="span" label="" class="w-min">
+			<HowToPlayExample el="div" label="" class="border-y breakout px-8 py-4">
 				<template #examples>
 					<HowToPlayExampleCells :values="('.1.1..'.split('') as PuzzleValueLine)" />
 					<span class="">Becomes:</span>
@@ -41,7 +41,7 @@
 				These rulers display how many of each {{ valueTypeDisplay }} still need to be placed in that row or column,
 				and highlight whenever a line has none remaining of a single {{ valueTypeDisplay }}, which means it can be
 				completed with the other {{ valueTypeDisplay }}.</p>
-			<HowToPlayExample el="span" label="" class="w-min">
+			<HowToPlayExample el="div" label="" class="border-y breakout px-8 pb-0 pt-4">
 				<template #examples>
 					<HowToPlayExampleCells :values="('1..110'.split('') as PuzzleValueLine)" />
 					<HowToPlayExampleCells :values="('100110'.split('') as PuzzleValueLine)" />
@@ -61,12 +61,42 @@
 				<SymbolDisplay v="0" />. Compare these scenarios
 				with existing lines to identify the correct placements.
 			</p>
-			<HowToPlayExample el="span" label="" class="w-min" v-if="false /*TODO: this example*/">
+			<HowToPlayExample class="border-y breakout px-8 py-4" el="div" label="Consider this 4x4 puzzle. Two rows are already completed, and the first row looks similar to the second row:">
 				<template #examples>
-					<HowToPlayExampleCells :values="('1010'.split('') as PuzzleValueLine)" />
-					<HowToPlayExampleCells :values="('0101'.split('') as PuzzleValueLine)" />
-					<HowToPlayExampleCells :values="('10..'.split('') as PuzzleValueLine)" />
-					<HowToPlayExampleCells :values="('01..'.split('') as PuzzleValueLine)" />
+					<HowToPlayExampleCells
+						class="mt-2"
+						:values="('1.0.'.split('') as PuzzleValueLine)"
+						:highlight="[1, 3]"
+					/>
+					<HowToPlayExampleCells
+						:values="('1001'.split('') as PuzzleValueLine)"
+						:highlight="[1, 3]"
+					/>
+					<HowToPlayExampleCells
+						:values="('0110'.split('') as PuzzleValueLine)"
+						class="opacity-40"
+					/>
+					<HowToPlayExampleCells
+						:values="('0.1.'.split('') as PuzzleValueLine)"
+						class="opacity-40"
+					/>
+					<div class="my-1">It can only be filled in one way to prevent two duplicate rows:</div>
+					<HowToPlayExampleCells
+						:values="('1100'.split('') as PuzzleValueLine)"
+						:highlight="[1, 3]"
+					/>
+					<HowToPlayExampleCells
+						:values="('1001'.split('') as PuzzleValueLine)"
+						:highlight="[1, 3]"
+					/>
+					<HowToPlayExampleCells
+						:values="('0110'.split('') as PuzzleValueLine)"
+						class="opacity-40"
+					/>
+					<HowToPlayExampleCells
+						:values="('0.1.'.split('') as PuzzleValueLine)"
+						class="opacity-40"
+					/>
 				</template>
 			</HowToPlayExample>
 		</div>
@@ -95,6 +125,12 @@ const valueTypeDisplayPlural = computed(() => {
 <style scoped>
 .basic-techniques-page {
 	counter-reset: technique-heading 0;
+}
+.basic-techniques-page > *:not(.breakout) {
+	@apply px-8;
+}
+.techniques > *:not(.breakout) {
+	@apply mx-8;
 }
 
 .techniques h3 {
