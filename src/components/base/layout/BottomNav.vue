@@ -1,6 +1,6 @@
 <template>
 	<nav class="bg-white w-full bg-opacity-90 dark:bg-slate-800 dark:border-t dark:border-slate-700 relative bottom-0">
-		<div class="flex justify-evenly h-full">
+		<div class="flex justify-evenly h-full max-w-lg mx-auto">
 			<router-link
 				v-for="item in menuItems"
 				:key="item.label"

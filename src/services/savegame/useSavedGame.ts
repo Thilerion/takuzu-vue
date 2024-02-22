@@ -13,7 +13,7 @@ const savedPuzzle = useStorage<SaveGame | null>(SAVE_DATA_STORAGE_KEY, null, loc
 const _useSavedPuzzle = () => {
 	const savePuzzle = (saveData: SaveData): boolean => {
 		const { moveList, timeElapsed } = saveData;
-		if (!moveList.length || !timeElapsed || timeElapsed < 5000) {
+		if (!moveList.length || !timeElapsed || timeElapsed < 1000) {
 			// do not save if no moves made and timeElapsed is very low
 			return false;
 		}

@@ -1,6 +1,7 @@
 <template>
-	<div class="flex flex-col items-center justify-start space-y-6 main-menu-buttons mx-auto">
-		<router-link
+	<div class="flex flex-col items-center justify-start main-menu-buttons mx-auto max-w-sm">
+		<div class="primary-container flex flex-col justify-start w-full gap-y-6">
+			<router-link
 			v-if="validSaveData"
 			:to="{ name: 'PlayPuzzle' }"
 			custom
@@ -20,24 +21,27 @@
 			class="text-base uppercase route-btn route-primary"
 			:class="{'btn-primary': !canContinue, 'shadow-md': !canContinue, 'shadow-sm': canContinue }"
 		>New Game</BaseButton></router-link>
+		</div>
+		
 
-		<div class="flex w-full space-x-6">
+		<div class="flex w-full gap-x-6 secondary-container">
 			<router-link
 				custom
 				v-slot="{navigate}"
 				to="/help"
 			><BaseButton
 				@click="navigate"
-				class="route-btn route-secondary w-1/2"
+				class="route-btn route-secondary flex-1"
 			>Help</BaseButton></router-link>
 
 			<router-link
+				v-if="HAS_TUTORIAL_ROUTE"
 				custom
 				v-slot="{navigate}"
 				to="/help/tutorial"
 			><BaseButton
 				@click="navigate"
-				class="route-btn route-secondary w-1/2"
+				class="route-btn route-secondary flex-1"
 			>Tutorial</BaseButton></router-link>
 		</div>
 	</div>
@@ -47,12 +51,15 @@
 import type { SaveData } from "@/services/savegame/types";
 import { computed, toRefs } from "vue";
 export type ContinueButtonSaveDataProps = Pick<SaveData, "timeElapsed" | "width" | "height" | "difficulty">;
+
+const HAS_TUTORIAL_ROUTE = false; // whether to display the, currently (feb 2024) unimplemented Tutorial route, link
+
 const props = defineProps<{
 	canContinue?: boolean,
 	saveData: ContinueButtonSaveDataProps | null
 }>();
 
-const validSaveData = computed(() => {
+const validSaveData = computed((): false | SaveData => {
 	if (props.canContinue) {
 		return props.saveData as SaveData;
 	}
@@ -68,7 +75,7 @@ const { canContinue } = toRefs(props);
 }
 
 .route-btn {
-	@apply w-full font-normal;
+	@apply font-normal;
 	@apply transition-colors;
 }
 .route-btn.btn-primary {
@@ -76,9 +83,13 @@ const { canContinue } = toRefs(props);
 	--tw-shadow: 0 6px 14px 1px rgba(var(--shadow-color), 0.3), 0 4px 6px -2px rgba(var(--shadow-color), 0.35);
 }
 .route-primary {
-	@apply tracking-wider h-14;
+	@apply tracking-wider h-14 w-full;
 }
 .route-secondary {
 	@apply tracking-wide h-12;
+}
+
+.secondary-container {
+	padding-top: clamp(1.5rem, 8vh, 5rem);
 }
 </style>
