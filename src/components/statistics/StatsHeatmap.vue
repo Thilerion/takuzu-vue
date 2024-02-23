@@ -205,7 +205,8 @@ const useMonthsList = (squares: Ref<HeatmapCellData[]>) => {
 	return res;
 }
 
-const createHeatmapRange = (): { numWeeks: number, interval: { start: Date, end: Date }} => {
+const createHeatmapRange = (): { numWeeks: number, interval: { start: Date, end: Date } } => {
+	// this uses a non-reactive "today" date, which is not that big of a problem. A reload, or when the component is unmounted and mounted, it will be correct again
 	const today = startOfDay(new Date());
 	const previousYear = addDays(subYears(today, 1), 1);
 	const numWeeks = differenceInCalendarISOWeeks(today, previousYear);
