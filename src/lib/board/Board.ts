@@ -4,9 +4,10 @@ import type { FoundIncorrectValue } from "../mistakes/types.js";
 import type { ColumnId, IterableBoardLineString, LineId, BoardExportString, PuzzleGrid, RowId, Vec, BoardString, Target, BoardShape } from "../types";
 import { array2d, cloneArray2d, columnIdToX, getCoordsForBoardSize, isLineIdColumn, isLineIdRow, isPuzzleValueLineStr, isValidCellDigit, isValidPuzzleValue, lineSizeToNumRequired, rowIdToY, shuffle } from "../utils";
 import { validateBoard } from "../validate/board";
-import { generateColumnIds, generateRowIds, getImportBoardStringData } from "./Board.helpers.js";
+import { generateColumnIds, generateRowIds } from "./Board.helpers.js";
 import { BoardLine } from "./BoardLine";
 import { ThreesUnit } from "./ThreesUnit";
+import { boardStringToPuzzleGrid, getImportBoardStringData, puzzleGridToBoardString, puzzleGridToExportString } from "./board-conversion.helpers.js";
 
 export class SimpleBoard {
 	grid: PuzzleGrid;
@@ -40,25 +41,7 @@ export class SimpleBoard {
 	}
 
 	static fromString(exportedStr: BoardString | BoardExportString, dims?: BoardShape) {
-		const { width, height, boardStr } = getImportBoardStringData(exportedStr, dims);
-		if (boardStr.length < width * height) {
-			throw new Error(`Unexpected boardStr size, smaller than board dimensions (str len: ${boardStr.length}, dimensions: ${width}x${height}=${width * height})`);
-		}
-
-		const grid: PuzzleGrid = [];
-		for (let y = 0; y < height; y++) {
-			const row: PuzzleValue[] = [];
-			for (let x = 0; x < width; x++) {
-				const idx = (y * width) + x;
-				const rawVal = boardStr[idx];
-				if (rawVal === ONE) {
-					row.push(ONE);
-				} else if (rawVal === ZERO) {
-					row.push(ZERO);
-				} else row.push(EMPTY);
-			}
-			grid.push(row);
-		}
+		const grid = boardStringToPuzzleGrid(exportedStr, dims);
 		return new SimpleBoard(grid);
 	}
 	// TODO: accept an optional width/height, to bypass deducePuzzleDimensions
@@ -303,15 +286,12 @@ export class SimpleBoard {
 		}).join('\n');
 	}
 	toBoardString(): BoardString {
-		return this.grid.flat().join('') as BoardString;
-	}
-
-	static gridToBoardString(grid: PuzzleGrid) {
-		return grid.flat().join('') as BoardString;
+		return puzzleGridToBoardString(this.grid);
 	}
 
 	export(): BoardExportString {
-		return `${this.width}x${this.height};${this.toBoardString()}` as BoardExportString;
+		const dims = { width: this.width, height: this.height };
+		return puzzleGridToExportString(this.grid, dims);
 	}
 }
 

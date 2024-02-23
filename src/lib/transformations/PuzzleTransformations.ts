@@ -1,5 +1,5 @@
+import { puzzleGridToBoardString } from "../board/board-conversion.helpers.js";
 import { getBoardShapeTypeFromGrid } from "../helpers/board-type.js";
-import { SimpleBoard } from "../index.js";
 import type { BoardString, PuzzleGrid } from "../types.js";
 import { pickRandom } from "../utils.js";
 import { getTransformationKey, getTransformationConfigFromKey, generateAllValidTransformations } from "./helpers.js";
@@ -49,7 +49,7 @@ export class PuzzleTransformations {
 		const result: TransformationBoardStringsMap = new Map();
 		for (const entry of Object.entries(transformations)) {
 			const [key, grid] = entry as [TransformationKey, PuzzleGrid];
-			const boardString = SimpleBoard.gridToBoardString(grid);
+			const boardString = puzzleGridToBoardString(grid);
 			result.set(key, boardString);
 		}
 		return new PuzzleTransformations(result);
@@ -71,7 +71,7 @@ export class PuzzleTransformations {
 	 * yields the grid supplied as the first argument.
 	 */
 	public getTransformationKeyOfGrid(grid: PuzzleGrid | BoardString): TransformationKey | undefined {
-		const boardString = typeof grid === 'string' ? grid : SimpleBoard.gridToBoardString(grid);
+		const boardString = typeof grid === 'string' ? grid : puzzleGridToBoardString(grid);
 		for (const [key, value] of this.transformations) {
 			if (value === boardString) {
 				return key;
@@ -221,7 +221,7 @@ export class PuzzleTransformations {
 				origFlip,
 				origInvert
 			] = getTransformationConfigFromKey(origKey as TransformationKey);
-			const boardString = SimpleBoard.gridToBoardString(grid);
+			const boardString = puzzleGridToBoardString(grid);
 
 			const expectedRot = canonicalFlip === 'noFlip' ? PuzzleTransformations.subtractRotations(origRot, canonicalRot) : this.subtractRotations(canonicalRot, origRot);
 			const expectedFlip = origFlip === canonicalFlip ? 'noFlip' : 'flip';
@@ -236,7 +236,7 @@ export class PuzzleTransformations {
 	private static identifyCanonicalForm(transformations: Partial<TransformationRecord<PuzzleGrid>>): [TransformationKey, BoardString] {
 		const entries = Object.entries(transformations) as [TransformationKey, PuzzleGrid][];
 		const boardStringEntries = entries.map(([key, grid]) => {
-			return [key, SimpleBoard.gridToBoardString(grid)] as [TransformationKey, BoardString];
+			return [key, puzzleGridToBoardString(grid)] as [TransformationKey, BoardString];
 		});
 		boardStringEntries.sort((a, b) => a[1].localeCompare(b[1]));
 

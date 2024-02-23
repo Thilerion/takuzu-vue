@@ -1,15 +1,5 @@
-import type { BoardExportString, BoardShape, BoardString, ColumnId, RowId } from "../types.js";
+import type { ColumnId, RowId } from "../types.js";
 import { range } from "../utils.js";
-
-const exportStrRegex = /^\d{1,2}x\d{1,2};([.01]){4,}$/;
-export const isExportString = (str: string): str is BoardExportString => {
-	return exportStrRegex.test(str);
-}
-export const parseExportString = (str: BoardExportString) => {
-	const [dimensions, boardStr] = str.split(';');
-	const [width, height] = dimensions.split('x').map(Number);
-	return { width, height, boardStr };
-}
 
 const validPuzzleSideLengths = [4, 6, 8, 10, 12, 14, 16, 18, 20] as const;
 function getValidRectPuzzleDimensions() {
@@ -55,25 +45,6 @@ export const deducePuzzleDimensionsFromLength = (length: number) => {
 	}
 
 	throw new Error(`Cannot deduce correct puzzle size from this length (${length})`);
-}
-
-export const getImportBoardStringData = (
-	str: BoardString | BoardExportString,
-	dims?: BoardShape
-): BoardShape & { boardStr: string } => {
-	if (isExportString(str)) {
-		return parseExportString(str);
-	} else if (dims != null) {
-		return {
-			...dims,
-			boardStr: str
-		}
-	} else {
-		return {
-			...deducePuzzleDimensionsFromLength(str.length),
-			boardStr: str
-		}
-	}
 }
 
 export const generateColumnIds = (width: number): ColumnId[] => {

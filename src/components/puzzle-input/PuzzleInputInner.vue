@@ -95,7 +95,7 @@ import { puzzleGridToString, shortenPuzzleString } from '@/components/puzzle-inp
 import { chunk } from '@/utils/array.ts.utils';
 
 import { usePuzzleInputSolvable } from '@/components/puzzle-input/usePuzzleInputSolvable';
-import { parseExportString } from '@/lib/board/Board.helpers.js';
+import { parseExportString } from '@/lib/board/board-conversion.helpers.js';
 import type { BoardExportString, BoardShape } from '@/lib/types.js';
 import type { PuzzleInputGrid, PuzzleInputValue } from './types.js';
 import PuzzleInputField from './PuzzleInputField.vue';

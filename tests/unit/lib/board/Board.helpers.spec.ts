@@ -1,4 +1,5 @@
-import { deducePuzzleDimensionsFromLength, isExportString } from "@/lib/board/Board.helpers.js";
+import { deducePuzzleDimensionsFromLength } from "@/lib/board/Board.helpers.js";
+import { isExportString } from "@/lib/board/board-conversion.helpers.js";
 
 describe('isExportString', () => {
 	test('matches export string', () => {

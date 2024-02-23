@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 // TODO: fix types, updating/setting/conversion of (input) values, choose which values are allowed, etc.
-import { isExportString } from '@/lib/board/Board.helpers';
+import { isExportString } from '@/lib/board/board-conversion.helpers.js';
 import { ONE, ZERO, type PuzzleSymbol } from '@/lib/constants';
 import { computed, ref, toRef } from 'vue';
 
