@@ -19,7 +19,7 @@ export const useDynamicPuzzleGridSize = (
 	infobarSize: GridInfobarSizeRefs,
 	padding: GridPaddingRefs
 ) => {
-	const { width: rows, height: columns } = puzzleSize;
+	const { width: columns, height: rows } = puzzleSize;
 	const { height: rulerHeight, width: rulerWidth } = rulerSize;
 	const { height: infoHeight } = infobarSize;
 	const { x: paddingX, y: paddingY } = padding;

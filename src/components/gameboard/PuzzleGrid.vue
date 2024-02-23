@@ -48,7 +48,7 @@ const emit = defineEmits<{
 const { vibrate } = usePuzzleTapVibrate(rows, columns);
 
 // GRID CELL DATA
-const staticCellData = useStaticGridCellData(rows, columns, initialGrid);
+const staticCellData = useStaticGridCellData(columns, rows, initialGrid);
 const grid = computed((): PuzzleGrid => props.board.grid);
 const incorrectCellKeys = computed((): Record<XYKey, boolean> => {
 	return props.markedMistakes.reduce((acc, xykey) => {
