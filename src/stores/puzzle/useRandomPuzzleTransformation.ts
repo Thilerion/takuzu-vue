@@ -11,7 +11,7 @@ export const getRandomPuzzleTransformationOnRestart = (): AllPuzzleBoards => {
 	if (store.transformations == null) {
 		store.transformations = {
 			previous: [],
-			handler: new PuzzleTransformations(store.initialBoard!.grid)
+			handler: PuzzleTransformations.fromAnyGrid(store.initialBoard!.grid)
 		}
 	}
 
