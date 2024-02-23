@@ -36,5 +36,22 @@ describe('transformations helpers', () => {
 
 			expect(gridA).toEqual(gridReverse);
 		})
+
+		test('should return a transformation config that returns a grid to its original state, with rot270', () => {
+			const configA: BaseTransformationConfig = ['rot270', 'noFlip', 'noInvert'];
+			const configReverse = getReverseTransformationConfig(configA);
+
+			const gridA = SimpleBoard.fromArrayOfLines([
+				'10.1.',
+				'..10.',
+				'.1..1',
+				'0..11',
+				'1.1.1',
+			]).grid;
+			const gridB = applyTransformationConfig(gridA, configA);
+			const gridReverse = applyTransformationConfig(gridB, configReverse);
+
+			expect(gridA).toEqual(gridReverse);
+		})
 	})
 })
