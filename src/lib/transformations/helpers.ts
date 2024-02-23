@@ -1,7 +1,7 @@
 import type { BoardShapeType } from "../helpers/board-type.js";
 import type { PuzzleGrid } from "../types.js";
 import { createCombinedTransformationFn } from "./base-transformations.js";
-import { type BaseTransformationConfig, type TransformationKey, type RotationTransform, type FlipTransform, type SymbolInversionTransform, flipValues, rotationValues, symbolInversionValues, type TransformationRecord } from "./types.js";
+import { type BaseTransformationConfig, type TransformationKey, type RotationTransform, type FlipTransform, type SymbolInversionTransform, flipValues, rotationValues, symbolInversionValues, type TransformationRecord, type TransformationFn } from "./types.js";
 
 export const getTransformationKey = ([rot, flip, invert]: BaseTransformationConfig) => {
 	return `${rot}_${flip}_${invert}` as const satisfies TransformationKey;
@@ -60,20 +60,6 @@ export const boardShapeTypeValidTransformationConfigs = (
 	}
 }
 
-export function generateAllValidTransformations(
-	grid: PuzzleGrid,
-	shapeType: BoardShapeType
-): Partial<TransformationRecord<PuzzleGrid>> {
-	const configs = boardShapeTypeValidTransformationConfigs(shapeType);
-		const result: Partial<TransformationRecord<PuzzleGrid>> = {};
-        configs.forEach(config => {
-            const key = getTransformationKey(config);
-			const fn = createCombinedTransformationFn(config);
-			result[key] = fn(grid);
-        });
-		return result;
-}
-
 export function rotationTransformToDegrees(rot: RotationTransform): number {
 	switch (rot) {
 		case 'rot0': return 0;
@@ -117,9 +103,31 @@ export function getReverseTransformationConfig(config: BaseTransformationConfig)
 	return [rotB, flipB, invertB];
 }
 
+const keyToTransformationFnMap = new Map<TransformationKey, TransformationFn>();
+export const getTransformationFnFromKey = (key: TransformationKey): TransformationFn => {
+	if (!keyToTransformationFnMap.has(key)) {
+		const fn = createCombinedTransformationFn(getTransformationConfigFromKey(key));
+		keyToTransformationFnMap.set(key, fn);
+	}
+	return keyToTransformationFnMap.get(key)!;
+}
+
 export function applyTransformationConfig(grid: PuzzleGrid, config: BaseTransformationConfig): PuzzleGrid {
-	return createCombinedTransformationFn(config)(grid);
+	return applyTransformationKey(grid, getTransformationKey(config));
 }
 export function applyTransformationKey(grid: PuzzleGrid, key: TransformationKey) {
-	return applyTransformationConfig(grid, getTransformationConfigFromKey(key));
+	return getTransformationFnFromKey(key)(grid);
+}
+
+export function generateAllValidTransformations(
+	grid: PuzzleGrid,
+	shapeType: BoardShapeType
+): Partial<TransformationRecord<PuzzleGrid>> {
+	const configs = boardShapeTypeValidTransformationConfigs(shapeType);
+		const result: Partial<TransformationRecord<PuzzleGrid>> = {};
+        configs.forEach(config => {
+            const key = getTransformationKey(config);
+			result[key] = applyTransformationKey(grid, key);
+        });
+		return result;
 }
