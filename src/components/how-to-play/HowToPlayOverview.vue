@@ -17,7 +17,7 @@
 			<HowToPlayExample label="Correct: ">
 				<template #examples>
 					<HowToPlayExampleCells
-						:values="('110010'.split('') as PuzzleValueLine)"
+						:values="splitLine('110010')"
 					/>
 				</template>
 				<template #explanation>
@@ -27,7 +27,7 @@
 			<HowToPlayExample label="Incorrect: ">
 				<template #examples>
 					<HowToPlayExampleCells
-						:values="('010010'.split('') as PuzzleValueLine)"
+						:values="splitLine('010010')"
 						:incorrect="[0, 2, 3, 5]"
 					/>
 				</template>
@@ -44,7 +44,7 @@
 			<HowToPlayExample label="Correct: ">
 				<template #examples>
 					<HowToPlayExampleCells
-						:values="('11..00'.split('') as PuzzleValueLine)"
+						:values="splitLine('11..00')"
 					/>
 				</template>
 				<template #explanation>
@@ -54,7 +54,7 @@
 			<HowToPlayExample label="Incorrect: ">
 				<template #examples>
 					<HowToPlayExampleCells
-						:values="('111.00'.split('') as PuzzleValueLine)"
+						:values="splitLine('111.00')"
 						:incorrect="[0, 1, 2]"
 					/>
 				</template>
@@ -71,18 +71,18 @@
 			<HowToPlayExample label="This 4x4 puzzle is incorrect, as two rows are the same:">
 				<template #examples>
 					<HowToPlayExampleCells
-						:values="('1001'.split('') as PuzzleValueLine)"
+						:values="splitLine('1001')"
 						:incorrect="[0, 1, 2, 3]"
 					/>
 					<HowToPlayExampleCells
-						:values="('1001'.split('') as PuzzleValueLine)"
+						:values="splitLine('1001')"
 						:incorrect="[0, 1, 2, 3]"
 					/>
 					<HowToPlayExampleCells
-						:values="('0110'.split('') as PuzzleValueLine)"
+						:values="splitLine('0110')"
 					/>
 					<HowToPlayExampleCells
-						:values="('0.1.'.split('') as PuzzleValueLine)"
+						:values="splitLine('0.1.')"
 					/>
 				</template>
 			</HowToPlayExample>
@@ -100,9 +100,9 @@
 </template>
 
 <script setup lang="ts">
-import type { PuzzleValueLine } from '@/lib/types.js';
 import { ONE, ZERO } from '@/lib/constants.js';
 import SymbolDisplay from '@/components/dynamic-symbols/PuzzleSymbolDisplay.vue';
+import { splitLine } from '@/lib/utils.js';
 </script>
 
 <style scoped>

@@ -12,8 +12,7 @@ import { applyEliminationConstraint, categorizeBoardLines, type ApplyElimination
 import { type CategorizeBoardLineFn, type PrioritySortBoardLinesFn } from "@/lib/solvers/constraint-solver/constraints/elimination.helpers.js";
 import type { PuzzleValueLine, Target } from "@/lib/types.js";
 import * as elimStratModule from '@/lib/solvers/common/EliminationStrategy.js';
-
-const splitToPuzzleValueLine = (str: string) => str.split('') as PuzzleValueLine;
+import { splitLine } from "@/lib/utils.js";
 
 describe('applyEliminationConstraint', () => {
 	let mockableSortNone: PrioritySortBoardLinesFn;
@@ -33,11 +32,11 @@ describe('applyEliminationConstraint', () => {
 			it('calls the assignLineCategory dependency for each line in boardLines', () => {
 				const boardLines = [
 					BoardLine.fromValues(
-						splitToPuzzleValueLine('001....1.0'),
+						splitLine('001....1.0'),
 						'A'
 					),
 					BoardLine.fromValues(
-						splitToPuzzleValueLine('1...100100'),
+						splitLine('1...100100'),
 						'B'
 					)
 				];
@@ -74,19 +73,19 @@ describe('applyEliminationConstraint', () => {
 			it('uses the sort dependency to sort the "lines to process" as categorized by the assignLineCategory dependency', () => {
 				const boardLines = [
 					BoardLine.fromValues(
-						splitToPuzzleValueLine('....'),
+						splitLine('....'),
 						'A'
 					),
 					BoardLine.fromValues(
-						splitToPuzzleValueLine('....'),
+						splitLine('....'),
 						'B'
 					),
 					BoardLine.fromValues(
-						splitToPuzzleValueLine('....'),
+						splitLine('....'),
 						'C'
 					),
 					BoardLine.fromValues(
-						splitToPuzzleValueLine('....'),
+						splitLine('....'),
 						'D'
 					)
 				];
@@ -123,15 +122,15 @@ describe('applyEliminationConstraint', () => {
 			it('correctly categorizes filled lines, grouped by line type', () => {
 				const boardLines = [
 					BoardLine.fromValues(
-						splitToPuzzleValueLine('1100'),
+						splitLine('1100'),
 						'A'
 					),
 					BoardLine.fromValues(
-						splitToPuzzleValueLine('1100'),
+						splitLine('1100'),
 						'B'
 					),
 					BoardLine.fromValues(
-						splitToPuzzleValueLine('1100'),
+						splitLine('1100'),
 						'1'
 					),
 				];
@@ -170,7 +169,7 @@ describe('applyEliminationConstraint', () => {
 		test('gatherBoardLines dependency is used, regardless of which board is passed into the function itself', () => {
 			const board = SimpleBoard.empty(4, 4); // would return 8 empty lines, and no result would be found
 			const gatherBoardLines = vi.fn(() => [BoardLine.fromValues(
-				splitToPuzzleValueLine('11.0'), // a result WOULD be found here
+				splitLine('11.0'), // a result WOULD be found here
 				'A'
 			)])
 			const assignLineCategory = vi.fn((() => 'process') as CategorizeBoardLineFn);
@@ -197,12 +196,12 @@ describe('applyEliminationConstraint', () => {
 	describe('applyEliminationConstraint', () => {
 		let grid4x4: PuzzleValueLine[];
 		beforeEach(() => {
-			grid4x4 = [
+			grid4x4 = ([
 				'.011',
 				'..1.',
 				'..0.',
 				'10..'
-			].map(splitToPuzzleValueLine);
+			] as const).map(l => splitLine(l));
 		})
 		it('returns false if there are no lines to process', () => {
 			const board = SimpleBoard.empty(4, 4);
@@ -222,7 +221,7 @@ describe('applyEliminationConstraint', () => {
 
 		it('returns an error object if a line has no possible completions', () => {
 			const board = SimpleBoard.empty(4, 4);
-			board.assignRow(0, splitToPuzzleValueLine('111.'));
+			board.assignRow(0, splitLine('111.'));
 			const opts: ApplyEliminationConstraintOptsParam = {
 				singleAction: false,
 				useDuplicateLines: false,
@@ -250,7 +249,7 @@ describe('applyEliminationConstraint', () => {
 			})
 
 			const board = SimpleBoard.empty(4, 4);
-			board.assignRow(0, splitToPuzzleValueLine('11..')); // needed so there are lines to process
+			board.assignRow(0, splitLine('11..')); // needed so there are lines to process
 			const res = applyEliminationConstraint(board, {
 				singleAction: false,
 				useDuplicateLines: false,
@@ -380,12 +379,12 @@ describe('applyEliminationConstraint', () => {
 		it.todo('does not account for filledLines if "useDuplicateLines" option is set to false');
 
 		it('correctly updates the filledLines with the processed line, and accounts for them in the next iterations, when an applied strategy result affects other boardLines', () => {
-			const grid = [
+			const grid = ([
 				'....',
 				'101.', // gets processed first, then added to filledLines, so the rest get called with filledLines[ROW].length === 1
 				'....',
 				'1..0',
-			].map(splitToPuzzleValueLine);
+			] as const).map(l => splitLine(l));
 			const board = new SimpleBoard(grid);
 
 			const mockedElimStrat = vi.spyOn(elimStratModule, 'checkEliminationStrategy');

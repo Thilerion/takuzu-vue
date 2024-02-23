@@ -2,6 +2,7 @@ import { SimpleBoard } from "@/lib/index.js";
 import type { BoardExportString, PuzzleValueLine } from "@/lib/types.js";
 import { COLUMN, EMPTY, ONE, ROW, ZERO } from "@/lib/constants.js";
 import { BoardLine } from "@/lib/board/BoardLine.js";
+import { splitLine } from "@/lib/utils.js";
 
 describe('boardLine', () => {
 	let board6x10: SimpleBoard;
@@ -34,7 +35,7 @@ describe('boardLine', () => {
 		})
 
 		it('works with a values array', () => {
-			const values = '..01.1'.split('') as PuzzleValueLine;
+			const values = splitLine('..01.1');
 			const rowId = 'B';
 			
 			const lineRow = BoardLine.fromValues(values, rowId);
@@ -78,7 +79,7 @@ describe('boardLine', () => {
 		
 		beforeEach(() => {
 			line = BoardLine.fromBoard(board6x10, 'B');
-			lineFilled = BoardLine.fromValues('1100'.split('') as any, 'B');
+			lineFilled = BoardLine.fromValues(splitLine('1100'), 'B');
 		})
 
 		test('values', () => {
@@ -134,7 +135,7 @@ describe('boardLine', () => {
 		})
 
 		test('leastRemSymbol/mostRemSymbol return "both" as string if both symbols have the same amount remaining', () => {
-			const lineBoth = BoardLine.fromValues('10..'.split('') as any, 'B');
+			const lineBoth = BoardLine.fromValues(splitLine('10..'), 'B');
 			expect(lineBoth.countRemaining).toEqual({
 				[ONE]: 1,
 				[ZERO]: 1

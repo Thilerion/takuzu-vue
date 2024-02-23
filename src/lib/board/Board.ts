@@ -1,4 +1,4 @@
-import { COLUMN, EMPTY, ONE, ROW, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "../constants";
+import { COLUMN, EMPTY, ROW, type LineType, type PuzzleSymbol, type PuzzleValue } from "../constants";
 import { findIncorrectValuesFromSolution } from "../mistakes/incorrect-values.js";
 import type { FoundIncorrectValue } from "../mistakes/types.js";
 import type { ColumnId, IterableBoardLineString, LineId, BoardExportString, PuzzleGrid, RowId, Vec, BoardString, Target, BoardShape } from "../types";
@@ -7,7 +7,7 @@ import { validateBoard } from "../validate/board";
 import { generateColumnIds, generateRowIds } from "./Board.helpers.js";
 import { BoardLine } from "./BoardLine";
 import { ThreesUnit } from "./ThreesUnit";
-import { boardStringToPuzzleGrid, getImportBoardStringData, puzzleGridToBoardString, puzzleGridToExportString } from "./board-conversion.helpers.js";
+import { boardStringToPuzzleGrid, puzzleGridToBoardString, puzzleGridToExportString } from "./board-conversion.helpers.js";
 
 export class SimpleBoard {
 	grid: PuzzleGrid;

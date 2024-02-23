@@ -1,6 +1,6 @@
 import { COLUMN, EMPTY, ONE, PUZZLE_VALUES, ROW, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "./constants";
 import { memoize } from "./memoize.utils";
-import type { BoardExportString, ColumnId, Grid, LineId, PuzzleSymbolLine, PuzzleSymbolLineStr, PuzzleValueLine, PuzzleValueLineStr, RowId } from "./types";
+import type { ColumnId, Grid, LineId, PuzzleSymbolLine, PuzzleSymbolLineStr, PuzzleValueLine, PuzzleValueLineStr, RowId } from "./types";
 
 // ARRAY UTILS //
 export const array2d = <T = unknown>(width: number, height = width, value: T) => {
@@ -145,13 +145,21 @@ export const isPuzzleSymbolLineStr = (str: string): str is PuzzleSymbolLineStr =
 	return /^[01]+$/.test(str);
 }
 
+type VerifyPuzzleValueLine<T extends string, A extends string = ""> =
+  T extends `${infer F}${infer R}` ? 
+    F extends PuzzleValue ? VerifyPuzzleValueLine<R, `${A}${F}`> : `${A}${PuzzleValue}` : 
+  A;
+type VerifyPuzzleSymbolLine<T extends string, A extends string = ""> =
+  T extends `${infer F}${infer R}` ? 
+	F extends PuzzleSymbol ? VerifyPuzzleSymbolLine<R, `${A}${F}`> : `${A}${PuzzleSymbol}` : 
+  A;
 interface SplitLineFn {
 	(str: PuzzleValueLineStr): PuzzleValueLine;
 	(str: PuzzleSymbolLineStr): PuzzleSymbolLine;
 	(str: PuzzleSymbolLineStr | PuzzleValueLineStr): PuzzleValueLine;
-	(str: string): string[];
+	<T extends string>(str: T): T extends VerifyPuzzleValueLine<T> ? PuzzleValueLine : T extends VerifyPuzzleSymbolLine<T> ? PuzzleSymbolLine : T extends (VerifyPuzzleSymbolLine<T> | VerifyPuzzleValueLine<T>) ? PuzzleValueLine : string[];
 }
-export const splitLine: SplitLineFn = (str: PuzzleSymbolLineStr | PuzzleValueLineStr) => {
+export const splitLine: SplitLineFn = <T extends string>(str: T | PuzzleSymbolLineStr | PuzzleValueLineStr) => {
 	// slight problem: if input string is neither ValueLineStr or SymbolLineStr (but a string literal), the result is ValueLine even though there may be other characters
 	if (import.meta.env.DEV) {
 		for (const char of str) {

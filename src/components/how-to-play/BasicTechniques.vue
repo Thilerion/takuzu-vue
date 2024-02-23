@@ -15,9 +15,9 @@
 				}} (a triplet).</p>
 			<HowToPlayExample el="div" label="" class="border-y breakout px-8 py-4">
 				<template #examples>
-					<HowToPlayExampleCells :values="('.00.'.split('') as PuzzleValueLine)" />
+					<HowToPlayExampleCells :values="splitLine('.00.')" />
 					<span class="">Becomes:</span>
-					<HowToPlayExampleCells :values="('1001'.split('') as PuzzleValueLine)" />
+					<HowToPlayExampleCells :values="splitLine('1001')" />
 				</template>
 			</HowToPlayExample>
 
@@ -27,9 +27,9 @@
 					valueTypeDisplay }} to avoid the formation of triplets.</p>
 			<HowToPlayExample el="div" label="" class="border-y breakout px-8 py-4">
 				<template #examples>
-					<HowToPlayExampleCells :values="('.1.1..'.split('') as PuzzleValueLine)" />
+					<HowToPlayExampleCells :values="splitLine('.1.1..')" />
 					<span class="">Becomes:</span>
-					<HowToPlayExampleCells :values="('.101..'.split('') as PuzzleValueLine)" />
+					<HowToPlayExampleCells :values="splitLine('.101..')" />
 				</template>
 			</HowToPlayExample>
 
@@ -43,8 +43,8 @@
 				completed with the other {{ valueTypeDisplay }}.</p>
 			<HowToPlayExample el="div" label="" class="border-y breakout px-8 pb-0 pt-4">
 				<template #examples>
-					<HowToPlayExampleCells :values="('1..110'.split('') as PuzzleValueLine)" />
-					<HowToPlayExampleCells :values="('100110'.split('') as PuzzleValueLine)" />
+					<HowToPlayExampleCells :values="splitLine('1..110')" />
+					<HowToPlayExampleCells :values="splitLine('100110')" />
 				</template>
 				<template #explanation>This row has 6 cells, which means there are 3 of each {{ valueTypeDisplay }} required. As you can see in the top row, there are 3 <SymbolDisplay :v="'1'" mult />, which means all other cells should be <SymbolDisplay v="0" mult/>.</template>
 			</HowToPlayExample>
@@ -65,36 +65,36 @@
 				<template #examples>
 					<HowToPlayExampleCells
 						class="mt-2"
-						:values="('1.0.'.split('') as PuzzleValueLine)"
+						:values="splitLine('1.0.')"
 						:highlight="[1, 3]"
 					/>
 					<HowToPlayExampleCells
-						:values="('1001'.split('') as PuzzleValueLine)"
+						:values="splitLine('1001')"
 						:highlight="[1, 3]"
 					/>
 					<HowToPlayExampleCells
-						:values="('0110'.split('') as PuzzleValueLine)"
+						:values="splitLine('0110')"
 						class="opacity-40"
 					/>
 					<HowToPlayExampleCells
-						:values="('0.1.'.split('') as PuzzleValueLine)"
+						:values="splitLine('0.1.')"
 						class="opacity-40"
 					/>
 					<div class="my-1">It can only be filled in one way to prevent two duplicate rows:</div>
 					<HowToPlayExampleCells
-						:values="('1100'.split('') as PuzzleValueLine)"
+						:values="splitLine('1100')"
 						:highlight="[1, 3]"
 					/>
 					<HowToPlayExampleCells
-						:values="('1001'.split('') as PuzzleValueLine)"
+						:values="splitLine('1001')"
 						:highlight="[1, 3]"
 					/>
 					<HowToPlayExampleCells
-						:values="('0110'.split('') as PuzzleValueLine)"
+						:values="splitLine('0110')"
 						class="opacity-40"
 					/>
 					<HowToPlayExampleCells
-						:values="('0.1.'.split('') as PuzzleValueLine)"
+						:values="splitLine('0.1.')"
 						class="opacity-40"
 					/>
 				</template>
@@ -109,6 +109,7 @@ import { injectCellThemeData } from '../gameboard/composables/useCellThemeProvid
 import { useDynamicPuzzleSymbolString } from '../dynamic-symbols/useDynamicPuzzleSymbolString.js';
 import SymbolDisplay from '@/components/dynamic-symbols/PuzzleSymbolDisplay.vue';
 import type { PuzzleValueLine } from '@/lib/types.js';
+import { splitLine } from '@/lib/utils.js';
 
 const { theme: cellTheme, type: cellThemeType } = injectCellThemeData();
 const { $p } = useDynamicPuzzleSymbolString(

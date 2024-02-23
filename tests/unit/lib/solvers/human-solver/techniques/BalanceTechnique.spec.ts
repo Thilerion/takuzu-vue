@@ -1,15 +1,15 @@
 import { BoardLine } from "@/lib/board/BoardLine"
 import { humanBalanceTechnique } from "@/lib/solvers/human-solver/techniques/BalanceTechnique";
-import type { PuzzleValueLine } from "@/lib/types"
+import { splitLine } from "@/lib/utils.js";
 
 describe('Human Solver HumanBalanceTechnique', () => {
 	it('finds all targets in a line that can be balanced', () => {
 		const boardLine = BoardLine.fromValues(
-			'1.101.11..'.split('') as PuzzleValueLine,
+			splitLine('1.101.11..'),
 			'A'
 		);
 		const emptyLine = BoardLine.fromValues(
-			'......11..'.split('') as PuzzleValueLine,
+			splitLine('......11..'),
 			'B'
 		)
 		const board = {

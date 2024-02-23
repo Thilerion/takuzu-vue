@@ -1,11 +1,9 @@
 import { BoardLine } from "@/lib/board/BoardLine.js";
 import { SimpleBoard } from "@/lib/index.js";
 import { applyLineBalanceConstraint } from "@/lib/solvers/constraint-solver/constraints/LineBalanceConstraint.js";
-import type { PuzzleValueLine } from "@/lib/types.js";
 import * as lineBalStratModule from '@/lib/solvers/common/LineBalanceStrategy.js';
 import { ONE, ZERO } from "@/lib/constants.js";
-
-const splitToPuzzleValueLine = (str: string) => str.split('') as PuzzleValueLine;
+import { splitLine } from "@/lib/utils.js";
 
 describe('applyLineBalanceConstraint', () => {
 	afterEach(() => vi.restoreAllMocks() as any);
@@ -13,9 +11,9 @@ describe('applyLineBalanceConstraint', () => {
 	it('uses the gatherBoardLines dependency to iterate over the boardLines', () => {
 		const mockGatherBoardLines = vi.fn(() => {
 			return [
-				BoardLine.fromValues(splitToPuzzleValueLine('1..1'), 'A'),
-				BoardLine.fromValues(splitToPuzzleValueLine('..1.'), 'B'),
-				BoardLine.fromValues(splitToPuzzleValueLine('.0.0'), 'C'),
+				BoardLine.fromValues(splitLine('1..1'), 'A'),
+				BoardLine.fromValues(splitLine('..1.'), 'B'),
+				BoardLine.fromValues(splitLine('.0.0'), 'C'),
 			]
 		});
 		const board = SimpleBoard.empty(4, 4); // Empty, so would result in no changes
@@ -36,8 +34,8 @@ describe('applyLineBalanceConstraint', () => {
 			.mockReturnValue({ found: false }); // would make the first two lines be assigned 0000, and 1111
 		const deps = {
 			gatherBoardLines: vi.fn(() => [
-				BoardLine.fromValues(splitToPuzzleValueLine('...1'), 'B'),
-				BoardLine.fromValues(splitToPuzzleValueLine('..1.'), '3'),
+				BoardLine.fromValues(splitLine('...1'), 'B'),
+				BoardLine.fromValues(splitLine('..1.'), '3'),
 			])
 		}
 		const assignSpy = vi.spyOn(board, 'assignLine');

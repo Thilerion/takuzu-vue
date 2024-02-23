@@ -3,11 +3,11 @@ import { generateAllLineCompletions, generateValidLineCompletions } from "@/lib/
 import { generateValidLinesOfSize } from "@/lib/line-generation/lines-of-size.js";
 import { generateUniqueArrayPermutations } from "@/lib/line-generation/permutations.js";
 import type { PuzzleValueLine } from "@/lib/types.js";
+import { splitLine } from "@/lib/utils.js";
 
 const sorted2dArr = (arr: readonly(readonly (number | string)[])[]) => {
 	return arr.map(line => line.join('')).sort();
 }
-const strToPuzzleValueLine = (str: string): PuzzleValueLine => str.split('') as PuzzleValueLine;
 
 describe('generateUniqueArrayPermutations', () => {
 	it('is correct for simple input arrays without duplicate values', () => {
@@ -37,7 +37,7 @@ describe('generateUniqueArrayPermutations', () => {
 	})
 
 	it('is correct for inputs with duplicate values', () => {
-		const input = [ZERO, ZERO, ONE] as PuzzleValueLine;
+		const input: PuzzleValueLine = [ZERO, ZERO, ONE];
 		const expected = [
 			[ZERO, ZERO, ONE],
 			[ZERO, ONE, ZERO],
@@ -75,7 +75,7 @@ describe('generateValidLinesOfSize', () => {
 
 describe('generateAllLineCompletions', () => {
 	it('is correct for standard line', () => {
-		const origLine = strToPuzzleValueLine('1...');
+		const origLine = splitLine('1...');
 		const line = [...origLine];
 		const lineCount = {
 			[ONE]: 1,
@@ -93,7 +93,7 @@ describe('generateAllLineCompletions', () => {
 	})
 
 	it('is correct for an odd-sized line', () => {
-		const origLine = strToPuzzleValueLine('11...');
+		const origLine = splitLine('11...');
 		const line = [...origLine];
 		const lineCount = {
 			[ONE]: 2,
@@ -106,13 +106,13 @@ describe('generateAllLineCompletions', () => {
 			'11100',
 			'11010',
 			'11001',
-		].map(strToPuzzleValueLine);
+		].map(splitLine);
 
 		expect([...result as any[][]].sort()).toEqual(expected.sort());
 	})
 
 	it('calculates lineCount if not provided', () => {
-		const inputLine = strToPuzzleValueLine('1...');
+		const inputLine = splitLine('1...');
 		const inputCounts = {
 			[ONE]: 1,
 			[ZERO]: 0,
@@ -132,35 +132,35 @@ describe('generateValidLineCompletions', () => {
 	}
 
 	test('with a filled line', () => {
-		const filledLine = '101010'.split('') as PuzzleValueLine;
+		const filledLine = splitLine('101010');
 		const count = {
 			'1': 3,
 			'0': 3,
 			'.': 0
 		};
-		const result = generateValidLineCompletions(filledLine, count);
+		const result = generateValidLineCompletions([...filledLine], count);
 		expect(result).toEqual([filledLine]);
 	})
 
 	test('with an invalid filled line', () => {
-		const filledLine = '111010'.split('') as PuzzleValueLine;
+		const filledLine = '111010';
 		const count = {
 			'1': 4,
 			'0': 2,
 			'.': 0
 		};
-		const result = generateValidLineCompletions(filledLine, count);
+		const result = generateValidLineCompletions(splitLine(filledLine), count);
 		expect(result).toEqual([]);
 	})
 
 	test('with an invalid line', () => {
-		const line = '111...'.split('') as PuzzleValueLine;
+		const line = '111...';
 		const count = {
 			'1': 3,
 			'0': 0,
 			'.': 0
 		};
-		const result = generateValidLineCompletions(line, count);
+		const result = generateValidLineCompletions(splitLine(line), count);
 		expect(result).toEqual([]);
 	})
 
@@ -172,7 +172,7 @@ describe('generateValidLineCompletions', () => {
 			'.': 4
 		}
 
-		const result = generateValidLineCompletions(line.split('') as PuzzleValueLine, count);
+		const result = generateValidLineCompletions(splitLine(line), count);
 		expect(linePermArrToSortedStrings(result)).toEqual([
 			'010011',
 			'010101',
@@ -189,7 +189,7 @@ describe('generateValidLineCompletions', () => {
 		}
 		const allPossibleLinesOfLength10 = generateValidLinesOfSize(10);
 		const allPossibleLinesOfLength10EndingInOne = allPossibleLinesOfLength10.filter(l => l.at(-1) === '1');
-		const result = generateValidLineCompletions(line.split('') as PuzzleValueLine, count);
+		const result = generateValidLineCompletions(splitLine(line), count);
 
 		expect(result.length).toBe(allPossibleLinesOfLength10EndingInOne.length);
 		expect(linePermArrToSortedStrings(result)).toEqual(allPossibleLinesOfLength10EndingInOne.sort());
