@@ -14,7 +14,8 @@ import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 export default defineConfig(({ command, mode }) => {
 	// load env variables from relevant env file to set manifest app name
-	process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
+	// process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
+	Object.assign(process.env, loadEnv(mode, process.cwd()))
 
 	// if building for production, create a 200.html fallback for nested routes
 	const copyFallback200 = command === 'build' ? viteStaticCopy({
