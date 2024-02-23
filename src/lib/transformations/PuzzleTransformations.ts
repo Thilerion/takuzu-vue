@@ -1,50 +1,62 @@
-import { type BoardShapeType, getBoardShapeTypeFromGrid } from "../helpers/board-type.js";
+import { getBoardShapeTypeFromGrid } from "../helpers/board-type.js";
 import { SimpleBoard } from "../index.js";
 import type { BoardString, PuzzleGrid } from "../types.js";
 import { pickRandom } from "../utils.js";
 import { createCombinedTransformationFn } from "./base-transformations.js";
 import { getTransformationKey, getTransformationConfigFromKey, generateAllValidTransformations } from "./helpers.js";
-import type { TransformationKey, BaseTransformationConfig, RotationTransform } from "./types.js";
+import type { TransformationKey, BaseTransformationConfig, RotationTransform, TransformationBoardStringsMap, TransformationRecord } from "./types.js";
 
 export class PuzzleTransformations {
-    private transformations: Map<TransformationKey, BoardString>;
+    private transformations: TransformationBoardStringsMap;
 	public readonly canonicalForm: BoardString;
 
-	private constructor(inputGrid: PuzzleGrid) {
-		const boardShapeType = getBoardShapeTypeFromGrid(inputGrid);
-
-		// 1. generate all transformations from viewpoint of inputGrid, and temporarily store these
-		// 2. find canonical form of inputGrid, using stringify and lexical ordering
-		// 3. store canonical form in this.canonicalForm
-		// 4. adjust all transformations to be relative to the canonical form by either: 
-		//    a. applying the inverse of the transformation to the canonical form, or
-		//	  b. redoing the transformation from the viewpoint of the canonical form (inefficient, slower but easier)
-		// 5. store reordered transformations in this.transformations
-
-		const tempTransformations: Partial<Record<TransformationKey, PuzzleGrid>> = generateAllValidTransformations(inputGrid, boardShapeType);
-		const [canonicalKey] = this.identifyCanonicalForm(tempTransformations);
-		this.transformations = this.getTransformationsFromCanonicalForm(
-			canonicalKey,
-			tempTransformations,
-		);
+	private constructor(
+		// from perspective of canonicalForm
+		transformations: TransformationBoardStringsMap,
+	) {
+		this.transformations = transformations;
 		this.canonicalForm = this.transformations.get('rot0_noFlip_noInvert')!;
 	}
 
-	static fromAnyGrid(grid: PuzzleGrid): PuzzleTransformations {
-		const instance = new PuzzleTransformations(grid);
-		return instance;
-
+	static fromAnyGrid(inputGrid: PuzzleGrid): PuzzleTransformations {
+		/*
+		Steps in getting all Transformations from the perspective of a canonical form:
+			1. generate all transformations from viewpoint of inputGrid, and temporarily store these
+			2. find canonical form of inputGrid, using stringify and lexical ordering
+			3. store canonical form in this.canonicalForm
+			4. adjust all transformations to be relative to the canonical form by either: 
+			a. applying the inverse of the transformation to the canonical form, or
+				b. redoing the transformation from the viewpoint of the canonical form (inefficient, slower but easier)
+			5. store reordered transformations in this.transformations
+		*/
+		const boardShapeType = getBoardShapeTypeFromGrid(inputGrid);
+		const tempTransformations: Partial<TransformationRecord<PuzzleGrid>> = generateAllValidTransformations(inputGrid, boardShapeType);
+		const [canonicalKey] = PuzzleTransformations.identifyCanonicalForm(tempTransformations);
+		const transformations = PuzzleTransformations.getTransformationsFromCanonicalForm(
+			canonicalKey,
+			tempTransformations,
+		);
+		return new PuzzleTransformations(transformations);
 	}
+	
 	static fromCanonicalGrid(canonicalGrid: PuzzleGrid): PuzzleTransformations {
-		const instance = new PuzzleTransformations(canonicalGrid);
-		return instance;
+		const boardShapeType = getBoardShapeTypeFromGrid(canonicalGrid);
+		const transformations: Partial<TransformationRecord<PuzzleGrid>> = generateAllValidTransformations(canonicalGrid, boardShapeType);
+		// make the TransformationBoardStringsMap
+		const result: TransformationBoardStringsMap = new Map();
+		for (const entry of Object.entries(transformations)) {
+			const [key, grid] = entry as [TransformationKey, PuzzleGrid];
+			const boardString = SimpleBoard.gridToBoardString(grid);
+			result.set(key, boardString);
+		}
+		return new PuzzleTransformations(result);
 	}
 
 	static getTransformationKeyFromPuzzleGrid(grid: PuzzleGrid): {
 		isCanonical: boolean,
 		transformationKey: TransformationKey
 	} {
-		const instance = new PuzzleTransformations(grid);
+		const instance = PuzzleTransformations.fromAnyGrid(grid);
 		const isCanonical = instance.isCanonicalForm(grid);
 		const transformationKey = instance.getTransformationKeyOfGrid(grid)!;
 		return {
@@ -76,7 +88,7 @@ export class PuzzleTransformations {
 		return { self, others };
 	}
 
-	public getAllTransformations(): ReadonlyMap<TransformationKey, BoardString> {
+	public getAllTransformations(): Readonly<TransformationBoardStringsMap> {
 		return this.transformations;
 	}
 
@@ -180,7 +192,7 @@ export class PuzzleTransformations {
 		return group[0];
 	}
 
-	private subRot(a: RotationTransform, b: RotationTransform): RotationTransform {
+	static subRot(a: RotationTransform, b: RotationTransform): RotationTransform {
 		const aInt = parseInt(a.replace('rot', ''));
 		const bInt = parseInt(b.replace('rot', ''));
 		const resInt = (aInt - bInt + 360) % 360;
@@ -194,12 +206,12 @@ export class PuzzleTransformations {
 	 * @param canonicalKey The transformationKey that, when applied to the inputGrid, yields the canonicalForm.
 	 * @param tempTransformations All transformed grids with their transformationKeys, from the perspective of the inputGrid
 	 */
-	private getTransformationsFromCanonicalForm(
+	static getTransformationsFromCanonicalForm(
 		// the transformation used to get from inputGrid to canonicalForm
 		canonicalKey: TransformationKey,
-		tempTransformations: Partial<Record<TransformationKey, PuzzleGrid>>,
-	): Map<TransformationKey, BoardString> {
-		const result = new Map<TransformationKey, BoardString>();
+		tempTransformations: Partial<TransformationRecord<PuzzleGrid>>,
+	): TransformationBoardStringsMap {
+		const result = new Map();
 		const [
 			canonicalRot,
 			canonicalFlip,
@@ -214,7 +226,7 @@ export class PuzzleTransformations {
 			] = getTransformationConfigFromKey(origKey as TransformationKey);
 			const boardString = SimpleBoard.gridToBoardString(grid);
 			
-			const expectedRot = canonicalFlip === 'noFlip' ? this.subRot(origRot, canonicalRot) : this.subRot(canonicalRot, origRot);
+			const expectedRot = canonicalFlip === 'noFlip' ? PuzzleTransformations.subRot(origRot, canonicalRot) : this.subRot(canonicalRot, origRot);
 			const expectedFlip = origFlip === canonicalFlip ? 'noFlip' : 'flip';
 			const expectedInvert = origInvert === canonicalInvert ? 'noInvert' : 'invertSymbols';
 			// then the result is the expectedKey, which is the transformation to get a particular grid (generated from the inputGrid) but from the viewpoint of the canonicalForm; how to transform the canonicalForm to get that grid
@@ -224,7 +236,7 @@ export class PuzzleTransformations {
 		return result;
 	}
 
-	private identifyCanonicalForm(transformations: Partial<Record<TransformationKey, PuzzleGrid>>): [TransformationKey, BoardString] {
+	static identifyCanonicalForm(transformations: Partial<TransformationRecord<PuzzleGrid>>): [TransformationKey, BoardString] {
 		const entries = Object.entries(transformations) as [TransformationKey, PuzzleGrid][];
 		const boardStringEntries = entries.map(([key, grid]) => {
 			return [key, SimpleBoard.gridToBoardString(grid)] as [TransformationKey, BoardString];

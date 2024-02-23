@@ -1,7 +1,7 @@
 import type { BoardShapeType } from "../helpers/board-type.js";
 import type { PuzzleGrid } from "../types.js";
 import { createCombinedTransformationFn } from "./base-transformations.js";
-import { type BaseTransformationConfig, type TransformationKey, type RotationTransform, type FlipTransform, type SymbolInversionTransform, flipValues, rotationValues, symbolInversionValues } from "./types.js";
+import { type BaseTransformationConfig, type TransformationKey, type RotationTransform, type FlipTransform, type SymbolInversionTransform, flipValues, rotationValues, symbolInversionValues, type TransformationRecord } from "./types.js";
 
 export const getTransformationKey = ([rot, flip, invert]: BaseTransformationConfig) => {
 	return `${rot}_${flip}_${invert}` as const satisfies TransformationKey;
@@ -63,9 +63,9 @@ export const boardShapeTypeValidTransformationConfigs = (
 export function generateAllValidTransformations(
 	grid: PuzzleGrid,
 	shapeType: BoardShapeType
-): Partial<Record<TransformationKey, PuzzleGrid>> {
+): Partial<TransformationRecord<PuzzleGrid>> {
 	const configs = boardShapeTypeValidTransformationConfigs(shapeType);
-		const result: Partial<Record<TransformationKey, PuzzleGrid>> = {};
+		const result: Partial<TransformationRecord<PuzzleGrid>> = {};
         configs.forEach(config => {
             const key = getTransformationKey(config);
 			const fn = createCombinedTransformationFn(config);

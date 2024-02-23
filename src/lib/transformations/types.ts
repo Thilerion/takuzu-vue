@@ -1,5 +1,5 @@
 import type { PuzzleValue } from "../constants.js";
-import type { PuzzleGrid } from "../types.js";
+import type { BoardString, PuzzleGrid } from "../types.js";
 
 export const rotationValues = ['rot0', 'rot90', 'rot180', 'rot270'] as const;
 export const flipValues = ['noFlip', 'flip'] as const;
@@ -30,3 +30,7 @@ export type TransformationRecordOddBoard<T> = Record<TransformationKeyOddBoard, 
 
 export type ReadonlyGrid = ReadonlyArray<ReadonlyArray<PuzzleValue>>;
 export type TransformationFn = (grid: ReadonlyGrid) => PuzzleGrid;
+
+export type TransformationMap<T> = Map<TransformationKey, T>;
+export type TransformationGridsMap = TransformationMap<PuzzleGrid>;
+export type TransformationBoardStringsMap = TransformationMap<BoardString>;
