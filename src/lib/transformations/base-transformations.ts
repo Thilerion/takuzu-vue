@@ -2,7 +2,6 @@ import { EMPTY, OPPOSITE_SYMBOL_MAP } from "../constants.js"
 import type { PuzzleGrid } from "../types.js";
 import type { ReadonlyGrid, TransformationFn, BaseTransformationConfig } from "./types.js";
 
-const reversed = <T>(arr: ReadonlyArray<T>): T[] => [...arr].reverse();
 const invertSymbols = (grid: ReadonlyGrid): PuzzleGrid => {
 	return grid.map(row => {
 		return row.map((val) => {
@@ -11,28 +10,16 @@ const invertSymbols = (grid: ReadonlyGrid): PuzzleGrid => {
 	})
 }
 
-const transpose = (grid: PuzzleGrid): PuzzleGrid => {
-	return grid[0].map((_row, i) => grid.map(col => col[i]));
-}
-const vFlip = (grid: ReadonlyGrid): PuzzleGrid => {
-	return reversed(grid.map(r => r.slice(0)));
-}
-const hFlip = (grid: ReadonlyGrid): PuzzleGrid => {
-	return grid.map(row => reversed(row));
-}
+const reversed = <T>(arr: ReadonlyArray<T>): T[] => [...arr].reverse();
+const transpose = (grid: PuzzleGrid): PuzzleGrid => grid[0].map((_row, i) => grid.map(col => col[i]));
+const identifyTransform = (grid: ReadonlyGrid): PuzzleGrid => grid.map(row => [...row]); // performs a 2d copy of the grid
 
-const identifyTransform = (grid: ReadonlyGrid): PuzzleGrid => {
-	return grid.map(row => [...row]);
-}
-const rotate90 = (grid: ReadonlyGrid): PuzzleGrid => {
-	return transpose(vFlip(grid));
-}
-const rotate180 = (grid: ReadonlyGrid): PuzzleGrid => {
-	return reversed(grid).map(row => reversed(row));
-}
-const rotate270 = (grid: ReadonlyGrid): PuzzleGrid => {
-	return transpose(hFlip(grid));
-}
+const vFlip = (grid: ReadonlyGrid): PuzzleGrid => reversed(grid.map(r => r.slice(0)));
+const hFlip = (grid: ReadonlyGrid): PuzzleGrid => grid.map(row => reversed(row));
+
+const rotate90 = (grid: ReadonlyGrid): PuzzleGrid => transpose(vFlip(grid));
+const rotate180 = (grid: ReadonlyGrid): PuzzleGrid => reversed(grid).map(row => reversed(row));
+const rotate270 = (grid: ReadonlyGrid): PuzzleGrid => transpose(hFlip(grid));
 
 export const createCombinedTransformationFn = (transforms: BaseTransformationConfig): TransformationFn => {
 	const fns: TransformationFn[] = [];

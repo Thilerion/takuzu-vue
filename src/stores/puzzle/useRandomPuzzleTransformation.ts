@@ -1,7 +1,7 @@
 import type { AllPuzzleBoards } from "@/lib/types.js";
 import { PuzzleTransformations } from "@/lib/transformations/PuzzleTransformations.js";
 import type { BaseTransformationConfig, TransformationKey } from "@/lib/transformations/types.js";
-import { applyTransformationConfig, getReverseTransformationConfig, getTransformationConfigFromKey, getTransformationKey } from "@/lib/transformations/helpers.js";
+import { getTransformationConfigFromKey, getTransformationKey } from "@/lib/transformations/helpers.js";
 import { usePuzzleStore } from "./store.js";
 import { SimpleBoard } from "@/lib/index.js";
 import { createSynchronizedTransformationHandlers } from "@/lib/transformations/synced.js";
@@ -25,7 +25,7 @@ export const getRandomPuzzleTransformationOnRestart = (): AllPuzzleBoards => {
 		}
 	}
 
-	const handler = store.transformations.initialGridHandler as PuzzleTransformations; // for some reason the private properties are missing from the type definition in the store
+	const handler = store.transformations.initialGridHandler;
 
 	// set current transformation key in previously used transformations
 	const currentKey = handler.getTransformationKeyOfGrid(store.initialBoard!.grid)!;
@@ -73,23 +73,29 @@ const addKeyToPreviousAndCapLength = (key: TransformationKey) => {
 	}
 }
 
-const getRandomUniqueTransformationKeyWithRetry = (handler: PuzzleTransformations, keysToSkip: TransformationKey[]): TransformationKey => {
-	const opts = { skip: [...keysToSkip] };
+const getRandomUniqueTransformationKeyWithRetry = (handler: Pick<PuzzleTransformations, 'getRandomTransformationKey'>, keysToSkip: TransformationKey[]): TransformationKey => {
 	// should succeed in the first try
 	for (let i = 0; i < 2; i++) {
-		const key = handler.getRandomUniqueTransformationKey(opts);
+		const key = handler.getRandomTransformationKey({
+			skip: [...keysToSkip],
+			uniqueOnly: true
+		});
 		if (key != null) {
 			return key;
 		}
 	}
 	if (keysToSkip.length > 0) {
 		// else, don't skip any previous keys; can occur when there are very few unique transformations
-		const key = handler.getRandomUniqueTransformationKey({
-			skip: []
+		const key = handler.getRandomTransformationKey({
+			skip: [],
+			uniqueOnly: true
 		});
 		if (key != null) return key;
 	}
-	// else, return a random transformation key
-	const randomKey = handler.getRandomTransformationKey();
+	// else, return a random transformation key without checking for uniqueness. Shouldn't really happen I recon.
+	const randomKey = handler.getRandomTransformationKey({
+		skip: [],
+		uniqueOnly: false
+	});
 	return randomKey!;
 }

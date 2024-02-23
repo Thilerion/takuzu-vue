@@ -76,7 +76,7 @@ describe('PuzzleTransformations class', () => {
 			expect(symmKeyGroups).toHaveLength(16);
 			expect(symmKeyGroups).toEqual(allKeys.map(k => [k]));
 		})
-		test('getRandomUniqueTransformationKey() always returns a key that is not symmetrical with any previously returned key, and correctly skips symmetrical keys as well', () => {
+		test('getRandomTransformationKey() with option uniqueOnly: true, always returns a key that is not symmetrical with any previously returned key, and correctly skips symmetrical keys as well', () => {
 			const grid = SimpleBoard.fromArrayOfLines([
 				'1..1',
 				'1..1',
@@ -91,7 +91,9 @@ describe('PuzzleTransformations class', () => {
 			const randomKeyResults = new Set<TransformationKey>();
 			// it will not return more than 4 unique keys
 			for (let i = 0; i < 50; i++) {
-				const key = result.getRandomUniqueTransformationKey();
+				const key = result.getRandomTransformationKey({
+					uniqueOnly: true
+				});
 				expect(key).not.toBe(null);
 				randomKeyResults.add(key!);
 			}

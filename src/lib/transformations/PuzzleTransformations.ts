@@ -3,10 +3,10 @@ import { SimpleBoard } from "../index.js";
 import type { BoardString, PuzzleGrid } from "../types.js";
 import { pickRandom } from "../utils.js";
 import { getTransformationKey, getTransformationConfigFromKey, generateAllValidTransformations } from "./helpers.js";
-import type { TransformationKey, BaseTransformationConfig, RotationTransform, TransformationBoardStringsMap, TransformationRecord } from "./types.js";
+import type { TransformationKey, RotationTransform, TransformationBoardStringsMap, TransformationRecord } from "./types.js";
 
 export class PuzzleTransformations {
-    private transformations: TransformationBoardStringsMap;
+	private transformations: TransformationBoardStringsMap;
 	public readonly canonicalForm: BoardString;
 
 	private constructor(
@@ -16,6 +16,10 @@ export class PuzzleTransformations {
 		this.transformations = transformations;
 		this.canonicalForm = this.transformations.get('rot0_noFlip_noInvert')!;
 	}
+
+	/*================================================================
+	 * STATIC CLASS INSTANTIATION METHODS
+	 * ===============================================================*/
 
 	static fromAnyGrid(inputGrid: PuzzleGrid): PuzzleTransformations {
 		/*
@@ -37,7 +41,7 @@ export class PuzzleTransformations {
 		);
 		return new PuzzleTransformations(transformations);
 	}
-	
+
 	static fromCanonicalGrid(canonicalGrid: PuzzleGrid): PuzzleTransformations {
 		const boardShapeType = getBoardShapeTypeFromGrid(canonicalGrid);
 		const transformations: Partial<TransformationRecord<PuzzleGrid>> = generateAllValidTransformations(canonicalGrid, boardShapeType);
@@ -51,50 +55,21 @@ export class PuzzleTransformations {
 		return new PuzzleTransformations(result);
 	}
 
-	static getTransformationKeyFromPuzzleGrid(grid: PuzzleGrid): {
-		isCanonical: boolean,
-		transformationKey: TransformationKey
-	} {
-		const instance = PuzzleTransformations.fromAnyGrid(grid);
-		const isCanonical = instance.isCanonicalForm(grid);
-		const transformationKey = instance.getTransformationKeyOfGrid(grid)!;
-		return {
-			isCanonical,
-			transformationKey
-		}
-	}
+	/*================================================================
+	 * METHODS FOR GETTING TRANSFORMATIONS/TRANSFORMATION KEYS AND CONFIGS/A SPECIFIC TRANSFORMATION
+	 * ===============================================================*/
 
 	public getAllTransformations(): Readonly<TransformationBoardStringsMap> {
 		return this.transformations;
 	}
-
 	public getTransformationByKey(key: TransformationKey): BoardString | undefined {
 		return this.transformations.get(key);
 	}
-	public getTransformedBoardByKey(key: TransformationKey): SimpleBoard | undefined {
-		const boardString = this.getTransformationByKey(key);
-		if (boardString === undefined) {
-			return undefined;
-		}
-		return SimpleBoard.fromString(boardString);
-	}
-	public getTransformationByConfig(config: BaseTransformationConfig): BoardString | undefined {
-		const key = getTransformationKey(config);
-		return this.getTransformationByKey(key);
-	}
-	public getTransformedBoardByConfig(config: BaseTransformationConfig): SimpleBoard | undefined {
-		const key = getTransformationKey(config);
-		return this.getTransformedBoardByKey(key);		
-	}
-	public isCanonicalForm(gridOrBoardString: PuzzleGrid | BoardString): boolean {
-		const boardString = typeof gridOrBoardString === 'string' ? gridOrBoardString : SimpleBoard.gridToBoardString(gridOrBoardString);
-		return boardString === this.canonicalForm;
-	}
-	public isTransformationOfCanonicalForm(grid: PuzzleGrid | BoardString): boolean {
-		const boardString = typeof grid === 'string' ? grid : SimpleBoard.gridToBoardString(grid);
-		// check if any value in this.transformations is equal to boardString
-		return [...this.transformations.values()].some(val => val === boardString);
-	}
+
+	/**
+	 * Get the TransformationKey that, when applied to the canonical grid,
+	 * yields the grid supplied as the first argument.
+	 */
 	public getTransformationKeyOfGrid(grid: PuzzleGrid | BoardString): TransformationKey | undefined {
 		const boardString = typeof grid === 'string' ? grid : SimpleBoard.gridToBoardString(grid);
 		for (const [key, value] of this.transformations) {
@@ -105,21 +80,37 @@ export class PuzzleTransformations {
 		return undefined;
 	}
 
+	/** Get all TransformationKeys that are valid for the current grid. */
 	public getValidTransformationKeys(): TransformationKey[] {
 		return [...this.transformations.keys()];
 	}
+	/** Get all BoardStrings that are a transformation of the current (canonical) grid, or the canonical grid itself. */
 	public getAllTransformationBoardStrings(): BoardString[] {
 		return [...this.transformations.values()];
 	}
+	/** Get all BoardStrings that are a transformation of the current grid, without any duplicates. Duplicates could only happen if there are symmetries in the current grid. */
 	public getAllUniqueTransformationBoardStrings(): BoardString[] {
 		return [...new Set(this.getAllTransformationBoardStrings())];
 	}
+	/**
+	 * The amount of valid transformations possible for the current grid.
+	 * Includes the identity transformation.
+	 */
 	public amountOfTransformations(): number {
 		return this.transformations.size;
 	}
+	/**
+	 * The amount of valid transformations possible for the current grid that yield a unique transformed grid.
+	 * Includes the identity transformation.
+	 */
 	public amountOfUniqueTransformations(): number {
 		return this.getAllUniqueTransformationBoardStrings().length;
 	}
+
+	/*================================================================
+	 * SYMMETRY-RELATED METHODS
+	 * ===============================================================*/
+
 	/**
 	 * Checks whether the board has "symmetries",
 	 * i.e. if there are multiple transformations that result in the same board.
@@ -128,6 +119,10 @@ export class PuzzleTransformations {
 	public hasSymmetries(): boolean {
 		return this.getAllUniqueTransformationBoardStrings().length < this.amountOfTransformations();
 	}
+	/**
+	 * Get all TransformationKeys that, when applied to the current grid, yield the same board.
+	 * @returns An array of arrays, where each sub-array contains all TransformationKeys that yield the same board.
+	 */
 	public getSymmetricalTransformationKeys(): TransformationKey[][] {
 		const uniqueBoardStrings = this.getAllUniqueTransformationBoardStrings();
 		const result: TransformationKey[][] = [];
@@ -143,7 +138,22 @@ export class PuzzleTransformations {
 		return result;
 	}
 
-	public getRandomTransformationKey(opts: { skip?: TransformationKey[] } = {}): TransformationKey | null {
+	/*================================================================
+	 * METHODS FOR GETTING RANDOM TRANSFORMATIONS
+	 * ===============================================================*/
+
+	/**
+	 * Returns a random TransformationKey valid for the current puzzle.
+	 * Allows skipping certain TransformationKeys, possibly because they were used recently and you don't want the random result to be the same as the previous one.
+	 * If opts.uniqueOnly is true, it will never return two keys that produce the same board by checking the symmetrical groups and always picking one from those.
+	 */
+	public getRandomTransformationKey(opts: {
+		uniqueOnly?: boolean,
+		skip?: TransformationKey[]
+	} = {}): TransformationKey | null {
+		if (opts.uniqueOnly) {
+			return this.getRandomUniqueTransformationKey(opts);
+		}
 		const { skip = [] } = opts;
 		const filteredKeys = this.getValidTransformationKeys().filter(key => !skip.includes(key));
 		if (filteredKeys.length === 0) return null;
@@ -153,7 +163,7 @@ export class PuzzleTransformations {
 	 * Returns a random TransformationKey valid for the current puzzle.
 	 * It will never return two keys that produce the same board by checking the symmetrical groups and always picking one from those.
 	 */
-	public getRandomUniqueTransformationKey(opts: { skip?: TransformationKey[] } = {}): TransformationKey | null {
+	private getRandomUniqueTransformationKey(opts: { skip?: TransformationKey[] } = {}): TransformationKey | null {
 		const symmGroups = this.getSymmetricalTransformationKeys();
 		const { skip = [] } = opts;
 		// filters out groups that contain any of the keys in skip
@@ -168,7 +178,18 @@ export class PuzzleTransformations {
 		return group[0];
 	}
 
-	static subRot(a: RotationTransform, b: RotationTransform): RotationTransform {
+
+	/*================================================================
+	 * PRIVATE STATIC METHODS
+	 * ===============================================================*/
+
+	/**
+	 * Subtract rotation a from rotation b (as RotationTransform strings), and return the result.\
+	 * 
+	 * @example
+	 * subtractRotations('rot90', 'rot180') // returns 'rot270': 90 - 180 = -90, equal to 270
+	 */
+	private static subtractRotations(a: RotationTransform, b: RotationTransform): RotationTransform {
 		const aInt = parseInt(a.replace('rot', ''));
 		const bInt = parseInt(b.replace('rot', ''));
 		const resInt = (aInt - bInt + 360) % 360;
@@ -182,7 +203,7 @@ export class PuzzleTransformations {
 	 * @param canonicalKey The transformationKey that, when applied to the inputGrid, yields the canonicalForm.
 	 * @param tempTransformations All transformed grids with their transformationKeys, from the perspective of the inputGrid
 	 */
-	static getTransformationsFromCanonicalForm(
+	private static getTransformationsFromCanonicalForm(
 		// the transformation used to get from inputGrid to canonicalForm
 		canonicalKey: TransformationKey,
 		tempTransformations: Partial<TransformationRecord<PuzzleGrid>>,
@@ -201,8 +222,8 @@ export class PuzzleTransformations {
 				origInvert
 			] = getTransformationConfigFromKey(origKey as TransformationKey);
 			const boardString = SimpleBoard.gridToBoardString(grid);
-			
-			const expectedRot = canonicalFlip === 'noFlip' ? PuzzleTransformations.subRot(origRot, canonicalRot) : this.subRot(canonicalRot, origRot);
+
+			const expectedRot = canonicalFlip === 'noFlip' ? PuzzleTransformations.subtractRotations(origRot, canonicalRot) : this.subtractRotations(canonicalRot, origRot);
 			const expectedFlip = origFlip === canonicalFlip ? 'noFlip' : 'flip';
 			const expectedInvert = origInvert === canonicalInvert ? 'noInvert' : 'invertSymbols';
 			// then the result is the expectedKey, which is the transformation to get a particular grid (generated from the inputGrid) but from the viewpoint of the canonicalForm; how to transform the canonicalForm to get that grid
@@ -212,7 +233,7 @@ export class PuzzleTransformations {
 		return result;
 	}
 
-	static identifyCanonicalForm(transformations: Partial<TransformationRecord<PuzzleGrid>>): [TransformationKey, BoardString] {
+	private static identifyCanonicalForm(transformations: Partial<TransformationRecord<PuzzleGrid>>): [TransformationKey, BoardString] {
 		const entries = Object.entries(transformations) as [TransformationKey, PuzzleGrid][];
 		const boardStringEntries = entries.map(([key, grid]) => {
 			return [key, SimpleBoard.gridToBoardString(grid)] as [TransformationKey, BoardString];
