@@ -15,7 +15,7 @@ import { usePuzzleAssistanceStore } from "../assistance/store";
 import { SimpleBoard } from "@/lib";
 import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
 import { PuzzleTransformations } from "@/lib/transformations/PuzzleTransformations.js";
-import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings, GridCounts, LineCounts } from "@/lib/types";
+import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings, GridCounts, LineCounts, PuzzleGrid } from "@/lib/types";
 import type { TransformationKey } from "@/lib/transformations/types.js";
 import type { PickOptional } from "@/types.js";
 import { ConstraintSolver } from "@/lib/solvers/constraint-solver/ConstraintSolver.js";
@@ -33,7 +33,8 @@ export type PuzzleStoreState = {
 
 	transformations: null | {
 		previous: TransformationKey[],
-		handler: PuzzleTransformations,
+		initialGridHandler: PuzzleTransformations,
+		solutionHandler: PuzzleTransformations,
 	},
 
 	initialEmpty: number | null,
@@ -342,26 +343,11 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 
 			const {	board, solution, initialBoard } = getRandomPuzzleTransformationOnRestart();
 
-			if (board.hasIncorrectValues(solution).hasMistakes) {
-				// TODO: a hacky fix, should fix getRandomPuzzleTransformationOnRestart instead
-				console.warn('Puzzle has mistakes after restart. This should not happen!');
-				const solverRes = ConstraintSolver.run(
-					initialBoard.copy(),
-					{
-						maxSolutions: 1,
-						dfs: {
-							enabled: false
-						}
-					}
-				);
-
-				this.setAllBoards({ board, solution: solverRes.solutions[0], initialBoard });
-				if (board.hasIncorrectValues(solverRes.solutions[0]).hasMistakes) {
-					throw new Error('Puzzle has mistakes after restart, and after re-solving. This should never happen.');
-				}
+			/* if (board.hasIncorrectValues(solution).hasMistakes) {
+				throw new Error('The transformed puzzle has mistakes after restart, when compared to the transformed solution. This should not happen!');
 			} else {
-				this.setAllBoards({ board, solution, initialBoard });
-			}
+				 */this.setAllBoards({ board, solution, initialBoard });
+			//}
 
 			const puzzleHistory = usePuzzleHistoryStore();
 			puzzleHistory.reset();

@@ -2,7 +2,6 @@ import { getBoardShapeTypeFromGrid } from "../helpers/board-type.js";
 import { SimpleBoard } from "../index.js";
 import type { BoardString, PuzzleGrid } from "../types.js";
 import { pickRandom } from "../utils.js";
-import { createCombinedTransformationFn } from "./base-transformations.js";
 import { getTransformationKey, getTransformationConfigFromKey, generateAllValidTransformations } from "./helpers.js";
 import type { TransformationKey, BaseTransformationConfig, RotationTransform, TransformationBoardStringsMap, TransformationRecord } from "./types.js";
 
@@ -63,29 +62,6 @@ export class PuzzleTransformations {
 			isCanonical,
 			transformationKey
 		}
-	}
-	static applyTransformation(grid: PuzzleGrid, config: BaseTransformationConfig): PuzzleGrid {
-		const transformationFn = createCombinedTransformationFn(config);
-        return transformationFn(grid);
-	}
-	static applyTransformationKey(grid: PuzzleGrid, key: TransformationKey): PuzzleGrid {
-		const config = getTransformationConfigFromKey(key);
-		return this.applyTransformation(grid, config);
-	}
-	static applyTransformationToBoard(board: SimpleBoard, config: BaseTransformationConfig): SimpleBoard {
-		const grid = PuzzleTransformations.applyTransformation(board.grid, config);
-		return SimpleBoard.fromGrid(grid);
-	}
-	getSynchronizedTransformedBoard(boards: SimpleBoard[], key: TransformationKey): { self: SimpleBoard, others: SimpleBoard[] } {
-		// TODO: this returns incorrect results, probably due to the canonical form of a board with empty cells not being the same as the canonical form of its solution	
-		const config = getTransformationConfigFromKey(key);
-		const self = this.getTransformedBoardByKey(key)!;
-
-		const others = boards.map(board => {
-			return PuzzleTransformations.applyTransformationToBoard(board, config);
-		});
-
-		return { self, others };
 	}
 
 	public getAllTransformations(): Readonly<TransformationBoardStringsMap> {

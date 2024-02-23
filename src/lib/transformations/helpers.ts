@@ -120,3 +120,6 @@ export function getReverseTransformationConfig(config: BaseTransformationConfig)
 export function applyTransformationConfig(grid: PuzzleGrid, config: BaseTransformationConfig): PuzzleGrid {
 	return createCombinedTransformationFn(config)(grid);
 }
+export function applyTransformationKey(grid: PuzzleGrid, key: TransformationKey) {
+	return applyTransformationConfig(grid, getTransformationConfigFromKey(key));
+}
