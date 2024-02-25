@@ -16,13 +16,13 @@
 </template>
 
 <script setup lang="ts">
-import { initPregeneratedPuzzles } from '@/services/db/puzzles-db/init.js';
 import { computed, onMounted, toRef } from 'vue';
 import { initSettingsPersistence } from './stores/settings/store';
 import { useStatisticsStore } from './stores/statistics';
 import { useMainStore } from './stores/main';
 import { initListeners as initPWAInstallListeners } from './composables/use-deferred-install-prompt';
 import { useInitThemePreferenceProvider } from './composables/use-theme-preferences';
+import { initPregeneratedPuzzles } from './workers/pregen-puzzles/init';
 
 const store = useMainStore();
 const puzzleKey = toRef(store, 'puzzleKey');

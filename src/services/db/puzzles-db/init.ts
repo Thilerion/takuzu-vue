@@ -2,7 +2,6 @@ import Dexie from "dexie";
 import { GeneratedPuzzle, type IPregenPuzzle } from "./models.js";
 import type { BasicPuzzleConfig, BoardExportString } from "@/lib/types.js";
 import { getRandomItem } from "@/utils/array.ts.utils.js";
-import { initPregenPuzzles } from "@/workers/pregen-puzzles/interface.js";
 
 class PregenPuzzlesDb extends Dexie {
 	puzzles!: Dexie.Table<GeneratedPuzzle, BoardExportString>;
@@ -74,25 +73,6 @@ class PregenPuzzlesDb extends Dexie {
 }
 
 const puzzleDb = new PregenPuzzlesDb();
-
-export async function initPregeneratedPuzzles(
-	{ pregenTimeout = 2000 } = {}
-) {
-	const count = await puzzleDb.puzzles.count();
-	if (count > 0) {
-		// console.log('Starting pregen worker.');
-		return new Promise((resolve) => {
-			window.setTimeout(() => {
-				initPregenPuzzles();
-				resolve(true);
-			}, pregenTimeout)
-		})
-	} else {
-		console.log('Populating database with initial puzzles.');
-		const initialPopulation = await import('./populate.js');
-		return puzzleDb.populateWith(initialPopulation.default);
-	}
-}
 
 export {
 	type PregenPuzzlesDb,
