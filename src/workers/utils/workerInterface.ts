@@ -30,19 +30,20 @@ TODO:
 */
 
 export class WorkerInterface<T extends BaseWorkerFunctionMap> {
-	private readonly workerData: WorkerInterfaceWorkerSetupProp;
 	readonly opts: Readonly<WorkerInterfaceOpts> = {
 		autoStart: true,
 		startOnInitialization: true,
 	}
 	private worker: Worker | null = null;
+	private createWorker: () => Worker;
 	private callbacks: Map<string, (response: WorkerResponse<any>) => void> = new Map();
+	isActive = false;
 
 	constructor(
-		workerData: WorkerInterfaceWorkerSetupProp,
+		createWorker: () => Worker,
 		opts: WorkerInterfaceOpts = {}
 	) {
-		this.workerData = workerData;
+		this.createWorker = createWorker;
 		this.opts = {
 			...this.opts,
 			...opts,
@@ -51,15 +52,6 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 		if (this.opts.startOnInitialization) {
 			this.start();
 		}
-	}
-
-	private createWorker() {
-		return new Worker(this.workerData.url, this.workerData.options);
-	}
-
-	/** Returns true if the worker is active, i.e. it is running and has not been terminated. */
-	get isActive() {
-		return this.worker != null;
 	}
 
 	/** Returns true if there are any pending requests. */
@@ -117,7 +109,6 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 		}
 		this.worker?.terminate();
 		this.rejectPendingRequests(new Error(customRejectErrorMessage));
-		this.worker = null;
 	}
 
 	/**

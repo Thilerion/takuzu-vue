@@ -1,9 +1,10 @@
 import { getAllPresetSizeDifficultyCombinations, isDifficultyKey } from "@/config.js";
-import { createNewPuzzleWorker } from "../generate-puzzle/interface.js";
 import { setupWorker } from "../utils/workerSetup.js";
 import { puzzleDb } from "@/services/db/puzzles-db/init.js";
 import type { BasicPuzzleConfig, PuzzleConfigKey } from "@/lib/types.js";
 import { awaitTimeout } from "@/utils/delay.utils.js";
+import type { GenPuzzleWorkerFns } from "../generate-puzzle/worker";
+import { type WorkerInterfaceOpts, WorkerInterface } from "../utils/workerInterface";
 
 const fns = {
 	"pregen": pregeneratePuzzles
@@ -12,7 +13,23 @@ const fns = {
 setupWorker(fns);
 
 
-const puzzleWorker = createNewPuzzleWorker();
+let _worker: null | Worker = null;
+const createWorker = () => {
+	_worker = new Worker(new URL('../generate-puzzle/worker.ts', import.meta.url), { type: 'module' });
+	return _worker;
+}
+
+const createGenPuzzleWorker = (opts: WorkerInterfaceOpts = {}): WorkerInterface<GenPuzzleWorkerFns> => {
+	const mergedOpts: WorkerInterfaceOpts = {
+		autoStart: true,
+		startOnInitialization: false,
+		...opts,
+	}
+	return new WorkerInterface<GenPuzzleWorkerFns>(createWorker, mergedOpts);
+}
+const puzzleWorker = createGenPuzzleWorker();
+
+
 const presets = getAllPresetSizeDifficultyCombinations()
 	.map(({ width, height, difficulty }) => {
 		const key = `${width}x${height}-${difficulty}`;
