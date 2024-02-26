@@ -9,6 +9,10 @@ import { type WorkerInterfaceOpts, WorkerInterface } from "../utils/workerInterf
 const fns = {
 	"pregen": pregeneratePuzzles,
 	"initialize": pregenOrPopulate,
+	clearDb: async () => {
+		await puzzleDb.puzzles.clear();
+		return true;
+	}
 } as const;
 
 setupWorker(fns);

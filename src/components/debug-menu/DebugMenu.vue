@@ -20,8 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { puzzleDb } from '@/services/db/puzzles-db/init.js'; // TODO: use PregenPuzzlesDb.clearPuzzles()
-import { initPregenPuzzles as initPregenPuzzlesWorker } from '@/workers/pregen-puzzles/interface.js';
+import { initPregenPuzzles as initPregenPuzzlesWorker, clearPregenPuzzlesDb } from '@/workers/pregen-puzzles/interface.js';
 import { ref } from 'vue';
 
 const clearPuzzlesResult = ref<{ str: string, id: number }[]>([]);
@@ -38,7 +37,7 @@ const clearPuzzleDbAction = async () => {
 	try {
 		addDbResultNotification('Resetting pregenerated puzzle database now...');
 		const result = await Promise.all([
-			puzzleDb.clearPuzzles(),
+			clearPregenPuzzlesDb(),
 			awaitTimeout()
 		])
 		const clearDbResult = result[0];
@@ -62,7 +61,7 @@ const awaitTimeout = async (timeout = 1000) => {
 
 const initPregenPuzzles = async () => {
 	try {
-		await puzzleDb.clearPuzzles();
+		await clearPregenPuzzlesDb();
 		addDbResultNotification('Now generating puzzles.', 20000);
 		const result = await Promise.all([
 			initPregenPuzzlesWorker(),

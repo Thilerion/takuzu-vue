@@ -38,3 +38,7 @@ export async function initPregenPuzzles(): Promise<{ generated: number, done: bo
 export async function initializeOrPopulatePregenPuzzles(): Promise<{ done: boolean, generated: number, populated?: boolean }> {
 	return await pregenWorker.request('initialize');
 }
+
+export async function clearPregenPuzzlesDb() {
+	return await pregenWorker.request('clearDb');
+}
