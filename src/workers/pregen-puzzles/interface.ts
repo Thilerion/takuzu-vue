@@ -1,9 +1,9 @@
 import { WorkerInterface, type WorkerInterfaceOpts } from "../utils/workerInterface.js";
-import type { PregenPuzzlesWorkerFns } from "./worker.js";
+import type { PregenPuzzlesWorkerFns } from "./pregen.worker.js";
 
 let _worker: null | Worker = null;
 const createWorker = () => {
-	_worker = new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' });
+	_worker = new Worker(new URL('./pregen.worker.ts', import.meta.url), { type: 'module' });
 	return _worker;
 }
 

@@ -3,7 +3,7 @@ import { setupWorker } from "../utils/workerSetup.js";
 import { puzzleDb } from "@/services/db/puzzles-db/init.js";
 import type { BasicPuzzleConfig, PuzzleConfigKey } from "@/lib/types.js";
 import { awaitTimeout } from "@/utils/delay.utils.js";
-import type { GenPuzzleWorkerFns } from "../generate-puzzle/worker";
+import type { GenPuzzleWorkerFns } from "../generate-puzzle/generate.worker";
 import { type WorkerInterfaceOpts, WorkerInterface } from "../utils/workerInterface";
 
 const fns = {
@@ -15,7 +15,7 @@ setupWorker(fns);
 
 let _worker: null | Worker = null;
 const createWorker = () => {
-	_worker = new Worker(new URL('../generate-puzzle/worker.ts', import.meta.url), { type: 'module' });
+	_worker = new Worker(new URL('../generate-puzzle/generate.worker.ts', import.meta.url), { type: 'module' });
 	return _worker;
 }
 
