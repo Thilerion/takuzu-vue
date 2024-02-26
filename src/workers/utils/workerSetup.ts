@@ -43,8 +43,22 @@ export const setupWorker = <T extends BaseWorkerFunctionMap>(funcMap: T) => {
             }
 			const result: unknown = await funcMap[fn](...args);
             postWorkerResponse({ id, success: true, result });
-		} catch (error) {
+        } catch (error) {
+            console.log('Caught error in setupWorker event Listener.');
+            console.log({ error });
             postWorkerResponse({ id, success: false, error });
         }
     });
+
+    worker.addEventListener('error', (event) => {
+        console.warn('Worker.onerror triggered by unhandled error, which will be rethrown now:');
+        console.error(event);
+        throw event;
+    })
+
+    worker.addEventListener('unhandledrejection', (event) => { 
+        console.warn('Worker.onUnhandledrejection triggered by unhandled promise reject, which will be rethrown now:');
+        console.error(event);
+        throw event;
+    })
 }
