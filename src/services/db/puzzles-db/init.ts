@@ -14,6 +14,10 @@ class PregenPuzzlesDb extends Dexie {
 		})
 
 		this.puzzles.mapToClass(GeneratedPuzzle);
+
+		this.on('ready', () => {
+			console.log('Puzzles database is ready.');
+		})
 	}
 
 	addPuzzle(puzzle: IPregenPuzzle) {

@@ -4,6 +4,7 @@ import { initPregenPuzzles } from './interface';
 export async function initPregeneratedPuzzles(
 	{ pregenTimeout = 2000 } = {}
 ) {
+	// TODO: move all these calls, checks to database, etc, to the worker. Make sure the database is only accessed from the worker, else it becomes a mess.
 	const count = await puzzleDb.puzzles.count();
 	if (count > 0) {
 		// console.log('Starting pregen worker.');

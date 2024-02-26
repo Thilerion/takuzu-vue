@@ -34,10 +34,11 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 		autoStart: true,
 		startOnInitialization: true,
 	}
+	private initialized = false;
+
 	private worker: Worker | null = null;
 	private createWorker: () => Worker;
 	private callbacks: Map<string, (response: WorkerResponse<any>) => void> = new Map();
-	isActive = false;
 
 	constructor(
 		createWorker: () => Worker,
@@ -54,6 +55,10 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 		}
 	}
 
+	isReady(): boolean {
+		return this.worker != null && !!this.initialized;
+	}
+
 	/** Returns true if there are any pending requests. */
 	hasPendingRequests() {
 		return this.callbacks.size > 0;
@@ -67,7 +72,7 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 	 * @param args The arguments to pass to the function.
 	 */
 	request<K extends keyof T, Params extends Parameters<T[K]>>(funcName: K, ...args: Params): WorkerReqPromise<T, K> {
-		if (!this.isActive) {
+		if (!this.isReady()) {
 			if (this.opts.autoStart) {
 				this.start();
 			} else {
@@ -103,12 +108,15 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 	 * @param customRejectErrorMessage The error message to use when rejecting pending requests. Defaults to 'Worker terminated'.
 	 */
 	forceTerminate(customRejectErrorMessage: string = 'Worker terminated') {
-		if (!this.isActive) {
-			console.warn('WorkerInterface already terminated');
-			return;
+		if (this.isReady()) {
+			this.worker?.terminate();
+			this.rejectPendingRequests(new Error(customRejectErrorMessage));
+		} else {
+			console.warn('WorkerInterface already terminated or not started yet; cannot terminate it.');
 		}
-		this.worker?.terminate();
-		this.rejectPendingRequests(new Error(customRejectErrorMessage));
+
+		this.worker = null;
+		this.initialized = false;		
 	}
 
 	/**
@@ -116,7 +124,7 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 	 * If the worker is not active, this does nothing.
 	 */
 	restart() {
-		if (!this.isActive) {
+		if (!this.isReady()) {
 			console.warn('Cannot restart worker; it is not active.');
 			return;
 		}
@@ -129,7 +137,7 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 	 * If the worker is already active, this does nothing.
 	 */
 	start() {
-		if (this.isActive) {
+		if (this.isReady()) {
 			console.warn('WorkerInterface already started');
 			return;
 		}
@@ -155,6 +163,7 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 			// this also rejects any pending requests with a custom error message
 			this.forceTerminate(`Pending request rejected due to caught worker error: ${event.message}`);
 		}
+		this.initialized = true;
 	}
 
 	private rejectPendingRequests(error: Error) {
