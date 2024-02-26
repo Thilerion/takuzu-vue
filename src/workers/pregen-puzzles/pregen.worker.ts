@@ -7,7 +7,8 @@ import type { GenPuzzleWorkerFns } from "../generate-puzzle/generate.worker";
 import { type WorkerInterfaceOpts, WorkerInterface } from "../utils/workerInterface";
 
 const fns = {
-	"pregen": pregeneratePuzzles
+	"pregen": pregeneratePuzzles,
+	"initialize": pregenOrPopulate,
 } as const;
 
 setupWorker(fns);
@@ -146,6 +147,19 @@ async function pregeneratePuzzles(): Promise<{ generated: number, done: boolean 
 	const result = /* await xxx */ { generated: numGenerated, done: true };
 	
 	return result;
+}
+
+async function pregenOrPopulate() {
+	const count = await puzzleDb.puzzles.count();
+	if (count > 0) {
+		// console.log('Starting pregen worker.');
+		return pregeneratePuzzles();
+	} else {
+		console.log('Populating database with initial puzzles.');
+		const initialPopulation = await import('@/services/db/puzzles-db/populate.js');
+		puzzleDb.populateWith(initialPopulation.default);
+		return { done: true as const, generated: initialPopulation.default.length, populated: true as const };
+	}
 }
 
 export type PregenPuzzlesWorkerFns = typeof fns;

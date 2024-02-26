@@ -69,6 +69,9 @@ export default defineConfig(({ command, mode }) => {
 		define: {
 			__BUILD_VERSION_DETAILS__: JSON.stringify(buildVersionDetails),
 			'import.meta.vitest': false
+		},
+		worker: {
+			format: 'es'
 		}
 	}
 })

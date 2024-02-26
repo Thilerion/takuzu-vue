@@ -34,3 +34,7 @@ export async function initPregenPuzzles(): Promise<{ generated: number, done: bo
 		return { ...result, pending: false as const };
 	}
 }
+
+export async function initializeOrPopulatePregenPuzzles(): Promise<{ done: boolean, generated: number, populated?: boolean }> {
+	return await pregenWorker.request('initialize');
+}
