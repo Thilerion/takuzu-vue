@@ -1,5 +1,4 @@
 export { 
-	// statsDb,
 	statsDb,
 	puzzleHistoryTable,
 
@@ -8,5 +7,4 @@ export {
 	type StatsDbTableValue
 } from './init.js';
 
-export * as StatsDbImportExport from './stats-db-import-export.js';
 export * from './models.js';

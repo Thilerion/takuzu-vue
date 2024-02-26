@@ -12,10 +12,10 @@ declare module 'vue-router' {
 // MAIN ROUTES
 import MainPage from '@/components/base/layout/MainPage.vue';
 import HomePage from '../views/HomePage.vue';
-import HowToPlay from '../views/HowToPlay.vue';
-import TutorialPage from '../views/TutorialPage.vue';
-import StatisticsPage from '../views/StatisticsPage.vue';
-import SettingsPage from '../views/SettingsPage.vue';
+const HowToPlay = () => import('../views/HowToPlay.vue');
+const TutorialPage = () => import('../views/TutorialPage.vue');
+const StatisticsPage = () => import('../views/StatisticsPage.vue');
+const SettingsPage = () => import('../views/SettingsPage.vue');
 
 // NESTED PAGES / OVERLAY PAGES
 import FreePlay from '../views/NewPuzzle.vue';
