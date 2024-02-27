@@ -17,7 +17,7 @@ export const usePuzzleHistoryStore = defineStore('puzzleHistory', () => {
 	const lastMove = computed((): HistoryMove | null => {
 		return moveList.value.length > 0 ? moveList.value.at(-1)! : null;
 	})
-	const canUndo = computed(() => moveList.value.length > 0);
+	const canUndo = computed(() => lastMove.value != null);
 	const reset = (): void => {
 		moveList.value = [];
 	}
@@ -56,7 +56,6 @@ export const usePuzzleHistoryStore = defineStore('puzzleHistory', () => {
 			const move = new HistoryMoveSingle(x, y, nextValue, value);
 			moveList.value.push(move);
 		}
-
 	}
 
 	const exportMoveHistory = (): MoveExport[] => {

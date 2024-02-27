@@ -61,7 +61,7 @@ export type AssignToBoardOpts = {
 	handleMarkedMistakes: "remove" | "reset" | "none",
 }
 export type MakePuzzleMoveOpts = {
-	commitToHistory?: boolean,
+	historyAction: "commit" | "reset" | "none",
 }
 
 export const usePuzzleStore = defineStore('puzzleOld', {
@@ -236,10 +236,14 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				handleGridCounts: "single",
 				handleMarkedMistakes: "remove"
 			});
-			if (opts.commitToHistory) {
-				usePuzzleHistoryStore().addMove({
+			const historyStore = usePuzzleHistoryStore();
+			if (opts.historyAction === 'commit') {
+				historyStore.addMove({
 					x, y, value: prevValue, nextValue: value
 				})
+			} else if (opts.historyAction === 'reset') {
+				// make sure that the history is reset to this point, so that the user cannot undo past this point
+				historyStore.reset();
 			}
 		},
 		// TODO: also allow for giving assignToBoardOpts
@@ -260,13 +264,16 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 
 			this.assignToBoard(validatedMoves);
 			// TODO: functionality to add list of moves to history as single entry
-			if (opts.commitToHistory) {
-				const historyStore = usePuzzleHistoryStore();
+			const historyStore = usePuzzleHistoryStore();
+			if (opts.historyAction === 'commit') {
 				for (const { x, y, value, prevValue } of validatedMoves) {
 					historyStore.addMove({
 						x, y, value: prevValue, nextValue: value
 					})
 				}
+			} else if (opts.historyAction === 'reset') {
+				// make sure that the history is reset to this point, so that the user cannot undo past this point
+				historyStore.reset();
 			}
 		},
 
@@ -276,7 +283,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			const { toggle } = useSharedPuzzleToggle();
 			const value = toggle(previous);
 
-			this.makeMove({ x, y, value, prevValue: previous }, { commitToHistory: true });
+			this.makeMove({ x, y, value, prevValue: previous }, { historyAction: "commit" });
 		},
 
 		undoLastMove() {
@@ -295,7 +302,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			// make move without committing to history; wouldn't want to add the undo to the history
 			this.makeMove({
 				x, y, value, prevValue
-			}, { commitToHistory: false });
+			}, { historyAction: "none" });
 		},
 
 		async createPuzzle({ width, height, difficulty }: BasicPuzzleConfig) {

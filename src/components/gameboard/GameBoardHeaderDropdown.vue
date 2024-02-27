@@ -118,7 +118,7 @@ const solvePuzzle = async () => {
 		const solutionValue = puzzleStore.solution!.get(x, y);
 		puzzleStore.makeMove({
 			x, y, prevValue, value: solutionValue
-		}, { commitToHistory: true });
+		}, { historyAction: 'commit' });
 		count += 1;
 
 		if (count % 4 === 0) {
@@ -170,7 +170,7 @@ const solveTrios = async () => {
 				if (prevValue !== EMPTY) continue;
 				puzzleStore.makeMove({
 					x, y, value, prevValue
-				}, { commitToHistory: true })
+				}, { historyAction: 'commit' })
 				count += 1;
 				if (count % 4 === 0) {
 					await awaitRaf();

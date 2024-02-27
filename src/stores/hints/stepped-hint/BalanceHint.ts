@@ -79,7 +79,7 @@ export class BalanceSteppedHint extends BaseSteppedHint {
 				const moves = this.targets.filter(t => {
 					return ctx.board.get(t.x, t.y) === EMPTY;
 				})
-				makeMultipleMoves(moves, { commitToHistory: true });
+				makeMultipleMoves(moves, { historyAction: "commit" });
 			}
 		}
 
