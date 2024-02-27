@@ -14,7 +14,7 @@ import { usePuzzleAssistanceStore } from "../assistance/store";
 import { SimpleBoard } from "@/lib";
 import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
 import { PuzzleTransformations } from "@/lib/transformations/PuzzleTransformations.js";
-import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings, GridCounts } from "@/lib/types";
+import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings, GridCounts, Vec } from "@/lib/types";
 import type { TransformationKey } from "@/lib/transformations/types.js";
 import type { PickOptional } from "@/types.js";
 import { usePuzzleHistoryStore } from "../puzzle-history/history-store.js";
@@ -218,13 +218,11 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				x, y, value: prevValue, nextValue: value
 			})
 		},
-		toggle({ x, y, value, prevValue }: PickOptional<VecValueChange, 'prevValue' | 'value'>) {
+		toggle({ x, y, prevValue }: Vec & { prevValue?: PuzzleValue, value?: never }) {
 			const previous = prevValue ?? this.board!.grid[y][x];
 
-			if (value == null) {
-				const { toggle } = useSharedPuzzleToggle();
-				value = toggle(previous);
-			}
+			const { toggle } = useSharedPuzzleToggle();
+			const value = toggle(previous);
 
 			this.makeMove({ x, y, value, prevValue: previous });
 		},

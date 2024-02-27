@@ -114,7 +114,7 @@ const hintActions: Record<HintType, HintAction> = {
 		const puzzleStore = usePuzzleStore();
 		targets.forEach(target => {
 			const { x, y } = target;
-			puzzleStore.toggle({ x, y, value: EMPTY });
+			puzzleStore.makeMove({ x, y, value: EMPTY });
 		})
 	}),
 	[HINT_TYPE.TRIPLES]: createHintAction('Execute', (hint) => {
@@ -123,7 +123,7 @@ const hintActions: Record<HintType, HintAction> = {
 		hint.targets.forEach(({ x, y, value }) => {
 			const boardValue = board!.get(x, y);
 			if (boardValue !== EMPTY) return;
-			puzzleStore.toggle({ x, y, value });
+			puzzleStore.makeMove({ x, y, value });
 		})
 	}),
 	[HINT_TYPE.BALANCE]: createHintAction('Execute', ({ targets }) => {
@@ -132,7 +132,7 @@ const hintActions: Record<HintType, HintAction> = {
 		targets.forEach(({ x, y, value }) => {
 			const boardValue = board!.get(x, y);
 			if (boardValue !== EMPTY) return;
-			puzzleStore.toggle({ x, y, value });
+			puzzleStore.makeMove({ x, y, value });
 		})
 	}),
 	[HINT_TYPE.ELIMINATION]: createHintAction('Execute', ({ targets }) => {
@@ -141,7 +141,7 @@ const hintActions: Record<HintType, HintAction> = {
 		targets.forEach(({ x, y, value }) => {
 			const boardValue = board!.get(x, y);
 			if (boardValue !== EMPTY) return;
-			puzzleStore.toggle({ x, y, value });
+			puzzleStore.makeMove({ x, y, value });
 		})
 	}),
 	[HINT_TYPE.ELIM_DUPE]: createHintAction('Execute', ({ targets }) => {
@@ -150,7 +150,7 @@ const hintActions: Record<HintType, HintAction> = {
 		targets.forEach(({ x, y, value }) => {
 			const boardValue = board!.get(x, y);
 			if (boardValue !== EMPTY) return;
-			puzzleStore.toggle({ x, y, value });
+			puzzleStore.makeMove({ x, y, value });
 		})
 	})
 };
