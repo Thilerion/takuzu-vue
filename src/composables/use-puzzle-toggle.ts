@@ -24,11 +24,11 @@ export const usePuzzleToggle = () => {
 	const settingsStore = useSettingsStore();
 	const mode = toRef(settingsStore, 'toggleMode');
 	const selectedOrder = computed(() => toggleOrders[mode.value]);
-  
+
 	return {
-	  toggle: (currentValue: PuzzleValue) =>
-		nextValue(selectedOrder.value, currentValue),
+		toggle: (currentValue: PuzzleValue) =>
+			nextValue(selectedOrder.value, currentValue),
 	};
-  };
-  
-  export const useSharedPuzzleToggle = createSharedComposable(usePuzzleToggle);
+};
+
+export const useSharedPuzzleToggle = createSharedComposable(usePuzzleToggle);

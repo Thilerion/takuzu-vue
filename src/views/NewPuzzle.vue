@@ -238,10 +238,6 @@ async function startGame() {
 	return createGame();
 }
 
-function continueSavedGame() {
-	router.push({ name: 'PlayPuzzle' })
-}
-
 async function createGame() {
 	resetGame();
 	const { width, height } = selectedDimensions.value;

@@ -20,7 +20,7 @@ const worker: Worker = self as unknown as Worker;
 function postWorkerResponse<T>(data: WorkerResponse<T>) {
     worker.postMessage(data);
 }
-function isWorkerRequest(data: unknown): data is WorkerRequest<Record<string, (...args: unknown[]) => any>, string> {
+function isWorkerRequest(data: unknown): data is WorkerRequest<Record<string, (...args: unknown[]) => unknown>, string> {
     if (typeof data !== 'object' || data === null) {
         return false;
     }

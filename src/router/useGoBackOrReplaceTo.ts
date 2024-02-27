@@ -1,4 +1,4 @@
-import { useRoute, useRouter, type RouteLocationNormalizedLoaded, type RouteLocationRaw, type Router } from "vue-router";
+import { useRoute, useRouter, type RouteLocationNormalizedLoaded, type Router } from "vue-router";
 
 export const useGoBackOrReplaceTo = (to: { name: string }) => {
 	const router = useRouter();

@@ -92,7 +92,7 @@ export const timeFormatter = (formatOptions: any) => {
 		const fullSeconds = Math.floor(timestampMS / 1000);
 
 		const seconds = padLeft(Math.floor(fullSeconds % 60));
-		let _minutes = Math.floor(fullSeconds / 60);
+		const _minutes = Math.floor(fullSeconds / 60);
 		let minutes: string;
 		if (padMinutes) minutes = padLeft(_minutes);
 		else minutes = `${_minutes}`;

@@ -41,6 +41,7 @@ addEventListener('message', (event): void => {
 			new Promise((resolve, reject) => {
 				reject('Test unhandled rejection');
 			})
+			break;
 		}
 		default: {
 			sendUnknownTaskError(receivedMsg);

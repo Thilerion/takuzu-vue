@@ -15,10 +15,9 @@ import { usePuzzleAssistanceStore } from "../assistance/store";
 import { SimpleBoard } from "@/lib";
 import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
 import { PuzzleTransformations } from "@/lib/transformations/PuzzleTransformations.js";
-import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings, GridCounts, LineCounts, PuzzleGrid } from "@/lib/types";
+import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings, GridCounts } from "@/lib/types";
 import type { TransformationKey } from "@/lib/transformations/types.js";
 import type { PickOptional } from "@/types.js";
-import { ConstraintSolver } from "@/lib/solvers/constraint-solver/ConstraintSolver.js";
 
 export type PuzzleStatus = 'none' | 'loading' | 'error_loading' | 'playing' | 'paused' | 'finished'; 
 export type PuzzleStoreState = {

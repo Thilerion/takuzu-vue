@@ -1,6 +1,6 @@
 import { EMPTY, OPPOSITE_SYMBOL_MAP, type PuzzleSymbol } from "@/lib/constants.js";
 import type { TriplesTechniqueResult } from "@/lib/human-solver/triples.js";
-import type { Vec, VecValue, BoardAndSolutionBoards, Target } from "@/lib/types.js";
+import type { Vec, BoardAndSolutionBoards, Target } from "@/lib/types.js";
 import { createAreaHighlightAroundCells, HIGHLIGHT_LEVELS, createCellHighlight } from "../highlights/highlight.js";
 import type { HintStepIntermediate, HintStepFinal, HintStepEventCallbackActionsParam } from "./types.js";
 import { BaseSteppedHint } from "./SteppedHint.js";

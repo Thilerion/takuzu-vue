@@ -36,7 +36,7 @@ export const useMetaThemeColor = ({
 			if (newColor == null) return;
 			if (newColor !== color.value) {
 				setCurrentThemeColor(newColor);
-		  	}
+			}
 		},
-	  };
+	};
 }

@@ -43,9 +43,7 @@ const viewportHeight = toRef(store.context, 'viewportHeight');
 const viewportHeightPx = computed(() => viewportHeight.value ? `${viewportHeight.value}px` : '100%');
 
 onMounted(() => {
-	initPregeneratedPuzzles({
-		pregenTimeout: 2000
-	});
+	initPregeneratedPuzzles();
 })
 </script>
 

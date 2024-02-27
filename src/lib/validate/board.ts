@@ -1,8 +1,7 @@
 import type { SimpleBoard } from "../board/Board";
 import { EMPTY, ONE, ROW, ZERO } from "../constants";
-import type { ColumnId, LineId, RowId, Vec } from "../types";
-import { threeInARowRegex, validateLine, validateMaxDigitsPerLine } from "./line.js";
-import { RuleConflictType } from './types';
+import type { ColumnId, RowId } from "../types";
+import { validateLine } from "./line.js";
 
 export function validateBoard(board: SimpleBoard, validateUniqueness = true) {
 	const filledRows: Set<RowId> = new Set();

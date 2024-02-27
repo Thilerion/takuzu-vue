@@ -73,7 +73,7 @@ export const getTimeSinceTimerStart = (now?: number) => {
 	}
 	return 0;
 }
-export const getTotalTimeElapsed = (now?: number) => {
+export const getTotalTimeElapsed = () => {
 	const puzzleTimerStore = usePuzzleTimer();
 	if (!puzzleTimerStore.started) {
 		throw new Error('Cannot get total time elapsed if timer has not even started yet.');

@@ -1,6 +1,5 @@
 import { useMainStore } from "@/stores/main.js"
 import { useSettingsStore } from "@/stores/settings/store.js";
-import type { RulerType } from "@/stores/settings/types.js";
 import { storeToRefs } from "pinia";
 import { readonly } from "vue";
 import { computed, ref } from "vue";

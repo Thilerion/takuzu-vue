@@ -49,14 +49,14 @@ function getHintMessage(hint: SteppedHint, stepIdx: number, $p: ToDynamicPuzzleS
 		if (!fn) {
 			console.error('No valid message found for triples hint step');
 			return null;
-		};
+		}
 		return fn(hint, $p);
 	} else if (hint.type === 'balance') {
 		const fn = BALANCE_HINT_MESSAGE.at(stepIdx);
 		if (!fn) {
 			console.error('No valid message found for balance hint step');
 			return null;
-		};
+		}
 		return fn(hint, $p);
 	} else {
 		console.error('No valid message found for hint type');

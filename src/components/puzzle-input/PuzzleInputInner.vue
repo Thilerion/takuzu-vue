@@ -256,10 +256,10 @@ const toggleValue = (x: number, y: number) => {
 	if (puzzleGridBase.value == null) {
 		throw new Error('Cannot toggle value on "null" PuzzleGridBase');
 	}
-	let current: PuzzleInputValue = puzzleGridBase.value[y][x];
-	let currentValue: PuzzleValue = (current !== ONE && current !== ZERO) ? EMPTY : current;
+	const current: PuzzleInputValue = puzzleGridBase.value[y][x];
+	const currentValue: PuzzleValue = (current !== ONE && current !== ZERO) ? EMPTY : current;
 
-	let value = toggle(currentValue);
+	const value = toggle(currentValue);
 	puzzleGridBase.value[y][x] = (value === EMPTY ? '' : value);
 }
 

@@ -55,11 +55,10 @@
 
 <script setup lang="ts">
 import { useStatisticsStore } from '@/stores/statistics';
-import { computed, onBeforeMount, ref, watch } from 'vue';
+import { computed, onBeforeMount, ref } from 'vue';
 import { formatTimeMMSSWithRounding } from '@/utils/time.utils';
 import { useStorage } from '@vueuse/core';
 import BaseTable from '@/components/global/table/BaseTable.vue'
-import { subDays, isBefore } from 'date-fns';
 import { getMostPlayedPuzzleConfigs, getMostPlayedPuzzleSizes } from '@/services/stats/most-played.js';
 import type { StatsDbExtendedStatisticDataEntry } from '@/services/db/stats-db/models.js';
 import { itemsSolvedSinceDaysAgo } from '@/services/stats/dates.js';
@@ -174,22 +173,6 @@ type TableGroupData = { numCells: number;
 	cells: number;
 	timePer100Cells: number;
 };
-const baseTableDataToTableData = (totals: BaseTableData, groupKey: string, group: BaseTableData): TableGroupData => {
-	const { count: totalCount, time: totalTime, favScore: totalFavScore } = totals;
-	const count = group.count;
-	const time = group.time;
-	const favScore = group.favScore;
-	const pCount = group.count / totalCount;
-	const pTime = group.time / totalTime;
-	const pFavScore = favScore / totalFavScore;
-	
-	const gData = groupData.value.find(val => val.key === groupKey)!.groupData;
-	const numCells = gData.numCells;
-	const cells = count * numCells;
-
-	const timePer100Cells = Math.ceil(time / cells * 100);
-	return { numCells, count, time, pCount, pTime, favScore, pFavScore, cells, timePer100Cells };
-}
 
 const tablePercentages = computed(() => {
 	const result: Record<string, TableGroupData> = {};
@@ -225,9 +208,6 @@ const tableRows = computed(() => {
 	}
 	return res;
 })
-
-watch(baseTableData, (value) => {
-}, { deep: true, immediate: true })
 </script>
 
 <style scoped>

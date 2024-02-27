@@ -1,5 +1,5 @@
 import { EMPTY, ZERO, ONE, type PuzzleSymbol } from "../constants.js";
-import type { PuzzleValueLineStr, PuzzleValueLine, PuzzleValueCount, PuzzleSymbolLineStr, ROPuzzleSymbolLine, PuzzleSymbolLine } from "../types.js";
+import type { PuzzleValueLineStr, PuzzleValueLine, PuzzleValueCount, PuzzleSymbolLineStr, PuzzleSymbolLine } from "../types.js";
 import { countLineValues, lineSizeToNumRequired, splitLine } from "../utils.js";
 import { generateUniqueArrayPermutations } from "./permutations.js";
 import type { LineArrSymbolPermutations } from "./types.js";
@@ -16,7 +16,7 @@ function _recurseGenerateValidLineCompletions(
 		return [line];
 	}
 
-	let validCompletions: PuzzleValueLineStr[] = [];
+	const validCompletions: PuzzleValueLineStr[] = [];
 
 	const valAtPos = line[position];
 	if (valAtPos !== EMPTY) {

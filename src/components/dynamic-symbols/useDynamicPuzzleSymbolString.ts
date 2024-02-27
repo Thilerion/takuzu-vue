@@ -21,7 +21,7 @@ const getTictactoeString = (val: PuzzleSymbol, multiple?: boolean) => {
 export type ToDynamicPuzzleString = (v: PuzzleSymbol | 'symbol', multiple?: boolean) => string;
 
 export const useDynamicPuzzleSymbolString = (theme: Ref<CellTheme>, themeType: Ref<CellThemeType>) => {
-	let displaySymbol = computed(() => {
+	const displaySymbol = computed(() => {
 		switch(theme.value) {
 			case 'blue-red': return getBlueRedString;
 			case 'classic': return getClassicString;
@@ -33,7 +33,7 @@ export const useDynamicPuzzleSymbolString = (theme: Ref<CellTheme>, themeType: R
 			}
 		}
 	})
-	const displayCellType = computed(() => {
+	const displayCellType = computed((): (multiple?: boolean) => string => {
 		switch(themeType.value) {
 			case 'symbols': return (multiple?: boolean) => {
 				if (multiple) return 'symbols';
@@ -42,6 +42,14 @@ export const useDynamicPuzzleSymbolString = (theme: Ref<CellTheme>, themeType: R
 			case 'coloredTiles': return (multiple?: boolean) => {
 				if (multiple) return 'color tiles';
 				return 'color';
+			}
+			default: {
+				const x: never = themeType.value;
+				console.error(`unexpected cellThemeType: ${x}`);
+				return (multiple?: boolean) => {
+					if (multiple) return 'symbols';
+					return 'symbol';
+				}
 			}
 		}
 	})

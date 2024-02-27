@@ -1,4 +1,4 @@
-import type { LineId, Target, Vec } from "@/lib/types.js";
+import type { LineId, Vec } from "@/lib/types.js";
 import type { Hint } from "./Hint.js";
 import type { SimpleBoard } from "@/lib/index.js";
 import type { PuzzleValue } from "@/lib/constants.js";

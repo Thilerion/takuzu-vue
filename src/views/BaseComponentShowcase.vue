@@ -81,8 +81,6 @@ import { ref } from 'vue';
 const baseRangeValue = ref(40);
 const componentRangeValue = ref(60);
 
-const modal1Active = ref(false);
-const modal2Active = ref(false);
 const input1Value = ref(true);
 
 const modal1 = ref<InstanceType<typeof BaseModal> | null>(null);

@@ -32,7 +32,8 @@ const awaitTimeout = (length = 200) => {
 		}, length);
 	})
 }
-const sendMessage = async <T>(message: T): Promise<any> => {
+
+async function sendMessage<T>(message: T): Promise<any> {
 	if (isActive.value) return;
 	let done = false;
 	isActive.value = true;
@@ -42,13 +43,13 @@ const sendMessage = async <T>(message: T): Promise<any> => {
 		const result = analyzePuzzleWorker.send(message).then(res => {
 			done = true;
 			return res;
-		})
+		});
 		awaitTimeout().then(() => {
 			if (!done) isActiveDelayed.value = true;
-		})
+		});
 		messageResults.value = (await result) as any;
 		return result;
-	} catch(e) {
+	} catch (e) {
 		done = true;
 		messageError.value = e as any;
 	} finally {

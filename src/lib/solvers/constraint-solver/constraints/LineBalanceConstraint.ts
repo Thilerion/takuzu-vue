@@ -1,6 +1,6 @@
 import type { SimpleBoard } from "@/lib/index.js"
 import { checkLineBalanceStrategy } from "../../common/LineBalanceStrategy.js";
-import { EMPTY, type PuzzleSymbol } from "@/lib/constants.js";
+import { EMPTY } from "@/lib/constants.js";
 import type { BoardLine } from "@/lib/board/BoardLine.js";
 import type { ConstraintResult } from "./types.js";
 

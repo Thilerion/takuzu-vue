@@ -47,7 +47,7 @@
 import { getItemsByDate } from '@/services/stats/dates';
 import { formatBasicSortableDateKey, getMonthNameShort, getWeekdayFromDate, getWeekdayNamesShort, timeFormatter } from '@/utils/date.utils';
 import { addDays, differenceInCalendarISOWeeks, eachDayOfInterval, endOfDay, isWithinInterval, startOfDay, subYears, type Interval } from 'date-fns';
-import { computed, inject, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { calculateScoresByDate, getValueWithinRange, mapScoreToArray } from './heatmap-data.js';
 import { useStatisticsStore } from '@/stores/statistics.js';
 import { toRef, type Ref } from 'vue';

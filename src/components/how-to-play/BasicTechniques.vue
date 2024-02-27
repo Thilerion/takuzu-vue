@@ -108,7 +108,6 @@ import { computed } from 'vue';
 import { injectCellThemeData } from '../gameboard/composables/useCellThemeProvider.js';
 import { useDynamicPuzzleSymbolString } from '../dynamic-symbols/useDynamicPuzzleSymbolString.js';
 import SymbolDisplay from '@/components/dynamic-symbols/PuzzleSymbolDisplay.vue';
-import type { PuzzleValueLine } from '@/lib/types.js';
 import { splitLine } from '@/lib/utils.js';
 
 const { theme: cellTheme, type: cellThemeType } = injectCellThemeData();

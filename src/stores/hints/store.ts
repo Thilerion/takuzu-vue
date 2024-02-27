@@ -5,7 +5,7 @@ import { validateHint } from "../hints/helpers.js";
 import { searchForHint } from "../hints/search.js";
 import { usePuzzleStore } from "../puzzle/store.js";
 import { useHintHighlightsStore } from "./highlights-store.js";
-import { computed, reactive, ref, type ComputedRef } from "vue";
+import { computed, reactive, ref } from "vue";
 import { readonly } from "vue";
 import type { SteppedHint } from "./stepped-hint/types.js";
 

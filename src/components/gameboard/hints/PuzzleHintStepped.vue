@@ -64,6 +64,7 @@ const subtitle = computed((): string | null => {
 		}
 		default: {
 			const x: never = type;
+			console.warn(`Unexpected stepped hint type ${x}`);
 			return null;
 		}
 	}
@@ -82,6 +83,7 @@ const title = computed(() => {
 		}
 		default: {
 			const x: never = type;
+			console.warn(`Unexpected stepped hint type ${x}`);
 			base = 'Hint';
 			break;
 		}

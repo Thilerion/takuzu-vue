@@ -5,7 +5,6 @@ import type { HintHighlight } from "../highlights/types.js";
 import type { Ref } from "vue";
 import type { TriplesSteppedHint } from "./TriplesHint.js";
 import type { BalanceSteppedHint } from "./BalanceHint.js";
-import type { ToDynamicPuzzleString } from "@/components/dynamic-symbols/useDynamicPuzzleSymbolString.js";
 
 export type SteppedHintType = 'ruleViolation' | 'incorrectValues' | 'triples' | 'balance' | 'elimination' | 'elimDuplicate';
 export type HintStepEventCallbackCtxParam = BoardAndSolutionBoards;

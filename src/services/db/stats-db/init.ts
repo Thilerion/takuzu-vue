@@ -2,7 +2,7 @@ import Dexie from 'dexie';
 import { persistStorage } from '@/services/storage-manager.js';
 import { StatsDbHistoryEntry, type StatsDbHistoryEntryWithId } from './models.js';
 import { initStatsDbVersionUpgrades } from './versions.js';
-import type { BasicPuzzleConfig, BoardShape, DifficultyKey } from '@/lib/types';
+import type { BasicPuzzleConfig, BoardShape } from '@/lib/types';
 
 type StatsDbTableKey = 'puzzleHistory';
 type StatsDbTableValue = Dexie.Table<StatsDbHistoryEntryWithId, number>;
