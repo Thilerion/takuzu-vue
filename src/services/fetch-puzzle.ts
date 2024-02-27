@@ -1,9 +1,8 @@
 import type { AllPuzzleBoards, BasicPuzzleConfig, BoardAndSolutionBoardStrings, BoardString } from "@/lib/types";
 import { generatePuzzle } from "@/workers/generate-puzzle/interface.js"; 
-import type { GeneratedPuzzleResult } from "@/workers/generate-puzzle/worker.js";
-import { puzzleDb } from "./db/puzzles-db/init.js";
+import type { GeneratedPuzzleResult } from "@/workers/generate-puzzle/generate.worker.js";
 import { SimpleBoard } from "@/lib/index.js";
-import { initPregenPuzzles } from "@/workers/pregen-puzzles/interface.js";
+import { initPregenPuzzles, retrievePregenPuzzleFromDb } from "@/workers/pregen-puzzles/interface.js";
 import { puzzleHistoryTable } from "./db/stats-db/init.js";
 import { pickRandom } from "@/lib/utils.js";
 
@@ -111,7 +110,7 @@ async function requestPuzzle(puzzleConfig: BasicPuzzleConfig): Promise<PuzzleReq
 
 async function retrievePuzzleFromDatabase(puzzleConfig: BasicPuzzleConfig): Promise<PuzzleRequestResult<'error'>> {
 	try {
-		const result = await puzzleDb.getPuzzle(puzzleConfig);
+		const result = await retrievePregenPuzzleFromDb(puzzleConfig);
 		if (result) {
 			const { boardStr, solutionStr } = result;
 			return { success: true, data: { boardStr, solutionStr } };

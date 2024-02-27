@@ -12,6 +12,9 @@ const fns = {
 	clearDb: async () => {
 		await puzzleDb.puzzles.clear();
 		return true;
+	},
+	retrieveFromDb: async (conf: BasicPuzzleConfig) => {
+		return puzzleDb.getPuzzle(conf);
 	}
 } as const;
 

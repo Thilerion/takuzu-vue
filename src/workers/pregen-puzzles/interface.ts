@@ -1,5 +1,7 @@
+import type { BasicPuzzleConfig } from "@/lib/types.js";
 import { WorkerInterface, type WorkerInterfaceOpts } from "../utils/workerInterface.js";
 import type { PregenPuzzlesWorkerFns } from "./pregen.worker.js";
+import type { GeneratedPuzzle } from "@/services/db/puzzles-db/models.js";
 
 let _worker: null | Worker = null;
 const createWorker = () => {
@@ -39,6 +41,9 @@ export async function initializeOrPopulatePregenPuzzles(): Promise<{ done: boole
 	return await pregenWorker.request('initialize');
 }
 
-export async function clearPregenPuzzlesDb() {
+export async function clearPregenPuzzlesDb(): Promise<boolean> {
 	return await pregenWorker.request('clearDb');
+}
+export function retrievePregenPuzzleFromDb(conf: BasicPuzzleConfig): Promise<GeneratedPuzzle | null> {
+	return pregenWorker.request('retrieveFromDb', conf);
 }
