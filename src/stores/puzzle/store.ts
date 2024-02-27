@@ -7,7 +7,7 @@ import { getRandomPuzzleTransformationOnRestart } from "./useRandomPuzzleTransfo
 import type { FinishedPuzzleState } from "@/services/db/stats-db/models.js";
 // Other stores
 import { usePuzzleHintsStore } from "../hints/store.js";
-import { usePuzzleHistoryStore } from "./history-store.js";
+import { usePuzzleHistoryStore, type HistoryMove } from "./history-store.js";
 import { usePuzzleTimer } from "./timer-store.js";
 import { useRecapStatsStore } from "../recap-stats";
 import { usePuzzleAssistanceStore } from "../assistance/store";
@@ -230,14 +230,17 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 
 		undoLastMove() {
 			const puzzleHistory = usePuzzleHistoryStore();
-			const move = { ...puzzleHistory.lastMove };
+			const move: HistoryMove = { ...puzzleHistory.lastMove! };
 			puzzleHistory.undoMove();
-			const { x, y, prevValue: value, value: prevValue } = move;
-			if (x == null || y == null || value == null) {
-				console.warn('Could not undo move. No move to undo.');
-				return;
+			const undoneActions = move.type === 'multi' ? move.moves : [move];
+			for (const action of undoneActions) {
+				const { x, y, prevValue: value, value: prevValue } = action;
+				if (x == null || y == null || value == null) {
+					console.warn('Could not undo move. No move to undo.');
+					return;
+				}
+				this.setValue({ x, y, value, prevValue });
 			}
-			this.setValue({ x, y, value, prevValue });
 		},
 
 		async createPuzzle({ width, height, difficulty }: BasicPuzzleConfig) {
