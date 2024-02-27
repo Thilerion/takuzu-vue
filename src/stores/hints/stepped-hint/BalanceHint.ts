@@ -74,14 +74,12 @@ export class BalanceSteppedHint extends BaseSteppedHint {
 			onHide: (ctx, { hideHighlights }) => {
 				hideHighlights();
 			},
-			onFinish: (ctx, { makeMove, removeHighlights }) => {
+			onFinish: (ctx, { makeMultipleMoves, removeHighlights }) => {
 				removeHighlights();
-				for (const { x, y, value } of this.targets) {
-					const boardValue = ctx.board.get(x, y);
-					if (boardValue === EMPTY) {
-						makeMove({ x, y, value });
-					}
-				}
+				const moves = this.targets.filter(t => {
+					return ctx.board.get(t.x, t.y) === EMPTY;
+				})
+				makeMultipleMoves(moves, { commitToHistory: true });
 			}
 		}
 

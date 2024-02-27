@@ -112,46 +112,43 @@ const createHintAction = (label: string, fn: HintActionFn): HintAction => ({ lab
 const hintActions: Record<HintType, HintAction> = {
 	[HINT_TYPE.MISTAKE]: createHintAction('Fix', ({ targets }) => {
 		const puzzleStore = usePuzzleStore();
-		targets.forEach(target => {
-			const { x, y } = target;
-			puzzleStore.makeMove({ x, y, value: EMPTY });
-		})
+		puzzleStore.makeMultipleMoves(targets, { commitToHistory: false });
 	}),
 	[HINT_TYPE.TRIPLES]: createHintAction('Execute', (hint) => {
 		const puzzleStore = usePuzzleStore();
 		const board = puzzleStore.board;
-		hint.targets.forEach(({ x, y, value }) => {
-			const boardValue = board!.get(x, y);
-			if (boardValue !== EMPTY) return;
-			puzzleStore.makeMove({ x, y, value });
+		const moves = hint.targets.filter(t => {
+			const boardValue = board!.get(t.x, t.y);
+			return boardValue === EMPTY;			
 		})
+		puzzleStore.makeMultipleMoves(moves, { commitToHistory: true });
 	}),
 	[HINT_TYPE.BALANCE]: createHintAction('Execute', ({ targets }) => {
 		const puzzleStore = usePuzzleStore();
 		const board = puzzleStore.board;
-		targets.forEach(({ x, y, value }) => {
-			const boardValue = board!.get(x, y);
-			if (boardValue !== EMPTY) return;
-			puzzleStore.makeMove({ x, y, value });
+		const moves = targets.filter(t => {
+			const boardValue = board!.get(t.x, t.y);
+			return boardValue === EMPTY;			
 		})
+		puzzleStore.makeMultipleMoves(moves, { commitToHistory: true });
 	}),
 	[HINT_TYPE.ELIMINATION]: createHintAction('Execute', ({ targets }) => {
 		const puzzleStore = usePuzzleStore();
 		const board = puzzleStore.board;
-		targets.forEach(({ x, y, value }) => {
-			const boardValue = board!.get(x, y);
-			if (boardValue !== EMPTY) return;
-			puzzleStore.makeMove({ x, y, value });
+		const moves = targets.filter(t => {
+			const boardValue = board!.get(t.x, t.y);
+			return boardValue === EMPTY;			
 		})
+		puzzleStore.makeMultipleMoves(moves, { commitToHistory: true });
 	}),
 	[HINT_TYPE.ELIM_DUPE]: createHintAction('Execute', ({ targets }) => {
 		const puzzleStore = usePuzzleStore();
 		const board = puzzleStore.board;
-		targets.forEach(({ x, y, value }) => {
-			const boardValue = board!.get(x, y);
-			if (boardValue !== EMPTY) return;
-			puzzleStore.makeMove({ x, y, value });
+		const moves = targets.filter(t => {
+			const boardValue = board!.get(t.x, t.y);
+			return boardValue === EMPTY;			
 		})
+		puzzleStore.makeMultipleMoves(moves, { commitToHistory: true });
 	})
 };
 

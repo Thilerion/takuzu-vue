@@ -24,6 +24,7 @@ export const useSteppedHintEvents = (
 		currentHighlights,
 		showHighlights: highlightsStore.show,
 		makeMove: puzzleStore.makeMove,
+		makeMultipleMoves: puzzleStore.makeMultipleMoves,
 	}));
 
 	const params = computed((): Parameters<HintStepEventCallback> => {

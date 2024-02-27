@@ -118,7 +118,7 @@ const solvePuzzle = async () => {
 		const solutionValue = puzzleStore.solution!.get(x, y);
 		puzzleStore.makeMove({
 			x, y, prevValue, value: solutionValue
-		})
+		}, { commitToHistory: true });
 		count += 1;
 
 		if (count % 4 === 0) {
@@ -143,7 +143,10 @@ const solveInstantly = async () => {
 		const value = puzzleStore.solution!.get(x, y);
 		return { x, y, value, prevValue };
 	})
-	puzzleStore.setMultipleValues(moves);
+	puzzleStore.assignToBoard(moves, {
+		handleGridCounts: "refresh",
+		handleMarkedMistakes: "reset"
+	});
 }
 
 const solveTrios = async () => {
@@ -167,7 +170,7 @@ const solveTrios = async () => {
 				if (prevValue !== EMPTY) continue;
 				puzzleStore.makeMove({
 					x, y, value, prevValue
-				})
+				}, { commitToHistory: true })
 				count += 1;
 				if (count % 4 === 0) {
 					await awaitRaf();

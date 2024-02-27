@@ -11,6 +11,7 @@ export type HintStepEventCallbackCtxParam = BoardAndSolutionBoards;
 export type HintStepEventCallbackActionsParam = {
 	// TODO: set certain cells in puzzleStore to a certain value, with or without adding to history, or adding to history as batch?
 	makeMove: ReturnType<typeof usePuzzleStore>['makeMove'],
+	makeMultipleMoves: ReturnType<typeof usePuzzleStore>['makeMultipleMoves'],
 	removeHighlights: () => void,
 	setHighlights: ReturnType<typeof useHintHighlightsStore>['setHighlights'],
 	currentHighlights: Ref<HintHighlight[]>,

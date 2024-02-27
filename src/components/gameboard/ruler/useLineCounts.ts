@@ -35,13 +35,15 @@ export const useLineCounts = createSharedComposable(() => {
 		args,
 		after
 	}) => {
-		if (name !== '_setValue') return;
-		const { x, y, value, prevValue } = args[0];
+		if (name !== 'assignToBoard') return;
+		const changeOrChanges = args[0];
 		after(() => {
-			if (rowCounts.value == null || colCounts.value == null) {
+			if ((Array.isArray(changeOrChanges) && changeOrChanges.length > 1) || (rowCounts.value == null || colCounts.value == null)) {
 				initializeCounts();
 				return;
 			}
+			const { x, y, value, prevValue } = Array.isArray(changeOrChanges) ? changeOrChanges[0] : changeOrChanges;
+			// here there is only 1 change, and row+colCounts were already initialized
 			rowCounts.value[y][value] += 1;
 			rowCounts.value[y][prevValue] -= 1;
 			colCounts.value[x][value] += 1;

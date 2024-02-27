@@ -54,6 +54,15 @@ export type PuzzleStoreState = {
 	creationError: boolean
 }
 export type PuzzleStoreSetAction = PickOptional<VecValueChange, 'prevValue'>;
+export type AssignToBoardOpts = {
+	// how to handle updated grid counts: single updates it for every changed cell, refresh recalculates it from scratch (is better for large updates at once), none does not touch it
+	handleGridCounts: "single" | "refresh" | "none",
+	// how to handle marked mistakes: "remove" will remove a marked mistake for each assignment, "reset" will completely reset it (better for large changes at once), "none" will not touch it
+	handleMarkedMistakes: "remove" | "reset" | "none",
+}
+export type MakePuzzleMoveOpts = {
+	commitToHistory?: boolean,
+}
 
 export const usePuzzleStore = defineStore('puzzleOld', {
 	state: (): PuzzleStoreState => ({
@@ -177,54 +186,97 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			this.gridCounts[prev] -= 1;
 		},
 
-		_setValue({ x, y, value, prevValue }: VecValueChange, updateCounts = true) {
-			this.board!.assign(x, y, value);
-			if (updateCounts) {
-				this._updateGridCount(value, prevValue);
-			}
-		},
-		setMultipleValues(changeList: VecValueChange[] = []) {
-			const moves = changeList.map(move => {
-				const {
-					x, y,
-					value,
-					prevValue = this.board!.grid[y][x]
-				} = move;
-				return { x, y, value, prevValue };
-			})
-			for (const move of moves) {
-				this._setValue(move, false);
-			}
-			this.refreshCounts();
-			usePuzzleAssistanceStore().resetMarkedMistakes();
-		},
-		setValue({ x, y, value, prevValue }: PickOptional<VecValueChange, 'prevValue'>) {
-			if (!prevValue) {
-				this._setValue({ x, y, value, prevValue: this.board!.grid[y][x] });
-			} else this._setValue({ x, y, value, prevValue });
+		/**
+		 * Simply update the board with one or multiple changes, and update the grid counts.
+		 * The most basic action that updates board values, and as such is the action to subscribe to if you want to listen to specific changes being applied to the board.
+		 */
+		assignToBoard(changeOrChanges: VecValueChange | VecValueChange[], opts: AssignToBoardOpts = {
+			handleGridCounts: "single",
+			handleMarkedMistakes: "remove"
+		}) {
+			const {
+				handleMarkedMistakes,
+				handleGridCounts
+			} = opts;
 
-			usePuzzleAssistanceStore().removeFromMarkedMistakes({ x, y });
-		},
-		makeMove({ x, y, value, prevValue }: PickOptional<VecValueChange, 'prevValue'>) {
-			if (!prevValue) {
-				prevValue = this.board!.grid[y][x];
+			const changes = Array.isArray(changeOrChanges) ? changeOrChanges : [changeOrChanges];
+			const assistanceStore = usePuzzleAssistanceStore();
+
+			for (const { x, y, value, prevValue } of changes) {
+				this.board!.assign(x, y, value);
+				if (handleGridCounts === "single") {
+					this._updateGridCount(value, prevValue);
+				}
+				if (handleMarkedMistakes === "remove") {
+					assistanceStore.removeFromMarkedMistakes({ x, y });
+				}
 			}
+			if (handleGridCounts === 'refresh') {
+				this.refreshCounts();
+			}
+			if (handleMarkedMistakes === 'reset') {
+				assistanceStore.resetMarkedMistakes();
+			}
+		},
+
+		// TODO: if opts.commitToHistory is false, it may be desirable to not allow undoing to before now
+		makeMove(
+			move: PickOptional<VecValueChange, 'prevValue'>,
+			opts: MakePuzzleMoveOpts
+		) {
+			const {
+				x, y, value,
+				prevValue = this.board!.grid[y][x]
+			} = move;
 			if (prevValue === value) {
 				console.log('Previous value is equal to current value. This move will not be committed.');
 				return;
 			}
-			this.setValue({ x, y, value, prevValue });
-			usePuzzleHistoryStore().addMove({
-				x, y, value: prevValue, nextValue: value
-			})
+			this.assignToBoard({ x, y, value, prevValue }, {
+				handleGridCounts: "single",
+				handleMarkedMistakes: "remove"
+			});
+			if (opts.commitToHistory) {
+				usePuzzleHistoryStore().addMove({
+					x, y, value: prevValue, nextValue: value
+				})
+			}
 		},
+		// TODO: also allow for giving assignToBoardOpts
+		// TODO: option to add to history as single entry, or as separate entries
+		makeMultipleMoves(moves: (PickOptional<VecValueChange, 'prevValue'>)[], opts: MakePuzzleMoveOpts) {
+			const validatedMoves: VecValueChange[] = [];
+			for (const m of moves) {
+				const prev = m.prevValue ?? this.board!.grid[m.y][m.x];
+				if (prev !== m.value) {
+					validatedMoves.push({ ...m, prevValue: prev });
+				}
+			}
+
+			if (validatedMoves.length === 0) {
+				console.log('No valid moves to make. No moves will be committed.');
+				return;
+			}
+
+			this.assignToBoard(validatedMoves);
+			// TODO: functionality to add list of moves to history as single entry
+			if (opts.commitToHistory) {
+				const historyStore = usePuzzleHistoryStore();
+				for (const { x, y, value, prevValue } of validatedMoves) {
+					historyStore.addMove({
+						x, y, value: prevValue, nextValue: value
+					})
+				}
+			}
+		},
+
 		toggle({ x, y, prevValue }: Vec & { prevValue?: PuzzleValue, value?: never }) {
 			const previous = prevValue ?? this.board!.grid[y][x];
 
 			const { toggle } = useSharedPuzzleToggle();
 			const value = toggle(previous);
 
-			this.makeMove({ x, y, value, prevValue: previous });
+			this.makeMove({ x, y, value, prevValue: previous }, { commitToHistory: true });
 		},
 
 		undoLastMove() {
@@ -236,7 +288,10 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				console.warn('Could not undo move. No move to undo.');
 				return;
 			}
-			this.setValue({ x, y, value, prevValue });
+			// make move without committing to history; wouldn't want to add the undo to the history
+			this.makeMove({
+				x, y, value, prevValue
+			}, { commitToHistory: false });
 		},
 
 		async createPuzzle({ width, height, difficulty }: BasicPuzzleConfig) {
