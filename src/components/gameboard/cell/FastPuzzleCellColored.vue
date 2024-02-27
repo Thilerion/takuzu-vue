@@ -1,11 +1,17 @@
 <template>
 	<div
 		class="cell"
-		:class="[valueClass, { locked }, shadeClass]"
+		:class="[valueClass, { locked }]"
+		:data-shade="shade"
+		:data-shade-type="shadeType"
 	>
 		<transition name="cell-color" mode="in-out">
-			<div v-if="value === ZERO" key="0" class="cell-color-bg color-0 cell-inner-color"></div>
-			<div v-else-if="value === ONE" key="1" class="cell-color-bg color-1 cell-inner-color"></div>
+			<div
+				class="cell-color-bg cell-inner-color"
+				:class="[value === ZERO ? 'color-0' : 'color-1']"
+				:key="value"
+				v-if="value !== EMPTY"
+			></div>
 		</transition>
 		<div class="incorrect-mark" v-if="incorrect"></div>
 		<div class="highlight-mark" v-if="highlighted"></div>
@@ -13,20 +19,21 @@
 </template>
 
 <script setup lang="ts">
-import { EMPTY, ZERO, type PuzzleValue, ONE } from "@/lib/constants";
+import { EMPTY, ZERO, type PuzzleValue } from "@/lib/constants";
 import { computed, toRefs } from "vue";
 
 const props = defineProps<{
 	value: PuzzleValue,
 	locked?: boolean,
 	incorrect?: boolean,
-	highlighted?: boolean // TODO: highlight style for colored cell
+	highlighted?: boolean,
 }>()
 
 const { value } = toRefs(props);
 
-const shade = Math.floor(Math.random() * 5);
-const shadeClass = `shade-${shade}`;
+const rndShadeIdx = Math.floor(Math.random() * 9) - 4;
+const shade = Math.abs(rndShadeIdx);
+const shadeType = rndShadeIdx < 0 ? 'lighten' : 'darken';
 
 const valueStr = computed(() => value.value === EMPTY ? 'none' : value.value);
 const valueClass = computed(() => `value-${valueStr.value}`);
@@ -58,35 +65,44 @@ const valueClass = computed(() => `value-${valueStr.value}`);
 .cell-color-bg {
 	@apply w-full h-full absolute;
 }
-.shade-0 .color-0 {
-	@apply bg-cell-blues;
+
+.color-0 {
+	--base-color: theme('colors.cell.blue.primary');
 }
-.shade-1 .color-0 {
-	@apply bg-cell-blues-v1;
+.color-1 {
+	--base-color: theme('colors.cell.red.primary');
 }
-.shade-2 .color-0 {
-	@apply bg-cell-blues-v2;
+[data-shade-type="darken"] {
+	--mix-0: theme('colors.cell.blue.dark');
+	--mix-1: theme('colors.cell.red.dark');
 }
-.shade-3 .color-0 {
-	@apply bg-cell-blues-v3;
+[data-shade-type="lighten"] {
+	--mix-0: theme('colors.cell.blue.light');
+	--mix-1: theme('colors.cell.red.light');
 }
-.shade-4 .color-0 {
-	@apply bg-cell-blues-v4;
+.color-0 {
+	--mix-color: var(--mix-0);
 }
-.shade-0 .color-1 {
-	@apply bg-cell-reds;
+.color-1 {
+	--mix-color: var(--mix-1);
 }
-.shade-1 .color-1 {
-	@apply bg-cell-reds-v1;
+[data-shade="0"] {
+	--mix-p: 0%;
 }
-.shade-2 .color-1 {
-	@apply bg-cell-reds-v2;
+[data-shade="1"] {
+	--mix-p: 15%;
 }
-.shade-3 .color-1 {
-	@apply bg-cell-reds-v3;
+[data-shade="2"] {
+	--mix-p: 22%;
 }
-.shade-4 .color-1 {
-	@apply bg-cell-reds-v4;
+[data-shade="3"] {
+	--mix-p: 30%;
+}
+[data-shade="4"] {
+	--mix-p: 40%;
+}
+.cell-color-bg {
+	background-color: color-mix(in srgb, var(--base-color), var(--mix-color) var(--mix-p));
 }
 
 .incorrect-mark {

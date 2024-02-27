@@ -49,25 +49,13 @@ export default {
 				cell: {
 					blue: {
 						primary: 'hsl(207, 90%, 61%)',
-						secondary: 'hsl(207, 82%, 58%)'
-					},
-					blues: {
-						...generateCellColorShades(
-							[207, 90, 61],
-							[-2, -4, 2, 4],
-							[1, 3, -1, -3],
-						)
-					},
-					reds: {
-						...generateCellColorShades(
-							[7, 77, 55],
-							[0, 0, -2, -3],
-							[2, 4, -1, -2]
-						)
+						dark: 'hsl(207, 70%, 55%)',
+						light: 'hsl(207, 80%, 66%)'
 					},
 					red: {
 						primary: 'hsl(7, 77%, 55%)',
-						secondary: 'hsl(7, 70%, 50%)'
+						dark: 'hsl(7, 50%, 47%)',
+						light: 'hsl(7, 70%, 59%)'
 					}
 				}
 			}
@@ -88,29 +76,3 @@ export default {
 		})
 	],
 };
-
-function generateCellColorShades([h, s, l], satDeltas = [], lightDeltas = []) {
-	const base = HSLToRGB(h, s, l);
-	const result = {
-		DEFAULT: base,
-		v0: base,
-	};
-	const length = Math.min(satDeltas.length, lightDeltas.length);
-	for (let i = 0; i < length; i++) {
-		const s2 = s + satDeltas[i];
-		const l2 = l + lightDeltas[i];
-		result[`v${i + 1}`] = HSLToRGB(h, s2, l2);
-	}
-	return result;
-}
-
-function HSLToRGB (h, s, l) {
-	s /= 100;
-	l /= 100;
-	const k = n => (n + h / 30) % 12;
-	const a = s * Math.min(l, 1 - l);
-	const f = n =>
-		l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
-	const rgb = [255 * f(0), 255 * f(8), 255 * f(4)];
-	return `rgb(${rgb.map(val => Math.round(val)).join(', ')})`;
-}
