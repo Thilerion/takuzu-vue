@@ -7,7 +7,6 @@ import { getRandomPuzzleTransformationOnRestart } from "./useRandomPuzzleTransfo
 import type { FinishedPuzzleState } from "@/services/db/stats-db/models.js";
 // Other stores
 import { usePuzzleHintsStore } from "../hints/store.js";
-import { usePuzzleHistoryStore, type HistoryMove } from "./history-store.js";
 import { usePuzzleTimer } from "./timer-store.js";
 import { useRecapStatsStore } from "../recap-stats";
 import { usePuzzleAssistanceStore } from "../assistance/store";
@@ -18,6 +17,8 @@ import { PuzzleTransformations } from "@/lib/transformations/PuzzleTransformatio
 import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings, GridCounts } from "@/lib/types";
 import type { TransformationKey } from "@/lib/transformations/types.js";
 import type { PickOptional } from "@/types.js";
+import { usePuzzleHistoryStore } from "../puzzle-history/history-store.js";
+import type { IHistoryMove } from "../puzzle-history/models.js";
 
 export type PuzzleStatus = 'none' | 'loading' | 'error_loading' | 'playing' | 'paused' | 'finished'; 
 export type PuzzleStoreState = {
@@ -230,17 +231,14 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 
 		undoLastMove() {
 			const puzzleHistory = usePuzzleHistoryStore();
-			const move: HistoryMove = { ...puzzleHistory.lastMove! };
+			const move: IHistoryMove = { ...puzzleHistory.lastMove! };
 			puzzleHistory.undoMove();
-			const undoneActions = move.type === 'multi' ? move.moves : [move];
-			for (const action of undoneActions) {
-				const { x, y, prevValue: value, value: prevValue } = action;
-				if (x == null || y == null || value == null) {
-					console.warn('Could not undo move. No move to undo.');
-					return;
-				}
-				this.setValue({ x, y, value, prevValue });
+			const { x, y, prevValue: value, value: prevValue } = move;
+			if (x == null || y == null || value == null) {
+				console.warn('Could not undo move. No move to undo.');
+				return;
 			}
+			this.setValue({ x, y, value, prevValue });
 		},
 
 		async createPuzzle({ width, height, difficulty }: BasicPuzzleConfig) {

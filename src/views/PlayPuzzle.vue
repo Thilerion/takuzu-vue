@@ -109,7 +109,7 @@ import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from 'vue-router';
 import type { DifficultyKey } from '@/lib/types.js';
 import { useGoBackOrReplaceTo } from '@/router/useGoBackOrReplaceTo.js';
 import { usePuzzlePauseResume } from '@/stores/puzzle/usePuzzlePauseResume.js';
-import { usePuzzleHistoryStore } from '@/stores/puzzle/history-store.js';
+import { usePuzzleHistoryStore } from '@/stores/puzzle-history/history-store.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { usePuzzleHintsStore } from '@/stores/hints/store.js';
 import { usePlayPuzzleUiState } from './usePlayPuzzleUiState.js';

@@ -1,6 +1,6 @@
 import type { HistorySaveData, PuzzleSaveData, SaveData, TimerSaveData } from "./types";
 import { isDifficultyKey } from "@/config.js";
-import { exportMoveList } from "@/stores/puzzle/history-store.js";
+import { exportMoveList } from "@/stores/puzzle-history/history-store.js";
 import { usePuzzleStore } from "@/stores/puzzle/store.js";
 import { getTotalTimeElapsed } from "@/stores/puzzle/timer-store.js";
 
