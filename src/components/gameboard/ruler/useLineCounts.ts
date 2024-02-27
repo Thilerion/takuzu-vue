@@ -33,21 +33,31 @@ export const useLineCounts = createSharedComposable(() => {
 	puzzleStore.$onAction(({
 		name,
 		args,
-		after
+		after,
+		store
 	}) => {
 		if (name !== 'assignToBoard') return;
 		const changeOrChanges = args[0];
+		if (Array.isArray(changeOrChanges)) {
+			after(() => {
+				console.log('initializing counts');
+				initializeCounts();
+			});
+			return;
+		}
+		const { x, y } = changeOrChanges;
+		// Cannot use change.prevValue and change.value, as there may be an incongruence between the move and what is actually on the board
+		const actualPrev = store.board!.get(x, y);
 		after(() => {
-			if ((Array.isArray(changeOrChanges) && changeOrChanges.length > 1) || (rowCounts.value == null || colCounts.value == null)) {
+			if (rowCounts.value == null || colCounts.value == null) {
 				initializeCounts();
 				return;
 			}
-			const { x, y, value, prevValue } = Array.isArray(changeOrChanges) ? changeOrChanges[0] : changeOrChanges;
-			// here there is only 1 change, and row+colCounts were already initialized
-			rowCounts.value[y][value] += 1;
-			rowCounts.value[y][prevValue] -= 1;
-			colCounts.value[x][value] += 1;
-			colCounts.value[x][prevValue] -= 1;
+			const actualValue = store.board!.get(x, y);
+			rowCounts.value[y][actualValue] += 1;
+			rowCounts.value[y][actualPrev] -= 1;
+			colCounts.value[x][actualValue] += 1;
+			colCounts.value[x][actualPrev] -= 1;
 		})
 	})
 

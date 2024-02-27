@@ -56,7 +56,7 @@ watchEffect(() => {
 puzzleStore.$onAction(({
 	name
 }) => {
-	// hide the hint if a value is set on the board
+	// hide the hint whenever a value is set on the board
 	if (name === 'assignToBoard' && showHint.value) hide();
 })
 

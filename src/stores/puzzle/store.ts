@@ -288,6 +288,10 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				console.warn('Could not undo move. No move to undo.');
 				return;
 			}
+			if (prevValue !== this.board!.grid[y][x]) {
+				console.error('This is an invalid undo move, as its prevValue is not consistent with what is actually on the board. Ignoring this one.');
+				return;
+			}
 			// make move without committing to history; wouldn't want to add the undo to the history
 			this.makeMove({
 				x, y, value, prevValue

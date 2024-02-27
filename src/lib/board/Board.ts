@@ -136,6 +136,11 @@ export class SimpleBoard {
 			throw new Error('X and/or Y value required for assignment');
 		}
 
+		if (value === this.get(x, y)) {
+			// console.log('Cannot assign a value to the board that is the same as the current value.');
+			return this;
+		}
+
 		if (!isValidCellDigit(value)) {
 			value = EMPTY;
 		}
