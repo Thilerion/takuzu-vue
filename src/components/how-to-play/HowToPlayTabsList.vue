@@ -19,8 +19,15 @@ const tabs = [
 	{
 		label: 'Basic Techniques',
 		routeName: 'BasicTechniques'
+	},
+	{
+		label: 'Advanced Techniques',
+		routeName: 'AdvancedTechniques',
+		enabled: false
 	}
-];
+].filter(t => {
+	return (t?.enabled ?? true);
+})
 
 </script>
 

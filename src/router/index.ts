@@ -121,6 +121,11 @@ const routes = [
 				path: 'techniques',
 				name: 'BasicTechniques',
 				component: () => import('@/components/how-to-play/BasicTechniques.vue'),
+			},
+			{
+				path: 'advanced',
+				name: 'AdvancedTechniques',
+				component: () => import('@/components/how-to-play/AdvancedTechniques.vue')
 			}
 		]
 	},
