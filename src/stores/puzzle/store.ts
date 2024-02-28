@@ -60,7 +60,7 @@ export type AssignToBoardOpts = {
 	handleMarkedMistakes: "remove" | "reset" | "none",
 }
 export type MakePuzzleMoveOpts = {
-	historyAction: "commit" | "reset" | "none",
+	historyAction: "commit" | "reset" | "skip",
 }
 
 export const usePuzzleStore = defineStore('puzzleOld', {
@@ -218,7 +218,6 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			}
 		},
 
-		// TODO: if opts.commitToHistory is false, it may be desirable to not allow undoing to before now
 		makeMove(
 			move: PickOptional<VecValueChange, 'prevValue'>,
 			opts: MakePuzzleMoveOpts
@@ -292,15 +291,15 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				return;
 			}
 			const move = puzzleHistory.undoMove();
-			const { x, y, prevValue: value, value: prevValue } = move;
-			if (prevValue !== this.board!.grid[y][x]) {
+			const { x, y, from, to } = move.getReverse(); // switch from and to because undoing === opposite move
+			if (from !== this.board!.grid[y][x]) {
 				console.error('This is an invalid undo move, as its prevValue is not consistent with what is actually on the board. Ignoring this one.');
 				return;
 			}
 			// make move without committing to history; wouldn't want to add the undo to the history
 			this.makeMove({
-				x, y, value, prevValue
-			}, { historyAction: "none" });
+				x, y, value: to, prevValue: from
+			}, { historyAction: "skip" });
 		},
 
 		async createPuzzle({ width, height, difficulty }: BasicPuzzleConfig) {

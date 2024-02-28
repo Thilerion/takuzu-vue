@@ -40,7 +40,6 @@ export const useLineCounts = createSharedComposable(() => {
 		const changeOrChanges = args[0];
 		if (Array.isArray(changeOrChanges)) {
 			after(() => {
-				console.log('initializing counts');
 				initializeCounts();
 			});
 			return;
