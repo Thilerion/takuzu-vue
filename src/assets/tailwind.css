@@ -85,18 +85,6 @@
 	}
 }
 
-@layer utilities {
-	.color-scheme-dark {
-		color-scheme: dark;
-	}
-	.color-scheme-normal {
-		color-scheme: normal;
-	}
-	.color-scheme-light {
-		color-scheme: light;
-	}
-}
-
 
 html, body, #app {
 	/* height: 100%; */
@@ -111,11 +99,11 @@ body {
 }
 
 html {
-	@apply color-scheme-normal;
+	color-scheme: light dark;
 }
-html.light {
-	@apply color-scheme-light;
+html.light, [data-base-theme="light"] {
+	color-scheme: light;
 }
-html.dark {
-	@apply color-scheme-dark;
+html.dark, [data-base-theme="dark"] {
+	color-scheme: dark;
 }
