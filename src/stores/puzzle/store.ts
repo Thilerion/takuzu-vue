@@ -282,8 +282,9 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 					const { x, y, from, to } = m.getReverse();
 					return { x, y, value: to, prevValue: from };
 				}).reverse();
-				this.makeMultipleMoves(reverseMoves, { historyCommitType: "skip" });
-				// TODO: check each if they are valid, and consistent with what is on the board
+				// remove (invalid) moves, where previous value (what is expected to be on the board now) is not consistent with what is actually on the board
+				const validatedReverseMoves: VecValueChange[] = reverseMoves.filter(m => m.prevValue === this.board!.grid[m.y][m.x]);
+				this.makeMultipleMoves(validatedReverseMoves, { historyCommitType: "skip" });
 				return;
 			}
 
