@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, toRef } from 'vue';
+import { onMounted, toRef } from 'vue';
 import { initSettingsPersistence } from './stores/settings/store';
 import { useStatisticsStore } from './stores/statistics';
 import { useMainStore } from './stores/main';
@@ -38,10 +38,6 @@ initPWAInstallListeners();
 // load statistics store; to prevent store data from being reset each time statistics page gets unloaded
 useStatisticsStore();
 
-const viewportHeight = toRef(store.context, 'viewportHeight');
-
-const viewportHeightPx = computed(() => viewportHeight.value ? `${viewportHeight.value}px` : '100%');
-
 onMounted(() => {
 	initPregeneratedPuzzles();
 })
@@ -54,13 +50,13 @@ html {
 body {
 	min-height: 100vh;
 	min-height: -webkit-fill-available;
+	min-height: 100svh;
 	overscroll-behavior-y: none;
 	@apply text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-gray-100;
 }
 .root {
-	@apply relative flex flex-col z-0;
-	--vh-total: v-bind(viewportHeightPx);
-	min-height: var(--vh-total);
+	--vh-total: 100dvh;
+	@apply relative flex flex-col z-0 min-h-vh;
 }
 
 .root.hide-overflow {
@@ -69,8 +65,9 @@ body {
 	overflow: hidden;
 }
 
-
 #overlay-wrapper {
+	min-height: 100svh;
+	max-height: 100lvh;
 	height: var(--vh-total);
 	@apply w-full pointer-events-none overscroll-contain fixed z-20 top-0 left-0 overflow-hidden;
 }
