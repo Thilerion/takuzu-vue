@@ -11,11 +11,12 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { RulerCellValueCountData, RulerCountType } from './CountsRuler.vue';
+import type { RulerCountType } from './CountsRuler.vue';
+import type { RulerPuzzleSymbolCountData } from './useRulerCellCountData.js';
 
 const props = defineProps<{
-	zero: RulerCellValueCountData,
-	one: RulerCellValueCountData,
+	zero: RulerPuzzleSymbolCountData,
+	one: RulerPuzzleSymbolCountData,
 	type: RulerCountType,
 	complete?: boolean
 }>()
@@ -39,7 +40,7 @@ const valueOne = computed(() => props.one[props.type]);
 	--font-size: clamp(10px, var(--half-size), 2rem);
 	--base-padding: calc(0.13 * var(--ruler-cell-size));
 	--min-padding: 0px;
-	padding: var(--cell-padding);
+	padding: var(--cell-padding, 2px);
 	font-size: var(--font-size);
 }
 

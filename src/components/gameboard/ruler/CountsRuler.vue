@@ -4,30 +4,23 @@
 		:data-ruler-dir="props.lineType"
 	>
 		<CountsRulerCell
-			v-for="({ index, one, zero, complete }) in countCellData"
-			:key="index"
+			v-for="data in rulerLineCountData"
+			:key="data.index"
 			:type="countType"
-			v-bind="{ one, zero, complete }"
+			v-bind="{ one: data[ONE], zero: data[ZERO], complete: data.isComplete }"
 		/>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { COLUMN, ONE, ROW, ZERO, type PuzzleValue } from '@/lib/constants';
-import { watchDebounced } from '@vueuse/core';
-import { computed, onBeforeMount, ref, toRefs } from 'vue';
+import { COLUMN, ONE, ROW, ZERO, type PuzzleSymbol } from '@/lib/constants';
+import { computed, toRefs } from 'vue';
 import { useLineCounts } from './useLineCounts.js';
 import type { LineCounts } from '@/lib/types.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
+import { useRulerCellCountData } from './useRulerCellCountData.js';
 
 // TODO: make showing errors optional here
-
-export type RulerCellValueCountData = {
-	current: number,
-	remaining: number,
-	error: boolean,
-	complete: boolean
-};
 export type RulerCountType = 'remaining' | 'current';
 
 const props = defineProps<{
@@ -43,61 +36,18 @@ const counts = computed((): LineCounts => {
 
 const { countType } = toRefs(props);
 const puzzleStore = usePuzzleStore();
-const numRequired = computed(() => {
-	return puzzleStore.board?.numRequired;
-})
-const lineRequired = computed(() => {
+const lineRequired = computed((): Record<PuzzleSymbol, number> | undefined => {
 	const key = props.lineType === 'rows' ? ROW : COLUMN;
-	const values = numRequired.value?.[key];
-	if (!values) {
-		return [
-			Math.floor(counts.value.length / 2),
-			Math.ceil(counts.value.length / 2),
-		]
-	}
-	const { [ZERO]: zero, [ONE]: one } = values;
-	return [zero, one];
+	return puzzleStore.board?.numRequired?.[key];
 })
-const countCellData = ref([] as { index: number, complete: boolean, zero: RulerCellValueCountData, one: RulerCellValueCountData }[]);
 
-const parseCellData = (counts: Record<PuzzleValue, number>[]) => {
-	const [reqZero, reqOne] = lineRequired.value;
-	return counts.map((c, i) => {
-		const {
-			[ZERO]: zeroCur,
-			[ONE]: oneCur
-		} = c;
-		const zeroRem = reqZero - zeroCur;
-		const oneRem = reqOne - oneCur;
-		const zero = {
-			current: zeroCur,
-			remaining: zeroRem,
-			error: zeroCur > reqZero,
-			complete: zeroRem === 0,
-		}
-		const one = {
-			current: oneCur,
-			remaining: oneRem,
-			error: oneCur > reqOne,
-			complete: oneRem === 0
-		}
-		const complete = zero.complete && one.complete;
-		return { zero, one, complete, index: i };
-	})
-}
-onBeforeMount(() => {
-	countCellData.value = parseCellData(counts.value);
-})
-const DEBOUNCE_DURATION = 180;
-const MAX_WAIT = Math.floor(DEBOUNCE_DURATION * 2.2);
-watchDebounced([counts, countType], ([countVal]) => {
-	try {
-		countCellData.value = parseCellData(countVal);
-	} catch(e) {
-		console.warn(e);
-		countCellData.value = [];
-	}
-}, { debounce: DEBOUNCE_DURATION, maxWait: MAX_WAIT, immediate: true, deep: true })
+const {
+	data: rulerLineCountData
+} = useRulerCellCountData(
+	counts,
+	lineRequired,
+	{ debounceDelay: 180, maxWait: 180 * 2.2 }
+)
 
 const cellPadding = computed(() => {
 	if (props.cellSize > 40) {
