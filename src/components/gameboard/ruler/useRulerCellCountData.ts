@@ -18,14 +18,8 @@ export type RulerCountData = RulerLineCountData[];
 export const useRulerCellCountData = (
 	lineCounts: Ref<LineCounts | null>,
 	requiredCount: Ref<Record<PuzzleSymbol, number> | undefined>,
-	opts: {
-		debounceDelay: number,
-		maxWait: number
-	}
-): {
-	data: DeepReadonly<Ref<RulerCountData | null>>,
-} => {
-
+	opts: {	debounceDelay: number, maxWait: number	}
+): { data: DeepReadonly<Ref<RulerCountData | null>> } => {
 	const data = ref(parseCellData(lineCounts.value, requiredCount.value));
 
 	debouncedWatch([lineCounts, requiredCount], ([counts, required]) => {
