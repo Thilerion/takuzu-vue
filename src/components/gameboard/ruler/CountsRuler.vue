@@ -20,6 +20,8 @@ import { useLineCounts } from './useLineCounts.js';
 import type { LineCounts } from '@/lib/types.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
 
+// TODO: make showing errors optional here
+
 export type RulerCellValueCountData = {
 	current: number,
 	remaining: number,

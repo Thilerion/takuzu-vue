@@ -1,7 +1,10 @@
 <template>
-	<div class="ruler coords"
-		:class="{'ruler-rows': lineType === 'rows', 'ruler-columns': lineType === 'columns'}"
-	>
+	<div
+		class="ruler coords"
+		:class="{
+			'ruler-rows': lineType === 'rows',
+			'ruler-columns': lineType === 'columns'
+	}">
 		<div
 			class="ruler-cell"
 			v-for="lineId in lineIds"

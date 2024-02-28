@@ -16,7 +16,7 @@ export const useLineCounts = createSharedComposable(() => {
 		if (puzzleStore.board == null) {
 			return;
 		}
-		const result = calculateLineCounts(puzzleStore.board!);
+		const result = calculateLineCounts(puzzleStore.board);
 		rowCounts.value = result.rowCounts;
 		colCounts.value = result.colCounts;
 	}
