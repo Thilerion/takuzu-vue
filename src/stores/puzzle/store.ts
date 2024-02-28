@@ -17,7 +17,7 @@ import { PuzzleTransformations } from "@/lib/transformations/PuzzleTransformatio
 import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings, GridCounts, Vec } from "@/lib/types";
 import type { TransformationKey } from "@/lib/transformations/types.js";
 import type { PickOptional } from "@/types.js";
-import { usePuzzleHistoryStore } from "../puzzle-history/history-store.js";
+import { usePuzzleHistoryStore, type PostMoveHistoryAction } from "../puzzle-history/history-store.js";
 
 export type PuzzleStatus = 'none' | 'loading' | 'error_loading' | 'playing' | 'paused' | 'finished'; 
 export type PuzzleStoreState = {
@@ -60,7 +60,10 @@ export type AssignToBoardOpts = {
 	handleMarkedMistakes: "remove" | "reset" | "none",
 }
 export type MakePuzzleMoveOpts = {
-	historyAction: "commit" | "reset" | "skip",
+	historyCommitType: Exclude<PostMoveHistoryAction, 'commitCombined'>,
+}
+export type MakePuzzleMovesOpts = {
+	historyCommitType: PostMoveHistoryAction,
 }
 
 export const usePuzzleStore = defineStore('puzzleOld', {
@@ -234,19 +237,12 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				handleGridCounts: "single",
 				handleMarkedMistakes: "remove"
 			});
-			const historyStore = usePuzzleHistoryStore();
-			if (opts.historyAction === 'commit') {
-				historyStore.addMove({
-					x, y, value: prevValue, nextValue: value
-				})
-			} else if (opts.historyAction === 'reset') {
-				// make sure that the history is reset to this point, so that the user cannot undo past this point
-				historyStore.reset();
-			}
+			usePuzzleHistoryStore().applyHistoryAction([{ x, y, value, prevValue }], opts.historyCommitType);
 		},
+
+
 		// TODO: also allow for giving assignToBoardOpts
-		// TODO: option to add to history as single entry, or as separate entries
-		makeMultipleMoves(moves: (PickOptional<VecValueChange, 'prevValue'>)[], opts: MakePuzzleMoveOpts) {
+		makeMultipleMoves(moves: (PickOptional<VecValueChange, 'prevValue'>)[], opts: MakePuzzleMovesOpts) {
 			const validatedMoves: VecValueChange[] = [];
 			for (const m of moves) {
 				const prev = m.prevValue ?? this.board!.grid[m.y][m.x];
@@ -261,18 +257,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			}
 
 			this.assignToBoard(validatedMoves);
-			// TODO: functionality to add list of moves to history as single entry
-			const historyStore = usePuzzleHistoryStore();
-			if (opts.historyAction === 'commit') {
-				for (const { x, y, value, prevValue } of validatedMoves) {
-					historyStore.addMove({
-						x, y, value: prevValue, nextValue: value
-					})
-				}
-			} else if (opts.historyAction === 'reset') {
-				// make sure that the history is reset to this point, so that the user cannot undo past this point
-				historyStore.reset();
-			}
+			usePuzzleHistoryStore().applyHistoryAction(validatedMoves, opts.historyCommitType);
 		},
 
 		toggle({ x, y, prevValue }: Vec & { prevValue?: PuzzleValue, value?: never }) {
@@ -281,7 +266,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			const { toggle } = useSharedPuzzleToggle();
 			const value = toggle(previous);
 
-			this.makeMove({ x, y, value, prevValue: previous }, { historyAction: "commit" });
+			this.makeMove({ x, y, value, prevValue: previous }, { historyCommitType: "commit" });
 		},
 
 		undoLastMove() {
@@ -291,6 +276,17 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				return;
 			}
 			const move = puzzleHistory.undoMove();
+
+			if (Array.isArray(move)) {
+				const reverseMoves = move.map(m => {
+					const { x, y, from, to } = m.getReverse();
+					return { x, y, value: to, prevValue: from };
+				}).reverse();
+				this.makeMultipleMoves(reverseMoves, { historyCommitType: "skip" });
+				// TODO: check each if they are valid, and consistent with what is on the board
+				return;
+			}
+
 			const { x, y, from, to } = move.getReverse(); // switch from and to because undoing === opposite move
 			if (from !== this.board!.grid[y][x]) {
 				console.error('This is an invalid undo move, as its prevValue is not consistent with what is actually on the board. Ignoring this one.');
@@ -299,7 +295,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			// make move without committing to history; wouldn't want to add the undo to the history
 			this.makeMove({
 				x, y, value: to, prevValue: from
-			}, { historyAction: "skip" });
+			}, { historyCommitType: "skip" });
 		},
 
 		async createPuzzle({ width, height, difficulty }: BasicPuzzleConfig) {

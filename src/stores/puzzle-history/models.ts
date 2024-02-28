@@ -48,12 +48,11 @@ export class HistoryMoveSingle implements IHistoryMoveSingle {
 		return `${this.x},${this.y},${this.to},${this.from}`;
 	}
 	static fromString(str: MoveSingleExport) {
-		const split = str.split(',');
-		const x = parseInt(split[0]);
-		const y = parseInt(split[1]);
-		const value = split[2] as PuzzleValue;
-		const prevValue = split[3] as PuzzleValue;
-		return new HistoryMoveSingle(x, y, value, prevValue);
+		const [xStr, yStr, to, from] = str.split(',');
+
+		const x = parseInt(xStr);
+		const y = parseInt(yStr);
+		return new HistoryMoveSingle(x, y, to as PuzzleValue, from as PuzzleValue);
 	}
 
 	toData(): IHistoryMoveSingle {
@@ -66,8 +65,8 @@ export class HistoryMoveSingle implements IHistoryMoveSingle {
 	}
 }
 
-export type IHistoryMove = IHistoryMoveSingle;
-export type HistoryMove = HistoryMoveSingle;
+export type IHistoryMove = IHistoryMoveSingle | IHistoryMoveSingle[];
+export type HistoryMove = HistoryMoveSingle | HistoryMoveSingle[];
 
 export type MoveSingleExport = `${number},${number},${PuzzleValue},${PuzzleValue}`;
-export type MoveExport = MoveSingleExport;
+export type MoveExport = MoveSingleExport | MoveSingleExport[];

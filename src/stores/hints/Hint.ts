@@ -112,7 +112,7 @@ const createHintAction = (label: string, fn: HintActionFn): HintAction => ({ lab
 const hintActions: Record<HintType, HintAction> = {
 	[HINT_TYPE.MISTAKE]: createHintAction('Fix', ({ targets }) => {
 		const puzzleStore = usePuzzleStore();
-		puzzleStore.makeMultipleMoves(targets, { historyAction: "reset" });
+		puzzleStore.makeMultipleMoves(targets, { historyCommitType: "reset" });
 	}),
 	[HINT_TYPE.TRIPLES]: createHintAction('Execute', (hint) => {
 		const puzzleStore = usePuzzleStore();
@@ -121,7 +121,7 @@ const hintActions: Record<HintType, HintAction> = {
 			const boardValue = board!.get(t.x, t.y);
 			return boardValue === EMPTY;			
 		})
-		puzzleStore.makeMultipleMoves(moves, { historyAction: "commit" });
+		puzzleStore.makeMultipleMoves(moves, { historyCommitType: "commitCombined" });
 	}),
 	[HINT_TYPE.BALANCE]: createHintAction('Execute', ({ targets }) => {
 		const puzzleStore = usePuzzleStore();
@@ -130,7 +130,7 @@ const hintActions: Record<HintType, HintAction> = {
 			const boardValue = board!.get(t.x, t.y);
 			return boardValue === EMPTY;			
 		})
-		puzzleStore.makeMultipleMoves(moves, { historyAction: "commit" });
+		puzzleStore.makeMultipleMoves(moves, { historyCommitType: "commitCombined" });
 	}),
 	[HINT_TYPE.ELIMINATION]: createHintAction('Execute', ({ targets }) => {
 		const puzzleStore = usePuzzleStore();
@@ -139,7 +139,7 @@ const hintActions: Record<HintType, HintAction> = {
 			const boardValue = board!.get(t.x, t.y);
 			return boardValue === EMPTY;			
 		})
-		puzzleStore.makeMultipleMoves(moves, { historyAction: "commit" });
+		puzzleStore.makeMultipleMoves(moves, { historyCommitType: "commitCombined" });
 	}),
 	[HINT_TYPE.ELIM_DUPE]: createHintAction('Execute', ({ targets }) => {
 		const puzzleStore = usePuzzleStore();
@@ -148,7 +148,7 @@ const hintActions: Record<HintType, HintAction> = {
 			const boardValue = board!.get(t.x, t.y);
 			return boardValue === EMPTY;			
 		})
-		puzzleStore.makeMultipleMoves(moves, { historyAction: "commit" });
+		puzzleStore.makeMultipleMoves(moves, { historyCommitType: "commitCombined" });
 	})
 };
 

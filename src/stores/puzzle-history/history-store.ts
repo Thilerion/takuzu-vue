@@ -1,8 +1,10 @@
 import type { PuzzleValue } from "@/lib/constants.js";
-import type { Vec } from "@/lib/types.js";
+import type { Vec, VecValueChange } from "@/lib/types.js";
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { HistoryMoveSingle, type MoveSingleExport, type HistoryMove, type MoveExport } from "./models.js";
+
+export type PostMoveHistoryAction = "commit" | "commitCombined" | "skip" | "reset";
 
 const moveToString = (move: HistoryMoveSingle): MoveSingleExport => {
 	return move.export();
@@ -33,6 +35,9 @@ export const usePuzzleHistoryStore = defineStore('puzzleHistory', () => {
 	const importMoveHistory = (moveExports: MoveExport[] = []) => {
 		reset();
 		const importedMoveList: HistoryMove[] = moveExports.map(moveExport => {
+			if (Array.isArray(moveExport)) {
+				return moveExport.map(moveFromString);
+			}
 			return moveFromString(moveExport);
 		})
 		moveList.value = importedMoveList;
@@ -42,7 +47,7 @@ export const usePuzzleHistoryStore = defineStore('puzzleHistory', () => {
 		const prev = lastMove.value;
 
 		// TODO: add timestamps, and don't combine moves if time difference is higher than a second or so
-		if (prev && prev.sameCell({ x, y })) {
+		if (prev && !Array.isArray(prev) && prev.sameCell({ x, y })) {
 			const combined = prev.withNextValue(nextValue);
 			if (!combined.hasValueChange()) {
 				// cell is back to original state
@@ -55,21 +60,62 @@ export const usePuzzleHistoryStore = defineStore('puzzleHistory', () => {
 		} else {
 			const move = new HistoryMoveSingle(x, y, nextValue, value);
 			moveList.value.push(move);
+			return;
 		}
+	}
+	const addMultipleMoves = (actions: (Vec & { value: PuzzleValue, nextValue: PuzzleValue })[]) => {
+		const moves = actions.map(action => new HistoryMoveSingle(action.x, action.y, action.nextValue, action.value));
+		moveList.value.push(moves);
 	}
 
 	const exportMoveHistory = (): MoveExport[] => {
 		return moveList.value.map(m => {
+			if (Array.isArray(m)) {
+				return m.map(moveToString);
+			}
 			return moveToString(m);
 		});
 	}
 
+	const applyHistoryAction = (moveOrMoves: VecValueChange[], action: PostMoveHistoryAction) => {
+		switch(action) {
+			case 'commit': {
+				const moves = Array.isArray(moveOrMoves) ? moveOrMoves : [moveOrMoves];
+				for (const { x, y, value, prevValue } of moves) {
+					addMove({
+						x, y, value: prevValue, nextValue: value
+					})
+				}
+				return;
+			}
+			case 'commitCombined': {
+				addMultipleMoves((moveOrMoves as VecValueChange[]).map(m => {
+					const { x, y, value, prevValue } = m;
+					return { x, y, value: prevValue, nextValue: value };
+				}))
+				return;
+			}
+			case 'reset': {
+				// make sure that the history is reset to this point, so that the user cannot undo past this point
+				reset();
+				return;
+			}
+			case 'skip': {
+				// do nothing
+				return;
+			}
+			default: {
+				const x: never = action;
+				throw new Error(`Unrecognized historyAction type post-makeMove: ${x}`);
+			}
+		}
+	}
+
 	return {
-		lastMove,
 		canUndo,
 		
 		reset,
-		addMove,
+		applyHistoryAction,
 		undoMove,
 		importMoveHistory,
 		exportMoveHistory,

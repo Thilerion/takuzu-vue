@@ -73,7 +73,7 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 				const moves = this.targets.filter(t => {
 					return ctx.board.get(t.x, t.y) === EMPTY;
 				})
-				makeMultipleMoves(moves, { historyAction: "commit" });
+				makeMultipleMoves(moves, { historyCommitType: "commitCombined" });
 			}
 		}
 
