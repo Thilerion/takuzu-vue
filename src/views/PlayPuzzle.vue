@@ -1,5 +1,5 @@
 <template>
-	<div class="play-puzzle fixed box-border overflow-auto inset-0 flex flex-col z-20 text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-white"
+	<div class="play-puzzle fixed box-border overflow-auto inset-0 max-h-vh flex flex-col z-20 text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-white"
 		:class="{ 'puzzle-paused': paused, 'puzzle-finished': finished }">
 		<GameBoardHeader
 			@close="exitGame"
@@ -35,29 +35,21 @@
 					/>
 				</template>
 				<template v-slot:ruler-rows>
-					<CoordsRuler 
-						v-if="rulerComponentType === 'coords'"
-						line-type="rows"
-						:line-ids="board.rowIds"
-					/>
-					<CountsRuler
-						v-else-if="rulerComponentType === 'count'"
-						:count-type="rulerCountType!"
-						line-type="rows"
+					<PuzzleRuler
 						:cell-size="cellSize"
+						:line-ids="board.rowIds"
+						ruler-line-type="rows"
+						:count-type="rulerCountType"
+						:component-type="rulerComponentType"
 					/>
 				</template>
 				<template v-slot:ruler-columns>
-					<CoordsRuler
-						v-if="rulerComponentType === 'coords'"
-						line-type="columns"
-						:line-ids="board.columnIds"
-					/>
-					<CountsRuler
-						v-else-if="rulerComponentType === 'count'"
-						:count-type="rulerCountType!"
-						line-type="columns"
+					<PuzzleRuler
 						:cell-size="cellSize"
+						:line-ids="board.rowIds"
+						ruler-line-type="columns"
+						:count-type="rulerCountType"
+						:component-type="rulerComponentType"
 					/>
 				</template>
 			</GameBoard>
@@ -97,8 +89,6 @@ import PuzzleInfo from '@/components/gameboard/PuzzleInfo.vue';
 import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
 import PuzzleHintWrapper from '@/components/gameboard/hints/PuzzleHintWrapper.vue';
 import PuzzleRecap from '@/components/puzzle-recap/PuzzleRecap.vue';
-import CountsRuler from '@/components/gameboard/ruler/CountsRuler.vue';
-import CoordsRuler from '@/components/gameboard/ruler/CoordsRuler.vue';
 
 import { usePuzzleWakeLock } from '@/composables/use-wake-lock';
 import { storeToRefs } from 'pinia';
@@ -206,36 +196,16 @@ onBeforeUnmount(() => {
 })
 
 // NAVIGATION GUARDS
-onBeforeRouteLeave((to, from, next) => {
+onBeforeRouteLeave(() => {
 	puzzleStore.reset();
-
-	const toName = to.name;
-	const prevName = from.meta?.prev?.name;
-	if (toName === prevName && toName === 'Home') {
-		return next({ name: 'NewPuzzleFreePlay' }); // TODO: comment, why?
-	}
-	next();
 })
 
-onBeforeRouteUpdate((to, from, next) => {
+onBeforeRouteUpdate((to) => {
 	const toName = to?.name;
 	const settingsShouldBeOpen = typeof toName === 'string' && toName.toLowerCase().includes('settings');
 	setSettingsOpen(settingsShouldBeOpen);
-	next();
 })
 </script>
 
 <style scoped>
-.inset-0 {
-	max-height: var(--vh-total);
-}
-
-.old-board {
-	display: inline-grid;
-	font-size: var(--cell-font-size);
-	gap: var(--grid-gap);
-
-	grid-template-rows: var(--line-helper-size) repeat(var(--board-rows), 1fr) 0px;
-	grid-template-columns: var(--line-helper-size) repeat(var(--board-cols), 1fr) 0px;
-}
 </style>
