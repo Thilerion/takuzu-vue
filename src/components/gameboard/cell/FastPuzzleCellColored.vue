@@ -5,7 +5,10 @@
 		:data-shade="shade"
 		:data-shade-type="shadeType"
 	>
-		<transition name="cell-color" mode="in-out">
+		<transition
+			name="cell-color"
+			mode="in-out"
+		>
 			<div
 				class="cell-color-bg cell-inner-color"
 				:class="[value === ZERO ? 'color-0' : 'color-1']"
@@ -20,6 +23,8 @@
 
 <script setup lang="ts">
 import { EMPTY, ZERO, type PuzzleValue } from "@/lib/constants";
+import { watch } from "vue";
+import { ref } from "vue";
 import { computed, toRefs } from "vue";
 
 const props = defineProps<{
@@ -37,29 +42,38 @@ const shadeType = rndShadeIdx < 0 ? 'lighten' : 'darken';
 
 const valueStr = computed(() => value.value === EMPTY ? 'none' : value.value);
 const valueClass = computed(() => `value-${valueStr.value}`);
+
+// transition from empty to a color is shorter, so the initial cell tap feels more responsive
+const enterDuration = ref<`${number}ms`>('250ms');
+watch(value, (to, from) => {
+	if (to !== EMPTY && from === EMPTY) {
+		enterDuration.value = '80ms';
+	} else {
+		enterDuration.value = '250ms';
+	}
+})
 </script>
 
 <style scoped>
 .cell {
-	@apply overflow-hidden relative pointer-events-none text-center;
+	@apply overflow-hidden relative isolate pointer-events-none text-center;
 	@apply w-full h-full;
-	@apply bg-gray-125 dark:bg-slate-800;	
+	@apply bg-gray-125 dark:bg-slate-800;
 }
 .cell > *, .cell {
 	border-radius: var(--cell-rounding);
 }
 
-.cell-color-enter-active, .cell-color-leave-active {
+.cell-color-enter-active {
+	transition: opacity v-bind(enterDuration) ease;
+	z-index: 1;
+}
+.cell-color-leave-active {
 	transition: opacity 0.25s ease;
+	z-index: 0;
 }
 .cell-color-enter-from, .cell-color-leave-to {
 	opacity: 0;
-}
-.cell-color-leave-active {
-	z-index: 0;
-}
-.cell-color-enter-active {
-	z-index: 1;
 }
 
 .cell-color-bg {
