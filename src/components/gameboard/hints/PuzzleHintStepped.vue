@@ -14,7 +14,7 @@
 			<button
 				@click="onAction"
 				class="text-sm flex-grow text-slate-700 bg-white border-l min-w-fit w-24 py-1 max-w-[27%]"
-			>{{ curStep.actionLabel }}<span v-if="!isFinalStep" class="ml-[1ch]">&#x3E;</span></button>
+			><transition name="stepchange" mode="out-in"><span :key="stepIdx">{{ curStep.actionLabel }}<span v-if="!isFinalStep" class="ml-[1ch]">&#x3E;</span></span></transition></button>
 		</template>
 	</PuzzleHintBase>
 </template>
@@ -115,5 +115,7 @@ watch(() => props.show, (val, prev) => {
 </script>
 
 <style scoped>
-
+/* 
+.step-change transition classes come from "PuzzleHintBase.vue"
+} */
 </style>

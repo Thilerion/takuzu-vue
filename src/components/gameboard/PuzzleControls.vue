@@ -2,6 +2,7 @@
 	<div class="puzzle-controls" :class="{'paused': paused}">
 		<div class="control-btns">
 
+			<div class="flex flex-row items-center justify-center mt-auto w-full space-x-2 px-6 max-w-screen-sm mx-auto">
 			<IconBtnText
 				@click="$emit('undo')"
 				:disabled="!canUndo || paused"
@@ -54,7 +55,7 @@
 					<icon-his-light-bulb/>
 				</template>
 			</IconBtnText>
-
+			</div>
 		</div>
 	</div>
 </template>
@@ -91,13 +92,14 @@ const checkButtonEnabled = computed(() => settingsStore.checkButton !== 'disable
 }
 
 .control-btns {
-	@apply flex flex-row items-center justify-center mt-auto w-full space-x-2 px-6;
+	@apply mt-auto w-full;
 	padding-bottom: max(env(safe-area-inset-bottom) + 4px, 0.5rem);
 	padding-top: 0.25rem;
 	box-shadow: 0 -12px 14px -16px rgba(0,0,0,.2);
 	@apply dark:bg-gray-800 dark:bg-opacity-30;
 }
-.control-btns > * {
+
+.control-btns button {
 	@apply text-xs flex-auto;
 }
 </style>

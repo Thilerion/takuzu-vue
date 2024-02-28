@@ -51,7 +51,4 @@ const onActionBtn = () => {
 </script>
 
 <style scoped>
-.hint-inner {
-	box-shadow: 0 5px 10px 10px rgba(0,0,0,0.03), 0 3px 3px 3px rgba(0,0,0,0.05);
-}
 </style>
