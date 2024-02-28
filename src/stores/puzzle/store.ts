@@ -18,7 +18,6 @@ import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, Ve
 import type { TransformationKey } from "@/lib/transformations/types.js";
 import type { PickOptional } from "@/types.js";
 import { usePuzzleHistoryStore } from "../puzzle-history/history-store.js";
-import type { IHistoryMove } from "../puzzle-history/models.js";
 
 export type PuzzleStatus = 'none' | 'loading' | 'error_loading' | 'playing' | 'paused' | 'finished'; 
 export type PuzzleStoreState = {
@@ -288,13 +287,12 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 
 		undoLastMove() {
 			const puzzleHistory = usePuzzleHistoryStore();
-			const move: IHistoryMove = { ...puzzleHistory.lastMove! };
-			puzzleHistory.undoMove();
-			const { x, y, prevValue: value, value: prevValue } = move;
-			if (x == null || y == null || value == null) {
-				console.warn('Could not undo move. No move to undo.');
+			if (!puzzleHistory.canUndo) {
+				console.warn('Cannot undo; there are no moves to undo.');
 				return;
 			}
+			const move = puzzleHistory.undoMove();
+			const { x, y, prevValue: value, value: prevValue } = move;
 			if (prevValue !== this.board!.grid[y][x]) {
 				console.error('This is an invalid undo move, as its prevValue is not consistent with what is actually on the board. Ignoring this one.');
 				return;

@@ -21,11 +21,11 @@ export const usePuzzleHistoryStore = defineStore('puzzleHistory', () => {
 	const reset = (): void => {
 		moveList.value = [];
 	}
-	const undoMove = () => {
+	const undoMove = (): HistoryMove => {
 		if (canUndo.value) {
 			const lastMove: HistoryMove = moveList.value.pop()!;
 			// clone moves to avoid mutation
-			return {...lastMove};
+			return lastMove;
 		}
 		throw new Error('Cannot undo move; there are no moves to undo.');
 	}

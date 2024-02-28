@@ -47,10 +47,13 @@ export class HistoryMoveSingle implements IHistoryMoveSingle {
 		return new HistoryMoveSingle(x, y, value, prevValue);
 	}
 
-	toJSON(): IHistoryMoveSingle {
+	toData(): IHistoryMoveSingle {
 		return {
 			...this,
 		}
+	}
+	toJSON() {
+		return JSON.stringify(this.toData());
 	}
 }
 
