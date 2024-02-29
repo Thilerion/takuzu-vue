@@ -7,7 +7,7 @@
 			:hide-back="hideBack"
 			back-options="Home"
 		>
-			<template #default>Settings</template>
+			<template #default>{{t('title')}}</template>
 			<template #right>
 				<BaseDropdown
 					align-right
@@ -146,6 +146,7 @@ import { CheckButtonOption, rulerType } from '@/stores/settings/options';
 import { useSettingsStore } from '@/stores/settings/store';
 import { storeToRefs } from 'pinia';
 import { onBeforeUnmount } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 defineProps<{
 	hideBack?: boolean
@@ -182,8 +183,21 @@ const lineInfoOptions = [
 	{ label: 'Remaining values in line', value: rulerType.COUNT_REMAINING},
 	{ label: 'Current values in line', value: rulerType.COUNT_CURRENT}
 ]
+
+const { t } = useI18n();
 </script>
 
 <style scoped>
 
 </style>
+
+<i18n>
+{
+	"en": {
+		"title": "Settings",
+	},
+	"nl": {
+		"title": "Instellingen"
+	}
+}
+</i18n>

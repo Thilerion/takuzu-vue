@@ -21,7 +21,7 @@
 					</span>
 					<span
 						class="nav-link-text"
-					>{{$t(item.label)}}</span>
+					>{{ item.label }}</span>
 				</a>
 			</router-link>
 		</div>
@@ -33,6 +33,7 @@ import { useMainStore } from "@/stores/main";
 import { computed } from "vue";
 import { useRoute, type RouteLocationNormalizedLoaded } from "vue-router";
 import type { BottomNavIconNames } from "./BottomNavIcon.vue";
+import { useI18n } from "vue-i18n";
 
 const mainStore = useMainStore();
 const customPuzzleToolEnabled = computed(() => mainStore.featureToggles.customPuzzleTool.isEnabled);
@@ -44,26 +45,28 @@ const showToolsMenu = computed(() => {
 type ActiveWhenCheckFn = (args: RouteLocationNormalizedLoaded) => boolean;
 type Item = { label: string, icon: BottomNavIconNames, to: string | { name: string }, activeWhen: ActiveWhenCheckFn };
 
-const baseMenuItems: Item[] = [
+const { t } = useI18n();
+
+const baseMenuItems = computed((): Item[] => [
 	{
-		label: 'navbar.home', to: { name: 'Home' }, icon: 'home',
+		label: t('navbar.home'), to: { name: 'Home' }, icon: 'home',
 		activeWhen: ({ name }) => name === 'Home'
 	},
 	{
-		label: 'navbar.stats', to: '/stats', icon: 'stats',
+		label: t('navbar.stats'), to: '/stats', icon: 'stats',
 		activeWhen: ({ path }) => path.startsWith('/stats')
 	},
 	{
-		label: 'navbar.settings', to: { name: 'Settings' }, icon: 'settings',
+		label: t('navbar.settings'), to: { name: 'Settings' }, icon: 'settings',
 		activeWhen: ({ name }) => name === 'Settings'
 	},
-]
+]);
 
-const menuItems = computed(() => {
-	const items = [...baseMenuItems];
+const menuItems = computed((): Item[] => {
+	const items = [...baseMenuItems.value];
 	if (showToolsMenu.value) {
 		items.push({
-			label: 'navbar.tools', to: '/tools', icon: 'tools',
+			label: t('navbar.tools'), to: '/tools', icon: 'tools',
 			activeWhen: ({ path }) => path.startsWith('/tools')
 		});
 	}

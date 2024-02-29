@@ -5,7 +5,7 @@ import { createApp, watch, markRaw } from 'vue';
 import { createPinia } from 'pinia';
 import App from './App.vue';
 import router from './router';
-import { setI18nLanguage, setupI18n, type SupportedLocale } from './i18n/index.js';
+import { setupI18n, setI18nLanguage, type SupportedLocale } from './i18n/index.js';
 
 import { registerSW } from 'virtual:pwa-register';
 
