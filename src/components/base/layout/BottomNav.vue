@@ -21,7 +21,7 @@
 					</span>
 					<span
 						class="nav-link-text"
-					>{{item.label}}</span>
+					>{{$t(item.label)}}</span>
 				</a>
 			</router-link>
 		</div>
@@ -46,15 +46,15 @@ type Item = { label: string, icon: BottomNavIconNames, to: string | { name: stri
 
 const baseMenuItems: Item[] = [
 	{
-		label: 'Home', to: { name: 'Home' }, icon: 'home',
+		label: 'pages.home.label', to: { name: 'Home' }, icon: 'home',
 		activeWhen: ({ name }) => name === 'Home'
 	},
 	{
-		label: 'Stats', to: '/stats', icon: 'stats',
+		label: 'pages.stats.label', to: '/stats', icon: 'stats',
 		activeWhen: ({ path }) => path.startsWith('/stats')
 	},
 	{
-		label: 'Settings', to: { name: 'Settings' }, icon: 'settings',
+		label: 'pages.settings.label', to: { name: 'Settings' }, icon: 'settings',
 		activeWhen: ({ name }) => name === 'Settings'
 	},
 ]
@@ -63,7 +63,7 @@ const menuItems = computed(() => {
 	const items = [...baseMenuItems];
 	if (showToolsMenu.value) {
 		items.push({
-			label: 'Tools', to: '/tools', icon: 'tools',
+			label: 'pages.tools.label', to: '/tools', icon: 'tools',
 			activeWhen: ({ path }) => path.startsWith('/tools')
 		});
 	}
