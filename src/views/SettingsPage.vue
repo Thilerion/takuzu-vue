@@ -26,16 +26,28 @@
 		<div class="pb-4 pt-2 flex flex-col gap-6 text-gray-900 dark:text-slate-100 settings-wrapper">
 			<div class="py-2">
 				<BasicLinkList
-					class="divide-none gap-4 px-4 pt-4 pb-6 flex flex-col"
+					class="px-4 pb-2 pt-4 flex flex-col"
 				>
-					<div class="px-2">
+					<div class="px-2 pb-4">
 						<DarkModeSetting />
 					</div>
-					<div class="px-2">
+					<div class="px-2 pt-4 pb-6">
 						<h2>Cell theme</h2>
 						<div class="px-0">
 							<CellThemeSetting v-model="cellTheme" />
 						</div>
+					</div>
+					<div class="px-2 pt-4 pb-4">
+						<h3>Language</h3>
+							<div class="mt-2">
+								<select class="block w-full mt-1" v-model="language">
+									<option
+										v-for="opt in SUPPORTED_LOCALES"
+										:value="opt"
+										:key="opt"
+									>{{opt}}</option>
+								</select>
+							</div>
 					</div>
 				</BasicLinkList>
 			</div>
@@ -128,6 +140,7 @@
 
 <script setup lang="ts">
 import { useThemePreferences } from '@/composables/use-theme-preferences';
+import { SUPPORTED_LOCALES } from '@/i18n/index.js';
 import { useDebugMode } from '@/stores/composables/useDebugMode';
 import { CheckButtonOption, rulerType } from '@/stores/settings/options';
 import { useSettingsStore } from '@/stores/settings/store';
@@ -141,7 +154,7 @@ defineProps<{
 const { enabled: isDebugModeEnabled, toggleDebugMode } = useDebugMode();
 
 const settingsStore = useSettingsStore();
-const { cellTheme, checkButton, toggleMode, showLineInfo, enableWakeLock, showTimer } = storeToRefs(settingsStore);
+const { cellTheme, checkButton, toggleMode, showLineInfo, enableWakeLock, showTimer, language } = storeToRefs(settingsStore);
 
 const { setBaseThemeDefault: resetBaseThemeToDefault } = useThemePreferences();
 

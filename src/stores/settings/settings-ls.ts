@@ -8,6 +8,7 @@ const DEFAULT_SETTINGS: Readonly<SettingsState> = Object.freeze({
 	showTimer: true,
 
 	cellTheme: 'classic',
+	language: 'en',
 
 	enableVibration: true,
 	vibrationStrength: 32,

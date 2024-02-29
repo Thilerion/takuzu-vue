@@ -1,4 +1,3 @@
-import type { Ref } from 'vue';
 import { createI18n, type I18n } from 'vue-i18n';
 import { messages } from './messages.js';
 
@@ -18,7 +17,7 @@ export function setupI18n(options: { locale: SupportedLocale } = { locale: 'nl' 
 }
 
 export function setI18nLanguage(i18n: I18n<any, any, any, SupportedLocale, false>, locale: SupportedLocale) {
-	(i18n.global.locale as Ref<string>).value = locale;
+	i18n.global.locale.value = locale;
 	/**
 	 * NOTE:
 	 * If you need to specify the language setting for headers, such as the `fetch` API, set it here.

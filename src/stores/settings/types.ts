@@ -1,3 +1,4 @@
+import type { SupportedLocale } from "@/i18n/index.js";
 import type { PuzzleSymbol } from "@/lib/constants";
 
 export const validVibrationStrengths = [0, 18, 32, 45, 60, 76] as const;
@@ -25,7 +26,8 @@ interface GameplayInterfaceSettings {
 	showTimer: boolean,
 }
 interface AppInterfaceSettings {
-	cellTheme: CellTheme
+	cellTheme: CellTheme,
+	language: SupportedLocale
 }
 interface VibrationSettings {
 	enableVibration: boolean,

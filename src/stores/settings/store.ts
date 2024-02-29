@@ -32,7 +32,7 @@ export const useSettingsStore = defineStore('settings', {
 		resetToDefaults() {
 			const defaults = getDefaultSettings();
 			Object.assign(this.$state, defaults);
-		}
+		},
 	}
 })
 
