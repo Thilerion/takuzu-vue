@@ -27,7 +27,7 @@ pinia.use(({ store }) => {
 	if (store.$id === 'settings') {
 		watch(() => store.language, (newLang) => {
 			console.log({ newLang });
-			setI18nLanguage(i18n, newLang as any as SupportedLocale);
+			setI18nLanguage(i18n, newLang as unknown as SupportedLocale);
 		}, { immediate: true })
 	}
 })

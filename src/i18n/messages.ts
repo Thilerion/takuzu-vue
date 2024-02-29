@@ -1,34 +1,18 @@
 export const messages = {
 	en: {
-		pages: {
-			home: {
-				label: 'Home'
-			},
-			stats: {
-				label: 'Stats'
-			},
-			settings: {
-				label: 'Settings'
-			},
-			tools: {
-				label: 'Tools'
-			}
+		navbar: {
+			home: 'Home',
+			stats: 'Stats',
+			settings: 'Settings',
+			tools: 'Tools'
 		}
 	},
 	nl: {
-		pages: {
-			home: {
-				label: 'Home'
-			},
-			stats: {
-				label: 'Stats'
-			},
-			settings: {
-				label: 'Instellingen'
-			},
-			tools: {
-				label: 'Gereedschap'
-			}
+		navbar: {
+			home: 'Home',
+			stats: 'Stats',
+			settings: 'Instellingen',
+			tools: 'Gereedschap'
 		}
 	}
 }

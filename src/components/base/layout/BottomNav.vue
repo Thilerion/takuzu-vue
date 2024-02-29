@@ -46,15 +46,15 @@ type Item = { label: string, icon: BottomNavIconNames, to: string | { name: stri
 
 const baseMenuItems: Item[] = [
 	{
-		label: 'pages.home.label', to: { name: 'Home' }, icon: 'home',
+		label: 'navbar.home', to: { name: 'Home' }, icon: 'home',
 		activeWhen: ({ name }) => name === 'Home'
 	},
 	{
-		label: 'pages.stats.label', to: '/stats', icon: 'stats',
+		label: 'navbar.stats', to: '/stats', icon: 'stats',
 		activeWhen: ({ path }) => path.startsWith('/stats')
 	},
 	{
-		label: 'pages.settings.label', to: { name: 'Settings' }, icon: 'settings',
+		label: 'navbar.settings', to: { name: 'Settings' }, icon: 'settings',
 		activeWhen: ({ name }) => name === 'Settings'
 	},
 ]
@@ -63,7 +63,7 @@ const menuItems = computed(() => {
 	const items = [...baseMenuItems];
 	if (showToolsMenu.value) {
 		items.push({
-			label: 'pages.tools.label', to: '/tools', icon: 'tools',
+			label: 'navbar.tools', to: '/tools', icon: 'tools',
 			activeWhen: ({ path }) => path.startsWith('/tools')
 		});
 	}

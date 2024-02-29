@@ -45,7 +45,7 @@
 										v-for="opt in SUPPORTED_LOCALES"
 										:value="opt"
 										:key="opt"
-									>{{opt}}</option>
+									>{{localeSettings[opt]}}</option>
 								</select>
 							</div>
 					</div>
@@ -140,7 +140,7 @@
 
 <script setup lang="ts">
 import { useThemePreferences } from '@/composables/use-theme-preferences';
-import { SUPPORTED_LOCALES } from '@/i18n/index.js';
+import { SUPPORTED_LOCALES, localeSettings } from '@/i18n/index.js';
 import { useDebugMode } from '@/stores/composables/useDebugMode';
 import { CheckButtonOption, rulerType } from '@/stores/settings/options';
 import { useSettingsStore } from '@/stores/settings/store';

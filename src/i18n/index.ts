@@ -3,6 +3,10 @@ import { messages } from './messages.js';
 
 export const SUPPORTED_LOCALES = ['en', 'nl'] as const;
 export type SupportedLocale = typeof SUPPORTED_LOCALES[number];
+export const localeSettings: Record<SupportedLocale, string> = {
+	en: 'English',
+	nl: 'Nederlands'
+};
 
 export function setupI18n(options: { locale: SupportedLocale } = { locale: 'nl' }) {
 	const i18n = createI18n({
