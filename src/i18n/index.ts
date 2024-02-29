@@ -1,8 +1,11 @@
-import { createI18n, type I18n } from 'vue-i18n';
+import { createI18n } from 'vue-i18n';
+import router from '@/router/index.js';
 import messages from '@intlify/unplugin-vue-i18n/messages';
 // See vite.config.ts; js/ts locale files are not includes in the combined message import from above, so import those separately and merge them
 import enjs from '@/locales/en.js';
 import nljs from '@/locales/nl.js';
+import type { PiniaPlugin } from 'pinia';
+import { markRaw, watch } from 'vue';
 
 export const SUPPORTED_LOCALES = ['en', 'nl'] as const;
 export type SupportedLocale = typeof SUPPORTED_LOCALES[number];
@@ -11,38 +14,45 @@ export const localeSettings: Record<SupportedLocale, string> = {
 	nl: 'Nederlands'
 };
 
-console.log({ messages, enjs, nljs });
+const mergedMessages = {
+	en: {
+		...enjs,
+		...(messages as Record<string, any>).en
+	},
+	nl: {
+		...nljs,
+		...(messages as Record<string, any>).nl
+	}
+};
 
-export function setupI18n(options: { locale: SupportedLocale } = { locale: 'nl' }) {
-	const i18n = createI18n({
-		...options,
-		legacy: false,
-		fallbackLocale: 'en',
-		availableLocales: SUPPORTED_LOCALES,
-		// TODO: lazy load locale messages
-		messages: {
-			en: {
-				...enjs,
-				...(messages as Record<string, any>).en
-			},
-			nl: {
-				...nljs,
-				...(messages as Record<string, any>).nl
-			}
-		},
-	})
-	setI18nLanguage(i18n, options.locale)
-	return i18n;
-}
+const i18n = createI18n({
+	// TODO: get default from localStorage, or browser settings
+	locale: 'nl' as const,
+	legacy: false,
+	fallbackLocale: 'en' as const,
+	availableLocales: SUPPORTED_LOCALES,
+	// TODO: lazy load locales
+	messages: mergedMessages
+})
+export type AppI18n = typeof i18n;
 
-export function setI18nLanguage(i18n: I18n<any, any, any, SupportedLocale, false>, locale: SupportedLocale | string) {
+function setI18nLanguage(locale: SupportedLocale) {
 	i18n.global.locale.value = locale;
-	/**
-	 * NOTE:
-	 * If you need to specify the language setting for headers, such as the `fetch` API, set it here.
-	 * The following is an example for axios.
-	 *
-	 * axios.defaults.headers.common['Accept-Language'] = locale
-	 */
 	document.querySelector('html')!.setAttribute('lang', locale)
 }
+
+router.isReady().then(() => {
+	document.querySelector('html')!.setAttribute('lang', i18n.global.locale.value);
+})
+
+export const i18nPiniaPropertyPlugin: PiniaPlugin = ({ store }) => {
+	store.i18n = markRaw(i18n.global);
+	if (store.$id === 'settings') {
+		watch(() => store.language, (newLang) => {
+			console.log({ newLang });
+			setI18nLanguage(newLang as unknown as SupportedLocale);
+		}, { immediate: true })
+	}
+}
+
+export { i18n, setI18nLanguage }

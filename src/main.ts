@@ -1,11 +1,11 @@
 import './assets/fonts.css';
 import './assets/tailwind.css';
 
-import { createApp, watch, markRaw } from 'vue';
+import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import App from './App.vue';
 import router from './router';
-import { setupI18n, setI18nLanguage, type SupportedLocale } from './i18n/index.js';
+import { i18n, i18nPiniaPropertyPlugin } from './i18n/index.js';
 
 import { registerSW } from 'virtual:pwa-register';
 
@@ -20,23 +20,8 @@ const SW_UPDATE_INTERVAL_MS = 60 * 60 * 1000;
 })
 
 const app = createApp(App);
-const i18n = setupI18n();
 const pinia = createPinia();
-pinia.use(({ store }) => {
-	store.i18n = markRaw(i18n.global);
-	if (store.$id === 'settings') {
-		watch(() => store.language, (newLang) => {
-			console.log({ newLang });
-			setI18nLanguage(i18n, newLang as unknown as SupportedLocale);
-		}, { immediate: true })
-	}
-})
-
-declare module 'pinia' {
-	export interface PiniaCustomProperties {
-		i18n: typeof i18n['global'];
-	}
-}
+pinia.use(i18nPiniaPropertyPlugin);
 
 app.use(i18n);
 app.use(router);
