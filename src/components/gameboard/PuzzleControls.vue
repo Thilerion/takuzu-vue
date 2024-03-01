@@ -2,7 +2,7 @@
 	<div class="puzzle-controls" :class="{'paused': paused}">
 		<div class="control-btns">
 
-			<div class="flex flex-row items-center justify-center mt-auto w-full space-x-2 px-6 max-w-screen-sm mx-auto">
+			<div class="grid grid-flow-col mt-auto w-full gap-x-2 px-6 max-w-screen-sm mx-auto">
 			<IconBtnText
 				@click="$emit('undo')"
 				:disabled="!canUndo || paused"
@@ -10,7 +10,7 @@
 				icon="md-undo"
 				vertical
 			>
-				<template v-slot:default><span class="text-xs">Undo</span></template>
+				<template v-slot:default><span class="text-xs whitespace-normal">{{ $t('PlayPuzzle.controls.undo') }}</span></template>
 				<template v-slot:icon>
 					<icon-ic-baseline-undo/>
 				</template>
@@ -23,7 +23,7 @@
 				vertical
 				:disabled="!canUndo || paused"
 			>
-				<template v-slot:default><span class="text-xs">Restart</span></template>
+				<template v-slot:default><span class="text-xs">{{ $t('PlayPuzzle.controls.restart') }}</span></template>
 				<template v-slot:icon>
 					<icon-ic-baseline-replay/>
 				</template>
@@ -37,7 +37,7 @@
 				v-if="checkButtonEnabled"
 				:disabled="paused"
 			>
-				<template v-slot:default><span class="text-xs">Check</span></template>
+				<template v-slot:default><span class="text-xs">{{ $t('PlayPuzzle.controls.check') }}</span></template>
 				<template v-slot:icon>
 					<icon-ic-baseline-done/>
 				</template>
@@ -50,7 +50,7 @@
 				@click="$emit('get-hint')"
 				:disabled="paused"
 			>
-				<template v-slot:default><span class="text-xs">Hint</span></template>
+				<template v-slot:default><span class="text-xs">{{ $t('PlayPuzzle.controls.hint') }}</span></template>
 				<template v-slot:icon>
 					<icon-his-light-bulb/>
 				</template>
@@ -101,5 +101,8 @@ const checkButtonEnabled = computed(() => settingsStore.checkButton !== 'disable
 
 .control-btns button {
 	@apply text-xs flex-auto;
+}
+.control-btns > .grid {
+	grid-auto-columns: 1fr;
 }
 </style>

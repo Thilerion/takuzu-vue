@@ -5,16 +5,23 @@
 	>
 		<div
 			class="difficulty text-left"
-		>{{difficulty}}* {{difficultyLabel}}</div>
+		>{{difficulty}}* {{ $t(`Game.difficulty.${difficultyLabel}`, difficultyLabel) }}</div>
 
 		<PuzzleInfoTimer
 			:puzzle-paused="puzzlePaused"
 			v-if="showTimer"
 		/>
 
-		<div
+		<i18n-t
+			keypath="PlayPuzzle.progress-percentage"
+			tag="div"
+			scope="global"
 			class="progress text-right whitespace-nowrap"
-		>Progress:<div class="progress-percentage">{{progressPercentage}}</div>%</div>
+		>
+			<template #p>
+				<div class="progress-percentage">{{progressPercentage}}</div>
+			</template>
+		</i18n-t>
 
 	</div>
 </template>

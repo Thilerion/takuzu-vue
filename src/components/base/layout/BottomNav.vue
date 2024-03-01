@@ -49,15 +49,15 @@ const { t } = useI18n();
 
 const baseMenuItems = computed((): Item[] => [
 	{
-		label: t('navbar.home'), to: { name: 'Home' }, icon: 'home',
+		label: t('routeButton.home'), to: { name: 'Home' }, icon: 'home',
 		activeWhen: ({ name }) => name === 'Home'
 	},
 	{
-		label: t('navbar.stats'), to: '/stats', icon: 'stats',
+		label: t('routeButton.stats'), to: '/stats', icon: 'stats',
 		activeWhen: ({ path }) => path.startsWith('/stats')
 	},
 	{
-		label: t('navbar.settings'), to: { name: 'Settings' }, icon: 'settings',
+		label: t('routeButton.settings'), to: { name: 'Settings' }, icon: 'settings',
 		activeWhen: ({ name }) => name === 'Settings'
 	},
 ]);
@@ -66,7 +66,7 @@ const menuItems = computed((): Item[] => {
 	const items = [...baseMenuItems.value];
 	if (showToolsMenu.value) {
 		items.push({
-			label: t('navbar.tools'), to: '/tools', icon: 'tools',
+			label: t('routeButton.tools'), to: '/tools', icon: 'tools',
 			activeWhen: ({ path }) => path.startsWith('/tools')
 		});
 	}

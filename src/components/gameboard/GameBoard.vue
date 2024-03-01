@@ -31,7 +31,7 @@
 						class="h-5/6 flex-auto mx-auto flex justify-center pause-icon-wrapper place-items-center py-2 pointer-events-auto"
 						@click="resumeByUser"
 					><icon-grommet-icons-pause-fill class="opacity-80" /></button>
-					<div class="flex-auto pause-label-wrapper uppercase mb-2 py-2">Paused</div>
+					<div class="flex-auto pause-label-wrapper uppercase mb-2 py-2">{{ $t('PlayPuzzle.paused') }}</div>
 				</div>
 			</div>
 		</transition>

@@ -1,5 +1,5 @@
 {
-    "navbar": {
+    "routeButton": {
         "home": "Home",
         "stats": "Stats",
         "settings": "Settings",
@@ -52,6 +52,25 @@
             "some-puzzle-sizes-are-disabled-for-harder-puzzles": "Note: some puzzle sizes are disabled for harder puzzles.",
             "loading-creating-game": "Creating game...",
             "loading-loading-replay": "Loading replay..."
+        }
+    },
+    "PlayPuzzle": {
+        "controls": {
+            "undo": "Undo",
+            "restart": "Restart",
+            "check": "Check",
+            "hint": "Hint"
+        },
+        "paused": "Paused",
+        "progress-percentage": "Progress:{p}%",
+        "dd": {
+            "set-bookmark": "Set bookmark",
+            "delete-bookmark": "Delete bookmark",
+            "copy-board-string": "Copy board string",
+            "solve-puzzle": "Solve puzzle",
+            "solve-instantly": "Solve instantly",
+            "increase-time-by-n-s": "Increase time by {n}s",
+            "solve-all-triples": "Solve all triples"
         }
     }
 }

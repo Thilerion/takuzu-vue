@@ -1,5 +1,5 @@
 {
-    "navbar": {
+    "routeButton": {
         "home": "Home",
         "stats": "Stats",
         "settings": "Instellingen",
@@ -52,6 +52,25 @@
             "help": "Help",
             "new-game": "Nieuw Spel",
             "tutorial": "Tutorial"
+        }
+    },
+    "PlayPuzzle": {
+        "controls": {
+            "undo": "Ongedaan maken",
+            "restart": "Herstart",
+            "check": "Controleer",
+            "hint": "Hint"
+        },
+        "paused": "Gepauzeerd",
+        "progress-percentage": "Voortgang:{p}%",
+        "dd": {
+            "set-bookmark": "Maak bladwijzer",
+            "delete-bookmark": "Verwijder bladwijzer",
+            "copy-board-string": "Kopieer puzzel 'BoardString'",
+            "solve-puzzle": "Puzzel oplossen",
+            "solve-instantly": "Direct oplossen",
+            "increase-time-by-n-s": "Tijd verhogen met {n}s",
+            "solve-all-triples": "Los alle 'Triples' op"
         }
     }
 }

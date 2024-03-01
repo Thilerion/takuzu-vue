@@ -53,6 +53,6 @@ const props = withDefaults(
 	@apply flex flex-col justify-start;
 }
 .icon-btn.vertical > .btn-label {
-	@apply mr-0 mt-1;
+	@apply mr-0 my-auto pt-0.5;
 }
 </style>

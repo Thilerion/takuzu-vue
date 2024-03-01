@@ -8,17 +8,17 @@
 		<template #content>
 			<BaseDropdownItem disabled>
 				<icon-ic-outline-bookmark-add class="opacity-80 text-base" />
-				<span class="ml-3 mt-px">Set bookmark</span>
+				<span class="ml-3 mt-px">{{ $t('PlayPuzzle.dd.set-bookmark') }}</span>
 			</BaseDropdownItem>
 			<BaseDropdownItem disabled>
 				<icon-ic-outline-bookmark-remove class="opacity-80 text-base" />
-				<span class="ml-3 mt-px">Delete bookmark</span>
+				<span class="ml-3 mt-px">{{ $t('PlayPuzzle.dd.delete-bookmark') }}</span>
 			</BaseDropdownItem>
 			<BaseDropdownDivider />
 			<BaseDropdownItem>
 				<label class="flex items-center">
 					<input type="checkbox" v-model="showTimer">
-					<span class="ml-2">Show timer</span>
+					<span class="ml-2">{{ $t('Settings.show-timer') }}</span>
 				</label>
 			</BaseDropdownItem>
 			<BaseDropdownDivider />
@@ -26,27 +26,27 @@
 			<template v-if="debugModeEnabled">
 				<BaseDropdownItem @click="copyPuzzleString">
 					<icon-heroicons-outline-clipboard-copy class="opacity-80 text-base" />
-					<span class="ml-3 mt-px">Copy board string</span>
+					<span class="ml-3 mt-px">{{ $t('PlayPuzzle.dd.copy-board-string') }}</span>
 					<span v-if="copyError" class="ml-2 text-xs text-red-700 mt-px">{{ copyError }}</span>
 				</BaseDropdownItem>
 				<BaseDropdownItem @click="solvePuzzle">
-					<span class="ml-7 mt-px">Solve puzzle</span>
+					<span class="ml-7 mt-px">{{ $t('PlayPuzzle.dd.solve-puzzle') }}</span>
 				</BaseDropdownItem>
 				<BaseDropdownItem @click="solveInstantly">
-					<span class="ml-7 mt-px">Solve instantly</span>
+					<span class="ml-7 mt-px">{{ $t('PlayPuzzle.dd.solve-instantly') }}</span>
 				</BaseDropdownItem>
 				<BaseDropdownItem @click="increasePuzzleTime">
-					<span class="ml-7 mt-px">Increase time by 10s</span>
+					<span class="ml-7 mt-px">{{ $t('PlayPuzzle.dd.increase-time-by-n-s', { n: 10 }) }}</span>
 				</BaseDropdownItem>
 				<BaseDropdownItem @click="solveTrios">
-					<span class="ml-7 mt-px">Solve all trios</span>
+					<span class="ml-7 mt-px">{{ $t('PlayPuzzle.dd.solve-all-triples') }}</span>
 				</BaseDropdownItem>
 				<BaseDropdownDivider />
 			</template>
 
 			<BaseDropdownItem @click="goToSettings">
 				<icon-ic-baseline-settings class="opacity-80" />
-				<span class="ml-3 mt-px">Settings</span>
+				<span class="ml-3 mt-px">{{ $t('routeButton.settings') }}</span>
 			</BaseDropdownItem>
 		</template>
 	</BaseDropdown>
