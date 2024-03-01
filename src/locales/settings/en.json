@@ -5,6 +5,13 @@
             "vibrate-when-toggling-cells": "Vibrate when toggling cells",
             "vibration-strength": "Vibration strength"
         },
+        "appThemeMode": {
+            "theme": "Theme",
+            "light": "Light",
+            "dark": "Dark",
+            "auto": "Auto",
+            "autoDescription": "Automatically change theme based on browser/system setting (currently: @.lower:{currentTheme})"
+        },
         "themes": {
             "classic": "Classic",
             "blue-red": "Colored Tiles",

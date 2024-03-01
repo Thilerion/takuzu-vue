@@ -5,6 +5,13 @@
             "vibrate-when-toggling-cells": "Trillen bij het tikken op een cel",
             "vibration-strength": "Trilsterkte"
         },
+        "appThemeMode": {
+            "theme": "Thema",
+            "light": "Licht",
+            "dark": "Donker",
+            "auto": "Automatisch",
+            "autoDescription": "Wijzig thema automatisch op basis van browser-/systeeminstelling (momenteel: @.lower:{currentTheme})"
+        },
         "themes": {
             "classic": "Klassiek",
             "blue-red": "Gekleurde Tegels",

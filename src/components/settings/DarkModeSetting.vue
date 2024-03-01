@@ -1,23 +1,23 @@
 <template>
 	<div>
-		<h2 class="setting-heading">{{ t('theme') }}</h2>
+		<h2 class="setting-heading">{{ t('Settings.appThemeMode.theme') }}</h2>
 		<div class="mt-2">
 			<label class="flex items-center">
 				<input type="radio" name="radio-theme" v-model="selectedValue" value="light">
-				<span class="ml-2">{{ t('light') }}</span>
+				<span class="ml-2">{{ t('Settings.appThemeMode.light') }}</span>
 			</label>
 		</div>
 		<div class="mt-2">
 			<label class="flex items-center">
 				<input type="radio" name="radio-theme" v-model="selectedValue" value="dark">
-				<span class="ml-2">{{ t('dark') }}</span>
+				<span class="ml-2">{{ t('Settings.appThemeMode.dark') }}</span>
 			</label>
 		</div>
 		<div class="mt-2">
 			<label class="grid radio-auto-grid">
 				<input class="col-start-1 row-start-1 mr-2" type="radio" name="radio-theme" v-model="selectedValue" value="auto">
-				<span class="col-start-2 row-start-1 self-center">{{ t('auto') }}</span>
-				<span class="col-start-2 row-start-2 self-center text-xs opacity-60">{{ t('autoDescription', { currentTheme: currentBrowserPreference.toLowerCase() }) }}</span>
+				<span class="col-start-2 row-start-1 self-center">{{ t('Settings.appThemeMode.auto') }}</span>
+				<span class="col-start-2 row-start-2 self-center text-xs opacity-60">{{ t('Settings.appThemeMode.autoDescription', { currentTheme: currentBrowserPreference.toLowerCase() }) }}</span>
 			</label>
 		</div>
 	</div>
@@ -56,25 +56,3 @@ input[type="radio"] {
 	grid-template-rows: auto auto;
 }
 </style>
-
-<i18n locale="en">
-{
-	"language": "Language",
-	"theme": "Theme",
-	"light": "Light",
-	"dark": "Dark",
-	"auto": "Auto",
-	"autoDescription": "Automatically change theme based on browser/system setting (currently: @.lower:{currentTheme})"
-}
-</i18n>
-
-<i18n locale="nl">
-{
-	"language": "Taal",
-	"theme": "Thema",
-	"light": "Licht",
-	"dark": "Donker",
-	"auto": "Automatisch",
-	"autoDescription": "Wijzig thema automatisch op basis van browser-/systeeminstelling (momenteel: @.lower:{currentTheme})"
-}
-</i18n>
