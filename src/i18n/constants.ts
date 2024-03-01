@@ -4,3 +4,4 @@ export const localeSettings: Record<SupportedLocale, string> = {
 	en: 'English',
 	nl: 'Nederlands'
 };
+export const DEFAULT_FALLBACK_LOCALE = 'en' satisfies SupportedLocale;

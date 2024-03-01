@@ -1,4 +1,6 @@
+import { guessUserLocale } from "@/i18n/helpers.js";
 import type { SettingsState } from "./types";
+import { DEFAULT_FALLBACK_LOCALE } from "@/i18n/constants.js";
 
 export const SETTINGS_STORAGE_KEY = 'takuzu-settings';
 
@@ -8,7 +10,7 @@ const DEFAULT_SETTINGS: Readonly<SettingsState> = Object.freeze({
 	showTimer: true,
 
 	cellTheme: 'classic',
-	language: 'en',
+	language: guessUserLocale() ?? DEFAULT_FALLBACK_LOCALE,
 
 	enableVibration: true,
 	vibrationStrength: 32,

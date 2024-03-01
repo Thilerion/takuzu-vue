@@ -6,7 +6,8 @@ import enjs from '@/locales/en.js';
 import nljs from '@/locales/nl.js';
 import type { PiniaPlugin } from 'pinia';
 import { markRaw, watch } from 'vue';
-import { SUPPORTED_LOCALES, type SupportedLocale } from './constants.js';
+import { DEFAULT_FALLBACK_LOCALE, SUPPORTED_LOCALES, type SupportedLocale } from './constants.js';
+import { getInitialLocale } from './helpers.js';
 
 const mergedMessages = {
 	en: {
@@ -21,9 +22,9 @@ const mergedMessages = {
 
 const i18n = createI18n({
 	// TODO: get default from localStorage, or browser settings
-	locale: 'nl' as const,
+	locale: getInitialLocale(),
 	legacy: false,
-	fallbackLocale: 'en' as const,
+	fallbackLocale: DEFAULT_FALLBACK_LOCALE,
 	availableLocales: SUPPORTED_LOCALES,
 	// TODO: lazy load locales
 	messages: mergedMessages
@@ -45,7 +46,7 @@ export const i18nPiniaPropertyPlugin: PiniaPlugin = ({ store }) => {
 		watch(() => store.language, (newLang) => {
 			console.log({ newLang });
 			setI18nLanguage(newLang as unknown as SupportedLocale);
-		}, { immediate: true })
+		}, /* { immediate: true } don't do this, as it overwrites the initialLocale */)
 	}
 }
 
