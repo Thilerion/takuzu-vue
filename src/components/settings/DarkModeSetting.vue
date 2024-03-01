@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<h2 class="setting-heading">Theme</h2>
+		<h2 class="setting-heading">{{ t('theme') }}</h2>
 		<div class="mt-2">
 			<label class="flex items-center">
 				<input type="radio" name="radio-theme" v-model="selectedValue" value="light">
@@ -75,6 +75,6 @@ input[type="radio"] {
 	"light": "Licht",
 	"dark": "Donker",
 	"auto": "Automatisch",
-	"autoDescription": "Thema automatisch wijzigen op basis van browser-/systeeminstelling (huidig systeemthema: @.lower:{currentTheme})"
+	"autoDescription": "Wijzig thema automatisch op basis van browser-/systeeminstelling (momenteel: @.lower:{currentTheme})"
 }
 </i18n>

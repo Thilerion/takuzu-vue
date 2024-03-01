@@ -6,17 +6,17 @@
 			:class="{ selected: cellTheme === theme }"
 			class="flex flex-1 items-center cell-theme-box"
 		>
-		<CellThemeSettingExamples
-			:theme="theme"
-		/>
-		<input
-			class="radio"
-			type="radio"
-			name="radio-cell-theme"
-			v-model="cellTheme"
-			:value="theme"
-		>
-		<span class="label">{{ cellThemeData[theme].label }}</span>
+			<CellThemeSettingExamples
+				:theme="theme"
+			/>
+			<input
+				class="radio"
+				type="radio"
+				name="radio-cell-theme"
+				v-model="cellTheme"
+				:value="theme"
+			>
+			<span class="label px-1">{{ cellThemeData[theme].label.value }}</span>
 		</label>
 	</div>
 </template>
@@ -25,18 +25,20 @@
 import type { CellTheme } from '@/stores/settings/types.js';
 import { computed } from 'vue';
 import { initGlobalCellThemeProvider } from '../gameboard/composables/useCellThemeProvider.js';
+import { useI18n } from 'vue-i18n';
 
 initGlobalCellThemeProvider();
+const { t } = useI18n();
 
 const cellThemeData = {
 	'blue-red': {
-		label: 'Colored Tiles',
+		label: computed(() => t('Settings.themes.blue-red')),
 	},
 	'classic': {
-		label: 'Classic',
+		label: computed(() => t('Settings.themes.classic')),
 	},
 	'tictactoe': {
-		label: 'Tic-tac-toe'
+		label: computed(() => t('Settings.themes.tic-tac-toe'))
 	}
 }
 const orderedCellThemes: CellTheme[] = ['classic', 'tictactoe', 'blue-red'];

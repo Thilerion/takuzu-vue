@@ -1,8 +1,17 @@
 {
-	"navbar": {
-		"home": "Home",
-		"stats": "Stats",
-		"settings": "Settings",
-		"tools": "Tools"
-	}
+    "navbar": {
+        "home": "Home",
+        "stats": "Stats",
+        "settings": "Settings",
+        "tools": "Tools"
+    },
+    "test": "Test",
+    "disabled": "Disabled",
+    "Game": {
+        "mistake": {
+            "rule-violation": "Rule violation | Rule violations",
+            "incorrect-value": "Incorrect value | Incorrect values"
+        }
+    },
+    "default": "default"
 }

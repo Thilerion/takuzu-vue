@@ -7,7 +7,7 @@
 			:hide-back="hideBack"
 			back-options="Home"
 		>
-			<template #default>{{t('title')}}</template>
+			<template #default>{{ $t('Settings.title') }}</template>
 			<template #right>
 				<BaseDropdown
 					align-right
@@ -17,7 +17,7 @@
 						<IconBtn @click="toggle"><icon-ic-baseline-more-vert /></IconBtn>
 					</template>
 					<template #content="{ close }">
-						<BaseDropdownItem @click="resetSettingsToDefaults(close)">Restore default settings</BaseDropdownItem>
+						<BaseDropdownItem @click="resetSettingsToDefaults(close)">{{ $t('Settings.restore-default-settings') }}</BaseDropdownItem>
 					</template>
 				</BaseDropdown>
 			</template>
@@ -28,45 +28,53 @@
 				<BasicLinkList
 					class="px-4 pb-2 pt-4 flex flex-col"
 				>
-					<div class="px-2 pb-4">
+				<div class="px-2 pb-4">
+						<h3>{{ $t('Settings.language') }}</h3>
+						<div class="mt-2">
+							<select class="block w-full mt-1" v-model="language">
+								<option
+									v-for="opt in SUPPORTED_LOCALES"
+									:value="opt"
+									:key="opt"
+								>{{localeSettings[opt]}}</option>
+							</select>
+						</div>
+					</div>
+					<div class="px-2 pb-4 pt-4">
 						<DarkModeSetting />
 					</div>
-					<div class="px-2 pt-4 pb-6">
-						<h2>Cell theme</h2>
+					<div class="px-2 pt-4 pb-4">
+						<h2>{{ $t('Settings.themes.cell-theme') }}</h2>
 						<div class="px-0">
 							<CellThemeSetting v-model="cellTheme" />
 						</div>
-					</div>
-					<div class="px-2 pt-4 pb-4">
-						<h3>Language</h3>
-							<div class="mt-2">
-								<select class="block w-full mt-1" v-model="language">
-									<option
-										v-for="opt in SUPPORTED_LOCALES"
-										:value="opt"
-										:key="opt"
-									>{{localeSettings[opt]}}</option>
-								</select>
-							</div>
 					</div>
 				</BasicLinkList>
 			</div>
 
 			<div>
-				<BasicListHeader>Gameplay</BasicListHeader>
+				<BasicListHeader>{{ $t('Settings.gameplay') }}</BasicListHeader>
 				<BasicLinkList class="px-4 pb-2 pt-4 flex flex-col">
 					<div class="px-2 pb-4">
-						<h3>Input mode</h3>
+						<h3>{{ $t('Settings.input-mode.label') }}</h3>
+						<div class="text-xs text-gray-500 dark:text-slate-400">{{ $t('Settings.input-mode.description') }}</div>
 						<div class="mt-2">
 							<label class="flex items-center">
 								<input type="radio" name="radio-toggle-mode" v-model="toggleMode" value="0">
-								<span class="ml-2">Toggle <span class="text-cell-blues">0</span> first</span><span class="text-xs opacity-50 ml-2">(default)</span>
+								<i18n-t keypath="Settings.input-mode.toggle-symbol-first" tag="span" class="ml-2" scope="global">
+									<template #symbol><span class="text-cell-blue-dark">0</span>
+								</template>
+								</i18n-t>
+								<span class="text-xs opacity-50 ml-2">({{ $t('default') }})</span>
 							</label>
 						</div>
 						<div class="mt-2">
 							<label class="flex items-center">
-								<input type="radio" name="radio-toggle-mode" v-model="toggleMode" value="1">
-								<span class="ml-2">Toggle <span class="text-cell-reds">1</span> first</span>
+								<input type="radio" name="radio-toggle-mode" v-model="toggleMode" value="0">
+								<i18n-t keypath="Settings.input-mode.toggle-symbol-first" tag="span" class="ml-2" scope="global">
+									<template #symbol><span class="text-cell-red-dark">1</span>
+								</template>
+								</i18n-t>
 							</label>
 						</div>
 					</div>
@@ -76,7 +84,7 @@
 							id="wakeLockToggle"
 							small
 							v-model="enableWakeLock"
-						>Keep screen active while playing</InputToggle>
+						>{{ $t('Settings.wake-lock') }}</InputToggle>
 					</div>
 					<div class="px-2 flex items-center h-14">
 						<InputToggle
@@ -84,7 +92,7 @@
 							small
 							id="timerToggle"
 							v-model="showTimer"
-						>Show timer</InputToggle>
+						>{{ $t('Settings.show-timer') }}</InputToggle>
 					</div>
 					<VibrationSetting
 						class="px-2 pt-4"
@@ -93,20 +101,20 @@
 			</div>
 
 			<div>
-				<BasicListHeader>Puzzle assistance</BasicListHeader>
+				<BasicListHeader>{{ $t('Settings.assistance.heading-puzzle-assistance') }}</BasicListHeader>
 				<BasicLinkList class="divide-none pb-6 pt-4 flex flex-col gap-6">
 						<div class="px-2">
-							<h3>Check button action</h3>
-							<div class="text-xs text-gray-500 dark:text-slate-400">Control whether a "check" button is displayed, and if only rule violations, or all incorrect values are highlighted</div>
+							<h3>{{ $t('Settings.assistance.check-button-action') }}</h3>
+							<div class="text-xs text-gray-500 dark:text-slate-400">{{ $t('Settings.assistance.check-button-description') }}</div>
 							<select class="block w-full mt-2" v-model="checkButton">
-								<option :value="CheckButtonOption.DISABLED">Disabled</option>
-								<option :value="CheckButtonOption.RULE_VIOLATIONS">Rule violations</option>
-								<option :value="CheckButtonOption.INCORRECT_VALUES">Incorrect values</option>
+								<option :value="CheckButtonOption.DISABLED">{{ $t('disabled') }}</option>
+								<option :value="CheckButtonOption.RULE_VIOLATIONS">{{ $t('Game.mistake.rule-violation', 2) }}</option>
+								<option :value="CheckButtonOption.INCORRECT_VALUES">{{ $t('Game.mistake.incorrect-value', 2) }}</option>
 							</select>
 						</div>
 						<div class="px-2">
-							<h3>Board rulers</h3>
-							<div class="text-xs text-gray-500 dark:text-slate-400">Choose the information displayed within the rulers next to the puzzle board, or disable them completely.</div>
+							<h3>{{ $t('Settings.rulers.board-rulers') }}</h3>
+							<div class="text-xs text-gray-500 dark:text-slate-400">{{ $t('Settings.rulers.description-choose-the-information-displayed-within') }}</div>
 							<div class="mt-2">
 								<select class="block w-full mt-1" v-model="showLineInfo">
 									<option
@@ -125,13 +133,13 @@
 					@increment-debug-mode="toggleDebugMode(true, { immediate: false })"
 					:debug-mode="isDebugModeEnabled"
 				/>
-				<BasicLinkListItem v-if="isDebugModeEnabled"><router-link to="/debug-options">Developer options</router-link></BasicLinkListItem>
+				<BasicLinkListItem v-if="isDebugModeEnabled"><router-link to="/debug-options">{{ $t('Settings.dev.developer-options') }}</router-link></BasicLinkListItem>
 				<BasicLinkListItem
 					v-if="isDebugModeEnabled"
 				>
 					<button
 						@click="toggleDebugMode(false, { immediate: true })"
-					>Disable developer mode</button>
+					>{{ $t('Settings.dev.disable-developer-mode') }}</button>
 				</BasicLinkListItem>
 			</BasicLinkList>
 		</div>
@@ -145,7 +153,7 @@ import { useDebugMode } from '@/stores/composables/useDebugMode';
 import { CheckButtonOption, rulerType } from '@/stores/settings/options';
 import { useSettingsStore } from '@/stores/settings/store';
 import { storeToRefs } from 'pinia';
-import { onBeforeUnmount } from 'vue';
+import { computed, onBeforeUnmount } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 defineProps<{
@@ -160,6 +168,8 @@ const { cellTheme, checkButton, toggleMode, showLineInfo, enableWakeLock, showTi
 const { setBaseThemeDefault: resetBaseThemeToDefault } = useThemePreferences();
 
 let resetToDefaultsTimeout: null | number = null;
+
+const { t } = useI18n();
 
 const resetSettingsToDefaults = (closeCb: () => void) => {
 	settingsStore.resetToDefaults();
@@ -177,27 +187,15 @@ onBeforeUnmount(() => {
 	}
 })
 
-const lineInfoOptions = [
-	{ label: 'Disabled', value: rulerType.NONE },
-	{ label: 'Line coordinates', value: rulerType.COORDS},
-	{ label: 'Remaining values in line', value: rulerType.COUNT_REMAINING},
-	{ label: 'Current values in line', value: rulerType.COUNT_CURRENT}
-]
+const lineInfoOptions = computed(() => [
+	{ label: t('disabled'), value: rulerType.NONE },
+	{ label: t('Settings.rulers.line-coordinates'), value: rulerType.COORDS},
+	{ label: t('Settings.rulers.remaining-values-in-line'), value: rulerType.COUNT_REMAINING},
+	{ label: t('Settings.rulers.current-values-in-line'), value: rulerType.COUNT_CURRENT}
+])
 
-const { t } = useI18n();
 </script>
 
 <style scoped>
 
 </style>
-
-<i18n>
-{
-	"en": {
-		"title": "Settings",
-	},
-	"nl": {
-		"title": "Instellingen"
-	}
-}
-</i18n>

@@ -1,0 +1,46 @@
+{
+    "Settings": {
+        "vibration": {
+            "unsupported": "Je browser/systeem ondersteunt geen haptische feedback/vibratie in webapps.",
+            "vibrate-when-toggling-cells": "Trillen bij het tikken op een cel",
+            "vibration-strength": "Trilsterkte"
+        },
+        "themes": {
+            "classic": "Klassiek",
+            "blue-red": "Gekleurde Tegels",
+            "tic-tac-toe": "Boter-kaas-en-eieren",
+            "cell-theme": "Celthema"
+        },
+        "version": {
+            "app": "App versie",
+            "previous": "Vorige versie"
+        },
+        "title": "Instellingen",
+        "restore-default-settings": "Standaardinstellingen herstellen",
+        "language": "Taal",
+        "gameplay": "Spel",
+        "input-mode": {
+            "label": "Invoermodus",
+            "description": "Selecteer in welke volgorde de puzzelsymbolen worden geselecteerd bij het tikken op een cel",
+            "toggle-symbol-first": "Eerst naar {symbol} wisselen"
+        },
+        "dev": {
+            "developer-options": "Ontwikkelaarsopties",
+            "disable-developer-mode": "Ontwikkelaarsmodus uitschakelen"
+        },
+        "rulers": {
+            "line-coordinates": "Lijncoördinaten",
+            "remaining-values-in-line": "Resterende waarden in lijn",
+            "current-values-in-line": "Huidige waarden in lijn",
+            "board-rulers": "Bordlinialen",
+            "description-choose-the-information-displayed-within": "Kies de informatie die wordt weergegeven binnen de linialen naast het puzzelbord, of schakel ze volledig uit."
+        },
+        "assistance": {
+            "check-button-description": "Beheer of een 'controle' knop wordt getoond, en of alleen regelovertredingen of alle onjuiste waarden worden gemarkeerd",
+            "check-button-action": "Functie van controleknop",
+            "heading-puzzle-assistance": "Puzzel hulpmiddelen"
+        },
+        "show-timer": "Timer weergeven",
+        "wake-lock": "Scherm aanhouden tijdens het spelen"
+    }
+}

@@ -1,8 +1,17 @@
 {
-	"navbar": {
-		"home": "Home",
-		"stats": "Stats",
-		"settings": "Instellingen",
-		"tools": "Gereedschap"
-	}
+    "navbar": {
+        "home": "Home",
+        "stats": "Stats",
+        "settings": "Instellingen",
+        "tools": "Gereedschap"
+    },
+    "disabled": "Uitgeschakeld",
+    "Game": {
+        "mistake": {
+            "rule-violation": "Regelovertreding | Regelovertredingen",
+            "incorrect-value": "Onjuiste waarde | Onjuiste waarden"
+        }
+    },
+    "test": "Test",
+    "default": "standaard"
 }

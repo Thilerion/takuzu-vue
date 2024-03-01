@@ -1,0 +1,46 @@
+{
+    "Settings": {
+        "vibration": {
+            "unsupported": "Your device does not support haptic feedback in web apps.",
+            "vibrate-when-toggling-cells": "Vibrate when toggling cells",
+            "vibration-strength": "Vibration strength"
+        },
+        "themes": {
+            "classic": "Classic",
+            "blue-red": "Colored Tiles",
+            "tic-tac-toe": "Tic-tac-toe",
+            "cell-theme": "Cell theme"
+        },
+        "version": {
+            "app": "App version",
+            "previous": "Previous version"
+        },
+        "title": "Settings",
+        "restore-default-settings": "Restore default settings",
+        "language": "Language",
+        "gameplay": "Gameplay",
+        "input-mode": {
+            "label": "Input mode",
+            "description": "Select the order in which the puzzle symbols are selected when tapping on a cell",
+            "toggle-symbol-first": "Toggle {symbol} first"
+        },
+        "dev": {
+            "developer-options": "Developer options",
+            "disable-developer-mode": "Disable developer mode"
+        },
+        "rulers": {
+            "line-coordinates": "Line coordinates",
+            "remaining-values-in-line": "Remaining values in line",
+            "current-values-in-line": "Current values in line",
+            "board-rulers": "Board rulers",
+            "description-choose-the-information-displayed-within": "Choose the information displayed within the rulers next to the puzzle board, or disable them completely."
+        },
+        "assistance": {
+            "check-button-description": "Control whether a \"check\" button is displayed, and if only rule violations, or all incorrect values are highlighted",
+            "check-button-action": "Check button action",
+            "heading-puzzle-assistance": "Puzzle assistance"
+        },
+        "wake-lock": "Keep screen active while playing",
+        "show-timer": "Show timer"
+    }
+}

@@ -7,14 +7,14 @@
 		>
 			<div
 				class="col-start-1 col-end-2 row-start-1 row-end-2"
-			>App version</div>
+			>{{ $t('Settings.version.app') }}</div>
 
 			<div
 				class="text-ellipsis col-start-2 row-start-1 row-end-2"
 			>{{shownCurAppVersion[0]}}<span class="text-[0.875em] opacity-80 ml-px">+{{shownCurAppVersion[1]}}</span></div>
 
 			<template v-if="shownPrevAppVersion">
-				<div class="text-xs text-gray-800/50 col-start-1 col-end-2 row-start-2">Previous version</div>			
+				<div class="text-xs text-gray-800/50 col-start-1 col-end-2 row-start-2">{{ $t('Settings.version.previous') }}</div>			
 				<div class="text-xs text-gray-800/50 text-ellipsis col-start-2 row-start-2">{{shownPrevAppVersion}}</div>
 			</template>
 		</button>
