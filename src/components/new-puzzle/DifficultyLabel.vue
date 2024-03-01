@@ -5,7 +5,7 @@
 			<StarIcon half v-if="halfStar" key="half" />
 		</div>
 		<div class="label text-lg font-semibold tracking-wide pb-1">
-			{{label}}
+			{{ $t(`Game.difficulty.${label}`, label)}}
 		</div>
 	</div>
 </template>

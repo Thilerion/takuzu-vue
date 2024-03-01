@@ -62,6 +62,7 @@ export const PRESET_BOARD_SIZES = [
 	new BoardPreset(13, 13, 5),
 ]
 
+// translatable with i18n, using these labels as keys, and the label itself as fallback
 export const DIFFICULTY_LABELS = {
 	1: 'Beginner',
 	2: 'Normal',

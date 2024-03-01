@@ -20,7 +20,7 @@
 			@click="navigate"
 			class="text-base uppercase route-btn route-primary"
 			:class="{'btn-primary': !canContinue, 'shadow-md': !canContinue, 'shadow-sm': canContinue }"
-		>New Game</BaseButton></router-link>
+		>{{ $t('Home.buttons.new-game') }}</BaseButton></router-link>
 		</div>
 		
 
@@ -32,7 +32,7 @@
 			><BaseButton
 				@click="navigate"
 				class="route-btn route-secondary flex-1"
-			>Help</BaseButton></router-link>
+			>{{ $t('Home.buttons.help') }}</BaseButton></router-link>
 
 			<router-link
 				v-if="HAS_TUTORIAL_ROUTE"
@@ -42,7 +42,7 @@
 			><BaseButton
 				@click="navigate"
 				class="route-btn route-secondary flex-1"
-			>Tutorial</BaseButton></router-link>
+			>$t('Home.buttons.tutorial')</BaseButton></router-link>
 		</div>
 	</div>
 </template>

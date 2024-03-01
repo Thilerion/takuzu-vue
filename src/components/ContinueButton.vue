@@ -1,8 +1,8 @@
 <template>
 	<BaseButton class="flex flex-col px-2 text-center justify-around items-center w-full continue-btn">
-		<div class="uppercase text-base mt-auto">Continue</div>
+		<div class="uppercase text-base mt-auto">{{ $t('Home.buttons.continue') }}</div>
 		<div class="flex text-xs justify-center gap-4 w-full flex-initial leading-relaxed items-center">
-			<span>{{dimensions}} - {{diffLabel}}</span>
+			<span>{{dimensions}} - {{ $t(`Game.difficulty.${diffLabelTKey}`, diffLabelTKey)}}</span>
 			<div class="flex items-center justify-start"><icon-uil-clock class="inline-block mr-1" />{{time}}</div>
 		</div>
 	</BaseButton>
@@ -23,7 +23,7 @@ export interface Props {
 
 const props = defineProps<Props>();
 
-const diffLabel = computed<string>(() => {
+const diffLabelTKey = computed<string>(() => {
 	return DIFFICULTY_LABELS[props.difficulty];
 })
 const time = computed(() => {

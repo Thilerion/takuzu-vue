@@ -10,8 +10,48 @@
         "mistake": {
             "rule-violation": "Regelovertreding | Regelovertredingen",
             "incorrect-value": "Onjuiste waarde | Onjuiste waarden"
-        }
+        },
+        "difficulty": {
+            "label": "Moeilijkheid",
+            "Beginner": "Beginner",
+            "Very Easy": "Zeer Makkelijk",
+            "Easy": "Makkelijk",
+            "Normal": "Normaal",
+            "Hard": "Moeilijk",
+            "Very Hard": "Zeer Moeilijk",
+            "Extreme": "Extreem"
+        },
+        "board-size": {
+            "label": "Puzzelgrootte",
+            "normal": "Normaal",
+            "tall": "Langwerpig",
+            "odd": "Oneven"
+        },
+        "replay": "replay"
     },
     "test": "Test",
-    "default": "standaard"
+    "default": "standaard",
+    "NewPuzzle": {
+        "title": "Nieuwe Puzzel",
+        "load-save": "Hervat huidige puzzel",
+        "options": {
+            "automatic-replay-mode": "Automatische Replay-modus"
+        },
+        "starting-a-new-puzzle-will-overwrite": "Een nieuwe puzzel starten zal de voortgang in je huidige puzzel overschrijven.",
+        "StartGame": {
+            "start-game": "Start spel",
+            "select-puzzle-size": "Selecteer een puzzelgrootte",
+            "some-puzzle-sizes-are-disabled-for-harder-puzzles": "Opmerking: sommige puzzelgroottes zijn uitgeschakeld voor moeilijkere puzzels.",
+            "loading-creating-game": "Puzzel aan het maken...",
+            "loading-loading-replay": "Puzzel laden..."
+        }
+    },
+    "Home": {
+        "buttons": {
+            "continue": "Hervatten",
+            "help": "Help",
+            "new-game": "Nieuw Spel",
+            "tutorial": "Tutorial"
+        }
+    }
 }
