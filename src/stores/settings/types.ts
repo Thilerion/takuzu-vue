@@ -1,5 +1,5 @@
+import type { SupportedLocale } from "@/i18n/constants.js";
 import type { PuzzleSymbol } from "@/lib/constants";
-import type { SupportedLocale } from "@/i18n/index.js";
 
 export const validVibrationStrengths = [0, 18, 32, 45, 60, 76] as const;
 export type ValidVibrationStrength = typeof validVibrationStrengths[number];

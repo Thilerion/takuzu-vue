@@ -147,13 +147,13 @@
 </template>
 
 <script setup lang="ts">
-import { useThemePreferences } from '@/composables/use-theme-preferences';
-import { SUPPORTED_LOCALES, localeSettings } from '@/i18n/index.js';
-import { useDebugMode } from '@/stores/composables/useDebugMode';
-import { CheckButtonOption, rulerType } from '@/stores/settings/options';
-import { useSettingsStore } from '@/stores/settings/store';
+import { useThemePreferences } from '@/composables/use-theme-preferences.js';
+import { SUPPORTED_LOCALES, localeSettings } from '@/i18n/constants.js';
+import { useDebugMode } from '@/stores/composables/useDebugMode.js';
+import { CheckButtonOption, rulerType } from '@/stores/settings/options.js';
+import { useSettingsStore } from '@/stores/settings/store.js';
 import { storeToRefs } from 'pinia';
-import { computed, onBeforeUnmount } from 'vue';
+import { onBeforeUnmount, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 defineProps<{

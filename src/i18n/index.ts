@@ -6,13 +6,7 @@ import enjs from '@/locales/en.js';
 import nljs from '@/locales/nl.js';
 import type { PiniaPlugin } from 'pinia';
 import { markRaw, watch } from 'vue';
-
-export const SUPPORTED_LOCALES = ['en', 'nl'] as const;
-export type SupportedLocale = typeof SUPPORTED_LOCALES[number];
-export const localeSettings: Record<SupportedLocale, string> = {
-	en: 'English',
-	nl: 'Nederlands'
-};
+import { SUPPORTED_LOCALES, type SupportedLocale } from './constants.js';
 
 const mergedMessages = {
 	en: {
