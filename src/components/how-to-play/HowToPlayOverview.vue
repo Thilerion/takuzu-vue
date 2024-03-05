@@ -2,29 +2,38 @@
 	<div
 		class="prose prose-sm md:prose lg:prose-lg xl:prose-xl mx-auto how-to-play-overview px-8"
 	>
-		<p>Welcome to Takuzu! This puzzle type, also known as a binary puzzle, is a delightful blend of logic and strategy.
-			Perfect for puzzle enthusiasts and newcomers alike, it offers a unique mental challenge. Our guide is here to
-			help you grasp the basics and discover the fun in every grid. Let's get started!</p>
+		<p>{{ $t('HowToPlay.overview.page-description') }}</p>
 
-		<h2>Basic Rules</h2>
-		<p>The goal of a binary puzzle is simple: fill every cell of the grid with a <SymbolDisplay v="0"/> or a <SymbolDisplay v="1"/> according to some simple
-			rules. These 3 key rules are:</p>
+		<h2>{{ $t('HowToPlay.BasicRules.title') }}</h2>
+		<HowToPlayThemedTranslation
+			tag="p"
+			keypath="HowToPlay.BasicRules.description"
+		/>
 
-		<h3 class="rule-heading">Balanced Lines</h3>
+		<h3 class="rule-heading">{{ $t('HowToPlay.BasicRules.balanced-lines.title') }}</h3>
 		<ul>
-			<li>Each row and column must have an equal number of <SymbolDisplay v="1" mult /> and <SymbolDisplay v="0" mult />.</li>
-			<li>For example, in a 4x4 grid, each row and column should contain two <SymbolDisplay v="1" mult /> and two <SymbolDisplay v="0" mult />.</li>
-			<HowToPlayExample label="Correct: ">
+			<HowToPlayThemedTranslation
+				tag="li"
+				keypath="HowToPlay.BasicRules.balanced-lines.description-1"
+			/>
+			<HowToPlayThemedTranslation
+				tag="li"
+				keypath="HowToPlay.BasicRules.balanced-lines.description-2"
+			/>
+			<HowToPlayExample :label="$t('HowToPlay.LabelCorrect')">
 				<template #examples>
 					<HowToPlayExampleCells
 						:values="splitLine('110010')"
 					/>
 				</template>
 				<template #explanation>
-					There are exactly 3 <SymbolDisplay :v="ZERO" mult /> and 3 <SymbolDisplay :v="ONE" mult /> in the line of 6 cells.
+					<HowToPlayThemedTranslation
+						tag="undefined"
+						keypath="HowToPlay.BasicRules.balanced-lines.example-correct"
+					/>
 				</template>
 			</HowToPlayExample>
-			<HowToPlayExample label="Incorrect: ">
+			<HowToPlayExample :label="$t('HowToPlay.LabelIncorrect')">
 				<template #examples>
 					<HowToPlayExampleCells
 						:values="splitLine('010010')"
@@ -32,26 +41,35 @@
 					/>
 				</template>
 				<template #explanation>
-					There are 4 <SymbolDisplay v="0" mult />, but the row has 6 cells, which means only three <SymbolDisplay v="0" mult /> are allowed.
+					<HowToPlayThemedTranslation
+						tag="undefined"
+						keypath="HowToPlay.BasicRules.balanced-lines.example-incorrect"
+					/>
 				</template>
 			</HowToPlayExample>
 		</ul>
 
-		<h3 class="rule-heading">Max Two Consecutive</h3>
+		<h3 class="rule-heading">{{ $t('HowToPlay.BasicRules.max-two-consecutive.title') }}</h3>
 		<ul>
-			<li>No more than two of the same number can be next to or under each other.</li>
-			<li>This means you cannot have three consecutive <SymbolDisplay v="1" mult /> or <SymbolDisplay v="0" mult /> in any row or column.</li>
-			<HowToPlayExample label="Correct: ">
+			<li>{{ $t('HowToPlay.BasicRules.max-two-consecutive.description-1') }}</li>
+			<HowToPlayThemedTranslation
+				tag="li"
+				keypath="HowToPlay.BasicRules.max-two-consecutive.description-2"
+			/>
+			<HowToPlayExample :label="$t('HowToPlay.LabelCorrect')">
 				<template #examples>
 					<HowToPlayExampleCells
 						:values="splitLine('11..00')"
 					/>
 				</template>
 				<template #explanation>
-					Two <SymbolDisplay v="1" mult /> in a row, and two <SymbolDisplay v="0" mult /> in a row is allowed.
+					<HowToPlayThemedTranslation
+						tag="undefined"
+						keypath="HowToPlay.BasicRules.max-two-consecutive.example-correct"
+					/>
 				</template>
 			</HowToPlayExample>
-			<HowToPlayExample label="Incorrect: ">
+			<HowToPlayExample :label="$t('HowToPlay.LabelIncorrect')">
 				<template #examples>
 					<HowToPlayExampleCells
 						:values="splitLine('111.00')"
@@ -59,16 +77,19 @@
 					/>
 				</template>
 				<template #explanation>
-					Three <SymbolDisplay v="1" mult /> in a row is not allowed.
+					<HowToPlayThemedTranslation
+						tag="undefined"
+						keypath="HowToPlay.BasicRules.max-two-consecutive.example-incorrect"
+					/>
 				</template>
 			</HowToPlayExample>
 		</ul>
 
-		<h3 class="rule-heading">Unique Rows and Columns</h3>
+		<h3 class="rule-heading">{{ $t('HowToPlay.BasicRules.unique-rows-and-columns.title') }}</h3>
 		<ul>
-			<li>Each row and each column must be unique.</li>
-			<li>No two rows can be the same, and no two columns can be the same.</li>
-			<HowToPlayExample label="This 4x4 puzzle is incorrect, as two rows are the same:">
+			<li>{{ $t('HowToPlay.BasicRules.unique-rows-and-columns.description-1') }}</li>
+			<li>{{ $t('HowToPlay.BasicRules.unique-rows-and-columns.description-2') }}</li>
+			<HowToPlayExample :label="$t('HowToPlay.BasicRules.unique-rows-and-columns.example-label')">
 				<template #examples>
 					<HowToPlayExampleCells
 						:values="splitLine('1001')"
@@ -88,21 +109,60 @@
 			</HowToPlayExample>
 		</ul>
 
-		<h2>Puzzle Variations</h2>
-		<p>In addition to standard puzzles, there is one puzzle variation available:</p>
-		<h3>Odd-Sized Puzzles</h3>
+		<h2>{{ $t('HowToPlay.Variations.title') }}</h2>
+		<p>{{ $t('HowToPlay.Variations.description') }}</p>
+		<h3>{{ $t('HowToPlay.Variations.Odd.title') }}</h3>
 		<ul>
-			<li>In puzzles with an odd number of rows and columns, the rule for balanced lines is slightly altered.</li>
-			<li>In these cases, each line will have one more 1 than 0.</li>
-			<li>This means in a 5x5 grid, each row and column should contain three <SymbolDisplay v="1" mult /> and two <SymbolDisplay v="0" mult />.</li>
+			<li>{{ $t('HowToPlay.Variations.Odd.description-1') }}</li>
+			<HowToPlayThemedTranslation
+				tag="li"
+				keypath="HowToPlay.Variations.Odd.description-2"
+			/>
+			<HowToPlayThemedTranslation
+				tag="li"
+				keypath="HowToPlay.Variations.Odd.description-3"
+			/>
 		</ul>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { ONE, ZERO } from '@/lib/constants.js';
-import SymbolDisplay from '@/components/dynamic-symbols/PuzzleSymbolDisplay.vue';
 import { splitLine } from '@/lib/utils.js';
+import { useI18n } from 'vue-i18n';
+import { injectCellThemeData } from '@/components/gameboard/composables/useCellThemeProvider.js'
+import { computed } from 'vue';
+import HowToPlayThemedTranslation from './HowToPlayThemedTranslation.vue';
+
+const { theme, type } = injectCellThemeData();
+const { t } = useI18n();
+
+const themedStrings = computed(() => {
+	switch (theme.value) {
+		case 'classic': {
+			return {
+				'symbolOne': t('Themed.classic.one'),
+				'symbolZero': t('Themed.classic.zero'),
+			}
+		}
+		case 'blue-red': {
+			return {
+				'symbolOne': t('Themed.bluered.one'),
+				'symbolZero': t('Themed.bluered.zero'),
+			}
+		}
+		case 'tictactoe': {
+			return {
+				'symbolOne': t('Themed.tictactoe.one'),
+				'symbolZero': t('Themed.tictactoe.zero'),
+			}
+		}
+		default: {
+			const x: never = theme.value;
+			throw new Error('unexpected theme in themedStrings');
+		}
+	}
+})
+
 </script>
 
 <style scoped>

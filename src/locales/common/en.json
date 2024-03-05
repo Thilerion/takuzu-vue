@@ -1,76 +1,117 @@
 {
-    "routeButton": {
-        "home": "Home",
-        "stats": "Stats",
-        "settings": "Settings",
-        "tools": "Tools"
+  "routeButton": {
+    "home": "Home",
+    "stats": "Stats",
+    "settings": "Settings",
+    "tools": "Tools"
+  },
+  "test": "Test",
+  "disabled": "Disabled",
+  "default": "default",
+  "Game": {
+    "mistake": {
+      "rule-violation": "Rule violation | Rule violations",
+      "incorrect-value": "Incorrect value | Incorrect values"
     },
-    "test": "Test",
-    "disabled": "Disabled",
-    "default": "default",
-    "Game": {
-        "mistake": {
-            "rule-violation": "Rule violation | Rule violations",
-            "incorrect-value": "Incorrect value | Incorrect values"
-        },
-        "difficulty": {
-            "label": "Difficulty",
-            "Beginner": "Beginner",
-            "Very Easy": "Very Easy",
-            "Easy": "Easy",
-            "Normal": "Normal",
-            "Hard": "Hard",
-            "Very Hard": "Very Hard",
-            "Extreme": "Extreme"
-        },
-        "board-size": {
-            "label": "Board size",
-            "normal": "Normal",
-            "tall": "Tall",
-            "odd": "Odd"
-        },
-        "replay": "replay"
+    "difficulty": {
+      "label": "Difficulty",
+      "Beginner": "Beginner",
+      "Very Easy": "Very Easy",
+      "Easy": "Easy",
+      "Normal": "Normal",
+      "Hard": "Hard",
+      "Very Hard": "Very Hard",
+      "Extreme": "Extreme"
     },
-    "Home": {
-        "buttons": {
-            "new-game": "New Game",
-            "help": "Help",
-            "tutorial": "Tutorial",
-            "continue": "Continue"
-        }
+    "board-size": {
+      "label": "Board size",
+      "normal": "Normal",
+      "tall": "Tall",
+      "odd": "Odd"
     },
-    "NewPuzzle": {
-        "title": "New Puzzle",
-        "load-save": "Load save",
-        "options": {
-            "automatic-replay-mode": "Automatic Replay Mode"
-        },
-        "starting-a-new-puzzle-will-overwrite": "Starting a new puzzle will overwrite your current puzzle in progress.",
-        "StartGame": {
-            "start-game": "Start game",
-            "select-puzzle-size": "Select a puzzle size",
-            "some-puzzle-sizes-are-disabled-for-harder-puzzles": "Note: some puzzle sizes are disabled for harder puzzles.",
-            "loading-creating-game": "Creating game...",
-            "loading-loading-replay": "Loading replay..."
-        }
-    },
-    "PlayPuzzle": {
-        "controls": {
-            "undo": "Undo",
-            "restart": "Restart",
-            "check": "Check",
-            "hint": "Hint"
-        },
-        "paused": "Paused",
-        "progress-percentage": "Progress:{p}%",
-        "dd": {
-            "set-bookmark": "Set bookmark",
-            "delete-bookmark": "Delete bookmark",
-            "copy-board-string": "Copy board string",
-            "solve-puzzle": "Solve puzzle",
-            "solve-instantly": "Solve instantly",
-            "increase-time-by-n-s": "Increase time by {n}s",
-            "solve-all-triples": "Solve all triples"
-        }
+    "replay": "replay"
+  },
+  "Home": {
+    "buttons": {
+      "new-game": "New Game",
+      "help": "Help",
+      "tutorial": "Tutorial",
+      "continue": "Continue"
     }
+  },
+  "NewPuzzle": {
+    "title": "New Puzzle",
+    "load-save": "Load save",
+    "options": {
+      "automatic-replay-mode": "Automatic Replay Mode"
+    },
+    "starting-a-new-puzzle-will-overwrite": "Starting a new puzzle will overwrite your current puzzle in progress.",
+    "StartGame": {
+      "start-game": "Start game",
+      "select-puzzle-size": "Select a puzzle size",
+      "some-puzzle-sizes-are-disabled-for-harder-puzzles": "Note: some puzzle sizes are disabled for harder puzzles.",
+      "loading-creating-game": "Creating game...",
+      "loading-loading-replay": "Loading replay..."
+    }
+  },
+  "PlayPuzzle": {
+    "controls": {
+      "undo": "Undo",
+      "restart": "Restart",
+      "check": "Check",
+      "hint": "Hint"
+    },
+    "paused": "Paused",
+    "progress-percentage": "Progress:{p}%",
+    "dd": {
+      "set-bookmark": "Set bookmark",
+      "delete-bookmark": "Delete bookmark",
+      "copy-board-string": "Copy board string",
+      "solve-puzzle": "Solve puzzle",
+      "solve-instantly": "Solve instantly",
+      "increase-time-by-n-s": "Increase time by {n}s",
+      "solve-all-triples": "Solve all triples"
+    }
+  },
+  "HowToPlay": {
+    "LabelCorrect": "Correct: ",
+    "LabelIncorrect": "Incorrect: ",
+    "BasicRules": {
+      "description": "The goal of a binary puzzle is simple: fill every cell of the grid with a {symbolZero} or a {symbolOne} according to some simple rules. These 3 key rules are:",
+      "title": "Basic Rules",
+      "balanced-lines": {
+        "title": "Balanced Lines",
+        "description-1": "Each row and column must have an equal number of {symbolOnePlural} and {symbolZeroPlural}.",
+        "description-2": "For example, in a 4x4 grid, each row and column should contain two {symbolOnePlural} and two {symbolZeroPlural}.",
+        "example-correct": "There are exactly 3 {symbolZeroPlural} and 3 {symbolOnePlural} in the line of 6 cells.",
+        "example-incorrect": "There are 4 {symbolZeroPlural}, but the row has 6 cells, which means only three {symbolZeroPlural} are allowed."
+      },
+      "max-two-consecutive": {
+        "title": "Max Two Consecutive",
+        "description-1": "No more than two of the same TODO:symbol/number/color can be next to or under each other.",
+        "description-2": "This means you cannot have three consecutive {symbolOnePlursal} or {symbolZeroPlural} in any row or column.",
+        "example-correct": "Two {symbolOnePlural} in a row, and two {symbolZeroPlural} in a row is allowed.",
+        "example-incorrect": "Three {symbolOnePlural} in a row is not allowed."
+      },
+      "unique-rows-and-columns": {
+        "title": "Unique Rows and Columns",
+        "description-1": "Each row and each column must be unique.",
+        "description-2": "No two rows can be the same, and no two columns can be the same.",
+        "example-label": "This 4x4 puzzle is incorrect, as two rows are the same:"
+      }
+    },
+    "Variations": {
+      "title": "Puzzle Variations",
+      "description": "In addition to standard puzzles, there is one puzzle variation available:",
+      "Odd": {
+        "title": "Odd-Sized Puzzles",
+        "description-1": "In puzzles with an odd number of rows and columns, the rule for balanced lines is slightly altered.",
+        "description-2": "In these cases, each line will have one more {symbolOne} than {symbolZero}.",
+        "description-3": "This means in a 5x5 grid, each row and column should contain three {symbolOnePlural} and two {symbolZeroPlural}."
+      }
+    },
+    "overview": {
+      "page-description": "Welcome to Takuzu! This puzzle type, also known as a binary puzzle, is a delightful blend of logic and strategy. Perfect for puzzle enthusiasts and newcomers alike, it offers a unique mental challenge. Our guide is here to help you grasp the basics and discover the fun in every grid. Let's get started!"
+    }
+  }
 }
