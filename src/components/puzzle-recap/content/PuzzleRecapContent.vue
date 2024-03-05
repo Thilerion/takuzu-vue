@@ -94,6 +94,7 @@ import { toRefs } from '@vueuse/core';
 import type { DifficultyKey } from '@/lib/types.js';
 import type { NavigationFailure } from 'vue-router';
 import type { RecapMessageType } from '@/services/recap-message/types.js';
+import { useI18n } from 'vue-i18n';
 const formatTimeMMSS = formatTimeMMSSWithRounding(200);
 
 defineEmits<{
@@ -147,6 +148,7 @@ const recordMessage = computed(() => {
 });
 const recapMessage = ref<null | ReturnType<typeof recapI18nMessageMap[RecapMessageType]>>(null);
 
+const { locale } = useI18n();
 
 watch(recapStatsInitialized, (value) => {
 	console.log('recap stats initialized: ' + value);
@@ -156,7 +158,7 @@ watch(recapStatsInitialized, (value) => {
 			recapMessageData.value = result;
 			recordMessageData.value = getRecordMessageData(result, recapStatsStore);
 			const type = result.type;
-			recapMessage.value = recapI18nMessageMap[type](result.context) ?? null;
+			recapMessage.value = recapI18nMessageMap[type](result.context, locale.value) ?? null;
 		}
 	} catch(e) {
 		console.warn('Error during generation of recap message.');
