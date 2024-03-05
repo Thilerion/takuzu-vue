@@ -1,5 +1,5 @@
 <template>
-	<span class="font-medium" :class="[colorClasses]">{{ symbolString }}</span>
+	<span class="font-medium" :class="[colorClasses]">{{ $t(symbolString) }}</span>
 </template>
 
 <script setup lang="ts">

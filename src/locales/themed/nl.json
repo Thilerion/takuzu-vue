@@ -1,0 +1,20 @@
+{
+	"Themed": {
+		"symbol": "symbool",
+		"symbols": "symbolen",
+		"color": "kleur",
+		"colors": "kleuren",
+		"red-tile": "rode tegel",
+		"red-tiles": "rode tegels",
+		"blue-tile": "blauwe tegel",
+		"blue-tiles": "blauwe tegels",
+		"1": "1",
+		"0": "0",
+		"O": "O",
+		"X": "X",
+		"1s": "1'en",
+		"0s": "0'en",
+		"Os": "O's",
+		"Xs": "X'en"
+	}
+}

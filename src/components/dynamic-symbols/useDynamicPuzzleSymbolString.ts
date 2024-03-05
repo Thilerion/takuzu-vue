@@ -5,14 +5,37 @@ import type { Ref } from "vue";
 import { computed } from "vue";
 
 const getBlueRedString = (val: PuzzleSymbol, multiple?: boolean) => {
-	return `${val === ZERO ? 'blue' : 'red'} tile${multiple ? 's' : ''}`;
+	if (val === ZERO) {
+		if (multiple) return 'Themed.blue-tiles';
+		return 'Themed.blue-tile';
+	} else {
+		if (multiple) return 'Themed.red-tiles';
+		return 'Themed.red-tile';
+	}
+	// return `${val === ZERO ? 'blue' : 'red'} tile${multiple ? 's' : ''}`;
 }
 const getClassicString = (val: PuzzleSymbol, multiple?: boolean) => {
+	if (val === ZERO) {
+		if (multiple) return 'Themed.0s';
+		return 'Themed.0';
+	} else {
+		if (multiple) return 'Themed.1s';
+		return 'Themed.1';
+	}
+
 	let str = `${val === ZERO ? "0" : "1"}`;
 	if (multiple) str += '\'s';
 	return str;
 }
 const getTictactoeString = (val: PuzzleSymbol, multiple?: boolean) => {
+	if (val === ZERO) {
+		if (multiple) return 'Themed.Os';
+		return 'Themed.O';
+	} else {
+		if (multiple) return 'Themed.Xs';
+		return 'Themed.X';
+	}
+
 	let str = `${val === ZERO ? "O" : "X"}`;
 	if (multiple) str += '\'s';
 	return str;
@@ -36,19 +59,19 @@ export const useDynamicPuzzleSymbolString = (theme: Ref<CellTheme>, themeType: R
 	const displayCellType = computed((): (multiple?: boolean) => string => {
 		switch(themeType.value) {
 			case 'symbols': return (multiple?: boolean) => {
-				if (multiple) return 'symbols';
-				return 'symbol';
+				if (multiple) return 'Themed.symbols';
+				return 'Themed.symbol';
 			}
 			case 'coloredTiles': return (multiple?: boolean) => {
-				if (multiple) return 'color tiles';
-				return 'color';
+				if (multiple) return 'Themed.colors';
+				return 'Themed.color';
 			}
 			default: {
 				const x: never = themeType.value;
 				console.error(`unexpected cellThemeType: ${x}`);
 				return (multiple?: boolean) => {
-					if (multiple) return 'symbols';
-					return 'symbol';
+					if (multiple) return 'Themed.symbols';
+					return 'Themed.symbol';
 				}
 			}
 		}

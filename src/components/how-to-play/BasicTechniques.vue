@@ -107,16 +107,18 @@ import { computed } from 'vue';
 import { injectCellThemeData } from '../gameboard/composables/useCellThemeProvider.js';
 import { useDynamicPuzzleSymbolString } from '../dynamic-symbols/useDynamicPuzzleSymbolString.js';
 import { splitLine } from '@/lib/utils.js';
+import { useI18n } from 'vue-i18n';
 
 const { theme: cellTheme, type: cellThemeType } = injectCellThemeData();
 const { $p } = useDynamicPuzzleSymbolString(
 	cellTheme, cellThemeType
 );
+const { t } = useI18n();
 const valueTypeDisplay = computed(() => {
-	return $p('symbol', false)
+	return t($p('symbol', false));
 })
 const valueTypeDisplayPlural = computed(() => {
-	return $p('symbol', true)
+	return t($p('symbol', true));
 })
 </script>
 

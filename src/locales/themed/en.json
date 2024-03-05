@@ -1,0 +1,20 @@
+{
+	"Themed": {
+		"symbol": "symbol",
+		"symbols": "symbols",
+		"color": "color",
+		"colors": "colors",
+		"red-tile": "red tile",
+		"red-tiles": "red tiles",
+		"blue-tile": "blue tile",
+		"blue-tiles": "blue tiles",
+		"1": "1",
+		"0": "0",
+		"O": "O",
+		"X": "X",
+		"1s": "1's",
+		"0s": "0's",
+		"Os": "O's",
+		"Xs": "X's"
+	}
+}
