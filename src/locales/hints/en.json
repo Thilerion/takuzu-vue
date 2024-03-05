@@ -1,0 +1,23 @@
+{
+	"Hints": {
+		"common": {
+			"cell": "cell",
+			"cells": "cells",
+			"surrounding-cells": "the surrounding cells",
+			"adjacent-cell": "the adjacent cell"
+		},
+		"Triples": {
+			"name": "Triples",
+			"pair": "pair",
+			"sandwich": "sandwich",
+			"messages": [
+				"There is a @:{subType} somewhere on the board.",
+				"Three @:{sourceSymbol} cannot be next to each other. Therefore, the adjacent @:{cellOrCells} can only possibly be one @:{symbolOrColor}.",
+				{
+					"pair": "Two equal @:{symbolOrColorPlural} (@:{source}) are next to each other. That means @:{surroundingCells} must be @:{target}.",
+					"sandwich": "An empty cell is surrounded by two of the same @:{symbolOrColor}. To prevent three equal @:{symbolOrColorPlural} in a row, the empty cell must be @:{target}."
+				}
+			]
+		}
+	}
+}

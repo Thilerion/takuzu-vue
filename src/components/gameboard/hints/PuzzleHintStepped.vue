@@ -1,6 +1,6 @@
 <template>
 	<PuzzleHintBase @hide="$emit('hide')" v-show="show" :step="stepIdx">
-		<template #title>{{ title }}<small class="text-sm opacity-80 ml-[0.5ch]" v-if="subtitle">{{ subtitle }}</small></template>
+		<template #title>{{ $t(title, title) }}<span class="mr-[0.5ch]" v-if="subtitle">:</span><small class="text-sm opacity-80" v-if="subtitle">{{ $t(subtitle, subtitle) }}</small></template>
 		<template #message>{{ stepMessage }}</template>
 		<template #buttons>
 			<button
@@ -26,6 +26,7 @@ import type { SteppedHint } from '@/stores/hints/stepped-hint/types.js';
 import { useDynamicPuzzleSymbolString } from '@/components/dynamic-symbols/useDynamicPuzzleSymbolString.js';
 import { initGlobalCellThemeProvider } from '../composables/useCellThemeProvider.js';
 import { useSteppedHintMessage } from './stepped-hint-message.js';
+import { useI18n } from 'vue-i18n';
 
 const emit = defineEmits<{
 	(e: 'hide'): void;
@@ -45,10 +46,13 @@ const themeData = initGlobalCellThemeProvider();
 const { $p } = useDynamicPuzzleSymbolString(themeData.theme, themeData.type);
 
 const { message } = useSteppedHintMessage(hint, stepIdx, $p);
+const { t } = useI18n();
 
 const stepMessage = computed((): string => {
-	if (message.value != null) {
+	if (message.value != null && typeof message.value === 'string') {
 		return message.value;
+	} else if (message.value != null) {
+		return t(message.value.messageKey, message.value.namedProperties ?? {})
 	}
 	console.error('UseSteppedHintMessage gave no message.');
 	return '';
@@ -57,7 +61,16 @@ const subtitle = computed((): string | null => {
 	const type = hint.value.type;
 	switch(type) {
 		case 'triples': {
-			return hint.value.subType;
+			const subtype = hint.value.subType;
+			if (subtype === 'double') {
+				return 'Hints.Triples.pair';
+			} else if (subtype === 'sandwich') {
+				return 'Hints.Triples.sandwich';
+			} else {
+				const x2: never = subtype;
+				console.warn(`Unexpected triples hint subtype: ${x2}`);
+				return null;
+			}
 		}
 		case 'balance': {
 			return null;
@@ -71,27 +84,19 @@ const subtitle = computed((): string | null => {
 })
 const title = computed(() => {
 	const type = hint.value.type;
-	let base: string;
 	switch(type) {
 		case 'triples': {
-			base = 'Triples';
-			break;
+			return 'Hints.Triples.name';
 		}
 		case 'balance': {
-			base = 'Balanced Lines';
-			break;
+			return 'Balanced Lines';
 		}
 		default: {
 			const x: never = type;
 			console.warn(`Unexpected stepped hint type ${x}`);
-			base = 'Hint';
-			break;
+			return 'Hint';
 		}
 	}
-	if (subtitle.value != null) {
-		base += ':';
-	} 
-	return base;
 })
 
 const onAction = () => {

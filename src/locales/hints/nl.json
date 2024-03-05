@@ -1,0 +1,23 @@
+{
+	"Hints": {
+		"common": {
+			"cell": "cel",
+			"cells": "cellen",
+			"surrounding-cells": "de aangrenzende cellen",
+			"adjacent-cell": "de aangrenzende cel"
+		},
+		"Triples": {
+			"name": "Drielingen",
+			"pair": "paar",
+			"sandwich": "sandwich",
+			"messages": [
+				"Er is ergens op het bord een '@:{subType}' te vinden.",
+				"Drie @:{sourceSymbol} kunnen niet naast elkaar staan. Daarom is er maar één mogelijkheid voor @:{surroundingCells}.",
+				{
+					"pair": "Twee gelijke @:{symbolOrColorPlural} (@:{source}) staan naast elkaar. Dat betekent dat @:{surroundingCells} @:{target} moeten zijn.",
+					"sandwich": "Een lege cel wordt omringd door twee van dezelfde @:{symbolOrColor}. Om drie gelijke @:{symbolOrColorPlural} op een rij te voorkomen, moet de lege cel @:{target} zijn."
+				}
+			]
+		}
+	}
+}
