@@ -143,5 +143,25 @@
             }
         }
     },
-    "tip": "Tip"
+    "tip": "Tip",
+    "Recap": {
+        "fallbackCompliment": "Good gedaan!",
+        "compliments": [
+            "Goed gedaan!",
+            "Sensationeel!",
+            "Wauw!",
+            "Geweldig!",
+            "Uitstekend!",
+            "Buitengewoon!",
+            "Uitzonderlijk!",
+            "Fantastisch!",
+            "Schitterend!",
+            "Fabuleus!",
+            "Enorm goed gedaan!",
+            "Super!",
+            "Goed zo!",
+            "Prachtig!",
+            "Verbazingwekkend!"
+        ]
+    }
 }

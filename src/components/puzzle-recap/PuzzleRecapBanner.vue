@@ -15,7 +15,7 @@
 			@click="emit('close')"
 		>
 			<div class="text-xl">
-				<slot>{{bannerText}}</slot>
+				<slot>{{$t(bannerText, $t('Recap.fallbackCompliment'))}}</slot>
 			</div>
 		</div>
 	</div>
@@ -23,27 +23,9 @@
 </template>
 
 <script setup lang="ts">
-import { pickRandom } from '@/lib/utils';
 import { ref, toRefs, computed } from 'vue';
 
-const BANNER_STRINGS = [
-	'Good job!',
-	'Sensational!',
-	'Wow!',
-	'Terrific!',
-	'Excellent!',
-	'Outstanding!',
-	'Sensational!',
-	'Exceptional!',
-	'Fantastic!',
-	'Marvelous!',
-	'Fabulous!',
-	'Tremendous job!',
-	'Superb!',
-	'Way to go!',
-	'Wonderful!',
-	"Amazing!",
-];
+const NUM_BANNER_STRINGS = 15;
 
 const emit = defineEmits<{
 	close: [],
@@ -74,9 +56,8 @@ const afterLeave = () => {
 	emit('banner-after-leave');
 }
 
-const bannerText = ref(
-	pickRandom(BANNER_STRINGS)
-);
+const rndIndx = Math.floor(Math.random() * NUM_BANNER_STRINGS);
+const bannerText = ref(`Recap.compliments[${rndIndx}]`);
 </script>
 
 <style scoped>

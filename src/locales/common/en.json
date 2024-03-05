@@ -143,5 +143,26 @@
                 "example-label-2": "It can only be filled in one way to prevent two duplicate rows:"
             }
         }
+    },
+    "Recap": {
+        "fallbackCompliment": "Good job!",
+        "compliments": [
+            "Good job!",
+            "Sensational!",
+            "Wow!",
+            "Terrific!",
+            "Excellent!",
+            "Outstanding!",
+            "Sensational!",
+            "Exceptional!",
+            "Fantastic!",
+            "Marvelous!",
+            "Fabulous!",
+            "Tremendous job!",
+            "Superb!",
+            "Way to go!",
+            "Wonderful!",
+            "Amazing!"
+        ]
     }
 }
