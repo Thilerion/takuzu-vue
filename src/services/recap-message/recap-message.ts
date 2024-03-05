@@ -46,36 +46,77 @@ const formatOrdinal = (value: number, locale = 'en-US') => {
 	return `${value}${suffix}`;
 }
 
-export const recapMessageMap: Record<RecapMessageType, (ctx: any) => string> = { // TODO: any as callback, could be better
-	[RECAP_MSG_TYPES.NOT_ADDED_TO_DB_CHEATS]: () => "Puzzle was not saved in your history, because you used cheats.",
-	[RECAP_MSG_TYPES.FIRST_TOTAL]: () => "You've solved your first puzzle ever!",
-	
-    [RECAP_MSG_TYPES.HARDEST_EVER]: () => "This was the hardest puzzle you've ever solved, well done!",
-    [RECAP_MSG_TYPES.FIRST_OF_DIFFICULTY]: ({ difficulty }) => `You've solved your first ${getDifficultyLabelString(difficulty)} puzzle.`,
-    [RECAP_MSG_TYPES.FIRST_OF_SIZE]: ({ dimensions }) => `First time solving a ${dimensions} puzzle.`,
-	[RECAP_MSG_TYPES.FIRST_OF_SIZE_DIFFICULTY]: ({ dimensions, difficulty}) => `First time solving a [${dimensions}] puzzle on ${getDifficultyLabelString(difficulty)} difficulty.`,
-	
-    [RECAP_MSG_TYPES.TIME_RECORD_LARGE]: ({ improvementPercentage }) => `You were an incredible ${formatPercentage(improvementPercentage)} faster than your previous best time!`,
-	[RECAP_MSG_TYPES.TIME_RECORD]: ({ difference }) => `You've improved your best time by ${msToSec(difference)}s!`,
+// TODO: localize ordinal suffixes, number (percentage and time) formatting, 
+export const recapI18nMessageMap: Record<RecapMessageType, (ctx: any) => ({ key: string, namedProperties?: Record<string, string | number>}) | null> = { // TODO: any as callback, could be better
+	[RECAP_MSG_TYPES.NOT_ADDED_TO_DB_CHEATS]: () => ({ key: "Recap.message.notAddedToDbCheats" }),
+    [RECAP_MSG_TYPES.FIRST_TOTAL]: () => ({ key: "Recap.message.firstTotal" }),
+    
+    [RECAP_MSG_TYPES.HARDEST_EVER]: () => ({ key: "Recap.message.hardestEver" }),
+    [RECAP_MSG_TYPES.FIRST_OF_DIFFICULTY]: ({ difficulty }) => ({
+        key: "Recap.message.firstOfDifficulty",
+        namedProperties: { difficultyKey: getDifficultyLabelString(difficulty) }
+    }),
+    [RECAP_MSG_TYPES.FIRST_OF_SIZE]: ({ dimensions }) => ({
+        key: "Recap.message.firstOfSize",
+        namedProperties: { dimensions }
+    }),
+    [RECAP_MSG_TYPES.FIRST_OF_SIZE_DIFFICULTY]: ({ dimensions, difficulty }) => ({
+        key: "Recap.message.firstOfSizeDifficulty",
+        namedProperties: { dimensions, difficultyKey: getDifficultyLabelString(difficulty) }
+    }),
+    
+    [RECAP_MSG_TYPES.TIME_RECORD_LARGE]: ({ improvementPercentage }) => ({
+        key: "Recap.message.timeRecordLarge",
+        namedProperties: { improvementPercentage }
+    }),
+    [RECAP_MSG_TYPES.TIME_RECORD]: ({ difference }) => ({
+        key: "Recap.message.timeRecord",
+        namedProperties: { differenceSec: msToSec(difference) }
+    }),
 
-	[RECAP_MSG_TYPES.REPLAY_TIME_RECORD]: ({ numPlays, difference }) => `This is the ${formatOrdinal(numPlays + 1)} time you solved this exact puzzle. You were ${msToSec(difference)}s faster than your fastest time.`,
-	
-	[RECAP_MSG_TYPES.ALMOST_TIME_RECORD_ABSOLUTE]: ({ difference }) => `Ooph, so close to setting a new time record. The difference is just ${msToSec(difference)}s.`,
-    [RECAP_MSG_TYPES.ALMOST_TIME_RECORD_PERCENTAGE]: ({ differencePercentage }) => `You almost set a new time record! You were only ${formatPercentage(differencePercentage)} slower.`,
-	
-    [RECAP_MSG_TYPES.MUCH_BETTER_THAN_AVERAGE_ABSOLUTE]: ({ difference }) => `You solved this puzzle faster than your previous average by an incredible ${msToSec(difference)}s!`,
-    [RECAP_MSG_TYPES.MUCH_BETTER_THAN_AVERAGE_PERCENTAGE]: ({ improvementPercentage }) => `That was much faster than average! You were ${formatPercentage(improvementPercentage)} faster.`,
-	[RECAP_MSG_TYPES.BETTER_THAN_AVERAGE]: ({ difference }) => `You were ${msToSec(difference)}s faster than your previous average.`,
-	
-    [RECAP_MSG_TYPES.WORST_EVER]: () => '', // TODO
-	[RECAP_MSG_TYPES.NEARLY_WORST_EVER]: () => '', // TODO
+    [RECAP_MSG_TYPES.REPLAY_TIME_RECORD]: ({ numPlays, difference }) => ({
+        key: "Recap.message.replayTimeRecord",
+        namedProperties: { numPlaysOrdinal: formatOrdinal(numPlays + 1), differenceSec: msToSec(difference) }
+    }),
+    
+    [RECAP_MSG_TYPES.ALMOST_TIME_RECORD_ABSOLUTE]: ({ difference }) => ({
+        key: "Recap.message.almostTimeRecordAbsolute",
+        namedProperties: { differenceSec: msToSec(difference) }
+    }),
+    [RECAP_MSG_TYPES.ALMOST_TIME_RECORD_PERCENTAGE]: ({ differencePercentage }) => ({
+        key: "Recap.message.almostTimeRecordPercentage",
+        namedProperties: { differencePercentage }
+    }),
+	[RECAP_MSG_TYPES.MUCH_BETTER_THAN_AVERAGE_ABSOLUTE]: ({ difference }) => ({
+        key: "Recap.message.muchBetterThanAverageAbsolute",
+        namedProperties: { differenceSec: msToSec(difference) }
+    }),
+    [RECAP_MSG_TYPES.MUCH_BETTER_THAN_AVERAGE_PERCENTAGE]: ({ improvementPercentage }) => ({
+        key: "Recap.message.muchBetterThanAveragePercentage",
+        namedProperties: { improvementPercentage }
+    }),
+    [RECAP_MSG_TYPES.BETTER_THAN_AVERAGE]: ({ difference }) => ({
+        key: "Recap.message.betterThanAverage",
+        namedProperties: { differenceSec: msToSec(difference) }
+    }),
+    [RECAP_MSG_TYPES.WORST_EVER]: () => null, // TODO: message already set in locales
+	[RECAP_MSG_TYPES.NEARLY_WORST_EVER]: () => null, // TODO: message already set in locales
 
-	[RECAP_MSG_TYPES.REPLAY_PLAYS_TOTAL]: ({ bestPreviousTime, numPlays }) => `This is the ${formatOrdinal(numPlays + 1)} time you've solved this exact same puzzle, with your best time being ${msToMinSec(bestPreviousTime)}.`,
+	[RECAP_MSG_TYPES.REPLAY_PLAYS_TOTAL]: ({ bestPreviousTime, numPlays }) => ({
+        key: "Recap.message.replayPlaysTotal",
+        namedProperties: { bestPreviousTimeMinSec: msToMinSec(bestPreviousTime), numPlaysOrdinal: formatOrdinal(numPlays + 1) }
+    }),
 	
-    [RECAP_MSG_TYPES.PLAYS_TOTAL]: ({ totalSolved }) => `You've solved a total of ${totalSolved} puzzles now.`,
-    [RECAP_MSG_TYPES.PLAYS_TODAY]: ({ totalSolvedToday }) => `Today, you've solved ${totalSolvedToday} puzzles.`,
-    [RECAP_MSG_TYPES.PLAYS_CONFIG_TOTAL]: ({ count, difficulty, dimensions }) => `You've solved a total of ${count} puzzles with ${dimensions} dimensions at ${getDifficultyLabelString(difficulty)} difficulty.`,
-	[RECAP_MSG_TYPES.PLAYS_CONFIG_TODAY]: ({ count, difficulty, dimensions }) => `You've played ${count} puzzles with ${dimensions} dimensions today at ${getDifficultyLabelString(difficulty)} difficulty.`,
+    [RECAP_MSG_TYPES.PLAYS_TOTAL]: ({ totalSolved }) => ({ key: "Recap.message.playsTotal", namedProperties: { totalSolved } }),
+    [RECAP_MSG_TYPES.PLAYS_TODAY]: ({ totalSolvedToday }) => ({ key: "Recap.message.playsToday", namedProperties: { totalSolvedToday } }),
+    [RECAP_MSG_TYPES.PLAYS_CONFIG_TOTAL]: ({ count, difficulty, dimensions }) => ({
+        key: "Recap.message.playsConfigTotal",
+        namedProperties: { count, dimensions, difficultyKey: getDifficultyLabelString(difficulty) }
+    }),
+    [RECAP_MSG_TYPES.PLAYS_CONFIG_TODAY]: ({ count, difficulty, dimensions }) => ({
+        key: "Recap.message.playsConfigToday",
+        namedProperties: { count, dimensions, difficultyKey: getDifficultyLabelString(difficulty) }
+    }),
 	
-    [RECAP_MSG_TYPES.DEFAULT]: () => ''
+    [RECAP_MSG_TYPES.DEFAULT]: () => null
 }

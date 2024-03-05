@@ -42,7 +42,7 @@ export function getRecordMessageData(recapMessageData: { type: RecapMessageType 
 	if (type === RECAP_MSG_TYPES.FIRST_TOTAL) {
 		return {
 			show: true,
-			message: 'First puzzle solved!'
+			message: "Recap.record.first-puzzle-solved"
 		};
 	} else if ([
 		RECAP_MSG_TYPES.TIME_RECORD as RecapMessageType,
@@ -50,14 +50,14 @@ export function getRecordMessageData(recapMessageData: { type: RecapMessageType 
 	].includes(type)) {
 		return {
 			show: true,
-			message: 'New time record!'
+			message: 'Recap.record.new-time-record'
 		}
 	}
 
 	if (recapStats.count === 1) {
 		return {
 			show: true,
-			message: 'First puzzle solved!'
+			message: "Recap.record.first-puzzle-solved"
 		}
 	}
 	return { show: false };

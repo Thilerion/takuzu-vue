@@ -172,6 +172,33 @@
         "solved-label": "Solved",
         "difficulty-label": "Difficulty",
         "time-best": "Best time",
-        "time-average": "Average"
+        "time-average": "Average",
+        "record": {
+            "first-puzzle-solved": "First puzzle solved!",
+            "new-time-record": "New personal best!"
+        },
+        "message": {
+            "notAddedToDbCheats": "Puzzle was not saved in your history, because you used cheats.",
+            "firstTotal": "You've solved your first puzzle ever!",
+            "hardestEver": "This was the hardest puzzle you've ever solved, well done!",
+            "firstOfDifficulty": "You've solved your first @:{difficultyKey} puzzle.",
+            "firstOfSize": "First time solving a {dimensions} puzzle.",
+            "firstOfSizeDifficulty": "First time solving a [{dimensions}] puzzle on @:{difficultyKey} difficulty.",
+            "timeRecordLarge": "You were an incredible {improvementPercentage}% faster than your previous best time!",
+            "timeRecord": "You've improved your best time by {differenceSec}s!",
+            "replayTimeRecord": "This is the {numPlaysOrdinal} time you solved this exact puzzle. You were {differenceSec}s faster than your fastest time.",
+            "almostTimeRecordAbsolute": "Ooph, so close to setting a new time record. You were only {differenceSec}s slower then your personal best.",
+            "almostTimeRecordPercentage": "You almost set a new time record! You were only {differencePercentage}% slower.",
+            "muchBetterThanAverageAbsolute": "You solved this puzzle faster than your average by an incredible {differenceSec}s!",
+            "muchBetterThanAveragePercentage": "That was much faster than average! You were {improvementPercentage}% faster.",
+            "betterThanAverage": "You were {differenceSec}s faster than your previous average.",
+            "worstEver": "This was your toughest challenge yet, setting a new personal record for the longest time taken.",
+            "nearlyWorstEver": "Almost your slowest solve, but you still managed to beat your personal worst time!",
+            "replayPlaysTotal": "This is the {numPlaysOrdinal} time you've solved this exact same puzzle, with your best time being {bestPreviousTimeMinSec}.",
+            "playsTotal": "You've solved a total of {totalSolved} puzzles now.",
+            "playsToday": "Today, you've solved {totalSolvedToday} puzzles.",
+            "playsConfigTotal": "You've solved a total of {count} puzzles with {dimensions} dimensions at @:{difficultyKey} difficulty.",
+            "playsConfigToday": "You've played {count} puzzles with {dimensions} dimensions today at @:{difficultyKey} difficulty."
+        }
     }
 }

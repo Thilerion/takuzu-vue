@@ -35,7 +35,7 @@
 		</div>
 		<div class="h-2 relative" v-if="hasRecordBanner">
 			<div class="w-full -translate-y-full flex items-center justify-center h-10">
-				<PuzzleRecapRecordBanner>{{recordMessage}}</PuzzleRecapRecordBanner>
+				<PuzzleRecapRecordBanner>{{recordMessage ? $t(recordMessage) : undefined}}</PuzzleRecapRecordBanner>
 			</div>
 		</div>
 
@@ -46,8 +46,8 @@
 		></RecapContent.RecapScores>
 
 		<RecapContent.MessageStats :navigation-fn="goBackToRoute">
-			<template v-if="recapMessage" #default="{formatMessage}">
-				{{formatMessage(recapMessage)}}
+			<template v-if="recapMessage" #default>
+				{{$t(recapMessage.key, recapMessage.namedProperties ?? {})}}
 			</template>
 		</RecapContent.MessageStats>
 		
@@ -83,7 +83,7 @@
 
 import { DIFFICULTY_LABELS } from '@/config';
 import { getRecapMessageType, getRecordMessageData } from '@/services/recap-message/index.js';
-import { recapMessageMap } from '@/services/recap-message/recap-message.js';
+import { recapI18nMessageMap } from '@/services/recap-message/recap-message.js';
 import { useRecapStatsStore } from '@/stores/recap-stats';
 import { storeToRefs } from 'pinia';
 import { computed, ref, watch } from 'vue';
@@ -145,7 +145,7 @@ const recordMessage = computed(() => {
 	const data = recordMessageData.value as { show: true, message: string };
 	return data.message;
 });
-const recapMessage = ref('');
+const recapMessage = ref<null | ReturnType<typeof recapI18nMessageMap[RecapMessageType]>>(null);
 
 
 watch(recapStatsInitialized, (value) => {
@@ -156,7 +156,7 @@ watch(recapStatsInitialized, (value) => {
 			recapMessageData.value = result;
 			recordMessageData.value = getRecordMessageData(result, recapStatsStore);
 			const type = result.type;
-			recapMessage.value = recapMessageMap[type](result.context) ?? '';
+			recapMessage.value = recapI18nMessageMap[type](result.context) ?? null;
 		}
 	} catch(e) {
 		console.warn('Error during generation of recap message.');
