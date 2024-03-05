@@ -1,99 +1,121 @@
 {
-  "routeButton": {
-    "home": "Home",
-    "stats": "Stats",
-    "settings": "Instellingen",
-    "tools": "Gereedschap"
-  },
-  "disabled": "Uitgeschakeld",
-  "Game": {
-    "mistake": {
-      "rule-violation": "Regelovertreding | Regelovertredingen",
-      "incorrect-value": "Onjuiste waarde | Onjuiste waarden"
+    "routeButton": {
+        "home": "Home",
+        "stats": "Stats",
+        "settings": "Instellingen",
+        "tools": "Gereedschap"
     },
-    "difficulty": {
-      "label": "Moeilijkheid",
-      "Beginner": "Beginner",
-      "Very Easy": "Zeer Makkelijk",
-      "Easy": "Makkelijk",
-      "Normal": "Normaal",
-      "Hard": "Moeilijk",
-      "Very Hard": "Zeer Moeilijk",
-      "Extreme": "Extreem"
+    "disabled": "Uitgeschakeld",
+    "Game": {
+        "mistake": {
+            "rule-violation": "Regelovertreding | Regelovertredingen",
+            "incorrect-value": "Onjuiste waarde | Onjuiste waarden"
+        },
+        "difficulty": {
+            "label": "Moeilijkheid",
+            "Beginner": "Beginner",
+            "Very Easy": "Zeer Makkelijk",
+            "Easy": "Makkelijk",
+            "Normal": "Normaal",
+            "Hard": "Moeilijk",
+            "Very Hard": "Zeer Moeilijk",
+            "Extreme": "Extreem"
+        },
+        "board-size": {
+            "label": "Puzzelgrootte",
+            "normal": "Normaal",
+            "tall": "Langwerpig",
+            "odd": "Oneven"
+        },
+        "replay": "replay"
     },
-    "board-size": {
-      "label": "Puzzelgrootte",
-      "normal": "Normaal",
-      "tall": "Langwerpig",
-      "odd": "Oneven"
+    "test": "Test",
+    "default": "standaard",
+    "NewPuzzle": {
+        "title": "Nieuwe Puzzel",
+        "load-save": "Hervat huidige puzzel",
+        "options": {
+            "automatic-replay-mode": "Automatische Replay-modus"
+        },
+        "starting-a-new-puzzle-will-overwrite": "Een nieuwe puzzel starten zal de voortgang in je huidige puzzel overschrijven.",
+        "StartGame": {
+            "start-game": "Start spel",
+            "select-puzzle-size": "Selecteer een puzzelgrootte",
+            "some-puzzle-sizes-are-disabled-for-harder-puzzles": "Opmerking: sommige puzzelgroottes zijn uitgeschakeld voor moeilijkere puzzels.",
+            "loading-creating-game": "Puzzel aan het maken...",
+            "loading-loading-replay": "Puzzel laden..."
+        }
     },
-    "replay": "replay"
-  },
-  "test": "Test",
-  "default": "standaard",
-  "NewPuzzle": {
-    "title": "Nieuwe Puzzel",
-    "load-save": "Hervat huidige puzzel",
-    "options": {
-      "automatic-replay-mode": "Automatische Replay-modus"
+    "Home": {
+        "buttons": {
+            "continue": "Hervatten",
+            "help": "Help",
+            "new-game": "Nieuw Spel",
+            "tutorial": "Tutorial"
+        }
     },
-    "starting-a-new-puzzle-will-overwrite": "Een nieuwe puzzel starten zal de voortgang in je huidige puzzel overschrijven.",
-    "StartGame": {
-      "start-game": "Start spel",
-      "select-puzzle-size": "Selecteer een puzzelgrootte",
-      "some-puzzle-sizes-are-disabled-for-harder-puzzles": "Opmerking: sommige puzzelgroottes zijn uitgeschakeld voor moeilijkere puzzels.",
-      "loading-creating-game": "Puzzel aan het maken...",
-      "loading-loading-replay": "Puzzel laden..."
+    "PlayPuzzle": {
+        "controls": {
+            "undo": "Ongedaan maken",
+            "restart": "Herstart",
+            "check": "Controleer",
+            "hint": "Hint"
+        },
+        "paused": "Gepauzeerd",
+        "progress-percentage": "Voortgang:{p}%",
+        "dd": {
+            "set-bookmark": "Maak bladwijzer",
+            "delete-bookmark": "Verwijder bladwijzer",
+            "copy-board-string": "Kopieer puzzel 'BoardString'",
+            "solve-puzzle": "Puzzel oplossen",
+            "solve-instantly": "Direct oplossen",
+            "increase-time-by-n-s": "Tijd verhogen met {n}s",
+            "solve-all-triples": "Los alle 'Triples' op"
+        }
+    },
+    "HowToPlay": {
+        "title": "Spelhulp",
+        "tab-overview": "Overzicht en Regels",
+        "tab-basic-techniques": "Basis Technieken",
+        "tab-advanced-techniques": "Geavanceerde Technieken",
+        "BasicRules": {
+            "description": "Het doel van een binaire puzzel is eenvoudig: vul elke cel van het raster met een {symbolZero} of een {symbolOne} volgens enkele eenvoudige regels. Deze 3 belangrijke regels zijn:",
+            "title": "Basisregels",
+            "balanced-lines": {
+                "description-1": "Elke rij en kolom moet een gelijk aantal {symbolOnePlural} en {symbolZeroPlural} bevatten.",
+                "description-2": "In een 4x4-raster moet elke rij en kolom bijvoorbeeld twee {symbolOnePlural} en twee {symbolZeroPlural} bevatten.",
+                "title": "Gebalanceerde lijnen",
+                "example-correct": "Er zijn precies 3 {symbolZeroPlural} en 3 {symbolOnePlural} in de rij van 6 cellen.",
+                "example-incorrect": "Er zijn vier {symbolZeroPlural}, maar de rij heeft zes cellen, wat betekent dat er slechts drie {symbolZeroPlural} zijn toegestaan."
+            },
+            "max-two-consecutive": {
+                "title": "Maximaal twee opeenvolgend",
+                "description-1": "Er mogen niet meer dan twee van hetzelfde TODO:symbol/number/color naast of onder elkaar staan.",
+                "description-2": "Dit betekent dat je in geen enkele rij of kolom drie opeenvolgende {symbolOnePlural} of {symbolZeroPlural} kunt hebben.",
+                "example-correct": "Twee {symbolOnePlural} op rij, en twee {symbolZeroPlural} op rij zijn toegestaan.",
+                "example-incorrect": "Drie {symbolOnePlural} op een rij is niet toegestaan."
+            },
+            "unique-rows-and-columns": {
+                "title": "Unieke Rijen en Kolommen",
+                "description-1": "Elke rij en elke kolom moet uniek zijn.",
+                "description-2": "Geen twee rijen kunnen hetzelfde zijn, en geen twee kolommen kunnen hetzelfde zijn.",
+                "example-label": "Deze 4x4 puzzel is incorrect, omdat twee rijen hetzelfde zijn:"
+            }
+        },
+        "Variations": {
+            "title": "Puzzelvarianten",
+            "description": "Naast standaardpuzzels is er één puzzelvariant beschikbaar:",
+            "Odd": {
+                "title": "Puzzels met Oneven Afmetingen",
+                "description-1": "In puzzels met een oneven aantal rijen en kolommen wordt de regel voor gebalanceerde lijnen enigszins aangepast.",
+                "description-2": "In deze gevallen zal elke lijn één {symbolOne} meer hebben dan {symbolZero}.",
+                "description-3": "Dit betekent dat in een 5x5 raster elke rij en kolom drie {symbolOnePlural} en twee {symbolZeroPlural} moet bevatten."
+            }
+        },
+        "overview": {
+            "page-description": "Welkom bij Takuzu! Dit puzzeltype, ook wel binaire puzzel genoemd, is een heerlijke mix van logica en strategie. Het is perfect voor puzzelliefhebbers en nieuwkomers en biedt een unieke mentale uitdaging. Onze gids is hier om u te helpen de basisbeginselen te begrijpen en het plezier in elk raster te ontdekken. Laten we beginnen!"
+        },
+        "LabelCorrect": "Juist:",
+        "LabelIncorrect": "Onjuist:"
     }
-  },
-  "Home": {
-    "buttons": {
-      "continue": "Hervatten",
-      "help": "Help",
-      "new-game": "Nieuw Spel",
-      "tutorial": "Tutorial"
-    }
-  },
-  "PlayPuzzle": {
-    "controls": {
-      "undo": "Ongedaan maken",
-      "restart": "Herstart",
-      "check": "Controleer",
-      "hint": "Hint"
-    },
-    "paused": "Gepauzeerd",
-    "progress-percentage": "Voortgang:{p}%",
-    "dd": {
-      "set-bookmark": "Maak bladwijzer",
-      "delete-bookmark": "Verwijder bladwijzer",
-      "copy-board-string": "Kopieer puzzel 'BoardString'",
-      "solve-puzzle": "Puzzel oplossen",
-      "solve-instantly": "Direct oplossen",
-      "increase-time-by-n-s": "Tijd verhogen met {n}s",
-      "solve-all-triples": "Los alle 'Triples' op"
-    }
-  },
-  "HowToPlay": {
-    "BasicRules": {
-      "description": "Het doel van een binaire puzzel is eenvoudig: vul elke cel van het raster met een {symbolZero} of een {symbolOne} volgens enkele eenvoudige regels. Deze 3 belangrijke regels zijn:",
-      "title": "Basisregels",
-      "balanced-lines": {
-        "description-1": "Elke rij en kolom moet een gelijk aantal {symbolOnePlural} en {symbolZeroPlural} bevatten.",
-        "description-2": "In een 4x4-raster moet elke rij en kolom bijvoorbeeld twee {symbolOnePlural} en twee {symbolZeroPlural} bevatten.",
-        "title": "Gebalanceerde lijnen",
-        "example-correct": "Er zijn precies 3 {symbolZeroPlural} en 3 {symbolOnePlural} in de rij van 6 cellen.",
-        "example-incorrect": "Er zijn vier {symbolZeroPlural}, maar de rij heeft zes cellen, wat betekent dat er slechts drie {symbolZeroPlural} zijn toegestaan."
-      },
-      "max-two-consecutive": {
-        "description-2": "Dit betekent dat je in geen enkele rij of kolom drie opeenvolgende {symbolOnePlural} of {symbolZeroPlural} kunt hebben.",
-        "title": "Maximaal twee opeenvolgende",
-        "description-1": "Er mogen niet meer dan twee van hetzelfde TODO:symbol/number/color naast of onder elkaar staan."
-      }
-    },
-    "overview": {
-      "page-description": "Welkom bij Takuzu! Dit puzzeltype, ook wel binaire puzzel genoemd, is een heerlijke mix van logica en strategie. Het is perfect voor puzzelliefhebbers en nieuwkomers en biedt een unieke mentale uitdaging. Onze gids is hier om u te helpen de basisbeginselen te begrijpen en het plezier in elk raster te ontdekken. Laten we beginnen!"
-    },
-    "LabelCorrect": "Juist:",
-    "LabelIncorrect": "Onjuist:"
-  }
 }

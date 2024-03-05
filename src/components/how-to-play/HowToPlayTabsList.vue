@@ -5,23 +5,27 @@
 			exact-active-class="border-b-2 border-b-teal-400 text-teal-600"
 			v-for="tab in tabs"
 			:to="{ name: tab.routeName }"
-			:key="tab.label"
-		>{{ tab.label }}</router-link>
+			:key="tab.routeName"
+		>{{ tab.label.value }}</router-link>
 	</nav>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
+
 const tabs = [
 	{
-		label: 'Overview and Rules',
+		label: computed(() => t('HowToPlay.tab-overview')),
 		routeName: 'OverviewAndRules'
 	},
 	{
-		label: 'Basic Techniques',
+		label: computed(() => t('HowToPlay.tab-basic-techniques')),
 		routeName: 'BasicTechniques'
 	},
 	{
-		label: 'Advanced Techniques',
+		label: computed(() => t('HowToPlay.tab-advanced-techniques')),
 		routeName: 'AdvancedTechniques',
 		enabled: false
 	}
@@ -34,3 +38,5 @@ const tabs = [
 <style scoped>
 
 </style>
+import { t } from 'vitest/dist/reporters-MmQN-57K.js';
+import { computed } from 'vue';

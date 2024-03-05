@@ -95,6 +95,8 @@ declare module 'vue' {
     IconMdiClose: typeof import('~icons/mdi/close')['default']
     IconMdiPencil: typeof import('~icons/mdi/pencil')['default']
     IconMdiTools: typeof import('~icons/mdi/tools')['default']
+    IconTablerNumber0: typeof import('~icons/tabler/number0')['default']
+    IconTablerNumber1: typeof import('~icons/tabler/number1')['default']
     IconUilClock: typeof import('~icons/uil/clock')['default']
     InputRange: typeof import('./src/components/global/input/InputRange.vue')['default']
     InputToggle: typeof import('./src/components/global/input/InputToggle.vue')['default']
