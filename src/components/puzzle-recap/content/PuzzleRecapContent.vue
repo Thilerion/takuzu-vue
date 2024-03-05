@@ -58,20 +58,20 @@
 				:to="{ name: 'Home', replace: true }"
 				v-slot="{ navigate, href }"
 			>
-				<BaseButton element="a" :href="href" @click.prevent="goBackToRoute({ name: 'Home' }, navigate)" class="text-gray-600 tracking-wider recap-btn text-xs row-span-1">Home</BaseButton>
+				<BaseButton element="a" :href="href" @click.prevent="goBackToRoute({ name: 'Home' }, navigate)" class="text-gray-600 tracking-wider recap-btn text-xs row-span-1">{{ $t('routeButton.home') }}</BaseButton>
 			</router-link>
 			<router-link
 				custom
 				:to="{ name: 'NewPuzzleFreePlay', replace: true }"
 				v-slot="{ navigate, href }"
 			>
-				<BaseButton element="a" :href="href" @click.prevent="goBackToRoute({ name: 'NewPuzzleFreePlay' }, navigate)" class="text-gray-600 tracking-wider recap-btn text-xs row-span-1">Change Level</BaseButton>
+				<BaseButton element="a" :href="href" @click.prevent="goBackToRoute({ name: 'NewPuzzleFreePlay' }, navigate)" class="text-gray-600 tracking-wider recap-btn text-xs row-span-1">{{ $t('Recap.change-level') }}</BaseButton>
 			</router-link>
 
 			
 			<BaseButton class="text-base font-normal h-12 btn-primary row-start-2 col-start-1 col-span-2" @click="$emit('exit-to', 'play-again')">
 			<div class="w-full px-8 flex items-center justify-center relative">
-				<div>Play again</div>
+				<div>{{ $t('Recap.play-again') }}</div>
 				<div class="w-7 h-7 ml-auto absolute right-0 opacity-95"><icon-mdi-arrow-right-thin class="w-full h-full" /></div>
 			</div>
 			</BaseButton>

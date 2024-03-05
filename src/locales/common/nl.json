@@ -12,7 +12,7 @@
             "incorrect-value": "Onjuiste waarde | Onjuiste waarden"
         },
         "difficulty": {
-            "label": "Moeilijkheid",
+            "label": "Niveau",
             "Beginner": "Beginner",
             "Very Easy": "Zeer Makkelijk",
             "Easy": "Makkelijk",
@@ -161,7 +161,17 @@
             "Super!",
             "Goed zo!",
             "Prachtig!",
-            "Verbazingwekkend!"
-        ]
+            "Verbazingwekkend!",
+            "Briljant!"
+        ],
+        "play-again": "Speel opnieuw",
+        "change-level": "Verander puzzel",
+        "set-note": "Maak notitie",
+        "difficulty-label": "Niveau",
+        "size-label": "Grootte",
+        "solved-label": "Opgelost",
+        "time-average": "Gemiddeld",
+        "time-best": "Beste",
+        "view-all-statistics": "Bekijk alle statistieken"
     }
 }

@@ -10,7 +10,7 @@
 				class="w-full self-center p-0 m-0 text-sm placeholder:text-white/50 rounded px-2 py-1 h-full border-0 focus:ring-2 ring-2 ring-white/20 focus:outline-none focus:ring-white/70 bg-slate-900/20 focus:bg-slate-900/70 transition"
 				@keydown.enter="saveNote"
 				@blur="saveNoteOnBlur"
-				placeholder="Set note"
+				:placeholder="$t('Recap.set-note')"
 				ref="inputEl"
 			>
 			<div class="w-full h-full px-2 py-1 border-0 rounded-t opacity-70" v-else-if="note != null">{{ note }}</div>

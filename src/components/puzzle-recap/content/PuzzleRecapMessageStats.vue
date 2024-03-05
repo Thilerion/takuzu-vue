@@ -7,7 +7,7 @@
 				:to="{ name: 'Statistics', replace: true }"
 				v-slot="{ navigate, href }"
 			>
-				<a class="stats-btn" :href="href" @click.prevent="() => navigationFn({ name: 'Statistics' }, navigate)"><icon-ic-baseline-leaderboard/><span class="text-sm leading-[1.25em] ml-2">View all statistics</span></a>
+				<a class="stats-btn" :href="href" @click.prevent="() => navigationFn({ name: 'Statistics' }, navigate)"><icon-ic-baseline-leaderboard/><span class="text-sm leading-[1.25em] ml-2 overflow-hidden whitespace-nowrap text-ellipsis">{{ $t('Recap.view-all-statistics') }}</span></a>
 			</router-link>
 		</div>
 	</div>
@@ -34,6 +34,6 @@ const formatMessage = (str = '') => {
 
 <style scoped>
 .stats-btn {
-	@apply mx-auto flex w-2/3 justify-center items-stretch font-medium cursor-pointer py-1 text-gray-700;
+	@apply mx-auto flex max-w-[66vw] w-full justify-center items-stretch font-medium cursor-pointer py-1 text-gray-700;
 }
 </style>

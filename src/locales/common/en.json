@@ -163,6 +163,15 @@
             "Way to go!",
             "Wonderful!",
             "Amazing!"
-        ]
+        ],
+        "play-again": "Play again",
+        "change-level": "Change Level",
+        "set-note": "Set note",
+        "view-all-statistics": "View all statistics",
+        "size-label": "Size",
+        "solved-label": "Solved",
+        "difficulty-label": "Difficulty",
+        "time-best": "Best time",
+        "time-average": "Average"
     }
 }
