@@ -82,6 +82,7 @@ const assistStore = usePuzzleAssistanceStore();
 	@apply relative z-10 pointer-events-none bg-gray-100 text-gray-400 grid place-items-center text-4xl;
 	border-radius: var(--cell-rounding);
 	@apply dark:bg-slate-800 dark:text-slate-200;
+	container: pauseoverlay / inline-size;
 }
 .fade-pause-enter-active,
 .fade-pause-leave-active {
@@ -94,12 +95,12 @@ const assistStore = usePuzzleAssistanceStore();
 }
 
 .pause-icon-wrapper {
-	font-size: clamp(20px, 25vmin, 90px);
+	font-size: clamp(20px, 25cqw, 90px);
 }
 .pause-label-wrapper {
 	@apply opacity-80 font-light;
 	letter-spacing: 0.15em;
-	font-size: clamp(20px, 10vmin, 60px);
+	font-size: clamp(20px, 100cqw / 10, 60px);
 }
 
 .puzzle-info-wrapper {
