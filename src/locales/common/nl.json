@@ -116,6 +116,32 @@
             "page-description": "Welkom bij Takuzu! Dit puzzeltype, ook wel binaire puzzel genoemd, is een heerlijke mix van logica en strategie. Het is perfect voor puzzelliefhebbers en nieuwkomers en biedt een unieke mentale uitdaging. Onze gids is hier om u te helpen de basisbeginselen te begrijpen en het plezier in elk raster te ontdekken. Laten we beginnen!"
         },
         "LabelCorrect": "Juist:",
-        "LabelIncorrect": "Onjuist:"
-    }
+        "LabelIncorrect": "Onjuist:",
+        "BasicTechniques": {
+            "description": "Hieronder hebben we enkele fundamentele strategieën uiteengezet waarmee u gemakkelijk door de puzzels kunt navigeren.",
+            "line-completion": {
+                "description": "Deze techniek hangt samen met de 'gebalanceerde lijnen'-regel, die zegt dat elke rij en kolom een gelijk aantal {symbolZeroPlural} en {symbolOnePlural} moet bevatten. Terwijl u de puzzel invult, houdt u het saldo binnen elke rij en kolom bij als leidraad voor uw plaatsingsbeslissingen.",
+                "example": "Deze rij heeft 6 cellen, wat betekent dat er 3 van elke {symbolOrColor} vereist zijn. Zoals je in de bovenste rij kunt zien, zijn er 3 {symbolOnePlural}, wat betekent dat alle andere cellen {symbolZeroPlural} moeten zijn.",
+                "tip": "Er is een instelling beschikbaar die een horizontale en verticale liniaal aan het puzzelraster toevoegt. Deze linialen geven aan hoeveel van elke {symbolOrColor} er nog in die rij of kolom moeten worden geplaatst, en markeren wanneer er op een lijn geen enkele {symbolOrColor} meer over is, wat betekent dat deze kan worden aangevuld met de andere {symbolOrColor}.",
+                "title": "Rijen en kolommen voltooien"
+            },
+            "pairs-and-sandwiches": {
+                "description": "Een directe toepassing van de regel 'maximaal twee opeenvolgend' is om te voorkomen dat er drielingen (drie dezelfde op een rij) ontstaan op het puzzelbord.",
+                "pairs": "Paren",
+                "pairs-description": "Wanneer je twee identieke {symbolOrColorPlural} naast elkaar ziet, horizontaal of verticaal, vormt dit een 'paar'. De cellen die direct aan dit paar grenzen, moeten worden gevuld met de andere {symbolOrColor} om te voorkomen dat er een reeks van drie identieke {symbolOrColorPlural} (een drieling) ontstaat.",
+                "sandwiches": "Sandwiches",
+                "sandwiches-description": "Er is sprake van een 'sandwich' wanneer een lege cel wordt geflankeerd door twee identieke {symbolOrColorPlural}. Deze opstelling schrijft voor dat de lege cel, feitelijk de \"vulling\" van de sandwich, wordt gevuld met de andere {symbolOrColor} om de vorming van drielingen te voorkomen.",
+                "title": "Paren en 'sandwiches' identificeren"
+            },
+            "unique-lines": {
+                "description": "Deze strategie is vaak niet noodzakelijk voor het oplossen van puzzels, vooral niet bij makkelijkere puzzels, dankzij het op maat gemaakte algoritme voor het genereren van puzzels. Het nut ervan schittert bij kleinere puzzels of tijdens moeilijkere uitdagingen waarbij andere strategieën je misschien niet verder kunnen helpen.",
+                "example-label": "Laten we kijken naar deze 4x4-puzzel. Er zijn al twee rijen voltooid en de eerste rij lijkt op de tweede rij:",
+                "example-label-2": "Deze rij kan maar op één manier worden ingevuld om twee identieke rijen te voorkomen:",
+                "title": "Unieke rijen en kolommen",
+                "when-to-use-label": "Wanneer te gebruiken:",
+                "when-to-use-text": "Het is vooral handig in scenario's waarin een lijn bijna compleet is, maar niet kan worden voltooid met behulp van de basisregels van balanceren, sandwiches of paren. Als u gebruik maakt van de liniaalinstelling die het resterende aantal van elke {symbolOrColor} aangeeft dat nodig is in een rij of kolom, let dan goed op de lijnen waarvoor de plaatsing van precies één {symbolOne} en één {symbolZero} vereist is. Vergelijk deze scenario's met bestaande lijnen om de juiste plaatsingen te identificeren."
+            }
+        }
+    },
+    "tip": "Tip"
 }

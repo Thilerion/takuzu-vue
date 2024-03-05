@@ -8,6 +8,8 @@
 		<template #symbolOne><PuzzleSymbolDisplay v="1" /></template>
 		<template #symbolZeroPlural><PuzzleSymbolDisplay v="0" mult /></template>
 		<template #symbolOnePlural><PuzzleSymbolDisplay v="1" mult /></template>
+		<template #symbolOrColor><slot name="symbolOrColor" /></template>
+		<template #symbolOrColorPlural><slot name="symbolOrColorPlural" /></template>
 	</i18n-t>
 </template>
 
