@@ -4,7 +4,9 @@
 			"cell": "cell",
 			"cells": "cells",
 			"surrounding-cells": "the surrounding cells",
-			"adjacent-cell": "the adjacent cell"
+			"adjacent-cell": "the adjacent cell",
+			"row": "row",
+			"column": "column"
 		},
 		"Triples": {
 			"name": "Triples",
@@ -18,6 +20,14 @@
 					"sandwich": "An empty cell is surrounded by two of the same @:{symbolOrColor}. To prevent three equal @:{symbolOrColorPlural} in a row, the empty cell must be @:{target}."
 				}
 			]
+		},
+		"Balance": {
+			"name": "Balanced Lines",
+			"message-1": "There is a @:{rowOrColumn} on the board that can be balanced.",
+			"message-2": "This @:{rowOrColumn} requires an equal amount of each @:{symbolOrColor}, and all @:{sourceSymbols} have been placed.",
+			"message-2-odd": "This @:{rowOrColumn} requires {reqZero} @:{zeros}, and {reqOne} @:{ones}, and all @:{sourceSymbols} have been placed.",
+			"message-3-single-target": "To balance this @:{rowOrColumn} so that it contains {reqZero} @:{zeros} and {reqOne} @:{ones}, a @:{target} must be placed in this cell.",
+			"message-3-multiple-targets": "To balance this @:{rowOrColumn} so that it contains {reqZero} @:{zeros} and {reqOne} @:{ones}, @:{targets} must be placed in these cells."
 		}
 	}
 }

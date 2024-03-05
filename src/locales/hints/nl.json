@@ -1,6 +1,8 @@
 {
 	"Hints": {
 		"common": {
+			"row": "rij",
+			"column": "kolom",
 			"cell": "cel",
 			"cells": "cellen",
 			"surrounding-cells": "de aangrenzende cellen",
@@ -18,6 +20,14 @@
 					"sandwich": "Een lege cel wordt omringd door twee van dezelfde @:{symbolOrColor}. Om drie gelijke @:{symbolOrColorPlural} op een rij te voorkomen, moet de lege cel @:{target} zijn."
 				}
 			]
+		},
+		"Balance": {
+			"name": "Gebalanceerde Lijnen",
+			"message-1": "Er is een @:{rowOrColumn} op het bord die gebalanceerd kan worden.",
+			"message-2": "Deze @:{rowOrColumn} vereist een gelijk aantal van elk @:{symbolOrColor}, en alle @:{sourceSymbols} zijn geplaatst.",
+			"message-2-odd": "Deze @:{rowOrColumn} vereist {reqZero} @:{zeros}, en {reqOne} @:{ones}, en alle @:{sourceSymbols} zijn geplaatst.",
+			"message-3-single-target": "Om deze @:{rowOrColumn} te balanceren, zodat er {reqZero} @:{zeros} en {reqOne} @:{ones} zijn, moet @:{target} in deze cell geplaatst worden.",
+			"message-3-multiple-targets": "Om deze @:{rowOrColumn} te balanceren, zodat er {reqZero} @:{zeros} en {reqOne} @:{ones} zijn, moeten @:{targets} in deze cellen geplaatst worden."
 		}
 	}
 }

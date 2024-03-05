@@ -89,7 +89,7 @@ const title = computed(() => {
 			return 'Hints.Triples.name';
 		}
 		case 'balance': {
-			return 'Balanced Lines';
+			return 'Hints.Balance.name';
 		}
 		default: {
 			const x: never = type;
