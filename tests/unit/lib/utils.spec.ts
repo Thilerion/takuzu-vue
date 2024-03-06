@@ -39,10 +39,12 @@ describe('board and puzzle utils', () => {
 
 	test('are lines equal', () => {
 		expect(areLinesEqual(
+			// @ts-expect-error testing with numbers
 			[1, 2, 3, 4, 5],
 			[1, 2, 3, 5, 4]
-		)).toBe(false);
-		expect(areLinesEqual(
+			)).toBe(false);
+			expect(areLinesEqual(
+			// @ts-expect-error testing with numbers, booleans, and null
 			[true, null, -1, ONE, ZERO, EMPTY],
 			[true, null, -1, ONE, ZERO, EMPTY]
 		)).toBe(true);

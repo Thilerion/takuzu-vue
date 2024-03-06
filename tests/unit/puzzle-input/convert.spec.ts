@@ -1,4 +1,5 @@
 import { expandPuzzleString, puzzleGridToString, puzzleStringToGrid, shortenPuzzleString, toSingleDigitSequence } from '@/components/puzzle-input/convert';
+import type { PuzzleInputGrid } from '@/components/puzzle-input/types.js';
 import { EMPTY } from '@/lib/constants';
 import { describe, expect, test } from 'vitest';
 
@@ -19,7 +20,7 @@ describe('puzzle input conversion helpers', () => {
 					'...0.1',
 					'.1...1',
 					'.1....',
-				].map(row => row.split(''))
+				].map(row => row.split('')) as PuzzleInputGrid
 			}
 		],
 		[
@@ -41,7 +42,7 @@ describe('puzzle input conversion helpers', () => {
 					'......',
 					'0..00.',
 					'.11.1.',
-				].map(row => row.split(''))
+				].map(row => row.split('')) as PuzzleInputGrid
 			}
 		],
 		[
@@ -59,10 +60,10 @@ describe('puzzle input conversion helpers', () => {
 					'.1....',
 					'0.....',
 					'.00..1',
-				].map(row => row.split(''))
+				].map(row => row.split('')) as PuzzleInputGrid
 			}
 		]
-	]
+	] as const;
 
 	describe('toSingleDigitSequence', () => {
 		test('with single is just the EMPTY character', () =>{
@@ -72,8 +73,10 @@ describe('puzzle input conversion helpers', () => {
 			expect(toSingleDigitSequence(0)).toBe('');
 		})
 		test('throws with invalid numbers', () => {
+			// @ts-expect-error testing invalid inputs
 			expect(() => toSingleDigitSequence()).toThrow(TypeError);
 			expect(() => toSingleDigitSequence(-1)).toThrow(TypeError);
+			// @ts-expect-error testing invalid inputs
 			expect(() => toSingleDigitSequence('x')).toThrow(TypeError);
 		})
 		test('correct for values lower than 10', () => {

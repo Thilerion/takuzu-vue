@@ -1,5 +1,5 @@
 import { expect, test, describe } from 'vitest';
-import * as dateUtils from '@/utils/date.utils';
+import * as dateUtils from '@/utils/date.utils.js';
 
 describe('date utilities', () => {
 	test('isNextDay', () => {
