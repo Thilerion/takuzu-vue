@@ -1,0 +1,43 @@
+{
+    "css.customData": [
+        ".vscode/tailwind.json"
+    ],
+    "testing.automaticallyOpenPeekView": "never",
+    "i18n-ally.keystyle": "nested",
+    "i18n-ally.pathMatcher": "{namespace}/{locale}.{ext}",
+    "i18n-ally.localesPaths": [
+        "src/locales"
+    ],
+    "i18n-ally.extract.ignoredByFiles": {
+        "src\\components\\settings\\VibrationSetting.vue": [
+            "${vibrationStrengthIdx.value / 5 * 100}%"
+        ],
+        "src\\components\\new-puzzle\\StartGameButton.vue": [
+            "{{sizeStr}} - {{difficultyLabel}} - {{difficultyStars}}*"
+        ]
+    },
+    "i18n-ally.extract.targetPickingStrategy": "most-similar-by-key",
+    "i18n-ally.refactor.templates": [
+        "computed(() => t('${key}'))",
+    ],
+    "i18n-ally.sourceLanguage": "en",
+    "i18n-ally.extract.ignored": [
+        "({{ $t('default') }})",
+        "English",
+        "Nederlands",
+        "Takuzu",
+        "Could not retrieve replay puzzle.",
+        "No replayable puzzle found.",
+        "An error occured while trying to generate a puzzle.",
+        "Cannot select difficulty of \"${val}\"; this is not a valid DifficultyKey."
+    ],
+    "i18n-ally.keysInUse": [
+        "Game.difficulty.Beginner",
+        "Game.difficulty.Very Easy",
+        "Game.difficulty.Easy",
+        "Game.difficulty.Normal",
+        "Game.difficulty.Hard",
+        "Game.difficulty.Very Hard",
+        "Game.difficulty.Extreme"
+    ]
+}

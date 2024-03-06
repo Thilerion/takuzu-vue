@@ -1,9 +1,8 @@
 node_modules
 .DS_Store
-coverage/*
-
 dist
 dist-ssr
+coverage
 *.local
 
 # local env files
@@ -11,23 +10,31 @@ dist-ssr
 .env.*.local
 
 # Log files
+logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-
-src_OLD_
-index_OLD_.html
+lerna-debug.log*
 
 /cypress/videos/
 /cypress/screenshots/
 
-# Editor directories and files
+# VS Code directory/files
 .vscode/*
+# Exclude useful VSCode directory files
 !.vscode/extensions.json
+!.vscode/tailwind.json
+!.vscode/i18n-ally-reviews.yml
+!.vscode/settings.json
+
+# Editor directories and files
 .idea
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+*.tsbuildinfo
