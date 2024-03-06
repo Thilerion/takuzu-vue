@@ -18,9 +18,19 @@
 </template>
 
 <script setup lang="ts">
+import { onBeforeMount, onUnmounted } from 'vue';
 
+// Allow body overscroll to enable pull to refresh whenever debug/dev options is open
+onBeforeMount(() => {
+	document.body.classList.add('allow-overscroll-y');
+})
+onUnmounted(() => {
+	document.body.classList.remove('allow-overscroll-y');
+})
 </script>
 
-<style scoped>
-
+<style>
+body.allow-overscroll-y {
+	overscroll-behavior-y: auto;
+}
 </style>
