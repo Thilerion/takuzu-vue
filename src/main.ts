@@ -8,16 +8,32 @@ import router from './router';
 import { i18n, i18nPiniaPropertyPlugin } from './i18n/index.js';
 
 import { registerSW } from 'virtual:pwa-register';
-
-const SW_UPDATE_INTERVAL_MS = 60 * 60 * 1000;
-/* const updateSW =  */registerSW({
+const SW_UPDATE_INTERVAL_MS = 30 * 60 * 1000; // 30 minutes
+registerSW({
 	immediate: true,
-	onRegistered(r) {
-		r && window.setInterval(() => {
-			r.update();
+	onRegisteredSW(swUrl, r) {
+		console.log(`Service Worker at url: ${swUrl}`);
+		r && setInterval(async () => {
+			if (!navigator?.onLine) return;
+
+			console.log('Checking for sw update');
+			// fetch first to ensure server is not down
+			const resp = await fetch(swUrl, {
+				method: 'HEAD', // request headers only
+				cache: 'no-store',
+				headers: {
+					'cache': 'no-store',
+					'cache-control': 'no-cache'
+				},
+			});
+
+			if (resp?.status === 200 && resp.ok) {
+				await r.update(); // pings server to check for updated sw
+			}
+
 		}, SW_UPDATE_INTERVAL_MS)
 	}
-})
+});
 
 const app = createApp(App);
 const pinia = createPinia();
