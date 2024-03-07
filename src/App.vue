@@ -1,24 +1,16 @@
 <template>
-	<div
-		class="root"
-	>
+	<div class="root">
 		<router-view v-slot="{ Component, route }">
 			<OverlayPageTransition show>
 				<component :is="Component" :key="route.meta.usePuzzleKey ? puzzleKey : undefined" />
 			</OverlayPageTransition>
 		</router-view>
-
-		<!-- container for overlays, for use with <teleport> component -->
-		<div id="overlay-wrapper">
-			<div id="overlay-container"></div>
-		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, toRef } from 'vue';
 import { initSettingsPersistence } from './stores/settings/store';
-import { useStatisticsStore } from './stores/statistics';
 import { useMainStore } from './stores/main';
 import { initListeners as initPWAInstallListeners } from './composables/use-deferred-install-prompt';
 import { useInitThemePreferenceProvider } from './composables/use-theme-preferences';
@@ -26,18 +18,11 @@ import { initPregeneratedPuzzles } from './workers/pregen-puzzles/init';
 
 const store = useMainStore();
 const puzzleKey = toRef(store, 'puzzleKey');
-// init settings store
+
+// init settings persistence, app theme provider, pwaInstallListeners, and populate or pregen the puzzles db
 initSettingsPersistence();
-
-// initDarkLightAutoTheme();
-// useColorSchemeProvider();
 useInitThemePreferenceProvider();
-
 initPWAInstallListeners();
-
-// load statistics store; to prevent store data from being reset each time statistics page gets unloaded
-useStatisticsStore();
-
 onMounted(() => {
 	initPregeneratedPuzzles();
 })
