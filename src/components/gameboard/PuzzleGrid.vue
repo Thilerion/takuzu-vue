@@ -74,8 +74,8 @@ const onCellClick = (val: VecValue) => {
 .puzzle-grid {
 	--cell-size-total: calc(var(--cell-size) - var(--grid-gap));
 	grid-area: puzzle-grid;
-	grid-template-rows: repeat(var(--rows), var(--cell-size-total));
-	grid-template-columns: repeat(var(--columns), var(--cell-size-total));
+	grid-template-rows: repeat(var(--rows), [cell-row-start] var(--cell-size-total) [cell-row-end]);
+	grid-template-columns: repeat(var(--columns), [cell-col-start] var(--cell-size-total) [cell-col-end]);
 	@apply mr-auto mb-auto grid relative justify-items-stretch items-stretch;
 	gap: var(--grid-gap);
 }

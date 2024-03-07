@@ -40,8 +40,8 @@ const {
 } = toRefs(props);
 
 const gridStyles = {
-	'grid-row': `${y.value + 1} / span 1`,
-	'grid-column': `${x.value + 1} / span 1`
+	'grid-row': `cell-row-start ${y.value + 1} / span 1`,
+	'grid-column': `cell-col-start ${x.value + 1} / span 1`
 };
 
 const cellValue = computed(() => {
