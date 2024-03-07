@@ -15,8 +15,7 @@ import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 export default defineConfig(({ command, mode }) => {
 	// load env variables from relevant env file to set manifest app name
-	// process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
-	Object.assign(process.env, loadEnv(mode, process.cwd()))
+	const env = loadEnv(mode, process.cwd());
 
 	// if building for production, create a 200.html fallback for nested routes
 	const copyFallback200 = command === 'build' ? viteStaticCopy({
@@ -31,15 +30,15 @@ export default defineConfig(({ command, mode }) => {
 	} catch (e) {
 		console.warn('Error in getting build version details.');
 		console.error(e);
-		console.error({ command, mode, processEnv: process.env });
+		console.error({ command, mode, processEnv: process.env, loadedEnv: env });
 	}
 
 	return {
 		plugins: [
 			vue(),
 			VitePWA(createVitePwaConfig({
-				name: process.env.VITE_APP_NAME,
-				short_name: process.env.VITE_APP_SHORT_NAME
+				name: env.VITE_APP_NAME,
+				short_name: env.VITE_APP_SHORT_NAME
 			})),
 			Components({
 				extensions: ['vue'],
@@ -58,12 +57,6 @@ export default defineConfig(({ command, mode }) => {
 				defaultClass: 'base-icon',
 			}),
 			VueI18n({
-				// include all ts, js, yaml, and json files in the src/i18n/messages directory, and all ts, js, yaml, and json files where the file name ends with ".localemessages.(ts|js|yaml|json)" in the src directory
-				// note: only if using runtime version of vue-i18n I think
-				// include: [
-				// 	fileURLToPath(new URL('./src/i18n/messages/**/*.{ts,js,yaml,json}', import.meta.url)),
-				// 	fileURLToPath(new URL('./src/**/*.{localemessages}.{ts,js,yaml,json}', import.meta.url))
-				// ],
 				runtimeOnly: true,
 				compositionOnly: true,
 				fullInstall: true,
