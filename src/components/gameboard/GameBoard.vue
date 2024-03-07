@@ -16,8 +16,6 @@
 			:style="{
 				'max-width': gridWidth,
 				'max-height': gridHeight,
-				'width': gridWidth,
-				'height': gridHeight,
 			}"
 			:initial-grid="puzzleStore.initialBoard!.grid"
 			:marked-mistakes="assistStore.markedMistakes"
