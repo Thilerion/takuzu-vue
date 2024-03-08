@@ -1,12 +1,12 @@
 <template>
 	<transition name="fade-pause">
 		<div class="pause-overlay text-center" v-show="paused">
-			<div class="flex flex-col h-full px-2 pt-8 pb-6 max-w-full">
+			<div class="flex flex-col h-full px-2 pt-8 pb-6 max-w-full items-stretch">
 				<button
-					class="h-5/6 flex-auto mx-auto w-full flex justify-center pause-icon-wrapper place-items-center py-2 m-6 pointer-events-auto focus-visible:outline-black"
+					class="flex-auto mx-auto w-full flex justify-center pause-icon-wrapper place-items-center py-4 pointer-events-auto focus-visible:outline-black"
 					@click="$emit('resume')"
 				><icon-grommet-icons-pause-fill class="opacity-80" /></button>
-				<div class="flex-auto pause-label-wrapper uppercase mb-2 py-2 break-all inline-block overflow-hidden">{{ pausedMessage }}</div>
+				<div class="pause-label-wrapper uppercase mb-2 py-2 break-all inline-block overflow-hidden">{{ pausedMessage }}</div>
 			</div>
 		</div>
 	</transition>
