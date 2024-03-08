@@ -1,5 +1,5 @@
 <template>
-	<div class="puzzle-grid">
+	<div class="puzzle-grid" :inert="paused">
 		<FastPuzzleCellWrapper
 			v-for="{ listKey, key: xyKey, x, y, locked } in staticCellData"
 			:key="listKey"
