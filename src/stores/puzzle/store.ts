@@ -141,6 +141,10 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				return 'playing';
 			}
 			throw new Error('Unrecognized Puzzle status??!');
+		},
+		canRestart(): boolean {
+			const canUndo = usePuzzleHistoryStore().canUndo;
+			return canUndo && this.status === 'playing';
 		}
 	},
 

@@ -58,6 +58,7 @@
 		<div class="footer2 h-32 w-full relative">
 			<PuzzleControls
 				:can-undo="puzzleHistoryStore.canUndo"
+				:can-restart="puzzleStore.canRestart"
 				:paused="paused"
 				@undo="puzzleStore.undoLastMove"
 				@restart="puzzleStore.restartPuzzle"
@@ -92,7 +93,7 @@ import PuzzleRecap from '@/components/puzzle-recap/PuzzleRecap.vue';
 
 import { usePuzzleWakeLock } from '@/composables/use-wake-lock';
 import { storeToRefs } from 'pinia';
-import { onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
+import { computed, onBeforeMount, onBeforeUnmount, onMounted, watchEffect } from 'vue';
 import { useRecapStatsStore } from '@/stores/recap-stats';
 import { usePuzzleAssistanceStore } from '@/stores/assistance/store';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from 'vue-router';
@@ -106,9 +107,16 @@ import { usePlayPuzzleUiState } from './usePlayPuzzleUiState.js';
 import { usePlayPuzzleSaveHandler } from './usePlayPuzzleSaveHandler.js';
 import { usePlayPuzzleAutoPause } from './usePlayPuzzleAutoPause.js';
 import { useGameCompletion } from './usePlayPuzzleCompletion.js';
+import { usePuzzlePlayHotkeys } from '@/components/gameboard/composables/usePuzzlePlayHotkeys.js';
+import { useSettingsStore } from '@/stores/settings/store.js';
 
 const { 
 	windowHidden,
+	dropdownOpen,
+	settingsOpen,
+
+	puzzleUiActive,
+
 	showRulers,
 	rulerComponentType,
 	rulerCountType,
@@ -116,9 +124,6 @@ const {
 	showTimer,
 	onDropdownToggled,
 	setSettingsOpen,
-
-	dropdownOpen,
-	settingsOpen,
 } = usePlayPuzzleUiState();
 
 const {
@@ -137,7 +142,7 @@ usePlayPuzzleAutoPause(
 	{ windowHidden, dropdownOpen, settingsOpen, userIdle },
 	{ autoResumeDelay: 250 }
 );
-const { manualPauseGame, manualResumeGame } = usePuzzlePauseResume();
+const { manualPauseGame, manualResumeGame, toggleManualPause } = usePuzzlePauseResume();
 
 // Setup watchers for puzzle completion
 const { clearCompletionCheckTimeouts } = useGameCompletion();
@@ -151,10 +156,42 @@ const puzzleStore = usePuzzleStore();
 const router = useRouter();
 
 const {
-	board, initialized, started, paused, finished,
+	board, initialized, started, paused, finished, status: puzzlePlayStatus,
 	height: rows, width: columns,
 	difficulty
 } = storeToRefs(puzzleStore);
+
+// Whether the puzzle is active and being played: the puzzle ui is shown, and the puzzle is loaded and not paused/finished/etc
+const puzzlePlayActive = computed((): boolean => {
+	return puzzleUiActive.value && puzzlePlayStatus.value === 'playing';
+})
+usePuzzlePlayHotkeys({
+	undo: () => {
+		if (!puzzlePlayActive.value) return;
+		if (puzzleHistoryStore.canUndo) puzzleStore.undoLastMove();
+	},
+	check: () => {
+		if (!puzzlePlayActive.value) return;
+		const settingsStore = useSettingsStore();
+		if (settingsStore.checkButtonEnabled) {
+			puzzleAssistanceStore.userCheck();
+		}
+	},
+	togglePause: () => {
+		// Check if puzzle ui is active, because otherwise the puzzle can be manually paused while the dropdown menu or settings are open
+		// However, "puzzlePlayActive" also checks if not paused, so that can't be used here
+		if (!puzzleUiActive.value) return;
+		toggleManualPause();
+	},
+	getHint: () => {
+		if (!puzzlePlayActive.value) return;
+		if (!puzzleHintsStore.isHintShown) puzzleHintsStore.getHint();
+	},
+	hideHint: () => {
+		if (!puzzlePlayActive.value) return;
+		if (puzzleHintsStore.isHintShown) puzzleHintsStore.hide();
+	}
+});
 
 const startGame = () => {
 	if (!initialized.value) {

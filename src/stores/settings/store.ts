@@ -11,6 +11,7 @@ export const useSettingsStore = defineStore('settings', {
 	getters: {
 		vibrationEnabled: state => state.enableVibration,
 		cellThemeType: state => cellThemeTypeMap[state.cellTheme],
+		checkButtonEnabled: state => state.checkButton !== 'disabled',
 
 		rulerComponentType: (state): RulerComponentType => {
 			switch(state.showLineInfo) {

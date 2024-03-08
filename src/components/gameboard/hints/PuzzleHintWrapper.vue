@@ -13,7 +13,7 @@
 				<PuzzleHintStepped
 					v-else-if="renderableSteppedHint"
 					:hint="renderableSteppedHint"
-					:show="showHint"
+					:show="isHintShown"
 					@hide="hide"
 				/>
 		</transition>
@@ -29,17 +29,17 @@ import { storeToRefs } from 'pinia';
 import { computed, watchEffect } from 'vue';
 
 const puzzleHintsStore = usePuzzleHintsStore();
-const { showHint, currentHint } = storeToRefs(puzzleHintsStore);
+const { isHintShown, currentHint } = storeToRefs(puzzleHintsStore);
 const { hide } = puzzleHintsStore;
 
 const renderableLegacyHint = computed((): null | Hint => {
-	if (showHint.value && currentHint.value != null && currentHint.value.isLegacyHint) {
+	if (isHintShown.value && currentHint.value != null && currentHint.value.isLegacyHint) {
 		return currentHint.value;
 	}
 	return null;
 })
 const renderableSteppedHint = computed((): null | SteppedHint => {
-	// Note: gets rendered even if showHint is false
+	// Note: gets rendered even if isHintShown is false
 	if (currentHint.value != null && !currentHint.value.isLegacyHint && currentHint.value.isSteppedHint) {
 		return currentHint.value;
 	}
@@ -57,7 +57,7 @@ puzzleStore.$onAction(({
 	name
 }) => {
 	// hide the hint whenever a value is set on the board
-	if (name === 'assignToBoard' && showHint.value) hide();
+	if (name === 'assignToBoard' && isHintShown.value) hide();
 })
 
 </script>

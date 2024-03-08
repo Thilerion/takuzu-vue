@@ -21,7 +21,7 @@
 				scale="1.125"
 				icon="md-replay"
 				vertical
-				:disabled="!canUndo || paused"
+				:disabled="!canRestart"
 			>
 				<template v-slot:default><span class="text-xs">{{ $t('PlayPuzzle.controls.restart') }}</span></template>
 				<template v-slot:icon>
@@ -62,10 +62,11 @@
 
 <script setup lang="ts">
 import { useSettingsStore } from '@/stores/settings/store';
-import { computed } from 'vue';
+import { toRef } from 'vue';
 
 defineProps<{
 	canUndo: boolean,
+	canRestart: boolean,
 	paused: boolean
 }>();
 
@@ -77,7 +78,7 @@ const emit = defineEmits<{
 }>();
 
 const settingsStore = useSettingsStore();
-const checkButtonEnabled = computed(() => settingsStore.checkButton !== 'disabled');
+const checkButtonEnabled = toRef(settingsStore, 'checkButtonEnabled');
 </script>
 
 <style scoped>
@@ -105,4 +106,4 @@ const checkButtonEnabled = computed(() => settingsStore.checkButton !== 'disable
 .control-btns > .grid {
 	grid-auto-columns: 1fr;
 }
-</style>
+</style>, toRef

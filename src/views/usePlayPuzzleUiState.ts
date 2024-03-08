@@ -37,8 +37,17 @@ export const usePlayPuzzleUiState = () => {
 	const onDropdownToggled = (val: boolean) => dropdownOpen.value = val;
 	const setSettingsOpen = (val: boolean) => settingsOpen.value = val;
 
+	const puzzleUiActive = computed(() => {
+		return !windowHidden.value && !settingsOpen.value && !dropdownOpen.value;
+	})
+
 	return {
 		windowHidden,
+		settingsOpen: readonly(settingsOpen),
+		dropdownOpen: readonly(dropdownOpen),
+
+		puzzleUiActive,
+
 		showRulers,
 		rulerComponentType,
 		rulerCountType,
@@ -46,7 +55,5 @@ export const usePlayPuzzleUiState = () => {
 		showTimer,
 		onDropdownToggled,
 		setSettingsOpen,
-		settingsOpen: readonly(settingsOpen),
-		dropdownOpen: readonly(dropdownOpen),
 	}
 }

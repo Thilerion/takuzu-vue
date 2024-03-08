@@ -11,7 +11,7 @@ import type { SteppedHint } from "./stepped-hint/types.js";
 
 export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 	// state
-	const showHint = ref(false);
+	const isHintShown = ref(false);
 	const current = reactive({
 		hint: null,
 		boardStr: null
@@ -42,7 +42,7 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 			// handled from component for stepped hints
 			// console.log('Cannot show stepped hint highlight from store.');
 		}
-		showHint.value = true;
+		isHintShown.value = true;
 	}
 	const showCurrentHintIfAvailable = () => {
 		if (currentHint.value == null) {
@@ -58,12 +58,12 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 			// handled from component for stepped hints
 			// console.log('Cannot hide stepped hint highlight from store.');
 		}
-		showHint.value = false;
+		isHintShown.value = false;
 	}
 	const removeCurrentHint = () => {
 		current.hint = null;
 		current.boardStr = null;
-		showHint.value = false;
+		isHintShown.value = false;
 		const hintHighlightsStore = useHintHighlightsStore();
 		hintHighlightsStore.clear();
 	}
@@ -153,7 +153,7 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 	}
 
 	const reset = () => {
-		showHint.value = false;
+		isHintShown.value = false;
 		current.hint = null;
 		current.boardStr = null;
 		cache.value = new Map();
@@ -166,7 +166,8 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 	}
 	
 	return {
-		currentHint, showHint,
+		currentHint,
+		isHintShown,
 
 		getHint,
 		reset,
