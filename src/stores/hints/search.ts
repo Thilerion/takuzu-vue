@@ -1,7 +1,8 @@
 import { SimpleBoard } from "@/lib";
 import { createHint } from "./helpers";
 import { HINT_TYPE, Hint } from "./Hint";
-import { humanSolveDuplicateLine, humanSolveElimination } from "@/lib/human-solver";
+import { humanSolveElimination } from "@/lib/human-solver/elimination.js";
+import { humanSolveDuplicateLine } from "@/lib/human-solver/duplicate.js";
 import { TriplesSteppedHint } from "./stepped-hint/TriplesHint.js";
 import type { SteppedHint } from "./stepped-hint/types.js";
 import { BalanceSteppedHint } from "./stepped-hint/BalanceHint.js";
