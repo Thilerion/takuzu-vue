@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="board new-board relative"
+		class="board inline-grid relative"
 	>
 		<div class="ruler-wrapper-columns" :class="{paused}"><slot name="ruler-columns" /></div>
 		<div class="ruler-wrapper-rows" :class="{paused}"><slot name="ruler-rows" /></div>
@@ -9,10 +9,8 @@
 		</div>
 
 		<PuzzleGrid
-			:board="board"
-			:rows="rows"
-			:columns="columns"
-			:paused="paused"
+			:key="puzzleGridForceReplaceKey"
+			:board :rows :columns :paused
 			:style="{
 				'max-width': gridWidth,
 				'max-height': gridHeight,
@@ -44,6 +42,7 @@ import type { VecValue } from '@/lib/types.js';
 import { usePuzzleAssistanceStore } from '@/stores/assistance/store.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { usePuzzlePauseResume } from '@/stores/puzzle/usePuzzlePauseResume.js';
+import { computed } from 'vue';
 
 defineProps<{
 	rows: number,
@@ -62,14 +61,19 @@ const resumeByUser = () => {
 	manualResumeGame();
 }
 
+// For PuzzleGrid prop: markedMistakes
 const assistStore = usePuzzleAssistanceStore();
+
+// Force PuzzleGrid component to be replaced/reloaded whenever the puzzle changes. This can be achieved using the initialBoard or the solutionBoard in the puzzleStore.
+// In this case, solutionBoardStr is used as it is already available in the store.
+const puzzleGridForceReplaceKey = computed((): string => puzzleStore.solutionBoardStr ?? '');
 </script>
 
 <style scoped>
 .board {
-	@apply inline-grid relative;
-	grid-template-areas: "none info"
-		"none ruler-cols"
+	grid-template-areas: 
+		". info"
+		". ruler-cols"
 		"ruler-rows puzzle-grid";
 	--cell-size-num: v-bind(cellSize);
 	--cell-size: calc(var(--cell-size-num) * 1px);

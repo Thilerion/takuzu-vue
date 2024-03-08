@@ -16,13 +16,13 @@
 <script setup lang="ts">
 import type { PuzzleValue } from "@/lib/constants.js";
 import type { VecValue } from "@/lib/types.js";
-import { computed, ref, toRefs, watch } from "vue";
+import { toRefs } from "vue";
 
 const props = defineProps<{
 	x: number,
 	y: number,
 	locked: boolean,
-	initialValue: PuzzleValue,
+	// initialValue: PuzzleValue,
 	value: PuzzleValue,
 	incorrect: boolean | undefined
 }>();
@@ -31,11 +31,9 @@ const emit = defineEmits<{
 }>();
 
 const {
-	value,
 	x,
 	y,
-	locked,
-	initialValue,
+	value: cellValue,
 	incorrect
 } = toRefs(props);
 
@@ -44,25 +42,10 @@ const gridStyles = {
 	'grid-column': `cell-col-start ${x.value + 1} / span 1`
 };
 
-const cellValue = computed(() => {
-	if (value.value == null) {
-		return initialValue.value;
-	} else return value.value;
-})
-const isLocked = computed(() => {
-	if (locked.value == null) {
-		return initialValue.value !== '.';
-	} else return locked.value;
-})
-
-const elementType = ref(isLocked.value ? 'div' : 'button');
-const eventName = ref(isLocked.value ? undefined : 'pointerdown');
-
-watch(isLocked, (v, prev) => {
-	if (v === prev) return;
-	elementType.value = v ? 'div' : 'button';
-	eventName.value = v ? undefined : 'pointerdown';
-})
+// Fixed values. The PuzzleGrid component is destroyed and recreated when the puzzle changes, so this component is always fresh when isLocked for a specific x,y gets a different value
+const isLocked = props.locked;
+const elementType = isLocked ? 'div' : 'button';
+const eventName = isLocked ? undefined : 'pointerdown';
 
 const handleCellToggle = () => {
 	emit('toggle', { x: x.value, y: y.value, value: cellValue.value });

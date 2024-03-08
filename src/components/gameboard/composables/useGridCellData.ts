@@ -6,7 +6,7 @@ export type GridStaticCellData = Vec & {
 	locked: boolean;
 	initialValue: PuzzleValue;
 	key: XYKey; // x,y key, used in accessing Maps wit data for a specific cell
-	listKey: string; // key used in v-for list
+	listKey: string; // key used in v-for list, simply use x,y because PuzzleGrid component is reloaded when the other values change
 }
 
 const getGridStaticCellData = (
@@ -20,9 +20,8 @@ const getGridStaticCellData = (
 		for (let x = 0; x < width; x++) {
 			const initialValue = initialGrid[y][x];
 			const locked = initialValue !== EMPTY;
-			const listKey = [x, y, locked ? 1 : 0, initialValue].join(',');
 			const key: XYKey = `${x},${y}`;
-			staticCellData.push({ x, y, listKey, locked, initialValue, key });
+			staticCellData.push({ x, y, listKey: key, locked, initialValue, key });
 		}
 	}
 	return staticCellData;

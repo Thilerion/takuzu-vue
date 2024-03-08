@@ -11,10 +11,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRefs } from 'vue';
+import { computed, ref, toRefs, toRef } from 'vue';
 import { useThrottledElementSizeObserver } from './composables/useThrottledElementSizeObserver.js';
 import { useDynamicPuzzleGridSize } from './composables/useDynamicPuzzleGridSize.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
+import { toRefs as refToRefs } from '@vueuse/core';
 
 const props = withDefaults(defineProps<{
 	rulerHeight: number | 'cellSize' | null, // number: px value, cellSize for equal to cellSize, null for hidden
@@ -30,9 +31,6 @@ const props = withDefaults(defineProps<{
 const { rulerHeight, rulerWidth, infoHeight, paddingX, paddingY } = toRefs(props);
 
 const container = ref<HTMLElement | null>(null);
-const puzzleStore = usePuzzleStore();
-const rows = computed(() => puzzleStore.height!);
-const columns = computed(() => puzzleStore.width!);
 
 const elDimensions = useThrottledElementSizeObserver(
 	container,
@@ -47,12 +45,13 @@ const validElDimensions = computed(() => {
 	return width > 0 && height > 0;
 })
 
+const puzzleStore = usePuzzleStore();
+const gridShape = toRef(puzzleStore.gridShape);
+const gridShapeRefs = refToRefs(gridShape);
+
 const { puzzleGridDimensions } = useDynamicPuzzleGridSize(
 	elDimensions,
-	{
-		width: columns,
-		height: rows
-	},
+	gridShapeRefs,
 	{
 		width: rulerWidth,
 		height: rulerHeight,
@@ -88,9 +87,8 @@ const cellSizeCategory = computed((): CellSizeCategory => {
 	@apply flex-1 flex flex-col;
 	overflow: hidden;
 
-	--rows: v-bind(rows);
-	--columns: v-bind(columns);
-	--aspect-ratio: calc(var(--columns) / var(--rows));
+	--rows: v-bind(gridShape.height);
+	--columns: v-bind(gridShape.width);
 }
 
 .puzzle-wrapper {

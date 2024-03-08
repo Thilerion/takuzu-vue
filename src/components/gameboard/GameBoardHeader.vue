@@ -47,7 +47,9 @@ const emit = defineEmits<{
 const puzzleStore = usePuzzleStore();
 const { paused, width, height } = storeToRefs(puzzleStore);
 
-// update with watcher, to prevent values being removed during playPuzzle exit transition after the puzzleStore was reset
+// when a puzzle is finished, and the user exits to a different route that causes the puzzleStore to reset,
+// during the transition from the current route to the next, width and height in the store become null, so the header very briefly
+// displays an empty rows and columns value. To prevent this, use a watcher.
 const rows = ref<number | null>(null);
 const columns = ref<number | null>(null);
 watchEffect(() => {

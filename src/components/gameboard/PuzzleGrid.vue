@@ -1,10 +1,10 @@
 <template>
 	<div class="puzzle-grid">
 		<FastPuzzleCellWrapper
-			v-for="{ listKey, key: xyKey, x, y, initialValue, locked } in staticCellData"
+			v-for="{ listKey, key: xyKey, x, y, locked } in staticCellData"
 			:key="listKey"
 			@toggle="onCellClick"
-			v-bind="{ x, y, listKey, initialValue }"
+			v-bind="{ x, y, listKey }"
 			:value="grid[y][x]"
 			:locked="locked"
 			:incorrect="incorrectCellKeys[xyKey]"
@@ -48,6 +48,7 @@ const emit = defineEmits<{
 const { vibrate } = usePuzzleTapVibrate(rows, columns);
 
 // GRID CELL DATA
+// probably does not need to be a composable, as the data does not need to be reactive: this component gets replaced whenever the puzzle/initialBoard changes
 const staticCellData = useStaticGridCellData(columns, rows, initialGrid);
 const grid = computed((): PuzzleGrid => props.board.grid);
 const incorrectCellKeys = computed((): Record<XYKey, boolean> => {
@@ -64,7 +65,10 @@ const {
 
 // CELL METHODS
 const onCellClick = (val: VecValue) => {
-	if (props.paused) return;
+	if (props.paused) {
+		console.warn('PuzzleGrid onCellClick (puzzle cell toggled) while game is paused. Ignoring.');
+		return;
+	}
 	vibrate();
 	emit('toggle-cell', val);
 }
