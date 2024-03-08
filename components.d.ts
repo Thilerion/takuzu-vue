@@ -121,6 +121,7 @@ declare module 'vue' {
     PuzzleGrid: typeof import('./src/components/gameboard/PuzzleGrid.vue')['default']
     PuzzleGridHighlightItem: typeof import('./src/components/gameboard/PuzzleGridHighlightItem.vue')['default']
     PuzzleGridHighlights: typeof import('./src/components/gameboard/PuzzleGridHighlights.vue')['default']
+    PuzzleGridPauseOverlay: typeof import('./src/components/gameboard/PuzzleGridPauseOverlay.vue')['default']
     PuzzleHint: typeof import('./src/components/gameboard/hints/PuzzleHint.vue')['default']
     PuzzleHintBase: typeof import('./src/components/gameboard/hints/PuzzleHintBase.vue')['default']
     PuzzleHintStepped: typeof import('./src/components/gameboard/hints/PuzzleHintStepped.vue')['default']

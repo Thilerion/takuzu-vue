@@ -20,17 +20,11 @@
 			@toggle-cell="toggleCell"
 		/>
 
-		<transition name="fade-pause">
-			<div class="pause-overlay text-center" v-show="paused">
-				<div class="flex flex-col h-full px-2 pt-8 pb-6">
-					<button
-						class="h-5/6 flex-auto mx-auto flex justify-center pause-icon-wrapper place-items-center py-2 pointer-events-auto"
-						@click="resumeByUser"
-					><icon-grommet-icons-pause-fill class="opacity-80" /></button>
-					<div class="flex-auto pause-label-wrapper uppercase mb-2 py-2">{{ $t('PlayPuzzle.paused') }}</div>
-				</div>
-			</div>
-		</transition>
+		<PuzzleGridPauseOverlay
+			:paused
+			@resume="resumeByUser"
+			class="pause-overlay"
+		/>
 		<PuzzleCheckIndicator />
 	</div>
 </template>
@@ -81,28 +75,6 @@ const puzzleGridForceReplaceKey = computed((): string => puzzleStore.solutionBoa
 
 .pause-overlay {
 	grid-area: puzzle-grid;
-	@apply relative z-10 pointer-events-none bg-gray-100 text-gray-400 grid place-items-center text-4xl;
-	border-radius: var(--cell-rounding);
-	@apply dark:bg-slate-800 dark:text-slate-200;
-	container: pauseoverlay / inline-size;
-}
-.fade-pause-enter-active,
-.fade-pause-leave-active {
-	transition: opacity .3s ease;
-}
-
-.fade-pause-enter-from,
-.fade-pause-leave-to {
-	opacity: 0;
-}
-
-.pause-icon-wrapper {
-	font-size: clamp(20px, 25cqw, 90px);
-}
-.pause-label-wrapper {
-	@apply opacity-80 font-light;
-	letter-spacing: 0.15em;
-	font-size: clamp(20px, 100cqw / 10, 60px);
 }
 
 .puzzle-info-wrapper {
