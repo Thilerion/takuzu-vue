@@ -10,7 +10,7 @@
             "light": "Light",
             "dark": "Dark",
             "auto": "Auto",
-            "autoDescription": "Automatically change theme based on browser/system setting (currently: @.lower:{currentTheme})"
+            "autoDescription": "Automatically change theme based on browser/system setting (currently: {currentTheme})"
         },
         "themes": {
             "classic": "Classic",

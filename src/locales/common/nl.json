@@ -1,204 +1,205 @@
 {
-    "routeButton": {
-        "home": "Home",
-        "stats": "Stats",
-        "settings": "Instellingen",
-        "tools": "Gereedschap"
-    },
-    "disabled": "Uitgeschakeld",
-    "Game": {
-        "mistake": {
-            "rule-violation": "Regelovertreding | Regelovertredingen",
-            "incorrect-value": "Onjuiste waarde | Onjuiste waarden"
-        },
-        "difficulty": {
-            "label": "Niveau",
-            "Beginner": "Beginner",
-            "Very Easy": "Zeer Makkelijk",
-            "Easy": "Makkelijk",
-            "Normal": "Normaal",
-            "Hard": "Moeilijk",
-            "Very Hard": "Zeer Moeilijk",
-            "Extreme": "Extreem"
-        },
-        "board-size": {
-            "label": "Puzzelgrootte",
-            "normal": "Normaal",
-            "tall": "Langwerpig",
-            "odd": "Oneven"
-        },
-        "replay": "replay"
-    },
-    "test": "Test",
-    "default": "standaard",
-    "NewPuzzle": {
-        "title": "Nieuwe Puzzel",
-        "load-save": "Hervat huidige puzzel",
-        "options": {
-            "automatic-replay-mode": "Automatische Replay-modus"
-        },
-        "starting-a-new-puzzle-will-overwrite": "Een nieuwe puzzel starten zal de voortgang in je huidige puzzel overschrijven.",
-        "StartGame": {
-            "start-game": "Start spel",
-            "select-puzzle-size": "Selecteer een puzzelgrootte",
-            "some-puzzle-sizes-are-disabled-for-harder-puzzles": "Opmerking: sommige puzzelgroottes zijn uitgeschakeld voor moeilijkere puzzels.",
-            "loading-creating-game": "Puzzel aan het maken...",
-            "loading-loading-replay": "Puzzel laden..."
-        }
-    },
-    "Home": {
-        "buttons": {
-            "continue": "Hervatten",
-            "help": "Help",
-            "new-game": "Nieuw Spel",
-            "tutorial": "Tutorial"
-        }
-    },
-    "PlayPuzzle": {
-        "controls": {
-            "undo": "Ongedaan maken",
-            "restart": "Herstart",
-            "check": "Controleer",
-            "hint": "Hint"
-        },
-        "paused": "Gepauzeerd",
-        "progress-percentage": "Voortgang:{p}%",
-        "dd": {
-            "set-bookmark": "Maak bladwijzer",
-            "delete-bookmark": "Verwijder bladwijzer",
-            "copy-board-string": "Kopieer puzzel 'BoardString'",
-            "solve-puzzle": "Puzzel oplossen",
-            "solve-instantly": "Direct oplossen",
-            "increase-time-by-n-s": "Tijd verhogen met {n}s",
-            "solve-all-triples": "Los alle 'Triples' op"
-        }
-    },
-    "HowToPlay": {
-        "title": "Spelhulp",
-        "tab-overview": "Overzicht en Regels",
-        "tab-basic-techniques": "Basis Technieken",
-        "tab-advanced-techniques": "Geavanceerde Technieken",
-        "BasicRules": {
-            "description": "Het doel van een binaire puzzel is eenvoudig: vul elke cel van het raster met een {symbolZero} of een {symbolOne} volgens enkele eenvoudige regels. Deze 3 belangrijke regels zijn:",
-            "title": "Basisregels",
-            "balanced-lines": {
-                "description-1": "Elke rij en kolom moet een gelijk aantal {symbolOnePlural} en {symbolZeroPlural} bevatten.",
-                "description-2": "In een 4x4-raster moet elke rij en kolom bijvoorbeeld twee {symbolOnePlural} en twee {symbolZeroPlural} bevatten.",
-                "title": "Gebalanceerde lijnen",
-                "example-correct": "Er zijn precies 3 {symbolZeroPlural} en 3 {symbolOnePlural} in de rij van 6 cellen.",
-                "example-incorrect": "Er zijn vier {symbolZeroPlural}, maar de rij heeft zes cellen, wat betekent dat er slechts drie {symbolZeroPlural} zijn toegestaan."
-            },
-            "max-two-consecutive": {
-                "title": "Maximaal twee opeenvolgend",
-                "description-1": "Er mogen niet meer dan twee van hetzelfde TODO:symbol/number/color naast of onder elkaar staan.",
-                "description-2": "Dit betekent dat je in geen enkele rij of kolom drie opeenvolgende {symbolOnePlural} of {symbolZeroPlural} kunt hebben.",
-                "example-correct": "Twee {symbolOnePlural} op rij, en twee {symbolZeroPlural} op rij zijn toegestaan.",
-                "example-incorrect": "Drie {symbolOnePlural} op een rij is niet toegestaan."
-            },
-            "unique-rows-and-columns": {
-                "title": "Unieke Rijen en Kolommen",
-                "description-1": "Elke rij en elke kolom moet uniek zijn.",
-                "description-2": "Geen twee rijen kunnen hetzelfde zijn, en geen twee kolommen kunnen hetzelfde zijn.",
-                "example-label": "Deze 4x4 puzzel is incorrect, omdat twee rijen hetzelfde zijn:"
-            }
-        },
-        "Variations": {
-            "title": "Puzzelvarianten",
-            "description": "Naast standaardpuzzels is er één puzzelvariant beschikbaar:",
-            "Odd": {
-                "title": "Puzzels met Oneven Afmetingen",
-                "description-1": "In puzzels met een oneven aantal rijen en kolommen wordt de regel voor gebalanceerde lijnen enigszins aangepast.",
-                "description-2": "In deze gevallen zal elke lijn één {symbolOne} meer hebben dan {symbolZero}.",
-                "description-3": "Dit betekent dat in een 5x5 raster elke rij en kolom drie {symbolOnePlural} en twee {symbolZeroPlural} moet bevatten."
-            }
-        },
-        "overview": {
-            "page-description": "Welkom bij Takuzu! Dit puzzeltype, ook wel binaire puzzel genoemd, is een heerlijke mix van logica en strategie. Het is perfect voor puzzelliefhebbers en nieuwkomers en biedt een unieke mentale uitdaging. Onze gids is hier om u te helpen de basisbeginselen te begrijpen en het plezier in elk raster te ontdekken. Laten we beginnen!"
-        },
-        "LabelCorrect": "Juist:",
-        "LabelIncorrect": "Onjuist:",
-        "BasicTechniques": {
-            "description": "Hieronder hebben we enkele fundamentele strategieën uiteengezet waarmee u gemakkelijk door de puzzels kunt navigeren.",
-            "line-completion": {
-                "description": "Deze techniek hangt samen met de 'gebalanceerde lijnen'-regel, die zegt dat elke rij en kolom een gelijk aantal {symbolZeroPlural} en {symbolOnePlural} moet bevatten. Terwijl u de puzzel invult, houdt u het saldo binnen elke rij en kolom bij als leidraad voor uw plaatsingsbeslissingen.",
-                "example": "Deze rij heeft 6 cellen, wat betekent dat er 3 van elke {symbolOrColor} vereist zijn. Zoals je in de bovenste rij kunt zien, zijn er 3 {symbolOnePlural}, wat betekent dat alle andere cellen {symbolZeroPlural} moeten zijn.",
-                "tip": "Er is een instelling beschikbaar die een horizontale en verticale liniaal aan het puzzelraster toevoegt. Deze linialen geven aan hoeveel van elke {symbolOrColor} er nog in die rij of kolom moeten worden geplaatst, en markeren wanneer er op een lijn geen enkele {symbolOrColor} meer over is, wat betekent dat deze kan worden aangevuld met de andere {symbolOrColor}.",
-                "title": "Rijen en kolommen voltooien"
-            },
-            "pairs-and-sandwiches": {
-                "description": "Een directe toepassing van de regel 'maximaal twee opeenvolgend' is om te voorkomen dat er drielingen (drie dezelfde op een rij) ontstaan op het puzzelbord.",
-                "pairs": "Paren",
-                "pairs-description": "Wanneer je twee identieke {symbolOrColorPlural} naast elkaar ziet, horizontaal of verticaal, vormt dit een 'paar'. De cellen die direct aan dit paar grenzen, moeten worden gevuld met de andere {symbolOrColor} om te voorkomen dat er een reeks van drie identieke {symbolOrColorPlural} (een drieling) ontstaat.",
-                "sandwiches": "Sandwiches",
-                "sandwiches-description": "Er is sprake van een 'sandwich' wanneer een lege cel wordt geflankeerd door twee identieke {symbolOrColorPlural}. Deze opstelling schrijft voor dat de lege cel, feitelijk de \"vulling\" van de sandwich, wordt gevuld met de andere {symbolOrColor} om de vorming van drielingen te voorkomen.",
-                "title": "Paren en 'sandwiches' identificeren"
-            },
-            "unique-lines": {
-                "description": "Deze strategie is vaak niet noodzakelijk voor het oplossen van puzzels, vooral niet bij makkelijkere puzzels, dankzij het op maat gemaakte algoritme voor het genereren van puzzels. Het nut ervan schittert bij kleinere puzzels of tijdens moeilijkere uitdagingen waarbij andere strategieën je misschien niet verder kunnen helpen.",
-                "example-label": "Laten we kijken naar deze 4x4-puzzel. Er zijn al twee rijen voltooid en de eerste rij lijkt op de tweede rij:",
-                "example-label-2": "Deze rij kan maar op één manier worden ingevuld om twee identieke rijen te voorkomen:",
-                "title": "Unieke rijen en kolommen",
-                "when-to-use-label": "Wanneer te gebruiken:",
-                "when-to-use-text": "Het is vooral handig in scenario's waarin een lijn bijna compleet is, maar niet kan worden voltooid met behulp van de basisregels van balanceren, sandwiches of paren. Als u gebruik maakt van de liniaalinstelling die het resterende aantal van elke {symbolOrColor} aangeeft dat nodig is in een rij of kolom, let dan goed op de lijnen waarvoor de plaatsing van precies één {symbolOne} en één {symbolZero} vereist is. Vergelijk deze scenario's met bestaande lijnen om de juiste plaatsingen te identificeren."
-            }
-        }
-    },
-    "tip": "Tip",
-    "Recap": {
-        "fallbackCompliment": "Good gedaan!",
-        "compliments": [
-            "Goed gedaan!",
-            "Sensationeel!",
-            "Wauw!",
-            "Geweldig!",
-            "Uitstekend!",
-            "Buitengewoon!",
-            "Uitzonderlijk!",
-            "Fantastisch!",
-            "Schitterend!",
-            "Fabuleus!",
-            "Enorm goed gedaan!",
-            "Super!",
-            "Goed zo!",
-            "Prachtig!",
-            "Verbazingwekkend!",
-            "Briljant!"
-        ],
-        "play-again": "Speel opnieuw",
-        "change-level": "Verander puzzel",
-        "set-note": "Maak notitie",
-        "difficulty-label": "Niveau",
-        "size-label": "Grootte",
-        "solved-label": "Opgelost",
-        "time-average": "Gemiddeld",
-        "time-best": "Beste",
-        "view-all-statistics": "Bekijk alle statistieken",
-        "record": {
-            "first-puzzle-solved": "Eerste puzzel opgelost!",
-            "new-time-record": "Persoonlijk record!"
-        },
-        "message": {
-            "notAddedToDbCheats": "Puzzel is niet opgeslagen in je geschiedenis, omdat je cheats hebt gebruikt.",
-            "firstTotal": "Je hebt je allereerste puzzel ooit opgelost!",
-            "hardestEver": "Dit was de moeilijkste puzzel die je ooit hebt opgelost, goed gedaan!",
-            "firstOfDifficulty": "Je hebt je eerste puzzel op het '@:{difficultyKey}' niveau opgelost.",
-            "firstOfSize": "Eerste keer een {dimensions} puzzel opgelost.",
-            "firstOfSizeDifficulty": "Eerste keer een [{dimensions}] puzzel opgelost op het '@:{difficultyKey}' niveau.",
-            "timeRecordLarge": "Je was een ongelooflijke {improvementPercentage} sneller dan je vorige beste tijd!",
-            "timeRecord": "Je hebt je beste tijd verbeterd met {differenceSec}s!",
-            "replayTimeRecord": "Dit is de {numPlaysOrdinal} keer dat je deze exacte puzzel hebt opgelost. Je was {differenceSec}s sneller dan je snelste tijd.",
-            "almostTimeRecordAbsolute": "Oef, zo dichtbij het zetten van een nieuw tijdrecord. Je was slechts {differenceSec}s langzamer dan je persoonlijk record.",
-            "almostTimeRecordPercentage": "Je was bijna een nieuw tijdrecord aan het zetten! Je was slechts {differencePercentage} langzamer.",
-            "muchBetterThanAverageAbsolute": "Je hebt deze puzzel sneller opgelost dan je gemiddelde met een ongelooflijke {differenceSec}s!",
-            "muchBetterThanAveragePercentage": "Dat was veel sneller dan gemiddeld! Je was {improvementPercentage} sneller.",
-            "betterThanAverage": "Je was {differenceSec}s sneller dan je vorige gemiddelde.",
-            "worstEver": "Dit was je zwaarste uitdaging tot nu toe, een nieuw persoonlijk record voor de langste tijd genomen.",
-            "nearlyWorstEver": "Bijna je langzaamste oplossing, maar je hebt toch je persoonlijk slechtste tijd verslagen!",
-            "replayPlaysTotal": "Dit is de {numPlaysOrdinal} keer dat je deze exact dezelfde puzzel hebt opgelost, met je beste tijd zijnde {bestPreviousTimeMinSec}.",
-            "playsTotal": "Je hebt nu in totaal {totalSolved} puzzels opgelost.",
-            "playsToday": "Vandaag heb je {totalSolvedToday} puzzels opgelost.",
-            "playsConfigTotal": "Je hebt in totaal {count} puzzels opgelost met {dimensions} afmetingen op het @:{difficultyKey} niveau.",
-            "playsConfigToday": "Je hebt vandaag {count} puzzels gespeeld met {dimensions} afmetingen op het @:{difficultyKey} niveau."
-        }
-    }
+	"Game": {
+		"board-size": {
+			"label": "Puzzelgrootte",
+			"normal": "Normaal",
+			"odd": "Oneven",
+			"tall": "Langwerpig"
+		},
+		"difficulty": {
+			"Beginner": "Beginner",
+			"Easy": "Makkelijk",
+			"Extreme": "Extreem",
+			"Hard": "Moeilijk",
+			"Normal": "Normaal",
+			"Very Easy": "Zeer Makkelijk",
+			"Very Hard": "Zeer Moeilijk",
+			"label": "Niveau"
+		},
+		"mistake": {
+			"incorrect-value": "Onjuiste waarde | Onjuiste waarden",
+			"rule-violation": "Regelovertreding | Regelovertredingen"
+		},
+		"replay": "replay"
+	},
+	"Home": {
+		"buttons": {
+			"continue": "Hervatten",
+			"help": "Help",
+			"new-game": "Nieuw Spel",
+			"tutorial": "Tutorial"
+		}
+	},
+	"HowToPlay": {
+		"BasicRules": {
+			"balanced-lines": {
+				"description-1": "Elke rij en kolom moet een gelijk aantal {symbolOnePlural} en {symbolZeroPlural} bevatten.",
+				"description-2": "In een 4x4-raster moet elke rij en kolom bijvoorbeeld twee {symbolOnePlural} en twee {symbolZeroPlural} bevatten.",
+				"example-correct": "Er zijn precies 3 {symbolZeroPlural} en 3 {symbolOnePlural} in de rij van 6 cellen.",
+				"example-incorrect": "Er zijn vier {symbolZeroPlural}, maar de rij heeft zes cellen, wat betekent dat er slechts drie {symbolZeroPlural} zijn toegestaan.",
+				"title": "Gebalanceerde lijnen"
+			},
+			"description": "Het doel van een binaire puzzel is eenvoudig: vul elke cel van het raster met een {symbolZero} of een {symbolOne} volgens enkele eenvoudige regels. Deze 3 belangrijke regels zijn:",
+			"max-two-consecutive": {
+				"description-1": "Er mogen niet meer dan twee van hetzelfde TODO:symbol/number/color naast of onder elkaar staan.",
+				"description-2": "Dit betekent dat je in geen enkele rij of kolom drie opeenvolgende {symbolOnePlural} of {symbolZeroPlural} kunt hebben.",
+				"example-correct": "Twee {symbolOnePlural} op rij, en twee {symbolZeroPlural} op rij zijn toegestaan.",
+				"example-incorrect": "Drie {symbolOnePlural} op een rij is niet toegestaan.",
+				"title": "Maximaal twee opeenvolgend"
+			},
+			"title": "Basisregels",
+			"unique-rows-and-columns": {
+				"description-1": "Elke rij en elke kolom moet uniek zijn.",
+				"description-2": "Geen twee rijen kunnen hetzelfde zijn, en geen twee kolommen kunnen hetzelfde zijn.",
+				"example-label": "Deze 4x4 puzzel is incorrect, omdat twee rijen hetzelfde zijn:",
+				"title": "Unieke Rijen en Kolommen"
+			}
+		},
+		"BasicTechniques": {
+			"description": "Hieronder hebben we enkele fundamentele strategieën uiteengezet waarmee u gemakkelijk door de puzzels kunt navigeren.",
+			"line-completion": {
+				"description": "Deze techniek hangt samen met de 'gebalanceerde lijnen'-regel, die zegt dat elke rij en kolom een gelijk aantal {symbolZeroPlural} en {symbolOnePlural} moet bevatten. Terwijl u de puzzel invult, houdt u het saldo binnen elke rij en kolom bij als leidraad voor uw plaatsingsbeslissingen.",
+				"example": "Deze rij heeft 6 cellen, wat betekent dat er 3 van elke {symbolOrColor} vereist zijn. Zoals je in de bovenste rij kunt zien, zijn er 3 {symbolOnePlural}, wat betekent dat alle andere cellen {symbolZeroPlural} moeten zijn.",
+				"tip": "Er is een instelling beschikbaar die een horizontale en verticale liniaal aan het puzzelraster toevoegt. Deze linialen geven aan hoeveel van elke {symbolOrColor} er nog in die rij of kolom moeten worden geplaatst, en markeren wanneer er op een lijn geen enkele {symbolOrColor} meer over is, wat betekent dat deze kan worden aangevuld met de andere {symbolOrColor}.",
+				"title": "Rijen en kolommen voltooien"
+			},
+			"pairs-and-sandwiches": {
+				"description": "Een directe toepassing van de regel 'maximaal twee opeenvolgend' is om te voorkomen dat er drielingen (drie dezelfde op een rij) ontstaan op het puzzelbord.",
+				"pairs": "Paren",
+				"pairs-description": "Wanneer je twee identieke {symbolOrColorPlural} naast elkaar ziet, horizontaal of verticaal, vormt dit een 'paar'. De cellen die direct aan dit paar grenzen, moeten worden gevuld met de andere {symbolOrColor} om te voorkomen dat er een reeks van drie identieke {symbolOrColorPlural} (een drieling) ontstaat.",
+				"sandwiches": "Sandwiches",
+				"sandwiches-description": "Er is sprake van een 'sandwich' wanneer een lege cel wordt geflankeerd door twee identieke {symbolOrColorPlural}. Deze opstelling schrijft voor dat de lege cel, feitelijk de \"vulling\" van de sandwich, wordt gevuld met de andere {symbolOrColor} om de vorming van drielingen te voorkomen.",
+				"title": "Paren en 'sandwiches' identificeren"
+			},
+			"unique-lines": {
+				"description": "Deze strategie is vaak niet noodzakelijk voor het oplossen van puzzels, vooral niet bij makkelijkere puzzels, dankzij het op maat gemaakte algoritme voor het genereren van puzzels. Het nut ervan schittert bij kleinere puzzels of tijdens moeilijkere uitdagingen waarbij andere strategieën je misschien niet verder kunnen helpen.",
+				"example-label": "Laten we kijken naar deze 4x4-puzzel. Er zijn al twee rijen voltooid en de eerste rij lijkt op de tweede rij:",
+				"example-label-2": "Deze rij kan maar op één manier worden ingevuld om twee identieke rijen te voorkomen:",
+				"title": "Unieke rijen en kolommen",
+				"when-to-use-label": "Wanneer te gebruiken:",
+				"when-to-use-text": "Het is vooral handig in scenario's waarin een lijn bijna compleet is, maar niet kan worden voltooid met behulp van de basisregels van balanceren, sandwiches of paren. Als u gebruik maakt van de liniaalinstelling die het resterende aantal van elke {symbolOrColor} aangeeft dat nodig is in een rij of kolom, let dan goed op de lijnen waarvoor de plaatsing van precies één {symbolOne} en één {symbolZero} vereist is. Vergelijk deze scenario's met bestaande lijnen om de juiste plaatsingen te identificeren."
+			}
+		},
+		"LabelCorrect": "Juist:",
+		"LabelIncorrect": "Onjuist:",
+		"Variations": {
+			"Odd": {
+				"description-1": "In puzzels met een oneven aantal rijen en kolommen wordt de regel voor gebalanceerde lijnen enigszins aangepast.",
+				"description-2": "In deze gevallen zal elke lijn één {symbolOne} meer hebben dan {symbolZero}.",
+				"description-3": "Dit betekent dat in een 5x5 raster elke rij en kolom drie {symbolOnePlural} en twee {symbolZeroPlural} moet bevatten.",
+				"title": "Puzzels met Oneven Afmetingen"
+			},
+			"description": "Naast standaardpuzzels is er één puzzelvariant beschikbaar:",
+			"title": "Puzzelvarianten"
+		},
+		"overview": {
+			"page-description": "Welkom bij Takuzu! Dit puzzeltype, ook wel binaire puzzel genoemd, is een heerlijke mix van logica en strategie. Het is perfect voor puzzelliefhebbers en nieuwkomers en biedt een unieke mentale uitdaging. Onze gids is hier om u te helpen de basisbeginselen te begrijpen en het plezier in elk raster te ontdekken. Laten we beginnen!"
+		},
+		"tab-advanced-techniques": "Geavanceerde Technieken",
+		"tab-basic-techniques": "Basis Technieken",
+		"tab-overview": "Overzicht en Regels",
+		"title": "Spelhulp"
+	},
+	"NewPuzzle": {
+		"StartGame": {
+			"loading-creating-game": "Puzzel aan het maken...",
+			"loading-loading-replay": "Puzzel laden...",
+			"select-puzzle-size": "Selecteer een puzzelgrootte",
+			"some-puzzle-sizes-are-disabled-for-harder-puzzles": "Opmerking: sommige puzzelgroottes zijn uitgeschakeld voor moeilijkere puzzels.",
+			"start-game": "Start spel"
+		},
+		"load-save": "Hervat huidige puzzel",
+		"options": {
+			"automatic-replay-mode": "Automatische Replay-modus"
+		},
+		"starting-a-new-puzzle-will-overwrite": "Een nieuwe puzzel starten zal de voortgang in je huidige puzzel overschrijven.",
+		"title": "Nieuwe Puzzel"
+	},
+	"PlayPuzzle": {
+		"controls": {
+			"check": "Controleer",
+			"hint": "Hint",
+			"restart": "Herstart",
+			"undo": "Ongedaan maken"
+		},
+		"dd": {
+			"copy-board-string": "Kopieer puzzel 'BoardString'",
+			"delete-bookmark": "Verwijder bladwijzer",
+			"increase-time-by-n-s": "Tijd verhogen met {n}s",
+			"set-bookmark": "Maak bladwijzer",
+			"solve-all-triples": "Los alle 'Triples' op",
+			"solve-instantly": "Direct oplossen",
+			"solve-puzzle": "Puzzel oplossen"
+		},
+		"paused": "Gepauzeerd",
+		"progress-percentage": "Voortgang:{p}%"
+	},
+	"Recap": {
+		"change-level": "Verander puzzel",
+		"compliments": [
+			"Goed gedaan!",
+			"Sensationeel!",
+			"Wauw!",
+			"Geweldig!",
+			"Uitstekend!",
+			"Buitengewoon!",
+			"Uitzonderlijk!",
+			"Fantastisch!",
+			"Schitterend!",
+			"Fabuleus!",
+			"Enorm goed gedaan!",
+			"Super!",
+			"Goed zo!",
+			"Prachtig!",
+			"Verbazingwekkend!",
+			"Briljant!"
+		],
+		"difficulty-label": "Niveau",
+		"fallbackCompliment": "Good gedaan!",
+		"message": {
+			"almostTimeRecordAbsolute": "Oef, zo dichtbij het zetten van een nieuw tijdrecord. Je was slechts {differenceSec}s langzamer dan je persoonlijk record.",
+			"almostTimeRecordPercentage": "Je was bijna een nieuw tijdrecord aan het zetten! Je was slechts {differencePercentage} langzamer.",
+			"betterThanAverage": "Je was {differenceSec}s sneller dan je vorige gemiddelde.",
+			"firstOfDifficulty": "Je hebt je eerste puzzel op het '@:{difficultyKey}' niveau opgelost.",
+			"firstOfSize": "Eerste keer een {dimensions} puzzel opgelost.",
+			"firstOfSizeDifficulty": "Eerste keer een [{dimensions}] puzzel opgelost op het '@:{difficultyKey}' niveau.",
+			"firstTotal": "Je hebt je allereerste puzzel ooit opgelost!",
+			"hardestEver": "Dit was de moeilijkste puzzel die je ooit hebt opgelost, goed gedaan!",
+			"muchBetterThanAverageAbsolute": "Je hebt deze puzzel sneller opgelost dan je gemiddelde met een ongelooflijke {differenceSec}s!",
+			"muchBetterThanAveragePercentage": "Dat was veel sneller dan gemiddeld! Je was {improvementPercentage} sneller.",
+			"nearlyWorstEver": "Bijna je langzaamste oplossing, maar je hebt toch je persoonlijk slechtste tijd verslagen!",
+			"notAddedToDbCheats": "Puzzel is niet opgeslagen in je geschiedenis, omdat je cheats hebt gebruikt.",
+			"playsConfigToday": "Je hebt vandaag {count} puzzels gespeeld met {dimensions} afmetingen op het @:{difficultyKey} niveau.",
+			"playsConfigTotal": "Je hebt in totaal {count} puzzels opgelost met {dimensions} afmetingen op het @:{difficultyKey} niveau.",
+			"playsToday": "Vandaag heb je {totalSolvedToday} puzzels opgelost.",
+			"playsTotal": "Je hebt nu in totaal {totalSolved} puzzels opgelost.",
+			"replayPlaysTotal": "Dit is de {numPlaysOrdinal} keer dat je deze exact dezelfde puzzel hebt opgelost, met je beste tijd zijnde {bestPreviousTimeMinSec}.",
+			"replayTimeRecord": "Dit is de {numPlaysOrdinal} keer dat je deze exacte puzzel hebt opgelost. Je was {differenceSec}s sneller dan je snelste tijd.",
+			"timeRecord": "Je hebt je beste tijd verbeterd met {differenceSec}s!",
+			"timeRecordLarge": "Je was een ongelooflijke {improvementPercentage} sneller dan je vorige beste tijd!",
+			"worstEver": "Dit was je zwaarste uitdaging tot nu toe, een nieuw persoonlijk record voor de langste tijd genomen."
+		},
+		"play-again": "Speel opnieuw",
+		"record": {
+			"first-puzzle-solved": "Eerste puzzel opgelost!",
+			"new-time-record": "Persoonlijk record!"
+		},
+		"set-note": "Maak notitie",
+		"size-label": "Grootte",
+		"solved-label": "Opgelost",
+		"time-average": "Gemiddeld",
+		"time-best": "Beste",
+		"view-all-statistics": "Bekijk alle statistieken"
+	},
+	"default": "standaard",
+	"disabled": "Uitgeschakeld",
+	"routeButton": {
+		"home": "Home",
+		"settings": "Instellingen",
+		"stats": "Stats",
+		"tools": "Gereedschap"
+	},
+	"test": "Test",
+	"tip": "Tip",
+	"unknown": "onbekend"
 }

@@ -10,7 +10,7 @@
             "light": "Licht",
             "dark": "Donker",
             "auto": "Automatisch",
-            "autoDescription": "Wijzig thema automatisch op basis van browser-/systeeminstelling (momenteel: @.lower:{currentTheme})"
+            "autoDescription": "Wijzig thema automatisch op basis van browser-/systeeminstelling (momenteel: {currentTheme})"
         },
         "themes": {
             "classic": "Klassiek",
