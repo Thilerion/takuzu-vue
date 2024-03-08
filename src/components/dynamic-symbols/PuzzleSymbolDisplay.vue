@@ -20,9 +20,9 @@ const colorClasses = computed(() => {
 	if (!isColored.value) return '';
 	if (cellTheme.value === 'blue-red') {
 		if (props.v === ZERO) {
-			return 'text-blue-800'
+			return 'text-cell-blue-primary dark:text-cell-blue-lighter'
 		} else if (props.v === ONE) {
-			return 'text-red-800';
+			return 'text-cell-red-primary dark:text-cell-red-lighter';
 		}
 	}
 	return '';

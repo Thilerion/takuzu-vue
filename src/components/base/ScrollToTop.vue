@@ -15,7 +15,7 @@
 				class="p-2 w-[4.5rem] h-[4.5rem] pointer-events-auto transition-opacity"
 				@click="scrollToTop"
 			><div
-				class="flex items-center justify-center text-gray-600 rounded-full bg-white/70 border aspect-square w-full h-full"
+				class="flex items-center justify-center text-gray-600 rounded-full bg-white/70 dark:bg-gray-500/50 dark:text-white border dark:border-gray-300/70 aspect-square w-full h-full"
 			><ArrowUp font-size="1.5rem" /></div></button>
 		</transition>
 	</div>

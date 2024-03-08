@@ -58,7 +58,7 @@ watch(value, (to, from) => {
 .cell {
 	@apply overflow-hidden relative isolate pointer-events-none text-center;
 	@apply w-full h-full;
-	@apply bg-gray-125 dark:bg-slate-800;
+	@apply bg-gray-125 dark:bg-gray-700/60;
 }
 .cell > *, .cell {
 	border-radius: var(--cell-rounding);

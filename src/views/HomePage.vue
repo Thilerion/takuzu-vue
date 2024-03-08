@@ -31,7 +31,10 @@ const newUpdateNotificationShown = ref(false);
 }
 
 .background-pattern {
-	--pattern-color: hsla(175, 84%, 32%, 0.5);
+	--pattern-color-light: hsla(175, 84%, 32%, 0.5);
+	--pattern-color-dark: hsla(175, 84%, 92%, 0.7);
+
+	--pattern-color: var(--pattern-color-light);
 	@apply h-full w-full absolute inset-0 z-0;
 	background-color: transparent;
 	background-image:  linear-gradient(var(--pattern-color) 1.8px, transparent 1.8px), linear-gradient(to right, var(--pattern-color) 1.8px, transparent 1.8px);
@@ -39,13 +42,16 @@ const newUpdateNotificationShown = ref(false);
 	background-position: 18px 8px;
 	mask-image: linear-gradient(120deg, rgba(0, 0, 0, 0.4) -140%, transparent 95%);
 }
+[data-base-theme="dark"] .background-pattern {
+	--pattern-color: var(--pattern-color-dark);
+}
 
 .background-pattern-2 {
 	@apply h-full w-full absolute inset-0 z-0;
 	background: conic-gradient(from -90deg at 50% 105%, theme('colors.slate.100'), transparent), rgba(84, 212, 221, 0.1);
 }
-.dark .background-pattern-2 {
-	background: conic-gradient(from -90deg at 50% 105%, theme('colors.slate.900'), theme('colors.slate.700'));
+[data-base-theme="dark"] .background-pattern-2 {
+	background: conic-gradient(from -90deg at 30% 105%, theme('colors.slate.700'), theme('colors.slate.800'));
 }
 
 .title-wrapper {

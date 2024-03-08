@@ -1,5 +1,5 @@
 <template>
-	<div class="prose prose-sm md:prose lg:prose-lg xl:prose-xl mx-auto py-4 px-0 basic-techniques-page relative">
+	<div class="prose-slate dark:prose-invert prose-sm md:prose lg:prose-lg xl:prose-xl mx-auto py-4 px-0 basic-techniques-page relative">
 		<h2>{{ $t('HowToPlay.tab-basic-techniques') }}</h2>
 		<p>{{ $t('HowToPlay.BasicTechniques.description') }}</p>
 
@@ -10,7 +10,7 @@
 
 			<h4>{{ $t('HowToPlay.BasicTechniques.pairs-and-sandwiches.pairs') }}</h4>
 			<p>{{ $t('HowToPlay.BasicTechniques.pairs-and-sandwiches.pairs-description', { symbolOrColorPlural: valueTypeDisplayPlural, symbolOrColor: valueTypeDisplay }) }}</p>
-			<HowToPlayExample el="div" label="" class="border-y breakout px-8 py-4">
+			<HowToPlayExample el="div" label="" class="border-y breakout bg-white/5 dark:border-slate-200/50 px-8 py-4">
 				<template #examples>
 					<HowToPlayExampleCells :values="splitLine('.00.')" />
 					<span class="">Becomes:</span>
@@ -20,7 +20,7 @@
 
 			<h4>{{ $t('HowToPlay.BasicTechniques.pairs-and-sandwiches.sandwiches') }}</h4>
 			<p>{{ $t('HowToPlay.BasicTechniques.pairs-and-sandwiches.sandwiches-description',  { symbolOrColorPlural: valueTypeDisplayPlural, symbolOrColor: valueTypeDisplay }) }}</p>
-			<HowToPlayExample el="div" label="" class="border-y breakout px-8 py-4">
+			<HowToPlayExample el="div" label="" class="border-y breakout bg-white/5 dark:border-slate-200/50 px-8 py-4">
 				<template #examples>
 					<HowToPlayExampleCells :values="splitLine('.1.1..')" />
 					<span class="">Becomes:</span>
@@ -34,7 +34,7 @@
 				keypath="HowToPlay.BasicTechniques.line-completion.description"
 			/>
 			<p><strong>{{$t('tip')}}: </strong> {{ $t('HowToPlay.BasicTechniques.line-completion.tip',  { symbolOrColorPlural: valueTypeDisplayPlural, symbolOrColor: valueTypeDisplay }) }}</p>
-			<HowToPlayExample el="div" label="" class="border-y breakout px-8 pb-0 pt-4">
+			<HowToPlayExample el="div" label="" class="border-y breakout bg-white/5 dark:border-slate-200/50 px-8 pb-0 pt-4">
 				<template #examples>
 					<HowToPlayExampleCells :values="splitLine('1..110')" />
 					<HowToPlayExampleCells :values="splitLine('100110')" />
@@ -60,7 +60,7 @@
 						<template #symbolOrColor>{{ valueTypeDisplay }}</template>
 						<template #symbolOrColorPlural>{{ valueTypeDisplayPlural }}</template>
 					</HowToPlayThemedTranslation></p>
-			<HowToPlayExample class="border-y breakout px-8 py-4" el="div" :label="$t('HowToPlay.BasicTechniques.unique-lines.example-label')">
+			<HowToPlayExample class="border-y breakout bg-white/5 dark:border-slate-200/50 px-8 py-4" el="div" :label="$t('HowToPlay.BasicTechniques.unique-lines.example-label')">
 				<template #examples>
 					<HowToPlayExampleCells
 						class="mt-2"

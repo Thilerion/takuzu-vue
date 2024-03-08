@@ -15,7 +15,7 @@
 		<div>
 			
 			<div
-				class="bg-white rounded-t-lg relative z-0 shadow-sm mb-6"
+				class="bg-white dark:bg-slate-800 rounded-t-lg relative z-0 shadow-sm mb-6"
 			>
 				<router-view class="py-4" />
 			</div>

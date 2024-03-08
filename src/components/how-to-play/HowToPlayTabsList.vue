@@ -1,8 +1,8 @@
 <template>
-	<nav class="bg-white flex gap-x-2">
+	<nav class="bg-white dark:bg-slate-800 flex gap-x-2">
 		<router-link
 			class="px-3 py-2 inline-block"
-			exact-active-class="border-b-2 border-b-teal-400 text-teal-600"
+			exact-active-class="border-b-2 border-b-teal-400 text-teal-600 dark:border-b-teal-300 dark:text-teal-300"
 			v-for="tab in tabs"
 			:to="{ name: tab.routeName }"
 			:key="tab.routeName"
@@ -38,5 +38,3 @@ const tabs = [
 <style scoped>
 
 </style>
-import { t } from 'vitest/dist/reporters-MmQN-57K.js';
-import { computed } from 'vue';

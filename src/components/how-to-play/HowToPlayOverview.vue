@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="prose prose-sm md:prose lg:prose-lg xl:prose-xl mx-auto how-to-play-overview px-8"
+		class="prose-slate dark:prose-invert prose-sm md:prose lg:prose-lg xl:prose-xl mx-auto py-4 how-to-play-overview px-8"
 	>
 		<p>{{ $t('HowToPlay.overview.page-description') }}</p>
 

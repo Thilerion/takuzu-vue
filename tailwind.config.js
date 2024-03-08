@@ -1,6 +1,7 @@
 import plugin from 'tailwindcss/plugin.js';
 import tailwindcssForms from '@tailwindcss/forms';
 import tailwindcssTypography from '@tailwindcss/typography';
+import colors from 'tailwindcss/colors.js';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -26,6 +27,13 @@ export default {
 			'hover-none': { 'raw': '(pointer: coarse)' },
 		},
 		extend: {
+			typography: ({ theme }) => ({
+				slate: {
+					'--tw-prose-invert-body': colors.slate[200],
+					'--tw-prose-invert-bullets': colors.slate[400],
+					'--tw-prose-invert-counters': colors.slate[300]
+				}
+			}),
 			fontSize: {
 				'xxs': ['0.625rem', '0.875rem'],
 			},
@@ -50,12 +58,14 @@ export default {
 					blue: {
 						primary: 'hsl(207, 90%, 61%)',
 						dark: 'hsl(207, 70%, 55%)',
-						light: 'hsl(207, 80%, 66%)'
+						light: 'hsl(207, 80%, 66%)',
+						lighter: 'hsl(207, 80%, 76%)'
 					},
 					red: {
 						primary: 'hsl(7, 77%, 55%)',
 						dark: 'hsl(7, 50%, 47%)',
-						light: 'hsl(7, 70%, 59%)'
+						light: 'hsl(7, 70%, 59%)',
+						lighter: 'hsl(7, 70%, 69%)'
 					}
 				}
 			}
@@ -75,4 +85,4 @@ export default {
 			addVariant('hocus', ['&:hover', '&:focus']);
 		})
 	],
-};
+}
