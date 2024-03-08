@@ -28,6 +28,11 @@
 			"message-2-odd": "This @:{rowOrColumn} requires {reqZero} @:{zeros}, and {reqOne} @:{ones}, and all @:{sourceSymbols} have been placed.",
 			"message-3-single-target": "To balance this @:{rowOrColumn} so that it contains {reqZero} @:{zeros} and {reqOne} @:{ones}, a @:{target} must be placed in this cell.",
 			"message-3-multiple-targets": "To balance this @:{rowOrColumn} so that it contains {reqZero} @:{zeros} and {reqOne} @:{ones}, @:{targets} must be placed in these cells."
+		},
+		"IncorrectValues": {
+			"name": "Mistakes",
+			"message-1": "You've made some mistakes.",
+			"message-2": "The highlighted cells are incorrect. You can automatically remove these mistakes, or manually fix your mistakes yourself."
 		}
 	}
 }

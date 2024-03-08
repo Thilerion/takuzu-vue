@@ -12,6 +12,7 @@ import { findRuleViolations } from "@/lib/mistakes/rule-violations";
 import { findIncorrectValuesFromSolution } from "@/lib/mistakes/incorrect-values";
 import type { FoundIncorrectValue, RuleViolation } from "@/lib/mistakes/types";
 import type { XYKey } from "@/lib/types";
+import { IncorrectValuesSteppedHint } from "./stepped-hint/IncorrectValuesHint.js";
 
 export const searchForHint = (
 	board: SimpleBoard,
@@ -32,7 +33,7 @@ export const searchForHint = (
 	return null;
 }
 
-function searchForMistakesHint(board: SimpleBoard, solution: SimpleBoard): Hint | null {
+function searchForMistakesHint(board: SimpleBoard, solution: SimpleBoard): Hint | IncorrectValuesSteppedHint | null {
 	// TODO: better to compare incorrect values AND rule violations, but for now, just check incorrect values
 		// 1: check if there are incorrect values
 		// 1a: if yes, check if there are rule violations
@@ -49,7 +50,8 @@ function searchForMistakesHint(board: SimpleBoard, solution: SimpleBoard): Hint 
 	const { results: incorrectValues } = findIncorrectValuesFromSolution({ board, solution });
 
 	if (!hasRuleViolations) {
-		return createHint(HINT_TYPE.MISTAKE, incorrectValues);
+		const incorrectValuesHint = new IncorrectValuesSteppedHint({ incorrectValues });
+		return incorrectValuesHint;
 	}
 	// check if all incorrect values are due to rule violations
 	return getRuleViolationOrIncorrectValueHint(incorrectValues, ruleViolationResults);
@@ -80,8 +82,9 @@ function getRuleViolationOrIncorrectValueHint(
 		console.warn('SHOULD RETURN RULE VIOLATION HINT NOW, BUT NOT IMPLEMENTED YET.');
 		return createHint(HINT_TYPE.MISTAKE, incorrectValues);
 	} else {
-		console.log('A true mistake/incorrect values hint here');
-		return createHint(HINT_TYPE.MISTAKE, incorrectValues);
+		// TODO: this is double code, as in the searchForMistakesHint the same thing happens. Maybe this function should just return which type of hint must be created, and the creation of the hint should happen in the searchForMistakesHint function.
+		const incorrectValuesHint = new IncorrectValuesSteppedHint({ incorrectValues });
+		return incorrectValuesHint;
 	}
 }
 

@@ -6,7 +6,7 @@ const nextHintId = (() => {
 	return () => id++;
 })();
 
-type HintStepsData = [...HintStepIntermediate[], HintStepFinal];
+export type HintStepsData = [...HintStepIntermediate[], HintStepFinal];
 
 export abstract class BaseSteppedHint {
 	// A variable amount of "intermediate" steps, and one required final step. For example, a hint might have no steps per se (such as the old, legacy hint type),

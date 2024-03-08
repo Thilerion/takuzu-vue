@@ -2,6 +2,7 @@ import type { ToDynamicPuzzleString } from "@/components/dynamic-symbols/useDyna
 import { ONE, ZERO } from "@/lib/constants.js";
 import { lineSizeToNumRequired } from "@/lib/utils.js";
 import type { BalanceSteppedHint } from "@/stores/hints/stepped-hint/BalanceHint.js";
+import type { IncorrectValuesSteppedHint } from "@/stores/hints/stepped-hint/IncorrectValuesHint.js";
 import type { TriplesSteppedHint } from "@/stores/hints/stepped-hint/TriplesHint.js";
 import type { SteppedHint } from "@/stores/hints/stepped-hint/types.js";
 import { usePuzzleStore } from "@/stores/puzzle/store.js";
@@ -77,6 +78,13 @@ const BALANCE_HINT_MESSAGE: HintMessageFnArray<BalanceSteppedHint> = [
 	}
 ] 
 
+const INCORRECT_VALUES_HINT_MESSAGE: HintMessageFnArray<IncorrectValuesSteppedHint> = [
+	(hint) => ({
+		messageKey: 'Hints.IncorrectValues.message-1',
+	}),
+	() => ({ messageKey: 'Hints.IncorrectValues.message-2' }),
+]
+
 
 export const useSteppedHintMessage = (
 	hint: Ref<SteppedHint>,
@@ -91,22 +99,36 @@ export const useSteppedHintMessage = (
 }
 
 function getHintMessage(hint: SteppedHint, stepIdx: number, $p: ToDynamicPuzzleString) {
-	if (hint.type === 'triples') {
-		const fn = TRIPLES_HINT_MESSAGES.at(stepIdx);
-		if (!fn) {
-			console.error('No valid message found for triples hint step');
+	const hintType = hint.type;
+	switch(hintType) {
+		case 'triples': {
+			const fn = TRIPLES_HINT_MESSAGES.at(stepIdx);
+			if (!fn) {
+				console.error('No valid message found for triples hint step');
+				return null;
+			}
+			return fn(hint, $p);
+		}
+		case 'balance': {
+			const fn = BALANCE_HINT_MESSAGE.at(stepIdx);
+			if (!fn) {
+				console.error('No valid message found for balance hint step');
+				return null;
+			}
+			return fn(hint, $p);
+		}
+		case 'incorrectValues': {
+			const fn = INCORRECT_VALUES_HINT_MESSAGE.at(stepIdx);
+			if (!fn) {
+				console.error('No valid message found for incorrect values hint step');
+				return null;
+			}
+			return fn(hint, $p);
+		}
+		default: {
+			const x: never = hintType;
+			console.error('No valid message found for hint type ' + x);
 			return null;
 		}
-		return fn(hint, $p);
-	} else if (hint.type === 'balance') {
-		const fn = BALANCE_HINT_MESSAGE.at(stepIdx);
-		if (!fn) {
-			console.error('No valid message found for balance hint step');
-			return null;
-		}
-		return fn(hint, $p);
-	} else {
-		console.error('No valid message found for hint type');
-		return null;
 	}
 }

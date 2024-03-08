@@ -84,6 +84,7 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 		console.log('validating stepped triples hint');
 		if (board.hasIncorrectValues(solution).hasMistakes) return false;
 		// in the case of a "triples" hint, it is only still valid if all source cells are the same, and at least one of the target cells is empty
+		// TODO: if targets is not exactly the same, the message shown in the hint, and the displayed highlights, might not be accurate anymore
 		if (this.targets.every(({ x, y }) => board.get(x, y) !== EMPTY)) return false;
 		if (this.source.some(({ x, y }) => board.get(x, y) !== solution.get(x, y))) return false;
 		return true;

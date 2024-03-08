@@ -5,6 +5,7 @@ import type { HintHighlight } from "../highlights/types.js";
 import type { Ref } from "vue";
 import type { TriplesSteppedHint } from "./TriplesHint.js";
 import type { BalanceSteppedHint } from "./BalanceHint.js";
+import type { IncorrectValuesSteppedHint } from "./IncorrectValuesHint.js";
 
 export type SteppedHintType = 'ruleViolation' | 'incorrectValues' | 'triples' | 'balance' | 'elimination' | 'elimDuplicate';
 export type HintStepEventCallbackCtxParam = BoardAndSolutionBoards;
@@ -47,4 +48,4 @@ type GetEventKeys<Obj> = keyof {
 };
 export type HintStepEvent = GetEventKeys<Required<HintStepIntermediate> & Required<HintStepFinal>>;
 
-export type SteppedHint = TriplesSteppedHint | BalanceSteppedHint;
+export type SteppedHint = TriplesSteppedHint | BalanceSteppedHint | IncorrectValuesSteppedHint;

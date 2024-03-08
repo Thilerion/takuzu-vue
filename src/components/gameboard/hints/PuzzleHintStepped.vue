@@ -72,6 +72,7 @@ const subtitle = computed((): string | null => {
 				return null;
 			}
 		}
+		case 'incorrectValues':
 		case 'balance': {
 			return null;
 		}
@@ -90,6 +91,9 @@ const title = computed(() => {
 		}
 		case 'balance': {
 			return 'Hints.Balance.name';
+		}
+		case 'incorrectValues': {
+			return 'Hints.IncorrectValues.name';
 		}
 		default: {
 			const x: never = type;
