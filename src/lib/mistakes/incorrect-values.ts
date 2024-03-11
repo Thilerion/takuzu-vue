@@ -2,6 +2,7 @@ import type { PuzzleSymbol } from "@/lib/constants.js";
 import type { BoardAndSolutionBoards } from "@/lib/types.js";
 import type { FoundIncorrectValue } from "./types.js";
 
+/** Generator that yields all incorrect values on the board, comparing it to the solution. */
 export function* incorrectValuesFromSolution(
 	{ board, solution }: BoardAndSolutionBoards
 ): Generator<FoundIncorrectValue> {
@@ -14,6 +15,7 @@ export function* incorrectValuesFromSolution(
 	}
 }
 
+/** Finds all incorrect values on the board, comparing it to the solution. */
 export function findIncorrectValuesFromSolution(
 	{ board, solution }: BoardAndSolutionBoards
 ): { hasMistakes: boolean, results: FoundIncorrectValue[] } {
@@ -22,6 +24,7 @@ export function findIncorrectValuesFromSolution(
 	return { hasMistakes, results };
 }
 
+/** Performs a quick comparison of the board to the solution, to find if there is at least one incorrect value on the puzzle board. */
 export function hasIncorrectValues(boardAndSolution: BoardAndSolutionBoards): boolean {
 	return incorrectValuesFromSolution(boardAndSolution).next().value !== undefined;
 }
