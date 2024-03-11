@@ -3,9 +3,9 @@
 import type { BoardLine } from "@/lib/board/BoardLine.js";
 import type { SolverStrategyResult } from "./types.js";
 import type { LineId, ROPuzzleSymbolLine, Target } from "@/lib/types.js";
-import { areLinesEqual } from "@/lib/utils.js";
 import { EMPTY } from "@/lib/constants.js";
 import type { LineArrSymbolPermutations } from "@/lib/line-generation/types.js";
+import { areLinesEqual } from "@/lib/utils/puzzle-line.utils.js";
 
 export type EliminationStrategyResult = SolverStrategyResult<{
 	targets: Target[]

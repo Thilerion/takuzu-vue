@@ -1,6 +1,6 @@
 import { ZERO, ONE } from "@/lib/constants.js";
 import type { SolverSelectValueFn } from "../types.js";
-import { countLineValues } from "@/lib/utils.js";
+import { countLineValues } from "@/lib/utils/puzzle-line.utils.js";
 
 export const zeroFirstValue: SolverSelectValueFn = () => ZERO;
 export const randomValue: SolverSelectValueFn = () => Math.random() < 0.5 ? ONE : ZERO;

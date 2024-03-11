@@ -12,7 +12,7 @@ import { applyEliminationConstraint, categorizeBoardLines, type ApplyElimination
 import { type CategorizeBoardLineFn, type PrioritySortBoardLinesFn } from "@/lib/solvers/constraint-solver/constraints/elimination.helpers.js";
 import type { PuzzleValueLine, Target } from "@/lib/types.js";
 import * as elimStratModule from '@/lib/solvers/common/EliminationStrategy.js';
-import { splitLine } from "@/lib/utils.js";
+import { splitLine } from "@/lib/utils/puzzle-line.utils.js";
 
 describe('applyEliminationConstraint', () => {
 	let mockableSortNone: PrioritySortBoardLinesFn;

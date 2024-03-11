@@ -3,7 +3,7 @@ import { generateAllLineCompletions, generateValidLineCompletions } from "@/lib/
 import { generateValidLinesOfSize } from "@/lib/line-generation/lines-of-size.js";
 import { generateUniqueArrayPermutations } from "@/lib/line-generation/permutations.js";
 import type { PuzzleValueLine } from "@/lib/types.js";
-import { splitLine } from "@/lib/utils.js";
+import { splitLine } from "@/lib/utils/puzzle-line.utils.js";
 
 const sorted2dArr = (arr: readonly(readonly (number | string)[])[]) => {
 	return arr.map(line => line.join('')).sort();

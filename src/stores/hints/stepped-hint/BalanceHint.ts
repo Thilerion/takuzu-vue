@@ -3,9 +3,10 @@ import type { BoardAndSolutionBoards, LineId, Target } from "@/lib/types.js";
 import { BaseSteppedHint } from "./SteppedHint.js";
 import type { HintStepIntermediate, HintStepFinal } from "./types.js";
 import { type LineType, type PuzzleSymbol, EMPTY } from "@/lib/constants.js";
-import { getOppositeSymbol, lineTypeFromLineId } from "@/lib/utils.js";
 import { HIGHLIGHT_LEVELS, createCellHighlight, createLineHighlight } from "../highlights/highlight.js";
 import { BoardLine } from "@/lib/board/BoardLine.js";
+import { getOppositeSymbol } from "@/lib/utils/puzzle-value.utils.js";
+import { lineTypeFromLineId } from "@/lib/utils/puzzle-line.utils.js";
 
 export class BalanceSteppedHint extends BaseSteppedHint {
 	readonly targets: Target[]; // the cells and values that are affected by this hint, that can be set

@@ -1,7 +1,7 @@
+import { arrayCountValuesAsMap } from "@/utils/array.ts.utils";
 import type { SimpleBoard } from "../board/Board";
 import { ONE, ZERO } from "../constants";
 import type { DifficultyKey } from "../types";
-import { countValuesInMap } from "../utils";
 
 // empirically found mask ratios, puzzles can be generated in a reasonable amount of time with this ratio of masked/unmasked cells
 const defaultMaskRatio = 0.6875;
@@ -56,7 +56,7 @@ export function getMaskedRatioQuality(board: SimpleBoard, optimalRatio: number):
 // a puzzle wherein one symbol is largely masked and the other largely unmasked
 //  is less fun, and possibly too easy
 export function getSymbolDistributionQuality(board: SimpleBoard): number {
-	const symbolCounts = countValuesInMap([...board.grid].flat());
+	const symbolCounts = arrayCountValuesAsMap([...board.grid].flat());
 	const countZero = symbolCounts.get(ZERO)!;
 	const countOne = symbolCounts.get(ONE)!;
 	const numFilled = countZero + countOne;

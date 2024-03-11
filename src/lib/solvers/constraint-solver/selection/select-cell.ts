@@ -1,8 +1,8 @@
 import { EMPTY } from "@/lib/constants.js";
 import type { LineId, Vec } from "@/lib/types.js";
-import { countLineValues } from "@/lib/utils.js";
 import type { SolverSelectCellFn } from "../types.js";
 import type { SimpleBoard } from "@/lib/index.js";
+import { countLineValues } from "@/lib/utils/puzzle-line.utils.js";
 
 export const firstEmptyCell: SolverSelectCellFn = (board) => {
 	const cellGen = board.cells({ skipEmpty: false, skipFilled: true });

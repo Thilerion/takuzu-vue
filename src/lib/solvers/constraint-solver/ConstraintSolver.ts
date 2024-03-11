@@ -8,7 +8,7 @@ import type { ConstraintResult } from "./constraints/types.js";
 import type { PuzzleSymbol } from "@/lib/constants.js";
 import type { DeepReadonly } from "vue";
 import { selectCellStrategies, selectValueStrategies, type SelectCellStrategyName, type SelectValueStrategyName } from "./selection/index.js";
-import { getOppositeSymbol } from "@/lib/utils.js";
+import { getOppositeSymbol } from "@/lib/utils/puzzle-value.utils.js";
 
 const DEFAULT_TIMEOUT = 2000; // safety measure, can be overridden by user
 

@@ -1,5 +1,4 @@
 import { EMPTY } from "@/lib/constants";
-import { lineTypeFromLineId } from "@/lib/utils";
 import type { HintAction as createHintAction, HintAction, HintActionFn, HintSource, HintTarget, HintTargetLine, HintType, HintValidatorFn } from "./types.js";
 import type { Vec } from "@/lib/types.js";
 import type { TriplesTechniqueResult } from "@/lib/human-solver/triples.js";
@@ -7,6 +6,7 @@ import type { BalanceTechniqueResult } from "@/lib/human-solver/balance.js";
 import type { ElimTechniqueResult } from "@/lib/human-solver/elimination.js";
 import type { DuplicateLineTechniqueResult } from "@/lib/human-solver/duplicate.js";
 import { usePuzzleStore } from "../puzzle/store.js";
+import { lineTypeFromLineId } from "@/lib/utils/puzzle-line.utils.js";
 
 export const HINT_TYPE = {
 	MISTAKE: 'MISTAKE',

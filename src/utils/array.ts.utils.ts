@@ -16,6 +16,21 @@ export const chunk = <T>(arr: T[], size: number): T[][] => {
 export const sortAsc = <T extends number>(arr: T[]) => [...arr].sort((a, z) => a - z);
 export const sortDesc = <T extends number>(arr: T[]) => [...arr].sort((a, z) => z - a);
 
+export const range = (n: number) => Array(n).fill(null).map((_, idx) => idx);
+
+export const arrayCountValues = <T, K extends T>(arr: T[], targetValue: K) => {
+	return arr.reduce((acc, val) => {
+		if (val === targetValue) acc += 1;
+		return acc;
+	}, 0);
+}
+export const arrayCountValuesAsMap = <T>(arr: T[]) => {
+	return arr.reduce((acc, val) => {
+		const num = (acc.get(val) || 0) + 1;
+		acc.set(val, num);
+		return acc;
+	}, new Map() as Map<T, number>);
+}
 
 export const groupBy = <K extends PropertyKey, TItem extends Record<K, PropertyKey>>(
 	items: TItem[],

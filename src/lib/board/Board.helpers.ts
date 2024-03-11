@@ -1,5 +1,6 @@
+import { range } from "@/utils/array.ts.utils.js";
+import { memoize } from "../memoize.utils.js";
 import type { ColumnId, RowId } from "../types.js";
-import { range } from "../utils.js";
 
 const validPuzzleSideLengths = [4, 6, 8, 10, 12, 14, 16, 18, 20] as const;
 function getValidRectPuzzleDimensions() {
@@ -58,3 +59,16 @@ export const generateRowIds = (height: number): RowId[] => {
 	}
 	return range(height).map(i => String.fromCharCode(65 + i)); // 65 = uppercase A
 }
+
+export const getCoordsForBoardSize = memoize(
+	(width: number, height: number) => {
+		const cellCoords = [];
+		for (let y = 0; y < height; y++) {
+			for (let x = 0; x < width; x++) {
+				cellCoords.push({ x, y });
+			}
+		}
+		return cellCoords;
+	},
+	(width: number, height: number) => `${width},${height}`
+)

@@ -127,7 +127,7 @@
 </template>
 
 <script setup lang="ts">
-import { splitLine } from '@/lib/utils.js';
+import { splitLine } from '@/lib/utils/puzzle-line.utils.js';
 import { useI18n } from 'vue-i18n';
 import { injectCellThemeData } from '@/components/gameboard/composables/useCellThemeProvider.js'
 import { computed } from 'vue';

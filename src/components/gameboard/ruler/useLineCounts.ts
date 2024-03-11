@@ -1,7 +1,7 @@
 import type { PuzzleValue } from "@/lib/constants.js";
 import type { SimpleBoard } from "@/lib/index.js";
 import type { LineCounts } from "@/lib/types.js";
-import { countLineValues } from "@/lib/utils.js";
+import { countLineValues } from "@/lib/utils/puzzle-line.utils";
 import { usePuzzleStore } from "@/stores/puzzle/store.js";
 import { createSharedComposable } from "@vueuse/core";
 import { watchEffect, ref } from "vue";

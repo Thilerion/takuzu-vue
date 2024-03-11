@@ -1,5 +1,5 @@
 import { ONE, ZERO } from "../constants";
-import { lineSizeToNumRequired } from "../utils";
+import { lineSizeToNumRequired } from "../utils/puzzle-line.utils";
 
 export const threeInARowRegex = new RegExp(`${ZERO}{3,}|${ONE}{3,}`, 'g');
 

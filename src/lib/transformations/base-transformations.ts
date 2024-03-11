@@ -1,6 +1,6 @@
 import { EMPTY } from "../constants.js"
 import type { PuzzleGrid } from "../types.js";
-import { getOppositeSymbol } from "../utils.js";
+import { getOppositeSymbol } from "../utils/puzzle-value.utils.js";
 import type { ReadonlyGrid, TransformationFn, BaseTransformationConfig } from "./types.js";
 
 const invertSymbols = (grid: ReadonlyGrid): PuzzleGrid => {

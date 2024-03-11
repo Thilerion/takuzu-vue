@@ -1,6 +1,6 @@
 import type { ToDynamicPuzzleString } from "@/components/dynamic-symbols/useDynamicPuzzleSymbolString.js";
 import { ONE, ZERO } from "@/lib/constants.js";
-import { lineSizeToNumRequired } from "@/lib/utils.js";
+import { lineSizeToNumRequired } from "@/lib/utils/puzzle-line.utils";
 import type { BalanceSteppedHint } from "@/stores/hints/stepped-hint/BalanceHint.js";
 import type { IncorrectValuesSteppedHint } from "@/stores/hints/stepped-hint/IncorrectValuesHint.js";
 import type { TriplesSteppedHint } from "@/stores/hints/stepped-hint/TriplesHint.js";

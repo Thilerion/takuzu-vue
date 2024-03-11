@@ -2,7 +2,7 @@ import { SimpleBoard } from "@/lib/index.js";
 import type { BoardExportString, PuzzleValueLine } from "@/lib/types.js";
 import { COLUMN, EMPTY, ONE, ROW, ZERO } from "@/lib/constants.js";
 import { BoardLine } from "@/lib/board/BoardLine.js";
-import { splitLine } from "@/lib/utils.js";
+import { splitLine } from "@/lib/utils/puzzle-line.utils";
 
 describe('boardLine', () => {
 	let board6x10: SimpleBoard;

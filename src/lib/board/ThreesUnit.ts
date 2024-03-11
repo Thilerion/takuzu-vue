@@ -1,6 +1,6 @@
 import { COLUMN, ROW, type LineType, type PuzzleValue } from "../constants";
 import type { Vec } from "../types";
-import { isPuzzleValue } from "../utils.js";
+import { isPuzzleValue } from "../utils/puzzle-value.utils";
 import type { SimpleBoard } from "./Board";
 
 export type ThreesCoords = [Vec, Vec, Vec];

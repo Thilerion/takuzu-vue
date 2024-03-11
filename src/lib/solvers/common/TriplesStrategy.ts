@@ -5,7 +5,7 @@ import type { ThreesUnit } from "@/lib/board/ThreesUnit.js";
 import { EMPTY } from "@/lib/constants.js";
 import type { SolverStrategyResult } from "./types.js";
 import type { Target, Vec } from "@/lib/types.js";
-import { getOppositeSymbol } from "@/lib/utils.js";
+import { getOppositeSymbol } from "@/lib/utils/puzzle-value.utils.js";
 
 export type TriplesStrategyResult = SolverStrategyResult<{
 	type: 'sandwich' | 'double',

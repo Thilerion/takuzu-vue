@@ -1,6 +1,6 @@
 import { BoardLine } from "@/lib/board/BoardLine"
 import { humanBalanceTechnique } from "@/lib/solvers/human-solver/techniques/BalanceTechnique";
-import { splitLine } from "@/lib/utils.js";
+import { splitLine } from "@/lib/utils/puzzle-line.utils.js";
 
 describe('Human Solver HumanBalanceTechnique', () => {
 	it('finds all targets in a line that can be balanced', () => {

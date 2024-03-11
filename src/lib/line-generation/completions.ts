@@ -1,6 +1,6 @@
 import { EMPTY, ZERO, ONE, type PuzzleSymbol } from "../constants.js";
 import type { PuzzleValueLineStr, PuzzleValueLine, PuzzleValueCount, PuzzleSymbolLineStr, PuzzleSymbolLine } from "../types.js";
-import { countLineValues, lineSizeToNumRequired, splitLine } from "../utils.js";
+import { countLineValues, lineSizeToNumRequired, splitLine } from "../utils/puzzle-line.utils.js";
 import { generateUniqueArrayPermutations } from "./permutations.js";
 import type { LineArrSymbolPermutations } from "./types.js";
 

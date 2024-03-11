@@ -3,7 +3,7 @@ import { SimpleBoard } from "@/lib/index.js";
 import { applyLineBalanceConstraint } from "@/lib/solvers/constraint-solver/constraints/LineBalanceConstraint.js";
 import * as lineBalStratModule from '@/lib/solvers/common/LineBalanceStrategy.js';
 import { ONE, ZERO } from "@/lib/constants.js";
-import { splitLine } from "@/lib/utils.js";
+import { splitLine } from "@/lib/utils/puzzle-line.utils.js";
 
 describe('applyLineBalanceConstraint', () => {
 	afterEach(() => vi.restoreAllMocks() as any);

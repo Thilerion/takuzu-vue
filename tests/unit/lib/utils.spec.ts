@@ -1,6 +1,8 @@
 import { expect, test, describe } from 'vitest';
 import { EMPTY, ONE, ZERO } from '../../../src/lib/constants';
-import { getCoordsForBoardSize, isPuzzleSymbol, areLinesEqual } from '../../../src/lib/utils';
+import { isPuzzleSymbol } from '@/lib/utils/puzzle-value.utils';
+import { areLinesEqual } from '@/lib/utils/puzzle-line.utils';
+import { getCoordsForBoardSize } from '@/lib/board/Board.helpers';
 
 describe('board and puzzle utils', () => {
 	

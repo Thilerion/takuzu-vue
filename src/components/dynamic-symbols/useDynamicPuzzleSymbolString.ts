@@ -1,5 +1,5 @@
 import { ZERO, type PuzzleSymbol } from "@/lib/constants.js";
-import { isPuzzleValue } from "@/lib/utils.js";
+import { isPuzzleValue } from "@/lib/utils/puzzle-value.utils";
 import type { CellTheme, CellThemeType } from "@/stores/settings/types.js";
 import type { Ref } from "vue";
 import { computed } from "vue";
@@ -22,10 +22,6 @@ const getClassicString = (val: PuzzleSymbol, multiple?: boolean) => {
 		if (multiple) return 'Themed.1s';
 		return 'Themed.1';
 	}
-
-	let str = `${val === ZERO ? "0" : "1"}`;
-	if (multiple) str += '\'s';
-	return str;
 }
 const getTictactoeString = (val: PuzzleSymbol, multiple?: boolean) => {
 	if (val === ZERO) {
@@ -35,10 +31,6 @@ const getTictactoeString = (val: PuzzleSymbol, multiple?: boolean) => {
 		if (multiple) return 'Themed.Xs';
 		return 'Themed.X';
 	}
-
-	let str = `${val === ZERO ? "O" : "X"}`;
-	if (multiple) str += '\'s';
-	return str;
 }
 
 export type ToDynamicPuzzleString = (v: PuzzleSymbol | 'symbol', multiple?: boolean) => string;

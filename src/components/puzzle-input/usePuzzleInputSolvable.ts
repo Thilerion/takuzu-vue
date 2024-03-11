@@ -2,10 +2,10 @@ import { SimpleBoard } from "@/lib";
 import { EMPTY, ONE, ZERO } from "@/lib/constants";
 import { ConstraintSolver } from "@/lib/solvers/constraint-solver/ConstraintSolver.js";
 import type { BoardShape, PuzzleGrid, PuzzleValueLine } from "@/lib/types.js";
-import { count } from "@/lib/utils";
 import { useDebounceFn } from "@vueuse/core";
 import { computed, reactive, ref, toRefs, watch, type Ref } from "vue";
 import type { PuzzleInputGrid } from "./types.js";
+import { arrayCountValues } from "@/utils/array.ts.utils.js";
 
 const MAX_MASK_RATIO = 0.9;
 
@@ -34,7 +34,7 @@ export const usePuzzleInputSolvable = (gridRef: Ref<PuzzleInputGrid | null>, isV
 
 	const numEmpty = computed(() => {
 		if (!isValidGridRef.value) return null;
-		return count(parsedGrid.value.flat(), EMPTY);
+		return arrayCountValues(parsedGrid.value.flat(), EMPTY);
 	})
 
 	const maskRatio = computed(() => {

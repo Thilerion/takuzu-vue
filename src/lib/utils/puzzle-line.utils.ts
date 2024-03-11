@@ -1,49 +1,11 @@
-import { COLUMN, EMPTY, ONE, PUZZLE_VALUES, ROW, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "./constants";
-import { memoize } from "./memoize.utils";
-import type { ColumnId, Grid, LineId, PuzzleSymbolLine, PuzzleSymbolLineStr, PuzzleValueLine, PuzzleValueLineStr, RowId } from "./types";
+import { type PuzzleValue, ONE, ZERO, EMPTY, type PuzzleSymbol, COLUMN, ROW, type LineType } from "../constants";
+import type { PuzzleValueLineStr, PuzzleSymbolLineStr, ColumnId, LineId, PuzzleSymbolLine, PuzzleValueLine, RowId } from "../types";
 
-// ARRAY UTILS //
-export const array2d = <T = unknown>(width: number, height = width, value: T) => {
-	return Array(height).fill(null).map(() => Array(width).fill(value));
+export const isPuzzleValueLineStr = (str: string): str is PuzzleValueLineStr => {
+	return /^[01.]+$/.test(str);
 }
-export const cloneArray2d = <T>(arr2: Grid<T>): Grid<T> => {
-	return arr2.map(row => [...row]);
-}
-export const range = (n: number) => Array(n).fill(null).map((_, idx) => idx);
-export const count = <T, K extends T>(arr: T[], targetValue: K) => {
-	return arr.reduce((acc, val) => {
-		if (val === targetValue) acc += 1;
-		return acc;
-	}, 0);
-}
-export const countValuesInMap = <T>(arr: T[]) => {
-	return arr.reduce((acc, val) => {
-		const num = (acc.get(val) || 0) + 1;
-		acc.set(val, num);
-		return acc;
-	}, new Map() as Map<T, number>);
-}
-
-
-// BOARD / CELL UTILS //
-export const isPuzzleSymbol = (value: unknown): value is PuzzleSymbol => value === ONE || value === ZERO;
-export const isPuzzleValue = (value: unknown): value is PuzzleValue => (PUZZLE_VALUES as ReadonlyArray<unknown>).includes(value);
-export const getOppositeSymbol = (value: PuzzleSymbol) => value === ONE ? ZERO : ONE;
-
-export const toggleValue = (value: PuzzleValue, oneFirst = false) => {
-	const isEmpty = !isPuzzleSymbol(value);
-
-	const toggleOrder = oneFirst ? [ONE, ZERO, EMPTY] : [ZERO, ONE, EMPTY];
-
-	if (isEmpty) {
-		return toggleOrder[0];
-	} else if (value === toggleOrder[0]) {
-		return toggleOrder[1];
-	} else if (value === toggleOrder[1]) {
-		return toggleOrder[2];
-	} else {
-		throw new Error(`Unexpected value: ${value} in toggleValue()`);
-	}
+export const isPuzzleSymbolLineStr = (str: string): str is PuzzleSymbolLineStr => {
+	return /^[01]+$/.test(str);
 }
 
 export const countLineValues = (lineArr: PuzzleValue[]) => {
@@ -75,20 +37,6 @@ export const numRequiredOfValue = (lineSize: number, value: PuzzleSymbol) => {
 	return value === ONE ? Math.ceil(half) : Math.floor(half);
 }
 
-export const getCoordsForBoardSize = memoize(
-	(width: number, height: number) => {
-		const cellCoords = [];
-		for (let y = 0; y < height; y++) {
-			for (let x = 0; x < width; x++) {
-				cellCoords.push({ x, y });
-			}
-		}
-		return cellCoords;
-	},
-	(width: number, height: number) => `${width},${height}`
-)
-
-// ROW / COLUMN / LINE UTILS //
 export const rowIdToY = (rowId: RowId) => rowId.charCodeAt(0) - 65;
 export const columnIdToX = (columnId: ColumnId) => (+columnId) - 1;
 
@@ -127,13 +75,6 @@ export const sortLineValues = <T extends PuzzleValue>(values: T[] | ReadonlyArra
 		return lineValueOrder.indexOf(a) - lineValueOrder.indexOf(z);
 	})
 	return copy;
-}
-
-export const isPuzzleValueLineStr = (str: string): str is PuzzleValueLineStr => {
-	return /^[01.]+$/.test(str);
-}
-export const isPuzzleSymbolLineStr = (str: string): str is PuzzleSymbolLineStr => {
-	return /^[01]+$/.test(str);
 }
 
 type VerifyPuzzleValueLine<T extends string, A extends string = ""> =

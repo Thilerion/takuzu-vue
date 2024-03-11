@@ -4,7 +4,7 @@ import type { Vec, BoardAndSolutionBoards, Target } from "@/lib/types.js";
 import { createAreaHighlightAroundCells, HIGHLIGHT_LEVELS, createCellHighlight } from "../highlights/highlight.js";
 import type { HintStepIntermediate, HintStepFinal, HintStepEventCallbackActionsParam } from "./types.js";
 import { BaseSteppedHint } from "./SteppedHint.js";
-import { getOppositeSymbol } from "@/lib/utils.js";
+import { getOppositeSymbol } from "@/lib/utils/puzzle-value.utils.js";
 
 export class TriplesSteppedHint extends BaseSteppedHint {
 	readonly subType: 'double' | 'sandwich';

@@ -3,12 +3,14 @@ import { COLUMN, EMPTY, ROW, type LineType, type PuzzleSymbol, type PuzzleValue 
 import { findIncorrectValuesFromSolution } from "../mistakes/incorrect-values.js";
 import type { FoundIncorrectValue } from "../mistakes/types.js";
 import type { ColumnId, IterableBoardLineString, LineId, BoardExportString, PuzzleGrid, RowId, Vec, BoardString, Target, BoardShape } from "../types";
-import { array2d, cloneArray2d, columnIdToX, getCoordsForBoardSize, isLineIdColumn, isLineIdRow, isPuzzleValueLineStr, isPuzzleSymbol, isPuzzleValue, lineSizeToNumRequired, rowIdToY } from "../utils";
 import { validateBoard } from "../validate/board";
-import { generateColumnIds, generateRowIds } from "./Board.helpers.js";
+import { generateColumnIds, generateRowIds, getCoordsForBoardSize } from "./Board.helpers.js";
 import { BoardLine } from "./BoardLine";
 import { ThreesUnit } from "./ThreesUnit";
 import { boardStringToPuzzleGrid, puzzleGridToBoardString, puzzleGridToExportString } from "./board-conversion.helpers.js";
+import { isPuzzleValue, isPuzzleSymbol } from "../utils/puzzle-value.utils";
+import { columnIdToX, isLineIdColumn, isLineIdRow, isPuzzleValueLineStr, lineSizeToNumRequired, rowIdToY } from "../utils/puzzle-line.utils";
+import { array2d, cloneArray2d } from "@/utils/array2d.utils";
 
 export class SimpleBoard {
 	grid: PuzzleGrid;
