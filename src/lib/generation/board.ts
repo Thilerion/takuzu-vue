@@ -1,9 +1,10 @@
+import { pickRandom } from "@/utils/random.utils";
 import { SimpleBoard } from "../board/Board";
 import { COLUMN, ROW, type LineType } from "../constants";
 import { getValidLinesOfSize } from "../line-generation/memoized.js";
 import { ConstraintSolver } from "../solvers/constraint-solver/ConstraintSolver.js";
 import type { PuzzleSymbolLineStr } from "../types";
-import { pickRandom, splitLine } from "../utils";
+import { splitLine } from "../utils";
 
 export function generateBoard(width: number, height: number, maxAttempts = 5) {
 	return new BoardGenerator(width, height, maxAttempts).start();

@@ -59,12 +59,12 @@ import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 import { toRef } from 'vue';
 import BaseDropdown from '../global/dropdown/BaseDropdown.vue';
-import { shuffle } from '@/lib/utils.js';
 import { awaitRaf, awaitTimeout } from '@/utils/delay.utils.js';
 import { humanSolveTriples } from '@/lib/human-solver/triples.js';
 import { EMPTY } from '@/lib/constants.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { usePuzzleTimer } from '@/stores/puzzle/timer-store.js';
+import { shuffle, shuffleInPlace } from '@/utils/random.utils.js';
 
 const settingsStore = useSettingsStore();
 const showTimer = toRef(settingsStore, 'showTimer');
@@ -108,7 +108,7 @@ const solvePuzzle = async () => {
 	if (emptyCells.length <= 1) return;
 
 	setCheatUsed();
-	const cells = shuffle(emptyCells.slice(0, -1));
+	const cells = shuffleInPlace(emptyCells.slice(0, -1));
 
 	await awaitTimeout(500);
 

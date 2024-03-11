@@ -9,14 +9,6 @@ export const array2d = <T = unknown>(width: number, height = width, value: T) =>
 export const cloneArray2d = <T>(arr2: Grid<T>): Grid<T> => {
 	return arr2.map(row => [...row]);
 }
-export const shuffle = <T>(arrOrig: T[]): T[] => {
-	const arr = [...arrOrig];
-	for (let i = arr.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		[arr[i], arr[j]] = [arr[j], arr[i]];
-	}
-	return arr;
-}
 export const range = (n: number) => Array(n).fill(null).map((_, idx) => idx);
 export const count = <T, K extends T>(arr: T[], targetValue: K) => {
 	return arr.reduce((acc, val) => {
@@ -31,8 +23,6 @@ export const countValuesInMap = <T>(arr: T[]) => {
 		return acc;
 	}, new Map() as Map<T, number>);
 }
-export const randomIndex = (arr: ReadonlyArray<unknown>) => Math.floor(Math.random() * arr.length);
-export const pickRandom = <T>(arr: ReadonlyArray<T>) => arr[randomIndex(arr)];
 
 
 // BOARD / CELL UTILS //

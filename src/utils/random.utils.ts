@@ -25,7 +25,7 @@ export const sample = <T>(arr: readonly T[], amount = 1, rng: RngSource = Math.r
 	} else if (amount === 1) {
 		return [getRandomItem(arr, rng)];
 	} else if (amount === arr.length) {
-		return shuffleCopy(arr, rng);
+		return shuffle(arr, rng);
 	} else if (amount > arr.length) {
 		throw new Error('Amount to sample must be equal to, or smaller than, the length of the array.');
 	}
@@ -55,7 +55,7 @@ export const pluckSample = <T>(arr: T[], amount = 1, rng: RngSource = Math.rando
 	return result;
 }
 
-export const shuffle = <T extends unknown[]>(arr: T, rng: RngSource = Math.random) => {
+export const shuffleInPlace = <T extends unknown[]>(arr: T, rng: RngSource = Math.random) => {
 	const len = arr.length;
 	const max = len - 2;
 	let j, temp;
@@ -67,6 +67,10 @@ export const shuffle = <T extends unknown[]>(arr: T, rng: RngSource = Math.rando
 	}
 	return arr;
 }
-export const shuffleCopy = <T extends ReadonlyArray<unknown>>(arr: T, rng: RngSource = Math.random) => {
-	return shuffle([...arr], rng);
+
+export const shuffle = <T extends ReadonlyArray<unknown>>(arr: T, rng: RngSource = Math.random) => {
+	return shuffleInPlace([...arr], rng);
 }
+
+export const randomIndex = (arr: ReadonlyArray<unknown>) => Math.floor(Math.random() * arr.length);
+export const pickRandom = <T>(arr: ReadonlyArray<T>) => arr[randomIndex(arr)];

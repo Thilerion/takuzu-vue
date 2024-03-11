@@ -210,7 +210,7 @@ describe('Random utils', () => {
 			it('shuffles the array without mutating the original array', () => {
 				const origArr = Object.freeze([1, 2, 3, 4, 5, 6]);
 				const arr = [...origArr];
-				const result = Rnd.shuffleCopy(arr);
+				const result = Rnd.shuffle(arr);
 				expect(result).not.toBe(arr);
 				expect(result).not.toEqual(arr);
 				expect(result).not.toEqual(origArr);

@@ -1,6 +1,6 @@
-import { shuffle } from "@/lib/utils";
 import type { IPregenPuzzle } from "./models.js";
 import type { BoardExportString } from "@/lib/types.js";
+import { shuffleInPlace } from "@/utils/random.utils.js";
 
 const createPregenPuzzle = <T extends {
     boardStr: string,
@@ -9,7 +9,7 @@ const createPregenPuzzle = <T extends {
     return puzzle as any as Omit<T, 'boardStr' | 'solutionStr'> & { boardStr: BoardExportString, solutionStr: BoardExportString };
 }
 
-const pregeneratedPuzzles: IPregenPuzzle[] = shuffle(([
+const pregeneratedPuzzles: IPregenPuzzle[] = shuffleInPlace(([
     {
         "boardStr": "10x10;..11..1..10....0.....0....1.1...1......0.0.01.1.......1..0..1........10.1.0.1............10.........",
         "solutionStr": "10x10;1011001001011010010110010110100110010110101010100101011010101001010101011001101010011001010100110110",

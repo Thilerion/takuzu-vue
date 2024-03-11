@@ -72,6 +72,7 @@ declare module 'vue' {
     IconGrommetIconsPauseFill: typeof import('~icons/grommet-icons/pause-fill')['default']
     IconHeroiconsOutlineClipboardCopy: typeof import('~icons/heroicons-outline/clipboard-copy')['default']
     IconHisLightBulb: typeof import('~icons/heroicons-solid/light-bulb')['default']
+    IconIcBaselineChevronRight: typeof import('~icons/ic/baseline-chevron-right')['default']
     IconIcBaselineClose: typeof import('~icons/ic/baseline-close')['default']
     IconIcBaselineDone: typeof import('~icons/ic/baseline-done')['default']
     IconIcBaselineHome: typeof import('~icons/ic/baseline-home')['default']

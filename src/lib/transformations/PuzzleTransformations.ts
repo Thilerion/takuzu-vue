@@ -1,7 +1,7 @@
+import { pickRandom } from "@/utils/random.utils.js";
 import { puzzleGridToBoardString } from "../board/board-conversion.helpers.js";
 import { getBoardShapeTypeFromGrid } from "../helpers/board-type.js";
 import type { BoardString, PuzzleGrid } from "../types.js";
-import { pickRandom } from "../utils.js";
 import { getTransformationKey, getTransformationConfigFromKey, generateAllValidTransformations } from "./helpers.js";
 import type { TransformationKey, RotationTransform, TransformationBoardStringsMap, TransformationRecord } from "./types.js";
 

@@ -4,7 +4,7 @@ import type { GeneratedPuzzleResult } from "@/workers/generate-puzzle/generate.w
 import { SimpleBoard } from "@/lib/index.js";
 import { initPregenPuzzles, retrievePregenPuzzleFromDb } from "@/workers/pregen-puzzles/interface.js";
 import { puzzleHistoryTable } from "./db/stats-db/init.js";
-import { pickRandom } from "@/lib/utils.js";
+import { pickRandom } from "@/utils/random.utils.js";
 
 type RequestError<T> = T extends 'reason' ? { success: false, reason: string } : T extends 'error' ? { success: false, error: unknown } : never;
 type PuzzleRequestResult<T> = RequestError<T> | { success: true, data: GeneratedPuzzleResult };
