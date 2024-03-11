@@ -23,9 +23,7 @@
 
 <script setup lang="ts">
 import { EMPTY, ZERO, type PuzzleValue } from "@/lib/constants";
-import { watch } from "vue";
-import { ref } from "vue";
-import { computed, toRefs } from "vue";
+import { computed, toRefs, watch, ref } from "vue";
 
 const props = defineProps<{
 	value: PuzzleValue,
