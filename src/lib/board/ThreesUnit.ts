@@ -1,6 +1,6 @@
 import { COLUMN, ROW, type LineType, type PuzzleValue } from "../constants";
 import type { Vec } from "../types";
-import { isValidPuzzleValue } from "../utils.js";
+import { isPuzzleValue } from "../utils.js";
 import type { SimpleBoard } from "./Board";
 
 export type ThreesCoords = [Vec, Vec, Vec];
@@ -53,7 +53,7 @@ export class ThreesUnit {
 	}
 
 	static isThreesValues(vals: unknown[]): vals is ThreesValues {
-		return vals.length === 3 && vals.every(v => isValidPuzzleValue(v));
+		return vals.length === 3 && vals.every(v => isPuzzleValue(v));
 	}
 
 	get values() {

@@ -9,11 +9,6 @@ export const PUZZLE_VALUES = [ONE, ZERO, EMPTY] as const;
 export type PuzzleSymbol = typeof PUZZLE_SYMBOLS[number];
 export type PuzzleValue = typeof PUZZLE_VALUES[number];
 
-export const OPPOSITE_SYMBOL_MAP = {
-	[ONE]: ZERO,
-	[ZERO]: ONE
-} as const;
-
 // line types
 export const ROW = 'row';
 export const COLUMN = 'column';

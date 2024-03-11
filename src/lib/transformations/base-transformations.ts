@@ -1,11 +1,12 @@
-import { EMPTY, OPPOSITE_SYMBOL_MAP } from "../constants.js"
+import { EMPTY } from "../constants.js"
 import type { PuzzleGrid } from "../types.js";
+import { getOppositeSymbol } from "../utils.js";
 import type { ReadonlyGrid, TransformationFn, BaseTransformationConfig } from "./types.js";
 
 const invertSymbols = (grid: ReadonlyGrid): PuzzleGrid => {
 	return grid.map(row => {
 		return row.map((val) => {
-			return val === EMPTY ? EMPTY : OPPOSITE_SYMBOL_MAP[val];
+			return val === EMPTY ? EMPTY : getOppositeSymbol(val);
 		})
 	})
 }

@@ -1,9 +1,10 @@
-import { EMPTY, OPPOSITE_SYMBOL_MAP, type PuzzleSymbol } from "@/lib/constants.js";
+import { EMPTY, type PuzzleSymbol } from "@/lib/constants.js";
 import type { TriplesTechniqueResult } from "@/lib/human-solver/triples.js";
 import type { Vec, BoardAndSolutionBoards, Target } from "@/lib/types.js";
 import { createAreaHighlightAroundCells, HIGHLIGHT_LEVELS, createCellHighlight } from "../highlights/highlight.js";
 import type { HintStepIntermediate, HintStepFinal, HintStepEventCallbackActionsParam } from "./types.js";
 import { BaseSteppedHint } from "./SteppedHint.js";
+import { getOppositeSymbol } from "@/lib/utils.js";
 
 export class TriplesSteppedHint extends BaseSteppedHint {
 	readonly subType: 'double' | 'sandwich';
@@ -23,7 +24,7 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 		this.source = [...origin];
 		this.targets = [...targets];
 		this.targetSymbol = this.targets[0].value;
-		this.sourceSymbol = OPPOSITE_SYMBOL_MAP[this.targetSymbol];
+		this.sourceSymbol = getOppositeSymbol(this.targetSymbol);
 
 		// The first step displays the type of the hint, and has an action that locates it.
 		// This action displays the source of the hint as a highlight.

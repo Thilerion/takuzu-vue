@@ -26,11 +26,12 @@ export const countValuesInMap = <T>(arr: T[]) => {
 
 
 // BOARD / CELL UTILS //
-export const isValidCellDigit = (value: unknown): value is PuzzleSymbol => value === ONE || value === ZERO;
-export const isValidPuzzleValue = (value: unknown): value is PuzzleValue => (PUZZLE_VALUES as ReadonlyArray<unknown>).includes(value);
+export const isPuzzleSymbol = (value: unknown): value is PuzzleSymbol => value === ONE || value === ZERO;
+export const isPuzzleValue = (value: unknown): value is PuzzleValue => (PUZZLE_VALUES as ReadonlyArray<unknown>).includes(value);
+export const getOppositeSymbol = (value: PuzzleSymbol) => value === ONE ? ZERO : ONE;
 
 export const toggleValue = (value: PuzzleValue, oneFirst = false) => {
-	const isEmpty = !isValidCellDigit(value);
+	const isEmpty = !isPuzzleSymbol(value);
 
 	const toggleOrder = oneFirst ? [ONE, ZERO, EMPTY] : [ZERO, ONE, EMPTY];
 

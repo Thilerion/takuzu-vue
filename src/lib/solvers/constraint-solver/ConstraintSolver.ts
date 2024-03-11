@@ -5,9 +5,10 @@ import { applyTriplesConstraintWithOpts } from "./constraints/TriplesConstraint.
 import { applyLineBalanceConstraintWithOpts } from "./constraints/LineBalanceConstraint.js";
 import { applyEliminationConstraintWithOpts } from "./constraints/EliminationConstraint.js";
 import type { ConstraintResult } from "./constraints/types.js";
-import { OPPOSITE_SYMBOL_MAP, type PuzzleSymbol } from "@/lib/constants.js";
+import type { PuzzleSymbol } from "@/lib/constants.js";
 import type { DeepReadonly } from "vue";
 import { selectCellStrategies, selectValueStrategies, type SelectCellStrategyName, type SelectValueStrategyName } from "./selection/index.js";
+import { getOppositeSymbol } from "@/lib/utils.js";
 
 const DEFAULT_TIMEOUT = 2000; // safety measure, can be overridden by user
 
@@ -316,7 +317,7 @@ export class ConstraintSolver {
 			this.dfs(resultBoardA);
 		}
 
-		const otherValue = OPPOSITE_SYMBOL_MAP[initialValue];
+		const otherValue = getOppositeSymbol(initialValue);
 		const resultBoardB = this.dfsGetNextState(board, x, y, otherValue);
 		if (resultBoardB) {
 			this.dfs(resultBoardB);

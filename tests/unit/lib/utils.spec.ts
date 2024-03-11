@@ -1,6 +1,6 @@
 import { expect, test, describe } from 'vitest';
 import { EMPTY, ONE, ZERO } from '../../../src/lib/constants';
-import { getCoordsForBoardSize, isValidCellDigit, areLinesEqual } from '../../../src/lib/utils';
+import { getCoordsForBoardSize, isPuzzleSymbol, areLinesEqual } from '../../../src/lib/utils';
 
 describe('board and puzzle utils', () => {
 	
@@ -30,11 +30,11 @@ describe('board and puzzle utils', () => {
 	})
 
 	test('isValidCellDigit', () => {
-		expect(isValidCellDigit(ONE)).toBe(true);
-		expect(isValidCellDigit(ZERO)).toBe(true);
-		expect(isValidCellDigit(EMPTY)).toBe(false);
-		expect(isValidCellDigit(false)).toBe(false);
-		expect(isValidCellDigit(true)).toBe(false);
+		expect(isPuzzleSymbol(ONE)).toBe(true);
+		expect(isPuzzleSymbol(ZERO)).toBe(true);
+		expect(isPuzzleSymbol(EMPTY)).toBe(false);
+		expect(isPuzzleSymbol(false)).toBe(false);
+		expect(isPuzzleSymbol(true)).toBe(false);
 	})
 
 	test('are lines equal', () => {

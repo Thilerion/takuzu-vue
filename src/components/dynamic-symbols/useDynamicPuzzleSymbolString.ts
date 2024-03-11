@@ -1,5 +1,5 @@
 import { ZERO, type PuzzleSymbol } from "@/lib/constants.js";
-import { isValidPuzzleValue } from "@/lib/utils.js";
+import { isPuzzleValue } from "@/lib/utils.js";
 import type { CellTheme, CellThemeType } from "@/stores/settings/types.js";
 import type { Ref } from "vue";
 import { computed } from "vue";
@@ -78,7 +78,7 @@ export const useDynamicPuzzleSymbolString = (theme: Ref<CellTheme>, themeType: R
 	})
 
 	const $p: ToDynamicPuzzleString = (symbol: PuzzleSymbol | 'symbol', multiple = false) => {
-		if (isValidPuzzleValue(symbol)) return displaySymbol.value(symbol, multiple);
+		if (isPuzzleValue(symbol)) return displaySymbol.value(symbol, multiple);
 		else if (symbol === 'symbol') return displayCellType.value(multiple);
 		else return symbol;
 	}

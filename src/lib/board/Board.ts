@@ -3,7 +3,7 @@ import { COLUMN, EMPTY, ROW, type LineType, type PuzzleSymbol, type PuzzleValue 
 import { findIncorrectValuesFromSolution } from "../mistakes/incorrect-values.js";
 import type { FoundIncorrectValue } from "../mistakes/types.js";
 import type { ColumnId, IterableBoardLineString, LineId, BoardExportString, PuzzleGrid, RowId, Vec, BoardString, Target, BoardShape } from "../types";
-import { array2d, cloneArray2d, columnIdToX, getCoordsForBoardSize, isLineIdColumn, isLineIdRow, isPuzzleValueLineStr, isValidCellDigit, isValidPuzzleValue, lineSizeToNumRequired, rowIdToY } from "../utils";
+import { array2d, cloneArray2d, columnIdToX, getCoordsForBoardSize, isLineIdColumn, isLineIdRow, isPuzzleValueLineStr, isPuzzleSymbol, isPuzzleValue, lineSizeToNumRequired, rowIdToY } from "../utils";
 import { validateBoard } from "../validate/board";
 import { generateColumnIds, generateRowIds } from "./Board.helpers.js";
 import { BoardLine } from "./BoardLine";
@@ -71,7 +71,7 @@ export class SimpleBoard {
 			const row: PuzzleValue[] = [];
 			for (const inputVal of inputRow) {
 				if (typeof inputVal === 'string') {
-					if (isValidPuzzleValue(inputVal)) {
+					if (isPuzzleValue(inputVal)) {
 						row.push(inputVal);
 					} else if (inputVal === ' ' || inputVal === '') {
 						row.push(EMPTY);
@@ -142,7 +142,7 @@ export class SimpleBoard {
 			return this;
 		}
 
-		if (!isValidCellDigit(value)) {
+		if (!isPuzzleSymbol(value)) {
 			value = EMPTY;
 		}
 

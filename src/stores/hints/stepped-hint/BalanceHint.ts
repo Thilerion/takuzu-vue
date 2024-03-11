@@ -2,8 +2,8 @@ import type { BalanceTechniqueResult } from "@/lib/solvers/human-solver/techniqu
 import type { BoardAndSolutionBoards, LineId, Target } from "@/lib/types.js";
 import { BaseSteppedHint } from "./SteppedHint.js";
 import type { HintStepIntermediate, HintStepFinal } from "./types.js";
-import { OPPOSITE_SYMBOL_MAP, type LineType, type PuzzleSymbol, EMPTY } from "@/lib/constants.js";
-import { lineTypeFromLineId } from "@/lib/utils.js";
+import { type LineType, type PuzzleSymbol, EMPTY } from "@/lib/constants.js";
+import { getOppositeSymbol, lineTypeFromLineId } from "@/lib/utils.js";
 import { HIGHLIGHT_LEVELS, createCellHighlight, createLineHighlight } from "../highlights/highlight.js";
 import { BoardLine } from "@/lib/board/BoardLine.js";
 
@@ -24,7 +24,7 @@ export class BalanceSteppedHint extends BaseSteppedHint {
 
 		this.targets = [...targets];
 		this.missingSymbol = targets[0].value;
-		this.filledSymbol = OPPOSITE_SYMBOL_MAP[this.missingSymbol];
+		this.filledSymbol = getOppositeSymbol(this.missingSymbol);
 		this.lineId = lineId;
 		this.lineType = lineTypeFromLineId(lineId);
 
