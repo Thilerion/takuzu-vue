@@ -29,7 +29,7 @@
 <script setup lang="ts">
 import { formatYYYYMMDD } from '@/utils/date.utils';
 import { computed, ref, toRef } from 'vue';
-import { statsDb } from '@/services/db/stats-db/index.js';
+import { statsDb } from '@/services/db/stats-db/init.js';
 import { importPeek, exportPuzzleHistoryDb, cleanImportPuzzleHistoryDb, importPuzzleHistoryItemsWithVersionUpgrade } from '@/services/db/stats-db/stats-db-import-export.js';
 
 const props = defineProps({

@@ -1,4 +1,4 @@
-import { statsDb } from "@/services/db/stats-db";
+import { statsDb } from "@/services/db/stats-db/init.js";
 import { StatsDbExtendedStatisticDataEntry } from "@/services/db/stats-db/models.js";
 import { isToday } from "date-fns";
 import { defineStore } from "pinia";

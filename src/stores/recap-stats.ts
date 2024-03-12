@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 import { startOfDay } from "date-fns";
 import { useMainStore } from "./main";
 import type { BasicPuzzleConfig, DifficultyKey } from "@/lib/types.js";
-import { statsDb } from "@/services/db/stats-db";
+import { statsDb } from "@/services/db/stats-db/init.js";
 
 type PuzzleStatisticsBestAverages = {
 	best: number;
