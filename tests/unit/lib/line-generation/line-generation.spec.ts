@@ -142,7 +142,7 @@ describe('generateValidLineCompletions', () => {
 		expect(result).toEqual([filledLine]);
 	})
 
-	test('with an invalid filled line', () => {
+	test('with an invalid filled line due to count imbalance', () => {
 		const filledLine = '111010';
 		const count = {
 			'1': 4,
@@ -153,7 +153,7 @@ describe('generateValidLineCompletions', () => {
 		expect(result).toEqual([]);
 	})
 
-	test('with an invalid line', () => {
+	test('with an invalid line with all 0 remaining of one symbol', () => {
 		const line = '111...';
 		const count = {
 			'1': 3,
@@ -161,6 +161,28 @@ describe('generateValidLineCompletions', () => {
 			'.': 0
 		};
 		const result = generateValidLineCompletions(splitLine(line), count);
+		expect(result).toEqual([]);
+	})
+
+	test('with an invalid line due to more than 2 consecutive of the same symbol', () => {
+		// This is added due to an encountered bug, where generated valid line completions correctly account for too many of a certain symbol,
+		// but do not account for the input having too many consecutive of the same symbol.
+		const line = '.111..........';
+		const count = { '1': 3, '0': 0, '.': 11 };
+		const result = generateValidLineCompletions(splitLine(line), count);
+		expect(result).toEqual([]);
+	})
+
+	test('with an invalid filled line due too many consecutive of same symbol', () => {
+		// This is added due to an encountered bug, where generated valid line completions correctly account for too many of a certain symbol,
+		// but do not account for the input having too many consecutive of the same symbol.
+		const filledLine = '111000';
+		const count = {
+			'1': 3,
+			'0': 3,
+			'.': 0
+		};
+		const result = generateValidLineCompletions(splitLine(filledLine), count);
 		expect(result).toEqual([]);
 	})
 
