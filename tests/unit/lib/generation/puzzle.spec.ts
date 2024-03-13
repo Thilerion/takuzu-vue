@@ -1,9 +1,7 @@
-import { getMaskValidatorsForPuzzleConfig } from '@/lib/generation/mask-validation.js';
-import { SimpleBoard, createPuzzle } from '@/lib/index.js';
+import { createPuzzle } from '@/lib/index.js';
 import { ConstraintSolver } from '@/lib/solvers/constraint-solver/ConstraintSolver.js';
 import { applyLineBalanceConstraintWithOpts } from '@/lib/solvers/constraint-solver/constraints/LineBalanceConstraint.js';
 import { applyTriplesConstraintWithOpts } from '@/lib/solvers/constraint-solver/constraints/TriplesConstraint.js';
-import type { BoardString } from '@/lib/types.js';
 import seedrandom from 'seedrandom';
 
 describe('createPuzzle', () => {
@@ -21,7 +19,7 @@ describe('createPuzzle', () => {
 			difficulty: 1
 		});
 		expect(result?.solution.toString()).toMatchInlineSnapshot(`"101100110010011001100110001101010011"`);
-		expect(result?.board.toString()).toMatchInlineSnapshot(`".0.......0.....00..........1.10.0..."`);
+		expect(result?.board.toString()).toMatchInlineSnapshot(`"....0.11.......00.......0...0...0..1"`);
 
 		const solveResult = ConstraintSolver.run(result!.board, {
 			maxSolutions: 1,
