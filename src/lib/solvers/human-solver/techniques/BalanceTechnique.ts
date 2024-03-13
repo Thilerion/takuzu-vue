@@ -10,6 +10,7 @@ export type BalanceTechniqueResult = {
 };
 
 export type HumanBalanceTechniqueParams = {
+	// or: SimpleBoard class
 	board: {
 		boardLines: () => Iterable<BoardLine>
 	}
