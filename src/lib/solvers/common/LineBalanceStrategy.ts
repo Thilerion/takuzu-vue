@@ -4,11 +4,11 @@ import { ONE, ZERO, type PuzzleSymbol } from "@/lib/constants.js";
 import type { SolverStrategyResult } from "./types.js";
 import type { BoardLine } from "@/lib/board/BoardLine.js";
 
-export type TriplesStrategyResult = SolverStrategyResult<{
+export type LineBalanceStrategyResult = SolverStrategyResult<{
 	value: PuzzleSymbol,
 }>;
 
-export const checkLineBalanceStrategy = (boardLine: BoardLine): TriplesStrategyResult => {
+export const checkLineBalanceStrategy = (boardLine: BoardLine): LineBalanceStrategyResult => {
 	if (boardLine.isFilled) return { found: false } as const;
 
 	const {

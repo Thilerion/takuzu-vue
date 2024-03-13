@@ -2,7 +2,7 @@ import type { SimpleBoard } from "@/lib/index.js";
 import type { ConstraintSolverConstraintsCollection } from "./types.js";
 import type { ConstraintResult } from "./constraints/types.js";
 
-export function applyFirstConstraintFn(board: SimpleBoard, fns: ConstraintSolverConstraintsCollection): ConstraintResult {
+function applyFirstConstraintFn(board: SimpleBoard, fns: ConstraintSolverConstraintsCollection): ConstraintResult {
 	for (const applyConstraint of fns) {
 		const result = applyConstraint(board);
 		if (result.changed) {

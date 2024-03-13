@@ -11,10 +11,12 @@ export type EliminationStrategyResult = SolverStrategyResult<{
 	targets: Target[]
 }>;
 
-/*
-	Function works on 1 BoardLine, and accepts, optioanlly, a list of filledLines which to exclude from the line permutations.
-	It then gets valid perms, removes those that are equal to a filled line, gets recurring values, and returns those values.
-*/
+/**
+ * Checks the elimination strategy for a given BoardLine.
+ * The strategy identifies recurring values that must be placed in the empty cells
+ * based on the valid permutations of the line, excluding any permutations that
+ * match already filled lines.
+ */
 export const checkEliminationStrategy = (boardLine: BoardLine, filledLines?: BoardLine[]): EliminationStrategyResult => {
 	// Check if the line is already completely filled. If so, the strategy does not apply, and we return early.
 	if (boardLine.isFilled) return { found: false } as const;
@@ -58,6 +60,7 @@ export function removeFilledLinesFromPermutations(perms: LineArrSymbolPermutatio
 
 	return { result };
 }
+
 
 export function removeFilledLinesFromPermutationsWithSources(perms: LineArrSymbolPermutations, filledLines: BoardLine[]): {
 	result: ROPuzzleSymbolLine[];
