@@ -28,6 +28,8 @@ export function genericEliminationTechnique(
 		leastRemaining: EliminationLeastRemainingRange
 	}
 ): GenericEliminationTechniqueResult[] {
+	assertValidLeastRemaining(opts.leastRemaining);
+	
 	const result: GenericEliminationTechniqueResult[] = [];
 	const boardLines = [...board.boardLines()];
 
@@ -46,10 +48,10 @@ export function genericEliminationTechnique(
 	// for each line, run the elimination strategy, explicitly without filledLines (as that is purpose of the duplicate line strategy)
 	for (const line of filteredLines) {
 		const lineResult = checkEliminationStrategy(line);
-		// if error found, exit early, return error that indicates board is invalid TODO
-		if ('error' in result) {
-			// TODO: return error object here
-			throw new Error('Cannot complete "GenericEliminationTechnique" due to invalid/unsolvable board state.');
+		// if error found, exit early, return error that indicates board is invalid
+		if (lineResult.invalid && lineResult.error) {
+			// TODO: throw custom error here, and handle a potential custom error  thrown by checkEliminationStrategy
+			throw new Error('[UnsolvableBoardLineError]: Cannot complete "GenericEliminationTechnique" due to invalid/unsolvable board state.');
 		}
 		// if no result found; continue with next line
 		if (!lineResult.found) continue;
@@ -70,7 +72,22 @@ export function genericEliminationTechnique(
 
 export function createGenericEliminationTechnique(leastRemaining: number | [min: number, max: number]) {
 	const leastRemainingRange = Array.isArray(leastRemaining) ? leastRemaining : [leastRemaining, leastRemaining] as [number, number];
+	assertValidLeastRemaining(leastRemainingRange);
 	return (data: HumanGenericElimTechniqueInputData, opts: Partial<Omit<HumanGenericElimTechniqueOpts, 'leastRemaining'>> = {}) => {
 		return genericEliminationTechnique(data, { ...opts, leastRemaining: leastRemainingRange });
+	}
+}
+
+function assertValidLeastRemaining(value: EliminationLeastRemaining): void {
+	const left = Array.isArray(value) ? value[0] : value;
+	if (left <= 0) {
+		throw new Error(`Least remaining lower bound cannot be 0 or lower, but got: ${left}`);
+	}
+	const right = Array.isArray(value) ? value[1] : value;
+	if (right <= 0) {
+		throw new Error(`Least remaining upper bound cannot be 0 or lower, but got: ${right}`);
+	}
+	if (Array.isArray(value) && right < left) {
+		throw new Error(`Least remaining upper bound cannot be lower than lower bound, but got: ${right} < ${left}`);
 	}
 }

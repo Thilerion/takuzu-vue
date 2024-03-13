@@ -25,6 +25,7 @@ export const checkEliminationStrategy = (boardLine: BoardLine, filledLines?: Boa
 	const perms = boardLine.validPermutations;
 	// If there are none, the board (or line) is invalid.
 	if (!perms || !perms.length) return {
+		// TODO: convert to custom error class
 		found: false,
 		error: 'No valid permutations found',
 		invalid: true
@@ -34,6 +35,7 @@ export const checkEliminationStrategy = (boardLine: BoardLine, filledLines?: Boa
 	const filteredPerms = filledLines == null ? perms : removeFilledLinesFromPermutations(perms, filledLines).result;
 	// If none are left, the board (or line) is invalid.
 	if (!filteredPerms.length) return {
+		// TODO: convert to custom error class
 		found: false,
 		error: 'No valid permutations remaining after removing filled lines',
 		invalid: true
