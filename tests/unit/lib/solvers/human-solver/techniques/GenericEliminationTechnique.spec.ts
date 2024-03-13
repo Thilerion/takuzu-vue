@@ -1,6 +1,5 @@
 import { BoardLine } from "@/lib/board/BoardLine.js";
 import { SimpleBoard } from "@/lib/index.js"
-import { checkEliminationStrategy } from "@/lib/solvers/common/EliminationStrategy.js";
 import { createGenericEliminationTechnique, genericEliminationTechnique, type GenericEliminationTechniqueResult } from "@/lib/solvers/human-solver/techniques/GenericEliminationTechnique.js";
 import type { BoardExportString } from "@/lib/types.js"
 import { splitLine } from "@/lib/utils/puzzle-line.utils.js";
@@ -197,7 +196,7 @@ describe('Human Solver GenericEliminationTechnique', () => {
 		expect(() => createGenericEliminationTechnique([2, 1])).toThrowError('lower than lower bound');
 	})
 
-	it.only('throws an error if checkEliminationStrategy returned an error because a line has no (valid) permutations and thus has no solutions', () => {
+	it('throws an error if checkEliminationStrategy returned an error because a line has no (valid) permutations and thus has no solutions', () => {
 		const board = {
 			boardLines: () => [
 				BoardLine.fromValues(splitLine('0111....'), 'A')
@@ -206,4 +205,44 @@ describe('Human Solver GenericEliminationTechnique', () => {
 		expect(() => genericEliminationTechnique({ board }, { leastRemaining: [1, 20] })).toThrowError('[UnsolvableBoardLineError]:');
 	})
 	it.todo('throws an (UnsolvableBoardLineError) if a line has no permutations or otherwise cannot be solved');
+
+	it('accepts a maxEmptyCells option to skip processing lines with more than a certain amount of empty cells', () => {
+		const board = {
+			boardLines: () => [
+				BoardLine.fromValues(splitLine('1.10..........'), 'A') // 11 empty
+			]
+		}
+
+		const resultsA = genericEliminationTechnique({ board }, { leastRemaining: [1, 10], maxEmptyCells: 10 });
+		expect(resultsA).toHaveLength(0);
+
+		const resultsB = genericEliminationTechnique({ board }, { leastRemaining: [1, 10], maxEmptyCells: 11 });
+		expect(resultsB).toHaveLength(1);
+
+		// also works with the createGenericEliminationTechnique
+		const genericElimTechnique = createGenericEliminationTechnique([1, 10]);
+		const resultsC = genericElimTechnique({ board }, { maxEmptyCells: 10 });
+		expect(resultsC).toHaveLength(0);
+
+		const resultsD = genericElimTechnique({ board }, { maxEmptyCells: 11 });
+		expect(resultsD).toHaveLength(1);
+	})
+
+	test('maxEmptyCells defaults to Infinity', () => {
+		const line = BoardLine.fromValues(splitLine('1.10..........'), 'A') // 11 empty
+		vi.spyOn(line, 'numEmpty', 'get').mockReturnValue(500);
+		const board = {
+			boardLines: () => [line]
+		}
+		const resultsA = genericEliminationTechnique({ board }, { leastRemaining: [1, 10] });
+		expect(resultsA).toHaveLength(1);
+
+
+		// make sure that the mocked return value works, by checking if results are correct with a given maxEmptyCells
+		const resultsB = genericEliminationTechnique({ board }, { leastRemaining: [1, 10], maxEmptyCells: 500 });
+		expect(resultsB).toHaveLength(1);
+
+		const resultsC = genericEliminationTechnique({ board }, { leastRemaining: [1, 10], maxEmptyCells: 499 });
+		expect(resultsC).toHaveLength(0);
+	})
 })

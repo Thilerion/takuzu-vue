@@ -13,6 +13,7 @@ export type HumanGenericElimTechniqueInputData = {
 }
 export type HumanGenericElimTechniqueOpts = {
 	leastRemaining: EliminationLeastRemaining,
+	maxEmptyCells: number,
 }
 
 export type GenericEliminationTechniqueResult = {
@@ -25,8 +26,8 @@ export type GenericEliminationTechniqueResult = {
 export function genericEliminationTechnique(
 	{ board }: HumanGenericElimTechniqueInputData,
 	opts: {
-		leastRemaining: EliminationLeastRemainingRange
-	}
+		leastRemaining: EliminationLeastRemainingRange,
+	} & Partial<Omit<HumanGenericElimTechniqueOpts, 'leastRemaining'>>
 ): GenericEliminationTechniqueResult[] {
 	assertValidLeastRemaining(opts.leastRemaining);
 	
@@ -36,9 +37,8 @@ export function genericEliminationTechnique(
 	// filter lines so they have the least remaining amount, or within the range
 	// TODO: extract filtering functionality, used in other Elimination techniques/strategies
 	const filteredLines = boardLines.filter(line => {
-		if (line.isFilled) return false;
-		if (line.numFilled === 0) return false;
-		// TODO: maxEmptyCells?
+		if (line.isFilled || line.numFilled === 0) return false;
+		else if (opts.maxEmptyCells != null && line.numEmpty > opts.maxEmptyCells) return false;
 		const leastRem = line.getLeastRemaining();
 		const [min, max] = opts.leastRemaining;
 		return leastRem >= min && leastRem <= max;
@@ -73,7 +73,7 @@ export function genericEliminationTechnique(
 export function createGenericEliminationTechnique(leastRemaining: number | [min: number, max: number]) {
 	const leastRemainingRange = Array.isArray(leastRemaining) ? leastRemaining : [leastRemaining, leastRemaining] as [number, number];
 	assertValidLeastRemaining(leastRemainingRange);
-	return (data: HumanGenericElimTechniqueInputData, opts: Partial<Omit<HumanGenericElimTechniqueOpts, 'leastRemaining'>> = {}) => {
+	return (data: HumanGenericElimTechniqueInputData, opts: Omit<Parameters<typeof genericEliminationTechnique>[1], 'leastRemaining'> = {}) => {
 		return genericEliminationTechnique(data, { ...opts, leastRemaining: leastRemainingRange });
 	}
 }
