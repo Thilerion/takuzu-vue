@@ -125,6 +125,13 @@ function getHintMessage(hint: SteppedHint, stepIdx: number, $p: ToDynamicPuzzleS
 			}
 			return fn(hint, $p);
 		}
+		case 'noHintsFound': {
+			if (stepIdx !== 0) {
+				console.error('No valid message found for no hints found hint step');
+				return null;
+			}
+			return { messageKey: 'Hints.NoHintsFound.message' };
+		}
 		default: {
 			const x: never = hintType;
 			console.error('No valid message found for hint type ' + x);

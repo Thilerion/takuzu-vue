@@ -1,7 +1,6 @@
 import { SimpleBoard } from "@/lib";
 import { createHint } from "./helpers";
 import { HINT_TYPE, Hint } from "./Hint";
-import { humanSolveElimination } from "@/lib/human-solver/elimination.js";
 import { humanSolveDuplicateLine } from "@/lib/human-solver/duplicate.js";
 import { TriplesSteppedHint } from "./stepped-hint/TriplesHint.js";
 import type { SteppedHint } from "./stepped-hint/types.js";
@@ -14,6 +13,7 @@ import type { FoundIncorrectValue, RuleViolation } from "@/lib/mistakes/types";
 import type { XYKey } from "@/lib/types";
 import { IncorrectValuesSteppedHint } from "./stepped-hint/IncorrectValuesHint.js";
 import { genericEliminationTechnique } from "@/lib/solvers/human-solver/techniques/GenericEliminationTechnique.js";
+import { NoHintsFoundSteppedHint } from "./stepped-hint/NoHintsFoundHint.js";
 
 export const searchForHint = (
 	board: SimpleBoard,
@@ -29,9 +29,11 @@ export const searchForHint = (
 	const humanStrategyHint = searchForHumanStrategyHint(board);
 	if (humanStrategyHint) return humanStrategyHint;
 
-	// Step 3: TODO: more advanced strategies, or random value from solution, or backtracking search
+	// Step 3: TODO: more advanced strategies, or backtracking search
 	console.warn("SHOULD RUN DEEPER SEARCH FOR HINTS NOW, BUT NOT IMPLEMENTED YET.");
-	return null;
+
+	// Step 4: TODO: use backtracking to find optimal random move to generate, or just give a random move from the solution
+	return createNoHintsFoundHint(board, solution);
 }
 
 function searchForMistakesHint(board: SimpleBoard, solution: SimpleBoard): Hint | IncorrectValuesSteppedHint | null {
@@ -157,4 +159,22 @@ function searchForHumanStrategyHint(board: SimpleBoard) {
 	}
 
 	return null;
+}
+
+function createNoHintsFoundHint(board: SimpleBoard, solution: SimpleBoard): NoHintsFoundSteppedHint {
+	// TODO: find a better target than randomly selecting a cell
+	// for instance, by finding out which move generates the most new *true* hints, or finding a move that allows for the largest part of the puzzle to be solved using regular hints, or at the least finding a move that generates at least 1 path
+
+	// get all empty cells, in random order, and take the first one
+	const boardCellsNext = board
+		.cells({ shuffled: true, skipFilled: true })
+		.next();
+	if (boardCellsNext.done) {
+		throw new Error('No empty cells found, but no hints found either. This should not be possible.');
+	}
+	const { x, y } = boardCellsNext.value;
+	const value = solution.get(x, y);
+
+	const hint = new NoHintsFoundSteppedHint({ target: { x, y, value }});
+	return hint;
 }

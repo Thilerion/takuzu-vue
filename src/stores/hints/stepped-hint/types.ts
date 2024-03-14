@@ -6,8 +6,9 @@ import type { Ref } from "vue";
 import type { TriplesSteppedHint } from "./TriplesHint.js";
 import type { BalanceSteppedHint } from "./BalanceHint.js";
 import type { IncorrectValuesSteppedHint } from "./IncorrectValuesHint.js";
+import type { NoHintsFoundSteppedHint } from "./NoHintsFoundHint.js";
 
-export type SteppedHintType = 'ruleViolation' | 'incorrectValues' | 'triples' | 'balance' | 'elimination' | 'elimDuplicate';
+export type SteppedHintType = 'ruleViolation' | 'incorrectValues' | 'triples' | 'balance' | 'elimination' | 'elimDuplicate' | 'noHintsFound';
 export type HintStepEventCallbackCtxParam = BoardAndSolutionBoards;
 export type HintStepEventCallbackActionsParam = {
 	// TODO: set certain cells in puzzleStore to a certain value, with or without adding to history, or adding to history as batch?
@@ -48,4 +49,4 @@ type GetEventKeys<Obj> = keyof {
 };
 export type HintStepEvent = GetEventKeys<Required<HintStepIntermediate> & Required<HintStepFinal>>;
 
-export type SteppedHint = TriplesSteppedHint | BalanceSteppedHint | IncorrectValuesSteppedHint;
+export type SteppedHint = TriplesSteppedHint | BalanceSteppedHint | IncorrectValuesSteppedHint | NoHintsFoundSteppedHint;

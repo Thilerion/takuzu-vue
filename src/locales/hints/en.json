@@ -8,9 +8,9 @@
 			"row": "row",
 			"column": "column"
 		},
-		"none-found": {
-			"no-hint-found": "No hint found",
-			"no-hint-found-too-hard-message": "Woops! This puzzle is hard, and no hint was found, sorry!"
+		"NoHintsFound": {
+			"name": "No hint found",
+			"message": "Woops! This puzzle is hard, and no hint was found, sorry! A random cell can be revealed instead."
 		},
 		"Triples": {
 			"name": "Triples",
