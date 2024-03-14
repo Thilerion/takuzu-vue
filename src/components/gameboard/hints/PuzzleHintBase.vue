@@ -25,7 +25,7 @@
 			<p :key="step" class="my-auto"><slot name="message">Default slotted message</slot></p>
 		</transition>
 		</div>
-		<div class="min-h-fit sticky bottom-0 mt-0.5 flex h-9 items-stretch border-t w-full">
+		<div class="min-h-fit sticky bottom-0 mt-0.5 flex h-9 items-stretch border-t w-full" v-if="$slots.buttons != null">
 			<div class="min-h-fit flex h-9 items-stretch w-full">
 				<slot name="buttons">Default slotted buttons / footer</slot>				
 			</div>

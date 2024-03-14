@@ -16,6 +16,13 @@
 					:show="isHintShown"
 					@hide="hide"
 				/>
+				<PuzzleHintBase
+					v-else-if="renderableFallbackNoneFoundHint"
+					@hide="hide"
+				>
+					<template #title>{{ $t('Hints.none-found.no-hint-found') }}</template>
+					<template #message>{{  $t('Hints.none-found.no-hint-found-too-hard-message') }}</template>
+				</PuzzleHintBase>
 		</transition>
 	</div>
 </template>
@@ -29,7 +36,7 @@ import { storeToRefs } from 'pinia';
 import { computed, watchEffect } from 'vue';
 
 const puzzleHintsStore = usePuzzleHintsStore();
-const { isHintShown, currentHint } = storeToRefs(puzzleHintsStore);
+const { isHintShown, currentHint, hintSearchedButNoneFound } = storeToRefs(puzzleHintsStore);
 const { hide } = puzzleHintsStore;
 
 const renderableLegacyHint = computed((): null | Hint => {
@@ -44,7 +51,11 @@ const renderableSteppedHint = computed((): null | SteppedHint => {
 		return currentHint.value;
 	}
 	return null;
-}) 
+})
+const renderableFallbackNoneFoundHint = computed((): null | true => {
+	if (hintSearchedButNoneFound.value && isHintShown.value) return true;
+	return null;
+})
 
 const puzzleStore = usePuzzleStore();
 watchEffect(() => {

@@ -5,7 +5,7 @@ import { validateHint } from "../hints/helpers.js";
 import { searchForHint } from "../hints/search.js";
 import { usePuzzleStore } from "../puzzle/store.js";
 import { useHintHighlightsStore } from "./highlights-store.js";
-import { computed, reactive, readonly, ref } from "vue";
+import { computed, reactive, readonly, ref, watchEffect } from "vue";
 import type { SteppedHint } from "./stepped-hint/types.js";
 
 export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
@@ -17,6 +17,11 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 	} as { hint: Hint | SteppedHint | null, boardStr: BoardString | null });
 	const cache = ref(new Map<BoardString, (null | Hint | SteppedHint)>());
 	const currentHint = computed(() => current.hint as null | Hint | SteppedHint);
+
+	// Discriminate between hint == null because none was found, or because it is simply the initial state
+	const hintSearchedButNoneFound = computed(() => {
+		return current.hint == null && current.boardStr != null;
+	})
 
 	// Note: does not include a requested hint that was not found, and does not include for how many different boards a hint was requested
 	const uniqueHintsRequested = computed(() => {
@@ -31,23 +36,23 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 	const currentBoardStr = computed(() => usePuzzleStore().boardStr!);
 
 	const showCurrentHint = () => {
-		if (currentHint.value == null) {
+		/* if (currentHint.value == null) {
 			throw new Error('Cannot show hint as there is no current hint set. Will hide hint and highlights instead.');
-		}
-		if (currentHint.value.isLegacyHint) {
+		} */
+		if (currentHint.value != null && currentHint.value.isLegacyHint) {
 			const hintHighlightsStore = useHintHighlightsStore();
 			hintHighlightsStore.show();
-		} else {
+		} else if (currentHint.value != null) {
 			// handled from component for stepped hints
 			// console.log('Cannot show stepped hint highlight from store.');
 		}
 		isHintShown.value = true;
 	}
 	const showCurrentHintIfAvailable = () => {
-		if (currentHint.value == null) {
+		/* if (currentHint.value == null) {
 			hideCurrentHint();
 			return;
-		}
+		} */
 		showCurrentHint();
 	}
 	const hideCurrentHint = () => {
@@ -148,7 +153,8 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 			return;
 		} else {
 			setNoHintAvailable();
-			hideCurrentHint();
+			showCurrentHint();
+			return;
 		}
 	}
 
@@ -168,6 +174,7 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 	return {
 		currentHint,
 		isHintShown,
+		hintSearchedButNoneFound,
 
 		getHint,
 		reset,
