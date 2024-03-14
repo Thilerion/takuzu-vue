@@ -13,6 +13,7 @@ import { findIncorrectValuesFromSolution } from "@/lib/mistakes/incorrect-values
 import type { FoundIncorrectValue, RuleViolation } from "@/lib/mistakes/types";
 import type { XYKey } from "@/lib/types";
 import { IncorrectValuesSteppedHint } from "./stepped-hint/IncorrectValuesHint.js";
+import { genericEliminationTechnique } from "@/lib/solvers/human-solver/techniques/GenericEliminationTechnique.js";
 
 export const searchForHint = (
 	board: SimpleBoard,
@@ -112,22 +113,29 @@ function searchForHumanStrategyHint(board: SimpleBoard) {
 		const hint = new BalanceSteppedHint(balanceHintResult[0]);
 		return hint;
 	}
-	// ELIMINATION HINT
-	const eliminationHintResult = humanSolveElimination({ board });
-	if (!Array.isArray(eliminationHintResult)) {
-		const err = eliminationHintResult.error;
-		throw new Error(`Elimination Technique returned an error, but the mistakes checker found none. This should not be possible. Error: ${err}`);
-	}
-	if (eliminationHintResult.length) {
-		const sorted = [...eliminationHintResult].sort((a, b) => {
-			if (a.elimType === b.elimType) {
-				return 0;
-			} else if (a.elimType > b.elimType) {
-				return 1;
-			} else return -1;
-		})
-		const hint = createHint(HINT_TYPE.ELIMINATION, sorted[0]);
-		return hint;
+
+	// (GENERIC) ELIMINATION HINT
+	try {
+		const eliminationTechniqueResult = genericEliminationTechnique({ board }, { leastRemaining: [1, 10], maxEmptyCells: 16 });
+		if (eliminationTechniqueResult.length > 0) {
+			if (eliminationTechniqueResult.length > 1) {
+				console.log({elim: eliminationTechniqueResult})
+			}
+			const sortedResults = [...eliminationTechniqueResult].sort((a, z) => {
+				if (a.remainingCounts[0] !== z.remainingCounts[0]) {
+					return a.remainingCounts[0] - z.remainingCounts[0]; // lowest leastRemaining: is easiest
+				} else if (a.targets.length !== z.targets.length) {
+					return z.targets.length - a.targets.length; // use the one with the most targets
+				} else {
+					return a.remainingCounts[1] - z.remainingCounts[1]; // lowest mostRemaining: not necessarily indicative of hint difficulty but sometimes is
+				}
+			})
+			const hint = createHint(HINT_TYPE.ELIMINATION, sortedResults[0]);
+			return hint;
+		}
+	} catch(err) {
+		// TODO: handle different error types, only catch UnsolvableBoardLineError I think?
+		throw new Error(`Elimination Technique returned an error, but the mistakes checker found none. This should not be possible. Error message: ${(err as Error).message}`, { cause: err });
 	}
 
 	// ELIMINATION/DUPE HINT

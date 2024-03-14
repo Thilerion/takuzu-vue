@@ -7,6 +7,7 @@ import type { ElimTechniqueResult } from "@/lib/human-solver/elimination.js";
 import type { DuplicateLineTechniqueResult } from "@/lib/human-solver/duplicate.js";
 import { usePuzzleStore } from "../puzzle/store.js";
 import { lineTypeFromLineId } from "@/lib/utils/puzzle-line.utils.js";
+import type { GenericEliminationTechniqueResult } from "@/lib/solvers/human-solver/techniques/GenericEliminationTechnique.js";
 
 export const HINT_TYPE = {
 	MISTAKE: 'MISTAKE',
@@ -218,6 +219,7 @@ const createBalanceHint = ({ targets, origin }: BalanceTechniqueResult) => {
 	console.log({ type: 'balance', hint });
 	return hint;
 }
+/* // Used for the old elimination technique
 const createEliminationHint = ({ targets, source, elimType }: ElimTechniqueResult) => {
 	const lineId = source[0];
 	const lineName = lineTypeFromLineId(lineId);
@@ -231,6 +233,21 @@ const createEliminationHint = ({ targets, source, elimType }: ElimTechniqueResul
 		{ subType }
 	);
 	console.log({ type: 'elim', hint })
+	return hint;
+} */
+const createEliminationHint = ({ targets, line, remainingCounts }: GenericEliminationTechniqueResult) => {
+	const lineId = line;
+	const lineName = lineTypeFromLineId(lineId);
+	const message = `Values can be eliminated from this ${lineName} (${lineId}).`;
+	const subType = `generic-elim-${remainingCounts.join('-')}`;
+	const hint = new Hint(
+		HINT_TYPE.ELIMINATION,
+		message,
+		targets,
+		[line],
+		{ subType }
+	);
+	console.log({ type: 'generic-elim', hint })
 	return hint;
 }
 const createElimDupeHint = ({ targets, source, elimType, targetLine }: DuplicateLineTechniqueResult) => {
