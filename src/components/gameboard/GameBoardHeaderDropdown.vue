@@ -60,11 +60,11 @@ import { ref } from 'vue';
 import { toRef } from 'vue';
 import BaseDropdown from '../global/dropdown/BaseDropdown.vue';
 import { awaitRaf, awaitTimeout } from '@/utils/delay.utils.js';
-import { humanSolveTriples } from '@/lib/human-solver/triples.js';
 import { EMPTY } from '@/lib/constants.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { usePuzzleTimer } from '@/stores/puzzle/timer-store.js';
-import { shuffle, shuffleInPlace } from '@/utils/random.utils.js';
+import { shuffleInPlace } from '@/utils/random.utils.js';
+import { humanTriplesTechnique } from '@/lib/solvers/human-solver/techniques/TriplesTechnique.js';
 
 const settingsStore = useSettingsStore();
 const showTimer = toRef(settingsStore, 'showTimer');
@@ -158,7 +158,7 @@ const solveTrios = async () => {
 	await awaitTimeout(400);
 
 	while (movesFound) {
-		const triplesHumanResult = humanSolveTriples({ board: board.value! });
+		const triplesHumanResult = humanTriplesTechnique({ board: board.value! });
 		if (!triplesHumanResult || !triplesHumanResult.length) {
 			movesFound = false;
 			break;

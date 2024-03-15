@@ -133,7 +133,6 @@ function searchForHumanStrategyHint(board: SimpleBoard) {
 					return a.remainingCounts[1] - z.remainingCounts[1]; // lowest mostRemaining: not necessarily indicative of hint difficulty but sometimes is
 				}
 			})
-			// const hint = createHint(HINT_TYPE.ELIMINATION, sortedResults[0]);
 			const hint = new GenericEliminationSteppedHint(sortedResults[0]);
 			return hint;
 		}

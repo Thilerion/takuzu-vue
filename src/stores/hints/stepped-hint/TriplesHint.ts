@@ -1,10 +1,10 @@
 import { EMPTY, type PuzzleSymbol } from "@/lib/constants.js";
-import type { TriplesTechniqueResult } from "@/lib/human-solver/triples.js";
 import type { Vec, BoardAndSolutionBoards, Target } from "@/lib/types.js";
 import { createAreaHighlightAroundCells, HIGHLIGHT_LEVELS, createCellHighlight } from "../highlights/highlight.js";
 import type { HintStepIntermediate, HintStepFinal, HintStepEventCallbackActionsParam } from "./types.js";
 import { BaseSteppedHint, type HintStepsData } from "./SteppedHint.js";
 import { getOppositeSymbol } from "@/lib/utils/puzzle-value.utils.js";
+import type { TriplesTechniqueResult } from "@/lib/solvers/human-solver/techniques/TriplesTechnique.js";
 
 export class TriplesSteppedHint extends BaseSteppedHint {
 	readonly subType: 'double' | 'sandwich';

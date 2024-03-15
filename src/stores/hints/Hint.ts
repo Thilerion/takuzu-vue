@@ -1,9 +1,6 @@
 import { EMPTY } from "@/lib/constants";
 import type { HintAction as createHintAction, HintAction, HintActionFn, HintSource, HintTarget, HintTargetLine, HintType, HintValidatorFn } from "./types.js";
 import type { Vec } from "@/lib/types.js";
-import type { TriplesTechniqueResult } from "@/lib/human-solver/triples.js";
-import type { BalanceTechniqueResult } from "@/lib/human-solver/balance.js";
-import type { ElimTechniqueResult } from "@/lib/human-solver/elimination.js";
 import type { DuplicateLineTechniqueResult } from "@/lib/human-solver/duplicate.js";
 import { usePuzzleStore } from "../puzzle/store.js";
 import { lineTypeFromLineId } from "@/lib/utils/puzzle-line.utils.js";
@@ -177,79 +174,7 @@ const createMistakeHint = (cells: Vec[]) => {
 	console.log({ type: 'mistake', hint });
 	return hint;
 }
-const createTriplesHint = ({ targets, origin, type }: TriplesTechniqueResult) => {
-	const originCoords = origin.map(({ x, y }) => `(${x},${y})`).join(' / ');
-	const message = `There is a ${type} somewhere on the board: ${originCoords}`;
-	const subType = type;
 
-	const hint = new Hint(
-		HINT_TYPE.TRIPLES,
-		message,
-		targets,
-		[...origin],
-		{ subType }
-	);
-	const hintValidator: HintValidatorFn = ({ board, solution }) => {
-		// check for mistakes first
-		if (board.hasIncorrectValues(solution)) return false;
-		for (const { x, y } of targets) {
-			if (board.get(x, y) !== EMPTY) return false;
-		}
-		// both source cells should have the same value
-		const sourceCells = origin.map(cell => board.get(cell.x, cell.y));
-		if (sourceCells[0] !== sourceCells[1] || sourceCells[0] === EMPTY) {
-			return false;
-		}
-		return true;
-	}
-	hint.setValidator(hintValidator);
-	console.log({ type: 'triples', hint });
-	return hint;
-}
-const createBalanceHint = ({ targets, origin }: BalanceTechniqueResult) => {
-	const lineId = origin[0];
-	const lineName = lineTypeFromLineId(lineId);
-	const message = `A ${lineName} can be balanced (${lineName}: ${lineId})`;
-	const hint = new Hint(
-		HINT_TYPE.BALANCE,
-		message,
-		targets,
-		origin
-	);
-	console.log({ type: 'balance', hint });
-	return hint;
-}
-/* // Used for the old elimination technique
-const createEliminationHint = ({ targets, source, elimType }: ElimTechniqueResult) => {
-	const lineId = source[0];
-	const lineName = lineTypeFromLineId(lineId);
-	const message = `Values can be eliminated from this ${lineName} (${lineId}).`;
-	const subType = elimType;
-	const hint = new Hint(
-		HINT_TYPE.ELIMINATION,
-		message,
-		targets,
-		source,
-		{ subType }
-	);
-	console.log({ type: 'elim', hint })
-	return hint;
-} */
-const createEliminationHint = ({ targets, line, remainingCounts }: GenericEliminationTechniqueResult) => {
-	const lineId = line;
-	const lineName = lineTypeFromLineId(lineId);
-	const message = `Values can be eliminated from this ${lineName} (${lineId}).`;
-	const subType = `generic-elim-${remainingCounts.join('-')}`;
-	const hint = new Hint(
-		HINT_TYPE.ELIMINATION,
-		message,
-		targets,
-		[line],
-		{ subType }
-	);
-	console.log({ type: 'generic-elim', hint })
-	return hint;
-}
 const createElimDupeHint = ({ targets, source, elimType, targetLine }: DuplicateLineTechniqueResult) => {
 	const lineId = targetLine;
 	const lineName = lineTypeFromLineId(lineId);
@@ -269,9 +194,6 @@ const createElimDupeHint = ({ targets, source, elimType, targetLine }: Duplicate
 
 export const hintGenerators = {
 	[HINT_TYPE.MISTAKE]: createMistakeHint,
-	[HINT_TYPE.TRIPLES]: createTriplesHint,
-	[HINT_TYPE.BALANCE]: createBalanceHint,
-	[HINT_TYPE.ELIMINATION]: createEliminationHint,
 	[HINT_TYPE.ELIM_DUPE]: createElimDupeHint
 }
 
