@@ -51,7 +51,7 @@ const route = useRoute();
 const router = useRouter();
 
 const showFilters = ref(false);
-const { historyItems: rawHistoryItems } = storeToRefs(statsStore);
+const { historyItems: rawHistoryItems, sortedByDate: itemsSortedByDate } = storeToRefs(statsStore);
 
 const { getDefaultOptions, resetCurrentItems, sortItems, isSortType } = usePuzzleHistorySorting();
 
@@ -59,12 +59,21 @@ const dataOptions = reactive(getDefaultOptions())
 const { page, pageSize } = toRefs(dataOptions);
 const currentItems = ref<StatsDbExtendedStatisticDataEntry[]>([]);
 
-function getHistoryItemsWithTimeRecord(sortedByDate: typeof rawHistoryItems.value): {
+function getHistoryItemsWithTimeRecord(sortedByDate: StatsDbExtendedStatisticDataEntry[]): {
 	first: number[];
 	current: number[];
 	all: number[];
 } {
-	const items = sortedByDate;
+	let items = sortedByDate;
+
+	if (items.length > 1) {
+		// make sure they are sorted in the correct order
+		const [first, second] = items;
+		if (first.date < second.date) {
+			console.error('First date is before second date; items sorted by date are sorted in reverse order!!');
+			items = [...items].reverse();
+		}
+	}
 
 	const iterationTimeRecord = new Map();
 	const currentRecords = new Map();
@@ -94,7 +103,7 @@ function getHistoryItemsWithTimeRecord(sortedByDate: typeof rawHistoryItems.valu
 	}
 }
 const historyItemsWithTimeRecord = computed(() => {
-	return getHistoryItemsWithTimeRecord(rawHistoryItems.value);
+	return getHistoryItemsWithTimeRecord(itemsSortedByDate.value);
 })
 
 export type HistoryItemTimeRecordData = { record: false } | { record: true, current: boolean, first: boolean };
