@@ -28,7 +28,7 @@ import type { PuzzleGrid, VecValue, XYKey } from '@/lib/types.js';
 import { computed, toRefs } from 'vue';
 import { useStaticGridCellData } from './composables/useGridCellData.js';
 import { usePuzzleTapVibrate } from './composables/usePuzzleTapVibrate.js';
-import { initGlobalCellThemeProvider } from './composables/useCellThemeProvider.js';
+import { injectCellThemeData } from './composables/useCellThemeProvider.js';
 import type { PuzzleValue } from '@/lib/constants.js';
 
 const props = defineProps<{
@@ -71,7 +71,7 @@ const keyedGrid = computed((): Record<XYKey, PuzzleValue> => {
 // CELL THEME
 const {
 	cellComponent
-} = initGlobalCellThemeProvider();
+} = injectCellThemeData();
 
 // CELL METHODS
 const onCellClick = (val: VecValue) => {

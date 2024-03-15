@@ -25,7 +25,6 @@
 </template>
 
 <script setup lang="ts">
-import { initGlobalCellThemeProvider } from '@/components/gameboard/composables/useCellThemeProvider.js';
 import { computed, ref } from 'vue';
 import ScrollToTop from '@/components/base/ScrollToTop.vue';
 
@@ -37,7 +36,6 @@ const y = computed(() => {
 	return scrollToTopComponent.value.y;
 })
 const elevateHeader = computed(() => y.value > 10);
-initGlobalCellThemeProvider();
 </script>
 
 <style scoped>

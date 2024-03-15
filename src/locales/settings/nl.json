@@ -25,7 +25,7 @@
         "title": "Instellingen",
         "restore-default-settings": "Standaardinstellingen herstellen",
         "language": "Taal",
-        "gameplay": "Spel",
+        "gameplay": "Spelinstellingen",
         "input-mode": {
             "label": "Invoermodus",
             "description": "Selecteer in welke volgorde de puzzelsymbolen worden geselecteerd bij het tikken op een cel",

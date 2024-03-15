@@ -15,6 +15,7 @@ import { useMainStore } from './stores/main';
 import { initListeners as initPWAInstallListeners } from './composables/use-deferred-install-prompt';
 import { useInitThemePreferenceProvider } from './composables/use-theme-preferences';
 import { initPregeneratedPuzzles } from './workers/pregen-puzzles/init';
+import { initGlobalCellThemeProvider } from './components/gameboard/composables/useCellThemeProvider.js';
 
 const store = useMainStore();
 const puzzleKey = toRef(store, 'puzzleKey');
@@ -22,6 +23,7 @@ const puzzleKey = toRef(store, 'puzzleKey');
 // init settings persistence, app theme provider, pwaInstallListeners, and populate or pregen the puzzles db
 initSettingsPersistence();
 useInitThemePreferenceProvider();
+initGlobalCellThemeProvider();
 initPWAInstallListeners();
 onMounted(() => {
 	initPregeneratedPuzzles();

@@ -92,6 +92,7 @@ export const initGlobalCellThemeProvider = (): CellThemeProviderData => {
 export const injectCellThemeData = (): CellThemeProviderData => {
 	const data = inject(key);
 	if (!data) {
+		console.error('No global cell theme provider found. Initializing one now. However, this should never happen.');
 		return initGlobalCellThemeProvider();
 	}
 	return { ...data };

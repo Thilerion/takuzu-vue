@@ -24,10 +24,8 @@
 <script setup lang="ts">
 import type { CellTheme } from '@/stores/settings/types.js';
 import { computed } from 'vue';
-import { initGlobalCellThemeProvider } from '../gameboard/composables/useCellThemeProvider.js';
 import { useI18n } from 'vue-i18n';
 
-initGlobalCellThemeProvider();
 const { t } = useI18n();
 
 const cellThemeData = {
