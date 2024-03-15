@@ -24,7 +24,7 @@ export class IncorrectValuesSteppedHint extends BaseSteppedHint {
 
 		// TODO: use different highlights; use the "incorrect" highlight, also used with the Check button functionality
 		const firstStep: HintStepIntermediate = {
-			actionLabel: 'Locate',
+			actionLabel: 'locate',
 			index: 0,
 			onNext: (ctx, { setHighlights }) => {
 				const highlights = this.moves.map((vec) => {
@@ -34,7 +34,7 @@ export class IncorrectValuesSteppedHint extends BaseSteppedHint {
 			}
 		}
 		const finalStep: HintStepFinal = {
-			actionLabel: 'Fix',
+			actionLabel: 'fix',
 			index: 1,
 			onShow: (ctx, { showHighlights }) => {
 				showHighlights();

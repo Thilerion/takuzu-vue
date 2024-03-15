@@ -30,7 +30,7 @@ export class BalanceSteppedHint extends BaseSteppedHint {
 		this.lineType = lineTypeFromLineId(lineId);
 
 		const firstStep: HintStepIntermediate = {
-			actionLabel: 'Locate',
+			actionLabel: 'locate',
 			index: 0,
 			onNext: (ctx, { setHighlights }) => {
 				const highlights = [createLineHighlight(
@@ -43,7 +43,7 @@ export class BalanceSteppedHint extends BaseSteppedHint {
 		}
 
 		const secondStep: HintStepIntermediate = {
-			actionLabel: 'Next',
+			actionLabel: 'next',
 			index: 1,
 			onShow: (ctx, { showHighlights }) => {
 				showHighlights();
@@ -64,7 +64,7 @@ export class BalanceSteppedHint extends BaseSteppedHint {
 		}
 
 		const finalStep: HintStepFinal = {
-			actionLabel: 'Execute',
+			actionLabel: 'execute',
 			index: 2,
 			onShow: (ctx, { showHighlights }) => {
 				showHighlights();

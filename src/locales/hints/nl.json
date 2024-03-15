@@ -9,11 +9,12 @@
 			"adjacent-cell": "de aangrenzende cel",
 
 			"actionLabel": {
-				"locate": "Laat zien",
+				"locate": "Bekijk",
 				"back": "Terug",
 				"apply": "Toepassen",
 				"execute": "Toepassen",
-				"fix": "Herstel"
+				"fix": "Herstel",
+				"next": "Volgende"
 			}			
 		},
 		"NoHintsFound": {

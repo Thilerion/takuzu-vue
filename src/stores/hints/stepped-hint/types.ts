@@ -27,7 +27,7 @@ export type HintStepEventCallback = (
 ) => void;
 
 type BaseHintStepData = {
-	actionLabel: string,
+	actionLabel: SteppedHintActionType,
 	index: number,
 	// TODO: secondary actions? for instance, with mistakes, the primary action is fix all, and the secondary action might be revert to last correct boardState
 }
@@ -51,3 +51,4 @@ type GetEventKeys<Obj> = keyof {
 export type HintStepEvent = GetEventKeys<Required<HintStepIntermediate> & Required<HintStepFinal>>;
 
 export type SteppedHint = TriplesSteppedHint | BalanceSteppedHint | IncorrectValuesSteppedHint | GenericEliminationSteppedHint | NoHintsFoundSteppedHint;
+export type SteppedHintActionType = 'locate' | 'next' | 'execute' | 'fix' | 'apply';

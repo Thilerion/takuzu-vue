@@ -29,7 +29,7 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 		// The first step displays the type of the hint, and has an action that locates it.
 		// This action displays the source of the hint as a highlight.
 		const firstStep: HintStepIntermediate = {
-			actionLabel: 'Locate',
+			actionLabel: 'locate',
 			index: 0,
 			// TODO: if many triples hints found, replace message with There are multiple pairs and/or sandwiches on the board.
 			onNext: (ctx, { setHighlights }) => {
@@ -40,7 +40,7 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 		// If going back to the first step, the source highlight is removed.
 		// If going forward to the third step, the target highlights are added to the currently shown source highlight.
 		const secondStep: HintStepIntermediate = {
-			actionLabel: `Locate`,
+			actionLabel: 'locate',
 			index: 1,
 			onShow: (ctx, { showHighlights }) => {
 				showHighlights();
@@ -58,7 +58,7 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 		// The final step further explains the hint, and has an action that sets the target(s) to the opposite (correct) symbol.
 		// If going back to the second step, the target highlights are removed, while the source highlight is kept.
 		const finalStep: HintStepFinal = {
-			actionLabel: 'Execute',
+			actionLabel: 'execute',
 			index: 2,
 			onShow: (ctx, { showHighlights }) => {
 				showHighlights();

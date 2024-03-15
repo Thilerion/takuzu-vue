@@ -17,7 +17,7 @@ export class NoHintsFoundSteppedHint extends BaseSteppedHint {
 		this.target = data.target;
 
 		const step: HintStepFinal = {
-			actionLabel: 'Apply',
+			actionLabel: 'apply',
 			index: 0,
 			onShow: (ctx, { setHighlights }) => {
 				const cellHighlight = createCellHighlight(

@@ -7,14 +7,14 @@
 				:disabled="isFirstStep"
 				@click="prevStep"
 				class="text-sm text-slate-700 bg-white border-r min-w-fit w-24 py-1 flex-grow max-w-[27%] disabled:text-slate-400 disabled:bg-slate-50"
-			><span class="mr-[1ch]">&#x3C;</span>Back</button>
+			><span class="mr-[1ch]">&#x3C;</span>{{ t('Hints.common.actionLabel.back') }}</button>
 			<div class="flex-1">
 				<!-- Space for secondary actions, or [Learn more] button, etc -->
 			</div>
 			<button
 				@click="onAction"
 				class="text-sm flex-grow text-slate-700 bg-white border-l min-w-fit w-24 py-1 max-w-[27%]"
-			><transition name="stepchange" mode="out-in"><span :key="stepIdx">{{ curStep.actionLabel }}<span v-if="!isFinalStep" class="ml-[1ch]">&#x3E;</span></span></transition></button>
+			><transition name="stepchange" mode="out-in"><span :key="stepIdx">{{ primaryActionLabel }}<span v-if="!isFinalStep" class="ml-[1ch]">&#x3E;</span></span></transition></button>
 		</template>
 	</PuzzleHintBase>
 </template>
@@ -57,6 +57,24 @@ const stepMessage = computed((): string => {
 	console.error('UseSteppedHintMessage gave no message.');
 	return '';
 })
+
+const primaryActionLabel = computed((): string => {
+	const rawLabel = curStep.value.actionLabel;
+
+	switch (rawLabel) {
+		case 'apply': return t('Hints.common.actionLabel.apply', rawLabel);
+		case 'locate': return t('Hints.common.actionLabel.locate', rawLabel);
+		case 'execute': return t('Hints.common.actionLabel.execute', rawLabel);
+		case 'fix': return t('Hints.common.actionLabel.fix', rawLabel);
+		case 'next': return t('Hints.common.actionLabel.next', rawLabel);
+		default: {
+			const x: never = rawLabel;
+			console.error(`Unknown primary action label for stepped hint: ${x}`);
+			return t('Hints.common.actionLabel.next', rawLabel);
+		}
+	}
+})
+
 const subtitle = computed((): string | null => {
 	const type = hint.value.type;
 	switch(type) {

@@ -26,7 +26,7 @@ export class GenericEliminationSteppedHint extends BaseSteppedHint {
 		this.originalLineValues = [...lineValues];
 
 		const firstStep: HintStepIntermediate = {
-			actionLabel: 'Locate',
+			actionLabel: 'locate',
 			index: 0,
 			onNext: (ctx, { setHighlights }) => {
 				const highlights = [createLineHighlight(
@@ -39,7 +39,7 @@ export class GenericEliminationSteppedHint extends BaseSteppedHint {
 		}
 
 		const secondStep: HintStepIntermediate = {
-			actionLabel: 'Locate',
+			actionLabel: 'locate',
 			index: 1,
 			onShow: (ctx, { showHighlights }) => {
 				showHighlights();
@@ -60,7 +60,7 @@ export class GenericEliminationSteppedHint extends BaseSteppedHint {
 		}
 
 		const finalStep: HintStepFinal = {
-			actionLabel: 'Execute',
+			actionLabel: 'execute',
 			index: 2,
 			onShow: (ctx, { showHighlights }) => {
 				showHighlights();
