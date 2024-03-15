@@ -70,7 +70,8 @@ describe('Human Solver GenericEliminationTechnique', () => {
 					"y": 1,
 					"value": "0"
 				}
-			]
+			],
+			lineValues: expect.any(Array)
 		}
 		expect(results[0]).toEqual(expected);
 	})
@@ -114,7 +115,8 @@ describe('Human Solver GenericEliminationTechnique', () => {
 			line: 'C',
 			targets: [
 				{ value: '1', ...line.getCoords(2) },
-			]
+			],
+			lineValues: [...line.values]
 		})
 	})
 
@@ -159,7 +161,8 @@ describe('Human Solver GenericEliminationTechnique', () => {
 				{ value: '1', ...line.getCoords(8) },
 				{ value: '0', ...line.getCoords(10) },
 				{ value: '0', ...line.getCoords(12) },
-			]
+			],
+			lineValues: [...line.values]
 		})
 	})
 

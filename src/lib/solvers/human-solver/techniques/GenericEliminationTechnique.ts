@@ -1,5 +1,5 @@
 import type { BoardLine } from "@/lib/board/BoardLine.js"
-import type { LineId, Target } from "@/lib/types.js"
+import type { LineId, PuzzleValueLine, Target } from "@/lib/types.js"
 import { checkEliminationStrategy } from "../../common/EliminationStrategy.js"
 
 export type EliminationLeastRemainingRange = [min: number, max: number];
@@ -21,6 +21,7 @@ export type GenericEliminationTechniqueResult = {
 	targets: Target[];
 	remainingCounts: [least: number, most: number];
 	line: LineId;
+	lineValues: PuzzleValueLine;
   }
 
 export function genericEliminationTechnique(
@@ -63,7 +64,8 @@ export function genericEliminationTechnique(
 			technique: 'elim-generic',
 			targets,
 			remainingCounts,
-			line: line.lineId
+			line: line.lineId,
+			lineValues: [...line.values]
 		});
 	}	
 
