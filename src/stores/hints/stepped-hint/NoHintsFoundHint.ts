@@ -37,7 +37,8 @@ export class NoHintsFoundSteppedHint extends BaseSteppedHint {
 	}
 
 	validate(): boolean {
-		// NoHintsFoundHint is only valid for the exact same board state it was created for
+		// NoHintsFoundHint is only valid for the exact same board state
+		// it was created for
 		return false;
 	}
 }

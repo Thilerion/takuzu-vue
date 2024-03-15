@@ -14,6 +14,7 @@ import type { XYKey } from "@/lib/types";
 import { IncorrectValuesSteppedHint } from "./stepped-hint/IncorrectValuesHint.js";
 import { genericEliminationTechnique } from "@/lib/solvers/human-solver/techniques/GenericEliminationTechnique.js";
 import { NoHintsFoundSteppedHint } from "./stepped-hint/NoHintsFoundHint.js";
+import type { PuzzleSymbol } from "@/lib/constants.js";
 
 export const searchForHint = (
 	board: SimpleBoard,
@@ -162,13 +163,16 @@ function searchForHumanStrategyHint(board: SimpleBoard) {
 }
 
 function createNoHintsFoundHint(board: SimpleBoard, solution: SimpleBoard): NoHintsFoundSteppedHint {
-	// TODO: find a better target than randomly selecting a cell
-	// for instance, by finding out which move generates the most new *true* hints, or finding a move that allows for the largest part of the puzzle to be solved using regular hints, or at the least finding a move that generates at least 1 path
+	/* TODO: find a better target than randomly selecting a cell
+	// for instance, by finding out which move generates the most new *true* hints, or
+	// finding a move that allows for the largest part of the puzzle to be solved using
+	// regular hints, or at the least finding a move that generates at least 1 path */
 
 	// get all empty cells, in random order, and take the first one
 	const boardCellsNext = board
 		.cells({ shuffled: true, skipFilled: true })
 		.next();
+
 	if (boardCellsNext.done) {
 		throw new Error('No empty cells found, but no hints found either. This should not be possible.');
 	}
