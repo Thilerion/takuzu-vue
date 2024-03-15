@@ -72,6 +72,9 @@ const subtitle = computed((): string | null => {
 				return null;
 			}
 		}
+		case 'eliminationGeneric': {
+			return 'Hints.EliminationGeneric.generic';
+		}
 		case 'incorrectValues':
 		case 'noHintsFound':
 		case 'balance': {
@@ -95,6 +98,9 @@ const title = computed(() => {
 		}
 		case 'incorrectValues': {
 			return 'Hints.IncorrectValues.name';
+		}
+		case 'eliminationGeneric': {
+			return 'Hints.EliminationGeneric.name';
 		}
 		case 'noHintsFound': {
 			return 'Hints.NoHintsFound.name';

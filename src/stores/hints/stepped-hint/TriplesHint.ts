@@ -3,14 +3,14 @@ import type { TriplesTechniqueResult } from "@/lib/human-solver/triples.js";
 import type { Vec, BoardAndSolutionBoards, Target } from "@/lib/types.js";
 import { createAreaHighlightAroundCells, HIGHLIGHT_LEVELS, createCellHighlight } from "../highlights/highlight.js";
 import type { HintStepIntermediate, HintStepFinal, HintStepEventCallbackActionsParam } from "./types.js";
-import { BaseSteppedHint } from "./SteppedHint.js";
+import { BaseSteppedHint, type HintStepsData } from "./SteppedHint.js";
 import { getOppositeSymbol } from "@/lib/utils/puzzle-value.utils.js";
 
 export class TriplesSteppedHint extends BaseSteppedHint {
 	readonly subType: 'double' | 'sandwich';
 	readonly source: [Vec, Vec]; // the pair of cells that resulted in this hint, for instance: the pair of cells in one symbol that resulted in the cells adjacent to be the opposite symbol
 	readonly targets: Target[]; // the cells and values that are affected by this hint, that can be set
-	readonly steps: [...HintStepIntermediate[], HintStepFinal];
+	readonly steps: HintStepsData;
 	readonly type = 'triples' as const;
 	readonly sourceSymbol: PuzzleSymbol;
 	readonly targetSymbol: PuzzleSymbol;

@@ -6,11 +6,30 @@
 			"surrounding-cells": "the surrounding cells",
 			"adjacent-cell": "the adjacent cell",
 			"row": "row",
-			"column": "column"
+			"column": "column",
+
+			"actionLabel": {
+				"locate": "Locate",
+				"back": "Back",
+				"apply": "Apply",
+				"execute": "Execute",
+				"fix": "Fix"
+			}
 		},
 		"NoHintsFound": {
 			"name": "No hint found",
 			"message": "Woops! This puzzle is hard, and no hint was found, sorry! A random cell can be revealed instead."
+		},
+		"EliminationCommon": {},
+		"EliminationGeneric": {
+			"name": "Elimination",
+			"generic": "generic",
+			"message-1-single-target": "There is a @:{rowOrColumn} on the board where the correct @:{symbolOrColor} of a cell can be deduced by eliminating impossible combinations.",
+			"message-1-multiple-targets": "There is a @:{rowOrColumn} on the board where some correct moves can be deduced by eliminating impossible combinations.",
+			"message-2-single-target": "In this @:{rowOrColumn}, one cell can only ever contain one @:{symbolOrColor}, because it would otherwise result in an invalid @:{rowOrColumn}.",
+			"message-2-multiple-targets": "In this @:{rowOrColumn}, some cells can only ever contain one @:{symbolOrColor}, because it would otherwise result in an invalid @:{rowOrColumn}.",
+			"message-3-single-target": "This cell can be deduced by eliminating impossible combinations of the remaining @:{symbolOrColorPlural} to be placed.",
+			"message-3-multiple-targets": "These cells can be deduced by eliminating impossible combinations of the remaining @:{symbolOrColorPlural} to be placed."
 		},
 		"Triples": {
 			"name": "Triples",

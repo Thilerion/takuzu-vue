@@ -1,7 +1,8 @@
 import type { ToDynamicPuzzleString } from "@/components/dynamic-symbols/useDynamicPuzzleSymbolString.js";
-import { ONE, ZERO } from "@/lib/constants.js";
-import { lineSizeToNumRequired } from "@/lib/utils/puzzle-line.utils";
+import { ONE, ROW, ZERO } from "@/lib/constants.js";
+import { lineSizeToNumRequired, lineTypeFromLineId } from "@/lib/utils/puzzle-line.utils";
 import type { BalanceSteppedHint } from "@/stores/hints/stepped-hint/BalanceHint.js";
+import type { GenericEliminationSteppedHint } from "@/stores/hints/stepped-hint/GenericEliminationHint.js";
 import type { IncorrectValuesSteppedHint } from "@/stores/hints/stepped-hint/IncorrectValuesHint.js";
 import type { TriplesSteppedHint } from "@/stores/hints/stepped-hint/TriplesHint.js";
 import type { SteppedHint } from "@/stores/hints/stepped-hint/types.js";
@@ -85,6 +86,29 @@ const INCORRECT_VALUES_HINT_MESSAGE: HintMessageFnArray<IncorrectValuesSteppedHi
 	() => ({ messageKey: 'Hints.IncorrectValues.message-2' }),
 ]
 
+const ELIMINATION_GENERIC_HINT_MESSAGE: HintMessageFnArray<GenericEliminationSteppedHint> = [
+	(hint, $p) => ({ 
+		messageKey: hint.targets.length > 1 ? 'Hints.EliminationGeneric.message-1-multiple-targets' : 'Hints.EliminationGeneric.message-1-single-target',
+		namedProperties: {
+			symbolOrColor: $p('symbol', false),
+			rowOrColumn: lineTypeFromLineId(hint.lineId) === ROW ? 'Hints.common.row' : 'Hints.common.column',
+		}
+	}),
+	(hint, $p) => ({
+		messageKey: hint.targets.length > 1 ? 'Hints.EliminationGeneric.message-2-multiple-targets' : 'Hints.EliminationGeneric.message-2-single-target',
+		namedProperties: {
+			rowOrColumn: lineTypeFromLineId(hint.lineId) === ROW ? 'Hints.common.row' : 'Hints.common.column',
+			symbolOrColor: $p('symbol', false),
+		}
+	}),
+	(hint, $p) => ({
+		messageKey: hint.targets.length > 1 ? 'Hints.EliminationGeneric.message-3-multiple-targets' : 'Hints.EliminationGeneric.message-3-single-target',
+		namedProperties: {
+			symbolOrColorPlural: $p('symbol', true),
+		}
+	}),
+]
+
 
 export const useSteppedHintMessage = (
 	hint: Ref<SteppedHint>,
@@ -121,6 +145,14 @@ function getHintMessage(hint: SteppedHint, stepIdx: number, $p: ToDynamicPuzzleS
 			const fn = INCORRECT_VALUES_HINT_MESSAGE.at(stepIdx);
 			if (!fn) {
 				console.error('No valid message found for incorrect values hint step');
+				return null;
+			}
+			return fn(hint, $p);
+		}
+		case 'eliminationGeneric': {
+			const fn = ELIMINATION_GENERIC_HINT_MESSAGE.at(stepIdx);
+			if (!fn) {
+				console.error('No valid message found for generic elimination hint step');
 				return null;
 			}
 			return fn(hint, $p);

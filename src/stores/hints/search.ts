@@ -14,7 +14,7 @@ import type { XYKey } from "@/lib/types";
 import { IncorrectValuesSteppedHint } from "./stepped-hint/IncorrectValuesHint.js";
 import { genericEliminationTechnique } from "@/lib/solvers/human-solver/techniques/GenericEliminationTechnique.js";
 import { NoHintsFoundSteppedHint } from "./stepped-hint/NoHintsFoundHint.js";
-import type { PuzzleSymbol } from "@/lib/constants.js";
+import { GenericEliminationSteppedHint } from "./stepped-hint/GenericEliminationHint.js";
 
 export const searchForHint = (
 	board: SimpleBoard,
@@ -133,7 +133,8 @@ function searchForHumanStrategyHint(board: SimpleBoard) {
 					return a.remainingCounts[1] - z.remainingCounts[1]; // lowest mostRemaining: not necessarily indicative of hint difficulty but sometimes is
 				}
 			})
-			const hint = createHint(HINT_TYPE.ELIMINATION, sortedResults[0]);
+			// const hint = createHint(HINT_TYPE.ELIMINATION, sortedResults[0]);
+			const hint = new GenericEliminationSteppedHint(sortedResults[0]);
 			return hint;
 		}
 	} catch(err) {

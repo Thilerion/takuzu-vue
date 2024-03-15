@@ -1,6 +1,6 @@
 import type { BalanceTechniqueResult } from "@/lib/solvers/human-solver/techniques/BalanceTechnique.js";
 import type { BoardAndSolutionBoards, LineId, Target } from "@/lib/types.js";
-import { BaseSteppedHint } from "./SteppedHint.js";
+import { BaseSteppedHint, type HintStepsData } from "./SteppedHint.js";
 import type { HintStepIntermediate, HintStepFinal } from "./types.js";
 import { type LineType, type PuzzleSymbol, EMPTY } from "@/lib/constants.js";
 import { HIGHLIGHT_LEVELS, createCellHighlight, createLineHighlight } from "../highlights/highlight.js";
@@ -10,7 +10,7 @@ import { lineTypeFromLineId } from "@/lib/utils/puzzle-line.utils.js";
 
 export class BalanceSteppedHint extends BaseSteppedHint {
 	readonly targets: Target[]; // the cells and values that are affected by this hint, that can be set
-	readonly steps: [...HintStepIntermediate[], HintStepFinal];
+	readonly steps: HintStepsData;
 	readonly type = 'balance' as const;
 
 	readonly missingSymbol: PuzzleSymbol;
