@@ -62,8 +62,7 @@
 							<label class="flex items-center">
 								<input type="radio" name="radio-toggle-mode" v-model="toggleMode" value="0">
 								<i18n-t keypath="Settings.input-mode.toggle-symbol-first" tag="span" class="ml-2" scope="global">
-									<template #symbol><span class="text-cell-blue-dark">0</span>
-								</template>
+									<template #symbol><PuzzleSymbolDisplay :v="ZERO" /></template>
 								</i18n-t>
 								<span class="text-xs opacity-50 ml-2">({{ $t('default') }})</span>
 							</label>
@@ -72,8 +71,7 @@
 							<label class="flex items-center">
 								<input type="radio" name="radio-toggle-mode" v-model="toggleMode" value="0">
 								<i18n-t keypath="Settings.input-mode.toggle-symbol-first" tag="span" class="ml-2" scope="global">
-									<template #symbol><span class="text-cell-red-dark">1</span>
-								</template>
+									<template #symbol><PuzzleSymbolDisplay :v="ONE" /></template>
 								</i18n-t>
 							</label>
 						</div>
@@ -149,6 +147,7 @@
 <script setup lang="ts">
 import { useThemePreferences } from '@/composables/use-theme-preferences.js';
 import { SUPPORTED_LOCALES, localeSettings } from '@/i18n/constants.js';
+import { ZERO, ONE } from '@/lib/constants.js';
 import { useDebugMode } from '@/stores/composables/useDebugMode.js';
 import { CheckButtonOption, rulerType } from '@/stores/settings/options.js';
 import { useSettingsStore } from '@/stores/settings/store.js';
