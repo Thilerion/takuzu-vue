@@ -1,13 +1,13 @@
 import { useMainStore } from "@/stores/main";
+import { usePuzzleRecapStore } from "@/stores/puzzle-recap";
 import { usePuzzleStore } from "@/stores/puzzle/store.js";
-import { useRecapStatsStore } from "@/stores/recap-stats"
 import { useRoute, useRouter } from "vue-router";
 
 export const usePuzzleRecapModalActions = () => {
-	const hideModal = () => recapStatsStore.hideModal();
+	const hideModal = () => puzzleRecapStore.hideModal();
 	const route = useRoute();
 	const router = useRouter();
-	const recapStatsStore = useRecapStatsStore();
+	const puzzleRecapStore = usePuzzleRecapStore();
 	const puzzleStore = usePuzzleStore();
 	const goBackToRoute = makeGoBackToRoute();
 	const mainStore = useMainStore();
@@ -19,7 +19,7 @@ export const usePuzzleRecapModalActions = () => {
 			return replayAction();
 		}		
 	
-		const { width, height, difficulty } = recapStatsStore.lastPuzzleEntry!;
+		const { width, height, difficulty } = puzzleRecapStore.historyEntry!;
 		puzzleStore.reset();
 		await puzzleStore.initPuzzle({ width, height, difficulty });
 	
@@ -55,7 +55,7 @@ export const usePuzzleRecapModalActions = () => {
 	
 	async function replayAction(): Promise<void> {
 		try {
-			const { width, height, difficulty } = recapStatsStore.lastPuzzleEntry!;
+			const { width, height, difficulty } = puzzleRecapStore.historyEntry!;
 			puzzleStore.reset();
 			const found = await puzzleStore.replayRandomPuzzle({ width, height, difficulty });
 			if (!found) {

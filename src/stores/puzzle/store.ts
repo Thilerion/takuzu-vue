@@ -4,11 +4,10 @@ import { useSavedPuzzle } from "@/services/savegame/useSavedGame";
 import { fetchAndPreparePuzzle, fetchRandomReplayablePuzzle } from "@/services/fetch-puzzle.js";
 import { useSharedPuzzleToggle } from "@/composables/use-puzzle-toggle";
 import { getRandomPuzzleTransformationOnRestart } from "./useRandomPuzzleTransformation.js";
-import type { FinishedPuzzleState } from "@/services/db/stats-db/models.js";
+import { StatsDbHistoryEntry, type FinishedPuzzleState, type StatsDbHistoryEntryWithId } from "@/services/db/stats-db/models.js";
 // Other stores
 import { usePuzzleHintsStore } from "../hints/store.js";
 import { usePuzzleTimer } from "./timer-store.js";
-import { useRecapStatsStore } from "../recap-stats";
 import { usePuzzleAssistanceStore } from "../assistance/store";
 // Lib imports and misc.
 import { SimpleBoard } from "@/lib";
@@ -18,6 +17,9 @@ import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, Ve
 import type { TransformationKey } from "@/lib/transformations/types.js";
 import type { PickOptional } from "@/types.js";
 import { usePuzzleHistoryStore, type PostMoveHistoryAction } from "../puzzle-history/history-store.js";
+import { usePuzzleRecapStore } from "../puzzle-recap.js";
+import { useMainStore } from "../main.js";
+import { statsDb } from "@/services/db/stats-db/init.js";
 
 export type PuzzleStatus = 'none' | 'loading' | 'error_loading' | 'playing' | 'paused' | 'finished'; 
 export type PuzzleStoreState = {
@@ -386,15 +388,43 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				}
 			}
 
-			const recapStatsStore = useRecapStatsStore();
-
 			try {
-				const historyEntry = await recapStatsStore.addFinishedPuzzleToHistory(finishedPuzzleState);
-				return historyEntry;
+				let historyEntry: StatsDbHistoryEntry | StatsDbHistoryEntryWithId = StatsDbHistoryEntry.fromPuzzleState(finishedPuzzleState);
+
+				let shouldSaveToDb = true;
+
+				if (finishedPuzzleState.assistance.cheatsUsed) {
+					const savePuzzleToHistoryIfCheatedFlag = useMainStore().featureToggles.addPuzzleToHistoryWithCheats.isEnabled;
+					if (!savePuzzleToHistoryIfCheatedFlag) {
+						console.warn('Cheats used; will not save entry to history!');
+						shouldSaveToDb = false;
+					}
+					// else: cheats were used, but will save to history anyway
+				}
+
+				// save to history database here, and update historyEntry with an id
+				if (shouldSaveToDb) {
+					const id = await statsDb.addEntry(historyEntry, true);
+					const succesfullSave = id != null && typeof id === 'number';
+					if (!succesfullSave) {
+						console.error('Did not receive a correct id after saving history entry.');
+						console.warn({ id });
+					} else {
+						if (historyEntry.id == null) {
+							historyEntry.id = id;
+						}
+					}
+				}
+
+				// initialize recap stats store/game end stats
+				const puzzleRecapStore = usePuzzleRecapStore();
+				puzzleRecapStore.initialize(historyEntry);
+				return true;
+
 			} catch (e) {
-				console.warn('Could not add finished puzzle to history...');
+				console.warn('Could not add finished puzzle to history, and could not initialize gameEndStats.');
 				console.warn(e);
-				return null;
+				return false;
 			} finally {
 				const { deleteSavedPuzzle } = useSavedPuzzle();
 				deleteSavedPuzzle();

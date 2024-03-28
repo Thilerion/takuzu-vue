@@ -167,7 +167,6 @@
 			"hardestEver": "Dit was de moeilijkste puzzel die je ooit hebt opgelost, goed gedaan!",
 			"muchBetterThanAverageAbsolute": "Je hebt deze puzzel sneller opgelost dan je gemiddelde met een ongelooflijke {differenceSec}s!",
 			"muchBetterThanAveragePercentage": "Dat was veel sneller dan gemiddeld! Je was {improvementPercentage} sneller.",
-			"nearlyWorstEver": "Bijna je langzaamste oplossing, maar je hebt toch je persoonlijk slechtste tijd verslagen!",
 			"notAddedToDbCheats": "Puzzel is niet opgeslagen in je geschiedenis, omdat je cheats hebt gebruikt.",
 			"playsConfigToday": "Je hebt vandaag {count} puzzels gespeeld met {dimensions} afmetingen op het @:{difficultyKey} niveau.",
 			"playsConfigTotal": "Je hebt in totaal {count} puzzels opgelost met {dimensions} afmetingen op het @:{difficultyKey} niveau.",
@@ -176,8 +175,7 @@
 			"replayPlaysTotal": "Dit is de {numPlaysOrdinal} keer dat je deze exact dezelfde puzzel hebt opgelost, met je beste tijd zijnde {bestPreviousTimeMinSec}.",
 			"replayTimeRecord": "Dit is de {numPlaysOrdinal} keer dat je deze exacte puzzel hebt opgelost. Je was {differenceSec}s sneller dan je snelste tijd.",
 			"timeRecord": "Je hebt je beste tijd verbeterd met {differenceSec}s!",
-			"timeRecordLarge": "Je was een ongelooflijke {improvementPercentage} sneller dan je vorige beste tijd!",
-			"worstEver": "Dit was je zwaarste uitdaging tot nu toe, een nieuw persoonlijk record voor de langste tijd genomen."
+			"timeRecordLarge": "Je was een ongelooflijke {improvementPercentage} sneller dan je vorige beste tijd!"
 		},
 		"play-again": "Speel opnieuw",
 		"record": {

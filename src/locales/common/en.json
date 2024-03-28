@@ -167,7 +167,6 @@
 			"hardestEver": "This was the hardest puzzle you've ever solved, well done!",
 			"muchBetterThanAverageAbsolute": "You solved this puzzle faster than your average by an incredible {differenceSec}s!",
 			"muchBetterThanAveragePercentage": "That was much faster than average! You were {improvementPercentage} faster.",
-			"nearlyWorstEver": "Almost your slowest solve, but you still managed to beat your personal worst time!",
 			"notAddedToDbCheats": "Puzzle was not saved in your history, because you used cheats.",
 			"playsConfigToday": "You've played {count} puzzles with {dimensions} dimensions today at @:{difficultyKey} difficulty.",
 			"playsConfigTotal": "You've solved a total of {count} puzzles with {dimensions} dimensions at @:{difficultyKey} difficulty.",
@@ -176,8 +175,7 @@
 			"replayPlaysTotal": "This is the {numPlaysOrdinal} time you've solved this exact same puzzle, with your best time being {bestPreviousTimeMinSec}.",
 			"replayTimeRecord": "This is the {numPlaysOrdinal} time you solved this exact puzzle. You were {differenceSec}s faster than your fastest time.",
 			"timeRecord": "You've improved your best time by {differenceSec}s!",
-			"timeRecordLarge": "You were an incredible {improvementPercentage} faster than your previous best time!",
-			"worstEver": "This was your toughest challenge yet, setting a new personal record for the longest time taken."
+			"timeRecordLarge": "You were an incredible {improvementPercentage} faster than your previous best time!"
 		},
 		"play-again": "Play again",
 		"record": {

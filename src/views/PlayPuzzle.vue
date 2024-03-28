@@ -77,7 +77,7 @@
 			</OverlayPageTransition>
 		</router-view>
 
-		<PuzzleRecap :show="finished && recapStatsStore.modalShown" />
+		<PuzzleRecap :show="finished && puzzleRecapStore.modalShown" />
 	</div>
 </template>
 
@@ -94,7 +94,6 @@ import PuzzleRecap from '@/components/puzzle-recap/PuzzleRecap.vue';
 import { usePuzzleWakeLock } from '@/composables/use-wake-lock';
 import { storeToRefs } from 'pinia';
 import { computed, onBeforeMount, onBeforeUnmount, onMounted, watchEffect } from 'vue';
-import { useRecapStatsStore } from '@/stores/recap-stats';
 import { usePuzzleAssistanceStore } from '@/stores/assistance/store';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from 'vue-router';
 import type { DifficultyKey } from '@/lib/types.js';
@@ -109,6 +108,7 @@ import { usePlayPuzzleAutoPause } from './usePlayPuzzleAutoPause.js';
 import { useGameCompletion } from './usePlayPuzzleCompletion.js';
 import { usePuzzlePlayHotkeys } from '@/components/gameboard/composables/usePuzzlePlayHotkeys.js';
 import { useSettingsStore } from '@/stores/settings/store.js';
+import { usePuzzleRecapStore } from '@/stores/puzzle-recap.js';
 
 const { 
 	windowHidden,
@@ -148,7 +148,7 @@ const { manualPauseGame, manualResumeGame, toggleManualPause } = usePuzzlePauseR
 const { clearCompletionCheckTimeouts } = useGameCompletion();
 
 // initialize required stores and router
-const recapStatsStore = useRecapStatsStore(); // should be initialized to keep state active until puzzle is finished
+const puzzleRecapStore = usePuzzleRecapStore();
 const puzzleHistoryStore = usePuzzleHistoryStore();
 const puzzleHintsStore = usePuzzleHintsStore();
 const puzzleAssistanceStore = usePuzzleAssistanceStore();
