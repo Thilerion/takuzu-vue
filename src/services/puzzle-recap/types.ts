@@ -2,7 +2,7 @@ import type { SupportedLocale } from "@/i18n/constants";
 import type { GameEndStats } from "./GameEndStats";
 
 // Generic interface for condition results
-type RecapMessageConditionResult<Data> = {
+export type RecapMessageConditionResult<Data> = {
 	success: false;
 	data?: undefined;
 } | {
@@ -10,7 +10,7 @@ type RecapMessageConditionResult<Data> = {
 	data: Data;
 }
 
-type RecapMessageConditionFn<Data> = (stats: GameEndStats) => RecapMessageConditionResult<Data>;
+export type RecapMessageConditionFn<Data> = (stats: GameEndStats) => RecapMessageConditionResult<Data>;
 
 // Generic interface for recap conditions
 export interface BaseRecapMessageConfig<Type, Data> {

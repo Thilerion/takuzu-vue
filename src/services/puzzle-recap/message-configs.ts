@@ -1,8 +1,12 @@
 import { DIFFICULTY_LABELS } from "@/config";
 import type { GameEndStats } from "./GameEndStats";
-import { asDimensionsStr, formatPercentage, getPercentageFaster, getPercentageSlower, isMultipleOf, msToMinSec, msToSec } from "./helpers";
+import { asDimensionsStr, formatPercentage, msToMinSec, msToSec } from "./helpers";
 import { createRecapMessageConfig, type BaseRecapMessageConfig } from "./types";
 import { formatLocaleOrdinal } from "@/i18n/format-ordinal";
+import { isFirstEverSolved, isFirstOfDifficultySolved, isFirstSolvedWithPuzzleConfig, isFirstWithDimensionsSolved, isHardestEverSolved } from "./message-conditions/firsts.condition.js";
+import { isAlmostTimeRecord, isSolvedWithLargeTimeRecord, isSolvedWithTimeRecord } from "./message-conditions/time-record.condition.js";
+import { hasSolvedAmountInTotal, hasSolvedAmountToday, hasSolvedAmountWithConfigInTotal, hasSolvedAmountWithConfigToday } from "./message-conditions/num-plays.condition.js";
+import { wasSolvedFasterThanAverageTime, wasSolvedMuchFasterThanAverageTime } from "./message-conditions/average.condition.js";
 
 export const recapMessageConfigs = [
 	createRecapMessageConfig({
@@ -17,45 +21,20 @@ export const recapMessageConfigs = [
 	createRecapMessageConfig({
 		type: 'firstTotal',
 		priority: 20,
-		condition: (stats: Pick<GameEndStats, 'totals'>) => {
-			const totalSolved = stats.totals.amount;
-			if (totalSolved === 1) return {
-				success: true,
-				data: { totalSolved }
-			}
-			return { success: false }
-		},
+		condition: isFirstEverSolved,
 		i18nKey: () => "Recap.message.firstTotal"
 	}),
 
 	createRecapMessageConfig({
 		type: 'hardestEver',
 		priority: 30,
-		condition: (stats: Pick<GameEndStats, 'isCurrentPuzzleHardestEverPlayed' | 'isFirstSolvedWithPuzzleConfig'>) => {
-			// applies not only when the difficulty is the highest difficulty ever solved, but also when this difficulty has already been played, but now it's been played on a larger board
-			if (!stats.isFirstSolvedWithPuzzleConfig()) {
-				return { success: false };
-			}
-			const isHardestEver = stats.isCurrentPuzzleHardestEverPlayed();
-			if (isHardestEver) {
-				return { success: true, data: null };
-			}
-			return { success: false };
-		},
+		condition: isHardestEverSolved,
 		i18nKey: () => "Recap.message.hardestEver"
 	}),
 	createRecapMessageConfig({
 		type: 'firstOfDifficulty',
 		priority: 40,
-		condition: (stats: Pick<GameEndStats, 'isFirstSolvedWithDifficulty' | 'historyEntry'>) => {
-			if (!stats.isFirstSolvedWithDifficulty()) return { success: false };
-			return {
-				success: true,
-				data: {
-					difficulty: stats.historyEntry.difficulty
-				}
-			};
-		},
+		condition: isFirstOfDifficultySolved,
 		i18nKey: ({ difficulty }) => {
 			return {
 				key: "Recap.message.firstOfDifficulty",
@@ -68,14 +47,7 @@ export const recapMessageConfigs = [
 	createRecapMessageConfig({
 		type: 'firstOfSize',
 		priority: 40,
-		condition: (stats: Pick<GameEndStats, 'isFirstSolvedWithSize' | 'historyEntry'>) => {
-			if (!stats.isFirstSolvedWithSize()) return { success: false };
-			const { width, height } = stats.historyEntry;
-			return {
-				success: true,
-				data: { width, height }
-			};
-		},
+		condition: isFirstWithDimensionsSolved,
 		i18nKey: () => "Recap.message.firstOfSize"
 	}),
 
@@ -83,14 +55,7 @@ export const recapMessageConfigs = [
 	createRecapMessageConfig({
 		type: 'firstOfSizeDifficulty',
 		priority: 45,
-		condition: (stats: Pick<GameEndStats, 'isFirstSolvedWithPuzzleConfig' | 'historyEntry'>) => {
-			if (!stats.isFirstSolvedWithPuzzleConfig()) return { success: false };
-			const { width, height, difficulty } = stats.historyEntry;
-			return {
-				success: true,
-				data: { width, height, difficulty }
-			};
-		},
+		condition: isFirstSolvedWithPuzzleConfig,
 		i18nKey: ({ width, height, difficulty }) => {
 			return {
 				key: "Recap.message.firstOfSizeDifficulty",
@@ -105,21 +70,7 @@ export const recapMessageConfigs = [
 	createRecapMessageConfig({
 		type: 'timeRecordLarge',
 		priority: 50,
-		condition: (stats) => {
-			if (!stats.bestAndAverage.isTimeRecord) return { success: false };
-			const { best, previousBest } = stats.bestAndAverage;
-			if (previousBest == null) return { success: false };
-			const time = stats.historyEntry.timeElapsed;
-			const improvement = previousBest - time;
-			const percentageFaster = getPercentageFaster(previousBest, time);
-
-			if (percentageFaster < 0.35 && improvement < 10000) return { success: false };
-
-			return {
-				success: true,
-				data: { time, best, previousBest, improvement, percentageFaster }
-			};
-		},
+		condition: isSolvedWithLargeTimeRecord,
 		i18nKey: (data, locale) => {
 			// TODO: sometimes display as percentage, sometimes as seconds
 			return {
@@ -133,19 +84,16 @@ export const recapMessageConfigs = [
 	createRecapMessageConfig({
 		type: 'timeRecord',
 		priority: 60,
-		condition: (stats: Pick<GameEndStats, 'bestAndAverage' | 'historyEntry'>) => {
-			if (!stats.bestAndAverage.isTimeRecord) return { success: false };
-			const { best, previousBest } = stats.bestAndAverage;
-			if (previousBest == null) return { success: false };
-			const time = stats.historyEntry.timeElapsed;
-			const improvement = previousBest - time;
-			const percentageFaster = getPercentageFaster(previousBest, time);
+		condition: isSolvedWithTimeRecord,
+		i18nKey: (data) => {
+			// TODO: percentageFaster sometimes?
 			return {
-				success: true,
-				data: { time, best, previousBest, improvement, percentageFaster }
-			};
-		},
-		i18nKey: () => "Recap.message.timeRecord"
+				key: "Recap.message.timeRecord",
+				namedProperties: {
+					differenceSec: msToSec(data.timeImprovement)
+				}
+			}
+		}
 	}),
 	createRecapMessageConfig({
 		type: 'replayTimeRecord',
@@ -177,45 +125,7 @@ export const recapMessageConfigs = [
 	createRecapMessageConfig({
 		type: 'almostTimeRecord',
 		priority: 150,
-		condition: (stats) => {
-			const count = stats.currentCounts.count;
-			// if less than 10 played, "almostTimeRecord" is not relevant enough
-			if (count < 10) return { success: false };
-			const { timeElapsed } = stats.historyEntry;
-			const { isTimeRecord, best, average } = stats.bestAndAverage;
-
-			// can not be "almost" timeRecord if it is the best time
-			if (isTimeRecord) return { success: false };
-			// if the time is slower than average, "almostTimeRecord" is too positive
-			if (timeElapsed > average) return { success: false };
-
-			console.log('checking for almost time record');
-
-			const timeDifference = timeElapsed - best;
-			const percentageDifference = getPercentageSlower(best, timeElapsed);
-
-			const isSuccessByPercentage = timeDifference < 6000 && percentageDifference < 0.05;
-			const isSuccessByTime = timeDifference < 800 && percentageDifference < 0.20;
-
-			console.log({ timeDifference, percentageDifference, isSuccessByPercentage, isSuccessByTime });
-
-			if (isSuccessByPercentage || isSuccessByTime) {
-				return {
-					success: true,
-					data: {
-						timeSlower: timeDifference,
-						percentageSlower: percentageDifference,
-
-						byPercentage: isSuccessByPercentage,
-						byTime: isSuccessByTime,
-
-						timeElapsed, best
-					}
-				};
-			} else {
-				return { success: false };
-			}
-		},
+		condition: isAlmostTimeRecord,
 		i18nKey: (data, locale): { key: string, namedProperties: Record<string, string | number > } => {
 			const {
 				timeSlower, percentageSlower,
@@ -254,37 +164,7 @@ export const recapMessageConfigs = [
 	createRecapMessageConfig({
 		type: 'muchBetterThanAverage',
 		priority: 200,
-		condition: (stats) => {
-			const count = stats.currentCounts.count;
-			// if less than 6 played, "muchBetterThanAverage" is not relevant enough
-			if (count < 6) return { success: false };
-			const { timeElapsed } = stats.historyEntry;
-			const { isTimeRecord, previousAverage: average } = stats.bestAndAverage;
-			if (average == null) {
-				// shouldn't happen, as count > 5, but just in case
-				return { success: false };
-			}
-
-			if (isTimeRecord) return { success: false };
-			if (timeElapsed >= average) return { success: false };
-
-			const timeDifference = average - timeElapsed; // time faster than average
-			const percentageDifference = getPercentageFaster(average, timeElapsed);
-
-			const success = 
-				(timeDifference > 45000) ||
-				(timeDifference > 30000 && percentageDifference > 0.5) ||
-				(timeDifference > 10000 && percentageDifference > 0.3);
-
-			if (!success) return { success: false };
-			return {
-				success: true,
-				data: {
-					timeElapsed, average,
-					timeDifference, percentageDifference
-				}
-			}
-		},
+		condition: wasSolvedMuchFasterThanAverageTime,
 		i18nKey: (data, locale): { key: string, namedProperties: Record<string, string | number > } => {
 			const { percentageDifference, timeDifference } = data;
 			let usePercentage = false;
@@ -317,26 +197,7 @@ export const recapMessageConfigs = [
 	createRecapMessageConfig({
 		type: 'betterThanAverage',
 		priority: 300,
-		condition: (stats) => {
-			const count = stats.currentCounts.count;
-			// if less than 4 played, "betterThanAverage" is not relevant enough
-			if (count < 4) return { success: false };
-			const { timeElapsed } = stats.historyEntry;
-			const { isTimeRecord, previousAverage: average } = stats.bestAndAverage;
-			// shouldn't happen, as count > 3, but just in case
-			if (average == null) return { success: false };
-			if (isTimeRecord || timeElapsed >= average) return { success: false };
-
-			const timeDifference = average - timeElapsed; // time faster than average
-			if (timeDifference <= 0) return { success: false };
-			return {
-				success: true,
-				data: {
-					timeElapsed, previousAverage: average,
-					timeDifference
-				}
-			}
-		},
+		condition: wasSolvedFasterThanAverageTime,
 		i18nKey: (data) => ({
 			key: "Recap.message.betterThanAverage",
 			namedProperties: {
@@ -376,22 +237,7 @@ export const recapMessageConfigs = [
 	createRecapMessageConfig({
 		type: 'playsTotal',
 		priority: 400,
-		condition: (stats) => {
-			const totalSolved = stats.totals.amount;
-			let success = false;
-			if (totalSolved <= 50 && isMultipleOf(totalSolved, 5)) {
-				// 5, 10, ..., 50
-				success = true;
-			} else if (totalSolved > 50 && totalSolved <= 150 && isMultipleOf(totalSolved, 25)) {
-				// 75, 100, 125, 150
-				success = true;
-			} else if (totalSolved > 150 && isMultipleOf(totalSolved, 50)) {
-				// 200, 250, 300, ...
-				success = true;
-			}
-			if (!success) return { success: false };
-			return { success: true, data: { totalSolved } };
-		},
+		condition: hasSolvedAmountInTotal,
 		i18nKey: (data) => ({
 			key: "Recap.message.playsTotal",
 			namedProperties: { totalSolved: data.totalSolved }
@@ -400,36 +246,16 @@ export const recapMessageConfigs = [
 	createRecapMessageConfig({
 		type: 'playsToday',
 		priority: 400,
-		condition: (stats) => {
-			const totalSolvedToday = stats.totals.today;
-			if (isMultipleOf(totalSolvedToday, 5) && totalSolvedToday >= 5) return { success: true, data: { totalSolvedToday } };
-			return { success: false };
-		},
+		condition: hasSolvedAmountToday,
 		i18nKey: (data) => ({
 			key: "Recap.message.playsToday",
-			namedProperties: { totalSolved: data.totalSolvedToday }
+			namedProperties: { totalSolvedToday: data.totalSolvedToday }
 		})
 	}),
 	createRecapMessageConfig({
 		type: 'playsConfigTotal',
 		priority: 400,
-		condition: (stats) => {
-			const count = stats.currentCounts.count;
-			let success = false;
-			if (count >= 10 && count <= 50 && isMultipleOf(count, 10)) {
-				// 10, 20, ..., 50
-				success = true;
-			} else if (count > 50 && count <= 250 && isMultipleOf(count, 25)) {
-				// 75, 100, 125, ..., 250
-				success = true;
-			} else if (count > 250 && isMultipleOf(count, 50)) {
-				// 300, 350, 400, ...
-				success = true;
-			}
-			if (!success) return { success: false };
-			const { width, height, difficulty } = stats.historyEntry;
-			return { success: true, data: { count, width, height, difficulty } };
-		},
+		condition: hasSolvedAmountWithConfigInTotal,
 		i18nKey: ({ count, width, height, difficulty }) => {
 			const difficultyKey = `Game.difficulty.${DIFFICULTY_LABELS[difficulty]}`;
 			const dimensions = asDimensionsStr(width, height);
@@ -442,21 +268,7 @@ export const recapMessageConfigs = [
 	createRecapMessageConfig({
 		type: 'playsConfigToday',
 		priority: 400,
-		condition: (stats) => {
-			const count = stats.currentCounts.today;
-
-			if (isMultipleOf(count, 5) && count >= 5) {
-				// 5, 10, 15,...
-				const { width, height, difficulty } = stats.historyEntry;
-				return {
-					success: true,
-					data: {
-						count, width, height, difficulty
-					}
-				}
-			}
-			return { success: false };			
-		},
+		condition: hasSolvedAmountWithConfigToday,
 		i18nKey: ({ count, width, height, difficulty }) => {
 			const difficultyKey = `Game.difficulty.${DIFFICULTY_LABELS[difficulty]}`;
 			const dimensions = asDimensionsStr(width, height);
