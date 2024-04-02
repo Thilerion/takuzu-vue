@@ -1,20 +1,17 @@
 import type { GameEndStats } from "../GameEndStats.js";
-import { getPercentageFaster, getPercentageSlower } from "../helpers.js";
 import type { RecapMessageConditionResult } from "../types.js";
 
 export const isSolvedWithLargeTimeRecordImprovement = (
-	stats: Pick<GameEndStats, 'bestAndAverage' | 'getTimeElapsed'>
+	stats: Pick<GameEndStats, 'personalBest'>
 ): RecapMessageConditionResult<{
 	percentageFaster: number
 }> => {
-	if (!stats.bestAndAverage.isTimeRecord) return { success: false };
-	const { previousBest } = stats.bestAndAverage;
-	if (previousBest == null) return { success: false };
-	const time = stats.getTimeElapsed();
-	const improvement = previousBest - time;
-	const percentageFaster = getPercentageFaster(previousBest, time);
+	if (!stats.personalBest.isTimeRecord()) return { success: false };
+	const timeImprovement = stats.personalBest.getTimeImprovement();
+	if (timeImprovement == null || timeImprovement < 0) return { success: false };
+	const percentageFaster = stats.personalBest.getPercentageFasterThanPreviousBest();
 
-	if (percentageFaster < 0.35 && improvement < 10000) return { success: false };
+	if (percentageFaster == null || (percentageFaster < 0.35 && timeImprovement < 10000)) return { success: false };
 
 	return {
 		success: true,
@@ -23,15 +20,13 @@ export const isSolvedWithLargeTimeRecordImprovement = (
 }
 
 export const isSolvedWithTimeRecord = (
-	stats: Pick<GameEndStats, 'bestAndAverage' | 'getTimeElapsed'>
+	stats: Pick<GameEndStats, 'personalBest'>
 ): RecapMessageConditionResult<{
 	timeImprovement: number;
 }> => {
-	if (!stats.bestAndAverage.isTimeRecord) return { success: false };
-	const { previousBest } = stats.bestAndAverage;
-	if (previousBest == null) return { success: false };
-	const time = stats.getTimeElapsed();
-	const timeImprovement = previousBest - time;
+	if (!stats.personalBest.isTimeRecord()) return { success: false };
+	const timeImprovement = stats.personalBest.getTimeImprovement();
+	if (timeImprovement == null || timeImprovement < 0) return { success: false };
 	// TODO: sometimes use percentageFaster in message instead of time improvement
 	// const percentageFaster = getPercentageFaster(previousBest, time);
 	return {
@@ -41,7 +36,7 @@ export const isSolvedWithTimeRecord = (
 }
 
 export const isAlmostTimeRecord = (
-	stats: Pick<GameEndStats, 'getTimeElapsed' | 'currentCounts' | 'bestAndAverage'>
+	stats: Pick<GameEndStats, 'personalBest' | 'currentCounts' | 'bestAndAverage'>
 ): RecapMessageConditionResult<{
 	timeSlower: number,
 	percentageSlower: number,
@@ -50,18 +45,18 @@ export const isAlmostTimeRecord = (
 	const count = stats.currentCounts.count;
 	// if less than 10 played, "almostTimeRecord" is not relevant enough
 	if (count < 10) return { success: false };
-	const timeElapsed = stats.getTimeElapsed();
-	const { isTimeRecord, best, average } = stats.bestAndAverage;
-
+	
 	// can not be "almost" timeRecord if it is the best time
-	if (isTimeRecord) return { success: false };
+	if (stats.personalBest.isTimeRecord()) return { success: false };
+
+	const timeElapsed = stats.personalBest.current.timeElapsed;
+	const average = stats.bestAndAverage.average;
 	// if the time is slower than average, "almostTimeRecord" is too positive
 	if (timeElapsed > average) return { success: false };
 
-	console.log('checking for almost time record');
-
-	const timeDifference = timeElapsed - best;
-	const percentageDifference = getPercentageSlower(best, timeElapsed);
+	const timeDifference = stats.personalBest.getTimeImprovement();
+	const percentageDifference = stats.personalBest.getPercentageSlowerThanBest();
+	if (timeDifference == null || percentageDifference == null) return { success: false };
 
 	const isSuccessByPercentage = timeDifference < 6000 && percentageDifference < 0.05;
 	const isSuccessByTime = timeDifference < 800 && percentageDifference < 0.20;

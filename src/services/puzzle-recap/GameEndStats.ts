@@ -1,6 +1,7 @@
 import type { BasicPuzzleConfig, BoardShape, DifficultyKey } from "@/lib/types.js";
 import type { StatsDbHistoryEntry, StatsDbHistoryEntryWithId } from "../db/stats-db/models.js";
 import { getPreviousItemsWithPuzzleConfig, getBestAndAverages, getPuzzleCurrentCounts, getHistoryTotals, getUniquePlayedPuzzleConfigs, getPuzzleReplayStats } from "./stats-helpers.js";
+import { getPercentageFaster, getPercentageSlower } from "./helpers.js";
 
 /** Best and average times for this specific puzzle configuration */
 export interface IPuzzleConfigBestAndAverage {
@@ -45,6 +46,7 @@ export interface IPuzzleReplayStatistics {
 
 export class GameEndStats {
 	// related to current puzzle history entry/current puzzle config
+	personalBest: PersonalBestGameEndStats;
 	bestAndAverage: IPuzzleConfigBestAndAverage;
 	currentCounts: IPuzzleConfigCounts;
 	historyEntry: StatsDbHistoryEntry | StatsDbHistoryEntryWithId; // with id only if saved to database
@@ -57,6 +59,7 @@ export class GameEndStats {
 
 	private constructor(
 		historyEntry: StatsDbHistoryEntry | StatsDbHistoryEntryWithId,
+		personalBest: PersonalBestGameEndStats,
 		bestAndAverage: IPuzzleConfigBestAndAverage,
 		currentCounts: IPuzzleConfigCounts,
 		totals: IHistoryTotals,
@@ -64,6 +67,7 @@ export class GameEndStats {
 		replayStats: IPuzzleReplayStatistics
 	) {
 		this.historyEntry = historyEntry;
+		this.personalBest = personalBest;
 		this.bestAndAverage = bestAndAverage;
 		this.currentCounts = currentCounts;
 		this.totals = totals;
@@ -74,6 +78,7 @@ export class GameEndStats {
 	static async init(entry: StatsDbHistoryEntry | StatsDbHistoryEntryWithId) {
 		const { items, previousItems } = await getPreviousItemsWithPuzzleConfig(entry, entry.id ?? null);
 
+		const personalBestStats = PersonalBestGameEndStats.fromItems(entry, items, previousItems);
 		const bestAndAverage = getBestAndAverages(entry, items, previousItems);
 		const currentCounts = await getPuzzleCurrentCounts(entry, items, previousItems);
 		const historyTotals = await getHistoryTotals();
@@ -82,6 +87,7 @@ export class GameEndStats {
 
 		return new GameEndStats(
 			entry,
+			personalBestStats,
 			bestAndAverage,
 			currentCounts,
 			historyTotals,
@@ -99,9 +105,6 @@ export class GameEndStats {
 	}
 	get hasCheatsUsed(): boolean {
 		return !!(this.historyEntry.flags?.cheatsUsed);
-	}
-	get isTimeRecord(): boolean {
-		return this.bestAndAverage.isTimeRecord;
 	}
 
 	/** Checks whether the historyEntry is the first puzzle played with that specific puzzle config */
@@ -165,4 +168,70 @@ function comparePuzzleConfigDifficulty(
 	else if (a.difficulty < b.difficulty) return false;
 
 	return a.cells > b.cells;
+}
+
+export class PersonalBestGameEndStats {
+	current: StatsDbHistoryEntry | StatsDbHistoryEntryWithId;
+	best: Pick<StatsDbHistoryEntryWithId, 'id' | 'timeElapsed'>;
+	previousBest: Pick<StatsDbHistoryEntryWithId, 'id' | 'timeElapsed'> | null;
+
+	constructor(
+		data: {
+			current: StatsDbHistoryEntry | StatsDbHistoryEntryWithId,
+			best: Pick<StatsDbHistoryEntryWithId, 'id' | 'timeElapsed'>,
+			previousBest: Pick<StatsDbHistoryEntryWithId, 'id' | 'timeElapsed'> | null
+		}
+	) {
+		this.current = data.current;
+		this.best = data.best;
+		this.previousBest = data.previousBest;
+	}
+
+	static fromItems(
+		current: StatsDbHistoryEntry | StatsDbHistoryEntryWithId,
+		all: StatsDbHistoryEntryWithId[],
+		previousAll: StatsDbHistoryEntryWithId[]
+	) {
+		const best = all[0];
+		const previousBest = previousAll.length > 0 ? previousAll[0] : null;
+		return new PersonalBestGameEndStats({
+			current,
+			best,
+			previousBest
+		})
+	}
+
+	isTimeRecord(): boolean {
+		if (this.best.id !== this.current.id) return false;
+		// the best is the same as the current entry, but might be due to having the exact same time
+		if (this.previousBest == null) return true;
+		return this.current.timeElapsed < this.previousBest.timeElapsed;
+	}
+
+	/**
+	 * Returns the time improvement in milliseconds; positive if current is faster than previous fastest time; negative if slower.
+	 * If there is no "previousBest" returns null.
+	 */
+	getTimeImprovement(): null | number {
+		if (this.previousBest == null) return null;
+		return this.previousBest.timeElapsed - this.current.timeElapsed;
+	}
+
+	getPercentageFasterThanPreviousBest(): number | null {
+		if (this.previousBest == null) return null;
+		const previousBestTime = this.previousBest.timeElapsed;
+		const currentTime = this.current.timeElapsed;
+		// if current time is slower than previous best, percentage faster is not relevant
+		if (previousBestTime < currentTime) return null;
+		return getPercentageFaster(previousBestTime, currentTime);
+	}
+
+	getPercentageSlowerThanBest(): number | null {
+		if (this.previousBest == null) return null;
+		const bestTime = this.best.timeElapsed;
+		const currentTime = this.current.timeElapsed;
+		// if current time is faster than best, percentage slower is not relevant
+		if (currentTime < bestTime) return null;
+		return getPercentageSlower(bestTime, currentTime);
+	}
 }

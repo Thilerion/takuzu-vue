@@ -8,12 +8,9 @@ export function getBestAndAverages(
 	historyEntry: StatsDbHistoryEntryWithId | StatsDbHistoryEntry,
 	items: StatsDbHistoryEntryWithId[],
 	previousItems: StatsDbHistoryEntryWithId[]
-): IPuzzleConfigBestAndAverage & { bestItem: null | StatsDbHistoryEntryWithId, previousBestItem: null | StatsDbHistoryEntryWithId } {
+): IPuzzleConfigBestAndAverage {
 	if (items.length === 0) {
 		return {
-			bestItem: null,
-			previousBestItem: null,
-			
 			best: 0,
 			average: 0,
 			previousBest: null,
@@ -33,9 +30,6 @@ export function getBestAndAverages(
 	const previousAverage = previousItems.length > 0 ? previousTimeSum / previousItems.length : null;
 
 	return {
-		bestItem: bestTimeItem,
-		previousBestItem: previousBestTimeItem,
-		
 		best: bestTimeItem.timeElapsed,
 		previousBest: previousBestTimeItem?.timeElapsed ?? null,
 		average,
