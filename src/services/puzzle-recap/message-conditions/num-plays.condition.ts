@@ -4,7 +4,9 @@ import { isMultipleOf } from "../helpers.js";
 import type { RecapMessageConditionResult } from "../types.js";
 
 export const hasSolvedAmountInTotal = (
-	stats: Pick<GameEndStats, 'totals'>
+	stats: {
+		totals: Pick<GameEndStats['totals'], 'amount'>
+	}
 ): RecapMessageConditionResult<{
 	totalSolved: number
 }> => {
@@ -25,7 +27,9 @@ export const hasSolvedAmountInTotal = (
 }
 
 export const hasSolvedAmountToday = (
-	stats: Pick<GameEndStats, 'totals'>
+	stats: {
+		totals: Pick<GameEndStats['totals'], 'today'>
+	}
 ): RecapMessageConditionResult<{
 	totalSolvedToday: number
 }> => {
@@ -57,7 +61,7 @@ export const hasSolvedAmountWithConfigInTotal = (
 }
 
 export const hasSolvedAmountWithConfigToday = (
-	stats: Pick<GameEndStats, 'currentCounts' | 'historyEntry'>
+	stats: Pick<GameEndStats, 'currentCounts' | 'getPuzzleConfig'>
 ): RecapMessageConditionResult<BasicPuzzleConfig & {
 	count: number
 }> => {
@@ -65,7 +69,7 @@ export const hasSolvedAmountWithConfigToday = (
 
 	if (isMultipleOf(count, 5) && count >= 5) {
 		// 5, 10, 15,...
-		const { width, height, difficulty } = stats.historyEntry;
+		const { width, height, difficulty } = stats.getPuzzleConfig();
 		return {
 			success: true,
 			data: {

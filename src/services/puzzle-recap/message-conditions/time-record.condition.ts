@@ -2,7 +2,7 @@ import type { GameEndStats } from "../GameEndStats.js";
 import { getPercentageFaster, getPercentageSlower } from "../helpers.js";
 import type { RecapMessageConditionResult } from "../types.js";
 
-export const isSolvedWithLargeTimeRecord = (
+export const isSolvedWithLargeTimeRecordImprovement = (
 	stats: Pick<GameEndStats, 'bestAndAverage' | 'getTimeElapsed'>
 ): RecapMessageConditionResult<{
 	percentageFaster: number
