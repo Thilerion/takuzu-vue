@@ -1,4 +1,5 @@
 import type { DimensionStr } from "@/lib/types";
+import { extent } from "@/utils/data-analysis.utils.js";
 import { timeFormatter } from "@/utils/date.utils";
 
 export function getPercentageSlower(faster: number, slower: number): number {
@@ -6,8 +7,14 @@ export function getPercentageSlower(faster: number, slower: number): number {
 	const fasterSpeed = 1 / faster;
 	return (fasterSpeed - slowerSpeed) / slowerSpeed;
 }
-export function getPercentageFaster(from: number, to: number): number {
-	return getPercentageSlower(to, from);
+export function getPercentageFaster(fromSlower: number, toFaster: number): number {
+	if (fromSlower < toFaster) {
+		throw new Error('Should only use "getPercentageFaster" if the "to" value is smaller (thus faster) than the "from" value.');
+	} else if (fromSlower === toFaster) {
+		return 0;
+	}
+	const timeDiff = fromSlower - toFaster;
+	return timeDiff / fromSlower;
 }
 
 type FormatPercentageOpts = {
