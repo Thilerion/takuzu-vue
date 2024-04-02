@@ -143,6 +143,14 @@ export class GameEndStats {
 		const { width, height, difficulty } = this.historyEntry;
 		return width === hardest.width && height === hardest.height && difficulty === hardest.difficulty;
 	}
+
+	getPuzzleConfig(): BasicPuzzleConfig {
+		const { width, height, difficulty } = this.historyEntry;
+		return { width, height, difficulty };
+	}
+	getTimeElapsed(): number {
+		return this.historyEntry.timeElapsed;
+	}
 }
 
 /** 

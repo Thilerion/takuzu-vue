@@ -3,14 +3,14 @@ import { getPercentageFaster, getPercentageSlower } from "../helpers.js";
 import type { RecapMessageConditionResult } from "../types.js";
 
 export const isSolvedWithLargeTimeRecord = (
-	stats: Pick<GameEndStats, 'bestAndAverage' | 'historyEntry'>
+	stats: Pick<GameEndStats, 'bestAndAverage' | 'getTimeElapsed'>
 ): RecapMessageConditionResult<{
 	percentageFaster: number
 }> => {
 	if (!stats.bestAndAverage.isTimeRecord) return { success: false };
 	const { previousBest } = stats.bestAndAverage;
 	if (previousBest == null) return { success: false };
-	const time = stats.historyEntry.timeElapsed;
+	const time = stats.getTimeElapsed();
 	const improvement = previousBest - time;
 	const percentageFaster = getPercentageFaster(previousBest, time);
 
@@ -23,14 +23,14 @@ export const isSolvedWithLargeTimeRecord = (
 }
 
 export const isSolvedWithTimeRecord = (
-	stats: Pick<GameEndStats, 'bestAndAverage' | 'historyEntry'>
+	stats: Pick<GameEndStats, 'bestAndAverage' | 'getTimeElapsed'>
 ): RecapMessageConditionResult<{
 	timeImprovement: number;
 }> => {
 	if (!stats.bestAndAverage.isTimeRecord) return { success: false };
 	const { previousBest } = stats.bestAndAverage;
 	if (previousBest == null) return { success: false };
-	const time = stats.historyEntry.timeElapsed;
+	const time = stats.getTimeElapsed();
 	const timeImprovement = previousBest - time;
 	// TODO: sometimes use percentageFaster in message instead of time improvement
 	// const percentageFaster = getPercentageFaster(previousBest, time);
@@ -41,7 +41,7 @@ export const isSolvedWithTimeRecord = (
 }
 
 export const isAlmostTimeRecord = (
-	stats: GameEndStats
+	stats: Pick<GameEndStats, 'getTimeElapsed' | 'currentCounts' | 'bestAndAverage'>
 ): RecapMessageConditionResult<{
 	timeSlower: number,
 	percentageSlower: number,
@@ -50,7 +50,7 @@ export const isAlmostTimeRecord = (
 	const count = stats.currentCounts.count;
 	// if less than 10 played, "almostTimeRecord" is not relevant enough
 	if (count < 10) return { success: false };
-	const { timeElapsed } = stats.historyEntry;
+	const timeElapsed = stats.getTimeElapsed();
 	const { isTimeRecord, best, average } = stats.bestAndAverage;
 
 	// can not be "almost" timeRecord if it is the best time

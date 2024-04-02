@@ -28,22 +28,22 @@ export const isHardestEverSolved = (
 }
 
 export const isFirstOfDifficultySolved = (
-	stats: Pick<GameEndStats, 'isFirstSolvedWithDifficulty' | 'historyEntry'>
+	stats: Pick<GameEndStats, 'isFirstSolvedWithDifficulty' | 'getPuzzleConfig'>
 ): RecapMessageConditionResult<{ difficulty: DifficultyKey }> => {
 	if (!stats.isFirstSolvedWithDifficulty()) return { success: false };
 	return {
 		success: true,
 		data: {
-			difficulty: stats.historyEntry.difficulty
+			difficulty: stats.getPuzzleConfig().difficulty
 		}
 	};
 }
 
 export const isFirstWithDimensionsSolved = (
-	stats: Pick<GameEndStats, 'isFirstSolvedWithSize' | 'historyEntry'>
+	stats: Pick<GameEndStats, 'isFirstSolvedWithSize' | 'getPuzzleConfig'>
 ): RecapMessageConditionResult<BoardShape> => {
 	if (!stats.isFirstSolvedWithSize()) return { success: false };
-	const { width, height } = stats.historyEntry;
+	const { width, height } = stats.getPuzzleConfig();
 	return {
 		success: true,
 		data: { width, height }
@@ -51,10 +51,10 @@ export const isFirstWithDimensionsSolved = (
 }
 
 export const isFirstSolvedWithPuzzleConfig = (
-	stats: Pick<GameEndStats, 'isFirstSolvedWithPuzzleConfig' | 'historyEntry'>
+	stats: Pick<GameEndStats, 'isFirstSolvedWithPuzzleConfig' | 'getPuzzleConfig'>
 ): RecapMessageConditionResult<BasicPuzzleConfig> => {
 	if (!stats.isFirstSolvedWithPuzzleConfig()) return { success: false };
-	const { width, height, difficulty } = stats.historyEntry;
+	const { width, height, difficulty } = stats.getPuzzleConfig();
 	return {
 		success: true,
 		data: { width, height, difficulty }

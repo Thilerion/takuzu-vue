@@ -35,7 +35,7 @@ export const hasSolvedAmountToday = (
 }
 
 export const hasSolvedAmountWithConfigInTotal = (
-	stats: Pick<GameEndStats, 'currentCounts' | 'historyEntry'>
+	stats: Pick<GameEndStats, 'currentCounts' | 'getPuzzleConfig'>
 ): RecapMessageConditionResult<BasicPuzzleConfig & {
 	count: number
 }> => {
@@ -52,7 +52,7 @@ export const hasSolvedAmountWithConfigInTotal = (
 		success = true;
 	}
 	if (!success) return { success: false };
-	const { width, height, difficulty } = stats.historyEntry;
+	const { width, height, difficulty } = stats.getPuzzleConfig();
 	return { success: true, data: { count, width, height, difficulty } };
 }
 
