@@ -36,7 +36,7 @@ export const isSolvedWithTimeRecord = (
 }
 
 export const isAlmostTimeRecord = (
-	stats: Pick<GameEndStats, 'personalBest' | 'currentCounts' | 'bestAndAverage'>
+	stats: Pick<GameEndStats, 'personalBest' | 'currentCounts' | 'averageTimes'>
 ): RecapMessageConditionResult<{
 	timeSlower: number,
 	percentageSlower: number,
@@ -50,7 +50,7 @@ export const isAlmostTimeRecord = (
 	if (stats.personalBest.isTimeRecord()) return { success: false };
 
 	const timeElapsed = stats.personalBest.current.timeElapsed;
-	const average = stats.bestAndAverage.average;
+	const average = stats.averageTimes.average;
 	// if the time is slower than average, "almostTimeRecord" is too positive
 	if (timeElapsed > average) return { success: false };
 

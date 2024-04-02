@@ -40,9 +40,9 @@
 		</div>
 
 		<RecapContent.RecapScores
-			:best="gameEndStats!.bestAndAverage.best"
-			:previous-best="gameEndStats!.bestAndAverage.previousBest"
-			:average="gameEndStats!.bestAndAverage.average"
+			:best="gameEndStats!.personalBest.best.timeElapsed"
+			:previous-best="gameEndStats!.personalBest.previousBest?.timeElapsed ?? null"
+			:average="gameEndStats!.averageTimes.average"
 		></RecapContent.RecapScores>
 
 		<RecapContent.MessageStats :navigation-fn="goBackToRoute">

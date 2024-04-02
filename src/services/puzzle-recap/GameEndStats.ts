@@ -1,18 +1,8 @@
 import type { BasicPuzzleConfig, BoardShape, DifficultyKey } from "@/lib/types.js";
 import type { StatsDbHistoryEntry, StatsDbHistoryEntryWithId } from "../db/stats-db/models.js";
-import { getPreviousItemsWithPuzzleConfig, getBestAndAverages, getPuzzleCurrentCounts, getHistoryTotals, getUniquePlayedPuzzleConfigs, getPuzzleReplayStats } from "./stats-helpers.js";
+import { getPreviousItemsWithPuzzleConfig, getPuzzleCurrentCounts, getHistoryTotals, getUniquePlayedPuzzleConfigs, getPuzzleReplayStats } from "./stats-helpers.js";
 import { getPercentageFaster, getPercentageSlower } from "./helpers.js";
 
-/** Best and average times for this specific puzzle configuration */
-export interface IPuzzleConfigBestAndAverage {
-	best: number,
-	average: number,
-	isTimeRecord: boolean,
-
-	// only null if this was the first puzzle played with this configuration
-	previousBest: number | null,
-	previousAverage: number | null,
-}
 /** Count/previousCount and count today for how many puzzles played with this specific puzzle config */
 export interface IPuzzleConfigCounts {
 	count: number,
@@ -47,7 +37,7 @@ export interface IPuzzleReplayStatistics {
 export class GameEndStats {
 	// related to current puzzle history entry/current puzzle config
 	personalBest: PersonalBestGameEndStats;
-	bestAndAverage: IPuzzleConfigBestAndAverage;
+	averageTimes: AverageTimeGameEndStats;
 	currentCounts: IPuzzleConfigCounts;
 	historyEntry: StatsDbHistoryEntry | StatsDbHistoryEntryWithId; // with id only if saved to database
 
@@ -60,7 +50,7 @@ export class GameEndStats {
 	private constructor(
 		historyEntry: StatsDbHistoryEntry | StatsDbHistoryEntryWithId,
 		personalBest: PersonalBestGameEndStats,
-		bestAndAverage: IPuzzleConfigBestAndAverage,
+		averageTimes: AverageTimeGameEndStats,
 		currentCounts: IPuzzleConfigCounts,
 		totals: IHistoryTotals,
 		uniqueConfigs: IUniquePuzzleConfigurationPlayed,
@@ -68,7 +58,7 @@ export class GameEndStats {
 	) {
 		this.historyEntry = historyEntry;
 		this.personalBest = personalBest;
-		this.bestAndAverage = bestAndAverage;
+		this.averageTimes = averageTimes;
 		this.currentCounts = currentCounts;
 		this.totals = totals;
 		this.uniqueConfigs = uniqueConfigs;
@@ -79,7 +69,7 @@ export class GameEndStats {
 		const { items, previousItems } = await getPreviousItemsWithPuzzleConfig(entry, entry.id ?? null);
 
 		const personalBestStats = PersonalBestGameEndStats.fromItems(entry, items, previousItems);
-		const bestAndAverage = getBestAndAverages(entry, items, previousItems);
+		const averageTimes = AverageTimeGameEndStats.fromItems(items, previousItems);
 		const currentCounts = await getPuzzleCurrentCounts(entry, items, previousItems);
 		const historyTotals = await getHistoryTotals();
 		const uniqueConfigs = await getUniquePlayedPuzzleConfigs();
@@ -88,7 +78,7 @@ export class GameEndStats {
 		return new GameEndStats(
 			entry,
 			personalBestStats,
-			bestAndAverage,
+			averageTimes,
 			currentCounts,
 			historyTotals,
 			uniqueConfigs,
@@ -168,6 +158,37 @@ function comparePuzzleConfigDifficulty(
 	else if (a.difficulty < b.difficulty) return false;
 
 	return a.cells > b.cells;
+}
+
+export class AverageTimeGameEndStats {
+	average: number;
+	previousAverage: number | null;
+
+	constructor(
+		data: {
+			average: number,
+			previousAverage: number | null
+		}
+	) {
+		this.average = data.average;
+		this.previousAverage = data.previousAverage;
+	}
+
+	static fromItems(
+		items: StatsDbHistoryEntryWithId[],
+		previousItems: StatsDbHistoryEntryWithId[]
+	) {
+		const timeSum = items.reduce((acc, val) => acc + val.timeElapsed, 0);
+		const previousTimeSum = previousItems.reduce((acc, val) => acc + val.timeElapsed, 0);
+
+		const average = timeSum / items.length;
+		const previousAverage = previousItems.length > 0 ? previousTimeSum / previousItems.length : null;
+
+		return new AverageTimeGameEndStats({
+			average,
+			previousAverage
+		});
+	}
 }
 
 export class PersonalBestGameEndStats {

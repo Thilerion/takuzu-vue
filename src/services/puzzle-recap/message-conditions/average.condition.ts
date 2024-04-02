@@ -3,7 +3,7 @@ import { getPercentageFaster } from "../helpers.js";
 import type { RecapMessageConditionResult } from "../types.js";
 
 export const wasSolvedMuchFasterThanAverageTime = (
-	stats: Pick<GameEndStats, 'currentCounts' | 'bestAndAverage' | 'getTimeElapsed'>
+	stats: Pick<GameEndStats, 'currentCounts' | 'averageTimes' | 'personalBest' | 'getTimeElapsed'>
 ): RecapMessageConditionResult<{
 	percentageDifference: number,
 	timeDifference: number
@@ -12,7 +12,8 @@ export const wasSolvedMuchFasterThanAverageTime = (
 	// if less than 6 played, "muchBetterThanAverage" is not relevant enough
 	if (count < 6) return { success: false };
 	const timeElapsed = stats.getTimeElapsed();
-	const { isTimeRecord, previousAverage: average } = stats.bestAndAverage;
+	const isTimeRecord = stats.personalBest.isTimeRecord();
+	const { previousAverage: average } = stats.averageTimes;
 	if (average == null) {
 		// shouldn't happen, as count > 5, but just in case
 		return { success: false };
@@ -40,7 +41,7 @@ export const wasSolvedMuchFasterThanAverageTime = (
 }
 
 export const wasSolvedFasterThanAverageTime = (
-	stats: Pick<GameEndStats, 'currentCounts' | 'bestAndAverage' | 'getTimeElapsed'>
+	stats: Pick<GameEndStats, 'currentCounts' | 'personalBest' | 'averageTimes' | 'getTimeElapsed'>
 ): RecapMessageConditionResult<{
 	timeDifference: number
 }> => {
@@ -48,7 +49,8 @@ export const wasSolvedFasterThanAverageTime = (
 	// if less than 4 played, "betterThanAverage" is not relevant enough
 	if (count < 4) return { success: false };
 	const timeElapsed = stats.getTimeElapsed();
-	const { isTimeRecord, previousAverage: average } = stats.bestAndAverage;
+	const isTimeRecord = stats.personalBest.isTimeRecord();
+	const { previousAverage: average } = stats.averageTimes;
 	// shouldn't happen, as count > 3, but just in case
 	if (average == null) return { success: false };
 	if (isTimeRecord || timeElapsed >= average) return { success: false };

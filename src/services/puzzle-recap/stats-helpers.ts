@@ -2,43 +2,7 @@ import type { BasicPuzzleConfig, BoardShape, DifficultyKey } from "@/lib/types";
 import { startOfDay } from "date-fns";
 import { statsDb } from "../db/stats-db/init";
 import type { StatsDbHistoryEntryWithId, StatsDbHistoryEntry } from "../db/stats-db/models";
-import type { IPuzzleConfigBestAndAverage, IPuzzleConfigCounts, IHistoryTotals, IUniquePuzzleConfigurationPlayed, IPuzzleReplayStatistics } from "./GameEndStats";
-
-export function getBestAndAverages(
-	historyEntry: StatsDbHistoryEntryWithId | StatsDbHistoryEntry,
-	items: StatsDbHistoryEntryWithId[],
-	previousItems: StatsDbHistoryEntryWithId[]
-): IPuzzleConfigBestAndAverage {
-	if (items.length === 0) {
-		return {
-			best: 0,
-			average: 0,
-			previousBest: null,
-			previousAverage: null,
-			
-			isTimeRecord: false,
-		}
-	}
-
-	const bestTimeItem = items[0];
-	const previousBestTimeItem = previousItems[0] ?? null;
-
-	const timeSum = items.reduce((acc, val) => acc + val.timeElapsed, 0);
-	const previousTimeSum = previousItems.reduce((acc, val) => acc + val.timeElapsed, 0);
-
-	const average = timeSum / items.length;
-	const previousAverage = previousItems.length > 0 ? previousTimeSum / previousItems.length : null;
-
-	return {
-		best: bestTimeItem.timeElapsed,
-		previousBest: previousBestTimeItem?.timeElapsed ?? null,
-		average,
-		previousAverage,
-		
-		isTimeRecord: historyEntry.id === bestTimeItem.id,
-	}
-}
-
+import type { IPuzzleConfigCounts, IHistoryTotals, IUniquePuzzleConfigurationPlayed, IPuzzleReplayStatistics } from "./GameEndStats";
 export async function getPreviousItemsWithPuzzleConfig(config: BasicPuzzleConfig, id: number | null): Promise<{ items: StatsDbHistoryEntryWithId[], previousItems: StatsDbHistoryEntryWithId[] }> {
 	const { width, height, difficulty } = config;
 	const items = await statsDb.puzzleHistory
