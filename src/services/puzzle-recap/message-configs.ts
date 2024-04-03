@@ -4,7 +4,7 @@ import { asDimensionsStr, formatPercentage, msToMinSec, msToSec } from "./helper
 import { createRecapMessageConfig, type BaseRecapMessageConfig } from "./types";
 import { formatLocaleOrdinal } from "@/i18n/format-ordinal";
 import { isFirstEverSolved, isFirstOfDifficultySolved, isFirstSolvedWithPuzzleConfig, isFirstWithDimensionsSolved, isHardestEverSolved } from "./message-conditions/firsts.condition.js";
-import { isAlmostTimeRecord, isSolvedWithLargeTimeRecordImprovement, isSolvedWithTimeRecord } from "./message-conditions/time-record.condition.js";
+import { isAlmostTimeRecord, isSolvedWithLargeTimeRecordImprovement, isSolvedWithTimeRecordImprovement } from "./message-conditions/time-record.condition.js";
 import { hasSolvedAmountInTotal, hasSolvedAmountToday, hasSolvedAmountWithConfigInTotal, hasSolvedAmountWithConfigToday } from "./message-conditions/num-plays.condition.js";
 import { wasSolvedFasterThanAverageTime, wasSolvedMuchFasterThanAverageTime } from "./message-conditions/average.condition.js";
 
@@ -84,7 +84,7 @@ export const recapMessageConfigs = [
 	createRecapMessageConfig({
 		type: 'timeRecord',
 		priority: 60,
-		condition: isSolvedWithTimeRecord,
+		condition: isSolvedWithTimeRecordImprovement,
 		i18nKey: (data) => {
 			// TODO: percentageFaster sometimes?
 			return {

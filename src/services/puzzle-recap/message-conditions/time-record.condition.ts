@@ -1,6 +1,9 @@
 import type { GameEndStats } from "../GameEndStats.js";
 import type { RecapMessageConditionResult } from "../types.js";
 
+const MIN_TIME_LARGE_IMPROVEMENT = 30_000;
+const MIN_PERCENTAGE_LARGE_IMPROVEMENT = 0.35;
+
 export const isSolvedWithLargeTimeRecordImprovement = (
 	stats: Pick<GameEndStats, 'personalBest'>
 ): RecapMessageConditionResult<{
@@ -11,15 +14,20 @@ export const isSolvedWithLargeTimeRecordImprovement = (
 	if (timeImprovement == null || timeImprovement < 0) return { success: false };
 	const percentageFaster = stats.personalBest.getPercentageFasterThanPreviousBest();
 
-	if (percentageFaster == null || (percentageFaster < 0.35 && timeImprovement < 10000)) return { success: false };
+	if (percentageFaster == null) return { success: false };
+	// if time and percentage improvements are BOTH below threshold, fail
+	else if (
+		percentageFaster < MIN_PERCENTAGE_LARGE_IMPROVEMENT &&
+		timeImprovement < MIN_TIME_LARGE_IMPROVEMENT
+	) return { success: false };
 
-	return {
+	return { 
 		success: true,
 		data: { percentageFaster }
-	}
+	};
 }
 
-export const isSolvedWithTimeRecord = (
+export const isSolvedWithTimeRecordImprovement = (
 	stats: Pick<GameEndStats, 'personalBest'>
 ): RecapMessageConditionResult<{
 	timeImprovement: number;
