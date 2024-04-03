@@ -1,5 +1,5 @@
-import { PersonalBestGameEndStats } from "@/services/puzzle-recap/GameEndStats.js"
-import { isSolvedWithLargeTimeRecordImprovement, isSolvedWithTimeRecordImprovement } from "@/services/puzzle-recap/message-conditions/time-record.condition.js"
+import { PersonalBestGameEndStats, type IPuzzleConfigCounts } from "@/services/puzzle-recap/GameEndStats.js"
+import { isAlmostTimeRecord, isSolvedWithLargeTimeRecordImprovement, isSolvedWithTimeRecordImprovement } from "@/services/puzzle-recap/message-conditions/time-record.condition.js"
 
 describe('time-record.condition', () => {
 	describe('isSolvedWithLargeTimeRecordImprovement', () => {
@@ -123,6 +123,70 @@ describe('time-record.condition', () => {
 				data: { timeImprovement: 1 }
 			});
 		})
+
+	})
+
+	describe('isAlmostTimeRecord', () => {
+		it('returns false if less than 4 puzzles have been solved', () => {
+			const pb = new PersonalBestGameEndStats({
+				current: { timeElapsed: 1001, id: 2 }, // only 1ms slower
+				best: { timeElapsed: 1000, id: 1 },
+				previousBest: { timeElapsed: 1000, id: 1 },
+			})
+			const averageTimes = { average: 10_000 };
+			expect(isAlmostTimeRecord({
+				currentCounts: { count: 3 },
+				personalBest: pb,
+				averageTimes
+			})).toEqual({ success: false });
+
+			expect(isAlmostTimeRecord({
+				currentCounts: { count: 4 }, // count is 4
+				personalBest: pb,
+				averageTimes
+			}).success).toBe(true);
+		})
+
+		it('returns false when it is a time record', () => {
+			expect(isAlmostTimeRecord({
+				currentCounts: { count: 100 },
+				personalBest: {
+					isTimeRecord: () => true
+				} as PersonalBestGameEndStats,
+				averageTimes: { average: 0 }
+			})).toEqual({ success: false });
+		})
+
+		it('returns false whenever the time is slower than average', () => {
+			const pb = new PersonalBestGameEndStats({
+				current: { timeElapsed: 1001, id: 2 }, // only 1ms slower
+				best: { timeElapsed: 1000, id: 1 },
+				previousBest: { timeElapsed: 1000, id: 1 },
+			})
+			const currentCounts = { count: 100 };
+			const averageTimes = { average: 1000 }; // current time is slower than average (this is a improbable average)
+			expect(isAlmostTimeRecord({ personalBest: pb, currentCounts, averageTimes })).toEqual({ success: false });
+		})
+
+		it('returns a success when the time is almost a time record', () => {
+			const pb = new PersonalBestGameEndStats({
+				current: { timeElapsed: 1001, id: 2 }, // only 1ms slower
+				best: { timeElapsed: 1000, id: 1 },
+				previousBest: { timeElapsed: 1000, id: 1 },
+			})
+			const currentCounts = { count: 100 };
+			const averageTimes = { average: 10_000 };
+			const result = isAlmostTimeRecord({ personalBest: pb, currentCounts, averageTimes });
+			expect(result.success).toBe(true);
+
+			const { timeSlower, percentageSlower } = result.data!;
+			expect(timeSlower).toBe(1);
+			expect(percentageSlower).toBeLessThan(0.0015);
+		})
+
+		it.todo('returns a success when time difference is very small, even though percentage is larger');
+
+		it.todo('returns a success when percentage difference is very small, even though time difference is > 800 ms');
 
 	})
 

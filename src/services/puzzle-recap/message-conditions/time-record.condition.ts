@@ -1,4 +1,4 @@
-import type { GameEndStats } from "../GameEndStats.js";
+import type { GameEndStats, PersonalBestGameEndStats } from "../GameEndStats.js";
 import type { RecapMessageConditionResult } from "../types.js";
 
 const MIN_TIME_LARGE_IMPROVEMENT = 30_000;
@@ -44,42 +44,56 @@ export const isSolvedWithTimeRecordImprovement = (
 }
 
 export const isAlmostTimeRecord = (
-	stats: Pick<GameEndStats, 'personalBest' | 'currentCounts' | 'averageTimes'>
+	{ personalBest, currentCounts, averageTimes }: {
+		personalBest: PersonalBestGameEndStats,
+		currentCounts: Pick<GameEndStats['currentCounts'], 'count'>,
+		averageTimes: Pick<GameEndStats['averageTimes'], 'average'>
+	}
 ): RecapMessageConditionResult<{
 	timeSlower: number,
 	percentageSlower: number,
 	byPercentage: boolean, byTime: boolean
 }> => {
-	const count = stats.currentCounts.count;
-	// if less than 10 played, "almostTimeRecord" is not relevant enough
-	if (count < 10) return { success: false };
+	const count = currentCounts.count;
+	// if less than 4 played, "almostTimeRecord" is not relevant enough
+	if (count < 4) return { success: false };
 	
 	// can not be "almost" timeRecord if it is the best time
-	if (stats.personalBest.isTimeRecord()) return { success: false };
+	if (personalBest.isTimeRecord()) return { success: false };
 
-	const timeElapsed = stats.personalBest.current.timeElapsed;
-	const average = stats.averageTimes.average;
+	const timeElapsed = personalBest.current.timeElapsed;
+	const average = averageTimes.average;
 	// if the time is slower than average, "almostTimeRecord" is too positive
 	if (timeElapsed > average) return { success: false };
 
-	const timeDifference = stats.personalBest.getTimeImprovement();
-	const percentageDifference = stats.personalBest.getPercentageSlowerThanBest();
-	if (timeDifference == null || percentageDifference == null) return { success: false };
+	const timeDifference = personalBest.getTimeImprovement(); // is negative, because slower
+	const percentageDifference = personalBest.getPercentageSlowerThanBest();
+	if (timeDifference == null || timeDifference >= 0 || percentageDifference == null) return { success: false };
+	
+	const timeSlower = Math.abs(timeDifference);
+	
+	// TODO: refine these conditions
+	let successByPercentage = false;
+	let successByTime = false;
 
-	const isSuccessByPercentage = timeDifference < 6000 && percentageDifference < 0.05;
-	const isSuccessByTime = timeDifference < 800 && percentageDifference < 0.20;
+	// if percentage slower is 5% or less, success (except if time difference is large)
+	if (percentageDifference < 0.05 && timeSlower < 6000) {
+		successByPercentage = true;
+	}
+	// if time slower is 0.8s or less, success (except if percentage difference is way too large)
+	if (timeSlower < 800 && percentageDifference < 0.4) {
+		successByTime = true;
+	}
 
-	console.log({ timeDifference, percentageDifference, isSuccessByPercentage, isSuccessByTime });
-
-	if (isSuccessByPercentage || isSuccessByTime) {
+	if (successByPercentage || successByTime) {
 		return {
 			success: true,
 			data: {
-				timeSlower: timeDifference,
+				timeSlower,
 				percentageSlower: percentageDifference,
 
-				byPercentage: isSuccessByPercentage,
-				byTime: isSuccessByTime
+				byPercentage: successByPercentage,
+				byTime: successByTime
 			}
 		};
 	} else {
