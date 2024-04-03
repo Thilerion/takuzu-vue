@@ -69,7 +69,7 @@
 						</div>
 						<div class="mt-2">
 							<label class="flex items-center">
-								<input type="radio" name="radio-toggle-mode" v-model="toggleMode" value="0">
+								<input type="radio" name="radio-toggle-mode" v-model="toggleMode" value="1">
 								<i18n-t keypath="Settings.input-mode.toggle-symbol-first" tag="span" class="ml-2" scope="global">
 									<template #symbol><PuzzleSymbolDisplay :v="ONE" /></template>
 								</i18n-t>
