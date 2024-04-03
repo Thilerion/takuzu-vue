@@ -2,6 +2,7 @@ import type { BasicPuzzleConfig, BoardShape, DifficultyKey } from "@/lib/types.j
 import type { StatsDbHistoryEntry, StatsDbHistoryEntryWithId } from "../db/stats-db/models.js";
 import { getPreviousItemsWithPuzzleConfig, getPuzzleCurrentCounts, getHistoryTotals, getUniquePlayedPuzzleConfigs, getPuzzleReplayStats } from "./stats-helpers.js";
 import { getPercentageFaster, getPercentageSlower } from "./helpers.js";
+import type { PickRequired } from "@/types.js";
 
 /** Count/previousCount and count today for how many puzzles played with this specific puzzle config */
 export interface IPuzzleConfigCounts {
@@ -63,9 +64,12 @@ export class GameEndStats {
 		this.totals = totals;
 		this.uniqueConfigs = uniqueConfigs;
 		this.replayStats = replayStats;
+		console.log(this);
 	}
 	
 	static async init(entry: StatsDbHistoryEntry | StatsDbHistoryEntryWithId) {
+		// entries are sorted by timeElapsed, with fastest items first
+		// TODO: add test to ensure that the items are sorted by timeElapsed
 		const { items, previousItems } = await getPreviousItemsWithPuzzleConfig(entry, entry.id ?? null);
 
 		const personalBestStats = PersonalBestGameEndStats.fromItems(entry, items, previousItems);
@@ -192,13 +196,13 @@ export class AverageTimeGameEndStats {
 }
 
 export class PersonalBestGameEndStats {
-	current: StatsDbHistoryEntry | StatsDbHistoryEntryWithId;
+	current: PickRequired<Partial<StatsDbHistoryEntryWithId>, 'timeElapsed'>;
 	best: Pick<StatsDbHistoryEntryWithId, 'id' | 'timeElapsed'>;
 	previousBest: Pick<StatsDbHistoryEntryWithId, 'id' | 'timeElapsed'> | null;
 
 	constructor(
 		data: {
-			current: StatsDbHistoryEntry | StatsDbHistoryEntryWithId,
+			current: StatsDbHistoryEntry | StatsDbHistoryEntryWithId | PickRequired<Partial<StatsDbHistoryEntryWithId>, 'timeElapsed'>,
 			best: Pick<StatsDbHistoryEntryWithId, 'id' | 'timeElapsed'>,
 			previousBest: Pick<StatsDbHistoryEntryWithId, 'id' | 'timeElapsed'> | null
 		}
@@ -226,6 +230,7 @@ export class PersonalBestGameEndStats {
 		if (this.best.id !== this.current.id) return false;
 		// the best is the same as the current entry, but might be due to having the exact same time
 		if (this.previousBest == null) return true;
+		// check if current time is faster than previous best. Should not ever actually be slower, but might be equal.
 		return this.current.timeElapsed < this.previousBest.timeElapsed;
 	}
 
@@ -238,17 +243,32 @@ export class PersonalBestGameEndStats {
 		return this.previousBest.timeElapsed - this.current.timeElapsed;
 	}
 
+	/**
+	 * Returns how much faster the current (best) time is compared to the previous best.
+	 * Only applies if the current time is the best time, and there is a previous best time.
+	 */
 	getPercentageFasterThanPreviousBest(): number | null {
 		if (this.previousBest == null) return null;
+		const bestTime = this.best.timeElapsed;
 		const previousBestTime = this.previousBest.timeElapsed;
 		const currentTime = this.current.timeElapsed;
-		// if current time is slower than previous best, percentage faster is not relevant
-		if (previousBestTime < currentTime) return null;
+		// only applies if current time is the best time OR equals the best time
+		if (currentTime > bestTime) return null;
 		return getPercentageFaster(previousBestTime, currentTime);
 	}
 
+	getPercentageOffFromBest(): number | null {
+		// when presenting as "you were only X% off from your best time"
+		const best = this.best.timeElapsed;
+		const current = this.current.timeElapsed;
+		const p = ((best - current) / current);
+		return p * -1; // assuming p was negative, because current took longer than best
+	}
+
 	getPercentageSlowerThanBest(): number | null {
+		// when presenting as "you were X% slower than your best time"
 		if (this.previousBest == null) return null;
+		if (this.current.id != null && this.current.id === this.best.id) return 0;
 		const bestTime = this.best.timeElapsed;
 		const currentTime = this.current.timeElapsed;
 		// if current time is faster than best, percentage slower is not relevant
