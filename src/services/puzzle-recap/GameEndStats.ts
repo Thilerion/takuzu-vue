@@ -64,7 +64,6 @@ export class GameEndStats {
 		this.totals = totals;
 		this.uniqueConfigs = uniqueConfigs;
 		this.replayStats = replayStats;
-		console.log(this);
 	}
 	
 	static async init(entry: StatsDbHistoryEntry | StatsDbHistoryEntryWithId) {
@@ -99,6 +98,10 @@ export class GameEndStats {
 	}
 	get hasCheatsUsed(): boolean {
 		return !!(this.historyEntry.flags?.cheatsUsed);
+	}
+
+	getNumSolvedWithConfig() {
+		return this.currentCounts.count;
 	}
 
 	/** Checks whether the historyEntry is the first puzzle played with that specific puzzle config */
