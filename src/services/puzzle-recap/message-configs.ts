@@ -33,7 +33,7 @@ export const recapMessageConfigs = [
 	}),
 	createRecapMessageConfig({
 		type: 'firstOfDifficulty',
-		priority: 40,
+		priority: 30,
 		condition: isFirstOfDifficultySolved,
 		i18nKey: ({ difficulty }) => {
 			return {
@@ -46,9 +46,14 @@ export const recapMessageConfigs = [
 	}),
 	createRecapMessageConfig({
 		type: 'firstOfSize',
-		priority: 40,
+		priority: 30,
 		condition: isFirstWithDimensionsSolved,
-		i18nKey: () => "Recap.message.firstOfSize"
+		i18nKey: (data) => ({
+			key: "Recap.message.firstOfSize",
+			namedProperties: {
+				dimensions: asDimensionsStr(data.width, data.height)
+			}
+		})
 	}),
 
 	// only applies if not first time playing this size and/or not first time playing this difficulty, but only when it is the first time this combination is played (due to lower priority)
