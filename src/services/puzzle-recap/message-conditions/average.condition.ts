@@ -24,13 +24,30 @@ export const wasSolvedMuchFasterThanAverageTime = (
 
 	const timeDifference = previousAverage - timeElapsed; // time faster than average
 	const percentageDifference = getPercentageFaster(previousAverage, timeElapsed);
+	
+	
+	// TODO: tweak all these values and checks and magic numbers
+	const bestTime = stats.personalBest.best.timeElapsed;
 
-	// TODO: tweak these values
-	const success = 
-		(timeDifference > 45000) ||
-		(timeDifference > 30000 && percentageDifference > 0.3) ||
-		(timeDifference > 10000 && percentageDifference > 0.5) ||
-		(timeDifference > 2500 && percentageDifference > 0.7);
+	// Calculate the current time's proportion within the range from best to average
+	const avgToBestRange = previousAverage - bestTime;
+    const proportionInRange = (timeElapsed - bestTime) / avgToBestRange;
+	// When proportionInRange is closer to < 0.5, the current time is closer to the best time than to the average time.
+
+	let success = false;
+	// To determine whether the currently set time is "MUCH" faster than average:
+	// 1. Determine based on absolute time difference (45s faster than average) with loose requirements of proportion in range and percentage difference
+	if (timeDifference > 45_000 && proportionInRange < 0.60 && percentageDifference > 0.15) {
+		success = true;
+	} else if (proportionInRange < 0.20) {
+		// 2. Determine based on strict proportion in range (so much closer to best time than average time)
+		success = true;
+	} else if (percentageDifference > 0.35) {
+		// 3. Determine based on strict percentage difference from average
+		success = true;
+	} else if (timeDifference > 30_000 && (proportionInRange < 0.30 || percentageDifference > 0.3)) {
+		success = true;
+	}	
 
 	if (!success) return { success: false };
 	return {
