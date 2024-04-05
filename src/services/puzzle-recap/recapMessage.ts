@@ -1,6 +1,6 @@
-import { usePuzzleRecapStore } from "@/stores/puzzle-recap";
 import { recapMessageConfigs } from "./message-configs";
 import { pickRandom } from "@/utils/random.utils";
+import type { GameEndStats } from "./GameEndStats.js";
 
 function getGroupedRecapMessageConfigs() {
 	const groupedConfigsObj: Record<number, (typeof recapMessageConfigs[number])[]> = {};
@@ -18,15 +18,12 @@ function getGroupedRecapMessageConfigs() {
 	return groupedConfigs;
 }
 
-export function getRecapMessage() {
-	const store = usePuzzleRecapStore();
-	const stats = store.gameEndStats!;
-
+export function getRecapMessage(gameEndStats: GameEndStats) {
 	for (const group of getGroupedRecapMessageConfigs()) {
 		const successes: Extract<(ReturnType<typeof recapMessageConfigs[number]['evaluate']>), { success: true }>[] = [];
 
 		for (const conf of group) {
-			const result = conf.evaluate(stats);
+			const result = conf.evaluate(gameEndStats);
 			if (result.success) {
 				successes.push(result);
 			}

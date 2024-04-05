@@ -15,7 +15,7 @@
 			/>
 		</div>
 
-		<div class="bg-gradient-to-t from-teal-100/70 via-teal-200/20 to-transparent bg-teal-600 text-white relative mb-2 rounded-t-xl" :class="[hasRecordBanner ? 'pb-6' : 'pb-2']">
+		<div class="bg-gradient-to-t from-teal-100/70 via-teal-200/20 to-transparent bg-teal-600 text-white relative mb-2 rounded-t-xl" :class="[recordMessage != null ? 'pb-6' : 'pb-2']">
 			<div class="h-full absolute inset-0 flex items-end justify-end z-0">
 				<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="fill-white bottom-0 inset-x-0 h-8 w-full" viewBox="0 0 1440 320"><path fill-opacity="1" d="M0,192L80,213.3C160,235,320,277,480,256C640,235,800,149,960,128C1120,107,1280,149,1360,170.7L1440,192L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z"></path></svg>
 			</div>
@@ -33,7 +33,7 @@
 				<RecapContent.TimeScore>{{formatTimeMMSS(historyEntry?.timeElapsed ?? 0)}}</RecapContent.TimeScore>	
 			</div>			
 		</div>
-		<div class="h-2 relative" v-if="hasRecordBanner">
+		<div class="h-2 relative" v-if="recordMessage != null">
 			<div class="w-full -translate-y-full flex items-center justify-center h-10">
 				<PuzzleRecapRecordBanner>{{recordMessage ? $t(recordMessage) : undefined}}</PuzzleRecapRecordBanner>
 			</div>
@@ -83,17 +83,18 @@
 
 import { DIFFICULTY_LABELS } from '@/config';
 import { getRecapMessage } from '@/services/puzzle-recap/recapMessage.js';
+import type { RecapI18nMessageData } from '@/services/puzzle-recap/types.js';
 import { storeToRefs } from 'pinia';
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import * as RecapContent from './recap-content-elements';
 import { formatTimeMMSSWithRounding } from '@/utils/time.utils';
 import type { NavigationFailure } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { usePuzzleRecapStore } from '@/stores/puzzle-recap';
-import { watchEffect } from 'vue';
 import type { SupportedLocale } from '@/i18n/constants.js';
 import { getRecordMessage } from '@/services/puzzle-recap/recordMessage.js';
+
 const formatTimeMMSS = formatTimeMMSSWithRounding(200);
 
 defineEmits<{
@@ -101,10 +102,29 @@ defineEmits<{
 }>();
 
 const puzzleRecapStore = usePuzzleRecapStore();
-const {
-	historyEntry,
-	gameEndStats
-} = storeToRefs(puzzleRecapStore);
+const { historyEntry, gameEndStats } = storeToRefs(puzzleRecapStore);
+const { locale } = useI18n();
+
+// Message data and related code for recap and record message
+const messageData = computed(() => {
+	const stats = gameEndStats.value;
+
+	if (!stats) {
+		return { recapMessage: null, recordMessage: null };
+	}
+
+	const recapData = getRecapMessage(stats);
+	const i18nKeyOrObject = recapData.i18nKey(locale.value as SupportedLocale);
+	const recapMessage = typeof i18nKeyOrObject === 'string' ? { key: i18nKeyOrObject } : i18nKeyOrObject;
+
+	const recordData = getRecordMessage(recapData.type, stats);
+	const recordMessage = recordData?.show ? recordData.key : null;
+
+	return { recapMessage, recordMessage };
+})
+const recapMessage = computed((): RecapI18nMessageData | null => messageData.value.recapMessage);
+const recordMessage = computed((): string | null => messageData.value.recordMessage);
+
 
 const note = computed(() => {
 	// must be computed (not ref), because note property may not be set on the lastPuzzleEntry
@@ -118,34 +138,6 @@ const note = computed(() => {
 const difficultyLabel = computed(() => {
 	return DIFFICULTY_LABELS[historyEntry.value!.difficulty];
 })
-
-const { locale } = useI18n();
-const recapMessageData = ref<null | ReturnType<typeof getRecapMessage>>(null);
-const recapMessage = ref<{ key: string, namedProperties?: Record<string, number | string> } | null>(null);
-const recordMessageData = ref<{ show: false } | { show: true, key: string } | null>(null);
-watchEffect(() => {
-	if (gameEndStats.value == null) {
-		recapMessageData.value = null;
-		recapMessage.value = null;
-		recordMessageData.value = null;
-		return;
-	}
-	recapMessageData.value = getRecapMessage();
-	const i18nMessageData = recapMessageData.value.i18nKey(locale.value as SupportedLocale);
-	if (typeof i18nMessageData === 'string') {
-		recapMessage.value = { key: i18nMessageData };
-	} else recapMessage.value = i18nMessageData;
-	recordMessageData.value = getRecordMessage(recapMessageData.value.type, puzzleRecapStore.gameEndStats!);
-	console.log(recapMessage.value);
-})
-
-const hasRecordBanner = computed(() => recordMessageData.value?.show);
-const recordMessage = computed(() => {
-	if (!hasRecordBanner.value) return null;
-	// recordMessageData.value.show is true
-	const data = recordMessageData.value as { show: true, key: string };
-	return data.key;
-});
 
 const route = useRoute();
 const router = useRouter();

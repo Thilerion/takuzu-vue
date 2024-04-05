@@ -62,6 +62,7 @@ onBeforeMount(() => {
 })
 
 const saveNote = () => {
+	if (isEditing.value === false) return;
 	isEditing.value = false;
 	if (unsavedNote.value === props.note) {
 		return;

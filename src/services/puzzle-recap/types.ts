@@ -12,12 +12,14 @@ export type RecapMessageConditionResult<Data> = {
 
 export type RecapMessageConditionFn<Data> = (stats: GameEndStats) => RecapMessageConditionResult<Data>;
 
+export type RecapI18nMessageData = { key: string, namedProperties?: Record<string, number | string> };
+
 // Generic interface for recap conditions
 export interface BaseRecapMessageConfig<Type, Data> {
 	type: Type;
 	condition: RecapMessageConditionFn<Data>;
 	priority: number;
-	i18nKey: (data: Data, locale: SupportedLocale) => (string | { key: string, namedProperties?: Record<string, number | string> } | null);
+	i18nKey: (data: Data, locale: SupportedLocale) => (string | null | RecapI18nMessageData);
 }
 export type RecapMessageEvaluateFnResult<Type, Data> = {
 	success: false, data?: undefined
