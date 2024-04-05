@@ -1,6 +1,6 @@
 import type { BasicPuzzleConfig, BoardShape, DifficultyKey } from "@/lib/types.js";
 import type { StatsDbHistoryEntry, StatsDbHistoryEntryWithId } from "../db/stats-db/models.js";
-import { getPreviousItemsWithPuzzleConfig, getPuzzleCurrentCounts, getHistoryTotals, getUniquePlayedPuzzleConfigs, getPuzzleReplayStats } from "./stats-helpers.js";
+import { getPreviousItemsWithPuzzleConfig, getPuzzleCurrentCounts, getHistoryTotals, getUniquePlayedPuzzleConfigs, getPuzzleReplayStats, getPuzzleTimeStatisticsFromItems } from "./stats-helpers.js";
 import { getPercentageFaster, getPercentageSlower } from "./helpers.js";
 import type { PickRequired } from "@/types.js";
 
@@ -34,6 +34,9 @@ export interface IPuzzleReplayStatistics {
 	isReplay: boolean;
 	previousPlays: StatsDbHistoryEntryWithId[]
 }
+export interface IPuzzleTimeStatistics {
+	sortedTimes: number[];
+}
 
 export class GameEndStats {
 	// related to current puzzle history entry/current puzzle config
@@ -41,6 +44,7 @@ export class GameEndStats {
 	averageTimes: AverageTimeGameEndStats;
 	currentCounts: IPuzzleConfigCounts;
 	historyEntry: StatsDbHistoryEntry | StatsDbHistoryEntryWithId; // with id only if saved to database
+	puzzleTimes: IPuzzleTimeStatistics;
 
 	// related to all history entries
 	totals: IHistoryTotals;
@@ -52,14 +56,16 @@ export class GameEndStats {
 		historyEntry: StatsDbHistoryEntry | StatsDbHistoryEntryWithId,
 		personalBest: PersonalBestGameEndStats,
 		averageTimes: AverageTimeGameEndStats,
+		puzzleTimes: IPuzzleTimeStatistics,
 		currentCounts: IPuzzleConfigCounts,
 		totals: IHistoryTotals,
 		uniqueConfigs: IUniquePuzzleConfigurationPlayed,
-		replayStats: IPuzzleReplayStatistics
+		replayStats: IPuzzleReplayStatistics,
 	) {
 		this.historyEntry = historyEntry;
 		this.personalBest = personalBest;
 		this.averageTimes = averageTimes;
+		this.puzzleTimes = puzzleTimes;
 		this.currentCounts = currentCounts;
 		this.totals = totals;
 		this.uniqueConfigs = uniqueConfigs;
@@ -73,6 +79,7 @@ export class GameEndStats {
 
 		const personalBestStats = PersonalBestGameEndStats.fromItems(entry, items, previousItems);
 		const averageTimes = AverageTimeGameEndStats.fromItems(items, previousItems);
+		const puzzleTimes = getPuzzleTimeStatisticsFromItems(items);
 		const currentCounts = await getPuzzleCurrentCounts(entry, items, previousItems);
 		const historyTotals = await getHistoryTotals();
 		const uniqueConfigs = await getUniquePlayedPuzzleConfigs();
@@ -82,6 +89,7 @@ export class GameEndStats {
 			entry,
 			personalBestStats,
 			averageTimes,
+			puzzleTimes,
 			currentCounts,
 			historyTotals,
 			uniqueConfigs,

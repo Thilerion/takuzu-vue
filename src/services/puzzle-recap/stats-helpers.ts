@@ -2,7 +2,7 @@ import type { BasicPuzzleConfig, BoardShape, DifficultyKey } from "@/lib/types";
 import { startOfDay } from "date-fns";
 import { statsDb } from "../db/stats-db/init";
 import type { StatsDbHistoryEntryWithId, StatsDbHistoryEntry } from "../db/stats-db/models";
-import type { IPuzzleConfigCounts, IHistoryTotals, IUniquePuzzleConfigurationPlayed, IPuzzleReplayStatistics } from "./GameEndStats";
+import type { IPuzzleConfigCounts, IHistoryTotals, IUniquePuzzleConfigurationPlayed, IPuzzleReplayStatistics, IPuzzleTimeStatistics } from "./GameEndStats";
 export async function getPreviousItemsWithPuzzleConfig(config: BasicPuzzleConfig, id: number | null): Promise<{ items: StatsDbHistoryEntryWithId[], previousItems: StatsDbHistoryEntryWithId[] }> {
 	const { width, height, difficulty } = config;
 	const items = await statsDb.puzzleHistory
@@ -109,4 +109,8 @@ export async function getPuzzleReplayStats(entry: StatsDbHistoryEntryWithId | St
 		isReplay,
 		previousPlays
 	}
+}
+
+export function getPuzzleTimeStatisticsFromItems(items: StatsDbHistoryEntryWithId[]): IPuzzleTimeStatistics {
+	return { sortedTimes: items.map(val => val.timeElapsed) }
 }

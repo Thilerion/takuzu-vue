@@ -45,7 +45,7 @@ export const wasSolvedMuchFasterThanAverageTime = (
 	} else if (percentageDifference > 0.35) {
 		// 3. Determine based on strict percentage difference from average
 		success = true;
-	} else if (timeDifference > 30_000 && (proportionInRange < 0.30 || percentageDifference > 0.3)) {
+	} else if (timeDifference > 30_000 && (proportionInRange < 0.25 || percentageDifference > 0.32)) {
 		success = true;
 	}	
 
