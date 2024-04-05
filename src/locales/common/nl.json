@@ -175,7 +175,8 @@
 			"replayPlaysTotal": "Dit is de {numPlaysOrdinal} keer dat je deze exact dezelfde puzzel hebt opgelost, met je beste tijd zijnde {bestPreviousTimeMinSec}.",
 			"replayTimeRecord": "Dit is de {numPlaysOrdinal} keer dat je deze exacte puzzel hebt opgelost. Je was {differenceSec}s sneller dan je snelste tijd.",
 			"timeRecord": "Je hebt je beste tijd verbeterd met {differenceSec}s!",
-			"timeRecordLarge": "Je was een ongelooflijke {improvementPercentage} sneller dan je vorige beste tijd!"
+			"timeRecordLarge": "Je was een ongelooflijke {improvementPercentage} sneller dan je vorige beste tijd!",
+			"top5Percent": "Geweldig gedaan! Je hebt deze puzzel sneller opgelost dan 95% van je eerder opgeloste puzzels."
 		},
 		"play-again": "Speel opnieuw",
 		"record": {
