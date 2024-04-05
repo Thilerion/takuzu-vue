@@ -1,4 +1,4 @@
-import { recapMessageConfigs } from "./message-configs";
+import { recapMessageConfigs, type RecapMessageConfigType } from "./message-configs";
 import { pickRandom } from "@/utils/random.utils";
 import type { GameEndStats } from "./GameEndStats.js";
 
@@ -18,11 +18,14 @@ function getGroupedRecapMessageConfigs() {
 	return groupedConfigs;
 }
 
-export function getRecapMessage(gameEndStats: GameEndStats) {
+export function getRecapMessage(gameEndStats: GameEndStats, filterRecapMessageConfig?: (type: RecapMessageConfigType) => boolean) {
+	const filterFn = filterRecapMessageConfig ?? (() => true);
+
 	for (const group of getGroupedRecapMessageConfigs()) {
 		const successes: Extract<(ReturnType<typeof recapMessageConfigs[number]['evaluate']>), { success: true }>[] = [];
 
 		for (const conf of group) {
+			if (!filterFn(conf.type)) continue;
 			const result = conf.evaluate(gameEndStats);
 			if (result.success) {
 				successes.push(result);

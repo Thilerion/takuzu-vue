@@ -113,7 +113,13 @@ const messageData = computed(() => {
 		return { recapMessage: null, recordMessage: null };
 	}
 
-	const recapData = getRecapMessage(stats);
+	const recapData = getRecapMessage(stats, (messageType) => {
+		// TODO: allow recapMessages that use the replay stats in certain conditions (dev mode? option? when puzzleReplay mode was specifically set by the user? When puzzle was started from the history list?)
+		if (messageType === 'replayPlaysTotal' || messageType === 'replayTimeRecord') {
+			return false;
+		}
+		return true;
+	});
 	const i18nKeyOrObject = recapData.i18nKey(locale.value as SupportedLocale);
 	const recapMessage = typeof i18nKeyOrObject === 'string' ? { key: i18nKeyOrObject } : i18nKeyOrObject;
 
