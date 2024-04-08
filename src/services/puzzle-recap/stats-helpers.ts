@@ -112,5 +112,7 @@ export async function getPuzzleReplayStats(entry: StatsDbHistoryEntryWithId | St
 }
 
 export function getPuzzleTimeStatisticsFromItems(items: StatsDbHistoryEntryWithId[]): IPuzzleTimeStatistics {
-	return { sortedTimes: items.map(val => val.timeElapsed) }
+	return { 
+		sortedTimes: items.map(val => val.timeElapsed)
+	}
 }

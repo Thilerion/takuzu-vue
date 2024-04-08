@@ -41,7 +41,8 @@
 			"replayTimeRecord": "This is the {numPlaysOrdinal} time you solved this exact puzzle. You were {differenceSec}s faster than your fastest time.",
 			"timeRecord": "You've improved your best time by {differenceSec}s!",
 			"timeRecordLarge": "You were an incredible {improvementPercentage} faster than your previous best time!",
-			"top5Percent": "Fantastic job! You've completed this puzzle faster than 95% of your previously solved puzzles."
+			"top5Percent": "Fantastic job! You've completed this puzzle faster than 95% of your previously solved puzzles.",
+			"top5Time": "Congratulations! You've achieved a top {rank} time for this puzzle."
 		},
 		"play-again": "Play again",
 		"record": {

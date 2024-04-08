@@ -7,7 +7,7 @@ import { isFirstEverSolved, isFirstOfDifficultySolved, isFirstSolvedWithPuzzleCo
 import { isAlmostTimeRecord, isSolvedWithLargeTimeRecordImprovement, isSolvedWithTimeRecordImprovement } from "./message-conditions/time-record.condition.js";
 import { hasSolvedAmountInTotal, hasSolvedAmountToday, hasSolvedAmountWithConfigInTotal, hasSolvedAmountWithConfigToday } from "./message-conditions/num-plays.condition.js";
 import { wasSolvedFasterThanAverageTime, wasSolvedMuchFasterThanAverageTime } from "./message-conditions/average.condition.js";
-import { isInTop5PercentOfTimes } from "./message-conditions/rank.condition.js";
+import { isInTop5PercentOfTimes, isTop5FastestTime } from "./message-conditions/rank.condition.js";
 
 export const recapMessageConfigs = [
 	createRecapMessageConfig({
@@ -162,6 +162,19 @@ export const recapMessageConfigs = [
 					namedProperties: {
 						differencePercentage: formatPercentage(percentageSlower, { maxDigits: 0, locale })
 					}
+				}
+			}
+		}
+	}),
+	createRecapMessageConfig({
+		type: 'top5Time',
+		priority: 150, // same as "almostTimeRecord"
+		condition: isTop5FastestTime,
+		i18nKey: (data) => {
+			return {
+				key: "Recap.message.top5Time",
+				namedProperties: {
+					rank: data.rank
 				}
 			}
 		}
