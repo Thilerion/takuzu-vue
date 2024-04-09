@@ -61,3 +61,24 @@ export function calculateEma(values: number[], span: number): number {
 	}
 	return emaSeries.at(-1)!;
 }
+
+/**
+ * Calculate the weighted moving average (WMA) of a series of values.
+ */
+export function calculateWeightedMovingAverage(values: number[], weights: number[]): number {
+	if (values.length !== weights.length) {
+		throw new Error("Values and weights must have the same length");
+	}
+	const sum = values.reduce((acc, val, i) => acc + val * weights[i], 0);
+	const weightSum = weights.reduce((acc, val) => acc + val, 0);
+	return sum / weightSum;
+}
+
+export type WMADynamicWeightFn = (distanceFromEnd: number, index: number, values: number[]) => number;
+export function calculateDynamicWeightedMovingAverage(values: number[], getWeight: WMADynamicWeightFn): number {
+	const length = values.length;
+	const weights = new Array(length).fill(0).map((_, i) => {
+		return getWeight(length - i - 1, i, values);
+	})
+	return calculateWeightedMovingAverage(values, weights);
+}

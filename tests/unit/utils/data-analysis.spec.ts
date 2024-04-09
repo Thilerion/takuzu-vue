@@ -1,4 +1,4 @@
-import { calculateEma } from "@/utils/data-analysis.utils.js";
+import { calculateDynamicWeightedMovingAverage, calculateEma } from "@/utils/data-analysis.utils.js";
 
 describe('data analysis utils', () => {
 	describe('exponential moving average', () => {
@@ -43,5 +43,27 @@ describe('data analysis utils', () => {
 			const emaB = calculateEma(valuesB, 10);
 			expect(emaB).toBeCloseTo(22.92);
 		})
+	})
+
+	describe('calculateDynamicWeightedMovingAverage()', () => {
+		it('calls the dynamic weight function for each value with the correct parameters', () => {
+			const values = [1, 2, 3, 4, 5];
+			const getWeight = vi.fn((distanceFromEnd, index/* , _values */) => index);
+			
+			calculateDynamicWeightedMovingAverage(values, getWeight);
+			expect(getWeight).toHaveBeenCalledTimes(values.length);
+
+			expect(getWeight).toHaveBeenNthCalledWith(1, 4, 0, values);
+			expect(getWeight).toHaveBeenNthCalledWith(5, 0, 4, values);
+		})
+
+		it('equals the average when the weights are all equal', () => {
+			const values = [1, 2, 3, 4, 5];
+			const getWeight = () => 10.5; // even when weight is not 1
+			const result = calculateDynamicWeightedMovingAverage(values, getWeight);
+			const average = (1 + 2 + 3 + 4 + 5) / 5
+			expect(result).toBe(average);
+		})
+
 	})
 })
