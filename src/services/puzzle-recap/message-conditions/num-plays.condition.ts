@@ -1,6 +1,6 @@
 import type { BasicPuzzleConfig } from "@/lib/types.js";
 import type { GameEndStats } from "../GameEndStats.js";
-import { isMultipleOf } from "../helpers.js";
+import { isCurrentlyMorning, isMultipleOf } from "../helpers.js";
 import type { RecapMessageConditionResult } from "../types.js";
 
 export const hasSolvedAmountInTotal = (
@@ -35,6 +35,32 @@ export const hasSolvedAmountToday = (
 }> => {
 	const totalSolvedToday = stats.totals.today;
 	if (isMultipleOf(totalSolvedToday, 5) && totalSolvedToday >= 5) return { success: true, data: { totalSolvedToday } };
+	return { success: false };
+}
+
+type FirstSolveTodayStatsParam = {
+	totals: Pick<GameEndStats['totals'], 'today' | 'amount'>
+}
+/**
+ * Check if last puzzle was the first solve of the day.
+ * Used for multiple recap messages.
+ */
+function checkIsFirstSolvedToday(
+	stats: FirstSolveTodayStatsParam
+): boolean {
+	return stats.totals.today === 1 && stats.totals.amount >= 10;
+}
+export const isFirstSolvedTodayGeneric = (
+	stats: FirstSolveTodayStatsParam
+): RecapMessageConditionResult<null> => {
+	if (checkIsFirstSolvedToday(stats) && !isCurrentlyMorning()) return { success: true, data: null };
+	return { success: false };
+}
+
+export const isFirstSolvedTodayInMorning = (
+	stats: FirstSolveTodayStatsParam
+): RecapMessageConditionResult<null> => {
+	if (checkIsFirstSolvedToday(stats) && isCurrentlyMorning()) return { success: true, data: null };
 	return { success: false };
 }
 

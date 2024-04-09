@@ -5,7 +5,7 @@ import { createRecapMessageConfig, type BaseRecapMessageConfig } from "./types";
 import { formatLocaleOrdinal } from "@/i18n/format-ordinal";
 import { isFirstEverSolved, isFirstOfDifficultySolved, isFirstSolvedWithPuzzleConfig, isFirstWithDimensionsSolved, isHardestEverSolved } from "./message-conditions/firsts.condition.js";
 import { isAlmostTimeRecord, isSolvedWithLargeTimeRecordImprovement, isSolvedWithTimeRecordImprovement } from "./message-conditions/time-record.condition.js";
-import { hasSolvedAmountInTotal, hasSolvedAmountToday, hasSolvedAmountWithConfigInTotal, hasSolvedAmountWithConfigToday } from "./message-conditions/num-plays.condition.js";
+import { hasSolvedAmountInTotal, hasSolvedAmountToday, hasSolvedAmountWithConfigInTotal, hasSolvedAmountWithConfigToday, isFirstSolvedTodayGeneric, isFirstSolvedTodayInMorning } from "./message-conditions/num-plays.condition.js";
 import { wasSolvedFasterThanAverageTime, wasSolvedMuchFasterThanAverageTime } from "./message-conditions/average.condition.js";
 import { isInTop5PercentOfTimes, isTop5FastestTime } from "./message-conditions/rank.condition.js";
 
@@ -231,6 +231,14 @@ export const recapMessageConfigs = [
 		})
 	}),
 
+	// In front of better than average, to reduce possibility that betterThanAverage is shown too often, when it might not be that important.
+	createRecapMessageConfig({
+		type: 'firstTodayMorning',
+		priority: 250,
+		condition: isFirstSolvedTodayInMorning,
+		i18nKey: () => "Recap.message.firstTodayMorning"
+	}),
+
 	createRecapMessageConfig({
 		type: 'betterThanAverage',
 		priority: 300,
@@ -288,6 +296,12 @@ export const recapMessageConfigs = [
 			key: "Recap.message.playsToday",
 			namedProperties: { totalSolvedToday: data.totalSolvedToday }
 		})
+	}),
+	createRecapMessageConfig({
+		type: 'firstTodayGeneric',
+		priority: 400,
+		condition: isFirstSolvedTodayGeneric,
+		i18nKey: () => "Recap.message.firstTodayGeneric"
 	}),
 	createRecapMessageConfig({
 		type: 'playsConfigTotal',

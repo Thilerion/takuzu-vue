@@ -29,6 +29,8 @@
 			"firstOfDifficulty": "You've solved your first '@:{difficultyKey}' puzzle.",
 			"firstOfSize": "This was the first time you solved a [{dimensions}] puzzle.",
 			"firstOfSizeDifficulty": "A first! You've completed your first [{dimensions}] puzzle on the '@:{difficultyKey}' difficulty level.",
+			"firstTodayGeneric": "Congratulations on solving your first puzzle of the day!",
+			"firstTodayMorning": "Good morning! You've solved your first puzzle of the day, what a great start!",
 			"firstTotal": "Fantastic! You've solved your very first puzzle ever!",
 			"hardestEver": "You've just cracked your toughest puzzle ever. Well done!",
 			"muchBetterThanAverageAbsolute": "What an achievement! You were {differenceSec}s faster than your average time.",

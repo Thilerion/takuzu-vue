@@ -29,6 +29,8 @@
 			"firstOfDifficulty": "Je hebt je eerste puzzel op het '@:{difficultyKey}' niveau opgelost.",
 			"firstOfSize": "Dit was de eerste keer dat je een [{dimensions}] puzzel hebt opgelost.",
 			"firstOfSizeDifficulty": "Een primeur! De eerste [{dimensions}] puzzel voltooid op '@:{difficultyKey}' niveau.",
+			"firstTodayGeneric": "Gefeliciteerd met het oplossen van je eerste puzzel van de dag!",
+			"firstTodayMorning": "Goedemorgen! Je hebt je eerste puzzel van de dag opgelost, wat een geweldige start!",
 			"firstTotal": "Fantastisch! Je hebt je allereerste puzzel ooit opgelost!",
 			"hardestEver": "Je hebt zojuist je moeilijkste puzzel ooit gekraakt. Goed gedaan!",
 			"muchBetterThanAverageAbsolute": "Wat een prestatie! Je was {differenceSec}s sneller dan je gemiddelde tijd.",

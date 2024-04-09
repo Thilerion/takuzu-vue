@@ -46,3 +46,8 @@ export const msToSec = (ms: number) => {
 export function isMultipleOf(value = 0, multipleOf = 5): boolean {
 	return value > 0 && value % multipleOf === 0;
 }
+
+export function isCurrentlyMorning() {
+	const hours = new Date().getHours();
+	return (hours >= 5 && hours < 12);
+}

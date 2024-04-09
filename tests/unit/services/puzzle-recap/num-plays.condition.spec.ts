@@ -1,5 +1,5 @@
 import type { IPuzzleConfigCounts } from "@/services/puzzle-recap/GameEndStats.js";
-import { hasSolvedAmountInTotal, hasSolvedAmountToday, hasSolvedAmountWithConfigInTotal, hasSolvedAmountWithConfigToday } from "@/services/puzzle-recap/message-conditions/num-plays.condition.js";
+import { hasSolvedAmountInTotal, hasSolvedAmountToday, hasSolvedAmountWithConfigInTotal, hasSolvedAmountWithConfigToday, isFirstSolvedTodayGeneric, isFirstSolvedTodayInMorning } from "@/services/puzzle-recap/message-conditions/num-plays.condition.js";
 
 describe('num-plays.condition', () => {
 	
@@ -57,6 +57,79 @@ describe('num-plays.condition', () => {
 					}
 				});
 				expect(result).toEqual({ success: false });
+			})
+		})
+	})
+
+	describe('isFirstSolvedToday', () => {
+		beforeEach(() => {
+			vi.useFakeTimers();
+		})
+		afterEach(() => {
+			vi.useRealTimers();
+		})
+
+		describe('in morning', () => {
+			it('returns false when not in morning', () => {
+				vi.setSystemTime(new Date(2024, 0, 1, 13)); // 1pm
+				const result = isFirstSolvedTodayInMorning({
+					totals: {
+						today: 1,
+						amount: 11
+					}
+				});
+				expect(result).toEqual({ success: false });
+			})
+			it('returns true when not in morning', () => {
+				vi.setSystemTime(new Date(2024, 0, 1, 5, 30)); // 5:30 am
+				const result = isFirstSolvedTodayInMorning({
+					totals: {
+						today: 1,
+						amount: 11
+					}
+				});
+				expect(result).toEqual({ success: true, data: null });
+			})
+		})
+		describe('in general', () => {
+			it('returns false when solved in total is less than 10', () => {
+				vi.setSystemTime(new Date(2024, 0, 1, 13)); // 1 pm
+				const result = isFirstSolvedTodayGeneric({
+					totals: {
+						today: 1,
+						amount: 9
+					}
+				});
+				expect(result).toEqual({ success: false });
+			})
+
+			it('returns false when morning', () => {
+				vi.setSystemTime(new Date(2024, 0, 1, 6)); // 6 am
+				const result = isFirstSolvedTodayGeneric({
+					totals: {
+						today: 1,
+						amount: 11
+					}
+				});
+				expect(result).toEqual({ success: false });
+			})
+			it('returns true when not in morning and played today is 1', () => {
+				vi.setSystemTime(new Date(2024, 0, 1, 13)); // 1 pm
+				const resultSuccess = isFirstSolvedTodayGeneric({
+					totals: {
+						today: 1,
+						amount: 10
+					}
+				});
+				expect(resultSuccess).toEqual({ success: true, data: null });
+
+				const resultFail = isFirstSolvedTodayGeneric({
+					totals: {
+						today: 2,
+						amount: 10
+					}
+				});
+				expect(resultFail).toEqual({ success: false });
 			})
 		})
 	})
