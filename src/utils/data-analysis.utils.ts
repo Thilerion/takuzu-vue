@@ -39,3 +39,25 @@ export const median = (arr: number[], { sorted = false } = {}, data: DataAnalysi
 		return (sortedArr[half - 1] + sortedArr[half]) / 2;
 	}
 }
+
+/**
+ * Calculate the exponential moving average (EMA) of a series of values.
+ */
+export function calculateEma(values: number[], span: number): number {
+	const alpha = 2 / (span + 1);
+
+	if (span < 1) {
+		throw new Error("Span must be greater than or equal to 1");
+	}
+	
+	if (values.length < span) {
+		span = values.length;
+	}
+
+	const emaSeries: number[] = [values[0]];
+	for (let i = 1; i < values.length; i++) {
+		const next = (alpha * values[i]) + ((1 - alpha) * emaSeries[i - 1]);
+		emaSeries.push(next);
+	}
+	return emaSeries.at(-1)!;
+}
