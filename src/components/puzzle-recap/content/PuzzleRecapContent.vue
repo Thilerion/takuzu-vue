@@ -23,7 +23,7 @@
 			<div class="relative z-10">
 				<RecapContent.PuzzleType
 					:width="historyEntry!.width" :height="historyEntry!.height"
-					:solved="gameEndStats!.currentCounts.count"
+					:solved="gameEndStats?.currentCounts.count ?? null"
 					:difficulty-stars="historyEntry!.difficulty"
 					:difficulty-label="difficultyLabel"
 				/>
@@ -40,14 +40,15 @@
 		</div>
 
 		<RecapContent.RecapScores
-			:best="gameEndStats!.personalBest.best.timeElapsed"
-			:previous-best="gameEndStats!.personalBest.previousBest?.timeElapsed ?? null"
-			:average="gameEndStats!.averageTimes.average"
+			:data="recapScoresData"
 		></RecapContent.RecapScores>
 
 		<RecapContent.MessageStats :navigation-fn="goBackToRoute">
 			<template v-if="recapMessage" #default>
 				{{$t(recapMessage.key, recapMessage.namedProperties ?? {})}}
+			</template>
+			<template v-else-if="errorLoading" #default>
+				{{  $t('Recap.errorLoadingMessage') }}
 			</template>
 		</RecapContent.MessageStats>
 		
@@ -94,6 +95,7 @@ import { useI18n } from 'vue-i18n';
 import { usePuzzleRecapStore } from '@/stores/puzzle-recap';
 import type { SupportedLocale } from '@/i18n/constants.js';
 import { getRecordMessage } from '@/services/puzzle-recap/recordMessage.js';
+import type { RecapScoresDataProp } from './PuzzleRecapRecapScores.vue';
 
 const formatTimeMMSS = formatTimeMMSSWithRounding(200);
 
@@ -102,7 +104,7 @@ defineEmits<{
 }>();
 
 const puzzleRecapStore = usePuzzleRecapStore();
-const { historyEntry, gameEndStats } = storeToRefs(puzzleRecapStore);
+const { historyEntry, gameEndStats, errorLoading } = storeToRefs(puzzleRecapStore);
 const { locale } = useI18n();
 
 // Message data and related code for recap and record message
@@ -143,6 +145,15 @@ const note = computed(() => {
 
 const difficultyLabel = computed(() => {
 	return DIFFICULTY_LABELS[historyEntry.value!.difficulty];
+})
+
+const recapScoresData = computed((): null | RecapScoresDataProp => {
+	if (gameEndStats.value == null) return null;
+	return {
+		best: gameEndStats.value.personalBest.best.timeElapsed,
+		average: gameEndStats.value.averageTimes.average,
+		previousBest: gameEndStats.value.personalBest.previousBest?.timeElapsed ?? null
+	}
 })
 
 const route = useRoute();

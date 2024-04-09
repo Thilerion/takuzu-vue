@@ -21,6 +21,7 @@
 		],
 		"difficulty-label": "Difficulty",
 		"fallbackCompliment": "Good job!",
+		"errorLoadingMessage": "Uh-oh! There was an error loading the statistics, and this puzzle might not have been saved to your history. Our apologies for the inconvenience.",
 		"message": {
 			"almostTimeRecordAbsolute": "Oh, so close! You were just {differenceSec}s off setting a new personal record.",
 			"almostTimeRecordPercentage": "Nearly set a new personal best time! Just {differencePercentage} slower than your best.",

@@ -100,10 +100,7 @@ export class GameEndStats {
 	get isSavedToDb(): boolean {
 		return this.historyEntry.id !== undefined;
 	}
-	get isFavorite(): boolean {
-		const flag = this.historyEntry.flags?.favorite;
-		return !!flag;
-	}
+
 	get hasCheatsUsed(): boolean {
 		return !!(this.historyEntry.flags?.cheatsUsed);
 	}

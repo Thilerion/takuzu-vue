@@ -21,6 +21,7 @@
 		],
 		"difficulty-label": "Niveau",
 		"fallbackCompliment": "Good gedaan!",
+		"errorLoadingMessage": "Oeps! Er is een fout opgetreden bij het laden van de statistieken, en het is mogelijk dat deze puzzel niet in je geschiedenis is opgeslagen. Onze excuses hiervoor.",
 		"message": {
 			"almostTimeRecordAbsolute": "Oh, zo dichtbij! Je was maar {differenceSec}s verwijderd van een nieuw persoonlijk record.",
 			"almostTimeRecordPercentage": "Bijna een nieuw record gevestigd! Slechts {differencePercentage} langzamer dan je beste tijd.",

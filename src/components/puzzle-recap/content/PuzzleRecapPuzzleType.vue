@@ -6,7 +6,7 @@
 		</div>
 		<div class="py-2 px-4 flex-1 min-w-[30%] text-center rounded-full bg-gray-800/0">
 			<div class="tracking-[0.15em] text-white/80 font-medium uppercase text-center text-xxs">{{ $t('Recap.solved-label') }}</div>
-			<div class="min-w-max h-[1.15em]">{{solved}}</div>
+			<div class="min-w-max h-[1.15em]">{{solved ?? '??' }}</div>
 		</div>
 		<div class="py-2 px-4 w-1/3 text-center top-2 relative">
 			<div class="tracking-[0.15em] text-white/80 font-medium uppercase text-center text-xxs">{{ $t('Recap.difficulty-label') }}</div>
@@ -21,6 +21,6 @@ const props = defineProps<{
 	height: number,
 	difficultyStars: number,
 	difficultyLabel: string,
-	solved: number
+	solved: number | null, // null if error and amount solved is unknown
 }>();
 </script>

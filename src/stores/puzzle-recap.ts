@@ -8,6 +8,7 @@ export const usePuzzleRecapStore = defineStore('puzzleRecap', {
 		// ui state
 		modalShown: false,
 		initialized: false,
+		errorLoading: false,
 
 		historyEntry: null as StatsDbHistoryEntry | null,
 
@@ -93,9 +94,16 @@ export const usePuzzleRecapStore = defineStore('puzzleRecap', {
 
 		async initialize(item: StatsDbHistoryEntry | StatsDbHistoryEntryWithId) {
 			this.setHistoryEntry(item);
-			await this.initializeGameEndStats();
-			this.initialized = true;
-			this.modalShown = true;
+			this.errorLoading = false;
+			try {
+				await this.initializeGameEndStats();
+			} catch(e) {
+				this.errorLoading = true;
+				this.gameEndStats = null;
+			} finally {
+				this.initialized = true;
+				this.modalShown = true;
+			}
 		},
 
 		async initializeGameEndStats() {
