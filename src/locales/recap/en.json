@@ -33,6 +33,7 @@
 			"muchBetterThanAverageAbsolute": "What an achievement! You were {differenceSec}s faster than your average time.",
 			"muchBetterThanAveragePercentage": "That was way faster than average! You were {improvementPercentage} faster.",
 			"notAddedToDbCheats": "This puzzle wasn't saved to your history because you've cheated.",
+			"notAddedToDbUnexpected": "Uh-oh! This puzzle could not be saved to your history due to an unexpected error.",
 			"playsConfigToday": "Today, you played {count} puzzles of [{dimensions}] size at '@:{difficultyKey}' difficulty.",
 			"playsConfigTotal": "In total, you've solved {count} puzzles of [{dimensions}] size at '@:{difficultyKey}' difficulty.",
 			"playsToday": "You've already solved {totalSolvedToday} puzzles today.",

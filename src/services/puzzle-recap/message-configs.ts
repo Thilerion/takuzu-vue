@@ -20,6 +20,16 @@ export const recapMessageConfigs = [
 		i18nKey: () => "Recap.message.notAddedToDbCheats"
 	}),
 	createRecapMessageConfig({
+		type: 'notAddedToDbUnexpected',
+		priority: 14,
+		condition: (stats: Pick<GameEndStats, 'isSavedToDb' | 'hasCheatsUsed'>) => {
+			// Checks if the game was not saved to the database, and this was not due to cheats being used
+			if (!stats.isSavedToDb && !stats.hasCheatsUsed) return { success: true, data: null };
+			return { success: false };
+		},
+		i18nKey: () => "Recap.message.notAddedToDbUnexpected"
+	}),
+	createRecapMessageConfig({
 		type: 'firstTotal',
 		priority: 20,
 		condition: isFirstEverSolved,
@@ -216,8 +226,8 @@ export const recapMessageConfigs = [
 		type: 'top5Percent',
 		priority: 200, // same as "muchBetterThanAverage"
 		condition: isInTop5PercentOfTimes,
-		i18nKey: (data) => ({
-			key: "Recap.message.top5Percent",
+		i18nKey: (/* data */) => ({
+			key: "Recap.message.top5Percent"
 		})
 	}),
 

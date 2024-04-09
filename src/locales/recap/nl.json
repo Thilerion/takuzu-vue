@@ -33,6 +33,7 @@
 			"muchBetterThanAverageAbsolute": "Wat een prestatie! Je was {differenceSec}s sneller dan je gemiddelde tijd.",
 			"muchBetterThanAveragePercentage": "Dat was veel sneller dan gemiddeld! Je was {improvementPercentage} sneller.",
 			"notAddedToDbCheats": "Deze puzzel is niet opgeslagen in je geschiedenis, omdat je cheats hebt gebruikt.",
+			"notAddedToDbUnexpected": "Uh-oh! Deze puzzel kon niet worden opgeslagen in je geschiedenis vanwege een onverwachte fout.",
 			"playsConfigToday": "Vandaag heb je {count} puzzels van [{dimensions}] gespeeld op het '@:{difficultyKey}' niveau.",
 			"playsConfigTotal": "Je hebt in totaal {count} puzzels van [{dimensions}] opgelost op het '@:{difficultyKey}' niveau.",
 			"playsToday": "Vandaag heb je al {totalSolvedToday} puzzels opgelost.",

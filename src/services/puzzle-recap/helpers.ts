@@ -1,5 +1,4 @@
 import type { DimensionStr } from "@/lib/types";
-import { extent } from "@/utils/data-analysis.utils.js";
 import { timeFormatter } from "@/utils/date.utils";
 
 export function getPercentageSlower(faster: number, slower: number): number {
