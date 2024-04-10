@@ -35,6 +35,10 @@ export const usePuzzleRecapStore = defineStore('puzzleRecap', {
 		hideModal() {
 			this.modalShown = false;
 		},
+		closeRecapModal() {
+			this.hideModal();
+			this.reset();
+		},
 		toggleModal(val?: boolean) {
 			if (val == null) {
 				this.modalShown = !this.modalShown;

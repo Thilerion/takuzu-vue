@@ -4,7 +4,7 @@ import { usePuzzleStore } from "@/stores/puzzle/store.js";
 import { useRoute, useRouter } from "vue-router";
 
 export const usePuzzleRecapModalActions = () => {
-	const hideModal = () => puzzleRecapStore.hideModal();
+	const closeRecapModal = () => puzzleRecapStore.closeRecapModal();
 	const route = useRoute();
 	const router = useRouter();
 	const puzzleRecapStore = usePuzzleRecapStore();
@@ -124,7 +124,7 @@ export const usePuzzleRecapModalActions = () => {
 			console.error(e);
 			goBackToRoute('NewPuzzleFreePlay');
 		} finally {
-			hideModal();
+			closeRecapModal();
 		}
 	}
 
