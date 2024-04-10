@@ -39,7 +39,7 @@ const currentBrowserPrefMessage = computed(() => {
 		case 'dark': return t('Settings.appThemeMode.dark').toLowerCase();
 		case 'light': return t('Settings.appThemeMode.light').toLowerCase();
 		default: {
-			const x: never = currentBrowserPreference.value;
+			const _x: never = currentBrowserPreference.value;
 			return t('unknown');
 		}
 	}

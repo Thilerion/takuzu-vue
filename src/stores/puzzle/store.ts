@@ -389,7 +389,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			}
 
 			try {
-				let historyEntry: StatsDbHistoryEntry | StatsDbHistoryEntryWithId = StatsDbHistoryEntry.fromPuzzleState(finishedPuzzleState);
+				const historyEntry: StatsDbHistoryEntry | StatsDbHistoryEntryWithId = StatsDbHistoryEntry.fromPuzzleState(finishedPuzzleState);
 
 				let shouldSaveToDb = true;
 

@@ -1,6 +1,6 @@
 // @ts-check
 /* eslint-env node */
-require('@rushstack/eslint-patch/modern-module-resolution');
+require("@rushstack/eslint-patch/modern-module-resolution");
 
 /**
  * @type {import("eslint").Linter.Config}
@@ -8,32 +8,35 @@ require('@rushstack/eslint-patch/modern-module-resolution');
 const config = {
 	root: true,
 	env: {
-		'es2022': true,
-		'node': true
+		"es2024": true,
+		"node": true,
+		"browser": true
 	},
 	extends: [
-		'plugin:vue/vue3-essential',
-		'eslint:recommended',
-		'@vue/eslint-config-typescript/recommended'
+		"eslint:recommended",
+		"plugin:vue/vue3-essential",
+		"@vue/eslint-config-typescript/recommended"
 	],
 	parserOptions: {
-		ecmaVersion: 'latest'
+		ecmaVersion: "latest"
 	},
 	rules: {
 		"@typescript-eslint/ban-ts-comment": [1, {
-			'ts-expect-error': 'allow-with-description',
-			'ts-ignore': 'allow-with-description',
-			'ts-nocheck': 'allow-with-description',
-			'ts-check': false,
+			"ts-expect-error": "allow-with-description",
+			"ts-ignore": "allow-with-description",
+			"ts-nocheck": "allow-with-description",
+			"ts-check": false,
 			minimumDescriptionLength: 10
 		}],
-		"no-undef": 'off',
-		"no-unused-vars": 'off',
-		"@typescript-eslint/no-unused-vars": ["error", { "ignoreRestSiblings": true, "varsIgnorePattern": "^(props|emit)$" }],
-		"prefer-const": ["error", {"destructuring": "all"}],
+		"@typescript-eslint/no-unused-vars": ["error", { "ignoreRestSiblings": true, "varsIgnorePattern": "(^(props|emit)$)|(^_)" }],
 		"@typescript-eslint/no-non-null-assertion": 0,
-		"@typescript-eslint/no-explicit-any": ["warn", { "ignoreRestArgs": true }],
+		"@typescript-eslint/no-explicit-any": "off",
+		"@typescript-eslint/array-type": ["warn", { "default": "array", "readonly": "generic" }],
+
 		"no-empty": ["error", { "allowEmptyCatch": true }],
+		"no-undef": "off",
+		"no-unused-vars": "off",
+		"prefer-const": ["error", {"destructuring": "all"}],
 	},
 	"overrides": [
 		{

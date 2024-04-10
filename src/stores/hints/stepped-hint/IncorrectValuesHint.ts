@@ -1,4 +1,4 @@
-import type { BoardAndSolutionBoards, VecValue } from "@/lib/types.js";
+import type { VecValue } from "@/lib/types.js";
 import { BaseSteppedHint, type HintStepsData } from "./SteppedHint.js";
 import type { FoundIncorrectValue } from "@/lib/mistakes/types.js";
 import type { HintStepFinal, HintStepIntermediate } from "./types.js";
@@ -58,7 +58,7 @@ export class IncorrectValuesSteppedHint extends BaseSteppedHint {
 		this.steps = [firstStep, finalStep];
 	}
 
-	validate({ board, solution }: BoardAndSolutionBoards) {
+	validate(/* { board, solution }: BoardAndSolutionBoards */) {
 		// TODO: validate incorrectValuesHint
 		return false;
 	}

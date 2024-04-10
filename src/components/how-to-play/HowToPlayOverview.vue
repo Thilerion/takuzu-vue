@@ -128,40 +128,7 @@
 
 <script setup lang="ts">
 import { splitLine } from '@/lib/utils/puzzle-line.utils.js';
-import { useI18n } from 'vue-i18n';
-import { injectCellThemeData } from '@/components/gameboard/composables/useCellThemeProvider.js'
-import { computed } from 'vue';
 import HowToPlayThemedTranslation from './HowToPlayThemedTranslation.vue';
-
-const { theme, type } = injectCellThemeData();
-const { t } = useI18n();
-
-const themedStrings = computed(() => {
-	switch (theme.value) {
-		case 'classic': {
-			return {
-				'symbolOne': t('Themed.classic.one'),
-				'symbolZero': t('Themed.classic.zero'),
-			}
-		}
-		case 'blue-red': {
-			return {
-				'symbolOne': t('Themed.bluered.one'),
-				'symbolZero': t('Themed.bluered.zero'),
-			}
-		}
-		case 'tictactoe': {
-			return {
-				'symbolOne': t('Themed.tictactoe.one'),
-				'symbolZero': t('Themed.tictactoe.zero'),
-			}
-		}
-		default: {
-			const x: never = theme.value;
-			throw new Error('unexpected theme in themedStrings');
-		}
-	}
-})
 
 </script>
 

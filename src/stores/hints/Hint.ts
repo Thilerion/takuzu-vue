@@ -4,7 +4,6 @@ import type { Vec } from "@/lib/types.js";
 import type { DuplicateLineTechniqueResult } from "@/lib/human-solver/duplicate.js";
 import { usePuzzleStore } from "../puzzle/store.js";
 import { lineTypeFromLineId } from "@/lib/utils/puzzle-line.utils.js";
-import type { GenericEliminationTechniqueResult } from "@/lib/solvers/human-solver/techniques/GenericEliminationTechnique.js";
 
 export const HINT_TYPE = {
 	MISTAKE: 'MISTAKE',

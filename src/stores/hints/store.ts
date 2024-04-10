@@ -5,7 +5,7 @@ import { validateHint } from "../hints/helpers.js";
 import { searchForHint } from "../hints/search.js";
 import { usePuzzleStore } from "../puzzle/store.js";
 import { useHintHighlightsStore } from "./highlights-store.js";
-import { computed, reactive, readonly, ref, watchEffect } from "vue";
+import { computed, reactive, readonly, ref } from "vue";
 import type { SteppedHint } from "./stepped-hint/types.js";
 
 export const usePuzzleHintsStore = defineStore('puzzleHints', () => {

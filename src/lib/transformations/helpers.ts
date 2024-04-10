@@ -12,10 +12,10 @@ export function getTransformationConfigFromKey<K extends TransformationKey>(key:
 }
 
 const createTransformationConfigs = (
-	r: readonly RotationTransform[],
-	f: readonly FlipTransform[],
-	i: readonly SymbolInversionTransform[]
-): readonly BaseTransformationConfig[] => {
+	r: ReadonlyArray<RotationTransform>,
+	f: ReadonlyArray<FlipTransform>,
+	i: ReadonlyArray<SymbolInversionTransform>
+): ReadonlyArray<BaseTransformationConfig> => {
 	const result: BaseTransformationConfig[] = [];
 	for (const rot of r) {
 		for (const flip of f) {
@@ -45,7 +45,7 @@ export const oddBoardTransformationConfigs = createTransformationConfigs(
 
 export const boardShapeTypeValidTransformationConfigs = (
 	shapeType: BoardShapeType
-): readonly BaseTransformationConfig[] => {
+): ReadonlyArray<BaseTransformationConfig> => {
 	switch (shapeType) {
 		case 'square':
 			return squareBoardTransformationConfigs;

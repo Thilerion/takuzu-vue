@@ -48,7 +48,7 @@ const BALANCE_HINT_MESSAGE: HintMessageFnArray<BalanceSteppedHint> = [
 		const puzzleStore = usePuzzleStore();
 		const lineSize = hint.lineType === 'row' ? puzzleStore.board!.width : puzzleStore.board!.height;
 		const numRequired = lineSizeToNumRequired(lineSize);
-		let isOddSized = numRequired[ZERO] !== numRequired[ONE];
+		const isOddSized = numRequired[ZERO] !== numRequired[ONE];
 
 		const messageKey = isOddSized ? 'Hints.Balance.message-2-odd' : 'Hints.Balance.message-2';
 		return { messageKey, namedProperties: {
@@ -80,7 +80,7 @@ const BALANCE_HINT_MESSAGE: HintMessageFnArray<BalanceSteppedHint> = [
 ] 
 
 const INCORRECT_VALUES_HINT_MESSAGE: HintMessageFnArray<IncorrectValuesSteppedHint> = [
-	(hint) => ({
+	() => ({
 		messageKey: 'Hints.IncorrectValues.message-1',
 	}),
 	() => ({ messageKey: 'Hints.IncorrectValues.message-2' }),

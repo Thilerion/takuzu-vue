@@ -18,7 +18,8 @@
     "test:bench": "vitest bench",
     "test": "run-s test:unit",
     "type-check": "vue-tsc --project tsconfig.app.json --noEmit",
-    "lint": "eslint src --ext .vue,.js,.cjs,.mjs,.ts,.cts,.mts,.jsx,.tsx --ignore-path .gitignore --fix",
+    "lint": "eslint . --ext .vue,.js,.cjs,.mjs,.ts,.cts,.mts,.jsx,.tsx --ignore-path .gitignore --fix",
+    "lint:src": "eslint src --ext .vue,.js,.cjs,.mjs,.ts,.cts,.mts,.jsx,.tsx --ignore-path .gitignore --fix",
     "lint:nofix": "eslint . --ext .vue,.js,.cjs,.mjs,.ts,.cts,.mts,.jsx,.tsx --ignore-path .gitignore"
   },
   "dependencies": {

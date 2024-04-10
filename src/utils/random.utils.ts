@@ -12,14 +12,14 @@ export const randomIntBetween = (min: number, max: number, rng: RngSource = Math
 
 export const randomIntBetweenIncl = (min: number, maxIncl: number, rng: RngSource = Math.random) => randomIntBetween(min, maxIncl + 1, rng);
 
-export const getRandomItem = <T>(arr: readonly T[], rng: RngSource = Math.random) => arr[randomInt(arr.length, rng)];
+export const getRandomItem = <T>(arr: ReadonlyArray<T>, rng: RngSource = Math.random) => arr[randomInt(arr.length, rng)];
 
 export const pluckRandomItem = <T>(arr: T[], rng: RngSource = Math.random): T => {
 	const idx = randomInt(arr.length, rng);
 	return arr.splice(idx, 1)[0];
 }
 
-export const sample = <T>(arr: readonly T[], amount = 1, rng: RngSource = Math.random): T[] => {
+export const sample = <T>(arr: ReadonlyArray<T>, amount = 1, rng: RngSource = Math.random): T[] => {
 	if(amount < 1) {
 		throw new Error('Amount to sample must be at least one.');
 	} else if (amount === 1) {

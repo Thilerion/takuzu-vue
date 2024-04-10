@@ -186,7 +186,7 @@ const boardSizeFilterValues = computed({
 	get() {
 		return currentFilters.boardSize?.length ? currentFilters.boardSize : [];
 	},
-	set(value: readonly string[]) {
+	set(value: ReadonlyArray<string>) {
 		setFilter('boardSize', [...value]);
 	}
 })
