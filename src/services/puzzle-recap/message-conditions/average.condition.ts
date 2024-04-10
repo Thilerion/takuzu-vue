@@ -84,3 +84,74 @@ export const wasSolvedFasterThanAverageTime = (
 		}
 	}
 }
+
+type SolvedFasterThanAverageConsecutivelyStatData = Pick<GameEndStats, 'getNumSolvedWithConfig' | 'personalBest' | 'averageTimes' | 'getTimeElapsed' | 'puzzleTimes'>;
+function getAmountConsecutivelySolvedFasterThanAverage(
+	stats: SolvedFasterThanAverageConsecutivelyStatData
+): number {
+	const isTimeRecord = stats.personalBest.isTimeRecord();
+	if (isTimeRecord) return 0;
+
+	const { previousAverage } = stats.averageTimes;
+	if (previousAverage == null) return 0;
+
+	// No time in the consecutive range may be slower than or equal to the average, and none may be the best time
+	const bestTime = stats.personalBest.best.timeElapsed;
+	const previousTimes = stats.puzzleTimes.timesRecentFirst;
+
+	let consecutive = 0;
+	for (let i = 0; i < previousTimes.length; i++) {
+		const time = previousTimes[i];
+
+		if (time >= previousAverage || time <= bestTime) break;
+		consecutive += 1;
+	}
+
+	return consecutive;
+}
+
+export const wasSolvedFasterThanAverage3Or5TimesConsecutively = (
+	stats: SolvedFasterThanAverageConsecutivelyStatData
+): RecapMessageConditionResult<{ consecutiveTimes: number }> => {
+	const count = stats.getNumSolvedWithConfig();
+	if (count < 25) return { success: false };
+
+	const amount = getAmountConsecutivelySolvedFasterThanAverage(stats);
+	const success = amount === 3 || amount === 5;
+	if (success) {
+		return { success: true, data: { consecutiveTimes: amount } };
+	} else {
+		return { success: false };
+	}
+}
+
+export const wasSolvedFasterThanAverageTenTimesExactlyConsecutively = (
+	stats: SolvedFasterThanAverageConsecutivelyStatData
+): RecapMessageConditionResult<{ consecutiveTimes: number }> => {
+	const count = stats.getNumSolvedWithConfig();
+	if (count < 75) return { success: false };
+
+	const amount = getAmountConsecutivelySolvedFasterThanAverage(stats);
+
+	const success = amount === 10;
+	if (success) {
+		return { success: true, data: { consecutiveTimes: amount } };
+	} else {
+		return { success: false };
+	}
+}
+
+export const wasSolvedFasterThanAverageMoreThanTenTimesConsecutively = (
+	stats: SolvedFasterThanAverageConsecutivelyStatData
+): RecapMessageConditionResult<{ consecutiveTimes: number, min: 10 }> => {
+	const count = stats.getNumSolvedWithConfig();
+	if (count < 75) return { success: false };
+
+	const amount = getAmountConsecutivelySolvedFasterThanAverage(stats);
+	const success = amount > 10;
+	if (success) {
+		return { success: true, data: { consecutiveTimes: amount, min: 10 } };
+	} else {
+		return { success: false };
+	}
+}

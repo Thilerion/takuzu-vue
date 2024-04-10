@@ -36,6 +36,7 @@ export interface IPuzzleReplayStatistics {
 	previousPlays: StatsDbHistoryEntryWithId[]
 }
 export interface IPuzzleTimeStatistics {
+	timesRecentFirst: number[];
 	sortedTimes: number[];
 }
 

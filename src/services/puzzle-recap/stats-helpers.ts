@@ -119,7 +119,11 @@ export async function getPuzzleReplayStats(entry: StatsDbHistoryEntryWithId | St
 }
 
 export function getPuzzleTimeStatisticsFromItems(items: StatsDbHistoryEntryWithId[]): IPuzzleTimeStatistics {
-	return { 
+	// Sort shallow copy of items by timestamp, so the newest is first
+	const itemsByDate = [...items].sort((a, b) => b.timestamp - a.timestamp);
+
+	return {
+		timesRecentFirst: itemsByDate.map(val => val.timeElapsed),
 		sortedTimes: items.map(val => val.timeElapsed)
 	}
 }

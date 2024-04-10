@@ -6,7 +6,7 @@ import { formatLocaleOrdinal } from "@/i18n/format-ordinal";
 import { isFirstEverSolved, isFirstOfDifficultySolved, isFirstSolvedWithPuzzleConfig, isFirstWithDimensionsSolved, isHardestEverSolved } from "./message-conditions/firsts.condition.js";
 import { isAlmostTimeRecord, isSolvedWithLargeTimeRecordImprovement, isSolvedWithTimeRecordImprovement } from "./message-conditions/time-record.condition.js";
 import { hasSolvedAmountInTotal, hasSolvedAmountToday, hasSolvedAmountWithConfigInTotal, hasSolvedAmountWithConfigToday, isFirstSolvedTodayGeneric, isFirstSolvedTodayInMorning } from "./message-conditions/num-plays.condition.js";
-import { wasSolvedFasterThanAverageTime, wasSolvedMuchFasterThanAverageTime } from "./message-conditions/average.condition.js";
+import { wasSolvedFasterThanAverage3Or5TimesConsecutively, wasSolvedFasterThanAverageMoreThanTenTimesConsecutively, wasSolvedFasterThanAverageTenTimesExactlyConsecutively, wasSolvedFasterThanAverageTime, wasSolvedMuchFasterThanAverageTime } from "./message-conditions/average.condition.js";
 import { isInTop5PercentOfTimes, isTop5FastestTime } from "./message-conditions/rank.condition.js";
 
 export const recapMessageConfigs = [
@@ -190,6 +190,29 @@ export const recapMessageConfigs = [
 		}
 	}),
 
+	// Prioritized above "fasterThanAverage more than 10 times consecutively", because it is shown at exactly 10 times.
+	// This removes the drawback that it can be shown many times in a row.
+	createRecapMessageConfig({
+		type: 'fasterThanAverageConsecutivelyTenTimesExactly',
+		priority: 175,
+		condition: wasSolvedFasterThanAverageTenTimesExactlyConsecutively,
+		i18nKey: ({ consecutiveTimes }) => ({
+			key: "Recap.message.betterThanAverageConsecutivelyTenExact",
+			namedProperties: { consecutiveTimes }
+		})
+	}),
+
+	// Faster than average consecutively 11+ times has one drawback: it can potentially be shown at 11 times, 12 times, etc, which might get repetitive.
+	// However, priority is equal to muchBetterThanAverage, and the chance one is faster than average so many times is, I think, low enough.
+	createRecapMessageConfig({
+		type: 'fasterThanAverageConsecutivelyMoreThanTenTimes',
+		priority: 200,
+		condition: wasSolvedFasterThanAverageMoreThanTenTimesConsecutively,
+		i18nKey: ({ consecutiveTimes }) => ({
+			key: "Recap.message.betterThanAverageConsecutivelyMoreThanTenTimes",
+			namedProperties: { consecutiveTimes }
+		})
+	}),
 	createRecapMessageConfig({
 		type: 'muchBetterThanAverage',
 		priority: 200,
@@ -237,6 +260,16 @@ export const recapMessageConfigs = [
 		priority: 250,
 		condition: isFirstSolvedTodayInMorning,
 		i18nKey: () => "Recap.message.firstTodayMorning"
+	}),
+
+	createRecapMessageConfig({
+		type: 'fasterThanAverageConsecutiveTimesExactly',
+		priority: 290, // just before "betterThanAverage"
+		condition: wasSolvedFasterThanAverage3Or5TimesConsecutively,
+		i18nKey: ({ consecutiveTimes }) => ({
+			key: "Recap.message.fasterThanAverageConsecutiveTimesExactly",
+			namedProperties: { consecutiveTimes }
+		})
 	}),
 
 	createRecapMessageConfig({
