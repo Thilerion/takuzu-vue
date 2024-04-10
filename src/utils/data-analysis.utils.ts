@@ -17,19 +17,19 @@ export const minMaxSum = (arr: number[]) => arr.reduce((acc, val) => {
 	return acc;
 }, { min: Infinity, max: -Infinity, sum: 0 });
 
-export const average = (arr: number[], data: DataAnalysisCache): number => {
+export const getAverage = (arr: number[], data: DataAnalysisCache = {}): number => {
 	const count = data.count ?? arr.length;
 	const summed = data.sum ?? sum(arr);
 	return summed / count;
 }
 
-const getSortedArr = (arr: number[], isSorted = false, data: DataAnalysisCache): number[] => {
+const getSortedArr = (arr: number[], isSorted = false, data: DataAnalysisCache = {}): number[] => {
 	if (isSorted) return arr;
 	if (data.sortedArr) return data.sortedArr;
 	return (data.sortedArr = [...arr].sort((a, z) => a - z));
 }
 
-export const median = (arr: number[], { sorted = false } = {}, data: DataAnalysisCache): number => {
+export const getMedian = (arr: number[], { sorted = false } = {}, data: DataAnalysisCache = {}): number => {
 	const count = data.count ?? arr.length;
 	const sortedArr = getSortedArr(arr, sorted, data);
 	const half = Math.floor(count / 2);
@@ -38,6 +38,30 @@ export const median = (arr: number[], { sorted = false } = {}, data: DataAnalysi
 	} else {
 		return (sortedArr[half - 1] + sortedArr[half]) / 2;
 	}
+}
+
+export const getVariance = (
+	arr: number[],
+	datasetOpts: DatasetOptions = { type: 'population' }
+): number => {
+	const avg = getAverage(arr, {});
+	const n = arr.length;
+	const summedDifferences = arr.reduce((acc, val) => acc + Math.pow(val - avg, 2), 0);
+	if (datasetOpts.type === 'population') {
+		return summedDifferences / n;
+	} else if (datasetOpts.type === 'sample') {
+		return summedDifferences / (n - 1);
+	} else {
+		throw new Error(`Invalid dataset type: ${datasetOpts.type}`);
+	}
+}
+
+export const getStdDev = (
+	arr: number[],
+	datasetOpts?: DatasetOptions
+) => {
+	const variance = getVariance(arr, datasetOpts);
+	return Math.sqrt(variance);
 }
 
 /**
@@ -81,4 +105,45 @@ export function calculateDynamicWeightedMovingAverage(values: number[], getWeigh
 		return getWeight(length - i - 1, i, values);
 	})
 	return calculateWeightedMovingAverage(values, weights);
+}
+
+export function asLogNormalDataset(dataset: number[]) {
+	return dataset.map(val => Math.log(val));
+}
+
+export type DatasetOptions = {
+	type: 'sample' | 'population'
+}
+
+export function getZScore(
+	target: number,
+	mean: number,
+	stdDev: number
+): number {
+	return (target - mean) / stdDev;
+}
+
+export function isPotentialOutlier(
+	target: number,
+	mean: number,
+	stdDev: number,
+	threshold = 3
+): { result: false } | { result: true, zScore: number } {
+	const zScore = getZScore(target, mean, stdDev);
+	const absZScore = Math.abs(zScore);
+	if (absZScore > threshold) {
+		return { result: true, zScore };
+	} else {
+		return { result: false };
+	}
+}
+
+export function isPotentialOutlierFromDataset(
+	target: number,
+	dataset: number[],
+	threshold?: number,
+) {
+	const mean = getAverage(dataset);
+	const stdDev = getStdDev(dataset, { type: 'sample' });
+	return isPotentialOutlier(target, mean, stdDev, threshold);
 }

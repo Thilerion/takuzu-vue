@@ -1,5 +1,5 @@
 import { groupBy } from "@/utils/array.ts.utils";
-import { minMaxSum, average, median } from '@/utils/data-analysis.utils';
+import { minMaxSum, getAverage, getMedian } from '@/utils/data-analysis.utils';
 import type { StatsDbExtendedStatisticDataEntry } from "../db/stats-db/models.js";
 
 interface MinMaxSumResult {
@@ -36,8 +36,8 @@ function summarizeGroup(times: number[] = []) {
 		count: times.length,
 	} as Summary;
 	Object.assign(summary, minMaxSum(times));
-	summary.average = average(times, summary);
-	summary.median = median(times, { sorted: false }, summary);
+	summary.average = getAverage(times, summary);
+	summary.median = getMedian(times, { sorted: false }, summary);
 	return summary;
 }
 

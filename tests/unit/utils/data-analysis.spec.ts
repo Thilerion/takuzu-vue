@@ -1,4 +1,4 @@
-import { calculateDynamicWeightedMovingAverage, calculateEma } from "@/utils/data-analysis.utils.js";
+import { calculateDynamicWeightedMovingAverage, calculateEma, getAverage, getStdDev, getVariance } from "@/utils/data-analysis.utils.js";
 
 describe('data analysis utils', () => {
 	describe('exponential moving average', () => {
@@ -65,5 +65,33 @@ describe('data analysis utils', () => {
 			expect(result).toBe(average);
 		})
 
+	})
+
+	describe('descriptive statistics', () => {
+		let datasetA: number[];
+		beforeEach(() => {
+			datasetA = [1, 2, 4, 3, 3, 4, 12, 6, 8, 1, 12];
+		})
+
+		test('getAverage', () => {
+			const average = getAverage(datasetA);
+			expect(average).toBeCloseTo(5.091);
+		})
+
+		test('getVariance', () => {
+			const variancePop = getVariance(datasetA);
+			expect(variancePop).toBeCloseTo(14.45);
+
+			const varianceSample = getVariance(datasetA, { type: 'sample' });
+			expect(varianceSample).toBeCloseTo(15.89);
+		})
+
+		test('getStdDev', () => {
+			const stdDevPop = getStdDev(datasetA);
+			expect(stdDevPop).toBeCloseTo(3.800);
+
+			const stdDevSample = getStdDev(datasetA, { type: 'sample' });
+			expect(stdDevSample).toBeCloseTo(3.986);
+		})
 	})
 })
