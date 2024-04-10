@@ -74,17 +74,25 @@ export class GameEndStats {
 	}
 	
 	static async init(entry: StatsDbHistoryEntry | StatsDbHistoryEntryWithId) {
-		// entries are sorted by timeElapsed, with fastest items first
-		// TODO: add test to ensure that the items are sorted by timeElapsed
-		const { items, previousItems } = await getPreviousItemsWithPuzzleConfig(entry, entry.id ?? null);
+		const asyncResults = await Promise.all([
+			getPreviousItemsWithPuzzleConfig(entry, entry.id ?? null),
+			getHistoryTotals(),
+			getUniquePlayedPuzzleConfigs(),
+			getPuzzleReplayStats(entry)
+		]);
+		const [
+			// entries are sorted by timeElapsed, with fastest items first
+			// TODO: add test to ensure that the items are sorted by timeElapsed
+			{ items, previousItems },
+			historyTotals,
+			uniqueConfigs,
+			replayStats
+		] = asyncResults;		
 
+		const currentCounts = await getPuzzleCurrentCounts(entry, items, previousItems);
 		const personalBestStats = PersonalBestGameEndStats.fromItems(entry, items, previousItems);
 		const averageTimes = AverageTimeGameEndStats.fromItems(items, previousItems);
 		const puzzleTimes = getPuzzleTimeStatisticsFromItems(items);
-		const currentCounts = await getPuzzleCurrentCounts(entry, items, previousItems);
-		const historyTotals = await getHistoryTotals();
-		const uniqueConfigs = await getUniquePlayedPuzzleConfigs();
-		const replayStats = await getPuzzleReplayStats(entry);
 
 		return new GameEndStats(
 			entry,

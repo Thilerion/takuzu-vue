@@ -3,6 +3,13 @@ import { startOfDay } from "date-fns";
 import { statsDb } from "../db/stats-db/init";
 import type { StatsDbHistoryEntryWithId, StatsDbHistoryEntry } from "../db/stats-db/models";
 import type { IPuzzleConfigCounts, IHistoryTotals, IUniquePuzzleConfigurationPlayed, IPuzzleReplayStatistics, IPuzzleTimeStatistics } from "./GameEndStats";
+
+/**
+ * Get all (previously) played puzzles with the same width, height, and difficulty as the current puzzle, sorted by time elapsed
+ * @param config Basic puzzle config, consisting of width, height, and difficulty
+ * @param id The id of the current/last played puzzle, if any
+ * @returns An object containing all previously played puzzles, and all previously played puzzles except the current one, sorted by time elapsed (with fastest first)
+ */
 export async function getPreviousItemsWithPuzzleConfig(config: BasicPuzzleConfig, id: number | null): Promise<{ items: StatsDbHistoryEntryWithId[], previousItems: StatsDbHistoryEntryWithId[] }> {
 	const { width, height, difficulty } = config;
 	const items = await statsDb
