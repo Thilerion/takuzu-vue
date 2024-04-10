@@ -13,24 +13,24 @@ export const wasSolvedMuchFasterThanAverageTime = (
 	if (count < 6) return { success: false };
 	const timeElapsed = stats.getTimeElapsed();
 	const isTimeRecord = stats.personalBest.isTimeRecord();
-	const { previousAverage } = stats.averageTimes;
-	if (previousAverage == null) {
+	const { previousWeightedAverage } = stats.averageTimes;
+	if (previousWeightedAverage == null) {
 		// shouldn't happen, as count > 5, but just in case
 		return { success: false };
 	}
 
 	if (isTimeRecord) return { success: false };
-	if (timeElapsed >= previousAverage) return { success: false };
+	if (timeElapsed >= previousWeightedAverage) return { success: false };
 
-	const timeDifference = previousAverage - timeElapsed; // time faster than average
-	const percentageDifference = getPercentageFaster(previousAverage, timeElapsed);
+	const timeDifference = previousWeightedAverage - timeElapsed; // time faster than average
+	const percentageDifference = getPercentageFaster(previousWeightedAverage, timeElapsed);
 	
 	
 	// TODO: tweak all these values and checks and magic numbers
 	const bestTime = stats.personalBest.best.timeElapsed;
 
 	// Calculate the current time's proportion within the range from best to average
-	const avgToBestRange = previousAverage - bestTime;
+	const avgToBestRange = previousWeightedAverage - bestTime;
     const proportionInRange = (timeElapsed - bestTime) / avgToBestRange;
 	// When proportionInRange is closer to < 0.5, the current time is closer to the best time than to the average time.
 
@@ -69,7 +69,7 @@ export const wasSolvedFasterThanAverageTime = (
 	if (count < 4) return { success: false };
 	const timeElapsed = stats.getTimeElapsed();
 	const isTimeRecord = stats.personalBest.isTimeRecord();
-	const { previousAverage } = stats.averageTimes;
+	const { previousWeightedAverage: previousAverage } = stats.averageTimes;
 	// shouldn't happen, as count > 3, but just in case
 	if (previousAverage == null) return { success: false };
 	if (isTimeRecord || timeElapsed >= previousAverage) return { success: false };
@@ -92,7 +92,7 @@ function getAmountConsecutivelySolvedFasterThanAverage(
 	const isTimeRecord = stats.personalBest.isTimeRecord();
 	if (isTimeRecord) return 0;
 
-	const { previousAverage } = stats.averageTimes;
+	const { previousWeightedAverage: previousAverage } = stats.averageTimes;
 	if (previousAverage == null) return 0;
 
 	// No time in the consecutive range may be slower than or equal to the average, and none may be the best time

@@ -151,7 +151,7 @@ const recapScoresData = computed((): null | RecapScoresDataProp => {
 	if (gameEndStats.value == null) return null;
 	return {
 		best: gameEndStats.value.personalBest.best.timeElapsed,
-		average: gameEndStats.value.averageTimes.average,
+		average: gameEndStats.value.averageTimes.weightedAverage,
 		previousBest: gameEndStats.value.personalBest.previousBest?.timeElapsed ?? null
 	}
 })

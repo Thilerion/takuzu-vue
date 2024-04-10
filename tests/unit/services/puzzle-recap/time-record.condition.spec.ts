@@ -133,7 +133,7 @@ describe('time-record.condition', () => {
 				best: { timeElapsed: 1000, id: 1 },
 				previousBest: { timeElapsed: 1000, id: 1 },
 			})
-			const averageTimes = { average: 10_000 };
+			const averageTimes = { weightedAverage: 10_000 };
 			expect(isAlmostTimeRecord({
 				currentCounts: { count: 3 },
 				personalBest: pb,
@@ -153,7 +153,7 @@ describe('time-record.condition', () => {
 				personalBest: {
 					isTimeRecord: () => true
 				} as PersonalBestGameEndStats,
-				averageTimes: { average: 0 }
+				averageTimes: { weightedAverage: 0 }
 			})).toEqual({ success: false });
 		})
 
@@ -164,7 +164,7 @@ describe('time-record.condition', () => {
 				previousBest: { timeElapsed: 1000, id: 1 },
 			})
 			const currentCounts = { count: 100 };
-			const averageTimes = { average: 1000 }; // current time is slower than average (this is a improbable average)
+			const averageTimes = { weightedAverage: 1000 }; // current time is slower than average (this is a improbable average)
 			expect(isAlmostTimeRecord({ personalBest: pb, currentCounts, averageTimes })).toEqual({ success: false });
 		})
 
@@ -175,7 +175,7 @@ describe('time-record.condition', () => {
 				previousBest: { timeElapsed: 1000, id: 1 },
 			})
 			const currentCounts = { count: 100 };
-			const averageTimes = { average: 10_000 };
+			const averageTimes = { weightedAverage: 10_000 };
 			const result = isAlmostTimeRecord({ personalBest: pb, currentCounts, averageTimes });
 			expect(result.success).toBe(true);
 
