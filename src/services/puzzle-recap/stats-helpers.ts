@@ -5,10 +5,10 @@ import type { StatsDbHistoryEntryWithId, StatsDbHistoryEntry } from "../db/stats
 import type { IPuzzleConfigCounts, IHistoryTotals, IUniquePuzzleConfigurationPlayed, IPuzzleReplayStatistics, IPuzzleTimeStatistics } from "./GameEndStats";
 export async function getPreviousItemsWithPuzzleConfig(config: BasicPuzzleConfig, id: number | null): Promise<{ items: StatsDbHistoryEntryWithId[], previousItems: StatsDbHistoryEntryWithId[] }> {
 	const { width, height, difficulty } = config;
-	const items = await statsDb.puzzleHistory
-			.where('[width+height+difficulty]')
-			.equals([width, height, difficulty])
-		.sortBy('timeElapsed');
+	const items = await statsDb
+			.puzzleHistory
+			.where({ width, height, difficulty })
+			.sortBy('timeElapsed');
 	const previousItems = id == null ? items : items.filter(val => val.id !== id);
 	return { items, previousItems };
 }

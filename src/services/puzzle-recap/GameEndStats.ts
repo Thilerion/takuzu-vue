@@ -3,6 +3,7 @@ import type { StatsDbHistoryEntry, StatsDbHistoryEntryWithId } from "../db/stats
 import { getPreviousItemsWithPuzzleConfig, getPuzzleCurrentCounts, getHistoryTotals, getUniquePlayedPuzzleConfigs, getPuzzleReplayStats, getPuzzleTimeStatisticsFromItems } from "./stats-helpers.js";
 import { getPercentageFaster, getPercentageSlower } from "./helpers.js";
 import type { PickRequired } from "@/types.js";
+import { calculateDynamicWeightedMovingAverage } from "@/utils/data-analysis.utils.js";
 
 /** Count/previousCount and count today for how many puzzles played with this specific puzzle config */
 export interface IPuzzleConfigCounts {
@@ -176,14 +177,22 @@ export class AverageTimeGameEndStats {
 	average: number;
 	previousAverage: number | null;
 
+	weightedAverage: number;
+	previousWeightedAverage: number | null;
+
 	constructor(
 		data: {
 			average: number,
-			previousAverage: number | null
+			previousAverage: number | null,
+			weightedAverage: number,
+			previousWeightedAverage: number | null
 		}
 	) {
 		this.average = data.average;
 		this.previousAverage = data.previousAverage;
+
+		this.weightedAverage = data.weightedAverage;
+		this.previousWeightedAverage = data.previousWeightedAverage;
 	}
 
 	static fromItems(
@@ -193,12 +202,30 @@ export class AverageTimeGameEndStats {
 		const timeSum = items.reduce((acc, val) => acc + val.timeElapsed, 0);
 		const previousTimeSum = previousItems.reduce((acc, val) => acc + val.timeElapsed, 0);
 
-		const average = timeSum / items.length;
+		const avg = timeSum / items.length;
 		const previousAverage = previousItems.length > 0 ? previousTimeSum / previousItems.length : null;
 
+		const getWeightFn = (distanceFromEnd: number): number => {
+			// most recent 50 get weight 100, next 50 get weight 40, next 100 get weight 10
+			// the remaining items get a weight of 1, capped at 1000 items
+			if (distanceFromEnd < 50) return 100;
+			if (distanceFromEnd < 100) return 40;
+			if (distanceFromEnd < 200) return 10;
+			if (distanceFromEnd < 1000) return 1;
+			return 0;
+		}
+
+		const itemsOldestFirst = [...items].sort((a, z) => a.timestamp - z.timestamp);
+		const times = itemsOldestFirst.map(i => i.timeElapsed);
+
+		const weightedAverage = calculateDynamicWeightedMovingAverage(times, getWeightFn);
+		const previousWeightedAverage = previousAverage == null ? null : calculateDynamicWeightedMovingAverage(times.slice(0, -1), getWeightFn);
+
 		return new AverageTimeGameEndStats({
-			average,
-			previousAverage
+			average: avg,
+			previousAverage,
+			weightedAverage,
+			previousWeightedAverage
 		});
 	}
 }
