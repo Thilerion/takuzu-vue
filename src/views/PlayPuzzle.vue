@@ -93,7 +93,7 @@ import PuzzleRecap from '@/components/puzzle-recap/PuzzleRecap.vue';
 
 import { usePuzzleWakeLock } from '@/composables/use-wake-lock';
 import { storeToRefs } from 'pinia';
-import { computed, onBeforeMount, onBeforeUnmount, onMounted, watchEffect } from 'vue';
+import { computed, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
 import { usePuzzleAssistanceStore } from '@/stores/assistance/store';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from 'vue-router';
 import type { DifficultyKey } from '@/lib/types.js';
@@ -182,6 +182,10 @@ usePuzzlePlayHotkeys({
 		// However, "puzzlePlayActive" also checks if not paused, so that can't be used here
 		if (!puzzleUiActive.value) return;
 		toggleManualPause();
+	},
+	resumePlay: () => {
+		if (!puzzleUiActive.value) return;
+		manualResumeGame();
 	},
 	getHint: () => {
 		if (!puzzlePlayActive.value) return;
