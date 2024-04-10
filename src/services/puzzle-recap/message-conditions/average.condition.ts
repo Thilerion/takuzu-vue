@@ -1,5 +1,5 @@
 import type { GameEndStats } from "../GameEndStats.js";
-import { getPercentageFaster } from "../helpers.js";
+import { getPercentageFaster, isMultipleOf } from "../helpers.js";
 import type { RecapMessageConditionResult } from "../types.js";
 
 export const wasSolvedMuchFasterThanAverageTime = (
@@ -125,7 +125,7 @@ export const wasSolvedFasterThanAverage3Or5TimesConsecutively = (
 	}
 }
 
-export const wasSolvedFasterThanAverageTenTimesExactlyConsecutively = (
+export const wasSolvedFasterThanAverageTenOrMultiplesExactlyConsecutively = (
 	stats: SolvedFasterThanAverageConsecutivelyStatData
 ): RecapMessageConditionResult<{ consecutiveTimes: number }> => {
 	const count = stats.getNumSolvedWithConfig();
@@ -133,24 +133,9 @@ export const wasSolvedFasterThanAverageTenTimesExactlyConsecutively = (
 
 	const amount = getAmountConsecutivelySolvedFasterThanAverage(stats);
 
-	const success = amount === 10;
+	const success = amount === 10 || (isMultipleOf(amount, 5) && amount > 10);
 	if (success) {
 		return { success: true, data: { consecutiveTimes: amount } };
-	} else {
-		return { success: false };
-	}
-}
-
-export const wasSolvedFasterThanAverageMoreThanTenTimesConsecutively = (
-	stats: SolvedFasterThanAverageConsecutivelyStatData
-): RecapMessageConditionResult<{ consecutiveTimes: number, min: 10 }> => {
-	const count = stats.getNumSolvedWithConfig();
-	if (count < 75) return { success: false };
-
-	const amount = getAmountConsecutivelySolvedFasterThanAverage(stats);
-	const success = amount > 10;
-	if (success) {
-		return { success: true, data: { consecutiveTimes: amount, min: 10 } };
 	} else {
 		return { success: false };
 	}
