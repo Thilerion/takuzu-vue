@@ -40,6 +40,7 @@ export type PuzzleBoardCellMark = ErrorMark; // for now, only type of mark is th
 
 export const usePuzzleVisualCuesStore = defineStore('puzzleVisualCues', () => {
 	// state
+	const highlightsVisible = ref(false);
 	const highlights = ref<PuzzleBoardHighlight[]>([]);
 	const cellMarks = ref<PuzzleBoardCellMark[]>([]);
 
@@ -78,6 +79,22 @@ export const usePuzzleVisualCuesStore = defineStore('puzzleVisualCues', () => {
 		}));
 		addErrorMarks(marks);
 	}
+	const addHintHighlights = (values: PuzzleBoardHighlight[]) => {
+		highlights.value = [...highlights.value, ...values];
+	}
+	const setHintHighlights = (values: PuzzleBoardHighlight[]) => {
+		clearHighlightsFromHints();
+		addHintHighlights(values);
+	}
+	
+	// highlights visibility state
+	const toggleHighlightsVisibility = () => {
+		highlightsVisible.value = !highlightsVisible.value;
+	}
+	const showHighlights = () => {
+		highlightsVisible.value = true;
+	}
+	const hideHighlights = () => highlightsVisible.value = false;
 
 	return {
 		// state
@@ -98,6 +115,14 @@ export const usePuzzleVisualCuesStore = defineStore('puzzleVisualCues', () => {
 
 		// add/set actions
 		addErrorMarks,
-		addErrorMarksFromCells,
+		addErrorMarksFromCells,		
+		addHintHighlights,
+		setHintHighlights, // replaces all highlights with source 'hint' with different highlights with source 'hint'
+
+		// visibility state of highlights
+		highlightsVisible,
+		toggleHighlightsVisibility,
+		showHighlights,
+		hideHighlights,
 	}
 })

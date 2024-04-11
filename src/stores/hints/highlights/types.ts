@@ -14,8 +14,8 @@ export type HintLineHighlight = {
 	start: Vec,
 	end: Vec,
 	context: {
-		lineId: LineId,
-		lineType: LineType,
+		lineId?: LineId,
+		lineType?: LineType,
 		width: number,
 		height: number
 	}

@@ -1,12 +1,17 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import type { Hint } from "../hints/Hint.js";
 import { usePuzzleStore } from "../puzzle/store.js";
 import { createHighlightsFromLegacyHint } from "./highlights/legacy-hint-highlights.js";
 import type { HintHighlight } from "./highlights/types.js";
+import { usePuzzleVisualCuesStore } from "../puzzle-visual-cues.js";
 
 export const useHintHighlightsStore = defineStore('hintHighlights', () => {
-	const visible = ref(false);
+	const visualCuesStore = usePuzzleVisualCuesStore();
+	const visible = computed({
+		get: () => visualCuesStore.highlightsVisible,
+		set: (val: boolean) => visualCuesStore.highlightsVisible = val
+	})
 	const currentHighlights = ref<HintHighlight[]>([]);
 
 	const show = () => {
