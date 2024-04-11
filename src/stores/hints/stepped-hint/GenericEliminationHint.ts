@@ -1,11 +1,10 @@
-import type { BoardAndSolutionBoards, ColumnId, LineId, PuzzleValueLine, RowId, Target, Vec } from "@/lib/types.js";
+import type { BoardAndSolutionBoards, LineId, PuzzleValueLine, Target } from "@/lib/types.js";
 import { BaseSteppedHint, type HintStepsData } from "./SteppedHint.js";
 import { BoardLine } from "@/lib/board/BoardLine.js";
 import { EMPTY } from "@/lib/constants.js";
 import type { GenericEliminationTechniqueResult } from "@/lib/solvers/human-solver/techniques/GenericEliminationTechnique.js";
 import type { HintStepFinal, HintStepIntermediate } from "./types.js";
-import type { CellHighlight, LineHighlight } from "@/stores/puzzle-visual-cues.js";
-import { columnIdToX, lineTypeFromLineId, rowIdToY } from "@/lib/utils/puzzle-line.utils.js";
+import { type CellHighlight, createLineHighlightFromLineId, createCellHighlight } from "@/helpers/puzzle-visual-cues.js";
 
 export class GenericEliminationSteppedHint extends BaseSteppedHint {
 	readonly type = 'eliminationGeneric' as const;
@@ -30,28 +29,10 @@ export class GenericEliminationSteppedHint extends BaseSteppedHint {
 			actionLabel: 'locate',
 			index: 0,
 			onNext: (ctx, { setHighlights }) => {
-				const lineType = lineTypeFromLineId(this.lineId);
-				let start: Vec;
-				if (lineType === 'row') {
-					const y = rowIdToY(this.lineId as RowId);
-					const x = 0;
-					start = { x, y };
-				} else if (lineType === 'column') {
-					const x = columnIdToX(this.lineId as ColumnId);
-					const y = 0;
-					start = { x, y };
-				} else {
-					throw new Error(`Invalid lineType: ${lineType}`);
-				}
-				const hl: LineHighlight = {
+				const hl = createLineHighlightFromLineId(this.lineId, ctx.board, {
 					colorId: 1,
-					type: 'highlight',
-					source: 'hint',
-					highlightAreaType: 'line',
-					height: lineType === 'column' ? ctx.board.height : 1,
-					width: lineType === 'row' ? ctx.board.width : 1,
-					start
-				}
+					source: 'hint'
+				})
 				const highlights = [hl];
 				setHighlights(highlights);
 			}
@@ -71,13 +52,10 @@ export class GenericEliminationSteppedHint extends BaseSteppedHint {
 			},
 			onNext: (ctx, { currentHighlights, setHighlights }) => {
 				const cellHighlights: CellHighlight[] = this.targets.map((tg) => {
-					return {
-						cell: { ...tg },
+					return createCellHighlight(tg, {
 						colorId: 2,
-						highlightAreaType: 'cell',
-						source: 'hint',
-						type: 'highlight'
-					}
+						source: 'hint'
+					})
 				});
 				setHighlights([...cellHighlights, ...currentHighlights.value])
 			}

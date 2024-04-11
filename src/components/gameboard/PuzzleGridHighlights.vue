@@ -22,7 +22,8 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
-import { usePuzzleVisualCuesStore, type AreaHighlight, type CellHighlight, type LineHighlight, type PuzzleBoardHighlight } from '@/stores/puzzle-visual-cues.js';
+import { usePuzzleVisualCuesStore } from '@/stores/puzzle-visual-cues.js';
+import type { PuzzleBoardHighlight, CellHighlight, LineHighlight, AreaHighlight } from '@/helpers/puzzle-visual-cues.js';
 
 const visualCuesStore = usePuzzleVisualCuesStore();
 const { highlights, highlightsVisible } = storeToRefs(visualCuesStore);

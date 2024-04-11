@@ -6,7 +6,8 @@ import type { BalanceSteppedHint } from "./BalanceHint.js";
 import type { IncorrectValuesSteppedHint } from "./IncorrectValuesHint.js";
 import type { NoHintsFoundSteppedHint } from "./NoHintsFoundHint.js";
 import type { GenericEliminationSteppedHint } from "./GenericEliminationHint.js";
-import type { PuzzleBoardHighlight, usePuzzleVisualCuesStore } from "@/stores/puzzle-visual-cues.js";
+import type { usePuzzleVisualCuesStore } from "@/stores/puzzle-visual-cues.js";
+import type { PuzzleBoardHighlight } from "@/helpers/puzzle-visual-cues.js";
 
 export type SteppedHintType = 'ruleViolation' | 'incorrectValues' | 'triples' | 'balance' | 'eliminationGeneric' | 'noHintsFound';
 export type HintStepEventCallbackCtxParam = BoardAndSolutionBoards;

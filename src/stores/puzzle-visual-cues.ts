@@ -1,41 +1,7 @@
-import type { Vec, XYKey } from "@/lib/types.js";
+import type { PuzzleBoardHighlight, PuzzleBoardCellMark, ErrorMark } from "@/helpers/puzzle-visual-cues.js";
+import type { Vec } from "@/lib/types.js";
 import { defineStore } from "pinia";
 import { ref } from "vue";
-
-type HighlightBase = {
-	type: 'highlight',
-	colorId: number, // similar to "highlightLevel", but more generic
-	source: 'hint', // only hints as source for now
-}
-export type CellHighlight = HighlightBase & {
-	highlightAreaType: 'cell',
-	cell: Vec
-}
-export type LineHighlight = HighlightBase & {
-	highlightAreaType: 'line',
-	start: Vec,
-	width: number,
-	height: number,
-}
-export type AreaHighlight = HighlightBase & {
-	highlightAreaType: 'area',
-	start: Vec,
-	width: number,
-	height: number,
-}
-export type PuzzleBoardHighlight = CellHighlight | LineHighlight | AreaHighlight;
-
-type ErrorMarkBase = {
-	cell: Vec,
-	id: XYKey,
-	type: 'error'
-}
-export type IncorrectValueErrorMark = ErrorMarkBase & {
-	errorType: 'incorrectValue', // only incorrect values for now
-}
-export type ErrorMark = IncorrectValueErrorMark; // for now, incorrectValue is the only marked error
-export type ErrorMarkErrorType = ErrorMark['errorType'];
-export type PuzzleBoardCellMark = ErrorMark; // for now, only type of mark is the error mark
 
 export const usePuzzleVisualCuesStore = defineStore('puzzleVisualCues', () => {
 	// state

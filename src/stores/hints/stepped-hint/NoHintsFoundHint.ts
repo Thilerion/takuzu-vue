@@ -1,7 +1,7 @@
 import type { VecValue } from "@/lib/types.js";
 import { BaseSteppedHint, type HintStepsData } from "./SteppedHint.js";
 import type { HintStepFinal } from "./types.js";
-import type { CellHighlight } from "@/stores/puzzle-visual-cues.js";
+import { createCellHighlight } from "@/helpers/puzzle-visual-cues.js";
 
 export class NoHintsFoundSteppedHint extends BaseSteppedHint {
 	readonly steps: HintStepsData;
@@ -20,14 +20,10 @@ export class NoHintsFoundSteppedHint extends BaseSteppedHint {
 			actionLabel: 'apply',
 			index: 0,
 			onShow: (ctx, { setHighlights }) => {
-				const cellHighlight: CellHighlight = {
-					cell: {...this.target},
+				setHighlights([createCellHighlight(this.target, {
 					colorId: 1,
-					highlightAreaType: 'cell',
-					source: 'hint',
-					type: 'highlight'
-				}
-				setHighlights([cellHighlight], { setVisible: true });
+					source: 'hint'
+				})], { setVisible: true });
 			},
 			onHide: (ctx, { hideHighlights }) => {
 				hideHighlights();

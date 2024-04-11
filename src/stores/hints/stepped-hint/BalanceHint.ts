@@ -1,12 +1,12 @@
 import type { BalanceTechniqueResult } from "@/lib/solvers/human-solver/techniques/BalanceTechnique.js";
-import type { BoardAndSolutionBoards, ColumnId, LineId, RowId, Target, Vec } from "@/lib/types.js";
+import type { BoardAndSolutionBoards, LineId, Target } from "@/lib/types.js";
 import { BaseSteppedHint, type HintStepsData } from "./SteppedHint.js";
 import type { HintStepIntermediate, HintStepFinal } from "./types.js";
 import { type LineType, type PuzzleSymbol, EMPTY } from "@/lib/constants.js";
 import { BoardLine } from "@/lib/board/BoardLine.js";
 import { getOppositeSymbol } from "@/lib/utils/puzzle-value.utils.js";
-import { columnIdToX, lineTypeFromLineId, rowIdToY } from "@/lib/utils/puzzle-line.utils.js";
-import type { CellHighlight, LineHighlight } from "@/stores/puzzle-visual-cues.js";
+import { lineTypeFromLineId } from "@/lib/utils/puzzle-line.utils.js";
+import { type CellHighlight, createLineHighlightFromLineId, createCellHighlight } from "@/helpers/puzzle-visual-cues.js";
 
 export class BalanceSteppedHint extends BaseSteppedHint {
 	readonly targets: Target[]; // the cells and values that are affected by this hint, that can be set
@@ -33,28 +33,10 @@ export class BalanceSteppedHint extends BaseSteppedHint {
 			actionLabel: 'locate',
 			index: 0,
 			onNext: (ctx, { setHighlights }) => {
-				const lineType = lineTypeFromLineId(this.lineId);
-				let start: Vec;
-				if (lineType === 'row') {
-					const y = rowIdToY(this.lineId as RowId);
-					const x = 0;
-					start = { x, y };
-				} else if (lineType === 'column') {
-					const x = columnIdToX(this.lineId as ColumnId);
-					const y = 0;
-					start = { x, y };
-				} else {
-					throw new Error(`Invalid lineType: ${lineType}`);
-				}
-				const hl: LineHighlight = {
+				const hl = createLineHighlightFromLineId(this.lineId, ctx.board, {
 					colorId: 1,
-					type: 'highlight',
-					source: 'hint',
-					highlightAreaType: 'line',
-					height: this.lineType === 'column' ? ctx.board.height : 1,
-					width: this.lineType === 'row' ? ctx.board.width : 1,
-					start
-				}
+					source: 'hint'
+				})
 				setHighlights([hl]);
 			}
 		}
@@ -73,13 +55,10 @@ export class BalanceSteppedHint extends BaseSteppedHint {
 			},
 			onNext: (ctx, { currentHighlights }) => {
 				const cellHighlights: CellHighlight[] = this.targets.map((tg) => {
-					return {
-						cell: { ...tg },
+					return createCellHighlight(tg, {
 						colorId: 2,
-						highlightAreaType: 'cell',
-						source: 'hint',
-						type: 'highlight'
-					}
+						source: 'hint'
+					})
 				});
 				currentHighlights.value.push(...cellHighlights);
 			}

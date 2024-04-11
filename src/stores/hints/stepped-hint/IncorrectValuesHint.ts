@@ -3,7 +3,7 @@ import { BaseSteppedHint, type HintStepsData } from "./SteppedHint.js";
 import type { FoundIncorrectValue } from "@/lib/mistakes/types.js";
 import type { HintStepFinal, HintStepIntermediate } from "./types.js";
 import { EMPTY } from "@/lib/constants.js";
-import type { CellHighlight } from "@/stores/puzzle-visual-cues.js";
+import { createCellHighlight, type CellHighlight } from "@/helpers/puzzle-visual-cues.js";
 
 export class IncorrectValuesSteppedHint extends BaseSteppedHint {
 	readonly type = 'incorrectValues' as const;
@@ -28,13 +28,10 @@ export class IncorrectValuesSteppedHint extends BaseSteppedHint {
 			index: 0,
 			onNext: (ctx, { setHighlights }) => {
 				const highlights = this.moves.map((vec): CellHighlight => {
-					return {
-						cell: {...vec},
+					return createCellHighlight(vec, {
 						colorId: 1,
-						type: 'highlight',
-						source: 'hint',
-						highlightAreaType: 'cell'
-					}
+						source: 'hint'
+					})
 				})
 				setHighlights(highlights);
 			}

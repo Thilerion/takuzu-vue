@@ -2,7 +2,8 @@ import type { BoardString, BoardAndSolutionBoards } from "@/lib/types";
 import { defineStore } from "pinia";
 import type { CheckActionResult, CurrentCheck } from "./types";
 import { usePuzzleStore } from "../puzzle/store.js";
-import { usePuzzleVisualCuesStore, type ErrorMarkErrorType } from "../puzzle-visual-cues.js";
+import { usePuzzleVisualCuesStore } from "../puzzle-visual-cues.js";
+import type { ErrorMarkErrorType } from "@/helpers/puzzle-visual-cues.js";
 
 export const usePuzzleValidationStore = defineStore('puzzleValidation', {
 	state: () => ({
