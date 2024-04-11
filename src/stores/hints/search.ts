@@ -64,7 +64,7 @@ function searchForMistakesHint(board: SimpleBoard, solution: SimpleBoard): Hint 
 function getRuleViolationOrIncorrectValueHint(
 	incorrectValues: FoundIncorrectValue[],
 	ruleViolations: RuleViolation[],
-) {
+): IncorrectValuesSteppedHint /* TODO: | RuleViolationSteppedHint */ {
 	// if all incorrect values are due to rule violations, return rule violation hint
 	// else, if any incorrect values are not due to rule violations, return incorrect value hint
 
@@ -84,7 +84,7 @@ function getRuleViolationOrIncorrectValueHint(
 		// all incorrect values are due to rule violation, so return rule violation hint
 		// TODO: implement RuleViolationHint
 		console.warn('SHOULD RETURN RULE VIOLATION HINT NOW, BUT NOT IMPLEMENTED YET.');
-		return createHint(HINT_TYPE.MISTAKE, incorrectValues);
+		return new IncorrectValuesSteppedHint({ incorrectValues });
 	} else {
 		// TODO: this is double code, as in the searchForMistakesHint the same thing happens. Maybe this function should just return which type of hint must be created, and the creation of the hint should happen in the searchForMistakesHint function.
 		const incorrectValuesHint = new IncorrectValuesSteppedHint({ incorrectValues });

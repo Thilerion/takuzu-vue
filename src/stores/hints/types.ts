@@ -3,7 +3,7 @@ import type { Hint } from "./Hint.js";
 import type { SimpleBoard } from "@/lib/index.js";
 import type { PuzzleValue } from "@/lib/constants.js";
 
-export type HintType = 'MISTAKE' | 'TRIPLES' | 'BALANCE' | 'ELIMINATION' | 'ELIM_DUPE';
+export type HintType = 'ELIM_DUPE';
 export type HintTarget = Vec & { value: PuzzleValue };
 export type HintTargetLine = LineId; // TODO: what else?
 export type HintSource = LineId[] | Vec[] | [Vec, Vec]; // TODO: what else?
