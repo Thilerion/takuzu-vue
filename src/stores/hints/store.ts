@@ -4,9 +4,9 @@ import type { Hint } from "../hints/Hint.js";
 import { validateHint } from "../hints/helpers.js";
 import { searchForHint } from "../hints/search.js";
 import { usePuzzleStore } from "../puzzle/store.js";
-import { useHintHighlightsStore } from "./highlights-store.js";
 import { computed, reactive, readonly, ref } from "vue";
 import type { SteppedHint } from "./stepped-hint/types.js";
+import { usePuzzleVisualCuesStore } from "../puzzle-visual-cues.js";
 
 export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 	// state
@@ -48,8 +48,8 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 		current.hint = null;
 		current.boardStr = null;
 		isHintShown.value = false;
-		const hintHighlightsStore = useHintHighlightsStore();
-		hintHighlightsStore.clear();
+		const visualCuesStore = usePuzzleVisualCuesStore();
+		visualCuesStore.clearHighlightsFromHints();
 	}
 
 	const setNewHint = (hint: Hint | SteppedHint) => {
@@ -60,9 +60,9 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 	const setCachedHint = (hint: Hint | SteppedHint | null) => {
 		current.hint = hint;
 		current.boardStr = currentBoardStr.value;
-		const hintHighlightsStore = useHintHighlightsStore();
 		if (hint == null) {
-			hintHighlightsStore.clear();
+			const visualCuesStore = usePuzzleVisualCuesStore();
+			visualCuesStore.clearHighlightsFromHints();
 		}
 		if (!cache.value.has(currentBoardStr.value)) {
 			throw new Error('Setting cached hint, but it is not in cache. This should not happen.');
@@ -72,8 +72,8 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 		current.hint = null;
 		current.boardStr = currentBoardStr.value;
 		_addToCache(null, currentBoardStr.value);
-		const hintHighlightsStore = useHintHighlightsStore();
-		hintHighlightsStore.clear();
+		const visualCuesStore = usePuzzleVisualCuesStore();
+		visualCuesStore.clearHighlightsFromHints();
 	}
 
 	/** Check if a hint currently set, but not (completely) executed, is still valid for a possibly changed board. */
@@ -130,8 +130,8 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 		current.hint = null;
 		current.boardStr = null;
 		cache.value = new Map();
-		const hintHighlightsStore = useHintHighlightsStore();
-		hintHighlightsStore.reset();	
+		const visualCuesStore = usePuzzleVisualCuesStore();
+		visualCuesStore.clearHighlightsFromHints();
 	}
 
 	const _addToCache = (hint: Hint | SteppedHint | null, boardStr: BoardString) => {
