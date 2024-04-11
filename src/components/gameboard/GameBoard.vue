@@ -16,7 +16,7 @@
 				'max-height': gridHeight,
 			}"
 			:initial-grid="puzzleStore.initialBoard!.grid"
-			:marked-mistakes="assistStore.markedMistakes"
+			:error-marks="errorMarks"
 			@toggle-cell="toggleCell"
 		/>
 
@@ -33,7 +33,7 @@
 import PuzzleGrid from './PuzzleGrid.vue';
 import type { SimpleBoard } from '@/lib/index.js';
 import type { VecValue } from '@/lib/types.js';
-import { usePuzzleAssistanceStore } from '@/stores/assistance/store.js';
+import { usePuzzleVisualCuesStore } from '@/stores/puzzle-visual-cues.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { usePuzzlePauseResume } from '@/stores/puzzle/usePuzzlePauseResume.js';
 import { computed } from 'vue';
@@ -56,7 +56,8 @@ const resumeByUser = () => {
 }
 
 // For PuzzleGrid prop: markedMistakes
-const assistStore = usePuzzleAssistanceStore();
+const visualCuesStore = usePuzzleVisualCuesStore();
+const errorMarks = computed(() => visualCuesStore.cellMarks.filter(m => m.errorType === 'incorrectValue'));
 
 // Force PuzzleGrid component to be replaced/reloaded whenever the puzzle changes. This can be achieved using the initialBoard or the solutionBoard in the puzzleStore.
 // In this case, solutionBoardStr is used as it is already available in the store.

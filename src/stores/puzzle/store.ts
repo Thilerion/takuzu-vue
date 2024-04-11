@@ -20,6 +20,7 @@ import { usePuzzleHistoryStore, type PostMoveHistoryAction } from "../puzzle-his
 import { usePuzzleRecapStore } from "../puzzle-recap.js";
 import { useMainStore } from "../main.js";
 import { statsDb } from "@/services/db/stats-db/init.js";
+import { usePuzzleVisualCuesStore } from "../puzzle-visual-cues.js";
 
 export type PuzzleStatus = 'none' | 'loading' | 'error_loading' | 'playing' | 'paused' | 'finished'; 
 export type PuzzleStoreState = {
@@ -188,6 +189,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			usePuzzleHistoryStore().reset();
 			usePuzzleHintsStore().reset();
 			usePuzzleAssistanceStore().reset();
+			usePuzzleVisualCuesStore().clearAll();
 
 			this.$reset();
 		},
@@ -210,7 +212,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			} = opts;
 
 			const changes = Array.isArray(changeOrChanges) ? changeOrChanges : [changeOrChanges];
-			const assistanceStore = usePuzzleAssistanceStore();
+			const visualCuesStore = usePuzzleVisualCuesStore();
 
 			for (const { x, y, value, prevValue } of changes) {
 				this.board!.assign(x, y, value);
@@ -218,14 +220,14 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 					this._updateGridCount(value, prevValue);
 				}
 				if (handleMarkedMistakes === "remove") {
-					assistanceStore.removeFromMarkedMistakes({ x, y });
+					visualCuesStore.removeCellMarkAtCell({ x, y });
 				}
 			}
 			if (handleGridCounts === 'refresh') {
 				this.refreshCounts();
 			}
 			if (handleMarkedMistakes === 'reset') {
-				assistanceStore.resetMarkedMistakes();
+				visualCuesStore.clearErrorMarks();
 			}
 		},
 
@@ -447,6 +449,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			puzzleHistory.reset();
 			usePuzzleHintsStore().reset();
 			usePuzzleAssistanceStore().reset();
+			usePuzzleVisualCuesStore().clearAll();
 			const timer = usePuzzleTimer();
 			timer.reset();
 			timer.start();

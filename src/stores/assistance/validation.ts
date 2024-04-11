@@ -1,8 +1,8 @@
-import type { BoardString, BoardAndSolutionBoards, Vec } from "@/lib/types";
+import type { BoardString, BoardAndSolutionBoards } from "@/lib/types";
 import { defineStore } from "pinia";
-import { vecToMark } from "./helpers";
-import type { CheckActionResult, CurrentCheck, MarkedMistake } from "./types";
+import type { CheckActionResult, CurrentCheck } from "./types";
 import { usePuzzleStore } from "../puzzle/store.js";
+import { usePuzzleVisualCuesStore, type ErrorMarkErrorType } from "../puzzle-visual-cues.js";
 
 export const usePuzzleValidationStore = defineStore('puzzleValidation', {
 	state: () => ({
@@ -10,8 +10,6 @@ export const usePuzzleValidationStore = defineStore('puzzleValidation', {
 		lastCheck: null as CurrentCheck | null,
 		previousUserCheckResults: new Map<BoardString, CheckActionResult>(),
 		previousAutoFilledCheckResults: new Map<BoardString, CheckActionResult>(),
-
-		markedMistakes: [] as MarkedMistake[],
 	}),
 
 	getters: {
@@ -77,13 +75,6 @@ export const usePuzzleValidationStore = defineStore('puzzleValidation', {
 				result
 			}, { addToPrevious: true });
 		},
-		resetMarkedMistakes() {
-			this.markedMistakes = [];
-		},
-		removeFromMarkedMistakes(cell: Vec) {
-			const mark = vecToMark(cell);
-			this.markedMistakes = this.markedMistakes.filter(val => val !== mark);	
-		},
 		reset() {
 			this.$reset();
 		},
@@ -124,9 +115,16 @@ export const usePuzzleValidationStore = defineStore('puzzleValidation', {
 			this._setMarkedMistakes();
 			return true;
 		},
-		_setMarkedMistakes() {
+		/** Removes all error marks, and replaces them with new error marks according to the results of the last check */
+		_setMarkedMistakes(type: ErrorMarkErrorType = 'incorrectValue') {
+			const visualCuesStore = usePuzzleVisualCuesStore();
+			visualCuesStore.clearErrorMarks();
+			
 			if (!this.lastCheck?.result.found) return;
-			this.markedMistakes = this.lastCheck.result.cells.map(vecToMark);
+			visualCuesStore.addErrorMarksFromCells(
+				type,
+				this.lastCheck.result.cells
+			);
 		}
 	}
 })

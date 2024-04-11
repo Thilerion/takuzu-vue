@@ -6,8 +6,8 @@
 			@toggle="onCellClick"
 			:x :y :listKey :locked
 			:value="keyedGrid[xyKey]"
-			:incorrect="incorrectCellKeys[xyKey]"
-			v-memo="[keyedGrid[xyKey], incorrectCellKeys[xyKey]]"
+			:incorrect="errorMarkKeys[xyKey]"
+			v-memo="[keyedGrid[xyKey], errorMarkKeys[xyKey]]"
 		>
 			<template v-slot="{ value, locked, incorrect }">
 				<component
@@ -30,6 +30,7 @@ import { useStaticGridCellData } from './composables/useGridCellData.js';
 import { usePuzzleTapVibrate } from './composables/usePuzzleTapVibrate.js';
 import { injectCellThemeData } from './composables/useCellThemeProvider.js';
 import type { PuzzleValue } from '@/lib/constants.js';
+import type { ErrorMark } from '@/stores/puzzle-visual-cues.js';
 
 const props = defineProps<{
 	board: SimpleBoard,
@@ -37,7 +38,7 @@ const props = defineProps<{
 	columns: number,
 	paused: boolean,
 	initialGrid: PuzzleGrid,
-	markedMistakes: `${number},${number}`[]
+	errorMarks: ErrorMark[]
 }>();
 const { rows, columns, initialGrid } = toRefs(props);
 
@@ -51,8 +52,11 @@ const { vibrate } = usePuzzleTapVibrate(rows, columns);
 // GRID CELL DATA
 // probably does not need to be a composable, as the data does not need to be reactive: this component gets replaced whenever the puzzle/initialBoard changes
 const staticCellData = useStaticGridCellData(columns, rows, initialGrid);
-const incorrectCellKeys = computed((): Record<XYKey, boolean> => {
-	return props.markedMistakes.reduce((acc, xykey) => {
+
+/** XYKey/id of each marked error */
+const errorMarkKeys = computed((): Record<XYKey, boolean> => {
+	return props.errorMarks.reduce((acc, mark) => {
+		const xykey: XYKey = mark.id;
 		acc[xykey] = true;
 		return acc;
 	}, {} as Record<XYKey, boolean>);

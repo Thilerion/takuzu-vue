@@ -4,11 +4,10 @@ import { usePuzzleValidationStore } from "./validation";
 export const usePuzzleAssistanceStore = defineStore('puzzleAssistance', () => {
 	// expose only some properties from puzzleValidationStore (and other puzzleAssistance helper stores in the future)
 	const puzzleValidationStore = usePuzzleValidationStore();
-	const { userCheck, autoFilledBoardCheck, resetMarkedMistakes, removeFromMarkedMistakes, reset: resetValidationStore } = puzzleValidationStore;
+	const { userCheck, autoFilledBoardCheck, reset: resetValidationStore } = puzzleValidationStore;
 	const {
 		userChecks,
 		mistakesFound,
-		markedMistakes,
 		checkAssistanceData
 	} = storeToRefs(puzzleValidationStore);
 
@@ -17,10 +16,10 @@ export const usePuzzleAssistanceStore = defineStore('puzzleAssistance', () => {
 	}
 
 	return {
-		userChecks, mistakesFound, markedMistakes,
+		userChecks, mistakesFound,
 		checkAssistanceData,
-		userCheck, autoFilledBoardCheck, resetMarkedMistakes,
-		removeFromMarkedMistakes, resetValidationStore,
+		userCheck, autoFilledBoardCheck,
+		resetValidationStore,
 
 		reset
 	}
