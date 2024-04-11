@@ -6,7 +6,3 @@ export const markToVec = (str: MarkedMistake): Vec => {
 	const [x, y] = str.split(',').map(Number) as [number, number];
 	return { x, y };
 }
-
-export const markedMistakeFromCellOrString = (cellOrMark: Vec | MarkedMistake): MarkedMistake => {
-	return typeof cellOrMark === 'string' ? cellOrMark : vecToMark(cellOrMark);
-}

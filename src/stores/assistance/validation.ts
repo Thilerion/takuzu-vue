@@ -1,7 +1,6 @@
-import type { SimpleBoard } from "@/lib";
 import type { BoardString, BoardAndSolutionBoards, Vec } from "@/lib/types";
 import { defineStore } from "pinia";
-import { markedMistakeFromCellOrString, vecToMark } from "./helpers";
+import { vecToMark } from "./helpers";
 import type { CheckActionResult, CurrentCheck, MarkedMistake } from "./types";
 import { usePuzzleStore } from "../puzzle/store.js";
 
@@ -81,8 +80,8 @@ export const usePuzzleValidationStore = defineStore('puzzleValidation', {
 		resetMarkedMistakes() {
 			this.markedMistakes = [];
 		},
-		removeFromMarkedMistakes(cellOrMark: MarkedMistake | Vec) {
-			const mark = markedMistakeFromCellOrString(cellOrMark);
+		removeFromMarkedMistakes(cell: Vec) {
+			const mark = vecToMark(cell);
 			this.markedMistakes = this.markedMistakes.filter(val => val !== mark);	
 		},
 		reset() {
@@ -132,11 +131,12 @@ export const usePuzzleValidationStore = defineStore('puzzleValidation', {
 	}
 })
 
-const getRequiredDataFromPuzzleStore = () => {
+const getRequiredDataFromPuzzleStore = (): BoardAndSolutionBoards & { boardStr: BoardString } => {
 	const puzzleStore = usePuzzleStore();
-	const boardStr = puzzleStore.boardStr as BoardString;
-	const board = puzzleStore.board! as SimpleBoard;
-	const solution = puzzleStore.solution! as SimpleBoard;
+	const boardStr = puzzleStore.boardStr;
+	const board = puzzleStore.board;
+	const solution = puzzleStore.solution;
+	if (boardStr == null || board == null || solution == null) throw new Error('Missing required data from puzzle store');
 	return { boardStr, board, solution };
 }
 
