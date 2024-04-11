@@ -22,31 +22,24 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
-import { HIGHLIGHT_TYPES } from '@/stores/hints/highlights/highlight';
-import type { HintAreaHighlight, HintCellHighlight, HintHighlight, HintLineHighlight } from '@/stores/hints/highlights/types.js';
-import { useHintHighlightsStore } from '@/stores/hints/highlights-store.js';
+import { usePuzzleVisualCuesStore, type AreaHighlight, type CellHighlight, type LineHighlight, type PuzzleBoardHighlight } from '@/stores/puzzle-visual-cues.js';
 
-
-const hintHighlightsStore = useHintHighlightsStore();
-const { visible, currentHighlights } = storeToRefs(hintHighlightsStore);
-const hasHighlights = computed(() => !!(currentHighlights.value?.length));
-const visibleHighlights = computed((): HintHighlight[] => {
-	if (!visible.value || !hasHighlights.value) {
-		return [];
-	}
-	return currentHighlights.value;
+const visualCuesStore = usePuzzleVisualCuesStore();
+const { highlights, highlightsVisible } = storeToRefs(visualCuesStore);
+const visibleHighlights = computed((): PuzzleBoardHighlight[] => {
+	if (highlightsVisible.value && highlights.value.length > 0) return highlights.value;
+	return [];
 })
 
-const cellHighlights = computed(() => {
-	return visibleHighlights.value.filter((hl): hl is HintCellHighlight => hl.type === HIGHLIGHT_TYPES.CELL);
+const cellHighlights = computed((): CellHighlight[] => {
+	return visibleHighlights.value.filter((hl): hl is CellHighlight => hl.highlightAreaType === 'cell');
 })
-const lineHighlights = computed(() => {
-	return visibleHighlights.value.filter((hl): hl is HintLineHighlight => hl.type === HIGHLIGHT_TYPES.LINE);
+const lineHighlights = computed((): LineHighlight[] => {
+	return visibleHighlights.value.filter((hl): hl is LineHighlight => hl.highlightAreaType === 'line');
 })
-const areaHighlights = computed(() => {
-	return visibleHighlights.value.filter((hl): hl is HintAreaHighlight => hl.type === HIGHLIGHT_TYPES.AREA);
+const areaHighlights = computed((): AreaHighlight[] => {
+	return visibleHighlights.value.filter((hl): hl is AreaHighlight => hl.highlightAreaType === 'area');
 })
-
 
 </script>
 

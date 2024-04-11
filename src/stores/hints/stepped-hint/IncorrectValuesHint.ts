@@ -2,8 +2,8 @@ import type { VecValue } from "@/lib/types.js";
 import { BaseSteppedHint, type HintStepsData } from "./SteppedHint.js";
 import type { FoundIncorrectValue } from "@/lib/mistakes/types.js";
 import type { HintStepFinal, HintStepIntermediate } from "./types.js";
-import { createCellHighlight, HIGHLIGHT_LEVELS } from "../highlights/highlight.js";
 import { EMPTY } from "@/lib/constants.js";
+import type { CellHighlight } from "@/stores/puzzle-visual-cues.js";
 
 export class IncorrectValuesSteppedHint extends BaseSteppedHint {
 	readonly type = 'incorrectValues' as const;
@@ -27,8 +27,14 @@ export class IncorrectValuesSteppedHint extends BaseSteppedHint {
 			actionLabel: 'locate',
 			index: 0,
 			onNext: (ctx, { setHighlights }) => {
-				const highlights = this.moves.map((vec) => {
-					return createCellHighlight(vec, HIGHLIGHT_LEVELS.PRIMARY);
+				const highlights = this.moves.map((vec): CellHighlight => {
+					return {
+						cell: {...vec},
+						colorId: 1,
+						type: 'highlight',
+						source: 'hint',
+						highlightAreaType: 'cell'
+					}
 				})
 				setHighlights(highlights);
 			}

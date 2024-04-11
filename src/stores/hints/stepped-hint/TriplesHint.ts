@@ -1,10 +1,10 @@
 import { EMPTY, type PuzzleSymbol } from "@/lib/constants.js";
 import type { Vec, BoardAndSolutionBoards, Target } from "@/lib/types.js";
-import { createAreaHighlightAroundCells, HIGHLIGHT_LEVELS, createCellHighlight } from "../highlights/highlight.js";
 import type { HintStepIntermediate, HintStepFinal, HintStepEventCallbackActionsParam } from "./types.js";
 import { BaseSteppedHint, type HintStepsData } from "./SteppedHint.js";
 import { getOppositeSymbol } from "@/lib/utils/puzzle-value.utils.js";
 import type { TriplesTechniqueResult } from "@/lib/solvers/human-solver/techniques/TriplesTechnique.js";
+import type { AreaHighlight, CellHighlight } from "@/stores/puzzle-visual-cues.js";
 
 export class TriplesSteppedHint extends BaseSteppedHint {
 	readonly subType: 'double' | 'sandwich';
@@ -92,8 +92,17 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 	}
 
 	static setSourceHighlight(source: [Vec, Vec], { setHighlights }: Pick<HintStepEventCallbackActionsParam, 'setHighlights'>) {
-		const highlights = [
-			createAreaHighlightAroundCells(source, HIGHLIGHT_LEVELS.PRIMARY),
+		const [start, end] = source;
+		const highlights: AreaHighlight[] = [
+			{
+				type: 'highlight',
+				colorId: 1,
+				source: 'hint',
+				highlightAreaType: 'area',
+				start,
+				width: end.x - start.x + 1,
+				height: end.y - start.y + 1,
+			}
 		];
 		setHighlights(highlights, { setVisible: true });
 	}
@@ -101,14 +110,19 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 		targets: Vec[],
 		{ currentHighlights }: Pick<HintStepEventCallbackActionsParam, 'currentHighlights'>
 	) {
-		const highlights = targets.map(vec => {
-			return createCellHighlight(vec, HIGHLIGHT_LEVELS.SECONDARY);
-		});
+		const highlights: CellHighlight[] = targets.map(vec => ({
+			colorId: 2,
+			type: 'highlight',
+			source: 'hint',
+			highlightAreaType: 'cell',
+			cell: { ...vec },
+		}))
+
 		currentHighlights.value.push(...highlights);
 	}
 	static removeTargetsHighlights(
 		{ currentHighlights }: Pick<HintStepEventCallbackActionsParam, 'currentHighlights'>
 	) {
-		currentHighlights.value = currentHighlights.value.filter(h => h.level !== HIGHLIGHT_LEVELS.SECONDARY);
+		currentHighlights.value = currentHighlights.value.filter(h => h.colorId !== 2);
 	}
 }

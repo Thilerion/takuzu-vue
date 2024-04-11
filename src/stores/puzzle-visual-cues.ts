@@ -4,21 +4,20 @@ import { ref } from "vue";
 
 type HighlightBase = {
 	type: 'highlight',
-	id: number,
 	colorId: number, // similar to "highlightLevel", but more generic
 	source: 'hint', // only hints as source for now
 }
-type CellHighlight = HighlightBase & {
+export type CellHighlight = HighlightBase & {
 	highlightAreaType: 'cell',
 	cell: Vec
 }
-type LineHighlight = HighlightBase & {
+export type LineHighlight = HighlightBase & {
 	highlightAreaType: 'line',
 	start: Vec,
 	width: number,
 	height: number,
 }
-type AreaHighlight = HighlightBase & {
+export type AreaHighlight = HighlightBase & {
 	highlightAreaType: 'area',
 	start: Vec,
 	width: number,
@@ -82,9 +81,18 @@ export const usePuzzleVisualCuesStore = defineStore('puzzleVisualCues', () => {
 	const addHintHighlights = (values: PuzzleBoardHighlight[]) => {
 		highlights.value = [...highlights.value, ...values];
 	}
-	const setHintHighlights = (values: PuzzleBoardHighlight[]) => {
+	const setHintHighlights = (
+		values: PuzzleBoardHighlight[],
+		{ setVisible }: { setVisible: boolean } = { setVisible: true }
+	) => {
 		clearHighlightsFromHints();
-		addHintHighlights(values);
+		
+		if (values.length > 0) {
+			addHintHighlights(values);
+			if (setVisible) showHighlights();
+		} else {
+			if (setVisible) hideHighlights();
+		}
 	}
 	
 	// highlights visibility state

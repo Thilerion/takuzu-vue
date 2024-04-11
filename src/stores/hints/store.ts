@@ -36,33 +36,12 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 	const currentBoardStr = computed(() => usePuzzleStore().boardStr!);
 
 	const showCurrentHint = () => {
-		/* if (currentHint.value == null) {
-			throw new Error('Cannot show hint as there is no current hint set. Will hide hint and highlights instead.');
-		} */
-		if (currentHint.value != null && currentHint.value.isLegacyHint) {
-			const hintHighlightsStore = useHintHighlightsStore();
-			hintHighlightsStore.show();
-		} else if (currentHint.value != null) {
-			// handled from component for stepped hints
-			// console.log('Cannot show stepped hint highlight from store.');
-		}
 		isHintShown.value = true;
 	}
 	const showCurrentHintIfAvailable = () => {
-		/* if (currentHint.value == null) {
-			hideCurrentHint();
-			return;
-		} */
 		showCurrentHint();
 	}
 	const hideCurrentHint = () => {
-		if (currentHint.value != null && currentHint.value.isLegacyHint) {
-			const hintHighlightsStore = useHintHighlightsStore();
-			hintHighlightsStore.hide();
-		} else if (currentHint.value != null && currentHint.value.isSteppedHint) {
-			// handled from component for stepped hints
-			// console.log('Cannot hide stepped hint highlight from store.');
-		}
 		isHintShown.value = false;
 	}
 	const removeCurrentHint = () => {
@@ -77,13 +56,6 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 		current.hint = hint;
 		current.boardStr = currentBoardStr.value;
 		_addToCache(hint, currentBoardStr.value);
-		if (hint.isLegacyHint) {
-			const hintHighlightsStore = useHintHighlightsStore();
-			hintHighlightsStore.setFromHint(hint);
-		} else {
-			// do not set highlights for stepped hint from here, it is handled by onShow/onHide etc callbacks in hint from the component
-			// console.warn('Setting highlights for stepped hint is not yet implemented?');
-		}
 	}
 	const setCachedHint = (hint: Hint | SteppedHint | null) => {
 		current.hint = hint;
@@ -91,11 +63,6 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 		const hintHighlightsStore = useHintHighlightsStore();
 		if (hint == null) {
 			hintHighlightsStore.clear();
-		} else if (hint.isLegacyHint) {
-			hintHighlightsStore.setFromHint(hint);
-		} else if (hint.isSteppedHint) {
-			// handle from component for stepped hints
-			// console.warn('Setting highlights for stepped hint is not yet implemented?');
 		}
 		if (!cache.value.has(currentBoardStr.value)) {
 			throw new Error('Setting cached hint, but it is not in cache. This should not happen.');

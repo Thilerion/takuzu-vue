@@ -2,12 +2,12 @@
 	<div
 		class="highlight"
 		:class="{
-			'hl-cell': hlType === HIGHLIGHT_TYPES.CELL,
-			'hl-line': hlType === HIGHLIGHT_TYPES.LINE,
-			'hl-area': hlType === HIGHLIGHT_TYPES.AREA,
-			'hl-line-area': hlType !== HIGHLIGHT_TYPES.CELL,
-			primary: level === HIGHLIGHT_LEVELS.PRIMARY,
-			secondary: level === HIGHLIGHT_LEVELS.SECONDARY
+			'hl-cell': hlType === 'cell',
+			'hl-line': hlType === 'line',
+			'hl-area': hlType === 'area',
+			'hl-line-area': hlType !== 'cell',
+			primary: colorId === 1,
+			secondary: colorId === 2
 		}"
 		:style="[gridAreaStyle]"
 	>
@@ -16,37 +16,33 @@
 </template>
 
 <script setup lang="ts">
-import type { BoardShape, Vec } from '@/lib/types.js';
-import { HIGHLIGHT_LEVELS, HIGHLIGHT_TYPES } from '@/stores/hints/highlights/highlight';
-import type { HighlightLevel, HighlightType } from '@/stores/hints/highlights/types.js';
+import type { Vec } from '@/lib/types.js';
+import type { PuzzleBoardHighlight } from '@/stores/puzzle-visual-cues.js';
 import { computed } from 'vue';
 
 const props = defineProps<{
-	type: HighlightType,
-	level: HighlightLevel,
-	context?: BoardShape,
-	end?: Vec,
+	highlightAreaType: PuzzleBoardHighlight['highlightAreaType'],
+	colorId: PuzzleBoardHighlight['colorId'],
+	width?: number,
+	height?: number,
 	start?: Vec,
-	cell?: Vec,
+	cell?: Vec
 }>();
 
-const hlType = computed(() => props.type);
+const hlType = computed(() => props.highlightAreaType);
 
-const isCellType = computed(() => props.type === HIGHLIGHT_TYPES.CELL);
+const isCellType = computed(() => props.highlightAreaType === 'cell');
 const areaHighlightData = computed(() => {
 	if (isCellType.value) return null;
 	// data is for line and area highlight
-	const shape = props.context!;
-	const end = props.end!;
-	const start = props.start!;
-	return { shape, end, start };
+	return { width: props.width!, height: props.height!, start: props.start! };
 })
 const cellHighlightData = computed(() => {
 	if (isCellType.value) return { cell: props.cell! };
 	return null;
 })
 
-const cornersToGridArea = (start: Vec, end: Vec, { width, height }: BoardShape) => {
+const cornersToGridArea = (start: Vec, width: number, height: number) => {
 	const { x: x0, y: y0 } = start;
 	const rowSpan = height;
 	const colSpan = width;
@@ -67,11 +63,11 @@ const gridAreaStyle = computed(() => {
 	if (cellHighlightData.value != null) {
 		return cellToGridArea(cellHighlightData.value.cell);
 	} else if (areaHighlightData.value != null) {
-		const { start, end, shape } = areaHighlightData.value;
+		const { start, width, height } = areaHighlightData.value;
 		return cornersToGridArea(
 			start,
-			end,
-			shape
+			width,
+			height
 		)
 	} else {
 		console.error('Cannot convert highlight data to grid area.');

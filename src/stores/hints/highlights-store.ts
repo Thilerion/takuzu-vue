@@ -1,22 +1,21 @@
 import { defineStore } from "pinia";
-import { computed, ref } from "vue";
-import type { Hint } from "../hints/Hint.js";
-import { usePuzzleStore } from "../puzzle/store.js";
-import { createHighlightsFromLegacyHint } from "./highlights/legacy-hint-highlights.js";
-import type { HintHighlight } from "./highlights/types.js";
+import { computed } from "vue";
 import { usePuzzleVisualCuesStore } from "../puzzle-visual-cues.js";
 
+// TODO: remove references to hintHighlightsStore; it is replaced by the puzzleVisualCuesStore
 export const useHintHighlightsStore = defineStore('hintHighlights', () => {
 	const visualCuesStore = usePuzzleVisualCuesStore();
 	const visible = computed({
 		get: () => visualCuesStore.highlightsVisible,
 		set: (val: boolean) => visualCuesStore.highlightsVisible = val
 	})
-	const currentHighlights = ref<HintHighlight[]>([]);
+	const hasCurrentHighlights = computed(() => {
+		return visualCuesStore.highlights.length > 0;
+	})
 
 	const show = () => {
 		if (visible.value) return;
-		else if (!currentHighlights.value?.length) {
+		else if (!hasCurrentHighlights.value) {
 			console.warn(`Trying to show highlights, but none are set... Reverting highlight visibility to hidden.`);
 			visible.value = false;
 			return;
@@ -24,55 +23,21 @@ export const useHintHighlightsStore = defineStore('hintHighlights', () => {
 			visible.value = true;
 		}
 	}
-	const setFromHint = (hint: Hint) => {
-		// without setting to visible
-		if (hint.isLegacyHint) {
-			const puzzleStore = usePuzzleStore();
-			const highlights: HintHighlight[] = createHighlightsFromLegacyHint(hint, puzzleStore.board!) ?? [];
-			setHighlights(highlights, { setVisible: false });
-			return;
-		} else {
-			console.warn('This is a new type of hint that should be able to display its own highlights. Therefore, calling displayFromHint is not necessary.');
-		}
-	}
 
 	const hide = () => {
 		if (!visible.value) return;
 		visible.value = false;
 	}
-	const setHighlights = (highlights: HintHighlight[], { setVisible = false } = {}) => {
-		if (!Array.isArray(highlights)) {
-			console.warn('Setting highlights requires an array.');
-			return;
-		}
 
-		if (highlights.length) {
-			currentHighlights.value = [...highlights];
-			if (setVisible) {
-				visible.value = true;
-			} else {
-				visible.value = false;
-			}
-		} else {
-			currentHighlights.value = [];
-			if (visible.value) {
-				console.warn('Current highlights are unset, so will now automatically hide the highlights.');
-				visible.value = false;
-			} else {
-				visible.value = false;
-			}
-		}
-	}
 	const clear = () => {
 		visible.value = false;
-		currentHighlights.value = [];
+		visualCuesStore.clearHighlights();
 	}
 
 	return {
-		visible, currentHighlights,
+		visible,
 
-		show, hide, setHighlights,
+		show, hide,
 		clear, reset: clear,
-		setFromHint,
 	}
 });
