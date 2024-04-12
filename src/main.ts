@@ -43,4 +43,8 @@ app.use(i18n);
 app.use(router);
 app.use(pinia);
 
+if (import.meta.env.DEV) {
+	app.config.performance = true;
+}
+
 app.mount('#app')

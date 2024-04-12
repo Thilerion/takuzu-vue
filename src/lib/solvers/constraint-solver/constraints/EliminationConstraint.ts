@@ -15,6 +15,8 @@ import { mergeAndValidateElimConstraintOpts, type CategorizeBoardLineFn, categor
 		3b. If singleAction is false, continue to the next boardLine after updating the boardLines that were changed by the actions of this line
 */
 
+// TODO: useDuplicateLines option should be required, to prevent accidentally using a "duplicate line" strategy when not desired
+
 export type ApplyEliminationConstraintOptsParam = {
 	/** Whether to stop after applying to a single line. Defaults to true. */
 	singleAction: boolean,
