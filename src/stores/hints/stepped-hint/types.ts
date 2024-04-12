@@ -8,8 +8,9 @@ import type { NoHintsFoundSteppedHint } from "./NoHintsFoundHint.js";
 import type { GenericEliminationSteppedHint } from "./GenericEliminationHint.js";
 import type { usePuzzleVisualCuesStore } from "@/stores/puzzle-visual-cues.js";
 import type { PuzzleBoardHighlight } from "@/helpers/puzzle-visual-cues.js";
+import type { GenericDuplicateLineSteppedHint } from "./GenericDuplicateLineHint.js";
 
-export type SteppedHintType = 'ruleViolation' | 'incorrectValues' | 'triples' | 'balance' | 'eliminationGeneric' | 'noHintsFound';
+export type SteppedHintType = 'ruleViolation' | 'incorrectValues' | 'triples' | 'balance' | 'eliminationGeneric' | 'duplicateLineGeneric' | 'noHintsFound';
 export type HintStepEventCallbackCtxParam = BoardAndSolutionBoards;
 export type HintStepEventCallbackActionsParam = {
 	// TODO: set certain cells in puzzleStore to a certain value, with or without adding to history, or adding to history as batch?
@@ -50,5 +51,5 @@ type GetEventKeys<Obj> = keyof {
 };
 export type HintStepEvent = GetEventKeys<Required<HintStepIntermediate> & Required<HintStepFinal>>;
 
-export type SteppedHint = TriplesSteppedHint | BalanceSteppedHint | IncorrectValuesSteppedHint | GenericEliminationSteppedHint | NoHintsFoundSteppedHint;
+export type SteppedHint = TriplesSteppedHint | BalanceSteppedHint | IncorrectValuesSteppedHint | GenericEliminationSteppedHint | GenericDuplicateLineSteppedHint | NoHintsFoundSteppedHint;
 export type SteppedHintActionType = 'locate' | 'next' | 'execute' | 'fix' | 'apply';

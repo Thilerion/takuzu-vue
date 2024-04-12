@@ -3,6 +3,8 @@
 		"common": {
 			"row": "rij",
 			"column": "kolom",
+			"rows": "rijen",
+			"columns": "kolommen",
 			"cell": "cel",
 			"cells": "cellen",
 			"surrounding-cells": "de aangrenzende cellen",
@@ -31,6 +33,38 @@
 			"message-2-multiple-targets": "In deze @:{rowOrColumn} kunnen sommige cellen slechts één @:{symbolOrColor} bevatten, omdat het anders zou resulteren in een ongeldige @:{rowOrColumn}.",
 			"message-3-single-target": "Deze cel kan worden afgeleid door onmogelijke combinaties van de resterende @:{symbolOrColorPlural} uit te sluiten.",
 			"message-3-multiple-targets": "Deze cellen kunnen worden afgeleid door onmogelijke combinaties van de resterende @:{symbolOrColorPlural} uit te sluiten."
+		},
+		"DuplicateLineGeneric": {
+			"name": "Mogelijk Dubbele Lijnen",
+			"generic": "algemeen",
+			"message-1": {
+				"single-comparison": "Er is een voltooide @:{rowOrColumn} die lijkt op een onvoltooide @:{rowOrColumn}. Er is maar één manier om @:{symbolOrColorPlural} te plaatsen om te voorkomen dat ze identiek worden.",
+				"multiple-comparisons": "Er zijn voltooide @:{rowsOrColumns} die lijken op een onvoltooide @:{rowOrColumn}. Er is maar één manier om @:{symbolOrColorPlural} te plaatsen om te voorkomen dat ze identiek worden."
+			},
+			"message-2": {
+				"single-comparison": "TODO",
+				"multiple-comparisons": "TODO"
+			},
+			"message-3": {
+				"single-comparison": {
+					"single-target": "Deze @:{rowOrColumn} lijkt op de voltooide @:{rowOrColumn}. Een @:{symbolOrColor} in een van de lege cellen plaatsen, zou leiden tot identieke @:{rowsOrColumns}, wat niet toegestaan is.",
+					"multiple-targets": "Deze @:{rowOrColumn} lijkt op de voltooide @:{rowOrColumn}. Bepaalde @:{symbolOrColorPlural} in bepaalde cellen plaatsen, zou leiden tot identieke @:{rowsOrColumns}, wat niet toegestaan is."
+				},
+				"multiple-comparisons": {
+					"single-target": "Deze @:{rowOrColumn} lijkt op de voltooide @:{rowsOrColumns}. Een @:{symbolOrColor} in een van de lege cellen plaatsen, zou dit leiden tot identieke @:{rowsOrColumns}, wat niet toegestaan is.",
+					"multiple-targets": "Deze @:{rowOrColumn} lijkt op de voltooide @:{rowsOrColumns}. Als bepaalde @:{symbolOrColorPlural} in sommige cellen geplaatst zouden worden, zou dit leiden tot identieke @:{rowsOrColumns}, wat niet toegestaan is."
+				}
+			},
+			"message-4": {
+				"single-comparison": {
+					"single-target": "Deze cel kan maar op één manier worden ingevuld om te voorkomen dat deze @:{rowOrColumn} identiek wordt aan de reeds voltooide @:{rowOrColumn}.",
+					"multiple-targets": "Deze cellen kunnen maar op één manier worden ingevuld om te voorkomen dat deze @:{rowOrColumn} identiek wordt aan de reeds voltooide @:{rowOrColumn}."
+				},
+				"multiple-comparisons": {
+					"single-target": "Deze cel kan maar op één manier worden ingevuld om te voorkomen dat deze @:{rowOrColumn} identiek wordt aan een van de gemarkeerde reeds voltooide @:{rowsOrColumns}.",
+					"multiple-targets": "Deze cellen kunnen maar op één manier worden ingevuld om te voorkomen dat deze @:{rowOrColumn} identiek wordt aan een van de gemarkeerde reeds voltooide @:{rowsOrColumns}."
+				}
+			}
 		},
 		"Triples": {
 			"name": "Drielingen",

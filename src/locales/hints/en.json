@@ -6,7 +6,9 @@
 			"surrounding-cells": "the surrounding cells",
 			"adjacent-cell": "the adjacent cell",
 			"row": "row",
+			"rows": "rows",
 			"column": "column",
+			"columns": "columns",
 
 			"actionLabel": {
 				"locate": "Locate",
@@ -31,6 +33,38 @@
 			"message-2-multiple-targets": "In this @:{rowOrColumn}, some cells can only ever contain one @:{symbolOrColor}, because it would otherwise result in an invalid @:{rowOrColumn}.",
 			"message-3-single-target": "This cell can be deduced by eliminating impossible combinations of the remaining @:{symbolOrColorPlural} to be placed.",
 			"message-3-multiple-targets": "These cells can be deduced by eliminating impossible combinations of the remaining @:{symbolOrColorPlural} to be placed."
+		},
+		"DuplicateLineGeneric": {
+			"name": "Potential Duplicate Lines",
+			"generic": "generic",
+			"message-1": {
+				"single-comparison": "There is a completed @:{rowOrColumn} with similarities to an incomplete @:{rowOrColumn}. There is one way of placing @:{symbolOrColorPlural} to prevent them from being duplicates.",
+				"multiple-comparisons": "There are completed @:{rowsOrColumns} with similarities to an incomplete @:{rowOrColumn}. There is one way of placing @:{symbolOrColorPlural} to prevent them from being duplicates."
+			},
+			"message-2": {
+				"single-comparison": "Compare this @:{rowOrColumn} to the incomplete @:{rowsOrColumns}. Could any of these @:{rowsOrColumns} become a duplicate of the filled @:{rowOrColumn} when certain @:{symbolOrColorPlural} are placed?",
+				"multiple-comparisons": "Compare these @:{rowsOrColumns} to the incomplete @:{rowsOrColumns}. Could any of these @:{rowsOrColumns} become a duplicate of the filled @:{rowsOrColumns} when certain @:{symbolOrColorPlural} are placed?"
+			},
+			"message-3": {
+				"single-comparison": {
+					"single-target": "This @:{rowOrColumn} is similar to the completed @:{rowOrColumn}. Placing a @:{symbolOrColor} in one of the empty cells will result in them being the same, which is not allowed.",
+					"multiple-targets": "This @:{rowOrColumn} is similar to the completed @:{rowOrColumn}. Placing @:{symbolOrColorPlural} in certain cells will result in them being the same, which is not allowed."
+				},
+				"multiple-comparisons": {
+					"single-target": "This @:{rowOrColumn} is similar to the completed @:{rowsOrColumns}. Placing a @:{symbolOrColor} in one of the empty cells will result in them being the same, which is not allowed.",
+					"multiple-targets": "This @:{rowOrColumn} is similar to the completed @:{rowsOrColumns}. Placing @:{symbolOrColorPlural} in certain cells will result in them being the same, which is not allowed."
+				}
+			},
+			"message-4": {
+				"single-comparison": {
+					"single-target": "This cell can only be filled in one way to prevent this @:{rowOrColumn} from being a duplicate of the already completed @:{rowOrColumn}.",
+					"multiple-targets": "These cells can only be filled in one way to prevent this @:{rowOrColumn} from being a duplicate of the already completed @:{rowOrColumn}."
+				},
+				"multiple-comparisons": {
+					"single-target": "This cell can only be filled in one way to prevent this @:{rowOrColumn} from being a duplicate of one or both of the highlighted already completed @:{rowsOrColumns}.",
+					"multiple-targets": "These cells can only be filled in one way to prevent this @:{rowOrColumn} from being a duplicate of one or both of the highlighted already completed @:{rowsOrColumns}."
+				}
+			}
 		},
 		"Triples": {
 			"name": "Triples",

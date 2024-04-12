@@ -2,6 +2,7 @@ import type { ToDynamicPuzzleString } from "@/components/dynamic-symbols/useDyna
 import { ONE, ROW, ZERO } from "@/lib/constants.js";
 import { lineSizeToNumRequired, lineTypeFromLineId } from "@/lib/utils/puzzle-line.utils";
 import type { BalanceSteppedHint } from "@/stores/hints/stepped-hint/BalanceHint.js";
+import type { GenericDuplicateLineSteppedHint } from "@/stores/hints/stepped-hint/GenericDuplicateLineHint.js";
 import type { GenericEliminationSteppedHint } from "@/stores/hints/stepped-hint/GenericEliminationHint.js";
 import type { IncorrectValuesSteppedHint } from "@/stores/hints/stepped-hint/IncorrectValuesHint.js";
 import type { TriplesSteppedHint } from "@/stores/hints/stepped-hint/TriplesHint.js";
@@ -108,6 +109,68 @@ const ELIMINATION_GENERIC_HINT_MESSAGE: HintMessageFnArray<GenericEliminationSte
 		}
 	}),
 ]
+const DUPLICATE_LINE_GENERIC_HINT_MESSAGE: HintMessageFnArray<GenericDuplicateLineSteppedHint> = [
+	(hint, $p) => {
+		// There is a completed @:{rowOrColumn} with similarities to an incomplete @:{rowOrColumn}. There is one way of placing values to prevent them from being duplicates.
+		const hasMultiplePotentialDuplicateLines = hint.potentialDuplicateLines.length > 1;
+		const messageKey = `Hints.DuplicateLineGeneric.message-1.${hasMultiplePotentialDuplicateLines ? 'multiple-comparisons' : 'single-comparison'}`;
+
+		const lineType = lineTypeFromLineId(hint.lineId);
+		return {
+			messageKey,
+			namedProperties: {
+				rowOrColumn: lineType === 'row' ? 'Hints.common.row' : 'Hints.common.column',
+				rowsOrColumns: lineType === 'row' ? 'Hints.common.rows' : 'Hints.common.columns',
+				symbolOrColorPlural: $p('symbol', true),
+			}
+		};
+	},
+	(hint, $p) => {
+		// Compare this row to the incomplete rows. Are there any that, when certain values are placed, are potential duplicates?
+		// Compare these rows to the incomplete rows. Are there any that, when certain values are placed, are potential duplicates?
+		const lineType = lineTypeFromLineId(hint.lineId);
+		const hasMultiplePotentialDuplicateLines = hint.potentialDuplicateLines.length > 1;
+		const messageKey = `Hints.DuplicateLineGeneric.message-2.${hasMultiplePotentialDuplicateLines ? 'multiple-comparisons' : 'single-comparison'}`;
+		return {
+			messageKey,
+			namedProperties: {
+				rowOrColumn: lineType === 'row' ? 'Hints.common.row' : 'Hints.common.column',
+				rowsOrColumns: lineType === 'row' ? 'Hints.common.rows' : 'Hints.common.columns',
+				symbolOrColorPlural: $p('symbol', true),
+			}
+		}
+	},
+	(hint, $p) => {
+		// This row is similar to the completed row. Placing colors in certain cells will result in them being the same, which is not allowed.
+		// This row is similar to those completed rows. Placing colors in certain cells will result in them being the same, which is not allowed.
+		const comparisonKey = hint.potentialDuplicateLines.length > 1 ? 'multiple-comparisons' : 'single-comparison';
+		const targetKey = hint.targets.length > 1 ? 'multiple-targets' : 'single-target';
+		const messageKey = `Hints.DuplicateLineGeneric.message-3.${comparisonKey}.${targetKey}`;
+		const lineType = lineTypeFromLineId(hint.lineId);
+		return {
+			messageKey,
+			namedProperties: {
+				rowOrColumn: lineType === 'row' ? 'Hints.common.row' : 'Hints.common.column',
+				rowsOrColumns: lineType === 'row' ? 'Hints.common.rows' : 'Hints.common.columns',
+				symbolOrColorPlural: $p('symbol', true),
+			}
+		}
+	},
+	(hint) => {
+		// [These cells/This cell] can only be filled in one way to prevent this @:{rowOrColumn} from being a duplicate of the already completed @:{rowOrColumn}.
+		const comparisonKey = hint.potentialDuplicateLines.length > 1 ? 'multiple-comparisons' : 'single-comparison';
+		const targetKey = hint.targets.length > 1 ? 'multiple-targets' : 'single-target';
+		const messageKey = `Hints.DuplicateLineGeneric.message-4.${comparisonKey}.${targetKey}`;
+		const lineType = lineTypeFromLineId(hint.lineId);
+		return {
+			messageKey,
+			namedProperties: {
+				rowOrColumn: lineType === 'row' ? 'Hints.common.row' : 'Hints.common.column',
+				rowsOrColumns: lineType === 'row' ? 'Hints.common.rows' : 'Hints.common.columns',
+			}
+		}
+	},
+]
 
 
 export const useSteppedHintMessage = (
@@ -163,6 +226,14 @@ function getHintMessage(hint: SteppedHint, stepIdx: number, $p: ToDynamicPuzzleS
 				return null;
 			}
 			return { messageKey: 'Hints.NoHintsFound.message' };
+		}
+		case 'duplicateLineGeneric': {
+			const fn = DUPLICATE_LINE_GENERIC_HINT_MESSAGE.at(stepIdx);
+			if (!fn) {
+				console.error('No valid message found for generic duplicate line hint step');
+				return null;
+			}
+			return fn(hint, $p);
 		}
 		default: {
 			const x: never = hintType;

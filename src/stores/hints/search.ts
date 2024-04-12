@@ -1,7 +1,4 @@
 import { SimpleBoard } from "@/lib";
-import { createHint } from "./helpers";
-import { HINT_TYPE, Hint } from "./Hint";
-import { humanSolveDuplicateLine } from "@/lib/human-solver/duplicate.js";
 import { TriplesSteppedHint } from "./stepped-hint/TriplesHint.js";
 import type { SteppedHint } from "./stepped-hint/types.js";
 import { BalanceSteppedHint } from "./stepped-hint/BalanceHint.js";
@@ -15,11 +12,13 @@ import { IncorrectValuesSteppedHint } from "./stepped-hint/IncorrectValuesHint.j
 import { genericEliminationTechnique } from "@/lib/solvers/human-solver/techniques/GenericEliminationTechnique.js";
 import { NoHintsFoundSteppedHint } from "./stepped-hint/NoHintsFoundHint.js";
 import { GenericEliminationSteppedHint } from "./stepped-hint/GenericEliminationHint.js";
+import { genericDuplicateLineTechnique } from "@/lib/solvers/human-solver/techniques/GenericDuplicateLineTechnique.js";
+import { GenericDuplicateLineSteppedHint } from "./stepped-hint/GenericDuplicateLineHint.js";
 
 export const searchForHint = (
 	board: SimpleBoard,
 	solution: SimpleBoard,
-): Hint | SteppedHint | null => {
+): SteppedHint | null => {
 
 	// Step 1: check for incorrect values
 	const mistakeHint = searchForMistakesHint(board, solution);
@@ -37,7 +36,7 @@ export const searchForHint = (
 	return createNoHintsFoundHint(board, solution);
 }
 
-function searchForMistakesHint(board: SimpleBoard, solution: SimpleBoard): Hint | IncorrectValuesSteppedHint | null {
+function searchForMistakesHint(board: SimpleBoard, solution: SimpleBoard): IncorrectValuesSteppedHint | null {
 	// TODO: better to compare incorrect values AND rule violations, but for now, just check incorrect values
 		// 1: check if there are incorrect values
 		// 1a: if yes, check if there are rule violations
@@ -92,7 +91,8 @@ function getRuleViolationOrIncorrectValueHint(
 	}
 }
 
-function searchForHumanStrategyHint(board: SimpleBoard) {
+function searchForHumanStrategyHint(board: SimpleBoard): SteppedHint | null {
+	// TODO: maybe shuffle hints before sorting them and picking the first one?
 	// TRIPLES STRATEGY
 	const triplesHumanResult = humanTriplesTechnique({ board });
 	if (triplesHumanResult && triplesHumanResult.length) {
@@ -113,6 +113,7 @@ function searchForHumanStrategyHint(board: SimpleBoard) {
 	// BALANCE HINT
 	const balanceHintResult = humanBalanceTechnique({ board });
 	if (balanceHintResult && balanceHintResult.length) {
+		// TODO: sort balance hints in some way?
 		const hint = new BalanceSteppedHint(balanceHintResult[0]);
 		return hint;
 	}
@@ -140,23 +141,29 @@ function searchForHumanStrategyHint(board: SimpleBoard) {
 		// TODO: handle different error types, only catch UnsolvableBoardLineError I think?
 		throw new Error(`Elimination Technique returned an error, but the mistakes checker found none. This should not be possible. Error message: ${(err as Error).message}`, { cause: err });
 	}
-
-	// ELIMINATION/DUPE HINT
-	const dupeHintResult = humanSolveDuplicateLine({ board });
-	if (!Array.isArray(dupeHintResult)) {
-		const err = dupeHintResult.error;
-		throw new Error(`DuplicateLine Technique returned an error, but the mistakes checker found none. This should not be possible. Error: ${err}`);
-	}
-	if (dupeHintResult.length) {
-		const sorted = [...dupeHintResult].sort((a, b) => {
-			if (a.elimType === b.elimType) {
-				return 0;
-			} else if (a.elimType > b.elimType) {
-				return 1;
-			} else return -1;
-		})
-		const hint = createHint(HINT_TYPE.ELIM_DUPE, sorted[0]);
-		return hint;
+ 
+	// (GENERIC) DUPLICATE LINE HINT
+	try {
+		const duplicateLineTechniqueResult = genericDuplicateLineTechnique({ board }, { leastRemaining: [1, 10], maxEmptyCells: 16 });
+		if (duplicateLineTechniqueResult.length > 0) {
+			if (duplicateLineTechniqueResult.length > 1) {
+				console.log({dupeLine: duplicateLineTechniqueResult})
+			}
+			const sortedResults = [...duplicateLineTechniqueResult].sort((a, z) => {
+				if (a.remainingCounts[0] !== z.remainingCounts[0]) {
+					return a.remainingCounts[0] - z.remainingCounts[0]; // lowest leastRemaining: is easiest
+				} else if (a.targets.length !== z.targets.length) {
+					return z.targets.length - a.targets.length; // use the one with the most targets
+				} else {
+					return a.remainingCounts[1] - z.remainingCounts[1]; // lowest mostRemaining: not necessarily indicative of hint difficulty but sometimes is
+				}
+			})
+			const hint = new GenericDuplicateLineSteppedHint(sortedResults[0]);
+			return hint;
+		}
+	} catch(err) {
+		// TODO: handle different error types, only catch UnsolvableBoardLineError I think?
+		throw new Error(`Duplicate Line Technique returned an error, but the mistakes checker found none. This should not be possible. Error message: ${(err as Error).message}`, { cause: err });
 	}
 
 	return null;
