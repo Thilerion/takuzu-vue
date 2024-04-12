@@ -1,15 +1,14 @@
-import type { BoardLine } from "@/lib/board/BoardLine.js"
 import type { LineId, PuzzleValueLine, Target } from "@/lib/types.js"
 import { checkEliminationStrategy } from "../../common/EliminationStrategy.js"
+import type { WithGetBoardLineIterableFn } from "./types.js";
+import { assertValidLeastRemaining, createLinePredicateWithinLeastRemainingRange } from "./common-helpers.js";
 
 export type EliminationLeastRemainingRange = [min: number, max: number];
 export type EliminationLeastRemaining = number | EliminationLeastRemainingRange;
 
 export type HumanGenericElimTechniqueInputData = {
 	// or: SimpleBoard class
-	board: {
-		boardLines: () => Iterable<BoardLine>
-	}
+	board: WithGetBoardLineIterableFn
 }
 export type HumanGenericElimTechniqueOpts = {
 	leastRemaining: EliminationLeastRemaining,
@@ -36,14 +35,11 @@ export function genericEliminationTechnique(
 	const boardLines = [...board.boardLines()];
 
 	// filter lines so they have the least remaining amount, or within the range
-	// TODO: extract filtering functionality, used in other Elimination techniques/strategies
-	const filteredLines = boardLines.filter(line => {
-		if (line.isFilled || line.numFilled === 0) return false;
-		else if (opts.maxEmptyCells != null && line.numEmpty > opts.maxEmptyCells) return false;
-		const leastRem = line.getLeastRemaining();
-		const [min, max] = opts.leastRemaining;
-		return leastRem >= min && leastRem <= max;
-	});
+	const rangePredicate = createLinePredicateWithinLeastRemainingRange(
+		opts.leastRemaining,
+		opts.maxEmptyCells
+	);
+	const filteredLines = boardLines.filter(line => rangePredicate(line));
 	// TODO: also sort by least remaining amount, but not needed if opts.leastRem is not a range
 
 	// for each line, run the elimination strategy, explicitly without filledLines (as that is purpose of the duplicate line strategy)
@@ -77,19 +73,5 @@ export function createGenericEliminationTechnique(leastRemaining: number | [min:
 	assertValidLeastRemaining(leastRemainingRange);
 	return (data: HumanGenericElimTechniqueInputData, opts: Omit<Parameters<typeof genericEliminationTechnique>[1], 'leastRemaining'> = {}) => {
 		return genericEliminationTechnique(data, { ...opts, leastRemaining: leastRemainingRange });
-	}
-}
-
-function assertValidLeastRemaining(value: EliminationLeastRemaining): void {
-	const left = Array.isArray(value) ? value[0] : value;
-	if (left <= 0) {
-		throw new Error(`Least remaining lower bound cannot be 0 or lower, but got: ${left}`);
-	}
-	const right = Array.isArray(value) ? value[1] : value;
-	if (right <= 0) {
-		throw new Error(`Least remaining upper bound cannot be 0 or lower, but got: ${right}`);
-	}
-	if (Array.isArray(value) && right < left) {
-		throw new Error(`Least remaining upper bound cannot be lower than lower bound, but got: ${right} < ${left}`);
 	}
 }
