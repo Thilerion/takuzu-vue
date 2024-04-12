@@ -39,5 +39,6 @@
         "Game.difficulty.Hard",
         "Game.difficulty.Very Hard",
         "Game.difficulty.Extreme"
-    ]
+    ],
+    "npm.packageManager": "pnpm"
 }

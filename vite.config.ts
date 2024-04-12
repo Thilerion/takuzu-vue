@@ -7,6 +7,7 @@ import Icons from 'unplugin-icons/vite';
 import IconsResolver from 'unplugin-icons/resolver';
 import Components from 'unplugin-vue-components/vite';
 import VueI18n from '@intlify/unplugin-vue-i18n/vite';
+import VueDevTools from 'vite-plugin-vue-devtools';
 
 // @ts-ignore TODO 02-07-2022: remove when pwa.config.js is converted to typescript
 import { createVitePwaConfig } from './pwa.config.js';
@@ -36,6 +37,7 @@ export default defineConfig(({ command, mode }) => {
 	return {
 		plugins: [
 			vue(),
+			VueDevTools(),
 			VitePWA(createVitePwaConfig({
 				name: env.VITE_APP_NAME,
 				short_name: env.VITE_APP_SHORT_NAME
