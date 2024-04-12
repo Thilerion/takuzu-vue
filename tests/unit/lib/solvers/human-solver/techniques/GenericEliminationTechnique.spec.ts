@@ -133,7 +133,7 @@ describe('Human Solver GenericEliminationTechnique', () => {
 		expect(results).toHaveLength(0);
 	})
 
-	it('can find results with leastRemaining=3', (ctx) => {
+	it('can find results with leastRemaining=3', () => {
 		const line = BoardLine.fromValues(splitLine("1..0..1..0.1.011"), "B");
 		const board = { boardLines: () => [line] };
 		const results1_2 = genericEliminationTechnique({ board }, {

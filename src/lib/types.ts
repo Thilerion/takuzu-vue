@@ -9,8 +9,8 @@ export type Grid<T> = T[][];
 export type PuzzleGrid = Grid<PuzzleValue>;
 export type ROPuzzleGrid = ReadonlyArray<ReadonlyArray<PuzzleValue>>;
 
-export type RowId = Flavor<string, 'RowId'>;
-export type ColumnId = Flavor<string, 'ColumnId'>;
+export type RowId = Flavor<string, 'RowId'>; // TODO: `${string}`?
+export type ColumnId = Flavor<string, 'ColumnId'>; // TODO: `${number}`?
 export type LineId = RowId | ColumnId;
 
 export type IterableBoardLineString = {
