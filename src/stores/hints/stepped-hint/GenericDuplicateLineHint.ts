@@ -32,19 +32,18 @@ export class GenericDuplicateLineSteppedHint extends BaseSteppedHint {
 			actionLabel: 'next',
 			index: 0,
 			onNext: (ctx, { setHighlights }) => {
-				const targetLineHighlight = createLineHighlightFromLineId(
-					this.lineId,
-					ctx.board,
-					{
+				// highlight potential duplicate lines
+				const potentialDuplicateLineHighlights = this.potentialDuplicateLines.map((lineId) => {
+					return createLineHighlightFromLineId(lineId, ctx.board, {
 						colorId: 1,
 						source: 'hint'
-					}
-				)
-				setHighlights([targetLineHighlight]);
+					})
+				})
+				setHighlights(potentialDuplicateLineHighlights);
 			}
 		}
 
-		// Displays target line, and explains that it has similarities to some filled lines that result in deduction of values
+		// Displays potential duplicate lines
 		const secondStep: HintStepIntermediate = {
 			actionLabel: 'locate',
 			index: 1,
@@ -58,21 +57,19 @@ export class GenericDuplicateLineSteppedHint extends BaseSteppedHint {
 				hideHighlights();
 			},
 			onNext: (ctx, { currentHighlights, setHighlights }) => {
-				// highlight potential duplicate lines
-				const potentialDuplicateLineHighlights = this.potentialDuplicateLines.map((lineId) => {
-					return createLineHighlightFromLineId(lineId, ctx.board, {
+				const targetLineHighlight = createLineHighlightFromLineId(
+					this.lineId,
+					ctx.board,
+					{
 						colorId: 2,
 						source: 'hint'
-					})
-				})
-				setHighlights([
-					...currentHighlights.value,
-					...potentialDuplicateLineHighlights
-				])
+					}
+				)
+				setHighlights([...currentHighlights.value, targetLineHighlight]);
 			}
 		}
 
-		// Displays potential duplicate lines, and explains that some values in the target line can be deduced, because setting a specific value will result in the line being the same as one or more filled lines
+		// Displays target line
 		const thirdStep: HintStepIntermediate = {
 			actionLabel: 'locate',
 			index: 2,
