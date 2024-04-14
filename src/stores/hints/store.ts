@@ -1,12 +1,11 @@
 import type { BoardString } from "@/lib/types.js";
 import { defineStore } from "pinia";
-import type { Hint } from "../hints/Hint.js";
-import { validateHint } from "../hints/helpers.js";
 import { searchForHint } from "../hints/search.js";
 import { usePuzzleStore } from "../puzzle/store.js";
 import { computed, reactive, readonly, ref } from "vue";
 import type { SteppedHint } from "./stepped-hint/types.js";
 import { usePuzzleVisualCuesStore } from "../puzzle-visual-cues.js";
+import { validateHint } from "./helpers.js";
 
 export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 	// state
@@ -14,9 +13,9 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 	const current = reactive({
 		hint: null,
 		boardStr: null
-	} as { hint: Hint | SteppedHint | null, boardStr: BoardString | null });
-	const cache = ref(new Map<BoardString, (null | Hint | SteppedHint)>());
-	const currentHint = computed(() => current.hint as null | Hint | SteppedHint);
+	} as { hint: SteppedHint | null, boardStr: BoardString | null });
+	const cache = ref(new Map<BoardString, (null | SteppedHint)>());
+	const currentHint = computed(() => current.hint as null | SteppedHint);
 
 	// Discriminate between hint == null because none was found, or because it is simply the initial state
 	const hintSearchedButNoneFound = computed(() => {
@@ -52,12 +51,12 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 		visualCuesStore.clearHighlightsFromHints();
 	}
 
-	const setNewHint = (hint: Hint | SteppedHint) => {
+	const setNewHint = (hint: SteppedHint) => {
 		current.hint = hint;
 		current.boardStr = currentBoardStr.value;
 		_addToCache(hint, currentBoardStr.value);
 	}
-	const setCachedHint = (hint: Hint | SteppedHint | null) => {
+	const setCachedHint = (hint: SteppedHint | null) => {
 		current.hint = hint;
 		current.boardStr = currentBoardStr.value;
 		if (hint == null) {
@@ -103,7 +102,7 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 	const getHint = () => {
 		// Set cachedHint (or no hint) if current boardStr is set in cache, then show it
 		if (cache.value.has(currentBoardStr.value)) {
-			const cachedHint = (cache.value.get(currentBoardStr.value) ?? null) as null | Hint | SteppedHint;
+			const cachedHint = (cache.value.get(currentBoardStr.value) ?? null) as null | SteppedHint;
 			setCachedHint(cachedHint);
 			showCurrentHintIfAvailable(); // as there is a possibility that the cached value is null
 			return;
@@ -134,7 +133,7 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 		visualCuesStore.clearHighlightsFromHints();
 	}
 
-	const _addToCache = (hint: Hint | SteppedHint | null, boardStr: BoardString) => {
+	const _addToCache = (hint: SteppedHint | null, boardStr: BoardString) => {
 		cache.value.set(boardStr, hint);
 	}
 	

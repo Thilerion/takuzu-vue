@@ -3,15 +3,8 @@
 		class="fixed bottom-0 inset-0 w-full min-h-full pointer-events-none z-20 h-full"
 	>
 		<transition name="t-slide-up">
-				<PuzzleHint
-					class="z-50 absolute bottom-0 pointer-events-none"
-					v-if="renderableLegacyHint"
-					:hint="renderableLegacyHint"
-					@done="puzzleHintsStore.removeHint"
-					@hide="hide"
-				></PuzzleHint>
 				<PuzzleHintStepped
-					v-else-if="renderableSteppedHint"
+					v-if="renderableSteppedHint"
 					:hint="renderableSteppedHint"
 					:show="isHintShown"
 					@hide="hide"
@@ -20,15 +13,14 @@
 					v-else-if="renderableFallbackNoneFoundHint"
 					@hide="hide"
 				>
-					<template #title>{{ $t('Hints.none-found.no-hint-found') }}</template>
-					<template #message>{{  $t('Hints.none-found.no-hint-found-too-hard-message') }}</template>
+					<template #title>{{ $t('Hints.NoHintsFound.name') }}</template>
+					<template #message>{{  $t('Hints.NoHintsFound.message') }}</template>
 				</PuzzleHintBase>
 		</transition>
 	</div>
 </template>
 
 <script setup lang="ts">
-import type { Hint } from '@/stores/hints/Hint.js';
 import type { SteppedHint } from '@/stores/hints/stepped-hint/types.js';
 import { usePuzzleHintsStore } from '@/stores/hints/store.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
@@ -39,12 +31,6 @@ const puzzleHintsStore = usePuzzleHintsStore();
 const { isHintShown, currentHint, hintSearchedButNoneFound } = storeToRefs(puzzleHintsStore);
 const { hide } = puzzleHintsStore;
 
-const renderableLegacyHint = computed((): null | Hint => {
-	if (isHintShown.value && currentHint.value != null && currentHint.value.isLegacyHint) {
-		return currentHint.value;
-	}
-	return null;
-})
 const renderableSteppedHint = computed((): null | SteppedHint => {
 	// Note: gets rendered even if isHintShown is false
 	if (currentHint.value != null && !currentHint.value.isLegacyHint && currentHint.value.isSteppedHint) {
