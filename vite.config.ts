@@ -36,8 +36,8 @@ export default defineConfig(({ command, mode }) => {
 
 	return {
 		plugins: [
+			// VueDevTools(),
 			vue(),
-			VueDevTools(),
 			VitePWA(createVitePwaConfig({
 				name: env.VITE_APP_NAME,
 				short_name: env.VITE_APP_SHORT_NAME
