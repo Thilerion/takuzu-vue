@@ -3,11 +3,9 @@ export interface DataAnalysisCache<T extends number = number> {
 	count?: number,
 	sum?: number
 }
-export type Extent = [min: number, max: number];
 
 export const min = (arr: number[]) => Math.min(...arr);
 export const max = (arr: number[]) => Math.max(...arr);
-export const extent = (arr: number[]) => [min(arr), max(arr)];
 export const sum = (arr: number[]) => arr.reduce((acc, val) => acc + val, 0);
 
 export const minMaxSum = (arr: number[]) => arr.reduce((acc, val) => {

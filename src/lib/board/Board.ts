@@ -105,9 +105,6 @@ export class SimpleBoard {
 		}
 		return this.grid[y][x];
 	}
-	isCellEmpty(x: number, y: number) {
-		return this.get(x, y) === EMPTY;
-	}
 	getColumn(x: ColumnId | number) {
 		const coordX = typeof x === 'string' ? columnIdToX(x) : x;
 		return this.grid.map(row => row[coordX]);

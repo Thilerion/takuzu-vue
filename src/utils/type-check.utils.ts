@@ -16,6 +16,3 @@ export function isPrimitive(val: unknown): val is Primitive {
 		'Undefined'
 	].includes(res);
 }
-export function isNonNullishPrimitive(val: unknown): val is NonNullishPrimitive {
-	return isPrimitive(val) && val != null;
-}

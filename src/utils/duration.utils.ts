@@ -38,16 +38,6 @@ const durationInHoursMinutesSeconds = (baseMs: number) => {
 	return { hours, minutes, seconds, remainderMs };
 }
 
-export const formatDurationMMSS = (ms: number, { padFirst = true } = {}) => {
-	const { minutes, seconds } = durationInMinutesSeconds(ms);
-
-	const formattedSeconds = `${seconds}`.padStart(2, '0');
-	const formattedMinutes = `${minutes}`.padStart(
-		padFirst ? 2 : 1, '0'
-	);
-	
-	return [formattedMinutes, formattedSeconds].join(':');
-}
 export const formatDurationHHMMSS = (ms: number, { 
 	padFirst = true,
 	emptyHours = true

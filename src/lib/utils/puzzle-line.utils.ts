@@ -42,9 +42,6 @@ export const columnIdToX = (columnId: ColumnId) => (+columnId) - 1;
 
 export const isLineIdRow = (lineId: LineId): lineId is RowId => /[A-Z]/.test(lineId);
 export const isLineIdColumn = (lineId: LineId): lineId is ColumnId => /^\d+$/.test(lineId);
-export const isLineId = (str: unknown): str is LineId => {
-	return typeof str === 'string' && str.length === 1;
-}
 
 export function lineTypeFromLineId(lineId: RowId): typeof ROW;
 export function lineTypeFromLineId(lineId: ColumnId): typeof COLUMN;

@@ -1,7 +1,7 @@
 import Dexie from "dexie";
 import { GeneratedPuzzle, type IPregenPuzzle } from "./models.js";
 import type { BasicPuzzleConfig, BoardExportString } from "@/lib/types.js";
-import { getRandomItem } from "@/utils/array.ts.utils.js";
+import { pickRandom } from "@/utils/random.utils.js";
 
 class PregenPuzzlesDb extends Dexie {
 	puzzles!: Dexie.Table<GeneratedPuzzle, BoardExportString>;
@@ -51,7 +51,7 @@ class PregenPuzzlesDb extends Dexie {
 			}
 	
 			const matchingPuzzles = await this.puzzles.where({ width, height, difficulty }).toArray();
-			const puzzle: GeneratedPuzzle = matchingPuzzles.length > 1 ? getRandomItem(matchingPuzzles) : matchingPuzzles[0];
+			const puzzle: GeneratedPuzzle = matchingPuzzles.length > 1 ? pickRandom(matchingPuzzles) : matchingPuzzles[0];
 	
 			await this.puzzles.delete(puzzle.boardStr);
 	

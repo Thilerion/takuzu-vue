@@ -1,4 +1,3 @@
-import type { SimpleBoard } from "../board/Board";
 import type { PuzzleValue } from "../constants.js";
 
 export type BoardShapeType = 'square' | 'rect' | 'odd';
@@ -13,11 +12,6 @@ const boardShapeTypeFromDimensions = (width: number, height: number): BoardShape
 		if (!isOdd(width) && !isOdd(height)) return 'rect';
 	}
 	throw new Error(`Unknown board shape type for width x height of: ${width} x ${height}`);
-}
-
-export const getBoardShapeType = (board: SimpleBoard): BoardShapeType => {
-	const { width, height } = board;
-	return boardShapeTypeFromDimensions(width, height);
 }
 
 export const getBoardShapeTypeFromGrid = (

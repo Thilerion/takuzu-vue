@@ -111,33 +111,6 @@ export const timeFormatter = (formatOptions: any) => {
 	}
 }
 
-export const formatTimeMMSSss = (timestampMS: number, { padMinutes = true } = {}) => {
-	const timestampToPrecision = Math.round(timestampMS / 10) * 10;
-	const date = new Date(timestampToPrecision);
-	let minutes: string | number = date.getMinutes();
-	let seconds: string | number = date.getSeconds();
-	let hundredths: string | number = Math.round(date.getMilliseconds() / 10);
-
-	if (padMinutes) {
-		minutes = padLeft(minutes);
-	}
-	seconds = padLeft(seconds);
-	hundredths = `00${hundredths}`.slice(-2);
-	return `${minutes}:${seconds}.${hundredths}`;
-}
-
-export const formatTimeHHMMSS = (timestampMS: number, { padHours = false } = {}) => {
-	const totalSeconds = Math.round(timestampMS / 1000);
-
-	const time = new Date(totalSeconds * 1000);
-
-	const hours = time.getHours();
-	const minutes = time.getMinutes();
-	const seconds = time.getSeconds();
-
-	return `${padHours ? padLeft(hours) : hours}:${padLeft(minutes)}:${padLeft(seconds)}`;
-}
-
 export const getMonthNameShort = (date: Date) => {
 	const intl = new Intl.DateTimeFormat(undefined, { month: 'short' });
 	return intl.format(date).replace('.', '');

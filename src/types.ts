@@ -10,11 +10,6 @@ export type PickRequired<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K
 /** PartialExcept accepts an object and one or more properties of that object, and returns a type with all properties markeda as optional, except for the the specified properties. */
 export type PartialExcept<T, K extends keyof T> = Partial<Omit<T, K>> & Pick<T, K>;
 
-
-export function assertUnreachable(value: never): asserts value is never {
-	throw new Error(`Unexpected value: ${value}`);
-}
-
 type NonFunctionKeyNames<T> = Exclude<{
 	[key in keyof T] : T[key] extends () => void ? never : key;
   }[keyof T], undefined>;
