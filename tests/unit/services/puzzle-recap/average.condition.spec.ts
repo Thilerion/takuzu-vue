@@ -7,6 +7,8 @@ describe('wasSolvedFasterThanAverageTime', () => {
 			getNumSolvedWithConfig: () => 3,
 			personalBest: {} as PersonalBestGameEndStats,
 			averageTimes: new AverageTimeGameEndStats({
+				weightedAverage: 1000,
+				previousWeightedAverage: 1000,
 				average: 1000,
 				previousAverage: 1000,
 			}),
@@ -19,6 +21,8 @@ describe('wasSolvedFasterThanAverageTime', () => {
 			getNumSolvedWithConfig: () => 100,
 			personalBest: { isTimeRecord: () => true } as PersonalBestGameEndStats,
 			averageTimes: new AverageTimeGameEndStats({
+				weightedAverage: 1000,
+				previousWeightedAverage: 1000,
 				average: 1000,
 				previousAverage: 1000,
 			}),
@@ -32,7 +36,9 @@ describe('wasSolvedFasterThanAverageTime', () => {
 			personalBest: { isTimeRecord: () => false } as PersonalBestGameEndStats,
 			averageTimes: new AverageTimeGameEndStats({
 				average: 1000,
+				weightedAverage: 1000,
 				previousAverage: 1000,
+				previousWeightedAverage: 1000,
 			}),
 			getTimeElapsed: () => 1000 // equal to average
 		})).toEqual({ success: false })
@@ -42,7 +48,9 @@ describe('wasSolvedFasterThanAverageTime', () => {
 			personalBest: { isTimeRecord: () => false } as PersonalBestGameEndStats,
 			averageTimes: new AverageTimeGameEndStats({
 				average: 1000,
+				weightedAverage: 1000,
 				previousAverage: 1000,
+				previousWeightedAverage: 1000,
 			}),
 			getTimeElapsed: () => 1001 // slower than average
 		})).toEqual({ success: false })
@@ -54,7 +62,9 @@ describe('wasSolvedFasterThanAverageTime', () => {
 			personalBest: { isTimeRecord: () => false } as PersonalBestGameEndStats,
 			averageTimes: new AverageTimeGameEndStats({
 				average: 999,
+				weightedAverage: 999,
 				previousAverage: 1000,
+				previousWeightedAverage: 1000,
 			}),
 			getTimeElapsed: () => 997
 		})).toEqual({
@@ -84,6 +94,8 @@ describe('wasSolvedMuchFasterThanAverageTime', () => {
 			averageTimes: new AverageTimeGameEndStats({
 				average: 10_000,
 				previousAverage: 10_000,
+				weightedAverage: 10_000,
+				previousWeightedAverage: 10_000,
 			}),
 			getTimeElapsed: () => 1
 		})).toEqual({ success: false })
@@ -98,6 +110,8 @@ describe('wasSolvedMuchFasterThanAverageTime', () => {
 			averageTimes: new AverageTimeGameEndStats({
 				average: 100_000,
 				previousAverage: 100_000,
+				weightedAverage: 100_000,
+				previousWeightedAverage: 100_000,
 			}),
 			getTimeElapsed: () => 25_000 // 35s faster
 		});

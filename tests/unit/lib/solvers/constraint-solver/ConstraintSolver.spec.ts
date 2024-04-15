@@ -226,7 +226,7 @@ describe('ConstraintSolver', () => {
 			})
 			// without timeout, finds all solutions (or up to 500)
 			const startA = performance.now();
-			expect(ConstraintSolver.run(board, getConf(null)).numSolutions).toBe(500);
+			expect(ConstraintSolver.run(board, getConf(10_000)).numSolutions).toBe(500);
 			const durationA = performance.now() - startA;
 			expect(durationA).toBeGreaterThan(100); // took 470ms on my machine, so expect it to be at least 100ms
 
