@@ -27,7 +27,7 @@ export const usePuzzleVisualCuesStore = defineStore('puzzleVisualCues', () => {
 	const removeCellMarkAtCell = (cell: Vec) => {
 		cellMarks.value = cellMarks.value.filter(mark => {
 			const { x, y } = mark.cell;
-			return cell.x !== x && cell.y !== y;
+			return !(cell.x === x && cell.y === y);
 		});
 	}
 
