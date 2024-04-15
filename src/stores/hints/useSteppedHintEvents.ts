@@ -21,6 +21,7 @@ export const useSteppedHintEvents = (
 		hideHighlights: visualCuesStore.hideHighlights,
 		removeHighlights: visualCuesStore.clearHighlightsFromHints,
 		setHighlights: visualCuesStore.setHintHighlights,
+		addErrorMarksFromCells: visualCuesStore.addErrorMarksFromCells,
 		currentHighlights,
 		showHighlights: visualCuesStore.showHighlights,
 		makeMove: puzzleStore.makeMove,

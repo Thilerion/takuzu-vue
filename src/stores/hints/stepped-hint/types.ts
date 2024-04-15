@@ -18,6 +18,7 @@ export type HintStepEventCallbackActionsParam = {
 	makeMultipleMoves: ReturnType<typeof usePuzzleStore>['makeMultipleMoves'],
 	removeHighlights: () => void,
 	setHighlights: ReturnType<typeof usePuzzleVisualCuesStore>['setHintHighlights'],
+	addErrorMarksFromCells: ReturnType<typeof usePuzzleVisualCuesStore>['addErrorMarksFromCells'],
 	currentHighlights: Ref<PuzzleBoardHighlight[]>,
 	showHighlights: () => void,
 	hideHighlights: () => void,

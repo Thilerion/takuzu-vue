@@ -36,12 +36,15 @@ export const usePuzzleVisualCuesStore = defineStore('puzzleVisualCues', () => {
 		cellMarks.value = [...cellMarks.value, ...marks];
 	}
 	const addErrorMarksFromCells = (type: ErrorMark['errorType'], cells: Vec[]) => {
-		const marks: ErrorMark[] = cells.map(({ x, y }) => ({
+		const marks: ErrorMark[] = cells.map(({ x, y }): ErrorMark => ({
 			type: 'error',
 			cell: { x, y }, // don't simply add the cell, it needs to be cloned at the least
 			errorType: type,
 			id: `${x},${y}`
-		}));
+		})).filter(mark => {
+			// don't add duplicates
+			return !cellMarks.value.some(existingMark => existingMark.id === mark.id);
+		})
 		addErrorMarks(marks);
 	}
 	const addHintHighlights = (values: PuzzleBoardHighlight[]) => {

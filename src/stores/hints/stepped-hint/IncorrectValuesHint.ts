@@ -26,7 +26,7 @@ export class IncorrectValuesSteppedHint extends BaseSteppedHint {
 		const firstStep: HintStepIntermediate = {
 			actionLabel: 'locate',
 			index: 0,
-			onNext: (ctx, { setHighlights }) => {
+			onNext: (ctx, { setHighlights, addErrorMarksFromCells }) => {
 				const highlights = this.moves.map((vec): CellHighlight => {
 					return createCellHighlight(vec, {
 						colorId: 1,
@@ -34,12 +34,17 @@ export class IncorrectValuesSteppedHint extends BaseSteppedHint {
 					})
 				})
 				setHighlights(highlights);
+
+				// also add (persistent) error marks to the cells
+				addErrorMarksFromCells('incorrectValue', this.moves.map(({ x, y }) => ({ x, y })));
 			}
 		}
 		const finalStep: HintStepFinal = {
 			actionLabel: 'fix',
 			index: 1,
-			onShow: (ctx, { showHighlights }) => {
+			onShow: (ctx, { showHighlights, addErrorMarksFromCells }) => {
+				// add error marks again because they may have been removed while the hint was hidden
+				addErrorMarksFromCells('incorrectValue', this.moves.map(({ x, y }) => ({ x, y })));
 				showHighlights();
 			},
 			onPrev: (ctx, { removeHighlights }) => {
