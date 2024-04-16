@@ -8,6 +8,7 @@ import type { PiniaPlugin } from 'pinia';
 import { markRaw, watch } from 'vue';
 import { DEFAULT_FALLBACK_LOCALE, SUPPORTED_LOCALES, type SupportedLocale } from './constants.js';
 import { getInitialLocale } from './helpers.js';
+import { numberFormats } from './number-formats.js';
 
 const mergedMessages = {
 	en: {
@@ -27,7 +28,8 @@ const i18n = createI18n({
 	fallbackLocale: DEFAULT_FALLBACK_LOCALE,
 	availableLocales: SUPPORTED_LOCALES,
 	// TODO: lazy load locales
-	messages: mergedMessages
+	messages: mergedMessages,
+	numberFormats: numberFormats
 })
 export type AppI18n = typeof i18n;
 
