@@ -6,7 +6,7 @@
 			</IconBtn>
 		</template>
 		<template #content>
-			<BookmarkItems
+			<GameBoardDdBookmarkItems
 				@close="closeDD"
 			/>
 			<BaseDropdownDivider />

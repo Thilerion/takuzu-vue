@@ -124,12 +124,13 @@
 		},
 		"dd": {
 			"bookmark-saved": "Bookmark saved",
-			"copy-board-string": "Copy board string",
-			"delete-bookmark": "Delete bookmark",
-			"increase-time-by-n-s": "Increase time by {n}s",
-			"load-bookmark": "Load bookmark {id}",
+			"load-last-bookmark": "Load last bookmark",
 			"set-bookmark": "Set bookmark",
+			"no-bookmark-saved": "No bookmarks saved",
+			"view-bookmarks": "View bookmarks",
 			"percent-solved": "{percentFormatted} solved",
+			"copy-board-string": "Copy board string",
+			"increase-time-by-n-s": "Increase time by {n}s",
 			"solve-all-triples": "Solve all triples",
 			"solve-instantly": "Solve instantly",
 			"solve-puzzle": "Solve puzzle"

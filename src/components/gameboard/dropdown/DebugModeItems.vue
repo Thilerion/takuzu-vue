@@ -13,7 +13,10 @@
 			<span class="ml-8 mt-px">{{ $t('PlayPuzzle.dd.solve-instantly') }}</span>
 		</BaseDropdownItem>
 		<BaseDropdownItem @click="increasePuzzleTime">
-			<span class="ml-8 mt-px">{{ $t('PlayPuzzle.dd.increase-time-by-n-s', { n: 10 }) }}</span>
+			<template #icon>
+				<IconIcOutlineMoreTime class="opacity-80 text-base" />
+			</template>
+			<span class="mt-px">{{ $t('PlayPuzzle.dd.increase-time-by-n-s', { n: 10 }) }}</span>
 		</BaseDropdownItem>
 		<BaseDropdownItem @click="solveTrios">
 			<span class="ml-8 mt-px">{{ $t('PlayPuzzle.dd.solve-all-triples') }}</span>

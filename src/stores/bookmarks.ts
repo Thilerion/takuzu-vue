@@ -64,6 +64,19 @@ export const usePuzzleBookmarksStore = defineStore('puzzleBookmarks', () => {
 		bookmarks.value.push(bookmark);
 	}
 
+	const lastBookmark = computed((): Bookmark | null => {
+		if (bookmarks.value.length === 0) return null;
+		const maxId = bookmarks.value.reduce((max, b) => Math.max(max, b.id), 0);
+		return bookmarks.value.find(b => b.id === maxId) ?? null;
+	})
+	const currentBoardIsLastBookmark = computed(() => {
+		if (lastBookmark.value == null) return false;
+		const board = usePuzzleStore().board;
+		if (board == null) return false;
+		const boardString = board.export();
+		return lastBookmark.value.board === boardString;
+	})
+
 	const reset = () => {
 		bookmarks.value = [];
 		prevBookmarkId = null;
@@ -71,6 +84,8 @@ export const usePuzzleBookmarksStore = defineStore('puzzleBookmarks', () => {
 
 	return {
 		bookmarks,
+		lastBookmark,
+		currentBoardIsLastBookmark,
 		reset,
 		saveStateAsBookmark,
 		canSaveCurrentBoardStateAsBookmark,
