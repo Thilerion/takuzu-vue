@@ -5,7 +5,6 @@ import { usePuzzleStore } from "../puzzle/store.js";
 import { computed, reactive, readonly, ref } from "vue";
 import type { SteppedHint } from "./stepped-hint/types.js";
 import { usePuzzleVisualCuesStore } from "../puzzle-visual-cues.js";
-import { validateHint } from "./helpers.js";
 
 export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 	// state
@@ -17,22 +16,9 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 	const cache = ref(new Map<BoardString, (null | SteppedHint)>());
 	const currentHint = computed(() => current.hint as null | SteppedHint);
 
-	// Discriminate between hint == null because none was found, or because it is simply the initial state
-	const hintSearchedButNoneFound = computed(() => {
-		return current.hint == null && current.boardStr != null;
-	})
-
-	// Note: does not include a requested hint that was not found, and does not include for how many different boards a hint was requested
-	const uniqueHintsRequested = computed(() => {
-		const uniqueHintIds = new Set<number>();
-		for (const hint of cache.value.values()) {
-			if (hint != null) uniqueHintIds.add(hint.id);
-		}
-		return uniqueHintIds.size;
-	})
 	// TODO: assistanceData used for stats/saved game; amount of hints requested, types, actions executed, etc
 
-	const currentBoardStr = computed(() => usePuzzleStore().boardStr!);
+	const currentBoardStr = computed((): BoardString => usePuzzleStore().boardStr!);
 
 	const showCurrentHint = () => {
 		isHintShown.value = true;
@@ -56,23 +42,13 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 		current.boardStr = currentBoardStr.value;
 		_addToCache(hint, currentBoardStr.value);
 	}
+
 	const setCachedHint = (hint: SteppedHint | null) => {
 		current.hint = hint;
 		current.boardStr = currentBoardStr.value;
-		if (hint == null) {
-			const visualCuesStore = usePuzzleVisualCuesStore();
-			visualCuesStore.clearHighlightsFromHints();
-		}
 		if (!cache.value.has(currentBoardStr.value)) {
 			throw new Error('Setting cached hint, but it is not in cache. This should not happen.');
 		}
-	}
-	const setNoHintAvailable = () => {
-		current.hint = null;
-		current.boardStr = currentBoardStr.value;
-		_addToCache(null, currentBoardStr.value);
-		const visualCuesStore = usePuzzleVisualCuesStore();
-		visualCuesStore.clearHighlightsFromHints();
 	}
 
 	/** Check if a hint currently set, but not (completely) executed, is still valid for a possibly changed board. */
@@ -85,8 +61,11 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 			return true;
 		}
 
-		const h = currentHint.value;
-		const isValid = validateHint(h);
+		const puzzleStore = usePuzzleStore();
+		const isValid = currentHint.value.validate({
+			board: puzzleStore.board!,
+			solution: puzzleStore.solution!
+		});
 
 		if (isValid) {
 			setNewHint(currentHint.value); // also adds to cache
@@ -112,15 +91,13 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 			return;
 		}
 		// Else, search for new hint
-		const hint = searchForHint(usePuzzleStore().board!, usePuzzleStore().solution!);
+		const hint: SteppedHint = searchForHint(usePuzzleStore().board!, usePuzzleStore().solution!);
 		if (hint != null) {
 			setNewHint(hint);
 			showCurrentHint();
 			return;
 		} else {
-			setNoHintAvailable();
-			showCurrentHint();
-			return;
+			throw new Error("There should never be no hint found, because the NoHintsFoundHint should be returned instead. So this should not happen.");
 		}
 	}
 
@@ -140,7 +117,6 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 	return {
 		currentHint,
 		isHintShown,
-		hintSearchedButNoneFound,
 
 		getHint,
 		reset,
@@ -148,6 +124,5 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 		removeHint: removeCurrentHint,
 
 		_cache: readonly(cache),
-		uniqueHintsRequested,
 	}
 })

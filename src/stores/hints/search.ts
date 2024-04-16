@@ -18,7 +18,7 @@ import { GenericDuplicateLineSteppedHint } from "./stepped-hint/GenericDuplicate
 export const searchForHint = (
 	board: SimpleBoard,
 	solution: SimpleBoard,
-): SteppedHint | null => {
+): SteppedHint => {
 
 	// Step 1: check for incorrect values
 	const mistakeHint = searchForMistakesHint(board, solution);
