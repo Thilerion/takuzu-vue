@@ -41,16 +41,6 @@ const _useSavedPuzzle = () => {
 		return savePuzzle(saveData);
 	}
 	const deleteSavedPuzzle = () => savedPuzzle.value = null;
-	const loadPuzzle = () => {
-		if (savedPuzzle.value == null) return null;
-
-		const { width, height, board } = savedPuzzle.value;
-		if (!width || !height || !board) {
-			deleteSavedPuzzle();
-			return null;
-		}
-		return readonly(savedPuzzle);
-	}
 	const hasCurrentSavedGame = computed(() => {
 		if (savedPuzzle.value == null) return false;
 		const { width, height, board } = savedPuzzle.value;
@@ -61,15 +51,9 @@ const _useSavedPuzzle = () => {
 		return true;
 	})
 
-	const getCurrentSavedPuzzle = (): SaveGame | null => {
-		if (savedPuzzle.value == null) return null;
-		return {
-			...savedPuzzle.value
-		}
-	}
 	const getParsedSavedPuzzle = () => {
-		const data = getCurrentSavedPuzzle();
-		if (data == null) return null;
+		if (savedPuzzle.value == null) return null;
+		const data: SaveGame = { ...savedPuzzle.value };
 		const { width, height, difficulty, initialBoard, board, solution, moveList, timeElapsed } = data;
 		return {
 			config: { width, height, difficulty },
@@ -86,11 +70,8 @@ const _useSavedPuzzle = () => {
 	return {
 		savedPuzzle: readonly(savedPuzzle),
 		hasCurrentSavedGame,
-		loadPuzzle,
 		deleteSavedPuzzle,
-		savePuzzle,
 		savePuzzleSaveData,
-		getCurrentSavedPuzzle,
 		getParsedSavedPuzzle,
 	}
 }
