@@ -23,9 +23,15 @@ export const usePuzzleWakeLock = ({ pauseAfter = 1.5 * MINUTE } = {}) => {
 	const shouldEnableWakeLock = computed(() => {
 		return settingsStore.enableWakeLock && playStatus.value === 'playing' && !idle.value;
 	})
-	const requestWakeLock = () => {
+	const requestWakeLock = async () => {
 		if (shouldEnableWakeLock.value && !hasActivated.value) {
-			request?.('screen');
+			try {
+				await request?.('screen');
+			} catch(e) {
+				if (e instanceof Error && e.name === 'NotAllowedError') {
+					console.warn('Wake lock request failed: "NotAllowedError".');
+				} else throw e;
+			}
 		}
 	}
 
