@@ -129,6 +129,7 @@
 			"increase-time-by-n-s": "Increase time by {n}s",
 			"load-bookmark": "Load bookmark {id}",
 			"set-bookmark": "Set bookmark",
+			"percent-solved": "{percentFormatted} solved",
 			"solve-all-triples": "Solve all triples",
 			"solve-instantly": "Solve instantly",
 			"solve-puzzle": "Solve puzzle"
