@@ -13,16 +13,18 @@ const savedPuzzle = useStorage<SaveGame | null>(SAVE_DATA_STORAGE_KEY, null, loc
 const _useSavedPuzzle = () => {
 	const savePuzzle = (saveData: SaveData): boolean => {
 		const { moveList, timeElapsed } = saveData;
-		// BUG: moveList is empty after loading bookmark, or some actions performed by hints or fixes, but should still save
-		if (!moveList.length || !timeElapsed || timeElapsed < 1000) {
+
+		const boardExport = saveData.board.export();
+		const initialBoardExport = saveData.initialBoard.export();
+		if (boardExport === initialBoardExport || !timeElapsed || timeElapsed < 1000) {
 			// do not save if no moves made and timeElapsed is very low
 			return false;
 		}
 	
 		const boardExports = {
-			board: saveData.board.export(),
+			board: boardExport,
 			solution: saveData.solution.export(),
-			initialBoard: saveData.initialBoard.export()
+			initialBoard: initialBoardExport
 		}
 		const { width, height, difficulty } = saveData;
 		const savegame: SaveGame = {
