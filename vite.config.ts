@@ -1,5 +1,5 @@
 import { fileURLToPath, URL } from 'node:url';
-import { getBuildVersionDetails } from './scripts/build-metadata.js';
+import { BuildVersionDetails, getBuildVersionDetails } from './scripts/build-metadata.js';
 
 import vue from '@vitejs/plugin-vue';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -25,18 +25,16 @@ export default defineConfig(({ command, mode }) => {
 		]
 	}) : undefined;
 
-	let buildVersionDetails = {};
+	let buildVersionDetails: BuildVersionDetails | { error: unknown };
 	try {
 		buildVersionDetails = getBuildVersionDetails(mode);
 	} catch (e) {
-		console.warn('Error in getting build version details.');
-		console.error(e);
-		console.error({ command, mode, processEnv: process.env, loadedEnv: env });
+		buildVersionDetails = { error: e };
 	}
 
 	return {
 		plugins: [
-			// VueDevTools(),
+			VueDevTools(),
 			vue(),
 			VitePWA(createVitePwaConfig({
 				name: env.VITE_APP_NAME,

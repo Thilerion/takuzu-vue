@@ -9,6 +9,9 @@ coverage
 .env.local
 .env.*.local
 
+# components.d.ts is updated so often, often even with removals and additions of the same components, it's not worth keeping in git with just a single developer
+components.d.ts
+
 # Log files
 logs
 *.log
