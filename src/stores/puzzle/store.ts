@@ -185,14 +185,17 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				return;
 			}
 
+			this.resetSubStores();
+			this.$reset();
+		},
+		resetSubStores() {
 			// reset all sub-stores
 			usePuzzleTimer().reset();
 			usePuzzleHistoryStore().reset();
 			usePuzzleHintsStore().reset();
 			usePuzzleAssistanceStore().reset();
 			usePuzzleVisualCuesStore().clearAll();
-
-			this.$reset();
+			usePuzzleBookmarksStore().reset();
 		},
 		_updateGridCount(value: PuzzleValue, prev: PuzzleValue) {
 			this.gridCounts[value] += 1;
@@ -446,13 +449,9 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 				 */this.setAllBoards({ board, solution, initialBoard });
 			//}
 
-			const puzzleHistory = usePuzzleHistoryStore();
-			puzzleHistory.reset();
-			usePuzzleHintsStore().reset();
-			usePuzzleAssistanceStore().reset();
-			usePuzzleVisualCuesStore().clearAll();
+			this.resetSubStores();
+			// additionally requires starting the timer again
 			const timer = usePuzzleTimer();
-			timer.reset();
 			timer.start();
 		},
 
