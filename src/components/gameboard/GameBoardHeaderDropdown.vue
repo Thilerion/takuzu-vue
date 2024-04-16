@@ -6,47 +6,63 @@
 			</IconBtn>
 		</template>
 		<template #content>
-			<BaseDropdownItem disabled>
-				<icon-ic-outline-bookmark-add class="opacity-80 text-base" />
-				<span class="ml-3 mt-px">{{ $t('PlayPuzzle.dd.set-bookmark') }}</span>
+			<BaseDropdownItem :disabled="!canSaveCurrentBoardStateAsBookmark" @click="saveStateAsBookmark">
+				<template #icon>
+					<icon-ic-outline-bookmark-added class="opacity-100 text-green-500 text-base" v-if="currentBoardIsSaved" />
+					<icon-ic-outline-bookmark-add class="opacity-80 text-base" v-else />
+				</template>
+				<span class="mt-px" v-if="currentBoardIsSaved">{{ $t('PlayPuzzle.dd.bookmark-saved') }}</span>
+				<span class="mt-px" v-else>{{ $t('PlayPuzzle.dd.set-bookmark') }}</span>
+			</BaseDropdownItem>
+			<BaseDropdownItem
+				v-for="bm in bookmarks"
+				:key="bm.id"
+			>
+				<span class="ml-8 mt-px">{{ $t('PlayPuzzle.dd.load-bookmark', { id: bm.id + 1 }) }}</span>
 			</BaseDropdownItem>
 			<BaseDropdownItem disabled>
-				<icon-ic-outline-bookmark-remove class="opacity-80 text-base" />
-				<span class="ml-3 mt-px">{{ $t('PlayPuzzle.dd.delete-bookmark') }}</span>
+				<template #icon>
+					<icon-ic-outline-bookmark-remove class="opacity-80 text-base" />
+				</template>
+				<span class="mt-px">{{ $t('PlayPuzzle.dd.delete-bookmark') }}</span>
 			</BaseDropdownItem>
 			<BaseDropdownDivider />
 			<BaseDropdownItem>
-				<label class="flex items-center">
+				<template #icon>
 					<input type="checkbox" v-model="showTimer">
-					<span class="ml-2">{{ $t('Settings.show-timer') }}</span>
-				</label>
+				</template>
+				<span class="">{{ $t('Settings.show-timer') }}</span>
 			</BaseDropdownItem>
 			<BaseDropdownDivider />
 
 			<template v-if="debugModeEnabled">
 				<BaseDropdownItem @click="copyPuzzleString">
-					<icon-heroicons-outline-clipboard-copy class="opacity-80 text-base" />
-					<span class="ml-3 mt-px">{{ $t('PlayPuzzle.dd.copy-board-string') }}</span>
+					<template #icon>
+						<icon-heroicons-outline-clipboard-copy class="opacity-80 text-base" />
+					</template>
+					<span class="mt-px">{{ $t('PlayPuzzle.dd.copy-board-string') }}</span>
 					<span v-if="copyError" class="ml-2 text-xs text-red-700 mt-px">{{ copyError }}</span>
 				</BaseDropdownItem>
 				<BaseDropdownItem @click="solvePuzzle">
-					<span class="ml-7 mt-px">{{ $t('PlayPuzzle.dd.solve-puzzle') }}</span>
+					<span class="ml-8 mt-px">{{ $t('PlayPuzzle.dd.solve-puzzle') }}</span>
 				</BaseDropdownItem>
 				<BaseDropdownItem @click="solveInstantly">
-					<span class="ml-7 mt-px">{{ $t('PlayPuzzle.dd.solve-instantly') }}</span>
+					<span class="ml-8 mt-px">{{ $t('PlayPuzzle.dd.solve-instantly') }}</span>
 				</BaseDropdownItem>
 				<BaseDropdownItem @click="increasePuzzleTime">
-					<span class="ml-7 mt-px">{{ $t('PlayPuzzle.dd.increase-time-by-n-s', { n: 10 }) }}</span>
+					<span class="ml-8 mt-px">{{ $t('PlayPuzzle.dd.increase-time-by-n-s', { n: 10 }) }}</span>
 				</BaseDropdownItem>
 				<BaseDropdownItem @click="solveTrios">
-					<span class="ml-7 mt-px">{{ $t('PlayPuzzle.dd.solve-all-triples') }}</span>
+					<span class="ml-8 mt-px">{{ $t('PlayPuzzle.dd.solve-all-triples') }}</span>
 				</BaseDropdownItem>
 				<BaseDropdownDivider />
 			</template>
 
 			<BaseDropdownItem @click="goToSettings">
-				<icon-ic-baseline-settings class="opacity-80" />
-				<span class="ml-3 mt-px">{{ $t('routeButton.settings') }}</span>
+				<template #icon>
+					<icon-ic-baseline-settings class="opacity-80" />
+				</template>
+				<span class="mt-px">{{ $t('routeButton.settings') }}</span>
 			</BaseDropdownItem>
 		</template>
 	</BaseDropdown>
@@ -63,6 +79,7 @@ import { awaitRaf, awaitTimeout } from '@/utils/delay.utils.js';
 import { EMPTY } from '@/lib/constants.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { usePuzzleTimer } from '@/stores/puzzle/timer-store.js';
+import { usePuzzleBookmarksStore } from '@/stores/bookmarks.js';
 import { shuffleInPlace } from '@/utils/random.utils.js';
 import { humanTriplesTechnique } from '@/lib/solvers/human-solver/techniques/TriplesTechnique.js';
 
@@ -74,6 +91,10 @@ const {
 	board,
 } = storeToRefs(puzzleStore);
 const setCheatUsed = () => puzzleStore.cheatsUsed = true;
+
+const bookmarksStore = usePuzzleBookmarksStore();
+const { saveStateAsBookmark } = bookmarksStore;
+const { canSaveCurrentBoardStateAsBookmark, currentBoardIsSaved, bookmarks } = storeToRefs(bookmarksStore);
 
 const mainStore = useMainStore();
 const debugModeEnabled = toRef(mainStore, 'debugMode');

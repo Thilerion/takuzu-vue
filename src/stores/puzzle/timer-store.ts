@@ -64,7 +64,7 @@ export const usePuzzleTimer = defineStore('puzzleTimer', {
 	}
 })
 
-export const getTimeSinceTimerStart = (now?: number) => {
+const getTimeSinceTimerStart = (now?: number) => {
 	const puzzleTimerStore = usePuzzleTimer();
 	if (puzzleTimerStore.running) {
 		const start: number = puzzleTimerStore.startTime;

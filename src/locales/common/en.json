@@ -123,9 +123,11 @@
 			"undo": "Undo"
 		},
 		"dd": {
+			"bookmark-saved": "Bookmark saved",
 			"copy-board-string": "Copy board string",
 			"delete-bookmark": "Delete bookmark",
 			"increase-time-by-n-s": "Increase time by {n}s",
+			"load-bookmark": "Load bookmark {id}",
 			"set-bookmark": "Set bookmark",
 			"solve-all-triples": "Solve all triples",
 			"solve-instantly": "Solve instantly",
@@ -133,7 +135,7 @@
 		},
 		"paused": "Paused",
 		"progress-percentage": "Progress:{p}%"
-	},	
+	},
 	"default": "default",
 	"disabled": "Disabled",
 	"routeButton": {

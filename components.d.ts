@@ -87,6 +87,7 @@ declare module 'vue' {
     IconIcBaselineUndo: typeof import('~icons/ic/baseline-undo')['default']
     IconIcCheck: typeof import('~icons/ic/check')['default']
     IconIcOutlineBookmarkAdd: typeof import('~icons/ic/outline-bookmark-add')['default']
+    IconIcOutlineBookmarkAdded: typeof import('~icons/ic/outline-bookmark-added')['default']
     IconIcOutlineBookmarkRemove: typeof import('~icons/ic/outline-bookmark-remove')['default']
     IconIcOutlineCancel: typeof import('~icons/ic/outline-cancel')['default']
     IconIcOutlineCheckCircle: typeof import('~icons/ic/outline-check-circle')['default']

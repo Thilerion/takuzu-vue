@@ -123,9 +123,11 @@
 			"undo": "Ongedaan maken"
 		},
 		"dd": {
+			"bookmark-saved": "Bladwijzer opgeslagen",
 			"copy-board-string": "Kopieer puzzel 'BoardString'",
 			"delete-bookmark": "Verwijder bladwijzer",
 			"increase-time-by-n-s": "Tijd verhogen met {n}s",
+			"load-bookmark": "Open bladwijzer {id}",
 			"set-bookmark": "Maak bladwijzer",
 			"solve-all-triples": "Los alle 'Triples' op",
 			"solve-instantly": "Direct oplossen",
