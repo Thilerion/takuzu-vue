@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { usePuzzleStore } from "./puzzle/store.js";
 import { getTotalTimeElapsed } from "./puzzle/timer-store.js";
+import { SimpleBoard } from "@/lib/index.js";
 
 export type Bookmark = {
 	/** Auto-incrementing (per puzzle) id, also used in name/label of bookmark */
@@ -77,6 +78,17 @@ export const usePuzzleBookmarksStore = defineStore('puzzleBookmarks', () => {
 		return lastBookmark.value.board === boardString;
 	})
 
+	const loadBookmark = (id: number) => {
+		const bookmark = bookmarks.value.find(b => b.id === id);
+		if (bookmark == null) {
+			console.warn('Cannot load bookmark with id:', id);
+			return;
+		}
+		const board = SimpleBoard.import(bookmark.board);
+		const puzzleStore = usePuzzleStore();
+		puzzleStore.loadBookmarkedPuzzleState(board);
+	}
+
 	const reset = () => {
 		bookmarks.value = [];
 		prevBookmarkId = null;
@@ -88,6 +100,7 @@ export const usePuzzleBookmarksStore = defineStore('puzzleBookmarks', () => {
 		currentBoardIsLastBookmark,
 		reset,
 		saveStateAsBookmark,
+		loadBookmark,
 		canSaveCurrentBoardStateAsBookmark,
 		currentBoardIsSaved,
 	}

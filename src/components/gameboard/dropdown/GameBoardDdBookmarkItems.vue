@@ -21,6 +21,7 @@
 
 	<BaseDropdownItem
 		:disabled="lastBookmark == null || currentBoardIsLastBookmark"
+		@click="loadLastBookmark"
 	>
 		<template #icon>
 			<icon-ic-outline-bookmark-border class="opacity-80 text-base" />
@@ -60,8 +61,25 @@ const emit = defineEmits<{
 }>();
 
 const bookmarksStore = usePuzzleBookmarksStore();
-const { saveStateAsBookmark } = bookmarksStore;
-const { canSaveCurrentBoardStateAsBookmark, currentBoardIsSaved, lastBookmark, bookmarks, currentBoardIsLastBookmark } = storeToRefs(bookmarksStore);
+const {
+	saveStateAsBookmark,
+	loadBookmark
+} = bookmarksStore;
+const { 
+	canSaveCurrentBoardStateAsBookmark,
+	currentBoardIsSaved,
+	lastBookmark,
+	bookmarks,
+	currentBoardIsLastBookmark
+} = storeToRefs(bookmarksStore);
+
+const loadLastBookmark = () => {
+	if (lastBookmark.value == null) {
+		throw new Error('Cannot load last bookmark as there is none.');
+	}
+	emit('close');
+	loadBookmark(lastBookmark.value.id);
+}
 </script>
 
 <style scoped>
