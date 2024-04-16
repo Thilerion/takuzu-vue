@@ -21,6 +21,7 @@ import { usePuzzleRecapStore } from "../puzzle-recap.js";
 import { useMainStore } from "../main.js";
 import { statsDb } from "@/services/db/stats-db/init.js";
 import { usePuzzleVisualCuesStore } from "../puzzle-visual-cues.js";
+import { usePuzzleBookmarksStore } from "../bookmarks.js";
 
 export type PuzzleStatus = 'none' | 'loading' | 'error_loading' | 'playing' | 'paused' | 'finished'; 
 export type PuzzleStoreState = {
@@ -483,6 +484,9 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 
 			const puzzleHistory = usePuzzleHistoryStore();
 			puzzleHistory.importMoveHistory([...saveData.moveList]);
+
+			const bookmarksStore = usePuzzleBookmarksStore();
+			bookmarksStore.importBookmarks(saveData.bookmarks);
 
 			this.initialized = true;
 		},

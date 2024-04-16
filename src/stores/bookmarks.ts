@@ -93,6 +93,11 @@ export const usePuzzleBookmarksStore = defineStore('puzzleBookmarks', () => {
 		bookmarks.value = [];
 		prevBookmarkId = null;
 	}
+	const importBookmarks = (arr: Bookmark[]) => {
+		bookmarks.value = [...arr];
+		const maxId = arr.reduce((max, b) => Math.max(max, b.id), 0);
+		prevBookmarkId = maxId;
+	}
 
 	return {
 		bookmarks,
@@ -101,6 +106,7 @@ export const usePuzzleBookmarksStore = defineStore('puzzleBookmarks', () => {
 		reset,
 		saveStateAsBookmark,
 		loadBookmark,
+		importBookmarks,
 		canSaveCurrentBoardStateAsBookmark,
 		currentBoardIsSaved,
 	}

@@ -1,19 +1,13 @@
 import type { AllPuzzleBoardExportStrings, AllPuzzleBoards, BasicPuzzleConfig } from "@/lib/types";
+import type { Bookmark } from "@/stores/bookmarks.js";
 import type { MoveExport } from "@/stores/puzzle-history/models.js";
 
-export interface TimerSaveData {
-	timeElapsed: number
-}
-export interface HistorySaveData {
-	moveList: MoveExport[]
-}
-export interface PuzzleSaveData extends SaveDataBoard, BasicPuzzleConfig {}
-export interface SaveData extends TimerSaveData, HistorySaveData, PuzzleSaveData {}
 
-export type SaveDataBoard = AllPuzzleBoards;
-export type SaveDataBoardStrings = AllPuzzleBoardExportStrings;
+export interface PuzzleStoreSaveData extends BasicPuzzleConfig, AllPuzzleBoards {}
 
-export interface SaveGame extends BasicPuzzleConfig, SaveDataBoardStrings {
+export interface SaveGame extends AllPuzzleBoardExportStrings, BasicPuzzleConfig {
 	timeElapsed: number,
-	moveList: MoveExport[]
+	moveList: MoveExport[],
+	bookmarks: Bookmark[]
 }
+export type SaveData = Omit<SaveGame, keyof AllPuzzleBoards> & AllPuzzleBoards;
