@@ -14,6 +14,7 @@ export abstract class BaseSteppedHint {
 	abstract readonly steps: HintStepsData;
 	abstract readonly type: SteppedHintType;
 	readonly id: number;
+	abstract readonly rawData: { id: number, type: SteppedHintType, data?: any };
 	
 	constructor(
 		id?: number

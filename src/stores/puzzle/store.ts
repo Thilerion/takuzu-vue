@@ -488,6 +488,9 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 			const bookmarksStore = usePuzzleBookmarksStore();
 			bookmarksStore.importBookmarks(saveData.bookmarks);
 
+			const hintsStore = usePuzzleHintsStore();
+			hintsStore.importHintSaveData(saveData.hints);
+
 			this.initialized = true;
 		},
 

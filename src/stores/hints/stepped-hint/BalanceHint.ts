@@ -17,6 +17,7 @@ export class BalanceSteppedHint extends BaseSteppedHint {
 	readonly filledSymbol: PuzzleSymbol;
 	readonly lineId: LineId;
 	readonly lineType: LineType;
+	readonly rawData: { id: number, type: 'balance', data: BalanceTechniqueResult };
 
 	constructor(data: BalanceTechniqueResult, id?: number) {
 		const { targets, lineId } = data;
@@ -28,6 +29,7 @@ export class BalanceSteppedHint extends BaseSteppedHint {
 		this.filledSymbol = getOppositeSymbol(this.missingSymbol);
 		this.lineId = lineId;
 		this.lineType = lineTypeFromLineId(lineId);
+		this.rawData = { id: this.id, type: 'balance', data: { ...data } };
 
 		const firstStep: HintStepIntermediate = {
 			actionLabel: 'locate',

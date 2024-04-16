@@ -14,6 +14,7 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 	readonly type = 'triples' as const;
 	readonly sourceSymbol: PuzzleSymbol;
 	readonly targetSymbol: PuzzleSymbol;
+	readonly rawData: { id: number, type: 'triples', data: TriplesTechniqueResult };
 
 	constructor(data: TriplesTechniqueResult, id?: number) {
 		const { targets, origin, type: subType } = data;
@@ -25,6 +26,7 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 		this.targets = [...targets];
 		this.targetSymbol = this.targets[0].value;
 		this.sourceSymbol = getOppositeSymbol(this.targetSymbol);
+		this.rawData = { id: this.id, type: 'triples', data: { ...data } };
 
 		// The first step displays the type of the hint, and has an action that locates it.
 		// This action displays the source of the hint as a highlight.

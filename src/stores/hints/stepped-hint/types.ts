@@ -53,4 +53,5 @@ type GetEventKeys<Obj> = keyof {
 export type HintStepEvent = GetEventKeys<Required<HintStepIntermediate> & Required<HintStepFinal>>;
 
 export type SteppedHint = TriplesSteppedHint | BalanceSteppedHint | IncorrectValuesSteppedHint | GenericEliminationSteppedHint | GenericDuplicateLineSteppedHint | NoHintsFoundSteppedHint;
+export type SteppedHintRawData = SteppedHint['rawData'];
 export type SteppedHintActionType = 'locate' | 'next' | 'execute' | 'fix' | 'apply';

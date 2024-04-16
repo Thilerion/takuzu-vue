@@ -7,6 +7,7 @@ export class NoHintsFoundSteppedHint extends BaseSteppedHint {
 	readonly steps: HintStepsData;
 	readonly type = 'noHintsFound' as const;
 	readonly target: VecValue;
+	readonly rawData: { id: number, type: 'noHintsFound', data: ConstructorParameters<typeof NoHintsFoundSteppedHint>['0'] };
 
 	constructor(
 		data: {
@@ -14,7 +15,8 @@ export class NoHintsFoundSteppedHint extends BaseSteppedHint {
 		}, id?: number
 	) {
 		super(id);
-		this.target = data.target;
+		this.target = {...data.target};
+		this.rawData = { id: this.id, type: 'noHintsFound', data: { ...data } };
 
 		const step: HintStepFinal = {
 			actionLabel: 'apply',

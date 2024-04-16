@@ -14,6 +14,7 @@ export class GenericEliminationSteppedHint extends BaseSteppedHint {
 	readonly lineId: LineId;
 	readonly originalLineValues: PuzzleValueLine;
 	readonly remainingCounts: [least: number, most: number];
+	readonly rawData: { id: number, type: 'eliminationGeneric', data: GenericEliminationTechniqueResult };
 
 	constructor(data: GenericEliminationTechniqueResult, id?: number) {
 		super(id);
@@ -24,6 +25,7 @@ export class GenericEliminationSteppedHint extends BaseSteppedHint {
 		this.remainingCounts = [...remainingCounts];
 		this.targets = [...targets];
 		this.originalLineValues = [...lineValues];
+		this.rawData = { id: this.id, type: 'eliminationGeneric', data: { ...data } };
 
 		const firstStep: HintStepIntermediate = {
 			actionLabel: 'locate',

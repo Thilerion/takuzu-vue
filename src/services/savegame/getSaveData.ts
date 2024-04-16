@@ -4,13 +4,15 @@ import { isDifficultyKey } from "@/config.js";
 import { exportMoveList } from "@/stores/puzzle-history/history-store.js";
 import { usePuzzleStore } from "@/stores/puzzle/store.js";
 import { getTotalTimeElapsed } from "@/stores/puzzle/timer-store.js";
+import { usePuzzleHintsStore } from "@/stores/hints/store.js";
 
 export const getSaveData = (): SaveData => {
 	return {
 		...getSaveDataFromPuzzleStore(),
 		...getSaveDataFromTimer(),
 		...getSaveDataFromHistory(),
-		...getSaveDataFromBookmarkStore()
+		...getSaveDataFromBookmarkStore(),
+		...getSaveDataFromHintsStore()
 	}
 }
 
@@ -31,5 +33,11 @@ function getSaveDataFromBookmarkStore(): Pick<SaveData, 'bookmarks'> {
 	const bookmarkStore = usePuzzleBookmarksStore();
 	return {
 		bookmarks: bookmarkStore.bookmarks.map(b => ({...b}))
+	}
+}
+function getSaveDataFromHintsStore(): Pick<SaveData, 'hints'> {
+	const hintsStore = usePuzzleHintsStore();
+	return {
+		hints: hintsStore.exportHintSaveData()
 	}
 }

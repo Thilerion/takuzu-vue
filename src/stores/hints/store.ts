@@ -3,8 +3,13 @@ import { defineStore } from "pinia";
 import { searchForHint } from "../hints/search.js";
 import { usePuzzleStore } from "../puzzle/store.js";
 import { computed, reactive, readonly, ref } from "vue";
-import type { SteppedHint } from "./stepped-hint/types.js";
+import type { SteppedHint, SteppedHintRawData } from "./stepped-hint/types.js";
 import { usePuzzleVisualCuesStore } from "../puzzle-visual-cues.js";
+import { exportSteppedHint, importSteppedHint } from "./stepped-hint/import-export.js";
+
+export type HintSaveData = {
+	cache: [BoardString, SteppedHintRawData][]
+}
 
 export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 	// state
@@ -13,10 +18,30 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 		hint: null,
 		boardStr: null
 	} as { hint: SteppedHint | null, boardStr: BoardString | null });
-	const cache = ref(new Map<BoardString, (null | SteppedHint)>());
+	const cache = ref(new Map<BoardString, SteppedHint>());
 	const currentHint = computed(() => current.hint as null | SteppedHint);
 
 	// TODO: assistanceData used for stats/saved game; amount of hints requested, types, actions executed, etc
+
+	const exportHintSaveData = (): HintSaveData => {
+		if (cache.value.size === 0) return { cache: []};
+		const result: [BoardString, SteppedHintRawData][] = [];
+		for (const [boardStr, hint] of cache.value) {
+			const data = exportSteppedHint(hint as SteppedHint);
+			result.push([boardStr, data]);
+		}
+		return { cache: result };
+	}
+	const importHintSaveData = (data: HintSaveData) => {
+		// first, reset all
+		reset();
+		// import hint cache
+		cache.value = new Map();
+		for (const [boardStr, hintData] of data.cache) {
+			const hint = importSteppedHint(hintData);
+			cache.value.set(boardStr, hint);
+		}
+	}
 
 	const currentBoardStr = computed((): BoardString => usePuzzleStore().boardStr!);
 
@@ -101,7 +126,7 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 		}
 	}
 
-	const reset = () => {
+	function reset() {
 		isHintShown.value = false;
 		current.hint = null;
 		current.boardStr = null;
@@ -110,7 +135,7 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 		visualCuesStore.clearHighlightsFromHints();
 	}
 
-	const _addToCache = (hint: SteppedHint | null, boardStr: BoardString) => {
+	const _addToCache = (hint: SteppedHint, boardStr: BoardString) => {
 		cache.value.set(boardStr, hint);
 	}
 	
@@ -122,6 +147,9 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 		reset,
 		hide: hideCurrentHint,
 		removeHint: removeCurrentHint,
+
+		exportHintSaveData,
+		importHintSaveData,
 
 		_cache: readonly(cache),
 	}

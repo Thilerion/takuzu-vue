@@ -11,6 +11,7 @@ export class IncorrectValuesSteppedHint extends BaseSteppedHint {
 	readonly moves: VecValue[];
 	readonly incorrectValues: FoundIncorrectValue[];
 	readonly steps: HintStepsData;
+	readonly rawData: { id: number, type: 'incorrectValues', data: ConstructorParameters<typeof IncorrectValuesSteppedHint>['0'] };
 
 	constructor(data: {
 		incorrectValues: FoundIncorrectValue[]
@@ -21,6 +22,7 @@ export class IncorrectValuesSteppedHint extends BaseSteppedHint {
 		this.moves = this.incorrectValues.map(({ x, y }) => {
 			return { x, y, value: EMPTY };
 		})
+		this.rawData = { id: this.id, type: 'incorrectValues', data: { ...data } };
 
 		// TODO: use different highlights; use the "incorrect" highlight, also used with the Check button functionality
 		const firstStep: HintStepIntermediate = {

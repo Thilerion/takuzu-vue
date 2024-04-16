@@ -26,13 +26,14 @@ const _useSavedPuzzle = () => {
 			solution: saveData.solution.export(),
 			initialBoard: initialBoardExport
 		}
-		const { width, height, difficulty, bookmarks } = saveData;
+		const { width, height, difficulty, bookmarks, hints } = saveData;
 		const savegame: SaveGame = {
 			...boardExports,
 			moveList,
 			timeElapsed,
 			width, height, difficulty,
-			bookmarks
+			bookmarks,
+			hints,
 		}
 		savedPuzzle.value = savegame;
 		return true;
@@ -63,7 +64,8 @@ const _useSavedPuzzle = () => {
 			// misc stored data
 			moveList,
 			timeElapsed,
-			bookmarks
+			bookmarks,
+			hints
 		} = data;
 		return {
 			config: { width, height, difficulty },
@@ -75,6 +77,7 @@ const _useSavedPuzzle = () => {
 			moveList,
 			timeElapsed,
 			bookmarks,
+			hints
 		};
 	}
 

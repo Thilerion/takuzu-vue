@@ -14,6 +14,7 @@ export class GenericDuplicateLineSteppedHint extends BaseSteppedHint {
 	readonly originalLineValues: PuzzleValueLine;
 	readonly remainingCounts: [least: number, most: number];
 	readonly potentialDuplicateLines: LineId[];
+	readonly rawData: { id: number, type: 'duplicateLineGeneric', data: GenericDuplicateLineTechniqueResult };
 
 	constructor(data: GenericDuplicateLineTechniqueResult, id?: number) {
 		super(id);
@@ -27,6 +28,7 @@ export class GenericDuplicateLineSteppedHint extends BaseSteppedHint {
 		this.targets = [...targets];
 		this.originalLineValues = [...lineValues];
 		this.potentialDuplicateLines = [...potentialDuplicateLines];
+		this.rawData = { id: this.id, type: 'duplicateLineGeneric', data: { ...data } };
 
 		const firstStep: HintStepIntermediate = {
 			actionLabel: 'next',
