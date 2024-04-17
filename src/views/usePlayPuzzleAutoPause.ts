@@ -40,6 +40,11 @@ export const usePlayPuzzleAutoPause = (
 		if (shouldAutoPause.value) {
 			// Pause the game
 			autoPauseGame();
+			// cancel autoResumeDelay
+			if (autoResumeDelayId != null) {
+				clearTimeout(autoResumeDelayId);
+				autoResumeDelayId = null;
+			}
 			return;
 		} else {
 			// Auto-resume the game, after a small delay
