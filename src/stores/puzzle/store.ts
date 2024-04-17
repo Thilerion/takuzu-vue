@@ -13,7 +13,7 @@ import { usePuzzleAssistanceStore } from "../assistance/store";
 import { SimpleBoard } from "@/lib";
 import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
 import { PuzzleTransformations } from "@/lib/transformations/PuzzleTransformations.js";
-import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings, GridCounts, Vec, BoardShape } from "@/lib/types";
+import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings, GridCounts, Vec, BoardShape, BoardExportString } from "@/lib/types";
 import type { TransformationKey } from "@/lib/transformations/types.js";
 import type { PickOptional } from "@/types.js";
 import { usePuzzleHistoryStore, type PostMoveHistoryAction } from "../puzzle-history/history-store.js";
@@ -112,6 +112,7 @@ export const usePuzzleStore = defineStore('puzzleOld', {
 		gridShape: (state): BoardShape => ({ width: state.width ?? 0, height: state.height ?? 0 }),
 
 		boardStr: (state): BoardString | undefined => state.board?.toString(),
+		boardExportStr: (state): BoardExportString | undefined => state.board?.export(),
 		boardFilled: state => state.gridCounts[EMPTY] === 0,
 
 		hasStarted: state => state.started && state.initialized && state.board != null,
