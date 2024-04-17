@@ -46,7 +46,7 @@ export const formatDurationHHMMSS = (ms: number, {
 
 	if (hours < 1 && !emptyHours) {
 		return [
-			`${minutes}`.padStart(2, '0'),
+			`${minutes}`.padStart(padFirst ? 2 : 1, '0'),
 			`${seconds}`.padStart(2, '0')
 		].join(':');
 	}

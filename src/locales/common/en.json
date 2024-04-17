@@ -123,18 +123,19 @@
 			"undo": "Undo"
 		},
 		"dd": {
-			"bookmark-saved": "Bookmark saved",
-			"load-last-bookmark": "Load last bookmark",
-			"set-bookmark": "Set bookmark",
-			"no-bookmark-saved": "No bookmarks saved",
-			"view-bookmarks": "View bookmarks",
-			"percent-solved": "{percentFormatted} solved",
 			"bookmark-n": "Bookmark {n}",
+			"bookmark-saved": "Bookmark saved",
 			"copy-board-string": "Copy board string",
 			"increase-time-by-n-s": "Increase time by {n}s",
+			"load-previous-bookmark": "Load previous bookmark",
+			"previous-bookmark-is-current": "Matches current progress",
+			"no-bookmark-saved": "No bookmarks saved",
+			"percent-solved": "{percentFormatted} solved",
+			"set-bookmark": "Set bookmark",
 			"solve-all-triples": "Solve all triples",
 			"solve-instantly": "Solve instantly",
-			"solve-puzzle": "Solve puzzle"
+			"solve-puzzle": "Solve puzzle",
+			"view-bookmarks": "View bookmarks"
 		},
 		"paused": "Paused",
 		"progress-percentage": "Progress:{p}%"

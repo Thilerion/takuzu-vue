@@ -25,7 +25,7 @@
 
 .dropdown-item:disabled {
 	background-color: transparent;
-	@apply  text-gray-500 cursor-default dark:text-gray-300/80;
+	@apply  text-gray-400 cursor-default dark:text-gray-300/80;
 }
 .dropdown-item:not(:disabled) {
 		@apply hover-hover:hover:bg-gray-100 hover-hover:hover:text-black;

@@ -123,15 +123,14 @@
 			"undo": "Ongedaan maken"
 		},
 		"dd": {
+			"bookmark-n": "Bladwijzer {n}",
 			"bookmark-saved": "Bladwijzer opgeslagen",
 			"copy-board-string": "Kopieer puzzel 'BoardString'",
-			"delete-bookmark": "Verwijder bladwijzer",
 			"increase-time-by-n-s": "Tijd verhogen met {n}s",
-			"load-bookmark": "Open bladwijzer {id}",
-			"load-last-bookmark": "Laad laatste bladwijzer",
+			"load-previous-bookmark": "Laad vorige bladwijzer",
 			"no-bookmark-saved": "Geen bladwijzers opgeslagen",
-			"bookmark-n": "Bladwijzer {n}",
 			"percent-solved": "{percentFormatted} opgelost",
+			"previous-bookmark-is-current": "Gelijk aan huidige voortgang",
 			"set-bookmark": "Maak bladwijzer",
 			"solve-all-triples": "Los alle 'Triples' op",
 			"solve-instantly": "Direct oplossen",

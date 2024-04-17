@@ -95,7 +95,10 @@ defineExpose({
 }
 
 .modal-content {
-	@apply overflow-auto max-w-2xl w-full max-h-full relative p-6 rounded focus:outline-none;
+	@apply pointer-events-none overflow-auto max-w-2xl w-full max-h-full relative p-6 rounded focus:outline-none;
+}
+.modal-content > * {
+	@apply pointer-events-auto;
 }
 
 .fade-scale-enter-active {

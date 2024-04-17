@@ -41,6 +41,8 @@ export const usePuzzleBookmarksStore = defineStore('puzzleBookmarks', () => {
 		const puzzleStore = usePuzzleStore();
 		const board = puzzleStore.board;
 		if (board == null || !puzzleStore.hasStarted || puzzleStore.finished) return false;
+		const progress = puzzleStore.progress;
+		if (progress == null || progress === 0 || progress === 1) return false;
 		return !hasBoardStateInBookmarks(board.export());
 	})
 	const currentBoardIsSaved = computed(() => {
@@ -65,17 +67,16 @@ export const usePuzzleBookmarksStore = defineStore('puzzleBookmarks', () => {
 		bookmarks.value.push(bookmark);
 	}
 
-	const lastBookmark = computed((): Bookmark | null => {
+	/** The previous bookmark that was saved. This excludes any bookmarks that are equal to the current board. */
+	const previousBookmark = computed((): Bookmark | null => {
 		if (bookmarks.value.length === 0) return null;
-		const maxId = bookmarks.value.reduce((max, b) => Math.max(max, b.id), 0);
-		return bookmarks.value.find(b => b.id === maxId) ?? null;
-	})
-	const currentBoardIsLastBookmark = computed(() => {
-		if (lastBookmark.value == null) return false;
-		const board = usePuzzleStore().board;
-		if (board == null) return false;
-		const boardString = board.export();
-		return lastBookmark.value.board === boardString;
+		const currentBoard = usePuzzleStore().board;
+		if (currentBoard == null) return null;
+		const currentBoardString = currentBoard.export();
+		
+		// Find the last bookmark where board is not the current board string
+		const bookmark = bookmarks.value.findLast(bm => bm.board !== currentBoardString);
+		return bookmark ?? null;
 	})
 
 	const loadBookmark = (id: number) => {
@@ -110,8 +111,7 @@ export const usePuzzleBookmarksStore = defineStore('puzzleBookmarks', () => {
 
 	return {
 		bookmarks,
-		lastBookmark,
-		currentBoardIsLastBookmark,
+		previousBookmark,
 		reset,
 		saveStateAsBookmark,
 		loadBookmark,
