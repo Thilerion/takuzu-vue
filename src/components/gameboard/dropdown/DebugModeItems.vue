@@ -21,6 +21,9 @@
 		<BaseDropdownItem @click="solveTrios">
 			<span class="ml-8 mt-px">{{ $t('PlayPuzzle.dd.solve-all-triples') }}</span>
 		</BaseDropdownItem>
+		<BaseDropdownItem @click="loadLastCorrectBoardState" :disabled="!canLoadLastCorrectState">
+			<span class="ml-8 mt-px">{{ $t('PlayPuzzle.dd.load-last-correct-board-state') }}</span>
+		</BaseDropdownItem>
 </template>
 
 <script setup lang="ts">
@@ -32,6 +35,10 @@ import { humanTriplesTechnique } from '@/lib/solvers/human-solver/techniques/Tri
 import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 import { shuffleInPlace } from '@/utils/random.utils.js';
+import { usePuzzleBookmarksStore } from '@/stores/bookmarks.js';
+import { toRef } from 'vue';
+import { SimpleBoard } from '@/lib/index.js';
+import { computed } from 'vue';
 
 const puzzleStore = usePuzzleStore();
 const {
@@ -131,6 +138,21 @@ const solveTrios = async () => {
 		}
 	}
 	console.log(`${count} values found with trios strategy.`);
+}
+
+const bookmarksStore = usePuzzleBookmarksStore();
+const lastCorrectState = toRef(bookmarksStore, 'lastCorrectStateBookmark');
+const canLoadLastCorrectState = computed(() => {
+	const last = lastCorrectState.value;
+	if (last == null) return false;
+	return last.board !== puzzleStore.boardExportStr;
+})
+const loadLastCorrectBoardState = () => {
+	if (!lastCorrectState.value) return;
+	const exportStr = lastCorrectState.value.board;
+	const board = SimpleBoard.import(exportStr);
+	puzzleStore.loadBookmarkedPuzzleState(board);
+	emit('close');
 }
 </script>
 
