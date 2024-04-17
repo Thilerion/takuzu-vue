@@ -3,8 +3,7 @@ import type { Ref } from "vue"
 import { computed, watchEffect } from "vue"
 
 export type UsePlayPuzzleAutoPauseDeps = {
-	settingsOpen: Ref<boolean>,
-	dropdownOpen: Ref<boolean>,
+	puzzleUiHasOverlay: Ref<boolean>,
 	windowHidden: Ref<boolean>,
 	userIdle: Ref<boolean>,
 }
@@ -23,7 +22,7 @@ export const usePlayPuzzleAutoPause = (
 	opts: UsePlayPuzzleAutoPauseOpts
 ) => {
 	const { 
-		settingsOpen, dropdownOpen, windowHidden,
+		puzzleUiHasOverlay, windowHidden,
 		userIdle
 	} = deps;
 	const { autoResumeDelay } = opts;
@@ -33,7 +32,7 @@ export const usePlayPuzzleAutoPause = (
 	let autoResumeDelayId: ReturnType<typeof setTimeout> | null = null;
 
 	const shouldAutoPause = computed(() => {
-		return settingsOpen.value || dropdownOpen.value || windowHidden.value;
+		return puzzleUiHasOverlay.value || windowHidden.value;
 	})
 
 	watchEffect(() => {

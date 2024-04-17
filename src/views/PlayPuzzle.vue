@@ -102,7 +102,7 @@ import { usePuzzlePauseResume } from '@/stores/puzzle/usePuzzlePauseResume.js';
 import { usePuzzleHistoryStore } from '@/stores/puzzle-history/history-store.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { usePuzzleHintsStore } from '@/stores/hints/store.js';
-import { usePlayPuzzleUiState } from './usePlayPuzzleUiState.js';
+import { usePlayPuzzleUiStateStore } from '@/stores/puzzle/play-ui-state-store.js';
 import { usePlayPuzzleSaveHandler } from './usePlayPuzzleSaveHandler.js';
 import { usePlayPuzzleAutoPause } from './usePlayPuzzleAutoPause.js';
 import { useGameCompletion } from './usePlayPuzzleCompletion.js';
@@ -110,11 +110,11 @@ import { usePuzzlePlayHotkeys } from '@/components/gameboard/composables/usePuzz
 import { useSettingsStore } from '@/stores/settings/store.js';
 import { usePuzzleRecapStore } from '@/stores/puzzle-recap.js';
 
+const puzzleUiStateStore = usePlayPuzzleUiStateStore();
 const { 
 	windowHidden,
-	dropdownOpen,
-	settingsOpen,
-
+	
+	puzzleUiHasOverlay,
 	puzzleUiActive,
 
 	showRulers,
@@ -122,9 +122,11 @@ const {
 	rulerCountType,
 	rulerSize,
 	showTimer,
-	onDropdownToggled,
+} = storeToRefs(puzzleUiStateStore);
+const {
+	setDropdownOpen: onDropdownToggled,
 	setSettingsOpen,
-} = usePlayPuzzleUiState();
+} = puzzleUiStateStore;
 
 const {
 	hasCurrentSavedGame,
@@ -139,7 +141,7 @@ const { idle: userIdle } = usePuzzleWakeLock();
 
 // setup auto-pause and auto-resume watchers
 usePlayPuzzleAutoPause(
-	{ windowHidden, dropdownOpen, settingsOpen, userIdle },
+	{ windowHidden, puzzleUiHasOverlay, userIdle },
 	{ autoResumeDelay: 250 }
 );
 const { manualPauseGame, manualResumeGame, toggleManualPause } = usePuzzlePauseResume();
