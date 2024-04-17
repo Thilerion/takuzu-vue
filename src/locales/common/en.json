@@ -129,6 +129,7 @@
 			"no-bookmark-saved": "No bookmarks saved",
 			"view-bookmarks": "View bookmarks",
 			"percent-solved": "{percentFormatted} solved",
+			"bookmark-n": "Bookmark {n}",
 			"copy-board-string": "Copy board string",
 			"increase-time-by-n-s": "Increase time by {n}s",
 			"solve-all-triples": "Solve all triples",

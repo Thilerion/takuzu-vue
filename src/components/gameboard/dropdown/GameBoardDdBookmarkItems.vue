@@ -44,20 +44,27 @@
 
 	<BaseDropdownItem
 		:disabled="!bookmarks.length"
+		@click="openBookmarkManagerModal"
 	>
 		<template #icon>
 			<icon-ic-outline-bookmarks class="opacity-80 text-base" />
 		</template>
 		<div class="mt-px">{{ $t('PlayPuzzle.dd.view-bookmarks') }}</div>
 	</BaseDropdownItem>
+
+	<GameBoardBookmarkManager
+		v-model="bookmarkManagerOpened"
+	/>
 </template>
 
 <script setup lang="ts">
 import { usePuzzleBookmarksStore } from '@/stores/bookmarks.js';
 import { storeToRefs } from 'pinia';
+import { watch, ref } from 'vue';
 
 const emit = defineEmits<{
-	(e: 'close'): void
+	(e: 'close-dropdown'): void,
+	(e: 'toggle-bookmark-manager', value: boolean): void,
 }>();
 
 const bookmarksStore = usePuzzleBookmarksStore();
@@ -77,9 +84,24 @@ const loadLastBookmark = () => {
 	if (lastBookmark.value == null) {
 		throw new Error('Cannot load last bookmark as there is none.');
 	}
-	emit('close');
+	emit('close-dropdown');
 	loadBookmark(lastBookmark.value.id);
 }
+
+const bookmarkManagerOpened = ref(false);
+const openBookmarkManagerModal = () => {
+	bookmarkManagerOpened.value = true;
+}
+watch(bookmarkManagerOpened, (val) => {
+	// if opening the bookmark modal, close the dropdown
+	// note: puzzle should remain paused!
+	if (val) {
+		emit('close-dropdown');
+		emit('toggle-bookmark-manager', true);
+	} else if (!val) {
+		emit('toggle-bookmark-manager', false);
+	}
+})
 </script>
 
 <style scoped>

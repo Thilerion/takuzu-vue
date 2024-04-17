@@ -99,6 +99,15 @@ export const usePuzzleBookmarksStore = defineStore('puzzleBookmarks', () => {
 		prevBookmarkId = maxId;
 	}
 
+	const deleteBookmark = (id: number) => {
+		const idx = bookmarks.value.findIndex(b => b.id === id);
+		if (idx === -1) {
+			console.warn('Cannot delete bookmark with id:', id);
+			return;
+		}
+		bookmarks.value.splice(idx, 1);	
+	}
+
 	return {
 		bookmarks,
 		lastBookmark,
@@ -106,6 +115,7 @@ export const usePuzzleBookmarksStore = defineStore('puzzleBookmarks', () => {
 		reset,
 		saveStateAsBookmark,
 		loadBookmark,
+		deleteBookmark,
 		importBookmarks,
 		canSaveCurrentBoardStateAsBookmark,
 		currentBoardIsSaved,

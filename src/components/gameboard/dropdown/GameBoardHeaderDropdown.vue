@@ -7,7 +7,8 @@
 		</template>
 		<template #content>
 			<GameBoardDdBookmarkItems
-				@close="closeDD"
+				@close-dropdown="closeDD"
+				@toggle-bookmark-manager="setBookmarkManagerOpened"
 			/>
 			<BaseDropdownDivider />
 			<BaseDropdownItem>
@@ -41,6 +42,7 @@ import { useSettingsStore } from '@/stores/settings/store.js';
 import { ref } from 'vue';
 import { toRef } from 'vue';
 import type BaseDropdown from '@/components/global/dropdown/BaseDropdown.vue';
+import { usePlayPuzzleUiStateStore } from '@/stores/puzzle/play-ui-state-store.js';
 
 const settingsStore = useSettingsStore();
 const showTimer = toRef(settingsStore, 'showTimer');
@@ -63,9 +65,12 @@ const goToSettings = () => {
 	emit('open-settings');
 }
 
-
 const dropdownToggled = (val: boolean) => {
 	emit('dropdown-toggled', val);
+}
+const uiStateStore = usePlayPuzzleUiStateStore();
+const setBookmarkManagerOpened = (val: boolean) => {
+	uiStateStore.setBookmarkManagerOpen(val);
 }
 </script>
 

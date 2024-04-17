@@ -10,9 +10,7 @@
 			<div class="modal-background" @click="backdropClose" tabindex="-1"></div>
 
 			<div class="modal-content" ref="modalContent" tabindex="-1">
-				<div class="modal-box">
-					<slot :close="close" :open="open" />
-				</div>
+				<slot :close="close" :open="open" />
 			</div>
 
 		</div>
@@ -29,15 +27,29 @@ const props = defineProps<{
 	preventClose?: boolean,
 	autoOpen?: boolean
 }>();
+const emit = defineEmits<{
+	(e: 'close'): void,
+	(e: 'open'): void
+}>();
 
-const close = () => isActive.value = false;
-const open = () => isActive.value = true;
+const close = () => {
+	if (isActive.value) {
+		isActive.value = false;
+		emit('close');
+	}
+}
+const open = () => {
+	if (!isActive.value) {
+		isActive.value = true;
+		emit('open');
+	}
+}
 const backdropClose = () => {
 	if (props.preventClose) return;
 	close();
 }
 const keyClose = () => {
-	if (props.preventClose || isActive.value) return;
+	if (props.preventClose || !isActive.value) return;
 	close();
 }
 
@@ -49,23 +61,23 @@ const modalContent = ref<HTMLElement | null>(null);
 
 watch(isActive, (cur, prev) => {
 	if (cur && !prev) {
-				prevFocus.value = document.activeElement as HTMLElement;
-				nextTick(() => {
-					try {
-						modalContent.value!.focus();
-					} catch(e) {
-						console.warn('Could not focus modalContent.');
-						console.warn(e);
-					}
-				})
-			} else if (!cur && prev && prevFocus.value != null) {
-				try {
-					prevFocus.value!.focus();
-				} catch(e) {
-					console.warn('Could not focus previously focused element.');
-					console.warn({e, prevFocus: prevFocus.value});
-				}
-				prevFocus.value = null;
+		prevFocus.value = document.activeElement as HTMLElement;
+		nextTick(() => {
+			try {
+				modalContent.value!.focus();
+			} catch (e) {
+				console.warn('Could not focus modalContent.');
+				console.warn(e);
+			}
+		})
+	} else if (!cur && prev && prevFocus.value != null) {
+		try {
+			prevFocus.value!.focus();
+		} catch (e) {
+			console.warn('Could not focus previously focused element.');
+			console.warn({ e, prevFocus: prevFocus.value });
+		}
+		prevFocus.value = null;
 			}
 })
 
@@ -83,13 +95,7 @@ defineExpose({
 }
 
 .modal-content {
-	@apply overflow-auto max-w-2xl w-full max-h-96 relative p-6 rounded focus:outline-none;
-}
-
-.modal-box {
-	/* transition: all 2.5s ease 2.5s;
-	transition-property: opacity transform; */
-	@apply bg-white rounded shadow-md block p-6 text-gray-900 max-h-full overflow-auto;
+	@apply overflow-auto max-w-2xl w-full max-h-full relative p-6 rounded focus:outline-none;
 }
 
 .fade-scale-enter-active {
