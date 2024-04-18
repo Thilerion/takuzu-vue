@@ -251,7 +251,11 @@ async function createGame() {
 	} catch(e) {
 		// TODO: puzzleStore.creationError is now true, display a warning of some kind
 		console.warn(e);
-		window.alert('An error occured while trying to generate a puzzle.')
+		if (e instanceof Error) {
+			window.alert(`An error occured while trying to generate a puzzle:\n\n${e.message}`);
+		} else {
+			window.alert(`An unexpected error occured while to trying to generate a new puzzle:\n\n${e}`);
+		}
 	}			
 }
 

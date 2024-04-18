@@ -15,3 +15,7 @@ type NonFunctionKeyNames<T> = Exclude<{
   }[keyof T], undefined>;
    
 export type RemoveFunctions<T> = Pick<T, NonFunctionKeyNames<T>>;
+
+export type NullableProps<T extends Record<PropertyKey, any>> = {
+	[K in keyof T]: T[K] | null;
+};

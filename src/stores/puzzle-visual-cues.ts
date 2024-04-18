@@ -82,6 +82,7 @@ export const usePuzzleVisualCuesStore = defineStore('puzzleVisualCues', () => {
 		clearHighlights,
 		clearMarks,
 		clearAll,
+		reset: clearAll,
 
 		// clear all of a specific type actions
 		clearHighlightsFromHints, // to remove all highlights with source 'hint'
