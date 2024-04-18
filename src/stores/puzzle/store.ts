@@ -108,7 +108,8 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		return state.solutionBoardStr !== boardStr.value;
 	});
 	const progress = computed((): number => {
-		const initialEmpty = state.initialEmpty!;
+		if (state.initialEmpty == null) return -1;
+		const initialEmpty = state.initialEmpty;
 		const currentEmpty = state.gridCounts[EMPTY];
 		const progress = 1 - (currentEmpty / initialEmpty);
 		return progress;
@@ -131,8 +132,10 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		throw new Error('Unrecognized Puzzle status??!');
 	});
 	const canRestart = computed((): boolean => {
-		const canUndo = usePuzzleHistoryStore().canUndo;
-		return canUndo && status.value === 'playing';
+		// Allow restarting only if status is "Playing". Then, there must be moves to be undone, or there must be progress in some way on the board.
+		// The "progress" check was added because a part of move history can be lost, or something else added to the board without adding to move history.
+		if (status.value !== 'playing') return false;
+		return progress.value > 0 || usePuzzleHistoryStore().canUndo;
 	});
 
 	function setLoading(val: boolean) {
