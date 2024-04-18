@@ -33,12 +33,10 @@ import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { usePuzzleTimer } from '@/stores/puzzle/timer-store.js';
 import { humanTriplesTechnique } from '@/lib/solvers/human-solver/techniques/TriplesTechnique.js';
 import { storeToRefs } from 'pinia';
-import { ref } from 'vue';
+import { ref, toRef, computed } from 'vue';
 import { shuffleInPlace } from '@/utils/random.utils.js';
 import { usePuzzleBookmarksStore } from '@/stores/bookmarks.js';
-import { toRef } from 'vue';
 import { SimpleBoard } from '@/lib/index.js';
-import { computed } from 'vue';
 
 const puzzleStore = usePuzzleStore();
 const {

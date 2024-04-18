@@ -4,7 +4,7 @@ export interface BeforeInstallPromptEvent extends Event {
 		outcome: 'accepted' | 'dismissed';
 		platform: string;
 	}>;
-	prompt(): Promise<void>;
+	prompt: () => Promise<void>;
 }
   
 declare global {

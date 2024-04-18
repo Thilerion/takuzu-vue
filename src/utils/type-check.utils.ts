@@ -1,4 +1,4 @@
-import type { NonNullishPrimitive, Primitive } from "@/types";
+import type { Primitive } from "@/types";
 
 function getTypeWithObjectToString(val: unknown) {
 	const res = Object.prototype.toString.call(val).replace(/[\][]/g, '').split(' ');

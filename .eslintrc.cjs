@@ -28,6 +28,10 @@ const config = {
 			"ts-check": false,
 			minimumDescriptionLength: 10
 		}],
+		"@typescript-eslint/method-signature-style": [
+			"error",
+			"property"
+		],
 		"@typescript-eslint/no-unused-vars": ["error", { "ignoreRestSiblings": true, "varsIgnorePattern": "(^(props|emit)$)|(^_)" }],
 		"@typescript-eslint/no-non-null-assertion": 0,
 		"@typescript-eslint/no-explicit-any": "off",
