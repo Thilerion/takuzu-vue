@@ -249,10 +249,10 @@ async function createGame() {
 		await puzzleStore.initPuzzle({ width, height, difficulty });
 		router.push({ name: 'PlayPuzzle' });
 	} catch(e) {
-		// TODO: puzzleStore.creationError is now true, display a warning of some kind
-		console.warn(e);
-		if (e instanceof Error) {
-			window.alert(`An error occured while trying to generate a puzzle:\n\n${e.message}`);
+		// TODO: puzzleStore.initializationError is now true, display a warning of some kind
+		// TODO: use custom errors inside store, to generate more informative error messages, and remove the need for displaying just any kind of error message
+		if (puzzleStore.initializationError.hasError && puzzleStore.initializationError.errorMessage != null) {
+			window.alert(puzzleStore.initializationError.errorMessage);
 		} else {
 			window.alert(`An unexpected error occured while to trying to generate a new puzzle:\n\n${e}`);
 		}
@@ -269,7 +269,7 @@ async function replayRandom() {
 		if (!found) throw new Error('Could not retrieve replay puzzle.');
 		router.push({ name: 'PlayPuzzle', query: { mode: 'replay' } });
 	} catch {
-		// TODO: puzzleStore.creationError is now true, display a warning of some kind (better than windows.alert at least)
+		// TODO: puzzleStore.initializationError is now true, display a warning of some kind (better than windows.alert at least)
 		window.alert('No replayable puzzle found.');
 	}
 }

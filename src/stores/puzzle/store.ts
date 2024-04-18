@@ -48,7 +48,7 @@ export type PuzzleStoreState = {
 	pausedManually: boolean,
 	pausedAutomatically: boolean,
 	loading: boolean,
-	creationError: boolean
+	initializationError: { hasError: false, errorMessage?: undefined } | { hasError: true, errorMessage?: string }
 }
 export type PuzzleStoreSetAction = PickOptional<VecValueChange, 'prevValue'>;
 export type AssignToBoardOpts = {
@@ -91,7 +91,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		pausedAutomatically: false,
 		// game creation state/errors
 		loading: false,
-		creationError: false,
+		initializationError: { hasError: false },
 	});
 
 	const gridShape = computed((): BoardShape => ({ width: state.width ?? 0, height: state.height ?? 0 }));
@@ -115,10 +115,11 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		return progress;
 	});
 	const paused = computed((): boolean => state.pausedManually || state.pausedAutomatically);
+	const hasInitializationError = computed((): boolean => state.initializationError.hasError);
 	const status = computed((): PuzzleStatus => {
 		if (!state.initialized) {
 			if (state.loading) return 'loading';
-			else if (state.creationError) return 'error_loading';
+			else if (hasInitializationError.value) return 'error_loading';
 			else return 'none';
 		}
 		// is initialized
@@ -138,12 +139,16 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		return progress.value > 0 || usePuzzleHistoryStore().canUndo;
 	});
 
-	function setLoading(val: boolean) {
-		state.loading = val;
-	}
-
-	function setCreationError(val: boolean) {
-		state.creationError = val;
+	// TODO: use initializationError in places other than "initPuzzle" and "replayRandomPuzzle"
+	function setInitializationError(val: boolean, errorMessage?: string) {
+		if (val) {
+			state.initializationError = { hasError: true, errorMessage };
+		} else {
+			if (errorMessage != null) {
+				console.warn('Cannot set errorMessage when initializationError value itself is false!');
+			}
+			state.initializationError = { hasError: false };
+		}
 	}
 
 	function setPuzzleConfig({ width, height, difficulty }: BasicPuzzleConfig) {
@@ -168,12 +173,12 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 	}
 
 	function reset() {
-		if (state.board != null && !state.initialized && !!state.board && !state.creationError) {
+		if (state.board != null && !state.initialized && !!state.board && !state.initializationError.hasError) {
 			console.log('puzzle not initialized. cannot reset');
 			return;
 		}
 		resetSubStores();
-		Object.assign(state, {
+		const freshState: PuzzleStoreState = {
 			width: null,
 			height: null,
 			difficulty: null,
@@ -195,8 +200,9 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 			pausedManually: false,
 			pausedAutomatically: false,
 			loading: false,
-			creationError: false,
-		});
+			initializationError: { hasError: false },
+		}
+		Object.assign(state, freshState);
 	}
 
 	function resetSubStores() {
@@ -317,16 +323,16 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 	}
 
 	async function createPuzzle({ width, height, difficulty }: BasicPuzzleConfig) {
-		setLoading(true);
+		state.loading = true;
 		try {
 			const {
 				board, solution, initialBoard
 			} = await fetchAndPreparePuzzle({ width, height, difficulty });			
 			setAllBoards({ board, solution, initialBoard });
 		} finally {
-			setLoading(false);
+			state.loading = false;
 		}
-		// catch error in caller, which also sets creationError property
+		// catch error in caller, which also sets initializationError property
 	}
 
 	async function initPuzzle(puzzleConfig: BasicPuzzleConfig) {
@@ -336,7 +342,8 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 			state.initialized = true;
 		} catch (e) {
 			reset();
-			setCreationError(true);
+			const msg = e instanceof Error ? e.message : 'An error occurred in "initPuzzle()"';
+			setInitializationError(true, msg);
 			throw e;
 		}
 	}
@@ -367,7 +374,8 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		} catch (e) {
 			console.warn('Could not replay random puzzle.');
 			reset();
-			setCreationError(true);
+			const msg = e instanceof Error ? e.message : 'An unknown error occurred while trying to retrieve and set a random replayable puzzle.';
+			setInitializationError(true, msg);
 			throw e;
 		}
 	}
