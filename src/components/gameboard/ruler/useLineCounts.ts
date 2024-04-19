@@ -4,7 +4,7 @@ import type { LineCounts } from "@/lib/types.js";
 import { countLineValues } from "@/lib/utils/puzzle-line.utils";
 import { usePuzzleStore } from "@/stores/puzzle/store.js";
 import { createSharedComposable } from "@vueuse/core";
-import { watchEffect, ref } from "vue";
+import { ref, watchEffect } from "vue";
 
 export const useLineCounts = createSharedComposable(() => {
 	const puzzleStore = usePuzzleStore();
@@ -25,40 +25,14 @@ export const useLineCounts = createSharedComposable(() => {
 		if (puzzleStore.board == null) {
 			rowCounts.value = null;
 			colCounts.value = null;
+			return;
 		} else {
 			initializeCounts();
 		}
 	})
 
-	puzzleStore.$onAction(({
-		name,
-		args,
-		after,
-		store
-	}) => {
-		if (name !== 'assignToBoard') return;
-		const changeOrChanges = args[0];
-		if (Array.isArray(changeOrChanges)) {
-			after(() => {
-				initializeCounts();
-			});
-			return;
-		}
-		const { x, y } = changeOrChanges;
-		// Cannot use change.prevValue and change.value, as there may be an incongruence between the move and what is actually on the board
-		const actualPrev = store.board!.get(x, y);
-		after(() => {
-			if (rowCounts.value == null || colCounts.value == null) {
-				initializeCounts();
-				return;
-			}
-			const actualValue = store.board!.get(x, y);
-			rowCounts.value[y][actualValue] += 1;
-			rowCounts.value[y][actualPrev] -= 1;
-			colCounts.value[x][actualValue] += 1;
-			colCounts.value[x][actualPrev] -= 1;
-		})
-	})
+	// Removed puzzleStore watcher because, when it was converted to a setup store, onAction didn't trigger when internally triggered
+	// So there was no (efficient, simple) way to track the specific changes to the board
 
 	return {
 		rowCounts,

@@ -17,6 +17,7 @@
 import { usePuzzleHintsStore } from '@/stores/hints/store.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { storeToRefs } from 'pinia';
+import { watch } from 'vue';
 import { watchEffect } from 'vue';
 
 const puzzleHintsStore = usePuzzleHintsStore();
@@ -30,11 +31,8 @@ watchEffect(() => {
 		return;
 	}
 })
-puzzleStore.$onAction(({
-	name
-}) => {
-	// hide the hint whenever a value is set on the board
-	if (name === 'assignToBoard' && isHintShown.value) hide();
+watch(() => puzzleStore.boardStr, () => {
+	if (isHintShown.value) hide();
 })
 
 </script>

@@ -100,10 +100,10 @@ const solveInstantly = async () => {
 		const value = puzzleStore.solution!.get(x, y);
 		return { x, y, value, prevValue };
 	})
-	puzzleStore.assignToBoard(moves, {
-		handleGridCounts: "refresh",
-		handleMarkedMistakes: "reset"
-	});
+
+	puzzleStore.makeMultipleMoves(moves, {
+		historyCommitType: 'reset'
+	})
 }
 
 const solveTrios = async () => {
