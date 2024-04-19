@@ -9,13 +9,14 @@
 		</div>
 
 		<PuzzleGrid
+			v-if="initialBoard != null"
 			:key="puzzleGridForceReplaceKey"
 			:board :rows :columns :paused
 			:style="{
 				'max-width': gridWidth,
 				'max-height': gridHeight,
 			}"
-			:initial-grid="puzzleStore.initialBoard!.grid"
+			:initial-grid="initialBoard.grid"
 			:error-marks="errorMarks"
 			@toggle-cell="toggleCell"
 		/>
@@ -36,7 +37,7 @@ import type { VecValue } from '@/lib/types.js';
 import { usePuzzleVisualCuesStore } from '@/stores/puzzle-visual-cues.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { usePuzzlePauseResume } from '@/stores/puzzle/usePuzzlePauseResume.js';
-import { watch, computed, ref } from 'vue';
+import { watch, computed, ref, toRef } from 'vue';
 
 defineProps<{
 	rows: number,
@@ -59,13 +60,13 @@ const resumeByUser = () => {
 const visualCuesStore = usePuzzleVisualCuesStore();
 const errorMarks = computed(() => visualCuesStore.cellMarks.filter(m => m.errorType === 'incorrectValue'));
 
-// Force PuzzleGrid component to be replaced/reloaded whenever the puzzle changes. This can be achieved using any of the 3 boards in the puzzleStore.
+// TODO: use a PuzzleStore event emitter with the "onNewPuzzle" or "onPuzzleTransformed" event
+// Force PuzzleGrid component to be replaced/reloaded whenever the puzzle changes, while the route has not changed. This can be achieved using any of the 3 boards in the puzzleStore.
 // However, initialBoard/solution are preferred, as they are barely accessed and should not receive any changes normally, so they are safer to use.
 const puzzleGridForceReplaceKey = ref(0);
-watch(() => puzzleStore.initialBoard?.grid, (val, prev) => {
-	console.log('triggered b');
-	if (val !== prev) {
-		console.log('Alternative: Forcing replace/reload of PuzzleGrid component.')
+const initialBoard = toRef(puzzleStore, 'initialBoard');
+watch(initialBoard, (val, prev) => {
+	if (val !== prev && val != null) {
 		puzzleGridForceReplaceKey.value += 1;
 	}
 }, { deep: false /** important not to watch deep, should only know when entire grid is replaced */ })
