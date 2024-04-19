@@ -270,8 +270,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		usePuzzleHistoryStore().applyHistoryAction([{ x, y, value, prevValue }], opts.historyCommitType);
 	}
 
-	// TODO: also allow for giving assignToBoardOpts
-	function makeMultipleMoves(moves: PuzzleStoreSetAction[], opts: MakePuzzleMovesOpts) {
+	function makeMultipleMoves(moves: PuzzleStoreSetAction[], opts: MakePuzzleMovesOpts & Partial<AssignToBoardOpts>) {
 		const validatedMoves: VecValueChange[] = [];
 		for (const m of moves) {
 			const prev = m.prevValue ?? state.board!.grid[m.y][m.x];
@@ -283,7 +282,11 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 			console.log('No valid moves to make. No moves will be committed.');
 			return;
 		}
-		assignToBoard(validatedMoves);
+		assignToBoard(validatedMoves, {
+			handleGridCounts: "refresh",
+			handleMarkedMistakes: "reset",
+			...opts,
+		});
 		usePuzzleHistoryStore().applyHistoryAction(validatedMoves, opts.historyCommitType);
 	}
 
