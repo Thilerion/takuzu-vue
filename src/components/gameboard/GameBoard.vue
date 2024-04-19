@@ -36,7 +36,7 @@ import type { VecValue } from '@/lib/types.js';
 import { usePuzzleVisualCuesStore } from '@/stores/puzzle-visual-cues.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { usePuzzlePauseResume } from '@/stores/puzzle/usePuzzlePauseResume.js';
-import { computed } from 'vue';
+import { watch, computed, ref } from 'vue';
 
 defineProps<{
 	rows: number,
@@ -59,9 +59,16 @@ const resumeByUser = () => {
 const visualCuesStore = usePuzzleVisualCuesStore();
 const errorMarks = computed(() => visualCuesStore.cellMarks.filter(m => m.errorType === 'incorrectValue'));
 
-// Force PuzzleGrid component to be replaced/reloaded whenever the puzzle changes. This can be achieved using the initialBoard or the solutionBoard in the puzzleStore.
-// In this case, solutionBoardStr is used as it is already available in the store.
-const puzzleGridForceReplaceKey = computed((): string => puzzleStore.solutionBoardStr ?? '');
+// Force PuzzleGrid component to be replaced/reloaded whenever the puzzle changes. This can be achieved using any of the 3 boards in the puzzleStore.
+// However, initialBoard/solution are preferred, as they are barely accessed and should not receive any changes normally, so they are safer to use.
+const puzzleGridForceReplaceKey = ref(0);
+watch(() => puzzleStore.initialBoard?.grid, (val, prev) => {
+	console.log('triggered b');
+	if (val !== prev) {
+		console.log('Alternative: Forcing replace/reload of PuzzleGrid component.')
+		puzzleGridForceReplaceKey.value += 1;
+	}
+}, { deep: false /** important not to watch deep, should only know when entire grid is replaced */ })
 </script>
 
 <style scoped>

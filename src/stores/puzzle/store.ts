@@ -18,10 +18,10 @@ import { usePuzzleHistoryStore, type PostMoveHistoryAction } from "../puzzle-his
 import { usePuzzleRecapStore } from "../puzzle-recap.js";
 import { useMainStore } from "../main.js";
 // Lib imports and misc.
-import { SimpleBoard } from "@/lib";
+import { SimpleBoard } from "@/lib/board/Board.js";
 import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
 import { PuzzleTransformations } from "@/lib/transformations/PuzzleTransformations.js";
-import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings, GridCounts, Vec, BoardShape, BoardExportString } from "@/lib/types";
+import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings, GridCounts, Vec, BoardExportString } from "@/lib/types";
 import type { TransformationKey } from "@/lib/transformations/types.js";
 import type { PickOptional } from "@/types.js";
 
@@ -65,7 +65,7 @@ export type MakePuzzleMovesOpts = {
 }
 
 export const usePuzzleStore = defineStore('puzzle', () => {
-	const state = reactive<PuzzleStoreState>({
+	const state: PuzzleStoreState = reactive<PuzzleStoreState>({
 		width: null,
 		height: null,
 		difficulty: null,
@@ -92,9 +92,8 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		// game creation state/errors
 		loading: false,
 		initializationError: { hasError: false },
-	});
+	}) as PuzzleStoreState;
 
-	const gridShape = computed((): BoardShape => ({ width: state.width ?? 0, height: state.height ?? 0 }));
 	const boardStr = computed((): BoardString | undefined => state.board?.toString());
 	const boardExportStr = computed((): BoardExportString | undefined => state.board?.export());
 	const boardFilled = computed((): boolean => state.gridCounts[EMPTY] === 0);
@@ -509,7 +508,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 
 	const {
 		width, height, difficulty,		
-		initialBoard, board, solution, solutionBoardStr,
+		initialBoard, board, solution,
 		transformations,		
 
 		cheatsUsed,
@@ -522,10 +521,9 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 	return {
 		// PUZZLE BOARD STATE
 		width, height, difficulty,
-		initialBoard, board, solution, solutionBoardStr,
+		initialBoard, board, solution,
 		transformations,
 		// PUZZLE BOARD GETTERS
-		gridShape,
 		boardStr, boardExportStr,
 		
 		// PUZZLE PLAY STATUS: state and getters

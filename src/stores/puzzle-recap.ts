@@ -96,6 +96,7 @@ export const usePuzzleRecapStore = defineStore('puzzleRecap', {
 			}
 		},
 
+		// TODO: show modal immediately, and load data during its animation. Then, when data is loaded, show it there, else use a temporary loading screen/spinner/placeholder.
 		async initialize(item: StatsDbHistoryEntry | StatsDbHistoryEntryWithId) {
 			this.setHistoryEntry(item);
 			this.errorLoading = false;
