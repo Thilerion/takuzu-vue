@@ -41,9 +41,11 @@ export const usePuzzleTimer = defineStore('puzzleTimer', {
 		},
 		start() {
 			if (this.started && this.running) return;
-			this.startTime = Date.now();
-			this.started = true;
-			this.running = true;
+			this.$patch({
+				startTime: Date.now(),
+				started: true,
+				running: true
+			})
 		},
 		pause() {
 			if (!this.running) return;
@@ -55,8 +57,10 @@ export const usePuzzleTimer = defineStore('puzzleTimer', {
 		},
 		resume() {
 			if (this.running) return;
-			this.startTime = Date.now();
-			this.running = true;
+			this.$patch({
+				startTime: Date.now(),
+				running: true
+			})
 		},
 		reset() {
 			this.$reset();

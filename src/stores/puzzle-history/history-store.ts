@@ -68,15 +68,6 @@ export const usePuzzleHistoryStore = defineStore('puzzleHistory', () => {
 		moveList.value.push(moves);
 	}
 
-	const exportMoveHistory = (): MoveExport[] => {
-		return moveList.value.map(m => {
-			if (Array.isArray(m)) {
-				return m.map(moveToString);
-			}
-			return moveToString(m);
-		});
-	}
-
 	const applyHistoryAction = (moveOrMoves: VecValueChange[], action: PostMoveHistoryAction) => {
 		switch(action) {
 			case 'commit': {
@@ -112,17 +103,26 @@ export const usePuzzleHistoryStore = defineStore('puzzleHistory', () => {
 	}
 
 	return {
+		moveList,
 		canUndo,
 		
 		reset,
 		applyHistoryAction,
 		undoMove,
 		importMoveHistory,
-		exportMoveHistory,
 	}
 })
 
-export const exportMoveList = () => {
+// Extracted from store itself to prevent it from continuously showing up in Pinia devtools
+const exportMoveHistory = (): MoveExport[] => {
 	const store = usePuzzleHistoryStore();
-	return store.exportMoveHistory();
+	return store.moveList.map(m => {
+		if (Array.isArray(m)) {
+			return m.map(moveToString);
+		}
+		return moveToString(m);
+	});
+}
+export const exportMoveList = () => {
+	return exportMoveHistory();
 }

@@ -23,15 +23,6 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 
 	// TODO: assistanceData used for stats/saved game; amount of hints requested, types, actions executed, etc
 
-	const exportHintSaveData = (): HintSaveData => {
-		if (cache.value.size === 0) return { cache: []};
-		const result: [BoardString, SteppedHintRawData][] = [];
-		for (const [boardStr, hint] of cache.value) {
-			const data = exportSteppedHint(hint as SteppedHint);
-			result.push([boardStr, data]);
-		}
-		return { cache: result };
-	}
 	const importHintSaveData = (data: HintSaveData) => {
 		// first, reset all
 		reset();
@@ -148,9 +139,20 @@ export const usePuzzleHintsStore = defineStore('puzzleHints', () => {
 		hide: hideCurrentHint,
 		removeHint: removeCurrentHint,
 
-		exportHintSaveData,
 		importHintSaveData,
 
 		_cache: readonly(cache),
 	}
 })
+
+// Extracted from store itself to prevent it from continuously showing up in Pinia devtools
+export const exportHintSaveData = (): HintSaveData => {
+	const cache = usePuzzleHintsStore()._cache;
+	if (cache.size === 0) return { cache: []};
+	const result: [BoardString, SteppedHintRawData][] = [];
+	for (const [boardStr, hint] of cache) {
+		const data = exportSteppedHint(hint as SteppedHint);
+		result.push([boardStr, data]);
+	}
+	return { cache: result };
+}
