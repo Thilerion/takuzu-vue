@@ -24,6 +24,7 @@ import { PuzzleTransformations } from "@/lib/transformations/PuzzleTransformatio
 import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings, GridCounts, Vec, BoardExportString } from "@/lib/types";
 import type { TransformationKey } from "@/lib/transformations/types.js";
 import type { PickOptional } from "@/types.js";
+import { usePuzzleEventEmitter } from "@/composables/puzzle-events.js";
 
 export type PuzzleStatus = 'none' | 'loading' | 'error_loading' | 'playing' | 'paused' | 'finished';
 export type PuzzleStoreState = {
@@ -237,8 +238,10 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		} = opts;
 		const changes = Array.isArray(changeOrChanges) ? changeOrChanges : [changeOrChanges];
 		const visualCuesStore = usePuzzleVisualCuesStore();
+		const puzzleEmitter = usePuzzleEventEmitter();
 		for (const { x, y, value, prevValue } of changes) {
 			allBoards.board!.assign(x, y, value);
+			puzzleEmitter.emit('value-change', { x, y, value, prevValue });
 			if (handleGridCounts === "single") {
 				_updateGridCount(value, prevValue);
 			}

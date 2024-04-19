@@ -14,10 +14,10 @@
 </template>
 
 <script setup lang="ts">
+import { usePuzzleEvent } from '@/composables/puzzle-events.js';
 import { usePuzzleHintsStore } from '@/stores/hints/store.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { storeToRefs } from 'pinia';
-import { watch } from 'vue';
 import { watchEffect } from 'vue';
 
 const puzzleHintsStore = usePuzzleHintsStore();
@@ -31,9 +31,12 @@ watchEffect(() => {
 		return;
 	}
 })
-watch(() => puzzleStore.boardStr, () => {
-	if (isHintShown.value) hide();
-})
+
+usePuzzleEvent('value-change', () => {
+	if (isHintShown.value) {
+		hide();
+	}
+});
 
 </script>
 

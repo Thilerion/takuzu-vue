@@ -1,10 +1,11 @@
+import { usePuzzleEvent } from "@/composables/puzzle-events.js";
 import type { PuzzleValue } from "@/lib/constants.js";
 import type { SimpleBoard } from "@/lib/index.js";
-import type { LineCounts } from "@/lib/types.js";
+import type { LineCounts, VecValueChange } from "@/lib/types.js";
 import { countLineValues } from "@/lib/utils/puzzle-line.utils";
 import { usePuzzleStore } from "@/stores/puzzle/store.js";
 import { createSharedComposable } from "@vueuse/core";
-import { ref, watchEffect } from "vue";
+import { ref, watch } from "vue";
 
 export const useLineCounts = createSharedComposable(() => {
 	const puzzleStore = usePuzzleStore();
@@ -21,18 +22,24 @@ export const useLineCounts = createSharedComposable(() => {
 		colCounts.value = result.colCounts;
 	}
 
-	watchEffect(() => {
-		if (puzzleStore.board == null) {
+	watch(() => puzzleStore.board, (board, prev) => {
+		if (board == null) {
 			rowCounts.value = null;
 			colCounts.value = null;
 			return;
-		} else {
+		} else if (board !== prev) {
+			// entire board has changed, or was set initially
 			initializeCounts();
 		}
-	})
+	}, { immediate: true, deep: false });
 
-	// Removed puzzleStore watcher because, when it was converted to a setup store, onAction didn't trigger when internally triggered
-	// So there was no (efficient, simple) way to track the specific changes to the board
+	usePuzzleEvent("value-change", (change: VecValueChange) => {
+		if (rowCounts.value == null || colCounts.value == null) {
+			initializeCounts();
+			return;
+		}
+		updateCountsWithChange(rowCounts.value, colCounts.value, change);
+	});
 
 	return {
 		rowCounts,
@@ -51,4 +58,12 @@ function calculateLineCounts(board: SimpleBoard): { rowCounts: Record<PuzzleValu
 		colCounts.push(count);
 	}
 	return { rowCounts, colCounts };
+}
+
+function updateCountsWithChange(rowCounts: LineCounts, colCounts: LineCounts, change: VecValueChange) {
+	const { x, y, value, prevValue } = change;
+	rowCounts[y][value]++;
+	colCounts[x][value]++;
+	rowCounts[y][prevValue]--;
+	colCounts[x][prevValue]--;
 }
