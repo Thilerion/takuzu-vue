@@ -73,8 +73,8 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		board: null,
 		solution: null,
 		solutionBoardStr: null,
-		transformations: null,
-		initialEmpty: null,
+		transformations: null,		
+		initialEmpty: null, // initial empty is set for tracking progress, and not for anything else
 		gridCounts: {
 			[ZERO]: 0,
 			[ONE]: 0,
@@ -514,36 +514,57 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		usePuzzleHistoryStore().applyHistoryAction(changes, 'reset');
 	}
 
+	const {
+		width, height, difficulty,		
+		initialBoard, board, solution, solutionBoardStr,
+		transformations,		
+
+		cheatsUsed,
+
+		pausedManually, pausedAutomatically,
+		initialized, started, finished,
+		initializationError,	
+	} = toRefs(state);
+
 	return {
-		// state
-		...toRefs(state),
-		// getters
+		// PUZZLE BOARD STATE
+		width, height, difficulty,
+		initialBoard, board, solution, solutionBoardStr,
+		transformations,
+		// PUZZLE BOARD GETTERS
 		gridShape,
-		boardStr,
-		boardExportStr,
-		boardFilled,
-		hasStarted,
-		finishedAndSolved,
-		finishedWithMistakes,
+		boardStr, boardExportStr,
+		
+		// PUZZLE PLAY STATUS: state and getters
+		initialized, started, finished,
+		pausedManually, pausedAutomatically,
+		initializationError,
+		paused, status, hasStarted,
+		finishedAndSolved, finishedWithMistakes,
+
+		// MISC STATE AND GETTERS
+		cheatsUsed,
 		progress,
-		paused,
-		status,
 		canRestart,
-		// actions
-		reset,
-		assignToBoard,
+		
+		// ACTIONS: PUZZLE BOARD ASSIGNMENT/MOVES
 		makeMove,
 		makeMultipleMoves,
 		toggle,
 		undoLastMove,
+
+		// ACTIONS: PUZZLE CREATION/INITIALIZATION
 		initPuzzle,
 		replayPuzzle,
 		replayRandomPuzzle,
-		finishPuzzle,
 		restartPuzzle,
 		startPuzzle,
 		loadSavedPuzzle,
-		loadBookmarkedPuzzleState
+		loadBookmarkedPuzzleState,
+		
+		// ACTIONS: MISC
+		finishPuzzle,
+		reset,
 	}
 })
 
