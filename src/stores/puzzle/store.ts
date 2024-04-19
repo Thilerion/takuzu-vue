@@ -492,26 +492,11 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 	}
 
 	function loadBookmarkedPuzzleState(board: SimpleBoard) {
-		// compare current board to bookmarked board states, then batch assign all changes in 1 go
-		// this way all dependent changes are made, such as refreshing grid counts, hiding hint, etc, while setting the board itself would be more problematic
-		const changes: VecValueChange[] = [];
-		const currentBoardCells = board!.cells({ skipEmpty: false, skipFilled: false });
-		for (const cell of currentBoardCells) {
-			const newState = board.get(cell.x, cell.y);
-			if (cell.value !== newState) {
-				changes.push({ x: cell.x, y: cell.y, value: newState, prevValue: cell.value });
-			}
-		}
-		if (!changes.length) {
-			console.warn('No changes to apply from bookmarked state.');
-			return;
-		}
-		assignToBoard(changes, {
-			handleGridCounts: 'refresh',
-			handleMarkedMistakes: 'reset'
-		});
-		// clear puzzle history after loading bookmark/snapshot
-		usePuzzleHistoryStore().applyHistoryAction(changes, 'reset');
+		state.board = board.copy();
+		usePuzzleHistoryStore().applyHistoryAction([], 'reset');
+		refreshCounts();
+		const visualCuesStore = usePuzzleVisualCuesStore();
+		visualCuesStore.clearErrorMarks();
 	}
 
 	const {
