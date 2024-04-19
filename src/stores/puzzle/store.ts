@@ -140,7 +140,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 	});
 
 	// TODO: use initializationError in places other than "initPuzzle" and "replayRandomPuzzle"
-	function setInitializationError(val: boolean, errorMessage?: string) {
+	function setInitializationError(val: boolean, errorMessage?: string): void {
 		if (val) {
 			state.initializationError = { hasError: true, errorMessage };
 		} else {
@@ -151,13 +151,13 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		}
 	}
 
-	function setPuzzleConfig({ width, height, difficulty }: BasicPuzzleConfig) {
+	function setPuzzleConfig({ width, height, difficulty }: BasicPuzzleConfig): void {
 		state.width = width;
 		state.height = height;
 		state.difficulty = difficulty;
 	}
 
-	function setAllBoards({ board, solution, initialBoard }: AllPuzzleBoards) {
+	function setAllBoards({ board, solution, initialBoard }: AllPuzzleBoards): void {
 		state.board = board;
 		state.solution = solution;
 		state.initialBoard = initialBoard;
@@ -167,12 +167,12 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 	}
 
 	/** Refresh grid counts, after multiple changes to the board at once, instead of manually adding and subtracting after each change. */
-	function refreshCounts() {
+	function refreshCounts(): void {
 		const gridCounts = calculateGridCounts(state.board!);
 		state.gridCounts = gridCounts;
 	}
 
-	function reset() {
+	function reset(): void {
 		if (state.board != null && !state.initialized && !!state.board && !state.initializationError.hasError) {
 			console.log('puzzle not initialized. cannot reset');
 			return;
@@ -205,7 +205,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		Object.assign(state, freshState);
 	}
 
-	function resetSubStores() {
+	function resetSubStores(): void {
 		// reset all sub-stores
 		usePuzzleTimer().reset();
 		usePuzzleHistoryStore().reset();
@@ -215,7 +215,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		usePuzzleBookmarksStore().reset();
 	}
 
-	function _updateGridCount(value: PuzzleValue, prev: PuzzleValue) {
+	function _updateGridCount(value: PuzzleValue, prev: PuzzleValue): void {
 		state.gridCounts[value] += 1;
 		state.gridCounts[prev] -= 1;
 	}
@@ -227,7 +227,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 	function assignToBoard(changeOrChanges: VecValueChange | VecValueChange[], opts: AssignToBoardOpts = {
 		handleGridCounts: "single",
 		handleMarkedMistakes: "remove"
-	}) {
+	}): void {
 		const {
 			handleMarkedMistakes,
 			handleGridCounts
@@ -254,7 +254,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 	function makeMove(
 		move: PuzzleStoreSetAction,
 		opts: MakePuzzleMoveOpts
-	) {
+	): void {
 		const {
 			x, y, value,
 			prevValue = state.board!.grid[y][x]
@@ -270,7 +270,10 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		usePuzzleHistoryStore().applyHistoryAction([{ x, y, value, prevValue }], opts.historyCommitType);
 	}
 
-	function makeMultipleMoves(moves: PuzzleStoreSetAction[], opts: MakePuzzleMovesOpts & Partial<AssignToBoardOpts>) {
+	function makeMultipleMoves(
+		moves: PuzzleStoreSetAction[],
+		opts: MakePuzzleMovesOpts & Partial<AssignToBoardOpts>
+	): void {
 		const validatedMoves: VecValueChange[] = [];
 		for (const m of moves) {
 			const prev = m.prevValue ?? state.board!.grid[m.y][m.x];
@@ -290,14 +293,16 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		usePuzzleHistoryStore().applyHistoryAction(validatedMoves, opts.historyCommitType);
 	}
 
-	function toggle({ x, y, prevValue }: Vec & { prevValue?: PuzzleValue, value?: never }) {
+	function toggle(
+		{ x, y, prevValue }: Vec & { prevValue?: PuzzleValue, value?: never }
+	): void {
 		const previous = prevValue ?? state.board!.grid[y][x];
 		const { toggle } = useSharedPuzzleToggle();
 		const value = toggle(previous);
 		makeMove({ x, y, value, prevValue: previous }, { historyCommitType: "commit" });
 	}
 
-	function undoLastMove() {
+	function undoLastMove(): void {
 		const puzzleHistory = usePuzzleHistoryStore();
 		if (!puzzleHistory.canUndo) {
 			console.warn('Cannot undo; there are no moves to undo.');
@@ -325,7 +330,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		}, { historyCommitType: "skip" });
 	}
 
-	async function createPuzzle({ width, height, difficulty }: BasicPuzzleConfig) {
+	async function createPuzzle({ width, height, difficulty }: BasicPuzzleConfig): Promise<void> {
 		state.loading = true;
 		try {
 			const {
@@ -338,7 +343,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		// catch error in caller, which also sets initializationError property
 	}
 
-	async function initPuzzle(puzzleConfig: BasicPuzzleConfig) {
+	async function initPuzzle(puzzleConfig: BasicPuzzleConfig): Promise<void> {
 		try {
 			setPuzzleConfig(puzzleConfig);
 			await createPuzzle(puzzleConfig);
@@ -350,10 +355,10 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 			throw e;
 		}
 	}
-	async function replayPuzzle({
+	function replayPuzzle({
 		puzzleConfig,
 		boardStrings
-	}: { puzzleConfig: BasicPuzzleConfig, boardStrings: BoardAndSolutionBoardStrings }) {
+	}: { puzzleConfig: BasicPuzzleConfig, boardStrings: BoardAndSolutionBoardStrings }): void {
 		const board = SimpleBoard.import(boardStrings.board);
 		const initialBoard = board.copy();
 		const solution = SimpleBoard.import(boardStrings.solution);
@@ -369,7 +374,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 			if (fetchedRandomPuzzle == null) {
 				return false;
 			}
-			await replayPuzzle({
+			replayPuzzle({
 				puzzleConfig,
 				boardStrings: fetchedRandomPuzzle
 			})
@@ -386,14 +391,14 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 	function loadPuzzle({
 		width, height, difficulty,
 		board, solution, initialBoard = board.copy()
-	}: BasicPuzzleConfig & PickOptional<AllPuzzleBoards, 'initialBoard'>) {
+	}: BasicPuzzleConfig & PickOptional<AllPuzzleBoards, 'initialBoard'>): void {
 		reset();
 		setPuzzleConfig({ width, height, difficulty });
 		setAllBoards({ board, solution, initialBoard });
 		state.initialized = true;
 	}
 
-	async function finishPuzzle() {
+	async function finishPuzzle(): Promise<boolean> {
 		state.finished = true;
 		const timer = usePuzzleTimer();
 		timer.pause();
@@ -448,7 +453,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		}
 	}
 
-	function restartPuzzle() {
+	function restartPuzzle(): void {
 		const { deleteSavedPuzzle } = useSavedPuzzle();
 		deleteSavedPuzzle();
 		const { board, solution, initialBoard } = getRandomPuzzleTransformationOnRestart();
@@ -463,7 +468,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		timer.start();
 	}
 
-	function startPuzzle() {
+	function startPuzzle(): void {
 		if (!state.initialized) throw new Error('Cannot start uninitialized game!');
 		if (state.started) throw new Error('Cannot start a game that already has started !');
 		state.started = true;
@@ -471,7 +476,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		timer.start();
 	}
 
-	function loadSavedPuzzle() {
+	function loadSavedPuzzle(): void {
 		// TODO: a savedPuzzle should have the "replay mode" persisted
 		reset();
 		const { getParsedSavedPuzzle } = useSavedPuzzle();
@@ -494,7 +499,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		state.initialized = true;
 	}
 
-	function loadBookmarkedPuzzleState(board: SimpleBoard) {
+	function loadBookmarkedPuzzleState(board: SimpleBoard): void {
 		state.board = board.copy();
 		usePuzzleHistoryStore().applyHistoryAction([], 'reset');
 		refreshCounts();
