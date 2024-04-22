@@ -4,7 +4,7 @@ import { columnIdToX, getLineDataFromId, rowIdToY } from "@/lib/utils/puzzle-lin
 type HighlightBase = {
 	type: 'highlight',
 	colorId: number, // similar to "highlightLevel", but more generic
-	source: 'hint', // only hints as source for now
+	source: 'hint' | 'ruleViolationCheck', // only hints as source for now
 }
 export type CellHighlight = HighlightBase & {
 	highlightAreaType: 'cell',

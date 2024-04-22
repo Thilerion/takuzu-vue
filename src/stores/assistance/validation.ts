@@ -1,9 +1,12 @@
 import { defineStore } from "pinia";
 import { usePuzzleStore } from "../puzzle/store.js";
-import { findIncorrectValuesFromSolution, hasIncorrectValues } from "@/lib/mistakes/incorrect-values.js";
-import type { FoundIncorrectValue } from "@/lib/mistakes/types.js";
+import { findIncorrectValuesFromSolution } from "@/lib/mistakes/incorrect-values.js";
+import type { FoundIncorrectValue, RuleViolation } from "@/lib/mistakes/types.js";
 import { useSettingsStore } from "../settings/store.js";
 import { usePuzzleVisualCuesStore } from "../puzzle-visual-cues.js";
+import { findRuleViolations } from "@/lib/mistakes/rule-violations.js";
+import { pickRandom } from "@/utils/random.utils.js";
+import { createAreaHighlightFromCorners, createLineHighlightFromLineId } from "@/helpers/puzzle-visual-cues.js";
 
 type IncorrectValuesResult = {
 	type: 'incorrectValues';
@@ -19,7 +22,7 @@ type RuleViolationsResult = {
 } | {
 	type: 'ruleViolations';
 	found: true;
-	violations: never[];
+	violations: RuleViolation[];
 }
 type CheckResultSource = 'user' | 'auto:filledBoard';
 export type ValidationCheckResult = (IncorrectValuesResult | RuleViolationsResult) & {
@@ -70,9 +73,11 @@ export const usePuzzleValidationStore = defineStore('puzzleValidation', {
 			return { isValid: !result.found };
 		},
 		ruleViolationsUserCheck(): { isValid: boolean } {
-			console.warn('Rule violations user check not yet implemented');
+			// console.warn('Rule violations user check not yet implemented');
+			const result = findCurrentRuleViolations();
+			this.lastValidation = { ...result, source: 'user' };
 			this.setRuleViolationMarks();
-			return { isValid: false };
+			return { isValid: !result.found };
 		},
 
 		filledBoardValidationCheck(): void {
@@ -92,7 +97,59 @@ export const usePuzzleValidationStore = defineStore('puzzleValidation', {
 			);
 		},
 		setRuleViolationMarks() {
-			console.error('SetRuleViolationMarks not yet implemented');
+			// TODO: determine which rule violations to mark; if a line has a maxConsecutive violation and a balance violation, prefer the maxConsecutive only if the line is not filled
+			// TODO: currently only marks one result
+			const visualCuesStore = usePuzzleVisualCuesStore();
+			if (!this.lastValidation.found) {
+				visualCuesStore.clearHighlightsFromRuleViolations();
+				return;
+			} else if (this.lastValidation.type !== 'ruleViolations') return;
+
+			const violations = this.lastValidation.violations;
+			console.log(violations);
+			const random = pickRandom(violations);
+			const puzzleStore = usePuzzleStore();
+			const boardShape = {
+				width: puzzleStore.width!,
+				height: puzzleStore.height!
+			};
+			switch(random.type) {
+				case 'balancedLines': {
+					visualCuesStore.setRuleViolationHighlights([
+						createLineHighlightFromLineId(random.lineId, boardShape, { colorId: 1, source: 'ruleViolationCheck' })
+					]);
+					return;
+				}
+				case 'maxConsecutive': {
+					const cells = random.cells;
+					const xes = cells.map(c => c.x);
+					const ys = cells.map(c => c.y);
+					const start = {
+						x: Math.min(...xes),
+						y: Math.min(...ys)
+					}
+					const end = {
+						x: Math.max(...xes),
+						y: Math.max(...ys)
+					}
+					visualCuesStore.setRuleViolationHighlights([
+						createAreaHighlightFromCorners(start, end, { colorId: 1, source: 'ruleViolationCheck' })
+					]);
+					return;
+				}
+				case 'uniqueLines': {
+					visualCuesStore.setRuleViolationHighlights([
+						createLineHighlightFromLineId(random.correctLine, boardShape, { colorId: 1, source: 'ruleViolationCheck' }),
+						...random.incorrectLines.map(l => createLineHighlightFromLineId(l, boardShape, { colorId: 2, source: 'ruleViolationCheck' }))
+					]);
+					return;
+				}
+				default: {
+					const _x: never = random;
+					console.error(`Unhandled rule violation type: ${(random as any)?.type}`);
+					return;
+				}
+			}
 		},
 
 		reset() {
@@ -115,4 +172,16 @@ const findIncorrectValues = (): IncorrectValuesResult => {
 
 	if (!hasMistakes) return { type: 'incorrectValues', found: false as const };
 	return { type: 'incorrectValues', found: true , cells: results };
+}
+
+const findCurrentRuleViolations = (): RuleViolationsResult => {
+	const puzzleStore = usePuzzleStore();
+	const board = puzzleStore.board;
+	const solution = puzzleStore.solution;
+	if (board == null || solution == null) {
+		throw new Error('Board or solution is null');
+	}
+	const { results, hasRuleViolations } = findRuleViolations({ board, solution });
+	if (!hasRuleViolations) return { type: 'ruleViolations', found: false as const };
+	return { type: 'ruleViolations', found: true, violations: results };
 }

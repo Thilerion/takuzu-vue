@@ -20,6 +20,9 @@ export const usePuzzleVisualCuesStore = defineStore('puzzleVisualCues', () => {
 	const clearHighlightsFromHints = () => {
 		highlights.value = highlights.value.filter(highlight => highlight.source !== 'hint');
 	}
+	const clearHighlightsFromRuleViolations = () => {
+		highlights.value = highlights.value.filter(highlight => highlight.source !== 'ruleViolationCheck');
+	}
 	// specific clear/remove actions for marks
 	const clearErrorMarks = () => {
 		cellMarks.value = cellMarks.value.filter(mark => mark.errorType !== 'incorrectValue');
@@ -63,6 +66,19 @@ export const usePuzzleVisualCuesStore = defineStore('puzzleVisualCues', () => {
 			if (setVisible) hideHighlights();
 		}
 	}
+	const setRuleViolationHighlights = (
+		values: PuzzleBoardHighlight[],
+		{ setVisible }: { setVisible: boolean } = { setVisible: true }
+	) => {
+		clearHighlightsFromRuleViolations();
+		
+		if (values.length > 0) {
+			addHintHighlights(values);
+			if (setVisible) showHighlights();
+		} else {
+			if (setVisible) hideHighlights();
+		}
+	}
 	
 	// highlights visibility state
 	const toggleHighlightsVisibility = () => {
@@ -86,6 +102,7 @@ export const usePuzzleVisualCuesStore = defineStore('puzzleVisualCues', () => {
 
 		// clear all of a specific type actions
 		clearHighlightsFromHints, // to remove all highlights with source 'hint'
+		clearHighlightsFromRuleViolations, // to remove all highlights with source 'ruleViolationCheck'
 		clearErrorMarks, // to remove all marks with type 'error'
 
 		// remove/filter some of a specific type actions
@@ -96,6 +113,7 @@ export const usePuzzleVisualCuesStore = defineStore('puzzleVisualCues', () => {
 		addErrorMarksFromCells,		
 		addHintHighlights,
 		setHintHighlights, // replaces all highlights with source 'hint' with different highlights with source 'hint'
+		setRuleViolationHighlights,
 
 		// visibility state of highlights
 		highlightsVisible,
