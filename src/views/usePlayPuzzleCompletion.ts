@@ -1,10 +1,9 @@
-import { usePuzzleAssistanceStore } from "@/stores/assistance/store.js";
+import { usePuzzleValidationStore } from "@/stores/assistance/validation.js";
 import { usePuzzleStore } from "@/stores/puzzle/store.js";
 import { ref, watch } from "vue";
 
 export function useGameCompletion() {
 	const puzzleStore = usePuzzleStore();
-	const puzzleAssistanceStore = usePuzzleAssistanceStore();
 
 	const finishedTimeout = ref<ReturnType<typeof setTimeout> | null>(null);
 	const mistakeCheckTimeout = ref<ReturnType<typeof setTimeout> | null>(null);
@@ -25,7 +24,8 @@ export function useGameCompletion() {
 				return;
 			}
 			// autoCheckErrors
-			puzzleAssistanceStore.autoFilledBoardCheck();
+			// TODO: was previously puzzleAssistanceStore.autoFilledBoardCheck();
+			usePuzzleValidationStore().filledBoardValidationCheck();
 		}, 2000);
 	};
 

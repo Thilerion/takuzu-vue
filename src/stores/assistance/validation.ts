@@ -1,146 +1,118 @@
-import type { BoardString, BoardAndSolutionBoards } from "@/lib/types";
 import { defineStore } from "pinia";
-import type { CheckActionResult, CurrentCheck } from "./types";
 import { usePuzzleStore } from "../puzzle/store.js";
+import { findIncorrectValuesFromSolution, hasIncorrectValues } from "@/lib/mistakes/incorrect-values.js";
+import type { FoundIncorrectValue } from "@/lib/mistakes/types.js";
+import { useSettingsStore } from "../settings/store.js";
 import { usePuzzleVisualCuesStore } from "../puzzle-visual-cues.js";
-import type { ErrorMarkErrorType } from "@/helpers/puzzle-visual-cues.js";
+
+type IncorrectValuesResult = {
+	type: 'incorrectValues';
+	found: false;
+} | {
+	type: 'incorrectValues';
+	found: true;
+	cells: FoundIncorrectValue[];
+};
+type RuleViolationsResult = {
+	type: 'ruleViolations';
+	found: false;
+} | {
+	type: 'ruleViolations';
+	found: true;
+	violations: never[];
+}
+type CheckResultSource = 'user' | 'auto:filledBoard';
+export type ValidationCheckResult = (IncorrectValuesResult | RuleViolationsResult) & {
+	source: CheckResultSource
+}
 
 export const usePuzzleValidationStore = defineStore('puzzleValidation', {
 	state: () => ({
+		// used to force refresh the checkButton checkmark/cross animation
 		userChecks: 0,
-		lastCheck: null as CurrentCheck | null,
-		previousUserCheckResults: new Map<BoardString, CheckActionResult>(),
-		previousAutoFilledCheckResults: new Map<BoardString, CheckActionResult>(),
+		lastValidation: { found: false, type: 'incorrectValues' } as ValidationCheckResult,
+		// TODO: previous check results for statistics/score calculation
 	}),
 
 	getters: {
-		checkAssistanceData() {
-			// TODO: used for puzzleFinished history state later
-			return {};
-		},
-		mistakesFound: state => !!(state.lastCheck?.result?.found),
-		lastCheckedByUser: state => state.lastCheck?.action === 'user',
+		
 	},
 
 	actions: {
-		userCheck() {
-			// TODO: implement check action: ruleViolations (currently only checks for incorrectValues)
-			this.userChecks += 1;
-
-			const data = getRequiredDataFromPuzzleStore();
-			const { boardStr } = data;
-
-			// check if current result still applies
-			if (this._currentResultStillApplies(boardStr)) return;
-
-			// check previous results first for match
-			const prev = this._getFromPreviousUserCheckResults(boardStr);
-			if (prev) {
-				this._setLastCheck({
-					boardStr,
-					action: 'user',
-					result: prev
-				}, { addToPrevious: false });
-				return;
-			}
-
-			const result = findMistakes(data);
-			this._setLastCheck({
-				boardStr,
-				action: 'user',
-				result
-			}, { addToPrevious: true });
-		},
-		autoFilledBoardCheck() {
-			const data = getRequiredDataFromPuzzleStore();
-			const { boardStr } = data;
-
-			// check if previous result still applies first
-			if (this._currentResultStillApplies(boardStr)) return;
-
-			// check previous (autoFilledCheck) results for match
-			const prevAutoFilled = this._getFromPreviousAutoFilledCheckResults(boardStr);
-			if (prevAutoFilled) {
-				this._setLastCheck({
-					boardStr,
-					action: 'auto-filled',
-					result: prevAutoFilled
-				}, { addToPrevious: false });
-				return;
-			}
-
-			const result = findMistakes(data);
-			this._setLastCheck({
-				boardStr,
-				action: 'auto-filled',
-				result
-			}, { addToPrevious: true });
-		},
-		reset() {
-			this.$reset();
-		},
-
-		// PRIVATE ACTIONS
-		_setLastCheck(data: CurrentCheck, { addToPrevious = true } = {}) {
-			this.lastCheck = {
-				boardStr: data.boardStr,
-				action: data.action,
-				result: data.result
-			}
-			if (addToPrevious) {
-				if (data.action === 'user') {
-					this.previousUserCheckResults.set(data.boardStr, data.result);
-				} else if (data.action === 'auto-filled') {
-					this.previousAutoFilledCheckResults.set(data.boardStr, data.result);
-				} else {
-					throw new Error('Add to previous what results?');
+		userCheck(): null | { isValid: boolean } {
+			const settingsStore = useSettingsStore();
+			const actionType = settingsStore.checkButton;
+			switch(actionType) {
+				case 'incorrectValues': {
+					this.userChecks += 1;
+					return this.incorrectValuesUserCheck();
+				}
+				case 'ruleViolations': {
+					this.userChecks += 1;
+					return this.ruleViolationsUserCheck();
+				}
+				case 'disabled': {
+					console.error('Check button is disabled');
+					return null;
+				}
+				default: {
+					const x: never = actionType;
+					console.error(`Unhandled checkButton action type: ${x}`);
+					return null;
 				}
 			}
-			this._setMarkedMistakes();
 		},
-		_getFromPreviousUserCheckResults(boardStr: BoardString) {
-			const prev = this.previousUserCheckResults.get(boardStr);
-			if (prev == null) return false;
-			return prev;			
+		incorrectValuesUserCheck(): { isValid: boolean } {
+			// TODO: what to do if the lastValidation was auto:filledBoard? It shouldn't reduce the score, shouldn't count in statistics
+			const result = findIncorrectValues();
+			this.lastValidation = { ...result, source: 'user' };
+			this.setIncorrectValueMarks();
+			return { isValid: !result.found };
 		},
-		_getFromPreviousAutoFilledCheckResults(boardStr: BoardString) {
-			const prev = this.previousAutoFilledCheckResults.get(boardStr);
-			if (prev == null) return false;
-			return prev;
+		ruleViolationsUserCheck(): { isValid: boolean } {
+			console.warn('Rule violations user check not yet implemented');
+			this.setRuleViolationMarks();
+			return { isValid: false };
 		},
-		_currentResultStillApplies(boardStr: BoardString) {
-			if (this.lastCheck == null) return false;
-			if (this.lastCheck.boardStr !== boardStr) return false;
 
-			// set marked cells again to be sure
-			this._setMarkedMistakes();
-			return true;
+		filledBoardValidationCheck(): void {
+			const result = findIncorrectValues();
+			this.lastValidation = { ...result, source: 'auto:filledBoard' };
+			this.setIncorrectValueMarks();
 		},
-		/** Removes all error marks, and replaces them with new error marks according to the results of the last check */
-		_setMarkedMistakes(type: ErrorMarkErrorType = 'incorrectValue') {
+
+		setIncorrectValueMarks() {
 			const visualCuesStore = usePuzzleVisualCuesStore();
 			visualCuesStore.clearErrorMarks();
-			
-			if (!this.lastCheck?.result.found) return;
+
+			if (this.lastValidation.type !== 'incorrectValues' || !this.lastValidation.found) return;
 			visualCuesStore.addErrorMarksFromCells(
-				type,
-				this.lastCheck.result.cells
+				'incorrectValue',
+				this.lastValidation.cells.map(cell => ({ x: cell.x, y: cell.y }))
 			);
+		},
+		setRuleViolationMarks() {
+			console.error('SetRuleViolationMarks not yet implemented');
+		},
+
+		reset() {
+			this.$reset();
 		}
 	}
 })
 
-const getRequiredDataFromPuzzleStore = (): BoardAndSolutionBoards & { boardStr: BoardString } => {
+const findIncorrectValues = (): IncorrectValuesResult => {
 	const puzzleStore = usePuzzleStore();
-	const boardStr = puzzleStore.boardStr;
 	const board = puzzleStore.board;
 	const solution = puzzleStore.solution;
-	if (boardStr == null || board == null || solution == null) throw new Error('Missing required data from puzzle store');
-	return { boardStr, board, solution };
-}
+	if (board == null || solution == null) {
+		throw new Error('Board or solution is null');
+	}
+	const {
+		hasMistakes,
+		results
+	} = findIncorrectValuesFromSolution({ board, solution });
 
-const findMistakes = ({ board, solution }: BoardAndSolutionBoards): CheckActionResult => {
-	const { hasMistakes, result } = board.hasIncorrectValues(solution);
-	if (!hasMistakes) return { found: false };
-	return { found: true, cells: result }
+	if (!hasMistakes) return { type: 'incorrectValues', found: false as const };
+	return { type: 'incorrectValues', found: true , cells: results };
 }

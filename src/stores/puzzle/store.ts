@@ -25,6 +25,7 @@ import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, Ve
 import type { TransformationKey } from "@/lib/transformations/types.js";
 import type { PickOptional } from "@/types.js";
 import { usePuzzleEventEmitter } from "@/composables/puzzle-events.js";
+import { usePuzzleValidationStore } from "../assistance/validation.js";
 
 export type PuzzleStatus = 'none' | 'loading' | 'error_loading' | 'playing' | 'paused' | 'finished';
 export type PuzzleStoreState = {
@@ -215,6 +216,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		usePuzzleHistoryStore().reset();
 		usePuzzleHintsStore().reset();
 		usePuzzleAssistanceStore().reset();
+		usePuzzleValidationStore().reset();
 		usePuzzleVisualCuesStore().reset();
 		usePuzzleBookmarksStore().reset();
 	}

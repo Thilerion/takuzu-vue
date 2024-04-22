@@ -14,12 +14,13 @@
 </template>
 
 <script setup lang="ts">
-import { usePuzzleAssistanceStore } from "@/stores/assistance/store";
+import { usePuzzleValidationStore } from "@/stores/assistance/validation.js";
 import { storeToRefs } from "pinia";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 
-const puzzleAssistanceStore = usePuzzleAssistanceStore();
-const { mistakesFound: errorFound, userChecks: checkId } = storeToRefs(puzzleAssistanceStore);
+const puzzleValidationStore = usePuzzleValidationStore();
+const { lastValidation, userChecks: checkId } = storeToRefs(puzzleValidationStore);
+const errorFound = computed(() => !!lastValidation.value.found);
 
 const correctEl = ref<HTMLElement | null>(null);
 const incorrectEl = ref<HTMLElement | null>(null);
@@ -66,9 +67,6 @@ watch(checkId, (value, prev) => {
 	if (value <= prev) {
 		return;
 	}
-	/* if (!lastCheckedByUser.value || value < prev) {
-		return;
-	} */
 	if (!errorFound.value) {
 		animateCorrectEl();
 	} else {

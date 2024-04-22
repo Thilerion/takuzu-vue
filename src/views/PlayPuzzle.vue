@@ -62,7 +62,7 @@
 				:paused="paused"
 				@undo="puzzleStore.undoLastMove"
 				@restart="puzzleStore.restartPuzzle"
-				@check="puzzleAssistanceStore.userCheck"
+				@check="puzzleValidationStore.userCheck"
 				@get-hint="puzzleHintsStore.getHint"
 			/>
 			<PuzzleHintWrapper />
@@ -82,19 +82,10 @@
 </template>
 
 <script setup lang="ts">
-import GameBoard from '@/components/gameboard/GameBoard.vue';
-import GameBoardHeader from '@/components/gameboard/GameBoardHeader.vue';
-import GameBoardWrapper from '@/components/gameboard/GameBoardWrapper.vue';
-import PuzzleControls from '@/components/gameboard/PuzzleControls.vue';
-import PuzzleInfo from '@/components/gameboard/PuzzleInfo.vue';
-import OverlayPageTransition from '@/views/transitions/OverlayPageTransition.vue';
-import PuzzleHintWrapper from '@/components/gameboard/hints/PuzzleHintWrapper.vue';
-import PuzzleRecap from '@/components/puzzle-recap/PuzzleRecap.vue';
-
-import { usePuzzleWakeLock } from '@/composables/use-wake-lock';
+import { usePuzzleWakeLock } from '@/composables/use-wake-lock.js';
 import { storeToRefs } from 'pinia';
 import { computed, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
-import { usePuzzleAssistanceStore } from '@/stores/assistance/store';
+import { usePuzzleAssistanceStore } from '@/stores/assistance/store.js';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from 'vue-router';
 import type { DifficultyKey } from '@/lib/types.js';
 import { useGoBackOrReplaceTo } from '@/router/useGoBackOrReplaceTo.js';
@@ -109,6 +100,7 @@ import { useGameCompletion } from './usePlayPuzzleCompletion.js';
 import { usePuzzlePlayHotkeys } from '@/components/gameboard/composables/usePuzzlePlayHotkeys.js';
 import { useSettingsStore } from '@/stores/settings/store.js';
 import { usePuzzleRecapStore } from '@/stores/puzzle-recap.js';
+import { usePuzzleValidationStore } from '@/stores/assistance/validation.js';
 
 const puzzleUiStateStore = usePlayPuzzleUiStateStore();
 const { 
@@ -154,6 +146,7 @@ const puzzleRecapStore = usePuzzleRecapStore();
 const puzzleHistoryStore = usePuzzleHistoryStore();
 const puzzleHintsStore = usePuzzleHintsStore();
 const puzzleAssistanceStore = usePuzzleAssistanceStore();
+const puzzleValidationStore = usePuzzleValidationStore();
 const puzzleStore = usePuzzleStore();
 const router = useRouter();
 
@@ -176,7 +169,7 @@ usePuzzlePlayHotkeys({
 		if (!puzzlePlayActive.value) return;
 		const settingsStore = useSettingsStore();
 		if (settingsStore.checkButtonEnabled) {
-			puzzleAssistanceStore.userCheck();
+			usePuzzleValidationStore().userCheck();
 		}
 	},
 	togglePause: () => {
