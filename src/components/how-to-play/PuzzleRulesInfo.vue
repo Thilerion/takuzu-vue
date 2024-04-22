@@ -2,8 +2,6 @@
 	<div
 		class="prose-slate dark:prose-invert prose-sm md:prose lg:prose-lg xl:prose-xl mx-auto py-4 how-to-play-overview px-8"
 	>
-		<p>{{ $t('HowToPlay.overview.page-description') }}</p>
-
 		<h2>{{ $t('HowToPlay.BasicRules.title') }}</h2>
 		<HowToPlayThemedTranslation
 			tag="p"
@@ -112,7 +110,7 @@
 		<h2>{{ $t('HowToPlay.Variations.title') }}</h2>
 		<p>{{ $t('HowToPlay.Variations.description') }}</p>
 		<h3>{{ $t('HowToPlay.Variations.Odd.title') }}</h3>
-		<ul>
+		<ul class="list-disc">
 			<li>{{ $t('HowToPlay.Variations.Odd.description-1') }}</li>
 			<HowToPlayThemedTranslation
 				tag="li"

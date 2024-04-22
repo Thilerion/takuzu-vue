@@ -43,10 +43,7 @@
 					<HowToPlayThemedTranslation
 						tag="undefined"
 						keypath="HowToPlay.BasicTechniques.line-completion.example"
-					>
-						<template #symbolOrColor>{{ valueTypeDisplay }}</template>
-						<template #symbolOrColorPlural>{{ valueTypeDisplayPlural }}</template>
-					</HowToPlayThemedTranslation>
+					/>
 				</template>
 			</HowToPlayExample>
 
@@ -56,10 +53,7 @@
 					<HowToPlayThemedTranslation
 						tag="undefined"
 						keypath="HowToPlay.BasicTechniques.unique-lines.when-to-use-text"
-					>
-						<template #symbolOrColor>{{ valueTypeDisplay }}</template>
-						<template #symbolOrColorPlural>{{ valueTypeDisplayPlural }}</template>
-					</HowToPlayThemedTranslation></p>
+					/></p>
 			<HowToPlayExample class="border-y breakout bg-white/5 dark:border-slate-200/50 px-8 py-4" el="div" :label="$t('HowToPlay.BasicTechniques.unique-lines.example-label')">
 				<template #examples>
 					<HowToPlayExampleCells

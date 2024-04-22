@@ -25,8 +25,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import ScrollToTop from '@/components/base/ScrollToTop.vue';
+import { useRoute } from 'vue-router';
 
 const pageEl = ref<HTMLElement | null>(null);
 const scrollToTopComponent = ref<null | InstanceType<typeof ScrollToTop>>(null);
@@ -36,6 +37,13 @@ const y = computed(() => {
 	return scrollToTopComponent.value.y;
 })
 const elevateHeader = computed(() => y.value > 10);
+
+const route = useRoute();
+watch(() => route.name, name => {
+	if (pageEl.value != null) {
+		pageEl.value.scrollTo(0, 0);
+	}
+})
 </script>
 
 <style scoped>

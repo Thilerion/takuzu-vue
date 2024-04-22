@@ -7,6 +7,22 @@
 			"advanced-techniques": "Geavanceerde Technieken"
 		},
 		"page-title": "Spelhulp",
+
+		"Overview": {
+			"intro-heading": "Welkom bij Takuzu!",
+			"intro-names": "Takuzu is bekend onder vele namen, zoals binaire puzzel, Binairo, Binero, Tohu-wa-vohu, en nog veel meer.",
+			"intro-description": "Het is een logisch denkspel dat eenvoudige regels combineert met verrassende diepgang. Het spel lijkt in eerste instantie eenvoudig omdat het bestaat uit het invullen van een raster met slechts twee {symbolOrColorPlural}. Echter, naarmate je vordert in hogere niveaus, onthult Takuzu een complexe laag van strategie die de puzzels aanzienlijk uitdagender maakt.",
+
+			"goal-heading": "Het doel",
+			"goal-text": "Het doel van een binaire puzzel is eenvoudig: vul elke cel van het raster met een {symbolZero} of een {symbolOne} volgens drie eenvoudige regels.",
+
+			"rules-heading": "De regels in het kort",
+			"rules-link": "Klik hier voor de uitgebreide omschrijving van de regels met voorbeelden",
+			"rules-list-1": "Elke rij en kolom moet een gelijk aantal {symbolZeroPlural} en {symbolOnePlural} bevatten.",
+			"rules-list-2": "Er mogen niet meer dan twee aangrenzende {symbolZeroPlural} of {symbolOnePlural} in een rij of kolom staan.",
+			"rules-list-3": "Elke rij en kolom moet uniek zijn."
+		},
+
 		"BasicRules": {
 			"balanced-lines": {
 				"description-1": "Elke rij en kolom moet een gelijk aantal {symbolOnePlural} en {symbolZeroPlural} bevatten.",
@@ -67,9 +83,6 @@
 			},
 			"description": "Naast standaardpuzzels is er één puzzelvariant beschikbaar:",
 			"title": "Puzzelvarianten"
-		},
-		"overview": {
-			"page-description": "Welkom bij Takuzu! Dit puzzeltype, ook wel binaire puzzel genoemd, is een heerlijke mix van logica en strategie. Het is perfect voor puzzelliefhebbers en nieuwkomers en biedt een unieke mentale uitdaging. Onze gids is hier om u te helpen de basisbeginselen te begrijpen en het plezier in elk raster te ontdekken. Laten we beginnen!"
 		}
 	}
 }

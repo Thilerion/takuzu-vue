@@ -7,6 +7,22 @@
 			"advanced-techniques": "Advanced Techniques"
 		},
 		"page-title": "How To Play",
+
+		"Overview": {
+			"intro-heading": "Welcome to Takuzu!",
+			"intro-names": "Takuzu is known by many names, such as Binary Puzzle, Binairo, Binero, Tohu-wa-vohu, and many more.",
+			"intro-description": "It is a logical thinking game that combines simple rules with surprising depth. Initially, the game seems simple as it involves filling a grid with just two colors. However, as you progress to higher levels, Takuzu reveals a complex layer of strategy that makes the puzzles significantly more challenging.",
+		
+			"goal-heading": "The Goal",
+			"goal-text": "The goal of a binary puzzle is simple: fill every cell of the grid with a {symbolZero} or a {symbolOne} according to three simple rules.",
+		
+			"rules-heading": "The Rules at a Glance",
+			"rules-link": "Click here for a detailed description of the rules with examples",
+			"rules-list-1": "Each row and column must contain an equal number of {symbolZeroPlural} and {symbolOnePlural}.",
+			"rules-list-2": "No more than two adjacent {symbolZeroPlural} or {symbolOnePlural} may be in a row or column.",
+			"rules-list-3": "Each row and column must be unique."
+		},
+
 		"BasicRules": {
 			"balanced-lines": {
 				"description-1": "Each row and column must have an equal number of {symbolOnePlural} and {symbolZeroPlural}.",
@@ -67,9 +83,6 @@
 			},
 			"description": "In addition to standard puzzles, there is one puzzle variation available:",
 			"title": "Puzzle Variations"
-		},
-		"overview": {
-			"page-description": "Welcome to Takuzu! This puzzle type, also known as a binary puzzle, is a delightful blend of logic and strategy. Perfect for puzzle enthusiasts and newcomers alike, it offers a unique mental challenge. Our guide is here to help you grasp the basics and discover the fun in every grid. Let's get started!"
 		}
 	}
 }
