@@ -20,6 +20,8 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+vite.config.timestamp*
+vitest.config.timestamp*
 
 /cypress/videos/
 /cypress/screenshots/
