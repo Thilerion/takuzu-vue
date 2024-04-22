@@ -18,7 +18,11 @@ const { t } = useI18n();
 const tabs = [
 	{
 		label: computed(() => t('HowToPlay.tab-overview')),
-		routeName: 'OverviewAndRules'
+		routeName: 'HowToPlayOverview'
+	},
+	{
+		label: computed(() => t('HowToPlay.tab-rules')),
+		routeName: 'PuzzleRulesInfo'
 	},
 	{
 		label: computed(() => t('HowToPlay.tab-basic-techniques')),

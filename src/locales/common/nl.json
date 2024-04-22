@@ -97,7 +97,8 @@
 		},
 		"tab-advanced-techniques": "Geavanceerde Technieken",
 		"tab-basic-techniques": "Basis Technieken",
-		"tab-overview": "Overzicht en Regels",
+		"tab-overview": "Overzicht",
+		"tab-rules": "Regels",
 		"title": "Spelhulp"
 	},
 	"NewPuzzle": {

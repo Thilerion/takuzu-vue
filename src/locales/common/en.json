@@ -97,7 +97,8 @@
 		},
 		"tab-advanced-techniques": "Advanced Techniques",
 		"tab-basic-techniques": "Basic Techniques",
-		"tab-overview": "Overview and Rules",
+		"tab-overview": "Overview",
+		"tab-rules": "Rules",
 		"title": "How To Play"
 	},
 	"NewPuzzle": {

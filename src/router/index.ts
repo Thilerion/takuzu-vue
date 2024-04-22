@@ -114,8 +114,13 @@ const routes = [
 		children: [
 			{
 				path: '',
-				name: 'OverviewAndRules',
+				name: 'HowToPlayOverview',
 				component: () => import('@/components/how-to-play/HowToPlayOverview.vue'),
+			},
+			{
+				path: 'rules',
+				name: 'PuzzleRulesInfo',
+				component: () => import('@/components/how-to-play/PuzzleRulesInfo.vue'),
 			},
 			{
 				path: 'techniques',
