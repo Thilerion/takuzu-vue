@@ -17,19 +17,19 @@ const { t } = useI18n();
 
 const tabs = [
 	{
-		label: computed(() => t('HowToPlay.tab-overview')),
+		label: computed(() => t('HowToPlay.tabs.overview')),
 		routeName: 'HowToPlayOverview'
 	},
 	{
-		label: computed(() => t('HowToPlay.tab-rules')),
+		label: computed(() => t('HowToPlay.tabs.rules')),
 		routeName: 'PuzzleRulesInfo'
 	},
 	{
-		label: computed(() => t('HowToPlay.tab-basic-techniques')),
+		label: computed(() => t('HowToPlay.tabs.basic-techniques')),
 		routeName: 'BasicTechniques'
 	},
 	{
-		label: computed(() => t('HowToPlay.tab-advanced-techniques')),
+		label: computed(() => t('HowToPlay.tabs.advanced-techniques')),
 		routeName: 'AdvancedTechniques',
 		enabled: false
 	}

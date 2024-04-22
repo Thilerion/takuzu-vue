@@ -1,0 +1,75 @@
+{
+	"HowToPlay": {
+		"tabs": {
+			"overview": "Overview",
+			"rules": "Rules",
+			"basic-techniques": "Basic Techniques",
+			"advanced-techniques": "Advanced Techniques"
+		},
+		"page-title": "How To Play",
+		"BasicRules": {
+			"balanced-lines": {
+				"description-1": "Each row and column must have an equal number of {symbolOnePlural} and {symbolZeroPlural}.",
+				"description-2": "For example, in a 4x4 grid, each row and column should contain two {symbolOnePlural} and two {symbolZeroPlural}.",
+				"example-correct": "There are exactly 3 {symbolZeroPlural} and 3 {symbolOnePlural} in the line of 6 cells.",
+				"example-incorrect": "There are 4 {symbolZeroPlural}, but the row has 6 cells, which means only three {symbolZeroPlural} are allowed.",
+				"title": "Balanced Lines"
+			},
+			"description": "The goal of a binary puzzle is simple: fill every cell of the grid with a {symbolZero} or a {symbolOne} according to some simple rules. These 3 key rules are:",
+			"max-two-consecutive": {
+				"description-1": "No more than two of the same TODO:symbol/number/color can be next to or under each other.",
+				"description-2": "This means you cannot have three consecutive {symbolOnePlural} or {symbolZeroPlural} in any row or column.",
+				"example-correct": "Two {symbolOnePlural} in a row, and two {symbolZeroPlural} in a row is allowed.",
+				"example-incorrect": "Three {symbolOnePlural} in a row is not allowed.",
+				"title": "Max Two Consecutive"
+			},
+			"title": "Basic Rules",
+			"unique-rows-and-columns": {
+				"description-1": "Each row and each column must be unique.",
+				"description-2": "No two rows can be the same, and no two columns can be the same.",
+				"example-label": "This 4x4 puzzle is incorrect, as two rows are the same:",
+				"title": "Unique Rows and Columns"
+			}
+		},
+		"BasicTechniques": {
+			"description": "Below, we've outlined some fundamental strategies to help you navigate through the puzzles with ease.",
+			"line-completion": {
+				"description": "This technique stems from the \"balanced lines\" rule, which stipulates that each row and column must contain an equal number of {symbolZeroPlural} and {symbolOnePlural}. As you fill in the puzzle, keep track of the balance within each row and column to guide your placement decisions.",
+				"example": "This row has 6 cells, which means there are 3 of each {symbolOrColor} required. As you can see in the top row, there are 3 {symbolOnePlural}, which means all other cells should be {symbolZeroPlural}.",
+				"tip": "A setting is available that adds a horizontal and vertical ruler to the puzzle grid. These rulers display how many of each {symbolOrColor} still need to be placed in that row or column, and highlight whenever a line has none remaining of a single {symbolOrColor}, which means it can be completed with the other {symbolOrColor}.",
+				"title": "Completing Rows and Columns"
+			},
+			"pairs-and-sandwiches": {
+				"description": "A direct application of the \"max two consecutive\" rule is to avoid forming triplets within the puzzle grid.",
+				"pairs": "Pairs",
+				"pairs-description": "Whenever you observe two identical {symbolOrColorPlural} next to each other, either horizontally or vertically, this forms a \"pair.\" The cells immediately adjacent to this pair must be filled with the other {symbolOrColor} to prevent creating a sequence of three identical {symbolOrColorPlural} (a triplet).",
+				"sandwiches": "Sandwiches",
+				"sandwiches-description": "A \"sandwich\" occurs when an empty cell is flanked by two identical {symbolOrColorPlural}. This setup mandates that the empty cell, effectively the \"filling\" of the sandwich, be filled with the other {symbolOrColor} to avoid the formation of triplets.",
+				"title": "Identifying Pairs and Sandwiches"
+			},
+			"unique-lines": {
+				"description": "This strategy is often not a necessity for solving puzzles, especially at easier difficulties, thanks to the tailored puzzle generation algorithm. Its utility shines on smaller boards or during tougher challenges where other strategies might leave you in a standstill.",
+				"example-label": "Consider this 4x4 puzzle. Two rows are already completed, and the first row looks similar to the second row:",
+				"example-label-2": "It can only be filled in one way to prevent two duplicate rows:",
+				"title": "Unique Rows and Columns",
+				"when-to-use-label": "When to use:",
+				"when-to-use-text": "It's especially helpful in scenarios where a line is almost complete yet cannot be completed using the basic rules of balancing, sandwiches, or pairs. If you're leveraging the rulers setting that indicates the remaining number of each {symbolOrColor} needed in a row or column, pay close attention to lines that require the placement of exactly one {symbolOne} and one {symbolZero}. Compare these scenarios with existing lines to identify the correct placements."
+			}
+		},
+		"LabelCorrect": "Correct: ",
+		"LabelIncorrect": "Incorrect: ",
+		"Variations": {
+			"Odd": {
+				"description-1": "In puzzles with an odd number of rows and columns, the rule for balanced lines is slightly altered.",
+				"description-2": "In these cases, each line will have one more {symbolOne} than {symbolZero}.",
+				"description-3": "This means in a 5x5 grid, each row and column should contain three {symbolOnePlural} and two {symbolZeroPlural}.",
+				"title": "Odd-Sized Puzzles"
+			},
+			"description": "In addition to standard puzzles, there is one puzzle variation available:",
+			"title": "Puzzle Variations"
+		},
+		"overview": {
+			"page-description": "Welcome to Takuzu! This puzzle type, also known as a binary puzzle, is a delightful blend of logic and strategy. Perfect for puzzle enthusiasts and newcomers alike, it offers a unique mental challenge. Our guide is here to help you grasp the basics and discover the fun in every grid. Let's get started!"
+		}
+	}
+}

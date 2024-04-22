@@ -8,7 +8,7 @@
 			class="flex-shrink-0 relative z-10"
 			:elevated="false"
 			:back-options="{ type: 'force', prevRouteName: 'Home' }"
-		>{{ $t('HowToPlay.title') }}</PageHeader>
+		>{{ $t('HowToPlay.page-title') }}</PageHeader>
 		<HowToPlayTabsList />
 		</div>
 		

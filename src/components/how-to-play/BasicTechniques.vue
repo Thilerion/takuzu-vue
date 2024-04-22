@@ -1,6 +1,6 @@
 <template>
 	<div class="prose-slate dark:prose-invert prose-sm md:prose lg:prose-lg xl:prose-xl mx-auto py-4 px-0 basic-techniques-page relative">
-		<h2>{{ $t('HowToPlay.tab-basic-techniques') }}</h2>
+		<h2>{{ $t('HowToPlay.tabs.basic-techniques') }}</h2>
 		<p>{{ $t('HowToPlay.BasicTechniques.description') }}</p>
 
 		<div class="techniques breakout">

@@ -40,5 +40,6 @@
         "Game.difficulty.Very Hard",
         "Game.difficulty.Extreme"
     ],
+    "i18n-ally.sortKeys": false,
     "npm.packageManager": "pnpm"
 }
