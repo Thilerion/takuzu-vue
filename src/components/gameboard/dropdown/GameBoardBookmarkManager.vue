@@ -59,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import type BaseModal from '@/components/global/BaseModal.vue';
+import type BaseModal from '@/components/base/BaseModal.vue';
 import { watchEffect, ref } from 'vue';
 import { usePuzzleBookmarksStore } from '@/stores/bookmarks.js';
 import { storeToRefs } from 'pinia';

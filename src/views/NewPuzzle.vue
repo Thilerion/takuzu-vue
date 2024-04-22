@@ -102,7 +102,7 @@
 					:size="selectedDimensions"
 					:difficulty-label="selectedDifficultyLabel"
 					:difficulty-stars="selectedDifficulty"
-					:disabled="disableStartButton"
+					:disabled="startButtonDisabled"
 					:loading="puzzleIsLoading"
 					:replay="debugAutoReplayModeEnabled"
 				/>
@@ -187,7 +187,7 @@ const oddPresets = computed(() => {
 	})
 })
 
-const disableStartButton = ref(false);
+const startButtonDisabled = ref(false);
 
 const selectedDimensions = ref({
 	width: newPuzzleSetupSelection.value.size.width,
@@ -210,21 +210,18 @@ const isValidDifficultySizeCombination = computed(() => {
 })
 
 watchEffect(() => {
-	if (!isValidDifficultySizeCombination.value) {
-		disableStartButton.value = true;
-	} else {
-		disableStartButton.value = false;
-	}
+	// Disable start button if difficulty+size is not a valid combination.
+	startButtonDisabled.value = !isValidDifficultySizeCombination.value;
 })
 
-watch([selectedDimensions, selectedDifficulty], (value) => {
+watch([selectedDimensions, selectedDifficulty], ([dimensions, difficulty]) => {
 	if (!isValidDifficultySizeCombination.value) {
 		return;
 	}
 	const merged = {
 		...newPuzzleSetupSelection.value,
-		difficulty: value[1],
-		size: {...value[0]}
+		difficulty,
+		size: { ...dimensions }
 	}
 	newPuzzleSetupSelection.value = merged;
 })

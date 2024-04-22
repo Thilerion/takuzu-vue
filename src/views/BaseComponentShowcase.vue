@@ -81,7 +81,7 @@
 </template>
 
 <script setup lang="ts">
-import type BaseModal from '@/components/global/BaseModal.vue';
+import type BaseModal from '@/components/base/BaseModal.vue';
 import { ref } from 'vue';
 
 const baseRangeValue = ref(40);

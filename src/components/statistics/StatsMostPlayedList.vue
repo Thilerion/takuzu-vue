@@ -58,7 +58,6 @@ import { useStatisticsStore } from '@/stores/statistics';
 import { computed, onBeforeMount, ref } from 'vue';
 import { formatTimeMMSSWithRounding } from '@/utils/time.utils';
 import { useStorage } from '@vueuse/core';
-import BaseTable from '@/components/global/table/BaseTable.vue'
 import { getMostPlayedPuzzleConfigs, getMostPlayedPuzzleSizes } from '@/services/stats/most-played.js';
 import type { StatsDbExtendedStatisticDataEntry } from '@/services/db/stats-db/models.js';
 import { itemsSolvedSinceDaysAgo } from '@/services/stats/dates.js';
