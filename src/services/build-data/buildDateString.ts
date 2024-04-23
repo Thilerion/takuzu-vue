@@ -1,3 +1,4 @@
+import { addMinutes } from "date-fns";
 import type { BuildDateString } from "./types";
 
 // The function that creates the BuildDateString, "createBuildDateString", is located within
@@ -12,14 +13,14 @@ function assertBuildDateString(str: string): asserts str is BuildDateString {
 }
 export const parseBuildDateString = (str: string): Date => {
 	assertBuildDateString(str);
-	const [,YY, MM, DD, mmmInterval2] = str.split(/^(\d{2})(\d{2})(\d{2})\+(\d{3})$/);
+	const year = parseInt(str.slice(0, 2)) + 2000;
+	const month = parseInt(str.slice(2, 4));
+	const day = parseInt(str.slice(4, 6));
+	const mmmInterval2 = str.slice(6, 9);
 	const minutesSinceMidnight = Number.parseInt(mmmInterval2) * 2;
-	const minutes = minutesSinceMidnight % 60;
-	const hours = (minutesSinceMidnight - minutes) / 24;
-	const day = Number(DD);
-	const month = Number(MM);
-	const year = Number(`20${YY}`);
 
-	const date = new Date(year, month - 1, day, hours, minutes);
-	return date;
+	return addMinutes(
+		new Date(year, month - 1, day),
+		minutesSinceMidnight
+	);
 }

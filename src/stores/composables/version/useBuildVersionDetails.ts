@@ -1,7 +1,7 @@
 import { parseBuildDateString } from "@/services/build-data/buildDateString";
 import { computed, readonly } from "vue";
 import { initializePersistence } from "./init";
-import type { BuildVersionSummary, PersistedBuildVersionData } from "./types";
+import type { BuildVersionSummary } from "./types";
 import { initVersionChange } from "./version-change";
 
 const BUILD_VERSION_DETAILS = Object.freeze(__BUILD_VERSION_DETAILS__);
@@ -20,13 +20,6 @@ const updateCheckData = initVersionChange(persistedVersionDataRef, updatedVersio
 const { changed: versionChanged, pkgVersionChanged, detailedVersionChanged } = updateCheckData;
 
 const persistedVersionData = readonly(persistedVersionDataRef);
-export const setPersistedBuildVersionData = (data: PersistedBuildVersionData) => {
-	console.warn('Setting persisted build version data');
-	const current = { ...data.current };
-	const previous = data.previous == null ? null : { ...data.previous };
-	console.log({ data: { current, previous } });
-	persistedVersionDataRef.value = { current, previous };
-}
 
 const {
 	date: buildDateString,
