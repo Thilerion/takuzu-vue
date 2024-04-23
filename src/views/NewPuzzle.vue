@@ -21,7 +21,7 @@
 					<template #content>
 						<BaseDropdownItem v-if="debugModeEnabled">
 							<label class="flex items-center">
-								<input type="checkbox" v-model="computedAutoReplayMode">
+								<input type="checkbox" v-model="autoReplayModeModel">
 								<span class="ml-2">{{ $t('NewPuzzle.options.automatic-replay-mode') }}</span>
 							</label>
 						</BaseDropdownItem>
@@ -113,32 +113,34 @@
 </template>
 
 <script setup lang="ts">
-import { DIFFICULTY_LABELS, PRESET_BOARD_SIZES, isDifficultyKey } from '@/config';
-import { computed, ref, toRef, watch, watchEffect } from 'vue';
-
+import { DIFFICULTY_LABELS, PRESET_BOARD_SIZES, isDifficultyKey } from '@/config.js';
+import { computed, ref, toRef, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { useMainStore } from '@/stores/main';
-import { useSavedPuzzle } from '@/services/savegame/useSavedGame';
-import { useNewPuzzleSetupSelection } from '@/components/new-puzzle/useNewPuzzleSetupSelection';
-import type { BoardShape, DifficultyKey } from '@/lib/types.js';
+import { useMainStore } from '@/stores/main.js';
+import { useSavedPuzzle } from '@/services/savegame/useSavedGame.js';
+import { useNewPuzzleSetupSelection } from '@/components/new-puzzle/useNewPuzzleSetupSelection.js';
+import type { BasicPuzzleConfig, BoardShape, DifficultyKey } from '@/lib/types.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
 
-const { hasCurrentSavedGame } = useSavedPuzzle();
-// display warning message if creating a new game will overwrite the currently saved puzzle
+const newPuzzleSetupSelection = useNewPuzzleSetupSelection();
 
+// Display warning message if creating a new game will overwrite the currently saved puzzle
+const { hasCurrentSavedGame } = useSavedPuzzle();
+
+// Check debug mode to determine if automatic replay mode can be enabled
 const mainStore = useMainStore();
 const debugModeEnabled = toRef(mainStore, 'debugMode');
-
-const newPuzzleSetupSelection = useNewPuzzleSetupSelection();
 const debugAutoReplayModeEnabled = computed(() => debugModeEnabled.value && newPuzzleSetupSelection.value.debug_autoReplayMode);
-const computedAutoReplayMode = computed({
+const autoReplayModeModel = computed({
 	get() {
 		return newPuzzleSetupSelection.value.debug_autoReplayMode ?? false;
 	},
-	set(value) {
+	set(value: boolean) {
 		newPuzzleSetupSelection.value.debug_autoReplayMode = !!value;
 	}
 })
+
+// Selected difficulty, its label, and increase/decrease/selection functions
 const selectedDifficulty = ref(newPuzzleSetupSelection.value.difficulty);
 const selectedDifficultyLabel = computed(() => {
 	return DIFFICULTY_LABELS[selectedDifficulty.value];
@@ -165,35 +167,32 @@ const decreaseDifficulty = () => {
 	}
 }
 
-const validPresets = computed(() => {
+// Presets for different board shape types, with maxDifficulty filters
+const validPresetsForSelectedDifficulty = computed(() => {
 	return PRESET_BOARD_SIZES.filter(preset => {
 		return preset.maxDifficulty >= selectedDifficulty.value;
 	})
 })
-
 const squarePresets = computed(() => {
-	return validPresets.value.filter(preset => {
+	return validPresetsForSelectedDifficulty.value.filter(preset => {
 		return !preset.isOdd && !preset.isRect;
 	})
 })
 const rectPresets = computed(() => {
-	return validPresets.value.filter(preset => {
+	return validPresetsForSelectedDifficulty.value.filter(preset => {
 		return preset.isRect;
 	})
 })
 const oddPresets = computed(() => {
-	return validPresets.value.filter(preset => {
+	return validPresetsForSelectedDifficulty.value.filter(preset => {
 		return preset.isOdd;
 	})
 })
-
-const startButtonDisabled = ref(false);
-
-const selectedDimensions = ref({
+// Currently selected preset(dimensions/boardShape) and selection function
+const selectedDimensions = ref<BoardShape>({
 	width: newPuzzleSetupSelection.value.size.width,
 	height: newPuzzleSetupSelection.value.size.height
 })
-
 function selectPreset(preset: BoardShape) {
 	selectedDimensions.value = {
 		width: preset.width,
@@ -201,36 +200,39 @@ function selectPreset(preset: BoardShape) {
 	}
 }
 
+// Check if the combination of selected difficulty and board size is valid, and disable start button if not
 const isValidDifficultySizeCombination = computed(() => {
 	const { width, height } = selectedDimensions.value;
-	const presetWithDims = validPresets.value.find(preset => {
+	const presetWithDims = validPresetsForSelectedDifficulty.value.find(preset => {
 		return preset.width === width && preset.height === height;
 	})
 	return presetWithDims != null;
 })
+const startButtonDisabled = computed(() => !isValidDifficultySizeCombination.value);
 
-watchEffect(() => {
-	// Disable start button if difficulty+size is not a valid combination.
-	startButtonDisabled.value = !isValidDifficultySizeCombination.value;
+// Update newPuzzleSetupSelection when selected dimensions or difficulty change, and the combination is valid
+const selectedConfig = computed((): BasicPuzzleConfig => {
+	const { width, height } = selectedDimensions.value;
+	const difficulty = selectedDifficulty.value;
+	return { width, height, difficulty };
 })
-
-watch([selectedDimensions, selectedDifficulty], ([dimensions, difficulty]) => {
+watch(selectedConfig, (conf) => {
 	if (!isValidDifficultySizeCombination.value) {
 		return;
 	}
+	const { width, height, difficulty } = conf;
 	const merged = {
 		...newPuzzleSetupSelection.value,
 		difficulty,
-		size: { ...dimensions }
+		size: { width, height }
 	}
 	newPuzzleSetupSelection.value = merged;
 })
 
+// Start/create game functions
 const puzzleStore = usePuzzleStore();
-const puzzleIsLoading = computed(() => puzzleStore.status === 'loading');
-const resetGame = () => puzzleStore.reset();
-
 const router = useRouter();
+const puzzleIsLoading = computed(() => puzzleStore.status === 'loading');
 
 async function startGame() {
 	if (debugAutoReplayModeEnabled.value) return replayRandom();
@@ -238,12 +240,9 @@ async function startGame() {
 }
 
 async function createGame() {
-	resetGame();
-	const { width, height } = selectedDimensions.value;
-	const difficulty = selectedDifficulty.value;
-
+	puzzleStore.reset();
 	try {
-		await puzzleStore.initPuzzle({ width, height, difficulty });
+		await puzzleStore.initPuzzle({...selectedConfig.value});
 		router.push({ name: 'PlayPuzzle' });
 	} catch(e) {
 		// TODO: puzzleStore.initializationError is now true, display a warning of some kind
@@ -257,12 +256,9 @@ async function createGame() {
 }
 
 async function replayRandom() {
-	resetGame();
-	const { width, height } = selectedDimensions.value;
-	const difficulty = selectedDifficulty.value;
-
+	puzzleStore.reset();
 	try {
-		const found = await puzzleStore.replayRandomPuzzle({ width, height, difficulty });
+		const found = await puzzleStore.replayRandomPuzzle({...selectedConfig.value});
 		if (!found) throw new Error('Could not retrieve replay puzzle.');
 		router.push({ name: 'PlayPuzzle', query: { mode: 'replay' } });
 	} catch {

@@ -1,7 +1,7 @@
 import type { BoardShape, DifficultyKey } from "@/lib/types";
-import { useStorage } from "@vueuse/core";
+import { useStorage, type RemovableRef } from "@vueuse/core";
 
-type PreviousSelectionState = {
+export type PreviousSelectionState = {
 	size: BoardShape,
 	difficulty: DifficultyKey,
 	debug_autoReplayMode?: boolean
@@ -26,7 +26,7 @@ const mergeSelectionDefaults = (stored: PreviousSelectionState, defaults: Previo
 	return stored;
 }
 
-export const useNewPuzzleSetupSelection = () => {
+export const useNewPuzzleSetupSelection = (): RemovableRef<PreviousSelectionState> => {
 	const state = useStorage(STORAGE_KEY, getDefaultSelection(), localStorage, {
 		writeDefaults: true,
 		mergeDefaults: mergeSelectionDefaults,
