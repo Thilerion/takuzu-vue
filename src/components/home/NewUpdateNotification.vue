@@ -4,8 +4,8 @@
 		v-show="show"
 		@click="updateAndReload"
 	>
-		<span>A new version is available!</span>
-		<span class="text-xs">Click here to update (will take just a second).</span>
+		<span>{{ $t('NewUpdate.new-version-is-available') }}</span>
+		<span class="text-xs">{{ $t('NewUpdate.click-here-to-update') }}</span>
 	</button>
 </template>
 

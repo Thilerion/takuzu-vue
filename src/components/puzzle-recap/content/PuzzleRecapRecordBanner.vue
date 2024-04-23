@@ -6,15 +6,11 @@
 				<icon-fxemoji-trophy class="w-full h-full" />
 			</div>
 			<div class="text-base ml-2">
-				<slot>New time record</slot>
+				<slot/>
 			</div>
 		</div>
 	</div>
 </template>
-
-<script setup lang="ts">
-
-</script>
 
 <style scoped>
 .banner-wrapper::before {

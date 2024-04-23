@@ -4,7 +4,7 @@
 			class="bg-white shadow-sm"
 			small
 			:back-options="{ type: 'force', prevRouteName: 'Statistics' }"
-		>Puzzle statistics</PageHeader>
+		>{{ $t('Statistics.puzzle-statistics') }}</PageHeader>
 		<div class="pt-4">
 			<StatsMostPlayedList />
 		</div>

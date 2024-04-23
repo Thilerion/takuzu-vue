@@ -39,7 +39,7 @@ const y = computed(() => {
 const elevateHeader = computed(() => y.value > 10);
 
 const route = useRoute();
-watch(() => route.name, name => {
+watch(() => route.name, () => {
 	if (pageEl.value != null) {
 		pageEl.value.scrollTo(0, 0);
 	}

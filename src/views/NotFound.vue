@@ -2,8 +2,8 @@
 	<div>
 		<PageHeader
 			hide-back
-		>Page not found</PageHeader>	
-		<p>You will now be redirected to the main menu...</p>
+		>{{ $t('NotFound404.page-not-found') }}</PageHeader>	
+		<p>{{ $t('NotFound404.you-will-be-redirected-main-menu') }}</p>
 	</div>
 </template>
 

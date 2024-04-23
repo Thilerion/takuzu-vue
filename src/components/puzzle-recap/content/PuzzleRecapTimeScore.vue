@@ -1,12 +1,8 @@
 <template>
 	<div class="time-box w-full text-white text-2xl text-center">
-		<span class="drop-shadow-sm"><slot>01:23</slot></span>
+		<span class="drop-shadow-sm"><slot/></span>
 	</div>
 </template>
-
-<script setup lang="ts">
-
-</script>
 
 <style scoped>
 .time-box {

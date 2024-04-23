@@ -82,5 +82,30 @@
 	"test": "Test",
 	"tip": "Tip",
 	"unknown": "unknown",
-	"Unknown": "Unknown"
+	"Unknown": "Unknown",
+	"NewUpdate": {
+		"new-version-is-available": "A new version is available!",
+		"click-here-to-update": "Click here to update (will take just a second)."
+	},
+	"PwaInstallNotification": {
+		"add-to-homescreen": "Add Takuzu to homescreen",
+		"install": "Install",
+		"pwa-install-pros": "Installing uses almost no storage, and provides a quick way to return to this app, even while offline!"
+	},
+	"Statistics": {
+		"title": "Statistics",
+		"loading-statistics": "Loading statistics...",
+		"none-solved-warning": "You haven't solved any puzzles yet! Go play some!",
+		"fallback-error-msg": "Woops... something went wrong",
+		"puzzle-statistics": "Puzzle statistics",
+		"History": {
+			"puzzle-history": "Puzzle history",
+			"none-found-with-filters": "No puzzles found with current filters!",
+			"none-played-yet": "You haven't played any puzzles yet!"
+		}
+	},
+	"NotFound404": {
+		"page-not-found": "Page not found",
+		"you-will-be-redirected-main-menu": "You will now be redirected to the main menu..."
+	}
 }

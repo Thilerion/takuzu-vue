@@ -2,7 +2,7 @@
 	<div class="flex flex-col overflow-y-auto">
 		<PageHeader
 			:back-options="{ type: 'force', prevRouteName: 'Statistics' }"
-		>Puzzle history</PageHeader>
+		>{{ $t('Statistics.History.puzzle-history') }}</PageHeader>
 
 		<div class="content flex-1 flex flex-col gap-2 pt-4">
 			<div class="select-inputs text-sm" ref="anchorEl">
@@ -25,9 +25,12 @@
 						@save-note="(note) => saveNote(item.id!, note)"
 						@delete="() => deleteItem(item.id!)"></HistoryListItem>
 				</div>
-				<div class="py-4 text-lg px-8 text-center" v-else-if="historyItems.length" key="none-filtered">No
-					puzzles found with current filters!</div>
-				<div class="py-4 text-lg px-8 text-center" key="none" v-else>You haven't played any puzzles yet!</div>
+				<div class="py-4 text-lg px-8 text-center" v-else-if="historyItems.length" key="none-filtered">
+					{{ $t('Statistics.History.none-found-with-filters') }}
+				</div>
+				<div class="py-4 text-lg px-8 text-center" key="none" v-else>
+					{{ $t('Statistics.History.none-played-yet') }}
+				</div>
 			</transition>
 		</div>
 

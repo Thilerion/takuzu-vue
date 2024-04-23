@@ -82,5 +82,30 @@
 	"test": "Test",
 	"tip": "Tip",
 	"unknown": "onbekend",
-	"Unknown": "Onbekend"
+	"Unknown": "Onbekend",
+	"NewUpdate": {
+		"click-here-to-update": "Klik hier om te updaten (duurt slechts een seconde).",
+		"new-version-is-available": "Een nieuwe versie is beschikbaar!"
+	},
+	"PwaInstallNotification": {
+		"add-to-homescreen": "Voeg Takuzu toe aan het startscherm",
+		"install": "Installeer",
+		"pwa-install-pros": "Installeren kost bijna geen opslagruimte en biedt een snelle manier om terug te keren naar deze app, zelfs als je offline bent!"
+	},
+	"Statistics": {
+		"History": {
+			"puzzle-history": "Spelgeschiedenis",
+			"none-found-with-filters": "Geen puzzels gevonden met de huidige filters!",
+			"none-played-yet": "Je hebt nog geen puzzels gespeeld!"
+		},
+		"fallback-error-msg": "Oeps... er is iets misgegaan",
+		"loading-statistics": "Statistieken laden...",
+		"none-solved-warning": "Je hebt nog geen puzzels opgelost! Ga er een paar spelen!",
+		"puzzle-statistics": "Puzzelstatistieken",
+		"title": "Statistieken"
+	},
+	"NotFound404": {
+		"page-not-found": "Pagina niet gevonden",
+		"you-will-be-redirected-main-menu": "Je wordt nu doorgestuurd naar het hoofdmenu..."
+	}
 }

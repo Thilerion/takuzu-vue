@@ -7,14 +7,14 @@
 		<IconBtn @click="dismiss" class="self-center col-start-1 row-start-1 row-span-2 mr-auto">
 			<icon-ic-baseline-close />
 		</IconBtn>
-		<h2 class="col-start-2 row-start-1 w-full block text-sm font-medium tracking-wide">Add Takuzu to homescreen</h2>
+		<h2 class="col-start-2 row-start-1 w-full block text-sm font-medium tracking-wide">{{ $t('PwaInstallNotification.add-to-homescreen') }}</h2>
 		<div class="col-start-3 row-start-1 row-span-2 self-center pl-2">
 			<BaseButton
 				class="ml-auto !rounded-full !text-sm !py-1 !px-0 !w-[8ch]"
 				@click="prompt"
-			>Install</BaseButton>
+			>{{ $t('PwaInstallNotification.install') }}</BaseButton>
 		</div>
-		<div class="col-start-2 col-span-1 text-xs">Installing uses almost no storage, and provides a quick way to return to this app, even while offline!</div>
+		<div class="col-start-2 col-span-1 text-xs">{{ $t('PwaInstallNotification.pwa-install-pros') }}</div>
 	</div>
 	</transition>
 </template>
