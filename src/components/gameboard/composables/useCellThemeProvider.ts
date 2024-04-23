@@ -2,15 +2,8 @@ import { CellThemeTypes } from "@/stores/settings/options.js";
 import { useSettingsStore } from "@/stores/settings/store.js";
 import { cellThemeTypeMap, type CellTheme, type CellThemeType } from "@/stores/settings/types.js";
 import { storeToRefs } from "pinia";
-import type { ComputedRef, InjectionKey } from "vue";
-import type { MaybeRef } from "vue";
-import type { Ref } from "vue";
-import { markRaw, readonly } from "vue";
-import { watchEffect } from "vue";
-import { shallowRef } from "vue";
-import { unref } from "vue";
-import { inject, provide } from "vue";
-import { computed, defineAsyncComponent } from "vue";
+import type { ComputedRef, InjectionKey, MaybeRef, Ref } from "vue";
+import { computed, defineAsyncComponent, inject, markRaw, provide, readonly, shallowRef, unref, watchEffect } from "vue";
 
 const ColoredPuzzleCellComp = defineAsyncComponent(() => import('../cell/FastPuzzleCellColored.vue'));
 const SymbolPuzzleCellComp = defineAsyncComponent(() => import('../cell/FastPuzzleCellSymbol.vue'));

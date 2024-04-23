@@ -1,7 +1,5 @@
 <template>
-	<div>
-		{{  value }}
-	</div>
+	<div>{{ value }}</div>
 </template>
 
 <script setup lang="ts">
@@ -11,7 +9,3 @@ defineProps<{
 	value: PuzzleValue
 }>();
 </script>
-
-<style scoped>
-
-</style>

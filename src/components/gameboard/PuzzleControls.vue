@@ -71,10 +71,10 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
-	undo: [],
-	restart: [],
-	check: [],
-	'get-hint': []
+	(e: 'undo'): void,
+	(e: 'restart'): void,
+	(e: 'check'): void,
+	(e: 'get-hint'): void,
 }>();
 
 const settingsStore = useSettingsStore();

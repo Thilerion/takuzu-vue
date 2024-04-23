@@ -55,7 +55,7 @@ export const pluckSample = <T>(arr: T[], amount = 1, rng: RngSource = Math.rando
 	return result;
 }
 
-export const shuffleInPlace = <T extends unknown[]>(arr: T, rng: RngSource = Math.random) => {
+export const shuffleInPlace = <T extends unknown[]>(arr: T, rng: RngSource = Math.random): T => {
 	const len = arr.length;
 	const max = len - 2;
 	let j, temp;
@@ -68,9 +68,9 @@ export const shuffleInPlace = <T extends unknown[]>(arr: T, rng: RngSource = Mat
 	return arr;
 }
 
-export const shuffle = <T extends ReadonlyArray<unknown>>(arr: T, rng: RngSource = Math.random) => {
+export const shuffle = <T>(arr: ReadonlyArray<T>, rng: RngSource = Math.random): T[] => {
 	return shuffleInPlace([...arr], rng);
 }
 
-export const randomIndex = (arr: ReadonlyArray<unknown>) => Math.floor(Math.random() * arr.length);
-export const pickRandom = <T>(arr: ReadonlyArray<T>) => arr[randomIndex(arr)];
+export const randomIndex = (arr: ReadonlyArray<unknown>): number => Math.floor(Math.random() * arr.length);
+export const pickRandom = <T>(arr: ReadonlyArray<T>): T => arr[randomIndex(arr)];

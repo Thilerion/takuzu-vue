@@ -19,6 +19,7 @@ import { useI18n } from "vue-i18n";
 defineProps<{
 	paused: boolean
 }>();
+
 defineEmits<{
 	(e: 'resume'): void
 }>();

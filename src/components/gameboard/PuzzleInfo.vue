@@ -5,7 +5,7 @@
 	>
 		<div
 			class="difficulty text-left"
-		>{{difficulty}}* {{ $t(`Game.difficulty.${difficultyLabel}`, difficultyLabel) }}</div>
+		>{{difficulty}}* {{ difficultyLabelMsg }}</div>
 
 		<PuzzleInfoTimer
 			:puzzle-paused="puzzlePaused"
@@ -29,6 +29,7 @@
 <script setup lang="ts">
 import { DIFFICULTY_LABELS } from '@/config';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const props = defineProps<{
 	showTimer: boolean,
@@ -48,6 +49,22 @@ const progressPercentage = computed(() => {
 })
 
 const difficultyLabel = computed(() => DIFFICULTY_LABELS[props.difficulty]);
+const { t } = useI18n();
+const difficultyLabelMsg = computed(() => {
+	const label = difficultyLabel.value;
+	switch(label) {
+		case 'Beginner': return t('Game.difficulty.Beginner');
+		case 'Normal': return t('Game.difficulty.Normal');
+		case 'Hard': return t('Game.difficulty.Hard');
+		case 'Very Hard': return t('Game.difficulty.Very Hard');
+		case 'Extreme': return t('Game.difficulty.Extreme');
+		default: {
+			const x: never = label;
+			console.warn('Unknown difficulty label:', x);
+			return t('Unknown');
+		}
+	}
+});
 
 </script>
 

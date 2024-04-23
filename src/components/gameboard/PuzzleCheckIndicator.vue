@@ -77,8 +77,9 @@ watch(checkId, (value, prev) => {
 
 <style scoped>
 .check-icon {
-	font-size: 50vmin;
-	width: 50vmin;
-	height: 50vmin;
+	--check-size: 50vmin;
+	font-size: var(--check-size);
+	width: var(--check-size);
+	height: var(--check-size);
 }
 </style>

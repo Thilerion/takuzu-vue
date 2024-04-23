@@ -81,5 +81,6 @@
 	},
 	"test": "Test",
 	"tip": "Tip",
-	"unknown": "unknown"
+	"unknown": "unknown",
+	"Unknown": "Unknown"
 }

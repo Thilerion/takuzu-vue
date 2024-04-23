@@ -1,9 +1,14 @@
 <template>
 	<button
 		class="bg-gray-50 dark:bg-slate-700 dark:border-slate-600 border rounded w-1/6 text-sm relative transition-colors"
-		:class="[tall ? 'tall' : 'square', { selected }]"
+		:class="{
+			tall, square: !tall,
+			'bg-teal-600 border-teal-700 text-white': selected
+		}"
 	>
-	<div class="inner" v-if="true">{{width}}<small class="opacity-70 text-xs px-px">x</small>{{height}}</div>
+		<div
+			class="flex flex-row items-center justify-center gap-px"
+		>{{width}}<small class="opacity-70 text-xs px-px">x</small>{{height}}</div>
 	</button>
 </template>
 
@@ -15,7 +20,7 @@ export type GameModeDimensionsButtonProps = BoardShape & {
 	selected?: boolean
 }
 
-const props = defineProps<GameModeDimensionsButtonProps>();
+defineProps<GameModeDimensionsButtonProps>();
 </script>
 
 <style scoped>
@@ -24,13 +29,5 @@ const props = defineProps<GameModeDimensionsButtonProps>();
 }
 .square {
 	aspect-ratio: 1;
-}
-
-.selected {
-	@apply bg-teal-600 border-teal-700 text-white;
-}
-
-button > .inner {
-	@apply flex flex-row items-center justify-center gap-px;
 }
 </style>

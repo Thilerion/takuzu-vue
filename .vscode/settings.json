@@ -41,5 +41,6 @@
         "Game.difficulty.Extreme"
     ],
     "i18n-ally.sortKeys": false,
-    "npm.packageManager": "pnpm"
+    "npm.packageManager": "pnpm",
+    "i18n-ally.extract.autoDetect": true
 }
