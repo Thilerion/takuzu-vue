@@ -15,13 +15,11 @@
 </template>
 
 <script setup lang="ts">
-import { useSavedPuzzle } from '@/services/savegame/useSavedGame';
-import { useMainStore } from '@/stores/main';
+import { useSavedPuzzle } from '@/services/savegame/useSavedGame.js';
 import { ref } from 'vue';
 
 const { savedPuzzle, hasCurrentSavedGame } = useSavedPuzzle();
 
-useMainStore();
 const newUpdateNotificationShown = ref(false);
 </script>
 

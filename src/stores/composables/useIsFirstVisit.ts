@@ -1,4 +1,4 @@
-import { useStorage, useTimestamp } from "@vueuse/core";
+import { useStorage } from "@vueuse/core";
 import { computed, toRefs } from "vue"
 
 interface FirstVisitData {
@@ -35,12 +35,4 @@ export const useIsFirstVisit = () => {
 		visits,
 		timestamp
 	}
-}
-
-export const useTimeSinceFirstVisit = () => {
-	const now = useTimestamp({ interval: 1000 });
-	const first = computed(() => firstVisitData.value.firstVisitTimestamp);
-	return computed(() => {
-		return now.value - first.value;
-	})
 }

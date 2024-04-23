@@ -85,7 +85,6 @@
 import { usePuzzleWakeLock } from '@/composables/use-wake-lock.js';
 import { storeToRefs } from 'pinia';
 import { computed, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
-import { usePuzzleAssistanceStore } from '@/stores/assistance/store.js';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from 'vue-router';
 import type { DifficultyKey } from '@/lib/types.js';
 import { useGoBackOrReplaceTo } from '@/router/useGoBackOrReplaceTo.js';
@@ -145,7 +144,6 @@ const { clearCompletionCheckTimeouts } = useGameCompletion();
 const puzzleRecapStore = usePuzzleRecapStore();
 const puzzleHistoryStore = usePuzzleHistoryStore();
 const puzzleHintsStore = usePuzzleHintsStore();
-const puzzleAssistanceStore = usePuzzleAssistanceStore();
 const puzzleValidationStore = usePuzzleValidationStore();
 const puzzleStore = usePuzzleStore();
 const router = useRouter();
@@ -194,11 +192,11 @@ usePuzzlePlayHotkeys({
 
 const startGame = () => {
 	if (!initialized.value) {
-		console.warn('Cannot start puzzle that is not initialized');
+		// console.warn('Cannot start puzzle that is not initialized');
 		return;
 	}
 	if (started.value) {
-		console.warn('Cannot start puzzle that is already started!');
+		// console.warn('Cannot start puzzle that is already started!');
 		return;
 	}
 	puzzleStore.startPuzzle();
