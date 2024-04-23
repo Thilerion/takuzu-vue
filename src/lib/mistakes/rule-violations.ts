@@ -1,7 +1,7 @@
 import type { BoardLine } from "../board/BoardLine.js";
 import type { BoardAndSolutionBoards } from "../types.js";
 import { hasIncorrectValues } from "./incorrect-values.js";
-import type { RuleViolation } from "./types.js";
+import type { RuleViolation, RuleViolationType } from "./types.js";
 import { findBalancedLinesRuleViolations } from "./violations/balanced-line-violation.js";
 import { findMaxConsecutiveRuleViolations } from "./violations/max-consecutive-violation.js";
 import { findUniqueLinesRuleViolations } from "./violations/unique-lines-violation.js";
@@ -49,4 +49,21 @@ export function findRuleViolations(
 		hasRuleViolations: true as const,
 		results
 	}
+}
+
+export type RuleViolationsByTypeRecord = {
+	[Type in RuleViolationType]: Extract<RuleViolation, { type: Type }>[]
+}
+export const groupRuleViolationResultsByType = (results: RuleViolation[]): RuleViolationsByTypeRecord => {
+	const result: RuleViolationsByTypeRecord = {
+		maxConsecutive: [],
+		balancedLines: [],
+		uniqueLines: [],
+	}
+
+	for (const violation of results) {
+		result[violation.type].push(violation as never);
+	}
+
+	return result;
 }
