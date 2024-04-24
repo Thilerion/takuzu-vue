@@ -23,6 +23,7 @@ export const usePuzzleVisualCuesStore = defineStore('puzzleVisualCues', () => {
 	const clearHighlightsFromRuleViolations = () => {
 		highlights.value = highlights.value.filter(highlight => highlight.source !== 'ruleViolationCheck');
 	}
+
 	// specific clear/remove actions for marks
 	const clearErrorMarks = () => {
 		cellMarks.value = cellMarks.value.filter(mark => mark.errorType !== 'incorrectValue');

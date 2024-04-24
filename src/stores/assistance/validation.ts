@@ -143,7 +143,7 @@ export const usePuzzleValidationStore = defineStore('puzzleValidation', {
 					}
 				}
 			}
-			// TODO: determine when to remove highlights
+			// TODO: determine when to remove highlights. For now, all these highlights are removed when a value on the board has changed in PuzzleGridHighlights component
 			const visualCuesStore = usePuzzleVisualCuesStore();
 			visualCuesStore.setRuleViolationHighlights(highlights);
 		},

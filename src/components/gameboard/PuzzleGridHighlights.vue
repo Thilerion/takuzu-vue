@@ -24,6 +24,7 @@ import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 import { usePuzzleVisualCuesStore } from '@/stores/puzzle-visual-cues.js';
 import type { PuzzleBoardHighlight, CellHighlight, LineHighlight, AreaHighlight } from '@/helpers/puzzle-visual-cues.js';
+import { usePuzzleEvent } from '@/composables/puzzle-events.js';
 
 const visualCuesStore = usePuzzleVisualCuesStore();
 const { highlights, highlightsVisible } = storeToRefs(visualCuesStore);
@@ -42,6 +43,11 @@ const areaHighlights = computed((): AreaHighlight[] => {
 	return visibleHighlights.value.filter((hl): hl is AreaHighlight => hl.highlightAreaType === 'area');
 })
 
+// TODO: Use a better way to remove RuleViolation highlights, as removing all of them can be annoying
+// Remove all RuleViolation highlights when a cell on the board is changed
+usePuzzleEvent('value-change', () => {
+	visualCuesStore.clearHighlightsFromRuleViolations();
+})
 </script>
 
 <style scoped>
