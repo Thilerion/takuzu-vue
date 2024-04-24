@@ -47,18 +47,16 @@ export class SimpleBoard {
 		const grid = boardStringToPuzzleGrid(exportedStr, dims);
 		return new SimpleBoard(grid);
 	}
-	// TODO: accept an optional width/height, to bypass deducePuzzleDimensions
 	static import(str: BoardString | BoardExportString, dims?: BoardShape) {
 		return SimpleBoard.fromString(str, dims);
 	}
-	// TODO: accept an optional width/height, to bypass deducePuzzleDimensions
-	static fromArrayOfLines(arr: string[]) {
+	static fromArrayOfLines(arr: string[], dims?: BoardShape) {
 		// validate that every value is a PuzzleValue, or every item in array is a PuzzleValueLine
 		const isValid = arr.every(l => isPuzzleValueLineStr(l));
 		if (!isValid) {
 			throw new Error('Cannot parse array of lines, not all values are PuzzleValues');
 		}
-		return this.fromString(arr.join('') as BoardString);
+		return this.fromString(arr.join('') as BoardString, dims);
 	}
 
 	/**
@@ -99,18 +97,22 @@ export class SimpleBoard {
 
 	get(x: number, y: number): PuzzleValue {
 		if (x < 0 || y < 0 || x >= this.width || y >= this.height) {
-			// return null;
-			// TODO: return null here? or remove this check?
-			throw new Error('X and/or Y value not in range.');
+			throw new BoardOutOfBoundsError({ width: this.width, height: this.height, position: { x, y } });
 		}
 		return this.grid[y][x];
 	}
 	getColumn(x: ColumnId | number) {
 		const coordX = typeof x === 'string' ? columnIdToX(x) : x;
+		if (coordX < 0 || coordX >= this.width) {
+			throw new BoardOutOfBoundsError({ position: `column ${x}`, width: this.width, height: this.height });
+		}
 		return this.grid.map(row => row[coordX]);
 	}
 	getRow(y: RowId | number) {
 		const coordY = typeof y === 'string' ? rowIdToY(y) : y;
+		if (coordY < 0 || coordY >= this.height) {
+			throw new BoardOutOfBoundsError({ position: `row ${y}`, width: this.width, height: this.height });
+		}
 		return [...this.grid[coordY]];
 	}
 	getLine(lineId: LineId) {
@@ -119,21 +121,15 @@ export class SimpleBoard {
 		} else if (isLineIdRow(lineId)) {
 			return this.getRow(lineId);
 		} else {
-			throw new Error(`Invalid lineId ("${lineId}")`);
+			throw new BoardOutOfBoundsError({ position: `line ${lineId}`, width: this.width, height: this.height });
 		}
 	}
 
 	// SET BOARD VALUES
 	// TODO: set lines/columns/rows
 	assign(x: number, y: number, value: PuzzleValue) {
-		if (x == null && y != null) {
-			// TODO: assign row
-			throw new Error('Assign row not yet implemented');
-		} else if (x != null && y == null) {
-			// TODO: assign column
-			throw new Error('Assign column not yet implemented');
-		} else if (x == null && y == null) {
-			throw new Error('X and/or Y value required for assignment');
+		if (x == null && y == null) {
+			throw new BoardAssignmentError('X and Y value required for assignment');
 		}
 
 		if (value === this.get(x, y)) {
@@ -153,14 +149,14 @@ export class SimpleBoard {
 	}
 	assignRow(y: number, values: PuzzleValue[]) {
 		if (!Array.isArray(values) || values.length !== this.width) {
-			throw new Error("Can only assign row with an array of values");
+			throw new BoardAssignmentError('assignRow() requires an array of values with the same length as the board width.');
 		}
 		this.grid.splice(y, 1, [...values]);
 		return this;
 	}
 	assignColumn(x: number, values: PuzzleValue[]) {
 		if (!Array.isArray(values) || values.length !== this.height) {
-			throw new Error("Can only assign column with an array of values");
+			throw new BoardAssignmentError('assignColumn() requires an array of values with the same length as the board height.');
 		}
 		for (let y = 0; y < this.height; y++) {
 			this._set(x, y, values[y]);
@@ -173,7 +169,7 @@ export class SimpleBoard {
 		} else if (this.isColumnId(lineId)) {
 			return this.assignColumn(columnIdToX(lineId), values);
 		} else {
-			throw new Error(`Invalid lineId ("${lineId}") in Board.assignLine()`);
+			throw new BoardAssignmentError(`invalid lineId "${lineId}" in Board.assignLine()`);
 		}
 	}
 	assignTarget(tg: Target): this {
@@ -313,4 +309,22 @@ export type CellsIteratorOptions = {
 	skipFilled?: boolean,
 	skipEmpty?: boolean,
 	shuffled?: boolean
+}
+
+// Error classes used by the SimpleBoard class, which extend the Error class: OutOfBoundsError, InvalidLineIdError, and an error that is thrown when parsing a string/array/grid etc to create a SimpleBoard cannot be done
+type BoardOutOfBoundsErrorData = BoardShape & { position: Vec | string };
+export class BoardOutOfBoundsError extends Error {
+	constructor(data: BoardOutOfBoundsErrorData, opts?: ErrorOptions) {
+		const positionStr = typeof data.position === 'string' ? data.position : `${data.position.x},${data.position.y}`;
+		super(`Tried to access out of bounds position (${positionStr}), while the board has a width of ${data.width} and height of ${data.height}.`, opts);
+		this.name = 'BoardOutOfBoundsError';
+		Object.setPrototypeOf(this, BoardOutOfBoundsError.prototype);
+	}
+}
+export class BoardAssignmentError extends Error {
+	constructor(message: string, opts?: ErrorOptions) {
+		super(`Cannot assign value(s) to board: ${message}`, opts);
+		this.name = 'BoardAssignmentError';
+		Object.setPrototypeOf(this, BoardAssignmentError.prototype);
+	}
 }
