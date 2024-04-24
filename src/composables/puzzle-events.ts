@@ -4,6 +4,8 @@ import mitt, { type Handler } from "mitt";
 
 export type PuzzleEvents = {
 	"value-change": VecValueChange;
+	"pause": void;
+	"resume": void;
 }
 const emitter = mitt<PuzzleEvents>();
 

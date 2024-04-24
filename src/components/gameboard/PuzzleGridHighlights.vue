@@ -48,6 +48,24 @@ const areaHighlights = computed((): AreaHighlight[] => {
 usePuzzleEvent('value-change', () => {
 	visualCuesStore.clearHighlightsFromRuleViolations();
 })
+
+// When puzzle is paused, and highlights are shown, temporarily hide them, and then show them again on resume
+let highlightsHiddenOnPause = false;
+usePuzzleEvent('pause', () => {
+	if (highlightsHiddenOnPause) {
+		console.error('HighlightsHiddenOnPause indicates that the puzzle is already paused so the pause event should not be triggered now...');
+	}
+	if (visibleHighlights.value.length > 0) {
+		visualCuesStore.hideHighlights();
+		highlightsHiddenOnPause = true;
+	}
+})
+usePuzzleEvent('resume', () => {
+	if (highlightsHiddenOnPause) {
+		visualCuesStore.showHighlights();
+		highlightsHiddenOnPause = false;
+	}
+})
 </script>
 
 <style scoped>

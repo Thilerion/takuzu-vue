@@ -138,6 +138,14 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		}
 		throw new Error('Unrecognized Puzzle status??!');
 	});
+	const puzzleEmitter = usePuzzleEventEmitter();
+	watch(status, (cur, prev) => {
+		if (cur === 'playing' && prev === 'paused') {
+			puzzleEmitter.emit('resume');
+		} else if (cur === 'paused' && prev === 'playing') {
+			puzzleEmitter.emit('pause');
+		}
+	})
 	const canRestart = computed((): boolean => {
 		// Allow restarting only if status is "Playing". Then, there must be moves to be undone, or there must be progress in some way on the board.
 		// The "progress" check was added because a part of move history can be lost, or something else added to the board without adding to move history.
@@ -240,7 +248,6 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		} = opts;
 		const changes = Array.isArray(changeOrChanges) ? changeOrChanges : [changeOrChanges];
 		const visualCuesStore = usePuzzleVisualCuesStore();
-		const puzzleEmitter = usePuzzleEventEmitter();
 		for (const { x, y, value, prevValue } of changes) {
 			allBoards.board!.assign(x, y, value);
 			puzzleEmitter.emit('value-change', { x, y, value, prevValue });
