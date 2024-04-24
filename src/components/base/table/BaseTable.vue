@@ -54,7 +54,8 @@ export type BaseTableColumn = {
 }
 export type BaseTableSortOpts = {
 	dir: 'asc' | 'desc',
-	key: string, // TODO: can be typed more strictly with generic component
+	// Could potentially be typed more strictly with a generic component, but probably not necessary right now
+	key: string,
 }
 
 withDefaults(defineProps<{

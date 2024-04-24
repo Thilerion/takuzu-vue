@@ -12,7 +12,6 @@ import { type Ref, computed } from "vue";
 
 type HintMessageFnArray<T extends SteppedHint> = ((hint: T, $p: ToDynamicPuzzleString) => string | { messageKey: string, namedProperties?: Record<string, string | number> })[];
 const TRIPLES_HINT_MESSAGES: HintMessageFnArray<TriplesSteppedHint> = [
-	// TODO: separate messages for when colored tiles are used, is much easier than introducing many variables in the same messages
 	// TODO: "a 1" or "a red tile" as additional message: so an article preceding the symbol might sometimes be used
 	(hint) => ({ messageKey: 'Hints.Triples.messages[0]', namedProperties: { subType: `Hints.Triples.${hint.subType === 'sandwich' ? 'sandwich' : 'pair' }` }}),
 	(hint, $p) => ({

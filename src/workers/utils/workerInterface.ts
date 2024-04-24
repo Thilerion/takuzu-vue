@@ -24,8 +24,7 @@ export type WorkerInterfaceOpts = {
 	startOnInitialization?: boolean,
 }
 
-/*
-TODO:
+/* TODO:
 - event emitter pattern that allows multiple parts of the application to listen to responses from the worker, not just the part that made the request
 */
 

@@ -5,7 +5,6 @@ import { validateMaxConsecutiveRule } from "../validate/line.js";
 import { generateUniqueArrayPermutations } from "./permutations.js";
 import type { LineArrSymbolPermutations } from "./types.js";
 
-// TODO: if line is completely empty, use generateAllValidFilledLines instead
 function _recurseGenerateValidLineCompletions(
 	line: PuzzleValueLineStr,
 	position: number, // current index/pointer

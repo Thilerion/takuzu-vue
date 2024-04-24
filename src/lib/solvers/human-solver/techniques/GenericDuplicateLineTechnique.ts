@@ -48,7 +48,6 @@ export function genericDuplicateLineTechnique(
 		// also filter by leastRemaining and maxEmptyCells
 		return rangePredicate(line);
 	});
-	// TODO: also sort by least remaining amount, but not needed if opts.leastRem is not a range
 
 	if (!filteredLines.length) return [];
 

@@ -1,7 +1,7 @@
 import { getAllPresetSizeDifficultyCombinations, isDifficultyKey } from "@/config.js";
 import { setupWorker } from "../utils/workerSetup.js";
 import { puzzleDb } from "@/services/db/puzzles-db/init.js";
-import type { BasicPuzzleConfig, PuzzleConfigKey } from "@/lib/types.js";
+import type { BasicPuzzleConfig, DifficultyKey, PuzzleConfigKey } from "@/lib/types.js";
 import { awaitTimeout } from "@/utils/delay.utils.js";
 import type { GenPuzzleWorkerFns } from "../generate-puzzle/generate.worker";
 import { type WorkerInterfaceOpts, WorkerInterface } from "../utils/workerInterface";
@@ -43,7 +43,14 @@ const presets = getAllPresetSizeDifficultyCombinations()
 		const key = `${width}x${height}-${difficulty}`;
 		return { key, width, height, difficulty, numCells: width * height };
 	});
-async function findPresetsWithoutPuzzlesAndGenerateMissing({ lazy = true, verbose = true, maxDifficulty = 3 } = {}) {
+
+type FindPresetsWithoutPuzzlesAndGenerateMissingOpts = {
+	lazy: boolean,
+	verbose: boolean,
+	maxDifficulty: DifficultyKey
+}
+
+async function findPresetsWithoutPuzzlesAndGenerateMissing({ lazy = true, verbose = true, maxDifficulty = 3 }: Partial<FindPresetsWithoutPuzzlesAndGenerateMissingOpts> = {}) {
 	const presetsInDb = await puzzleDb.puzzles
 		.orderBy('[width+height+difficulty]')
 		.uniqueKeys();

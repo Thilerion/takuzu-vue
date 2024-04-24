@@ -42,10 +42,12 @@ class BoardGenerator {
 	public start() {
 		for (let i = 0; i < this.maxAttempts; i++) {
 			const board = this.initialFill();
-			if (!board.isValid()) {
-				// TODO: remove this check if it always works
-				throw new Error('Board is not valid after the initial fill during board/solution generation???');
-			}
+			if (import.meta.env.DEV) {
+				// 24-4-2024: Never had this problem, but let's keep this check in dev mode just in case something changes somewhere else
+				if (!board.isValid()) {
+					throw new Error('Board is not valid after the initial fill during board/solution generation???');
+				}
+			}			
 			const solverResult = ConstraintSolver.run(board, {
 				maxSolutions: 1,
 				dfs: {

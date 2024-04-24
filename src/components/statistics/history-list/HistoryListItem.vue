@@ -149,7 +149,7 @@ const puzzleConfig = computed(() => {
 	return { width: width.value, height: height.value, difficulty: difficulty.value };
 })
 const router = useRouter();
-const goToPlayPuzzleRoute = () => router.push({ name: 'PlayPuzzle'});
+const goToPlayPuzzleRoute = () => router.push({ name: 'PlayPuzzle' });
 async function replayPuzzle() {
 	// TODO: SET REPLAY_MODE IN ROUTE, so game board header knows this, etc
 	const boardStrings = {
@@ -157,7 +157,7 @@ async function replayPuzzle() {
 		solution: props.item.solution
 	};
 	const puzzleStore = usePuzzleStore();
-	await puzzleStore.replayPuzzle({ puzzleConfig: puzzleConfig.value, boardStrings });
+	puzzleStore.replayPuzzle({ puzzleConfig: puzzleConfig.value, boardStrings });
 	await awaitTimeout(1000 / 60 * 2);
 	goToPlayPuzzleRoute();
 }

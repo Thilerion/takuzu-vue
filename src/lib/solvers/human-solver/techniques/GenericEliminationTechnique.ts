@@ -40,7 +40,6 @@ export function genericEliminationTechnique(
 		opts.maxEmptyCells
 	);
 	const filteredLines = boardLines.filter(line => rangePredicate(line));
-	// TODO: also sort by least remaining amount, but not needed if opts.leastRem is not a range
 
 	// for each line, run the elimination strategy, explicitly without filledLines (as that is purpose of the duplicate line strategy)
 	for (const line of filteredLines) {

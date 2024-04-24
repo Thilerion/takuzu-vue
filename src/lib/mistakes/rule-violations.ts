@@ -34,7 +34,6 @@ export function findRuleViolations(
 	const results: RuleViolation[] = [
 		...findMaxConsecutiveRuleViolations(getBoardLines, solution),
 		...findBalancedLinesRuleViolations(getBoardLines, solution),
-		// TODO: (optionally?) also get uniqueLines rule violations when both the target and reference lines have incorrect values
 		...findUniqueLinesRuleViolations(getBoardLines, solution)
 	];
 

@@ -22,12 +22,12 @@ const mergedMessages = {
 };
 
 const i18n = createI18n({
-	// TODO: get default from localStorage, or browser settings
 	locale: getInitialLocale(),
 	legacy: false,
 	fallbackLocale: DEFAULT_FALLBACK_LOCALE,
 	availableLocales: SUPPORTED_LOCALES,
 	// TODO: lazy load locales
+	// TODO: separate some messages by component/route
 	messages: mergedMessages,
 	numberFormats: numberFormats
 })

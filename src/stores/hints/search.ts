@@ -37,11 +37,6 @@ export const searchForHint = (
 }
 
 function searchForMistakesHint(board: SimpleBoard, solution: SimpleBoard): IncorrectValuesSteppedHint | null {
-	// TODO: better to compare incorrect values AND rule violations, but for now, just check incorrect values
-		// 1: check if there are incorrect values
-		// 1a: if yes, check if there are rule violations
-		// 1b: is all incorrect values are due to rule violations, show ruleViolation hint
-		// 1c: if not all incorrect due to RV, are no RV at all, show IncorrectValue hint
 	const {
 		hasIncorrectValues,
 		hasRuleViolations,
@@ -104,7 +99,7 @@ function getRuleViolationHintIfCompleteCoverage(
 }
 
 function searchForHumanStrategyHint(board: SimpleBoard): SteppedHint | null {
-	// TODO: maybe shuffle hints before sorting them and picking the first one?
+	// TODO: maybe shuffle hints before sorting them and picking the first one? They would have to be cached by boardStr key to prevent each "getHint" from returning a different random value
 	// TRIPLES STRATEGY
 	const triplesHumanResult = humanTriplesTechnique({ board });
 	if (triplesHumanResult && triplesHumanResult.length) {

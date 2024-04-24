@@ -126,7 +126,6 @@ export class SimpleBoard {
 	}
 
 	// SET BOARD VALUES
-	// TODO: set lines/columns/rows
 	assign(x: number, y: number, value: PuzzleValue) {
 		if (x == null && y == null) {
 			throw new BoardAssignmentError('X and Y value required for assignment');
@@ -140,8 +139,6 @@ export class SimpleBoard {
 		if (!isPuzzleSymbol(value)) {
 			value = EMPTY;
 		}
-
-		// TODO: update grid and line counts?
 
 		this._set(x, y, value);
 

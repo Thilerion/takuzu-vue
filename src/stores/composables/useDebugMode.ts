@@ -35,18 +35,7 @@ export const useDebugMode = () => {
 	return { toggleDebugMode, enabled };
 }
 
-function getInitialValue() {
-	// TODO: removes old key from localstorage, for compatibility, 24/05/2022, can be removed later
-	let value = import.meta.env.DEV;
-	try {
-		const oldValue = localStorage.getItem('takuzu-debug-mode');
-		localStorage.removeItem('takuzu-debug-mode');
-		if (oldValue) {
-			const parsed = JSON.parse(oldValue);
-			value = !!parsed;
-		}
-		return value;
-	} catch {
-		return value ?? false;
-	}
+function getInitialValue(): boolean {
+	const isDev: boolean = import.meta.env.DEV;
+	return !!isDev;
 }

@@ -27,7 +27,7 @@ export function applyLineBalanceConstraint(
 		const res = checkLineBalanceStrategy(boardLine);
 		if (res.found) {
 			const { value } = res.data;
-			// TODO: use Board.assignLine()? or Board.fillLine()?
+			// TODO: maybe add a Board.fillLine() which fills the empty cells with a symbol?
 			const lineValues = boardLine.values.map(v => v === EMPTY ? value : v);
 			board.assignLine(boardLine.lineId, lineValues);
 			changed = true;
