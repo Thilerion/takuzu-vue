@@ -1,12 +1,11 @@
 import { defineStore } from "pinia";
 import { usePuzzleStore } from "../puzzle/store.js";
 import { findIncorrectValuesFromSolution } from "@/lib/mistakes/incorrect-values.js";
-import type { FoundIncorrectValue, RuleViolation } from "@/lib/mistakes/types.js";
+import type { BalancedLinesRuleViolation, FoundIncorrectValue, MaxConsecutiveRuleViolation, RuleViolation, UniqueLinesRuleViolation } from "@/lib/mistakes/types.js";
 import { useSettingsStore } from "../settings/store.js";
 import { usePuzzleVisualCuesStore } from "../puzzle-visual-cues.js";
-import { findRuleViolations } from "@/lib/mistakes/rule-violations.js";
-import { pickRandom } from "@/utils/random.utils.js";
-import { createAreaHighlightFromCorners, createLineHighlightFromLineId } from "@/helpers/puzzle-visual-cues.js";
+import { filterUnnecessaryRuleViolations, findRuleViolations, type RuleViolationsByTypeRecord } from "@/lib/mistakes/rule-violations.js";
+import { createAreaHighlightFromCorners, createLineHighlightFromLineId, type AreaHighlight, type LineHighlight, type PuzzleBoardHighlight } from "@/helpers/puzzle-visual-cues.js";
 
 type IncorrectValuesResult = {
 	type: 'incorrectValues';
@@ -23,6 +22,7 @@ type RuleViolationsResult = {
 	type: 'ruleViolations';
 	found: true;
 	violations: RuleViolation[];
+	byType: RuleViolationsByTypeRecord;
 }
 type CheckResultSource = 'user' | 'auto:filledBoard';
 export type ValidationCheckResult = (IncorrectValuesResult | RuleViolationsResult) & {
@@ -73,7 +73,6 @@ export const usePuzzleValidationStore = defineStore('puzzleValidation', {
 			return { isValid: !result.found };
 		},
 		ruleViolationsUserCheck(): { isValid: boolean } {
-			// console.warn('Rule violations user check not yet implemented');
 			const result = findCurrentRuleViolations();
 			this.lastValidation = { ...result, source: 'user' };
 			this.setRuleViolationMarks();
@@ -96,60 +95,57 @@ export const usePuzzleValidationStore = defineStore('puzzleValidation', {
 				this.lastValidation.cells.map(cell => ({ x: cell.x, y: cell.y }))
 			);
 		},
-		setRuleViolationMarks() {
-			// TODO: determine which rule violations to mark; if a line has a maxConsecutive violation and a balance violation, prefer the maxConsecutive only if the line is not filled
-			// TODO: currently only marks one result
+		unsetRuleViolationMarks() {
 			const visualCuesStore = usePuzzleVisualCuesStore();
+			visualCuesStore.clearHighlightsFromRuleViolations();
+			return;
+		},
+		setRuleViolationMarks() {
 			if (!this.lastValidation.found) {
-				visualCuesStore.clearHighlightsFromRuleViolations();
+				return this.unsetRuleViolationMarks();
+			} else if (this.lastValidation.type !== 'ruleViolations') {
 				return;
-			} else if (this.lastValidation.type !== 'ruleViolations') return;
+			} else if (this.lastValidation.violations.length === 0) {
+				return this.unsetRuleViolationMarks();
+			}
 
 			const violations = this.lastValidation.violations;
 			console.log(violations);
-			const random = pickRandom(violations);
-			const puzzleStore = usePuzzleStore();
-			const boardShape = {
-				width: puzzleStore.width!,
-				height: puzzleStore.height!
-			};
-			switch(random.type) {
-				case 'balancedLines': {
-					visualCuesStore.setRuleViolationHighlights([
-						createLineHighlightFromLineId(random.lineId, boardShape, { colorId: 1, source: 'ruleViolationCheck' })
-					]);
-					return;
-				}
-				case 'maxConsecutive': {
-					const cells = random.cells;
-					const xes = cells.map(c => c.x);
-					const ys = cells.map(c => c.y);
-					const start = {
-						x: Math.min(...xes),
-						y: Math.min(...ys)
+
+			// TODO: better way to mark rule violations and give a message? use a pseudo-hint maybe?
+			// for now, mark all violations
+			const highlights: PuzzleBoardHighlight[] = [];
+			for (const violation of violations) {
+				const violationType = violation.type;
+				switch(violationType) {
+					case 'maxConsecutive': {
+						highlights.push(
+							createMaxConsecutiveViolationHighlight(violation)
+						)
+						break;
 					}
-					const end = {
-						x: Math.max(...xes),
-						y: Math.max(...ys)
+					case 'balancedLines': {
+						highlights.push(
+							createBalancedLinesViolationHighlight(violation)
+						)
+						break;
 					}
-					visualCuesStore.setRuleViolationHighlights([
-						createAreaHighlightFromCorners(start, end, { colorId: 1, source: 'ruleViolationCheck' })
-					]);
-					return;
-				}
-				case 'uniqueLines': {
-					visualCuesStore.setRuleViolationHighlights([
-						createLineHighlightFromLineId(random.correctLine, boardShape, { colorId: 1, source: 'ruleViolationCheck' }),
-						...random.incorrectLines.map(l => createLineHighlightFromLineId(l, boardShape, { colorId: 2, source: 'ruleViolationCheck' }))
-					]);
-					return;
-				}
-				default: {
-					const _x: never = random;
-					console.error(`Unhandled rule violation type: ${(random as any)?.type}`);
-					return;
+					case 'uniqueLines': {
+						highlights.push(
+							...createUniqueLinesViolationHighlights(violation)
+						)
+						break;
+					}
+					default: {
+						const x: never = violationType;
+						console.warn(`Unhandled rule violation type: ${x}`);
+						break;
+					}
 				}
 			}
+			// TODO: determine when to remove highlights
+			const visualCuesStore = usePuzzleVisualCuesStore();
+			visualCuesStore.setRuleViolationHighlights(highlights);
 		},
 
 		reset() {
@@ -183,5 +179,49 @@ const findCurrentRuleViolations = (): RuleViolationsResult => {
 	}
 	const { results, hasRuleViolations } = findRuleViolations({ board, solution });
 	if (!hasRuleViolations) return { type: 'ruleViolations', found: false as const };
-	return { type: 'ruleViolations', found: true, violations: results };
+
+	const {
+		violations: filteredViolations,
+		byType: filteredViolationsByType
+	} = filterUnnecessaryRuleViolations(results);
+
+	return { type: 'ruleViolations', found: true, violations: filteredViolations, byType: filteredViolationsByType };
+}
+
+function boardShapeFromStore() {
+	const puzzleStore = usePuzzleStore();
+	return {
+		width: puzzleStore.width!,
+		height: puzzleStore.height!
+	}
+}
+
+function createBalancedLinesViolationHighlight(violation: BalancedLinesRuleViolation): LineHighlight {
+	return createLineHighlightFromLineId(
+		violation.lineId,
+		boardShapeFromStore(),
+		{ colorId: 1, source: 'ruleViolationCheck' }
+	);
+}
+function createMaxConsecutiveViolationHighlight(violation: MaxConsecutiveRuleViolation): AreaHighlight {
+	const xes = violation.cells.map(c => c.x);
+	const ys = violation.cells.map(c => c.y);
+	const start = {
+		x: Math.min(...xes),
+		y: Math.min(...ys)
+	}
+	const end = {
+		x: Math.max(...xes),
+		y: Math.max(...ys)
+	}
+	return createAreaHighlightFromCorners(start, end, { colorId: 1, source: 'ruleViolationCheck' });
+}
+function createUniqueLinesViolationHighlights(violation: UniqueLinesRuleViolation): LineHighlight[] {
+	const { correctLine, incorrectLines } = violation;
+	const boardShape = boardShapeFromStore();
+	const highlights: LineHighlight[] = [
+		createLineHighlightFromLineId(correctLine, boardShape, { colorId: 1, source: 'ruleViolationCheck' }),
+		...incorrectLines.map(l => createLineHighlightFromLineId(l, boardShape, { colorId: 2, source: 'ruleViolationCheck' }))
+	];
+	return highlights;
 }
