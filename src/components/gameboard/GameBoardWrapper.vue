@@ -5,7 +5,7 @@
 			:class="[`cell-size-${cellSizeCategory}`]"
 			v-show="validElDimensions"
 		>
-			<slot v-bind="puzzleGridDimensions" />
+			<slot :cell-size :width="gridWidth" :height="gridHeight" />
 		</div>
 	</div>
 </template>
@@ -49,7 +49,7 @@ const puzzleStore = usePuzzleStore();
 const { width, height } = storeToRefs(puzzleStore);
 const gridShapeRefs = { width, height } as GridPuzzleShapeRefs;
 
-const { puzzleGridDimensions } = useDynamicPuzzleGridSize(
+const { cellSize, gridWidth, gridHeight } = useDynamicPuzzleGridSize(
 	elDimensions,
 	gridShapeRefs,
 	{
@@ -67,14 +67,14 @@ const { puzzleGridDimensions } = useDynamicPuzzleGridSize(
 
 export type CellSizeCategory = 'xs' | 's' | 'm' | 'l' | 'xl';
 const cellSizeCategory = computed((): CellSizeCategory => {
-	const { cellSize } = puzzleGridDimensions.value;
-	if (cellSize <= 26) {
+	const size = cellSize.value;
+	if (size <= 26) {
 		return "xs";
-	} else if (cellSize <= 38) {
+	} else if (size <= 38) {
 		return "s";
-	} else if (cellSize <= 52) {
+	} else if (size <= 52) {
 		return "m";
-	} else if (cellSize <= 74) {
+	} else if (size <= 74) {
 		return "l";
 	} else {
 		return "xl";

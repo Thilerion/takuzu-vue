@@ -11,7 +11,6 @@ export type GridPaddingRefs = Record<keyof Vec, Ref<number>>;
 const MIN_CELL_SIZE = 14;
 const MAX_CELL_SIZE = 80;
 
-// TODO: reduce possible over-reliance on intermediate computed values, which are always dependent on each other
 export const useDynamicPuzzleGridSize = (
 	availableSize: Ref<ElementDimensions>,
 	puzzleSize: GridPuzzleShapeRefs,
@@ -61,7 +60,7 @@ export const useDynamicPuzzleGridSize = (
 	const maxWidth = computed(() => availableSize.value.width - unavailableWidth.value);
 	const maxHeight = computed(() => availableSize.value.height - unavailableHeight.value);
 
-	const puzzleGridDimensions = computed(() => {
+	const cellSize = computed(() => {
 		let cellSize: number;
 
 		const aspectRatio = columnsWithRuler.value / rowsWithRuler.value;
@@ -83,10 +82,11 @@ export const useDynamicPuzzleGridSize = (
 				MAX_CELL_SIZE
 			);
 		}
-		const w = cellSize * columns.value;
-		const h = cellSize * rows.value;
-		return { width: w + "px", height: h + "px", cellSize };
+		return cellSize;
 	})
 
-	return { puzzleGridDimensions };
+	const gridWidth = computed(() => `${cellSize.value * columns.value}px`);
+	const gridHeight = computed(() => `${cellSize.value * rows.value}px`);
+
+	return { cellSize, gridWidth, gridHeight };
 }
