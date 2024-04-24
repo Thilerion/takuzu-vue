@@ -17,22 +17,38 @@ describe('findUniqueLinesRuleViolations()', () => {
 		])
 		expect(findUniqueLinesRuleViolations(() => board.boardLines(), solution)).toEqual([]);
 	});
-	
-	test('returns an empty array if there are duplicate lines in the board, but none are correct', () => {
+
+	test('returns a result with "correctLines" with an empty array, when there are duplicate lines but none are actually correct', () => {
 		const solution = SimpleBoard.fromArrayOfLines([
 			'1010',
 			'0110',
 			'1001',
 			'0101'
 		]);
+		// Row B and D are duplicates, but neither are actually correct according to the solution
 		const board = SimpleBoard.fromArrayOfLines([
 			'....',
 			'1010',
 			'....',
-			'1010'
+			'1010',
 		]);
-		expect(findUniqueLinesRuleViolations(() => board.boardLines(), solution)).toEqual([]);
-	});
+		const results = findUniqueLinesRuleViolations(board, solution);
+		expect(results).toHaveLength(1);
+
+		const result = results[0];
+		expect(result.correctLine).toBe(null);
+		expect(result).toEqual({
+			type: 'uniqueLines',
+			correctLine: null,
+			lines: ['B', 'D'],
+			incorrectLines: ['B', 'D'],
+			incorrectCells: expect.any(Array)
+		});
+
+		// It includes incorrectCells from both incorrectLines
+		// 2 cells from line B, and all 4 cells from line D
+		expect(result.incorrectCells).toHaveLength(6);
+	})
 	
 	test('returns a violation with a line that is the same is another line', () => {
 		const solution = SimpleBoard.fromArrayOfLines([
@@ -103,7 +119,7 @@ describe('findUniqueLinesRuleViolations()', () => {
 		expect(result[0]).toMatchObject({
 			type: 'uniqueLines',
 			correctLine: 'C',
-			lines: ['C', 'A', 'D'],
+			lines: ['A', 'C', 'D'],
 			incorrectLines: ['A', 'D'],
 		});
 		expect(result[0].incorrectCells).toHaveLength(4);

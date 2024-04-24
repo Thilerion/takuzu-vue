@@ -2,7 +2,6 @@ import { ONE, ZERO } from "@/lib/constants";
 import { SimpleBoard } from "@/lib/index.js";
 import { findRuleViolations } from "@/lib/mistakes/rule-violations.js";
 import type { BoardExportString } from "@/lib/types";
-import exp from "constants";
 
 describe('findRuleViolations()', () => {
 	it('finds nothing with a correct board', () => {

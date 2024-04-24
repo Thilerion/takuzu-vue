@@ -217,11 +217,8 @@ function createMaxConsecutiveViolationHighlight(violation: MaxConsecutiveRuleVio
 	return createAreaHighlightFromCorners(start, end, { colorId: 1, source: 'ruleViolationCheck' });
 }
 function createUniqueLinesViolationHighlights(violation: UniqueLinesRuleViolation): LineHighlight[] {
-	const { correctLine, incorrectLines } = violation;
+	const { lines } = violation;
 	const boardShape = boardShapeFromStore();
-	const highlights: LineHighlight[] = [
-		createLineHighlightFromLineId(correctLine, boardShape, { colorId: 1, source: 'ruleViolationCheck' }),
-		...incorrectLines.map(l => createLineHighlightFromLineId(l, boardShape, { colorId: 2, source: 'ruleViolationCheck' }))
-	];
+	const highlights: LineHighlight[] = lines.map(l => createLineHighlightFromLineId(l, boardShape, { colorId: 1, source: 'ruleViolationCheck' }));
 	return highlights;
 }

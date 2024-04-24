@@ -6,7 +6,7 @@ import { humanBalanceTechnique } from "@/lib/solvers/human-solver/techniques/Bal
 import { humanTriplesTechnique } from "@/lib/solvers/human-solver/techniques/TriplesTechnique.js";
 import { findRuleViolations } from "@/lib/mistakes/rule-violations";
 import { findIncorrectValuesFromSolution } from "@/lib/mistakes/incorrect-values";
-import type { FoundIncorrectValue, RuleViolation } from "@/lib/mistakes/types";
+import type { FoundIncorrectValue, RuleViolation, UniqueLinesRuleViolation } from "@/lib/mistakes/types";
 import type { XYKey } from "@/lib/types";
 import { IncorrectValuesSteppedHint } from "./stepped-hint/IncorrectValuesHint.js";
 import { genericEliminationTechnique } from "@/lib/solvers/human-solver/techniques/GenericEliminationTechnique.js";
@@ -56,17 +56,31 @@ function searchForMistakesHint(board: SimpleBoard, solution: SimpleBoard): Incor
 		const incorrectValuesHint = new IncorrectValuesSteppedHint({ incorrectValues });
 		return incorrectValuesHint;
 	}
-	// check if all incorrect values are due to rule violations
-	return getRuleViolationOrIncorrectValueHint(incorrectValues, ruleViolationResults);
+
+	// Check if the RuleViolations completely cover all found incorrect values when they are fixed
+	const potentialRuleViolationHint = getRuleViolationHintIfCompleteCoverage(
+		incorrectValues,
+		ruleViolationResults,
+	);
+	if (potentialRuleViolationHint) return potentialRuleViolationHint;
+
+	// If RuleViolationHint isn't comprehensive enough, show IncorrectValuesHint
+	return new IncorrectValuesSteppedHint({ incorrectValues });
 }
 
-function getRuleViolationOrIncorrectValueHint(
+function getRuleViolationHintIfCompleteCoverage(
 	incorrectValues: FoundIncorrectValue[],
 	ruleViolations: RuleViolation[],
-): IncorrectValuesSteppedHint /* TODO: | RuleViolationSteppedHint */ {
+): null | IncorrectValuesSteppedHint /* TODO: | RuleViolationSteppedHint instead of IncorrectValuesHint */ {
+	// If there are UniqueLines rule violations, make sure that at least one of the lines is a correct line
+	const uniqueLineViolations = ruleViolations.filter((v): v is UniqueLinesRuleViolation => v.type === 'uniqueLines')
+	if (uniqueLineViolations.some(v => v.correctLine === null)) {
+		// There is a UniqueLines rule violation where none of the lines are actually correct, so RuleViolations hint wouldn't cover all incorrect values
+		return null;
+	}
+
 	// if all incorrect values are due to rule violations, return rule violation hint
 	// else, if any incorrect values are not due to rule violations, return incorrect value hint
-
 	const ruleViolationIncorrectCells = new Set<XYKey>();
 
 	for (const violation of ruleViolations) {
@@ -85,9 +99,7 @@ function getRuleViolationOrIncorrectValueHint(
 		console.warn('SHOULD RETURN RULE VIOLATION HINT NOW, BUT NOT IMPLEMENTED YET.');
 		return new IncorrectValuesSteppedHint({ incorrectValues });
 	} else {
-		// TODO: this is double code, as in the searchForMistakesHint the same thing happens. Maybe this function should just return which type of hint must be created, and the creation of the hint should happen in the searchForMistakesHint function.
-		const incorrectValuesHint = new IncorrectValuesSteppedHint({ incorrectValues });
-		return incorrectValuesHint;
+		return null;
 	}
 }
 

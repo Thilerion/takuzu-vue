@@ -21,7 +21,7 @@ export type BalancedLinesRuleViolation = {
 }
 export type UniqueLinesRuleViolation = {
 	type: 'uniqueLines';
-	correctLine: LineId; // the line that is correctly filled
+	correctLine: LineId | null; // the line that is correctly filled, or null if all lines are actually incorrect
 	incorrectLines: LineId[]; // the lines that are (incorrectly) filled the same as the correctLine
 	lines: LineId[]; // combination of correctLine and incorrectLines
 	incorrectCells: FoundIncorrectValue[];
