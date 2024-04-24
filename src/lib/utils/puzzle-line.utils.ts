@@ -39,6 +39,8 @@ export const numRequiredOfValue = (lineSize: number, value: PuzzleSymbol) => {
 
 export const rowIdToY = (rowId: RowId) => rowId.charCodeAt(0) - 65;
 export const columnIdToX = (columnId: ColumnId) => (+columnId) - 1;
+export const yToRowId = (y: number): RowId => String.fromCharCode(65 + y);
+export const xToColumnId = (x: number): ColumnId => `${x + 1}`;
 
 export const isLineIdRow = (lineId: LineId): lineId is RowId => /[A-Z]/.test(lineId);
 export const isLineIdColumn = (lineId: LineId): lineId is ColumnId => /^\d+$/.test(lineId);

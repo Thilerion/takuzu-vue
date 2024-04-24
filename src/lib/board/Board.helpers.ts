@@ -1,6 +1,7 @@
 import { range } from "@/utils/array.ts.utils.js";
 import { memoize } from "../memoize.utils.js";
 import type { ColumnId, RowId } from "../types.js";
+import { xToColumnId, yToRowId } from "../utils/puzzle-line.utils.js";
 
 const validPuzzleSideLengths = [4, 6, 8, 10, 12, 14, 16, 18, 20] as const;
 function getValidRectPuzzleDimensions() {
@@ -50,14 +51,14 @@ export const deducePuzzleDimensionsFromLength = (length: number) => {
 
 export const generateColumnIds = (width: number): ColumnId[] => {
 	// row at idx 0 has lineId: 1, then 2, etc
-	return range(width).map((val) => String(val + 1));
+	return range(width).map((val) => xToColumnId(val));
 }
 export const generateRowIds = (height: number): RowId[] => {
 	// column at idx 0 has lineId: A, then B, then C
 	if (height >= 26) {
 		throw new Error('Cannot generate column ids for height higher than "Z"');
 	}
-	return range(height).map(i => String.fromCharCode(65 + i)); // 65 = uppercase A
+	return range(height).map(y => yToRowId(y)); // 65 = uppercase A
 }
 
 export const getCoordsForBoardSize = memoize(
