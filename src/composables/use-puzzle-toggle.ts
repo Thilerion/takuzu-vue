@@ -1,7 +1,6 @@
 import { EMPTY, ONE, ZERO, type PuzzleSymbol, type PuzzleValue } from "@/lib/constants";
 import { useSettingsStore } from "@/stores/settings/store"
-import { createSharedComposable } from "@vueuse/core";
-import { computed, toRef } from "vue";
+import { computed } from "vue";
 
 type ToggleOrder = [typeof EMPTY, PuzzleSymbol, PuzzleSymbol];
 
@@ -20,15 +19,12 @@ const nextValue = (order: ToggleOrder, current: PuzzleValue): PuzzleValue => {
   return nextInOrder(order, curIdx);
 };
 
-export const usePuzzleToggle = () => {
-	const settingsStore = useSettingsStore();
-	const mode = toRef(settingsStore, 'toggleMode');
+export const useSharedPuzzleToggle = () => {
+	const store = useSettingsStore();
+	const mode = computed(() => store.toggleMode);
 	const selectedOrder = computed(() => toggleOrders[mode.value]);
-
 	return {
 		toggle: (currentValue: PuzzleValue) =>
 			nextValue(selectedOrder.value, currentValue),
 	};
 };
-
-export const useSharedPuzzleToggle = createSharedComposable(usePuzzleToggle);
