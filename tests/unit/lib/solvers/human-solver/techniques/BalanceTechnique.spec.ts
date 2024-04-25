@@ -50,10 +50,10 @@ describe('Human Solver HumanBalanceTechnique', () => {
 			'......',
 			'1.....',
 		])
-		const str = board.toString();
+		const str = board.toBoardString();
 		const result = humanBalanceTechnique({ board });
 		expect(result).toHaveLength(3);
 
-		expect(board.toString()).toBe(str);
+		expect(board.toBoardString()).toBe(str);
 	})
 })

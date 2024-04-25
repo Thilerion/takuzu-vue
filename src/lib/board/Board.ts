@@ -294,9 +294,6 @@ export class SimpleBoard {
 	}
 
 	// STRINGIFY UTILITIES
-	toString(): BoardString {
-		return this.toBoardString();
-	}
 	toDisplayString() {
 		return this.grid.map(row => {
 			return row.join('');

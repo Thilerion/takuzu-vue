@@ -46,7 +46,7 @@ export type DifficultyKey = 1 | 2 | 3 | 4 | 5;
 export type PuzzleConfigKey = `${DimensionStr}-${DifficultyKey}`;
 
 export type BoardExportString = Brand<string, "Board.export() => WxH;1.01100101...101">;
-export type BoardString = Brand<string, "Board.toString() => 1.01100101...101">;
+export type BoardString = Brand<string, "Board.toBoardString() => 1.01100101...101">;
 
 export interface BoardShape {
 	width: number,

@@ -16,7 +16,7 @@ describe('generateBoard', () => {
 		for (let i = 0; i < 1000; i++) {
 			const board = generateBoard(4, 4, 1);
 			if (board) {
-				boards.add(board.toString());
+				boards.add(board.toBoardString());
 			}
 			if (boards.size >= 72) {
 				break;

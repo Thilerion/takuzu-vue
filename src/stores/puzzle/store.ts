@@ -101,7 +101,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		initialEmpty.value = initialBoard == null ? null : initialBoard.getNumEmpty();
 	})
 
-	const boardStr = computed((): BoardString | undefined => allBoards.board?.toString());
+	const boardStr = computed((): BoardString | undefined => allBoards.board?.toBoardString());
 	const boardExportStr = computed((): BoardExportString | undefined => allBoards.board?.export());
 	const boardFilled = computed((): boolean => state.gridCounts[EMPTY] === 0);
 	const hasStarted = computed((): boolean => state.started && state.initialized && allBoards.board != null);
