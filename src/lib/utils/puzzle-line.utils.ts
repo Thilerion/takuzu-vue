@@ -28,40 +28,44 @@ export const areLinesEqual = (a: string | ReadonlyArray<PuzzleValue>, b: string 
 
 export const lineSizeToNumRequired = (lineSize: number): PuzzleSymbolCount => {
 	return {
-		[ONE]: numRequiredOfValue(lineSize, ONE),
-		[ZERO]: numRequiredOfValue(lineSize, ZERO)
+		[ONE]: numRequiredOfValue(lineSize, true),
+		[ZERO]: numRequiredOfValue(lineSize, false)
 	}
 }
-export const numRequiredOfValue = (lineSize: number, value: PuzzleSymbol): number => {
+const numRequiredOfValue = (lineSize: number, isOne: boolean): number => {
 	const half = lineSize / 2;
-	return value === ONE ? Math.ceil(half) : Math.floor(half);
+	return isOne ? Math.ceil(half) : Math.floor(half);
 }
 
 export const rowIdToY = (rowId: RowId): number => rowId.charCodeAt(0) - 65;
 export const columnIdToX = (columnId: ColumnId): number => (+columnId) - 1;
-export const yToRowId = (y: number): RowId => String.fromCharCode(65 + y);
+export const yToRowId = (y: number): RowId => {
+	if (y < 0 || y > 25) throw new Error('Y cannot be lower than 0 or higher than 25 (A-Z) when converting to RowId');
+	return String.fromCharCode(65 + y);
+}
 export const xToColumnId = (x: number): ColumnId => `${x + 1}`;
 
-export const isLineIdRow = (lineId: LineId): lineId is RowId => /[A-Z]/.test(lineId);
+export const isLineIdRow = (lineId: LineId): lineId is RowId => /^[A-Z]$/.test(lineId);
 export const isLineIdColumn = (lineId: LineId): lineId is ColumnId => /^\d+$/.test(lineId);
 
-export function lineTypeFromLineId(lineId: RowId): typeof ROW;
-export function lineTypeFromLineId(lineId: ColumnId): typeof COLUMN;
-export function lineTypeFromLineId(lineId: LineId): LineType;
 export function lineTypeFromLineId(lineId: string): LineType {
 	if (isLineIdRow(lineId)) return ROW;
 	if (isLineIdColumn(lineId)) return COLUMN;
 	throw new Error('Unrecognized lineId');
 }
 
-export function getLineDataFromId(id: RowId): { lineId: RowId, lineType: typeof ROW };
-export function getLineDataFromId(id: ColumnId): { lineId: ColumnId, lineType: typeof COLUMN };
-export function getLineDataFromId(id: LineId): { lineId: RowId, lineType: typeof ROW } | { lineId: ColumnId, lineType: typeof COLUMN };
-export function getLineDataFromId(id: LineId): { lineId: LineId, lineType: LineType } {
+export type LineData = {
+	lineId: RowId;
+	lineType: typeof ROW;
+} | {
+	lineId: ColumnId;
+	lineType: typeof COLUMN;
+}
+export function getLineDataFromId(id: LineId): LineData {
 	if (isLineIdRow(id)) {
-		return { lineId: id, lineType: ROW };
+		return { lineId: id, lineType: ROW } as any;
 	} else if (isLineIdColumn(id)) {
-		return { lineId: id, lineType: COLUMN };
+		return { lineId: id, lineType: COLUMN } as any;
 	}
 	throw new Error('Unrecognized lineId');
 }
