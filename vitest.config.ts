@@ -14,7 +14,13 @@ export default defineConfig(configEnv => mergeConfig(
       // isolate: false, // dangerous
       benchmark: {
         reporters: ['verbose']
+      },
+      coverage: {
+        exclude: [
+          ...(configDefaults.coverage.exclude ?? []),
+          "**/types.ts"
+        ]
       }
     }
-  }) as any
+  })
 ))
