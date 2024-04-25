@@ -8,7 +8,7 @@ import { generateColumnIds, generateRowIds, getCoordsForBoardSize } from "./Boar
 import { BoardLine } from "./BoardLine";
 import { ThreesUnit } from "./ThreesUnit";
 import { boardStringToPuzzleGrid, puzzleGridToBoardString, puzzleGridToExportString } from "./board-conversion.helpers.js";
-import { isPuzzleValue, isPuzzleSymbol } from "../utils/puzzle-value.utils";
+import { isPuzzleValue } from "../utils/puzzle-value.utils";
 import { columnIdToX, isLineIdColumn, isLineIdRow, isPuzzleValueLineStr, lineSizeToNumRequired, rowIdToY } from "../utils/puzzle-line.utils";
 import { array2d, cloneArray2d } from "@/utils/array2d.utils";
 
@@ -17,9 +17,8 @@ export class SimpleBoard {
 	width: number;
 	height: number;
 	numRequired: Record<LineType, Record<PuzzleSymbol, number>>;
-	rowIds: string[];
-	columnIds: string[];
-	lineIds: string[];
+	rowIds: ReadonlyArray<RowId>;
+	columnIds: ReadonlyArray<ColumnId>;
 
 	constructor(grid: PuzzleGrid) {
 		this.grid = grid;
@@ -31,7 +30,10 @@ export class SimpleBoard {
 		}
 		this.rowIds = generateRowIds(this.height);
 		this.columnIds = generateColumnIds(this.width);
-		this.lineIds = [...this.rowIds, ...this.columnIds];
+	}
+
+	get lineIds() {
+		return [...this.rowIds, ...this.columnIds];
 	}
 
 	static empty(width: number, height = width) {
@@ -96,21 +98,24 @@ export class SimpleBoard {
 	}
 
 	get(x: number, y: number): PuzzleValue {
-		if (x < 0 || y < 0 || x >= this.width || y >= this.height) {
+		if (!this.isXInBounds(x) || !this.isYInBounds(y)) {
 			throw new BoardOutOfBoundsError({ width: this.width, height: this.height, position: { x, y } });
 		}
 		return this.grid[y][x];
 	}
+	atPos(pos: Vec) {
+		return this.get(pos.x, pos.y);
+	}
 	getColumn(x: ColumnId | number) {
 		const coordX = typeof x === 'string' ? columnIdToX(x) : x;
-		if (coordX < 0 || coordX >= this.width) {
+		if (!this.isXInBounds(coordX)) {
 			throw new BoardOutOfBoundsError({ position: `column ${x}`, width: this.width, height: this.height });
 		}
 		return this.grid.map(row => row[coordX]);
 	}
 	getRow(y: RowId | number) {
 		const coordY = typeof y === 'string' ? rowIdToY(y) : y;
-		if (coordY < 0 || coordY >= this.height) {
+		if (!this.isYInBounds(coordY)) {
 			throw new BoardOutOfBoundsError({ position: `row ${y}`, width: this.width, height: this.height });
 		}
 		return [...this.grid[coordY]];
@@ -126,21 +131,30 @@ export class SimpleBoard {
 	}
 
 	// SET BOARD VALUES
+
+	/**
+	 * Set a value on the board, without validation of the arguments.
+	 * Unsafe, use with caution. Primarily used for internal methods.
+	 */
+	u_set(x: number, y: number, value: PuzzleValue) {
+		this.grid[y][x] = value;
+		return this;
+	}
+
 	assign(x: number, y: number, value: PuzzleValue) {
-		if (x == null && y == null) {
+		if (x == null || y == null) {
 			throw new BoardAssignmentError('X and Y value required for assignment');
+		} else if (!this.isXInBounds(x) || !this.isYInBounds(y)) {
+			throw new BoardAssignmentError('Tried to assign value to out of bounds position.');
 		}
 
-		if (value === this.get(x, y)) {
-			// console.log('Cannot assign a value to the board that is the same as the current value.');
-			return this;
-		}
-
-		if (!isPuzzleSymbol(value)) {
+		if (!isPuzzleValue(value)) {
+			console.error(`Tried to assign "${value}" to board, but this is not a PuzzleValue. Assigning an empty cell instead.`);
+			// TODO: 25-4-2024; throw BoardAssignmentError instead
 			value = EMPTY;
 		}
 
-		this._set(x, y, value);
+		this.u_set(x, y, value);
 
 		return this;
 	}
@@ -156,14 +170,14 @@ export class SimpleBoard {
 			throw new BoardAssignmentError('assignColumn() requires an array of values with the same length as the board height.');
 		}
 		for (let y = 0; y < this.height; y++) {
-			this._set(x, y, values[y]);
+			this.u_set(x, y, values[y]);
 		}
 		return this;
 	}
 	assignLine(lineId: LineId, values: PuzzleValue[]) {
-		if (this.isRowId(lineId)) {
+		if (this.isKnownRowId(lineId)) {
 			return this.assignRow(rowIdToY(lineId), values);
-		} else if (this.isColumnId(lineId)) {
+		} else if (this.isKnownColumnId(lineId)) {
 			return this.assignColumn(columnIdToX(lineId), values);
 		} else {
 			throw new BoardAssignmentError(`invalid lineId "${lineId}" in Board.assignLine()`);
@@ -172,10 +186,6 @@ export class SimpleBoard {
 	assignTarget(tg: Target): this {
 		const { x, y, value } = tg;
 		return this.assign(x, y, value);
-	}
-	_set(x: number, y: number, value: PuzzleValue) {
-		this.grid[y][x] = value;
-		return this;
 	}
 
 	cellCoords({ shuffled = false } = {}) {
@@ -204,7 +214,7 @@ export class SimpleBoard {
 			const lineValues = this.getLine(lineId);
 			yield {
 				lineStr: lineValues.join(''),
-				lineType: this.isRowId(lineId) ? ROW : COLUMN,
+				lineType: this.isKnownRowId(lineId) ? ROW : COLUMN,
 				lineId
 			}
 		}
@@ -229,7 +239,7 @@ export class SimpleBoard {
 		}
 	}
 
-	get numEmpty() {
+	getNumEmpty() {
 		let count = 0;
 		for (const value of this.values()) {
 			if (value === EMPTY) count += 1;
@@ -237,11 +247,21 @@ export class SimpleBoard {
 		return count;
 	}
 
-	isRowId(id: string): id is RowId {
+	/** Determines that a string is a RowId that is available on this board. */
+	isKnownRowId(id: string): id is RowId {
 		return this.rowIds.includes(id);
 	}
-	isColumnId(id: string): id is ColumnId {
+
+	/** Determines that a string is a ColumnId that is available on this board. */
+	isKnownColumnId(id: string): id is ColumnId {
 		return this.columnIds.includes(id);
+	}
+
+	isXInBounds(x: number) {
+		return x >= 0 && x < this.width;
+	}
+	isYInBounds(y: number) {
+		return y >= 0 && y < this.height;
 	}
 
 	// VALIDITY / SOLVED CHECKS
@@ -263,15 +283,14 @@ export class SimpleBoard {
 			return { hasMistakes: true, result: origResult.results };
 		} else return { hasMistakes: false, result: null };
 	}
-	// checks if the board is solved by comparing to the solutionBoard
-	equalsSolution(solutionBoard: SimpleBoard) {
-		return this.isFilled() && this.toBoardString() === solutionBoard.toBoardString();
-	}
 
 	// CLASS UTILTIES
 	copy(): SimpleBoard {
 		const grid = cloneArray2d(this.grid);
 		return new SimpleBoard(grid);
+	}
+	clone(): SimpleBoard {
+		return this.copy();
 	}
 
 	// STRINGIFY UTILITIES

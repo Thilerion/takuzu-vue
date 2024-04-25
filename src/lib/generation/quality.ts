@@ -43,7 +43,8 @@ function normalizeValue(value: number, min = 0, max = 1) {
 }
 
 export function getMaskedRatioQuality(board: SimpleBoard, optimalRatio: number): number {
-	const { width, height, numEmpty } = board;
+	const { width, height } = board;
+	const numEmpty = board.getNumEmpty();
 	const numCells = width * height;
 	const maskRatio = numEmpty / numCells;
 

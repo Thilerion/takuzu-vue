@@ -1,3 +1,6 @@
+import { BoardAssignmentError, BoardOutOfBoundsError } from "@/lib/board/Board.js"
+import { ThreesUnit } from "@/lib/board/ThreesUnit.js"
+import { EMPTY, ONE, ZERO } from "@/lib/constants.js"
 import { SimpleBoard } from "@/lib/index.js"
 import type { BoardExportString, BoardString } from "@/lib/types.js"
 
@@ -186,6 +189,211 @@ describe('Board class', () => {
 				})
 			});
 		});
+
+	})
+
+	describe('properties', () => {
+
+		it('generates the correct row ids', () => {
+			const board = SimpleBoard.empty(4);
+			expect(board.rowIds).toEqual(['A', 'B', 'C', 'D']);
+		});
+		it('generates the correct column ids', () => {
+			const board = SimpleBoard.empty(4);
+			expect(board.columnIds).toEqual(['1', '2', '3', '4']);
+		})
+		it('generates the correct line ids', () => {
+			const board = SimpleBoard.empty(4);
+			expect(board.lineIds).toEqual(['A', 'B', 'C', 'D', '1', '2', '3', '4']);
+		})
+
+		it('generates the correct "numRequired" for rows and columns', () => {
+			const board4x6 = SimpleBoard.empty(4, 6);
+			expect(board4x6.numRequired).toEqual({
+				row: {
+					"0": 2,
+					"1": 2,
+				},
+				column: {
+					"0": 3,
+					"1": 3,
+				}
+			})
+
+			const board5x5 = SimpleBoard.empty(5);
+			const expected = { "0": 2, "1": 3 };
+			expect(board5x5.numRequired).toEqual({
+				row: expected,
+				column: expected
+			})
+		})
+	})
+
+	describe('retrieve value methods', () => {
+		describe('.get()', () => {
+			test('returns value on grid at given coordinates', () => {
+				const board = SimpleBoard.fromArrayOfLines([
+					'1010',
+					'1..1',
+					'0..1',
+					'0.0.'
+				])
+				expect(board.get(0, 0)).toBe(ONE);
+				expect(board.get(1, 0)).toBe(ZERO);
+				expect(board.get(0, 1)).toBe(ONE);
+			})
+
+			it('throws on OutOfBoundsError if x or y is out of bounds', () => {
+				const board = SimpleBoard.empty(4);
+				expect(() => board.get(4, 0)).toThrowError(BoardOutOfBoundsError);
+				expect(() => board.get(0, 4)).toThrowError(BoardOutOfBoundsError);
+				expect(() => board.get(-1, 0)).toThrowError(BoardOutOfBoundsError);
+				expect(() => board.get(0, -0.5)).toThrowError(BoardOutOfBoundsError);
+			})
+		})
+
+		test('.atPos() returns the correct value with a Vec object', () => {
+			const board = SimpleBoard.fromArrayOfLines([
+				'1010',
+				'1..1',
+				'0..1',
+				'0.0.'
+			])
+			expect(board.atPos({ x: 0, y: 0 })).toBe(ONE);
+			expect(board.atPos({ x: 1, y: 0 })).toBe(ZERO);
+			expect(board.atPos({ x: 0, y: 1 })).toBe(ONE);
+			expect(board.atPos({ x: 1, y: 3 })).toBe(EMPTY);
+		})
+
+		describe('get[Line]()', () => {
+			let board: SimpleBoard;
+			beforeEach(() => {
+				board = SimpleBoard.fromArrayOfLines([
+					'1010',
+					'1..1',
+					'0..1',
+					'0.0.'
+				])
+			});
+
+			test('getLine("A") returns the correct row', () => {
+				expect(board.getLine('A')).toEqual([ONE, ZERO, ONE, ZERO]);
+			})
+			test('getLine("1") returns the correct column', () => {
+				expect(board.getLine('1')).toEqual([ONE, ONE, ZERO, ZERO]);
+			})
+			test('getLine with a line id that does not exist on the board throws an out of bounds error', () => {
+				expect(() => board.getLine('Z')).toThrowError(BoardOutOfBoundsError);
+				expect(() => board.getLine('abc')).toThrowError(BoardOutOfBoundsError);
+				expect(() => board.getLine('')).toThrowError(BoardOutOfBoundsError);
+			})
+		
+			test('getRow and getColumn allow numbers as the index of the line', () => {
+				const colZero = board.getColumn(0);
+				const colZeroId = board.getColumn('1');
+				expect(colZero).toEqual(colZeroId);
+
+				const rowZero = board.getRow(0);
+				const rowAId = board.getRow('A');
+				expect(rowZero).toEqual(rowAId);
+			})
+
+			test('getRow and getColumn throw an OutOfBoundsError if row id or index is out of bounds', () => {
+				expect(() => board.getRow(4)).toThrowError(BoardOutOfBoundsError);
+				expect(() => board.getColumn(4)).toThrowError(BoardOutOfBoundsError);
+				expect(() => board.getRow(-1)).toThrowError(BoardOutOfBoundsError);
+				expect(() => board.getColumn(-1)).toThrowError(BoardOutOfBoundsError);
+				expect(() => board.getRow('E')).toThrowError(BoardOutOfBoundsError);
+				expect(() => board.getColumn('5')).toThrowError(BoardOutOfBoundsError);
+
+				expect(() => board.getRow('D')).not.toThrowError(BoardOutOfBoundsError);
+				expect(() => board.getColumn('4')).not.toThrowError(BoardOutOfBoundsError);
+			})
+		})
+	})
+
+	describe('set/assign value methods', () => {
+		let board: SimpleBoard;
+		beforeEach(() => {
+			board = SimpleBoard.empty(4);
+		})
+		test('u_set() sets a value on the grid without any validation', () => {
+			board.u_set(0, 0, ONE);
+			expect(board.get(0, 0)).toBe(ONE);
+
+			expect(board.grid[0]).toHaveLength(4);
+			// this works because it is not validated against board height/width
+			board.u_set(5, 0, ZERO);
+			expect(() => board.get(5, 0)).toThrowError(BoardOutOfBoundsError);
+			expect(board.grid[0]).toHaveLength(6);
+		})
+
+		describe('assign()', () => {
+			it('sets a value on the grid', () => {
+				expect(board.get(1, 0)).toBe(EMPTY);
+				board.assign(1, 0, ONE);
+				expect(board.get(1, 0)).toBe(ONE);
+				board.assign(1, 0, EMPTY);
+				expect(board.get(1, 0)).toBe(EMPTY);
+			})
+
+			it('throws a BoardAssignmentError if x or y are null', () => {
+				expect(() => board.assign(null as any as number, 0, ONE)).toThrowError(BoardAssignmentError);
+				expect(() => board.assign(0, null as any as number, ONE)).toThrowError(BoardAssignmentError);			
+			})
+
+			it.todo('throws a BoardAssignmentError if the value is not a PuzzleValue', () => {
+				expect(() => board.assign(0, 0, 'x' as any)).toThrowError(BoardAssignmentError);
+				expect(() => board.assign(0, 0, 2 as any)).toThrowError(BoardAssignmentError);
+				// @ts-expect-error - 2 instead of 3 arguments
+				expect(() => board.assign(0, 0)).toThrowError(BoardAssignmentError);
+				// @ts-expect-error - null is not a PuzzleValue
+				expect(() => board.assign(0, 0, null)).toThrowError(BoardAssignmentError);
+			})
+
+			it('throws a BoardAssignmentError if x or y are out of bounds', () => {
+				expect(() => board.assign(4, 0, ONE)).toThrowError(BoardAssignmentError);
+				expect(() => board.assign(0, 4, ONE)).toThrowError(BoardAssignmentError);
+				expect(() => board.assign(-1, 0, ONE)).toThrowError(BoardAssignmentError);
+				expect(() => board.assign(0, -1, ONE)).toThrowError(BoardAssignmentError);
+			})
+
+		})
+	})
+
+	describe('iteration', () => {
+
+		describe.todo('cells()');
+
+		describe.todo('cellCoords()');
+
+		describe.todo('lineStrings()');
+
+		describe('threesUnits()', () => {
+			it('returns 16 ThreesUnits for a 4x4 board', () => {
+				const board = SimpleBoard.empty(4);
+				const result = [...board.threesUnits()];
+				expect(result).toHaveLength(16);
+				expect(result.every(i => i instanceof ThreesUnit)).toBe(true);
+			})
+
+			it('uses the correct x,y start coordinates for each ThreesUnit', () => {
+				const board = SimpleBoard.empty(4);
+				const result = [...board.threesUnits()];
+				expect(result.map(i => `${i.x},${i.y}`).sort()).toEqual([
+					// horizontal
+					[0, 0], [1, 0],
+					[0, 1], [1, 1],
+					[0, 2], [1, 2],
+					[0, 3], [1, 3],
+					// vertical
+					[0, 0], [1, 0], [2, 0], [3, 0],
+					[0, 1], [1, 1], [2, 1], [3, 1],
+				].map(([x, y]) => `${x},${y}`).sort())
+			})
+		});
+
+		describe.todo('boardLines()');
 
 	})
 

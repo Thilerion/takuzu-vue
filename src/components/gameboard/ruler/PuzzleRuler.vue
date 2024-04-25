@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import type { RulerCountType } from './CountsRuler.vue.js';
+import type { RulerCountType } from './CountsRuler.vue';
 import type { LineId } from '@/lib/types.js';
 import type { RulerComponentType } from '@/stores/settings/store.js';
 
@@ -21,7 +21,7 @@ defineProps<{
 	rulerLineType: 'rows' | 'columns',
 	cellSize: number,
 	countType: RulerCountType | null,
-	lineIds: LineId[],
+	lineIds: ReadonlyArray<LineId>,
 	componentType: RulerComponentType
 }>();
 </script>

@@ -20,7 +20,7 @@ describe('generateBoard', () => {
 			}
 			if (boards.size >= 72) {
 				break;
-			};
+			}
 		}
 		expect(boards.size).toBe(72);
 	})

@@ -28,7 +28,7 @@ import type { LineCounts, LineId } from '@/lib/types.js';
 
 const props = defineProps<{
 	lineType: 'rows' | 'columns',
-	lineIds: string[]
+	lineIds: ReadonlyArray<LineId>
 }>();
 
 // TODO: similarly to CountsRuler, also (optionally!) highlight red if incorrect, and maybe show if line is complete

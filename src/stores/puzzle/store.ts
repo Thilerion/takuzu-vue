@@ -98,7 +98,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 	const initialEmpty = ref(null as number | null); // initial empty is used for tracking progress, and not for anything else
 	watch([() => allBoards.solution, () => allBoards.initialBoard], ([solution, initialBoard]) => {
 		solutionBoardStr.value = solution == null ? null : solution.toBoardString();
-		initialEmpty.value = initialBoard == null ? null : initialBoard.numEmpty;
+		initialEmpty.value = initialBoard == null ? null : initialBoard.getNumEmpty();
 	})
 
 	const boardStr = computed((): BoardString | undefined => allBoards.board?.toString());

@@ -5,7 +5,7 @@
 			:class="[`cell-size-${cellSizeCategory}`]"
 			v-show="validElDimensions"
 		>
-			<slot :cell-size :width="gridWidth" :height="gridHeight" />
+			<slot :cell-size="cellSize" :width="gridWidth" :height="gridHeight" />
 		</div>
 	</div>
 </template>

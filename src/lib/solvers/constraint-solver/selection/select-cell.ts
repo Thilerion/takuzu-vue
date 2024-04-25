@@ -15,7 +15,7 @@ export const firstEmptyCell: SolverSelectCellFn = (board) => {
 const TARGET_EMPTY_RATIO = 0.7;
 export const fewestEmptyPeersCell: SolverSelectCellFn = (board) => {
 	const numCells = board.width * board.height;
-	const emptyRatio = board.numEmpty / numCells; // percentage of empty cells
+	const emptyRatio = board.getNumEmpty() / numCells; // percentage of empty cells
 
 	// if percentage empty cells higher than 70%, this heuristic is not fast enough to matter
 	// so first empty cell should be returned
