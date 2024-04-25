@@ -575,8 +575,8 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 	}
 })
 
-function calculateGridCounts(board: SimpleBoard): Record<PuzzleValue, number> {
-	const counts = { [ONE]: 0, [ZERO]: 0, [EMPTY]: 0 };
+function calculateGridCounts(board: SimpleBoard): GridCounts {
+	const counts: GridCounts = { [ONE]: 0, [ZERO]: 0, [EMPTY]: 0 };
 	for (const cell of board.cells({ skipEmpty: false })) {
 		counts[cell.value] += 1;
 	}

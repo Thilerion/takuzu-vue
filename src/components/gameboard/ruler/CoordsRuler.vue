@@ -21,10 +21,10 @@
 import { computed, ref } from 'vue';
 import { logicOr } from '@vueuse/math';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
-import { type PuzzleSymbol, ROW, COLUMN, ZERO, ONE } from '@/lib/constants.js';
+import { ROW, COLUMN, ZERO, ONE } from '@/lib/constants.js';
 import { useRulerCellCountData } from './useRulerCellCountData.js';
 import { useLineCounts } from './useLineCounts.js';
-import type { LineCounts, LineId } from '@/lib/types.js';
+import type { LineCounts, LineId, PuzzleSymbolCount } from '@/lib/types.js';
 
 const props = defineProps<{
 	lineType: 'rows' | 'columns',
@@ -37,7 +37,7 @@ const coordsRulerCompleteHelperEnabled = ref(true);
 
 const rulerCountDataEnabled = logicOr(coordsRulerErrorsEnabled, coordsRulerCompleteHelperEnabled);
 const puzzleStore = usePuzzleStore()
-const lineRequired = computed((): Record<PuzzleSymbol, number> | undefined => {
+const lineRequired = computed((): PuzzleSymbolCount | undefined => {
 	if (!rulerCountDataEnabled.value) return undefined;
 	const key = props.lineType === 'rows' ? ROW : COLUMN;
 	return puzzleStore.board?.numRequired?.[key];

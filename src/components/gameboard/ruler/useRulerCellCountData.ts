@@ -1,5 +1,5 @@
-import { ONE, ZERO, type PuzzleSymbol, type PuzzleValue } from "@/lib/constants.js";
-import type { LineCounts } from "@/lib/types.js";
+import { ONE, ZERO, type PuzzleSymbol } from "@/lib/constants.js";
+import type { LineCounts, PuzzleSymbolCount } from "@/lib/types.js";
 import { debouncedWatch } from "@vueuse/core";
 import { ref, type Ref, type DeepReadonly, readonly } from "vue";
 
@@ -17,7 +17,7 @@ export type RulerCountData = RulerLineCountData[];
 
 export const useRulerCellCountData = (
 	lineCounts: Ref<LineCounts | null>,
-	requiredCount: Ref<Record<PuzzleSymbol, number> | undefined>,
+	requiredCount: Ref<PuzzleSymbolCount | undefined>,
 	opts: {	debounceDelay: number, maxWait: number	}
 ): { data: DeepReadonly<Ref<RulerCountData | null>> } => {
 	const data = ref(parseCellData(lineCounts.value, requiredCount.value));
@@ -32,8 +32,8 @@ export const useRulerCellCountData = (
 }
 
 function parseCellData(
-	counts: Record<PuzzleValue, number>[] | null,
-	required: Record<PuzzleSymbol, number> | undefined
+	counts: LineCounts | null,
+	required: PuzzleSymbolCount | undefined
 ): RulerCountData | null {
 	if (counts == null || required == null) return null;
 	const {[ZERO]: reqZero, [ONE]: reqOne} = required;

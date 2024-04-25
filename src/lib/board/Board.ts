@@ -1,8 +1,8 @@
 import { shuffle } from "@/utils/random.utils";
-import { COLUMN, EMPTY, ROW, type LineType, type PuzzleSymbol, type PuzzleValue } from "../constants";
+import { COLUMN, EMPTY, ROW, type PuzzleValue } from "../constants";
 import { findIncorrectValuesFromSolution } from "../mistakes/incorrect-values.js";
 import type { FoundIncorrectValue } from "../mistakes/types.js";
-import type { ColumnId, IterableBoardLineString, LineId, BoardExportString, PuzzleGrid, RowId, Vec, BoardString, Target, BoardShape } from "../types";
+import type { ColumnId, IterableBoardLineString, LineId, BoardExportString, PuzzleGrid, RowId, Vec, BoardString, Target, BoardShape, NumSymbolRequired } from "../types";
 import { validateBoard } from "../validate/board";
 import { generateColumnIds, generateRowIds, getCoordsForBoardSize } from "./Board.helpers.js";
 import { BoardLine } from "./BoardLine";
@@ -16,7 +16,7 @@ export class SimpleBoard {
 	grid: PuzzleGrid;
 	width: number;
 	height: number;
-	numRequired: Record<LineType, Record<PuzzleSymbol, number>>;
+	numRequired: NumSymbolRequired;
 	rowIds: ReadonlyArray<RowId>;
 	columnIds: ReadonlyArray<ColumnId>;
 

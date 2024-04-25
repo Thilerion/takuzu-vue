@@ -1,5 +1,5 @@
 import { type PuzzleSymbol, ZERO, ONE } from "../constants.js";
-import type { PuzzleSymbolLineStr } from "../types.js";
+import type { PuzzleSymbolCount, PuzzleSymbolLineStr } from "../types.js";
 import { lineSizeToNumRequired } from "../utils/puzzle-line.utils.js";
 import type { LineStrSymbolPermutations } from "./types.js";
 
@@ -45,7 +45,7 @@ function _recurseGenerateValidLinesOfSize(
 	return [...validLines];
 }
 
-export function generateValidLinesOfSize(length: number, _numRequired?: Record<PuzzleSymbol, number>): LineStrSymbolPermutations {
+export function generateValidLinesOfSize(length: number, _numRequired?: PuzzleSymbolCount): LineStrSymbolPermutations {
 	const numRequired = _numRequired ?? lineSizeToNumRequired(length);
 
 	return _recurseGenerateValidLinesOfSize(

@@ -5,7 +5,7 @@ Line size: 10, no duplicate lines
 */
 
 import { BoardLine } from "@/lib/board/BoardLine.js";
-import { ROW, type PuzzleValue, COLUMN, type LineType, ONE } from "@/lib/constants.js";
+import { ROW, COLUMN, type LineType, ONE } from "@/lib/constants.js";
 import { SimpleBoard } from "@/lib/index.js";
 import type { EliminationStrategyResult } from "@/lib/solvers/common/EliminationStrategy.js";
 import { applyEliminationConstraint, categorizeBoardLines, type ApplyEliminationConstraintValidatedOpts, type ApplyEliminationConstraintOptsParam } from "@/lib/solvers/constraint-solver/constraints/EliminationConstraint.js";

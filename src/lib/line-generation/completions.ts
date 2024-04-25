@@ -1,5 +1,5 @@
-import { EMPTY, ZERO, ONE, type PuzzleSymbol } from "../constants.js";
-import type { PuzzleValueLineStr, PuzzleValueLine, PuzzleValueCount, PuzzleSymbolLineStr, PuzzleSymbolLine } from "../types.js";
+import { EMPTY, ZERO, ONE } from "../constants.js";
+import type { PuzzleValueLineStr, PuzzleValueLine, PuzzleValueCount, PuzzleSymbolLineStr, PuzzleSymbolLine, PuzzleSymbolCount } from "../types.js";
 import { countLineValues, lineSizeToNumRequired, splitLine } from "../utils/puzzle-line.utils.js";
 import { validateMaxConsecutiveRule } from "../validate/line.js";
 import { generateUniqueArrayPermutations } from "./permutations.js";
@@ -57,7 +57,7 @@ function _recurseGenerateValidLineCompletions(
 export function generateValidLineCompletions(
 	lineArr: PuzzleValueLine,
 	_lineCount?: PuzzleValueCount,
-	_numRequired?: Record<PuzzleSymbol, number>
+	_numRequired?: PuzzleSymbolCount
 ): LineArrSymbolPermutations {
 	// Validate max consecutive rule; input may be invalid and without this check, valid line completions would still be generated
 	if (!validateMaxConsecutiveRule(lineArr.join(''))) {

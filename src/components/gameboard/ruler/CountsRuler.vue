@@ -13,10 +13,10 @@
 </template>
 
 <script setup lang="ts">
-import { COLUMN, ONE, ROW, ZERO, type PuzzleSymbol } from '@/lib/constants';
+import { COLUMN, ONE, ROW, ZERO } from '@/lib/constants';
 import { computed, toRefs } from 'vue';
 import { useLineCounts } from './useLineCounts.js';
-import type { LineCounts } from '@/lib/types.js';
+import type { LineCounts, PuzzleSymbolCount } from '@/lib/types.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { useRulerCellCountData } from './useRulerCellCountData.js';
 
@@ -36,7 +36,7 @@ const counts = computed((): LineCounts => {
 
 const { countType } = toRefs(props);
 const puzzleStore = usePuzzleStore();
-const lineRequired = computed((): Record<PuzzleSymbol, number> | undefined => {
+const lineRequired = computed((): PuzzleSymbolCount | undefined => {
 	const key = props.lineType === 'rows' ? ROW : COLUMN;
 	return puzzleStore.board?.numRequired?.[key];
 })

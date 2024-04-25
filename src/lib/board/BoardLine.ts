@@ -1,7 +1,7 @@
 import { EMPTY, ONE, ZERO, type LineType, type PuzzleSymbol, type PuzzleValue } from "../constants.js";
 import { getValidLineCompletions } from "../line-generation/memoized.js";
 import type { LineArrSymbolPermutations } from "../line-generation/types.js";
-import type { LineId, PuzzleValueCount, PuzzleValueLine, ROPuzzleValueLine, Vec, VecValue } from "../types.js";
+import type { LineId, PuzzleSymbolCount, PuzzleValueCount, PuzzleValueLine, ROPuzzleValueLine, Vec, VecValue } from "../types.js";
 import { areLinesEqual, columnIdToX, countLineValues, isLineIdRow, lineSizeToNumRequired, lineTypeFromLineId, rowIdToY } from "../utils/puzzle-line.utils.js";
 import type { SimpleBoard } from "./Board.js";
 
@@ -15,7 +15,7 @@ export class BoardLine {
 
 	private _coords: null | Vec[] = null;
 	private _counts: null | PuzzleValueCount = null;
-	private _numRequired: null | Record<PuzzleSymbol, number> = null;
+	private _numRequired: null | PuzzleSymbolCount = null;
 	private _validPermutations: null | LineArrSymbolPermutations = null;
 	private _remaining: Record<PuzzleSymbol, null | number> = {
 		[ZERO]: null,

@@ -1,5 +1,5 @@
 import { type PuzzleValue, ONE, ZERO, EMPTY, type PuzzleSymbol, COLUMN, ROW, type LineType } from "../constants";
-import type { PuzzleValueLineStr, PuzzleSymbolLineStr, ColumnId, LineId, PuzzleSymbolLine, PuzzleValueLine, RowId } from "../types";
+import type { PuzzleValueLineStr, PuzzleSymbolLineStr, ColumnId, LineId, PuzzleSymbolLine, PuzzleValueLine, RowId, PuzzleValueCount, PuzzleSymbolCount } from "../types";
 
 export const isPuzzleValueLineStr = (str: string): str is PuzzleValueLineStr => {
 	return /^[01.]+$/.test(str);
@@ -8,13 +8,13 @@ export const isPuzzleSymbolLineStr = (str: string): str is PuzzleSymbolLineStr =
 	return /^[01]+$/.test(str);
 }
 
-export const countLineValues = (lineArr: PuzzleValue[]) => {
-	return lineArr.reduce((acc, val) => {
+export const countLineValues = (lineArr: PuzzleValue[]): PuzzleValueCount => {
+	return lineArr.reduce<PuzzleValueCount>((acc, val) => {
 		if (val === ONE) acc[ONE] += 1;
 		else if (val === ZERO) acc[ZERO] += 1;
 		else acc[EMPTY] += 1;
 		return acc;
-	}, { [ONE]: 0, [ZERO]: 0, [EMPTY]: 0 } as Record<PuzzleValue, number>);
+	}, { [ONE]: 0, [ZERO]: 0, [EMPTY]: 0 });
 }
 
 // faster than casting to strings and comparing them
@@ -26,19 +26,19 @@ export const areLinesEqual = (a: string | ReadonlyArray<PuzzleValue>, b: string 
 	return true;
 }
 
-export const lineSizeToNumRequired = (lineSize: number) => {
+export const lineSizeToNumRequired = (lineSize: number): PuzzleSymbolCount => {
 	return {
 		[ONE]: numRequiredOfValue(lineSize, ONE),
 		[ZERO]: numRequiredOfValue(lineSize, ZERO)
 	}
 }
-export const numRequiredOfValue = (lineSize: number, value: PuzzleSymbol) => {
+export const numRequiredOfValue = (lineSize: number, value: PuzzleSymbol): number => {
 	const half = lineSize / 2;
 	return value === ONE ? Math.ceil(half) : Math.floor(half);
 }
 
-export const rowIdToY = (rowId: RowId) => rowId.charCodeAt(0) - 65;
-export const columnIdToX = (columnId: ColumnId) => (+columnId) - 1;
+export const rowIdToY = (rowId: RowId): number => rowId.charCodeAt(0) - 65;
+export const columnIdToX = (columnId: ColumnId): number => (+columnId) - 1;
 export const yToRowId = (y: number): RowId => String.fromCharCode(65 + y);
 export const xToColumnId = (x: number): ColumnId => `${x + 1}`;
 

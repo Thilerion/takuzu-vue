@@ -1,5 +1,4 @@
 import { usePuzzleEvent } from "@/composables/puzzle-events.js";
-import type { PuzzleValue } from "@/lib/constants.js";
 import type { SimpleBoard } from "@/lib/index.js";
 import type { LineCounts, VecValueChange } from "@/lib/types.js";
 import { countLineValues } from "@/lib/utils/puzzle-line.utils";
@@ -47,7 +46,7 @@ export const useLineCounts = createSharedComposable(() => {
 	}
 })
 
-function calculateLineCounts(board: SimpleBoard): { rowCounts: Record<PuzzleValue, number>[], colCounts: Record<PuzzleValue, number>[] } {
+function calculateLineCounts(board: SimpleBoard): { rowCounts: LineCounts, colCounts: LineCounts } {
 	const rowCounts = board.grid.map(row => {
 		return countLineValues(row);
 	})

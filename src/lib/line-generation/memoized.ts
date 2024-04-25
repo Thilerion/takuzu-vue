@@ -1,10 +1,11 @@
-import { ONE, ZERO, type PuzzleSymbol } from "../constants.js";
+import { ONE, ZERO } from "../constants.js";
 import { memoize } from "../memoize.utils.js";
+import type { PuzzleSymbolCount } from "../types.js";
 import { generateAllLineCompletions, generateValidLineCompletions } from "./completions.js";
 import { generateValidLinesOfSize } from "./lines-of-size.js";
 import { generateUniqueArrayPermutations } from "./permutations.js";
 
-const stringifyOptionalNumReq = (numReq: undefined | Record<PuzzleSymbol, number>): string => {
+const stringifyOptionalNumReq = (numReq: undefined | PuzzleSymbolCount): string => {
 	if (numReq == null) return '';
 	return `-${numReq[ZERO]}-${numReq[ONE]}`;
 }
