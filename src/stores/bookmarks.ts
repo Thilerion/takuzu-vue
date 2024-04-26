@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 import { computed, ref, watchEffect } from "vue";
 import { usePuzzleStore } from "./puzzle/store.js";
 import { getTotalTimeElapsed } from "./puzzle/timer-store.js";
-import { SimpleBoard } from "@/lib/index.js";
+import { SimpleBoard } from "@/lib/board/Board.js";
 
 type BookmarkType = 'user' | 'lastCorrect';
 type BaseBookmark<Type extends BookmarkType> = {

@@ -1,4 +1,4 @@
-import { SimpleBoard } from "@/lib/index.js";
+import { SimpleBoard } from "@/lib/board/Board.js";
 import { createCombinedTransformationFn } from "@/lib/transformations/base-transformations.js";
 import { applyTransformationConfig, getReverseTransformationConfig } from "@/lib/transformations/helpers.js";
 import type { BaseTransformationConfig } from "@/lib/transformations/types.js";

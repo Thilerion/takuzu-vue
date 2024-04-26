@@ -1,4 +1,5 @@
-import { SimpleBoard, generateBoard } from '@/lib/index.js';
+import { generateBoard } from '@/lib/generation/board.js';
+import { SimpleBoard } from '@/lib/board/Board.js';
 import seedrandom from 'seedrandom';
 
 describe('generateBoard', () => {

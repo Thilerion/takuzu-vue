@@ -1,7 +1,7 @@
 import { BoardAssignmentError, BoardOutOfBoundsError } from "@/lib/board/Board.js"
 import { ThreesUnit } from "@/lib/board/ThreesUnit.js"
 import { EMPTY, ONE, ZERO } from "@/lib/constants.js"
-import { SimpleBoard } from "@/lib/index.js"
+import { SimpleBoard } from "@/lib/board/Board.js"
 import type { BoardExportString, BoardString } from "@/lib/types.js"
 
 describe('Board class', () => {

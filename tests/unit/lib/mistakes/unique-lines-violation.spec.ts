@@ -1,4 +1,4 @@
-import { SimpleBoard } from "@/lib/index.js";
+import { SimpleBoard } from "@/lib/board/Board.js";
 import { findUniqueLinesRuleViolations } from "@/lib/mistakes/violations/unique-lines-violation.js";
 
 describe('findUniqueLinesRuleViolations()', () => {

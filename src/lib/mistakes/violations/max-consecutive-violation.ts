@@ -1,6 +1,6 @@
 import type { BoardLine } from "@/lib/board/BoardLine.js";
 import { ZERO, ONE, type PuzzleSymbol } from "@/lib/constants.js";
-import type { SimpleBoard } from "@/lib/index.js";
+import type { SimpleBoard } from "@/lib/board/Board.js";
 import type { Target } from "@/lib/types.js";
 import type { MaxConsecutiveRuleViolation, FoundIncorrectValue } from "../types.js";
 

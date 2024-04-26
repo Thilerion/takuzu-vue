@@ -42,7 +42,7 @@ function normalizeValue(value: number, min = 0, max = 1) {
 	return (value - min) / (max - min);
 }
 
-export function getMaskedRatioQuality(board: SimpleBoard, optimalRatio: number): number {
+function getMaskedRatioQuality(board: SimpleBoard, optimalRatio: number): number {
 	const { width, height } = board;
 	const numEmpty = board.getNumEmpty();
 	const numCells = width * height;
@@ -56,7 +56,7 @@ export function getMaskedRatioQuality(board: SimpleBoard, optimalRatio: number):
 
 // a puzzle wherein one symbol is largely masked and the other largely unmasked
 //  is less fun, and possibly too easy
-export function getSymbolDistributionQuality(board: SimpleBoard): number {
+function getSymbolDistributionQuality(board: SimpleBoard): number {
 	const symbolCounts = arrayCountValuesAsMap([...board.grid].flat());
 	const countZero = symbolCounts.get(ZERO)!;
 	const countOne = symbolCounts.get(ONE)!;

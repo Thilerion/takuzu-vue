@@ -1,4 +1,4 @@
-import type { SimpleBoard } from "@/lib/index.js";
+import type { SimpleBoard } from "@/lib/board/Board.js";
 import type { applyTriplesConstraint } from "./TriplesConstraint.js";
 import type { applyEliminationConstraint } from "./EliminationConstraint.js";
 import type { applyLineBalanceConstraint } from "./LineBalanceConstraint.js";

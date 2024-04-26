@@ -1,4 +1,4 @@
-import { createPuzzle } from '@/lib/index.js';
+import { createPuzzle } from '@/lib/generation/puzzle.js';
 import { ConstraintSolver } from '@/lib/solvers/constraint-solver/ConstraintSolver.js';
 import { applyLineBalanceConstraintWithOpts } from '@/lib/solvers/constraint-solver/constraints/LineBalanceConstraint.js';
 import { applyTriplesConstraintWithOpts } from '@/lib/solvers/constraint-solver/constraints/TriplesConstraint.js';

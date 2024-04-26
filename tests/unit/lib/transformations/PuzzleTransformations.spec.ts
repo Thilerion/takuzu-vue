@@ -1,4 +1,4 @@
-import { SimpleBoard } from "@/lib/index.js"
+import { SimpleBoard } from "@/lib/board/Board.js"
 import { PuzzleTransformations } from "@/lib/transformations/PuzzleTransformations.js";
 import type { TransformationKey } from "@/lib/transformations/types.js";
 import type { BoardExportString, BoardString } from "@/lib/types.js";

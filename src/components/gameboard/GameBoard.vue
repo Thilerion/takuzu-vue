@@ -31,8 +31,8 @@
 </template>
 
 <script setup lang="ts">
+import type { SimpleBoard } from '@/lib/board/Board.js';
 import PuzzleGrid from './PuzzleGrid.vue';
-import type { SimpleBoard } from '@/lib/index.js';
 import type { VecValue } from '@/lib/types.js';
 import { usePuzzleVisualCuesStore } from '@/stores/puzzle-visual-cues.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';

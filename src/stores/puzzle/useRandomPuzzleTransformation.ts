@@ -3,7 +3,7 @@ import { PuzzleTransformations } from "@/lib/transformations/PuzzleTransformatio
 import type { BaseTransformationConfig, TransformationKey } from "@/lib/transformations/types.js";
 import { getTransformationConfigFromKey, getTransformationKey } from "@/lib/transformations/helpers.js";
 import { usePuzzleStore } from "./store.js";
-import { SimpleBoard } from "@/lib/index.js";
+import { SimpleBoard } from "@/lib/board/Board.js";
 import { createSynchronizedTransformationHandlers } from "@/lib/transformations/synced.js";
 
 export const getRandomPuzzleTransformationOnRestart = (): AllPuzzleBoards => {

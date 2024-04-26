@@ -1,6 +1,6 @@
 import { BoardLine } from "@/lib/board/BoardLine.js";
 import { ZERO, ONE, type PuzzleSymbol } from "@/lib/constants.js";
-import type { SimpleBoard } from "@/lib/index.js";
+import type { SimpleBoard } from "@/lib/board/Board.js";
 import type { BalancedLinesRuleViolation, FoundIncorrectValue } from "../types.js";
 
 export function findBalancedLinesRuleViolations(

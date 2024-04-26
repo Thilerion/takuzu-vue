@@ -1,5 +1,5 @@
 import { BoardLine } from "@/lib/board/BoardLine.js";
-import { SimpleBoard } from "@/lib/index.js";
+import { SimpleBoard } from "@/lib/board/Board.js";
 import { applyLineBalanceConstraint } from "@/lib/solvers/constraint-solver/constraints/LineBalanceConstraint.js";
 import * as lineBalStratModule from '@/lib/solvers/common/LineBalanceStrategy.js';
 import { ONE, ZERO } from "@/lib/constants.js";

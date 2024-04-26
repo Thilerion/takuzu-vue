@@ -1,4 +1,4 @@
-import { SimpleBoard } from "@/lib/index.js";
+import { SimpleBoard } from "@/lib/board/Board.js";
 import type { BoardExportString, PuzzleValueLine } from "@/lib/types.js";
 import { COLUMN, EMPTY, ONE, ROW, ZERO } from "@/lib/constants.js";
 import { BoardLine } from "@/lib/board/BoardLine.js";

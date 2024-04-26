@@ -1,4 +1,4 @@
-import type { SimpleBoard } from "@/lib/index.js";
+import type { SimpleBoard } from "@/lib/board/Board.js";
 import type { ConstraintSolverConstraintsCollection } from "./types.js";
 import type { ConstraintResult } from "./constraints/types.js";
 

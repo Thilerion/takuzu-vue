@@ -1,4 +1,4 @@
-import { SimpleBoard } from "@/lib/index.js";
+import { SimpleBoard } from "@/lib/board/Board.js";
 import { findBalancedLinesRuleViolations } from "@/lib/mistakes/violations/balanced-line-violation.js";
 import type { BoardExportString } from "@/lib/types.js";
 

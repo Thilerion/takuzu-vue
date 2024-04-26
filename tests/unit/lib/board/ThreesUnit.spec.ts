@@ -1,6 +1,6 @@
 import { ThreesUnit, type ThreesValues } from "@/lib/board/ThreesUnit.js";
 import { COLUMN, ROW } from "@/lib/constants.js";
-import { SimpleBoard } from "@/lib/index.js";
+import { SimpleBoard } from "@/lib/board/Board.js";
 import type { BoardExportString } from "@/lib/types.js";
 
 describe('ThreesUnit', () => {

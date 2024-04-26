@@ -1,4 +1,3 @@
-import { SimpleBoard } from "@/lib";
 import { TriplesSteppedHint } from "./stepped-hint/TriplesHint.js";
 import type { SteppedHint } from "./stepped-hint/types.js";
 import { BalanceSteppedHint } from "./stepped-hint/BalanceHint.js";
@@ -14,6 +13,7 @@ import { NoHintsFoundSteppedHint } from "./stepped-hint/NoHintsFoundHint.js";
 import { GenericEliminationSteppedHint } from "./stepped-hint/GenericEliminationHint.js";
 import { genericDuplicateLineTechnique } from "@/lib/solvers/human-solver/techniques/GenericDuplicateLineTechnique.js";
 import { GenericDuplicateLineSteppedHint } from "./stepped-hint/GenericDuplicateLineHint.js";
+import type { SimpleBoard } from "@/lib/board/Board.js";
 
 export const searchForHint = (
 	board: SimpleBoard,

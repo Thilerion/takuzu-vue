@@ -23,7 +23,6 @@
 </template>
 
 <script setup lang="ts">
-import type { SimpleBoard } from '@/lib/index.js';
 import type { PuzzleGrid, VecValue, XYKey } from '@/lib/types.js';
 import { computed, toRefs } from 'vue';
 import { useStaticGridCellData } from './composables/useGridCellData.js';
@@ -31,6 +30,7 @@ import { usePuzzleTapVibrate } from './composables/usePuzzleTapVibrate.js';
 import { injectCellThemeData } from './composables/useCellThemeProvider.js';
 import type { PuzzleValue } from '@/lib/constants.js';
 import type { ErrorMark } from '@/helpers/puzzle-visual-cues.js';
+import type { SimpleBoard } from '@/lib/board/Board.js';
 
 const props = defineProps<{
 	board: SimpleBoard,

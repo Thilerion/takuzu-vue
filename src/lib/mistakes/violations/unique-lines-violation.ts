@@ -1,6 +1,6 @@
 import type { BoardLine } from "@/lib/board/BoardLine.js";
 import type { LineType, PuzzleSymbol } from "@/lib/constants.js";
-import type { SimpleBoard } from "@/lib/index.js";
+import type { SimpleBoard } from "@/lib/board/Board.js";
 import type { LineId } from "@/lib/types.js";
 import type { UniqueLinesRuleViolation, FoundIncorrectValue } from "../types.js";
 

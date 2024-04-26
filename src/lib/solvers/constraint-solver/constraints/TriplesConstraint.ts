@@ -1,4 +1,4 @@
-import type { SimpleBoard } from "@/lib/index.js";
+import type { SimpleBoard } from "@/lib/board/Board.js";
 import { checkTriplesStrategy } from "../../common/TriplesStrategy.js";
 import type { ConstraintResult } from "./types.js";
 import type { ThreesUnit } from "@/lib/board/ThreesUnit.js";

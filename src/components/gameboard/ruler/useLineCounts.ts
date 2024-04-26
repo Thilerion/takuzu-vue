@@ -1,5 +1,5 @@
 import { usePuzzleEvent } from "@/composables/puzzle-events.js";
-import type { SimpleBoard } from "@/lib/index.js";
+import type { SimpleBoard } from "@/lib/board/Board.js";
 import type { LineCounts, VecValueChange } from "@/lib/types.js";
 import { countLineValues } from "@/lib/utils/puzzle-line.utils";
 import { usePuzzleStore } from "@/stores/puzzle/store.js";

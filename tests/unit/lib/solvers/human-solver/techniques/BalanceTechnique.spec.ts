@@ -1,5 +1,5 @@
 import { BoardLine } from "@/lib/board/BoardLine"
-import { SimpleBoard } from "@/lib/index.js";
+import { SimpleBoard } from "@/lib/board/Board.js";
 import { humanBalanceTechnique } from "@/lib/solvers/human-solver/techniques/BalanceTechnique";
 import { splitLine } from "@/lib/utils/puzzle-line.utils.js";
 

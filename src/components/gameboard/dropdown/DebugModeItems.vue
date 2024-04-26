@@ -36,7 +36,7 @@ import { storeToRefs } from 'pinia';
 import { ref, toRef, computed } from 'vue';
 import { shuffleInPlace } from '@/utils/random.utils.js';
 import { usePuzzleBookmarksStore } from '@/stores/bookmarks.js';
-import { SimpleBoard } from '@/lib/index.js';
+import { SimpleBoard } from '@/lib/board/Board.js';
 
 const puzzleStore = usePuzzleStore();
 const {

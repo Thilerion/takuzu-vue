@@ -1,8 +1,8 @@
-import type { SimpleBoard } from "../board/Board";
+import type { SimpleBoard } from "../board/Board.js";
 import type { BasicPuzzleConfig, BoardAndSolutionBoards } from "../types";
-import { generateBoard } from "./board";
-import { createMaskWithDifficulty } from "./mask";
-import { getOptimalMaskRatio, getMaskQuality } from "./quality";
+import { generateBoard } from "./board.js";
+import { createMaskWithDifficulty } from "./mask.js";
+import { getOptimalMaskRatio, getMaskQuality } from "./quality.js";
 
 const minMaskedRatioQuality = 0.94;
 const minSymbolDistributionQuality = 0.36;

@@ -1,6 +1,6 @@
 import type { BoardLine } from "@/lib/board/BoardLine.js";
 import { ROW, type LineType, COLUMN } from "@/lib/constants.js";
-import type { SimpleBoard } from "@/lib/index.js";
+import type { SimpleBoard } from "@/lib/board/Board.js";
 import { checkEliminationStrategy } from "../../common/EliminationStrategy.js";
 import type { ConstraintResult } from "./types.js";
 import type { Target } from "@/lib/types.js";

@@ -6,7 +6,7 @@ Line size: 10, no duplicate lines
 
 import { BoardLine } from "@/lib/board/BoardLine.js";
 import { ROW, COLUMN, type LineType, ONE } from "@/lib/constants.js";
-import { SimpleBoard } from "@/lib/index.js";
+import { SimpleBoard } from "@/lib/board/Board.js";
 import type { EliminationStrategyResult } from "@/lib/solvers/common/EliminationStrategy.js";
 import { applyEliminationConstraint, categorizeBoardLines, type ApplyEliminationConstraintValidatedOpts, type ApplyEliminationConstraintOptsParam } from "@/lib/solvers/constraint-solver/constraints/EliminationConstraint.js";
 import { type CategorizeBoardLineFn, type PrioritySortBoardLinesFn } from "@/lib/solvers/constraint-solver/constraints/elimination.helpers.js";

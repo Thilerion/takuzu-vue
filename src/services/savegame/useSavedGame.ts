@@ -3,7 +3,7 @@ import { createSharedComposable, StorageSerializers, useStorage } from "@vueuse/
 import { readonly } from "vue";
 import type { SaveData, SaveGame } from "./types";
 import { getSaveData } from "./getSaveData";
-import { SimpleBoard } from "@/lib/index.js";
+import { SimpleBoard } from "@/lib/board/Board.js";
 const SAVE_DATA_STORAGE_KEY = 'takuzu_saved-game';
 
 const savedPuzzle = useStorage<SaveGame | null>(SAVE_DATA_STORAGE_KEY, null, localStorage, {

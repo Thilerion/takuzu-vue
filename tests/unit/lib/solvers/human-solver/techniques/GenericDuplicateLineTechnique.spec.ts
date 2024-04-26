@@ -1,5 +1,5 @@
 import { BoardLine } from "@/lib/board/BoardLine.js";
-import { SimpleBoard } from "@/lib/index.js";
+import { SimpleBoard } from "@/lib/board/Board.js";
 import { genericDuplicateLineTechnique } from "@/lib/solvers/human-solver/techniques/GenericDuplicateLineTechnique.js";
 import type { BoardExportString } from "@/lib/types.js";
 import { splitLine } from "@/lib/utils/puzzle-line.utils.js";

@@ -1,5 +1,5 @@
 import { ZERO, ONE } from "@/lib/constants.js";
-import { SimpleBoard } from "@/lib/index.js";
+import { SimpleBoard } from "@/lib/board/Board.js";
 import { findIncorrectValuesFromSolution, hasIncorrectValues } from "@/lib/mistakes/incorrect-values.js";
 import type { BoardExportString } from "@/lib/types.js";
 

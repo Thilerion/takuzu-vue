@@ -1,5 +1,5 @@
 import type { PuzzleSymbol } from "@/lib/constants.js";
-import type { SimpleBoard } from "@/lib/index.js";
+import type { SimpleBoard } from "@/lib/board/Board.js";
 import type { Vec } from "@/lib/types.js";
 import type { ConstraintResult } from "./constraints/types.js";
 

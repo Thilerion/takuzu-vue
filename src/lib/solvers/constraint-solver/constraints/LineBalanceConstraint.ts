@@ -1,4 +1,4 @@
-import type { SimpleBoard } from "@/lib/index.js"
+import type { SimpleBoard } from "@/lib/board/Board.js"
 import { checkLineBalanceStrategy } from "../../common/LineBalanceStrategy.js";
 import { EMPTY } from "@/lib/constants.js";
 import type { BoardLine } from "@/lib/board/BoardLine.js";

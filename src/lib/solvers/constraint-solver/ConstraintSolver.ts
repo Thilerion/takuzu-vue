@@ -1,4 +1,4 @@
-import type { SimpleBoard } from "@/lib/index.js";
+import type { SimpleBoard } from "@/lib/board/Board.js";
 import type { ConstraintSolverConstraintsCollection, SolverSelectCellFn, SolverSelectValueFn } from "./types.js";
 import { applyConstraintFnsWhileChangesFound } from "./helpers.js";
 import { applyTriplesConstraintWithOpts } from "./constraints/TriplesConstraint.js";

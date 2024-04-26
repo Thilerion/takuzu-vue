@@ -1,4 +1,4 @@
-import { SimpleBoard } from "@/lib/index.js";
+import { SimpleBoard } from "@/lib/board/Board.js";
 import { ConstraintSolver, type ConstraintSolverOpts } from "@/lib/solvers/constraint-solver/ConstraintSolver.js";
 import { applyEliminationConstraint } from "@/lib/solvers/constraint-solver/constraints/EliminationConstraint.js";
 import { applyLineBalanceConstraint } from "@/lib/solvers/constraint-solver/constraints/LineBalanceConstraint.js";

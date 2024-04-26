@@ -1,6 +1,6 @@
 import type { ThreesCoords, ThreesValues } from "@/lib/board/ThreesUnit.js";
 import { EMPTY, ONE, ZERO } from "@/lib/constants.js";
-import { SimpleBoard } from "@/lib/index.js";
+import { SimpleBoard } from "@/lib/board/Board.js";
 import { applyTriplesConstraint } from "@/lib/solvers/constraint-solver/constraints/TriplesConstraint.js";
 import * as triplesStratModule from '@/lib/solvers/common/TriplesStrategy.js';
 
