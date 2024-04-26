@@ -64,15 +64,30 @@ describe('settings localStorage module', () => {
 				vibrationStrength: 76,
 				enableVibration: false
 			}
+			
 			window.localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(lsSettings));
 			const loaded = loadSettings();
 			const defaults = getDefaultSettings();
-			expect(loaded).toEqual({
-				...loaded,
-				...lsSettings
-			});
-			expect(loaded).toHaveProperty('vibrationStrength', 76);
-			expect(defaults.vibrationStrength).not.toBe(76);
+
+			expect(defaults.showTimer).not.toBe(lsSettings.showTimer);
+			expect(defaults.enableWakeLock).not.toBe(lsSettings.enableWakeLock);
+			expect(defaults.vibrationStrength).not.toBe(lsSettings.vibrationStrength);
+			expect(defaults.enableVibration).not.toBe(lsSettings.enableVibration);
+
+			expect(loaded).toMatchObject(lsSettings);
+			expect(loaded).toMatchInlineSnapshot(`
+				{
+				  "cellTheme": "classic",
+				  "checkButton": "incorrectValues",
+				  "enableVibration": false,
+				  "enableWakeLock": false,
+				  "language": "en",
+				  "showLineInfo": "remainingCount",
+				  "showTimer": false,
+				  "toggleMode": "0",
+				  "vibrationStrength": 76,
+				}
+			`);
 		})
 
 		test('does not include additional properties in storage', () => {
