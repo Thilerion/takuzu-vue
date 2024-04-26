@@ -8,7 +8,7 @@
 			<div v-if="!loading">
 			<template v-if="!disabled">
 				<div>{{ $t('NewPuzzle.StartGame.start-game') }} <small class="text-xs opacity-70 font-normal" v-if="replay">({{ $t('Game.replay') }})</small></div>
-				<div class="text-xs" v-if="!disabled">{{sizeStr}} - {{difficultyLabel}} - {{difficultyStars}}*</div>
+				<div class="text-xs" v-if="!disabled">{{sizeStr}} - {{$t(difficultyLabelMsgKey, difficultyLabel)}} - {{difficultyStars}}*</div>
 			</template>
 			<template v-else-if="disabled">
 				<div>{{ $t('NewPuzzle.StartGame.select-puzzle-size') }}</div>
@@ -49,6 +49,10 @@ const props = defineProps<StartGameButtonProps>();
 
 const sizeStr = computed(() => {
 	return `${props.size.width}x${props.size.height}`;
+})
+
+const difficultyLabelMsgKey = computed(() => {
+	return `Game.difficulty.${props.difficultyLabel}`;
 })
 </script>
 
