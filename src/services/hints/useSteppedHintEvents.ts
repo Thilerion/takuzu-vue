@@ -1,9 +1,9 @@
 import { computed, toValue } from "vue";
-import { usePuzzleStore } from "../puzzle/store.js";
+import { usePuzzleStore } from "../../stores/puzzle/store.js";
 import type { ReadonlyRefOrGetter } from "@vueuse/core";
-import type { HintStep, HintStepEventCallback, HintStepEvent, HintStepEventCallbackActionsParam, HintStepEventCallbackCtxParam } from "./stepped-hint/types.js";
+import type { HintStep, HintStepEventCallback, HintStepEvent, HintStepEventCallbackActionsParam, HintStepEventCallbackCtxParam } from "./SteppedHint/types.js";
 import { toRef } from "vue";
-import { usePuzzleVisualCuesStore } from "../puzzle-visual-cues.js";
+import { usePuzzleVisualCuesStore } from "../../stores/puzzle-visual-cues.js";
 
 export const useSteppedHintEvents = (
 	stepRef: ReadonlyRefOrGetter<HintStep | null | undefined>

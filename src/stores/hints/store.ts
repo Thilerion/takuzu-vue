@@ -1,11 +1,11 @@
 import type { BoardString } from "@/lib/types.js";
 import { defineStore } from "pinia";
-import { searchForHint } from "../hints/search.js";
+import { searchForHint } from "../../services/hints/search.js";
 import { usePuzzleStore } from "../puzzle/store.js";
 import { computed, reactive, readonly, ref } from "vue";
-import type { SteppedHint, SteppedHintRawData } from "./stepped-hint/types.js";
+import type { SteppedHint, SteppedHintRawData } from "../../services/hints/SteppedHint/types.js";
 import { usePuzzleVisualCuesStore } from "../puzzle-visual-cues.js";
-import { exportSteppedHint, importSteppedHint } from "./stepped-hint/import-export.js";
+import { exportSteppedHint, importSteppedHint } from "../../services/hints/SteppedHint/import-export.js";
 
 export type HintSaveData = {
 	cache: [BoardString, SteppedHintRawData][]

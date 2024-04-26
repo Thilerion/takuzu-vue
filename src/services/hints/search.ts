@@ -1,18 +1,18 @@
-import { TriplesSteppedHint } from "./stepped-hint/TriplesHint.js";
-import type { SteppedHint } from "./stepped-hint/types.js";
-import { BalanceSteppedHint } from "./stepped-hint/BalanceHint.js";
+import { TriplesSteppedHint } from "./SteppedHint/TriplesHint.js";
+import type { SteppedHint } from "./SteppedHint/types.js";
+import { BalanceSteppedHint } from "./SteppedHint/BalanceHint.js";
 import { humanBalanceTechnique } from "@/lib/solvers/human-solver/techniques/BalanceTechnique.js";
 import { humanTriplesTechnique } from "@/lib/solvers/human-solver/techniques/TriplesTechnique.js";
 import { findRuleViolations } from "@/lib/mistakes/rule-violations";
 import { findIncorrectValuesFromSolution } from "@/lib/mistakes/incorrect-values";
 import type { FoundIncorrectValue, RuleViolation, UniqueLinesRuleViolation } from "@/lib/mistakes/types";
 import type { XYKey } from "@/lib/types";
-import { IncorrectValuesSteppedHint } from "./stepped-hint/IncorrectValuesHint.js";
+import { IncorrectValuesSteppedHint } from "./SteppedHint/IncorrectValuesHint.js";
 import { genericEliminationTechnique } from "@/lib/solvers/human-solver/techniques/GenericEliminationTechnique.js";
-import { NoHintsFoundSteppedHint } from "./stepped-hint/NoHintsFoundHint.js";
-import { GenericEliminationSteppedHint } from "./stepped-hint/GenericEliminationHint.js";
+import { NoHintsFoundSteppedHint } from "./SteppedHint/NoHintsFoundHint.js";
+import { GenericEliminationSteppedHint } from "./SteppedHint/GenericEliminationHint.js";
 import { genericDuplicateLineTechnique } from "@/lib/solvers/human-solver/techniques/GenericDuplicateLineTechnique.js";
-import { GenericDuplicateLineSteppedHint } from "./stepped-hint/GenericDuplicateLineHint.js";
+import { GenericDuplicateLineSteppedHint } from "./SteppedHint/GenericDuplicateLineHint.js";
 import type { SimpleBoard } from "@/lib/board/Board.js";
 
 export const searchForHint = (

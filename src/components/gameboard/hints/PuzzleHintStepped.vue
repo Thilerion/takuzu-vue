@@ -22,11 +22,11 @@
 <script setup lang="ts">
 import { computed, toRef, watch } from 'vue';
 import { useStepThroughSteppedHint } from './step-through.js';
-import type { SteppedHint } from '@/stores/hints/stepped-hint/types.js';
 import { useDynamicPuzzleSymbolString } from '@/components/dynamic-symbols/useDynamicPuzzleSymbolString.js';
 import { injectCellThemeData } from '../composables/useCellThemeProvider.js';
 import { useSteppedHintMessage } from './stepped-hint-message.js';
 import { useI18n } from 'vue-i18n';
+import type { SteppedHint } from '@/services/hints/SteppedHint/types.js';
 
 const emit = defineEmits<{
 	(e: 'hide'): void;
@@ -45,8 +45,8 @@ const { stepIdx, curStep, isFirstStep, isFinalStep, nextStep, prevStep, resetSte
 const themeData = injectCellThemeData();
 const { $p } = useDynamicPuzzleSymbolString(themeData.theme, themeData.type);
 
-const { message } = useSteppedHintMessage(hint, stepIdx, $p);
 const { t } = useI18n();
+const { message } = useSteppedHintMessage(hint, stepIdx, $p);
 
 const stepMessage = computed((): string => {
 	if (message.value != null && typeof message.value === 'string') {
