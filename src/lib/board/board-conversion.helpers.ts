@@ -1,6 +1,6 @@
 import { type PuzzleValue, ONE, ZERO, EMPTY } from "../constants.js";
 import type { BoardExportString, BoardShape, BoardString, PuzzleGrid } from "../types.js";
-import { deducePuzzleDimensionsFromLength } from "./Board.helpers.js";
+import { deducePuzzleDimensions } from "./Board.helpers.js";
 
 const exportStrRegex = /^\d{1,2}x\d{1,2};([.01]){4,}$/;
 export const isExportString = (str: string): str is BoardExportString => {
@@ -25,7 +25,7 @@ export const getImportBoardStringData = (
 		}
 	} else {
 		return {
-			...deducePuzzleDimensionsFromLength(str.length),
+			...deducePuzzleDimensions(str.length),
 			boardStr: str
 		}
 	}

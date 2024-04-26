@@ -1,10 +1,10 @@
 import { EMPTY, ONE, ZERO } from '../../../src/lib/constants.js';
 import { isPuzzleSymbol } from '@/lib/utils/puzzle-value.utils.js';
-import { getCoordsForBoardSize } from '@/lib/board/Board.helpers.js';
+import { generateBoardCoords } from '@/lib/board/Board.helpers.js';
 
 describe('board and puzzle utils', () => {
 	
-	describe('getCoordsForBoardSize', () => {
+	describe('generateBoardCoords', () => {
 
 		test('returns correct coordinates', () => {
 			const expected = [
@@ -15,13 +15,13 @@ describe('board and puzzle utils', () => {
 				{ x: 1, y: 1 },
 				{ x: 2, y: 1 },
 			];
-			const result = getCoordsForBoardSize(3, 2);
+			const result = generateBoardCoords(3, 2);
 			expect(result).toEqual(expected);
 		})
 
 		test('is memoized', () => {
-			const firstResult = getCoordsForBoardSize(4, 5);
-			const secondResult = getCoordsForBoardSize(4, 5);
+			const firstResult = generateBoardCoords(4, 5);
+			const secondResult = generateBoardCoords(4, 5);
 
 			expect(firstResult).toBe(secondResult);
 			expect(firstResult[0]).toBe(secondResult[0]);

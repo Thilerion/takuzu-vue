@@ -4,7 +4,7 @@ import { findIncorrectValuesFromSolution } from "../mistakes/incorrect-values.js
 import type { FoundIncorrectValue } from "../mistakes/types.js";
 import type { ColumnId, IterableBoardLineString, LineId, BoardExportString, PuzzleGrid, RowId, Vec, BoardString, Target, BoardShape, NumSymbolRequired } from "../types";
 import { validateBoard } from "../validate/board";
-import { generateColumnIds, generateRowIds, getCoordsForBoardSize } from "./Board.helpers.js";
+import { generateColumnIds, generateRowIds, generateBoardCoords } from "./Board.helpers.js";
 import { BoardLine } from "./BoardLine";
 import { ThreesUnit } from "./ThreesUnit";
 import { boardStringToPuzzleGrid, puzzleGridToBoardString, puzzleGridToExportString } from "./board-conversion.helpers.js";
@@ -188,8 +188,8 @@ export class SimpleBoard {
 		return this.assign(x, y, value);
 	}
 
-	cellCoords({ shuffled = false } = {}) {
-		const coords: Vec[] = getCoordsForBoardSize(this.width, this.height);
+	cellCoords({ shuffled = false } = {}): (Readonly<Vec>)[] {
+		const coords = generateBoardCoords(this.width, this.height);
 		if (shuffled) return shuffle(coords);
 		return [...coords];
 	}

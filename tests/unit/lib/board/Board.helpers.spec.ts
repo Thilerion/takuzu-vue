@@ -1,4 +1,4 @@
-import { deducePuzzleDimensionsFromLength } from "@/lib/board/Board.helpers.js";
+import { deducePuzzleDimensions } from "@/lib/board/Board.helpers.js";
 import { isExportString } from "@/lib/board/board-conversion.helpers.js";
 
 describe('isExportString', () => {
@@ -35,46 +35,46 @@ describe('isExportString', () => {
 	})
 })
 
-describe('deducePuzzleDimensionsFromLength', () => {
+describe('deducePuzzleDimensions', () => {
 	test('width odd line length', () => {
 		const expectVal = (size: number) => ({ width: size, height: size });
-		expect(deducePuzzleDimensionsFromLength(11 * 11)).toStrictEqual(expectVal(11));
-		expect(deducePuzzleDimensionsFromLength(5 * 5)).toStrictEqual(expectVal(5));
-		expect(deducePuzzleDimensionsFromLength(1 * 1)).toStrictEqual(expectVal(1));
+		expect(deducePuzzleDimensions(11 * 11)).toStrictEqual(expectVal(11));
+		expect(deducePuzzleDimensions(5 * 5)).toStrictEqual(expectVal(5));
+		expect(deducePuzzleDimensions(1 * 1)).toStrictEqual(expectVal(1));
 	})
 
 	test('with square size', () => {
 		const expectVal = (size: number) => ({ width: size, height: size });
-		expect(deducePuzzleDimensionsFromLength(2 * 2)).toStrictEqual(expectVal(2));
-		expect(deducePuzzleDimensionsFromLength(10 * 10)).toStrictEqual(expectVal(10));
-		expect(deducePuzzleDimensionsFromLength(16 * 16)).toStrictEqual(expectVal(16));
-		expect(deducePuzzleDimensionsFromLength(20 * 20)).toStrictEqual(expectVal(20));
+		expect(deducePuzzleDimensions(2 * 2)).toStrictEqual(expectVal(2));
+		expect(deducePuzzleDimensions(10 * 10)).toStrictEqual(expectVal(10));
+		expect(deducePuzzleDimensions(16 * 16)).toStrictEqual(expectVal(16));
+		expect(deducePuzzleDimensions(20 * 20)).toStrictEqual(expectVal(20));
 
-		const diffA = deducePuzzleDimensionsFromLength(16 * 10);
+		const diffA = deducePuzzleDimensions(16 * 10);
 		expect(diffA.width).not.toBeCloseTo(diffA.height);
 	})
 
 	test('with rectangular size', () => {
 		const expectVal = (width: number, height: number) => ({ width, height });
 
-		expect(deducePuzzleDimensionsFromLength(10 * 16)).toStrictEqual(expectVal(10, 16));
-		expect(deducePuzzleDimensionsFromLength(12 * 16)).toStrictEqual(expectVal(12, 16));
-		expect(deducePuzzleDimensionsFromLength(4 * 14)).toStrictEqual(expectVal(4, 14));
-		expect(deducePuzzleDimensionsFromLength(6 * 10)).toStrictEqual(expectVal(6, 10));
+		expect(deducePuzzleDimensions(10 * 16)).toStrictEqual(expectVal(10, 16));
+		expect(deducePuzzleDimensions(12 * 16)).toStrictEqual(expectVal(12, 16));
+		expect(deducePuzzleDimensions(4 * 14)).toStrictEqual(expectVal(4, 14));
+		expect(deducePuzzleDimensions(6 * 10)).toStrictEqual(expectVal(6, 10));
 
-		expect(() => deducePuzzleDimensionsFromLength(11 * 12)).toThrow();
+		expect(() => deducePuzzleDimensions(11 * 12)).toThrow();
 	})
 
 	test('with conflictign rectangular size', () => {
 		// can be 8x12, but also 6x16
-		const result96A = deducePuzzleDimensionsFromLength(8 * 12);
-		const result96B = deducePuzzleDimensionsFromLength(6 * 16);
+		const result96A = deducePuzzleDimensions(8 * 12);
+		const result96B = deducePuzzleDimensions(6 * 16);
 
 		expect(result96B).toStrictEqual(result96A);
 		expect(result96A).toStrictEqual({ width: 8, height: 12 });
 
-		const result48A = deducePuzzleDimensionsFromLength(6 * 8);
-		const result48B = deducePuzzleDimensionsFromLength(4 * 12);
+		const result48A = deducePuzzleDimensions(6 * 8);
+		const result48B = deducePuzzleDimensions(4 * 12);
 
 		expect(result48A).toStrictEqual(result48B);
 		expect(result48A).toStrictEqual({ width: 6, height: 8 });
