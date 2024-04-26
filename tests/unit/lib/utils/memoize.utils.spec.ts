@@ -1,5 +1,4 @@
-import { expect, it, describe, vi } from 'vitest';
-import { memoize } from '../../../../src/lib/memoize.utils';
+import { memoize } from "@/lib/utils/memoize.utils.js";
 
 describe('memoize function', () => {
 	it('correctly memoized results with a single argument', () => {

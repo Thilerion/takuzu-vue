@@ -1,5 +1,5 @@
 import { range } from "@/utils/array.ts.utils.js";
-import { memoize } from "../memoize.utils.js";
+import { memoize } from "../utils/memoize.utils.js";
 import type { ColumnId, RowId } from "../types.js";
 import { xToColumnId, yToRowId } from "../utils/puzzle-line.utils.js";
 

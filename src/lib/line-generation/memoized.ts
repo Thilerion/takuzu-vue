@@ -1,5 +1,5 @@
 import { ONE, ZERO } from "../constants.js";
-import { memoize } from "../memoize.utils.js";
+import { memoize } from "../utils/memoize.utils.js";
 import type { PuzzleSymbolCount } from "../types.js";
 import { generateAllLineCompletions, generateValidLineCompletions } from "./completions.js";
 import { generateValidLinesOfSize } from "./lines-of-size.js";
