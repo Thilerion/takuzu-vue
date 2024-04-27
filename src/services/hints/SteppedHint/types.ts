@@ -1,6 +1,5 @@
 import type { BoardAndSolutionBoards } from "@/lib/types.js";
 import type { usePuzzleStore } from "@/stores/puzzle/store.js";
-import type { Ref } from "vue";
 import type { TriplesSteppedHint } from "./TriplesHint.js";
 import type { BalanceSteppedHint } from "./BalanceHint.js";
 import type { IncorrectValuesSteppedHint } from "./IncorrectValuesHint.js";
@@ -9,6 +8,7 @@ import type { GenericEliminationSteppedHint } from "./GenericEliminationHint.js"
 import type { usePuzzleVisualCuesStore } from "@/stores/puzzle-visual-cues.js";
 import type { PuzzleBoardHighlight } from "@/helpers/puzzle-visual-cues.js";
 import type { GenericDuplicateLineSteppedHint } from "./GenericDuplicateLineHint.js";
+import type { WritableComputedRef } from "vue";
 
 export type SteppedHintType = 'ruleViolation' | 'incorrectValues' | 'triples' | 'balance' | 'eliminationGeneric' | 'duplicateLineGeneric' | 'noHintsFound';
 export type HintStepEventCallbackCtxParam = BoardAndSolutionBoards;
@@ -19,7 +19,7 @@ export type HintStepEventCallbackActionsParam = {
 	removeHighlights: () => void,
 	setHighlights: ReturnType<typeof usePuzzleVisualCuesStore>['setHintHighlights'],
 	addErrorMarksFromCells: ReturnType<typeof usePuzzleVisualCuesStore>['addErrorMarksFromCells'],
-	currentHighlights: Ref<PuzzleBoardHighlight[]>,
+	currentHighlights: WritableComputedRef<PuzzleBoardHighlight[]>,
 	showHighlights: () => void,
 	hideHighlights: () => void,
 }

@@ -1,9 +1,9 @@
 import { computed, toValue } from "vue";
-import { usePuzzleStore } from "../../stores/puzzle/store.js";
 import type { ReadonlyRefOrGetter } from "@vueuse/core";
 import type { HintStep, HintStepEventCallback, HintStepEvent, HintStepEventCallbackActionsParam, HintStepEventCallbackCtxParam } from "./SteppedHint/types.js";
-import { toRef } from "vue";
-import { usePuzzleVisualCuesStore } from "../../stores/puzzle-visual-cues.js";
+import { usePuzzleStore } from "@/stores/puzzle/store.js";
+import { usePuzzleVisualCuesStore } from "@/stores/puzzle-visual-cues.js";
+import type { PuzzleBoardHighlight } from "@/helpers/puzzle-visual-cues.js";
 
 export const useSteppedHintEvents = (
 	stepRef: ReadonlyRefOrGetter<HintStep | null | undefined>
@@ -15,14 +15,21 @@ export const useSteppedHintEvents = (
 	}));
 
 	const visualCuesStore = usePuzzleVisualCuesStore();
-	const currentHighlights = toRef(visualCuesStore, 'highlights');
+	const currentHighlights = computed<PuzzleBoardHighlight[]>({
+		get: (): PuzzleBoardHighlight[] => {
+			return [...visualCuesStore.highlights];
+		},
+		set: (value: PuzzleBoardHighlight[]) => {
+			visualCuesStore.highlights = [...value];
+		}
+	})
 
 	const actions = computed((): HintStepEventCallbackActionsParam => ({
 		hideHighlights: visualCuesStore.hideHighlights,
 		removeHighlights: visualCuesStore.clearHighlightsFromHints,
 		setHighlights: visualCuesStore.setHintHighlights,
 		addErrorMarksFromCells: visualCuesStore.addErrorMarksFromCells,
-		currentHighlights,
+		currentHighlights: currentHighlights,
 		showHighlights: visualCuesStore.showHighlights,
 		makeMove: puzzleStore.makeMove,
 		makeMultipleMoves: puzzleStore.makeMultipleMoves,

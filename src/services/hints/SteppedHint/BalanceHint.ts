@@ -55,14 +55,14 @@ export class BalanceSteppedHint extends BaseSteppedHint {
 			onHide: (ctx, { hideHighlights }) => {
 				hideHighlights();
 			},
-			onNext: (ctx, { currentHighlights }) => {
+			onNext: (ctx, { setHighlights }) => {
 				const cellHighlights: CellHighlight[] = this.targets.map((tg) => {
 					return createCellHighlight(tg, {
 						colorId: 2,
 						source: 'hint'
 					})
 				});
-				currentHighlights.value.push(...cellHighlights);
+				setHighlights(cellHighlights);
 			}
 		}
 

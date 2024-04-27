@@ -1,5 +1,4 @@
 import type { SimpleBoard } from "@/lib/board/Board.js";
-import type { SteppedHint } from "./SteppedHint/types.js";
 import { TriplesSteppedHint } from "./SteppedHint/TriplesHint.js";
 import { BalanceSteppedHint } from "./SteppedHint/BalanceHint.js";
 import { GenericDuplicateLineSteppedHint } from "./SteppedHint/GenericDuplicateLineHint.js";
@@ -9,7 +8,7 @@ import { humanBalanceTechnique } from "@/lib/solvers/human-solver/techniques/Bal
 import { genericDuplicateLineTechnique } from "@/lib/solvers/human-solver/techniques/GenericDuplicateLineTechnique.js";
 import { genericEliminationTechnique, type GenericEliminationTechniqueResult } from "@/lib/solvers/human-solver/techniques/GenericEliminationTechnique.js";
 
-export function findHintWithHumanTechniques(board: SimpleBoard): SteppedHint | null {
+export function findHintWithHumanTechniques(board: SimpleBoard): TriplesSteppedHint | BalanceSteppedHint | GenericEliminationSteppedHint | GenericDuplicateLineSteppedHint | null {
 	return findTriplesHint(board)
 		?? findBalanceHint(board)
 		// TODO: generic elimination and duplicate line hints can throw "UnsolvableBoardLineError" if the board is invalid. They should be handled somewhere at least.
