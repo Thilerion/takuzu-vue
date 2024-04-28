@@ -7,22 +7,18 @@
 			"advanced-techniques": "Geavanceerde Technieken"
 		},
 		"page-title": "Spelhulp",
-
 		"Overview": {
 			"intro-heading": "Welkom bij Takuzu!",
 			"intro-names": "Takuzu is bekend onder vele namen, zoals binaire puzzel, Binairo, Binero, Tohu-wa-vohu, en nog veel meer.",
 			"intro-description": "Het is een logisch denkspel dat eenvoudige regels combineert met verrassende diepgang. Het spel lijkt in eerste instantie eenvoudig omdat het bestaat uit het invullen van een raster met slechts twee {symbolOrColorPlural}. Echter, naarmate je vordert in hogere niveaus, onthult Takuzu een complexe laag van strategie die de puzzels aanzienlijk uitdagender maakt.",
-
 			"goal-heading": "Het doel",
 			"goal-text": "Het doel van een binaire puzzel is eenvoudig: vul elke cel van het raster met een {symbolZero} of een {symbolOne} volgens drie eenvoudige regels.",
-
 			"rules-heading": "De regels in het kort",
 			"rules-link": "Klik hier voor de uitgebreide omschrijving van de regels met voorbeelden",
 			"rules-list-1": "Elke rij en kolom moet een gelijk aantal {symbolZeroPlural} en {symbolOnePlural} bevatten.",
 			"rules-list-2": "Er mogen niet meer dan twee aangrenzende {symbolZeroPlural} of {symbolOnePlural} in een rij of kolom staan.",
 			"rules-list-3": "Elke rij en kolom moet uniek zijn."
 		},
-
 		"BasicRules": {
 			"balanced-lines": {
 				"description-1": "Elke rij en kolom moet een gelijk aantal {symbolOnePlural} en {symbolZeroPlural} bevatten.",
@@ -47,32 +43,6 @@
 				"title": "Unieke Rijen en Kolommen"
 			}
 		},
-		"BasicTechniques": {
-			"description": "We hebben een aantal basisstrategieën op een rij gezet om je te helpen soepel door de puzzels te navigeren.",
-			"line-completion": {
-				"description": "Volgens de 'gebalanceerde lijnen'-regel moet elke rij en kolom een gelijk aantal {symbolZeroPlural} en {symbolOnePlural} bevatten. Tijdens het oplossen kan je deze regel gebruiken om rijen en kolommen, die al het maximale aantal van één {symbolOrColor} bevatten, te voltooien.",
-				"example": "Deze rij heeft 6 cellen, wat betekent dat er 3 van elke {symbolOrColor} vereist zijn. Zoals je in de bovenste rij kunt zien, zijn er 3 {symbolOnePlural}, wat betekent dat alle andere cellen {symbolZeroPlural} moeten zijn.",
-				"tip": "Er is een instelling beschikbaar die een horizontale en verticale liniaal aan het puzzelraster toevoegt. Deze linialen geven aan hoeveel van elke {symbolOrColor} er nog in die rij of kolom moeten worden geplaatst, en laten het zien als een {symbolOrColor} niet meer gebruikt kan worden, wat betekent dat deze gevuld moet worden met de andere {symbolOrColor}.",
-				"title": "Rijen en kolommen voltooien"
-			},
-			"pairs-and-sandwiches": {
-				"description": "Deze techniek voorkomt het onstaan van drielingen (drie op een rij), en is een toepassing van de regel 'maximaal twee opeenvolgend'.",
-				"pairs": "Paren",
-				"pairs-description": "Wanneer je twee identieke {symbolOrColorPlural} naast elkaar ziet, horizontaal of verticaal, vormt dit een 'paar'. De cellen die direct aan dit paar grenzen, moeten worden gevuld met de andere {symbolOrColor} om te voorkomen dat er een reeks van drie {symbolOrColorPlural} op een rij (een drieling) ontstaat.",
-				"sandwiches": "Sandwiches",
-				"sandwiches-description": "Er is sprake van een 'sandwich' wanneer een lege cel tussen twee identieke {symbolOrColorPlural} ligt. Deze lege cel moet worden gevuld met de andere {symbolOrColor} om te voorkomen dat er een drieling ontstaat.",
-				"title": "Paren en 'sandwiches' identificeren"
-			},
-			"unique-lines": {
-				"description": "Deze strategie is vaak niet noodzakelijk voor het oplossen van puzzels, vooral niet bij makkelijkere puzzels, dankzij het op maat gemaakte algoritme voor het genereren van puzzels. Maar het kan nuttig zijn bij kleinere en moeilijkere puzzels als je anders niet verder komt.",
-				"example-label": "Laten we kijken naar deze 4x4-puzzel. Er zijn al twee rijen voltooid en de eerste rij lijkt op de tweede rij:",
-				"example-label-2": "Deze rij kan maar op één manier worden ingevuld om twee identieke rijen te voorkomen:",
-				"title": "Unieke rijen en kolommen",
-				"when-to-use-label": "Wanneer te gebruiken:",
-				"when-to-use-text": "Het is vooral handig wanneer een lijn bijna compleet is, maar niet kan worden voltooid met behulp van de basisregels van balanceren, sandwiches of paren. Als je gebruik maakt van de liniaalinstelling die het resterende aantal te plaatsen van elke {symbolOrColor} aangeeft, let dan goed op de lijnen waar nog precies één {symbolOne} en één {symbolZero} vereist is. Vergelijk deze dan met al complete lijnen die er bijna hetzelfde uitzien."
-			},
-			"a-becomes-b": "Wordt:"
-		},
 		"LabelCorrect": "Juist:",
 		"LabelIncorrect": "Onjuist:",
 		"Variations": {
@@ -84,6 +54,28 @@
 			},
 			"description": "Naast standaardpuzzels is er één puzzelvariant beschikbaar:",
 			"title": "Puzzelvarianten"
+		},
+		"BasicTechniques": {
+			"Becomes:": "Wordt:",
+			"identify-pairs": {
+				"description": "Als twee identieke {symbolOrColorPlural} naast elkaar staan, noemen we dit een 'paar'. Aangezien elke {symbolOrColor} maximaal twee keer naast of onder elkaar mag verschijnen, kunnen de naastgelegen cellen ingevuld worden met de tegenovergestelde {symbolOrColor}.",
+				"name": "Paren identificeren"
+			},
+			"identify-sandwiches": {
+				"name": "'Sandwiches' identificeren",
+				"description": "Een lege cel tussen twee gelijke {symbolOrColorPlural} vormt een 'sandwich'. Deze lege cel moet de andere {symbolOrColor} bevatten om te voorkomen dat er drie dezelfde {symbolOrColorPlural} op een rij komen te staan."
+			},
+			"fill-lines": {
+				"name": "Rijen en kolommen aanvullen",
+				"description": "Elke rij en elke kolom moet een gelijk aantal van elke {symbolOrColor} bevatten. Als een rij of kolom al het maximum aantal van één {symbolOrColor} heeft, dan moeten de overige lege cellen dus de andere {symbolOrColor} krijgen.",
+				"example": "Deze rij heeft 6 cellen, wat betekent dat er 3 van elke {symbolOrColor} vereist zijn. Zoals je in de bovenste rij kunt zien, zijn er 3 {symbolOnePlural}, wat betekent dat alle andere cellen {symbolZeroPlural} moeten zijn."
+			},
+			"prevent-duplicate-lines": {
+				"name": "Dubbele rijen en kolommen vermijden",
+				"description": "Elke rij en elke kolom moet uniek zijn. Je kan deze techniek bijvoorbeeld toepassen als je al een volledig ingevulde rij of kolom hebt, en er een andere rij of kolom is die bijna hetzelfde is. Ontbrekende cellen kunnen soms maar op één manier worden ingevuld zonder dat de twee rijen of kolommen hetzelfde worden.",
+				"example-label": "Laten we kijken naar deze 4x4-puzzel. Er zijn al twee rijen voltooid en de eerste rij lijkt op de tweede rij:",
+				"example-label-2": "Deze rij kan maar op één manier worden ingevuld om twee identieke rijen te voorkomen:"
+			}
 		}
 	}
 }
