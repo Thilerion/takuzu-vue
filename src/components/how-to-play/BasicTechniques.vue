@@ -13,7 +13,7 @@
 			<HowToPlayExample el="div" label="" class="border-y breakout bg-white/5 dark:border-slate-200/50 px-8 py-4">
 				<template #examples>
 					<HowToPlayExampleCells :values="splitLine('.00.')" />
-					<span class="">Becomes:</span>
+					<span class="">{{ $t('HowToPlay.BasicTechniques.a-becomes-b') }}</span>
 					<HowToPlayExampleCells :values="splitLine('1001')" />
 				</template>
 			</HowToPlayExample>
@@ -23,7 +23,7 @@
 			<HowToPlayExample el="div" label="" class="border-y breakout bg-white/5 dark:border-slate-200/50 px-8 py-4">
 				<template #examples>
 					<HowToPlayExampleCells :values="splitLine('.1.1..')" />
-					<span class="">Becomes:</span>
+					<span class="">{{ $t('HowToPlay.BasicTechniques.a-becomes-b') }}</span>
 					<HowToPlayExampleCells :values="splitLine('.101..')" />
 				</template>
 			</HowToPlayExample>
@@ -37,6 +37,7 @@
 			<HowToPlayExample el="div" label="" class="border-y breakout bg-white/5 dark:border-slate-200/50 px-8 pb-0 pt-4">
 				<template #examples>
 					<HowToPlayExampleCells :values="splitLine('1..110')" />
+					<span class="">{{ $t('HowToPlay.BasicTechniques.a-becomes-b') }}</span>
 					<HowToPlayExampleCells :values="splitLine('100110')" />
 				</template>
 				<template #explanation>

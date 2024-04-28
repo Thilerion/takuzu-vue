@@ -7,22 +7,18 @@
 			"advanced-techniques": "Advanced Techniques"
 		},
 		"page-title": "How To Play",
-
 		"Overview": {
 			"intro-heading": "Welcome to Takuzu!",
 			"intro-names": "Takuzu is known by many names, such as Binary Puzzle, Binairo, Binero, Tohu-wa-vohu, and many more.",
 			"intro-description": "It is a logical thinking game that combines simple rules with surprising depth. Initially, the game seems simple as it involves filling a grid with just two colors. However, as you progress to higher levels, Takuzu reveals a complex layer of strategy that makes the puzzles significantly more challenging.",
-		
 			"goal-heading": "The Goal",
 			"goal-text": "The goal of a binary puzzle is simple: fill every cell of the grid with a {symbolZero} or a {symbolOne} according to three simple rules.",
-		
 			"rules-heading": "The Rules at a Glance",
 			"rules-link": "Click here for a detailed description of the rules with examples",
 			"rules-list-1": "Each row and column must contain an equal number of {symbolZeroPlural} and {symbolOnePlural}.",
 			"rules-list-2": "No more than two adjacent {symbolZeroPlural} or {symbolOnePlural} may be in a row or column.",
 			"rules-list-3": "Each row and column must be unique."
 		},
-
 		"BasicRules": {
 			"balanced-lines": {
 				"description-1": "Each row and column must have an equal number of {symbolOnePlural} and {symbolZeroPlural}.",
@@ -70,7 +66,8 @@
 				"title": "Unique Rows and Columns",
 				"when-to-use-label": "When to use:",
 				"when-to-use-text": "It's especially helpful in scenarios where a line is almost complete yet cannot be completed using the basic rules of balancing, sandwiches, or pairs. If you're leveraging the rulers setting that indicates the remaining number of each {symbolOrColor} needed in a row or column, pay close attention to lines that require the placement of exactly one {symbolOne} and one {symbolZero}. Compare these scenarios with existing lines to identify the correct placements."
-			}
+			},
+			"a-becomes-b": "Becomes:"
 		},
 		"LabelCorrect": "Correct: ",
 		"LabelIncorrect": "Incorrect: ",
