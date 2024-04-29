@@ -19,7 +19,7 @@ export type HintStepEventCallbackActionsParam = {
 	removeHighlights: () => void,
 	setHighlights: ReturnType<typeof usePuzzleVisualCuesStore>['setHintHighlights'],
 	addErrorMarksFromCells: ReturnType<typeof usePuzzleVisualCuesStore>['addErrorMarksFromCells'],
-	currentHighlights: WritableComputedRef<PuzzleBoardHighlight[]>,
+	currentHighlights: WritableComputedRef<ReadonlyArray<PuzzleBoardHighlight>>,
 	showHighlights: () => void,
 	hideHighlights: () => void,
 }

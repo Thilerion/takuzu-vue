@@ -53,8 +53,8 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 			onHide: (ctx, { hideHighlights }) => {
 				hideHighlights();
 			},
-			onNext: (ctx, { currentHighlights }) => {
-				TriplesSteppedHint.addTargetsHighlights(this.targets, { currentHighlights });
+			onNext: (ctx, { currentHighlights, setHighlights }) => {
+				TriplesSteppedHint.addTargetsHighlights(this.targets, { currentHighlights, setHighlights });
 			},
 		}
 		// The final step further explains the hint, and has an action that sets the target(s) to the opposite (correct) symbol.
@@ -105,14 +105,14 @@ export class TriplesSteppedHint extends BaseSteppedHint {
 	}
 	static addTargetsHighlights(
 		targets: Vec[],
-		{ currentHighlights }: Pick<HintStepEventCallbackActionsParam, 'currentHighlights'>
+		{ currentHighlights, setHighlights }: Pick<HintStepEventCallbackActionsParam, 'currentHighlights' | 'setHighlights'>
 	) {
 		const highlights = targets.map(vec => createCellHighlight(vec, {
 			colorId: 2,
 			source: 'hint'
 		}));
 
-		currentHighlights.value.push(...highlights);
+		setHighlights([...currentHighlights.value, ...highlights], { setVisible: true })
 	}
 	static removeTargetsHighlights(
 		{ currentHighlights }: Pick<HintStepEventCallbackActionsParam, 'currentHighlights'>
