@@ -1,29 +1,29 @@
 <template>
+<div
+	class="puzzle-info"
+	:class="{ 'has-border': hasBorder }"
+>
 	<div
-		class="puzzle-info"
-		:class="{ 'has-border': hasBorder }"
+		class="difficulty text-left"
+	>{{ difficulty }}* {{ difficultyLabelMsg }}</div>
+
+	<PuzzleInfoTimer
+		v-if="showTimer"
+		:puzzle-paused="puzzlePaused"
+	/>
+
+	<i18n-t
+		keypath="PlayPuzzle.progress-percentage"
+		tag="div"
+		scope="global"
+		class="progress text-right whitespace-nowrap"
 	>
-		<div
-			class="difficulty text-left"
-		>{{difficulty}}* {{ difficultyLabelMsg }}</div>
+		<template #p>
+			<div class="progress-percentage">{{ progressPercentage }}</div>
+		</template>
+	</i18n-t>
 
-		<PuzzleInfoTimer
-			:puzzle-paused="puzzlePaused"
-			v-if="showTimer"
-		/>
-
-		<i18n-t
-			keypath="PlayPuzzle.progress-percentage"
-			tag="div"
-			scope="global"
-			class="progress text-right whitespace-nowrap"
-		>
-			<template #p>
-				<div class="progress-percentage">{{progressPercentage}}</div>
-			</template>
-		</i18n-t>
-
-	</div>
+</div>
 </template>
 
 <script setup lang="ts">

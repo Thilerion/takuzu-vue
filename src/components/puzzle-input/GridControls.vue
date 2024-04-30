@@ -1,39 +1,63 @@
 <template>
-	<div>
-		<header>Puzzle dimensions</header>
-		<button @click="expanded = !expanded">Expand</button>
+<div>
+	<header>Puzzle dimensions</header>
+	<button @click="expanded = !expanded">Expand</button>
 	<ExpandTransition :duration="300" :show="expanded">
-	<div>
-		<div class="flex flex-row gap-x-4">
-			<div class="flex flex-col">
-				<label for="widthInput">Width</label>
-				<input type="number" :value="width" @change="setWidth(($event.target as HTMLInputElement).valueAsNumber)" name="width" id="widthInput" min="4" max="16" class="p-2 text-sm min-w-[3.5rem] min-h-8 rounded border-gray-400">
+		<div>
+			<div class="flex flex-row gap-x-4">
+				<div class="flex flex-col">
+					<label for="widthInput">Width</label>
+					<input
+						id="widthInput"
+						type="number"
+						:value="width"
+						name="width"
+						min="4"
+						max="16"
+						class="p-2 text-sm min-w-[3.5rem] min-h-8 rounded border-gray-400"
+						@change="setWidth(($event.target as HTMLInputElement).valueAsNumber)"
+					>
+				</div>
+				<div class="self-end py-2">x</div>
+				<div class="flex flex-col">
+					<label for="heightInput">Height</label>
+					<input
+						id="heightInput"
+						type="number"
+						:value="height"
+						name="height"
+						min="4"
+						max="16"
+						class="p-2 text-sm min-w-[3.5rem] min-h-[2rem] rounded border-gray-400 disabled:text-gray-600 disabled:bg-gray-100 disabled:border-gray-400/70"
+						:disabled="forceSquareGrid"
+						@change="setHeight(($event.target as HTMLInputElement).valueAsNumber)"
+					>
+				</div>
 			</div>
-			<div class="self-end py-2">x</div>
-			<div class="flex flex-col">
-				<label for="heightInput">Height</label>
-				<input type="number" :value="height" @change="setHeight(($event.target as HTMLInputElement).valueAsNumber)" name="height" id="heightInput" min="4" max="16" class="p-2 text-sm min-w-[3.5rem] min-h-[2rem] rounded border-gray-400 disabled:text-gray-600 disabled:bg-gray-100 disabled:border-gray-400/70" :disabled="forceSquareGrid">
+			<label class="py-2 inline-flex items-center gap-x-2 text-sm">
+				<input
+					id="squareGridToggle"
+					type="checkbox"
+					name="squareGrid"
+					:checked="forceSquareGrid"
+					@input="setSquareGridToggle(($event.target as HTMLInputElement).checked)"
+				>
+				Force square grid
+			</label>
+			<div class="flex flex-row gap-2">
+				<BaseButton @click="emitSetDimensions">
+					<span v-if="gridExists">Update</span>
+					<span v-else>Create</span>
+				</BaseButton>
+				<BaseButton @click="emitReset">Reset</BaseButton>
 			</div>
 		</div>
-		<label class="py-2 inline-flex items-center gap-x-2 text-sm">
-			<input type="checkbox" name="squareGrid" id="squareGridToggle" @input="setSquareGridToggle(($event.target as HTMLInputElement).checked)" :checked="forceSquareGrid">
-			Force square grid
-		</label>
-		<div class="flex flex-row gap-2">
-			<BaseButton @click="emitSetDimensions">
-				<span v-if="gridExists">Update</span>
-				<span v-else>Create</span>
-			</BaseButton>
-			<BaseButton @click="emitReset">Reset</BaseButton>
-		</div>
-	</div>
 	</ExpandTransition>
-	</div>
+</div>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref, toRef } from 'vue';
-
 
 const emit = defineEmits([
 	'reset',
@@ -139,9 +163,4 @@ const emitReset = () => {
 	emit('reset');
 }
 
-
 </script>
-
-<style scoped>
-
-</style>

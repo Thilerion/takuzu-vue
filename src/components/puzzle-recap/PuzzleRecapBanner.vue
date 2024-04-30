@@ -1,25 +1,25 @@
 <template>
-	<transition
-		name="t-banner"
-		@after-enter="afterEnter"
-		@after-leave="afterLeave"
-		:duration="{enter: enterDuration, leave: leaveDuration}"
-		appear
-	>
+<transition
+	name="t-banner"
+	:duration="{enter: enterDuration, leave: leaveDuration}"
+	appear
+	@after-enter="afterEnter"
+	@after-leave="afterLeave"
+>
 	<div
-		class="banner-container bg-black text-white w-full my-auto flex justify-center items-center relative py-1"
 		v-show="show"
+		class="banner-container bg-black text-white w-full my-auto flex justify-center items-center relative py-1"
 	>
 		<div
 			class="banner min-h-[2rem] px-4 py-6"
 			@click="emit('close')"
 		>
 			<div class="text-xl">
-				<slot>{{$t(bannerText, $t('Recap.fallbackCompliment'))}}</slot>
+				<slot>{{ $t(bannerText, $t('Recap.fallbackCompliment')) }}</slot>
 			</div>
 		</div>
 	</div>
-	</transition>
+</transition>
 </template>
 
 <script setup lang="ts">

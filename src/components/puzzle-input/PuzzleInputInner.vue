@@ -1,87 +1,116 @@
 <template>
-	<main class="pt-4 gap-y-4 grid bleed-grid-4 v-grid-bleed text-sm">
-		<GridControls class="bg-white rounded px-4 pt-4 pb-2 shadow" @reset="resetGridValues"
-			@set-dimensions="(w: number, h: number) => updatePuzzleGridBase(w, h)"
-			:grid-exists="puzzleGridBase != null && puzzleGridBase?.[0] != null" v-model="config" />
+<main class="pt-4 gap-y-4 grid bleed-grid-4 v-grid-bleed text-sm">
+	<GridControls
+		v-model="config"
+		class="bg-white rounded px-4 pt-4 pb-2 shadow"
+		:grid-exists="puzzleGridBase != null && puzzleGridBase?.[0] != null"
+		@reset="resetGridValues"
+		@set-dimensions="(w: number, h: number) => updatePuzzleGridBase(w, h)"
+	/>
 
-		<div class="bg-white rounded px-1 py-4 shadow full-bleed" v-if="isValidPuzzleGrid">
-			<div class="mb-2 px-2">
-				<label>
-					<input type="checkbox" v-model="toggleInputMode">
-					Use toggle input mode
-				</label>
-			</div>
-			<PuzzleInputTable v-if="isValidPuzzleGrid" :grid="puzzleGridBase!"
-				@set-value="({ x, y, value }) => puzzleGridBase![y][x] = value">
-				<template v-slot="{ x, y, index }">
-					<PuzzleInputField v-model="puzzleGridBase![y][x]"
-						@set-multiple="(val) => setMultipleValuesFromString(val, { index })"
-						@import-export-string="importExportString" inputmode="numeric" enterkeyhint="next"
-						:ref="(el) => setRef(el as (InstanceType<typeof PuzzleInputField> | null), { index })" :index="index" :disabled="toggleInputMode" :class="{
-							'bg-blue-100': puzzleGridBase![y][x] === '0',
-							'bg-red-100': puzzleGridBase![y][x] === '1',
-						}" />
-					<button class="absolute top-0 left-0 z-20 w-full h-full touch-manipulation"
-						@click="toggleValue(x, y)" v-if="toggleInputMode"></button>
-				</template>
-			</PuzzleInputTable>
-
-			<div class="my-2">
-				<InputValidityDisplay
-					v-if="puzzleGridBase != null"
-					v-bind="inputSolutionsDataRaw"
-					:max-solutions="maxSolutions"
+	<div v-if="isValidPuzzleGrid" class="bg-white rounded px-1 py-4 shadow full-bleed">
+		<div class="mb-2 px-2">
+			<label>
+				<input v-model="toggleInputMode" type="checkbox">
+				Use toggle input mode
+			</label>
+		</div>
+		<PuzzleInputTable
+			v-if="isValidPuzzleGrid"
+			:grid="puzzleGridBase!"
+			@set-value="({ x, y, value }) => puzzleGridBase![y][x] = value"
+		>
+			<template #default="{ x, y, index }">
+				<PuzzleInputField
+					:ref="(el) => setRef(el as (InstanceType<typeof PuzzleInputField> | null), { index })"
+					v-model="puzzleGridBase![y][x]"
+					inputmode="numeric"
+					enterkeyhint="next"
+					:index="index"
+					:disabled="toggleInputMode"
+					:class="{
+						'bg-blue-100': puzzleGridBase![y][x] === '0',
+						'bg-red-100': puzzleGridBase![y][x] === '1',
+					}"
+					@set-multiple="(val) => setMultipleValuesFromString(val, { index })"
+					@import-export-string="importExportString"
 				/>
-			</div>
+				<button
+					v-if="toggleInputMode"
+					class="absolute top-0 left-0 z-20 w-full h-full touch-manipulation"
+					@click="toggleValue(x, y)"
+				></button>
+			</template>
+		</PuzzleInputTable>
 
-			<div class="my-2 px-0.5">
-				<BaseButton @click="showPuzzleStrings = !showPuzzleStrings"
-					class="w-full -mb-0.5 transition-colors duration-500" :class="{
-						'!rounded-b-none': showPuzzleStrings,
-						'!bg-gray-100': !showPuzzleStrings
-					}">
-					<div class="w-full flex justify-between">
-						<span>Puzzle strings</span>
-						<icon-ic-outline-keyboard-arrow-down class="ml-auto transition-transform duration-500" :class="{
-							'rotate-180': showPuzzleStrings
-						}" />
-					</div>
-				</BaseButton>
-				<ExpandTransition @after-enter="scrollToPuzzleStrings" :duration="200" :show="showPuzzleStrings">
-					<div ref="puzzleStringsEl">
-						<div
-							class="pt-2 w-full flex flex-col px-3 gap-y-2 box-border border border-gray-200 border-t-transparent pb-3 rounded-b">
-							<div>Short</div>
-							<div class="max-w-full text-sm pr-1 pl-2 py-2 bg-gray-100 rounded mb-2">
-								<BaseButton
-									class="float-right ml-2 mb-0.5 px-2 py-2 my-auto rounded border inline-block w-24"
-									@click="copyShortStr">{{ copyShortSuccess ? 'Copied!' : 'Copy' }}</BaseButton>
-								<p class="break-all font-mono">{{ puzzleGridStrShort }}</p>
-							</div>
-							<div>Long</div>
-							<div class="max-w-full text-sm pr-1 pl-2 py-2 bg-gray-100 rounded">
-								<BaseButton
-									class="float-right ml-2 mb-0.5 px-2 py-2 my-auto rounded border inline-block w-24"
-									@click="copyLongStr">{{ copyLongSuccess ? 'Copied!' : 'Copy' }}</BaseButton>
-								<p class="break-words font-mono">{{ puzzleGridStrLongFormatted }}</p>
-							</div>
-							<div>Export string</div>
-							<div class="max-w-full text-sm pr-1 pl-2 py-2 bg-gray-100 rounded">
-								<BaseButton
-									class="float-right ml-2 mb-0.5 px-2 py-2 my-auto rounded border inline-block w-24"
-									@click="copyExportStr">{{ copyExportStrSuccess ? 'Copied!' : 'Copy' }}</BaseButton>
-								<p class="break-words font-mono">{{ puzzleGridExportStr }}</p>
-							</div>
+		<div class="my-2">
+			<InputValidityDisplay
+				v-if="puzzleGridBase != null"
+				v-bind="inputSolutionsDataRaw"
+				:max-solutions="maxSolutions"
+			/>
+		</div>
+
+		<div class="my-2 px-0.5">
+			<BaseButton
+				class="w-full -mb-0.5 transition-colors duration-500"
+				:class="{
+					'!rounded-b-none': showPuzzleStrings,
+					'!bg-gray-100': !showPuzzleStrings
+				}"
+				@click="showPuzzleStrings = !showPuzzleStrings"
+			>
+				<div class="w-full flex justify-between">
+					<span>Puzzle strings</span>
+					<icon-ic-outline-keyboard-arrow-down
+						class="ml-auto transition-transform duration-500"
+						:class="{ 'rotate-180': showPuzzleStrings }"
+					/>
+				</div>
+			</BaseButton>
+			<ExpandTransition
+				:duration="200"
+				:show="showPuzzleStrings"
+				@after-enter="scrollToPuzzleStrings"
+			>
+				<div ref="puzzleStringsEl">
+					<div class="pt-2 w-full flex flex-col px-3 gap-y-2 box-border border border-gray-200 border-t-transparent pb-3 rounded-b">
+						<div>Short</div>
+						<div class="max-w-full text-sm pr-1 pl-2 py-2 bg-gray-100 rounded mb-2">
+							<BaseButton
+								class="float-right ml-2 mb-0.5 px-2 py-2 my-auto rounded border inline-block w-24"
+								@click="copyShortStr"
+							>{{ copyShortSuccess ? 'Copied!' : 'Copy' }}</BaseButton>
+							<p class="break-all font-mono">{{ puzzleGridStrShort }}</p>
+						</div>
+						<div>Long</div>
+						<div class="max-w-full text-sm pr-1 pl-2 py-2 bg-gray-100 rounded">
+							<BaseButton
+								class="float-right ml-2 mb-0.5 px-2 py-2 my-auto rounded border inline-block w-24"
+								@click="copyLongStr"
+							>{{ copyLongSuccess ? 'Copied!' : 'Copy' }}</BaseButton>
+							<p class="break-words font-mono">{{ puzzleGridStrLongFormatted }}</p>
+						</div>
+						<div>Export string</div>
+						<div class="max-w-full text-sm pr-1 pl-2 py-2 bg-gray-100 rounded">
+							<BaseButton
+								class="float-right ml-2 mb-0.5 px-2 py-2 my-auto rounded border inline-block w-24"
+								@click="copyExportStr"
+							>{{ copyExportStrSuccess ? 'Copied!' : 'Copy' }}</BaseButton>
+							<p class="break-words font-mono">{{ puzzleGridExportStr }}</p>
 						</div>
 					</div>
-				</ExpandTransition>
-			</div>
+				</div>
+			</ExpandTransition>
 		</div>
-		<div class="bg-white rounded px-6 text-center text-lg py-4 grid place-items-center h-40 shadow full-bleed"
-			v-else>
-			<div>Select grid dimensions to start</div>
-		</div>
-	</main>
+	</div>
+	<div
+		v-else
+		class="bg-white rounded px-6 text-center text-lg py-4 grid place-items-center h-40 shadow full-bleed"
+	>
+		<div>Select grid dimensions to start</div>
+	</div>
+</main>
 </template>
 
 <script setup lang="ts">

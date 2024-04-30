@@ -1,38 +1,41 @@
 <template>
-	<teleport to="#overlay-container">
-		<transition name="t-wrapper">
-			<div
-				class="fixed pointer-events-none inset-0 flex w-full h-full modal-wrapper items-center justify-center"
-				v-if="shouldShow"
-			>
-				<transition name="t-blur">
-					<div class="bg-blur backdrop-blur-sm z-0 absolute w-full h-full inset-0" v-if="showBackdrop"></div>
-				</transition>
+<teleport to="#overlay-container">
+	<transition name="t-wrapper">
+		<div
+			v-if="shouldShow"
+			class="fixed pointer-events-none inset-0 flex w-full h-full modal-wrapper items-center justify-center"
+		>
+			<transition name="t-blur">
+				<div
+					v-if="showBackdrop"
+					class="bg-blur backdrop-blur-sm z-0 absolute w-full h-full inset-0"
+				></div>
+			</transition>
 
-				<PuzzleRecapBanner
-					:show="showBanner"
-					:enter-duration="500"
-					:leave-duration="400"
-					@banner-after-enter="bannerAfterEnter"
-					class="z-10"
-				/>
-				<transition name="t-backdrop">
-					<div v-if="showBackdrop" class="backdrop inset-0 w-full h-full absolute z-0 opacity-90"></div>
-				</transition>
+			<PuzzleRecapBanner
+				:show="showBanner"
+				:enter-duration="500"
+				:leave-duration="400"
+				class="z-10"
+				@banner-after-enter="bannerAfterEnter"
+			/>
+			<transition name="t-backdrop">
+				<div v-if="showBackdrop" class="backdrop inset-0 w-full h-full absolute z-0 opacity-90"></div>
+			</transition>
 
-				<div class="absolute w-full h-full inset-0 z-20 p-6 flex justify-center items-center">
-					<PuzzleRecapModalTransition>
-						<template v-if="showContent">
-							<PuzzleRecapContent
-								@exit-to="exitTo"
-							/>
-						</template>
-					</PuzzleRecapModalTransition>
-				</div>
-
+			<div class="absolute w-full h-full inset-0 z-20 p-6 flex justify-center items-center">
+				<PuzzleRecapModalTransition>
+					<template v-if="showContent">
+						<PuzzleRecapContent
+							@exit-to="exitTo"
+						/>
+					</template>
+				</PuzzleRecapModalTransition>
 			</div>
-		</transition>
-	</teleport>
+
+		</div>
+	</transition>
+</teleport>
 </template>
 
 <script setup lang="ts">

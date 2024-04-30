@@ -1,15 +1,15 @@
 <template>
-	<div
-		class="ruler grid leading-none place-items-center gap-[--grip-gap]"
-		:data-ruler-dir="props.lineType"
-	>
-		<CountsRulerCell
-			v-for="data in rulerLineCountData"
-			:key="data.index"
-			:type="countType"
-			v-bind="{ one: data[ONE], zero: data[ZERO], complete: data.isComplete }"
-		/>
-	</div>
+<div
+	class="ruler grid leading-none place-items-center gap-[--grip-gap]"
+	:data-ruler-dir="props.lineType"
+>
+	<CountsRulerCell
+		v-for="data in rulerLineCountData"
+		:key="data.index"
+		:type="countType"
+		v-bind="{ one: data[ONE], zero: data[ZERO], complete: data.isComplete }"
+	/>
+</div>
 </template>
 
 <script setup lang="ts">

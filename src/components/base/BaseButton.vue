@@ -1,12 +1,12 @@
 <template>
-	<component
-		:is="element"
-		class="btn"
-		:class="{
-			'btn-primary': primary,
-			'btn-elevated': elevated
-		}"
-	><slot /></component>
+<component
+	:is="element"
+	class="btn"
+	:class="{
+		'btn-primary': primary,
+		'btn-elevated': elevated
+	}"
+><slot /></component>
 </template>
 
 <script setup lang="ts">

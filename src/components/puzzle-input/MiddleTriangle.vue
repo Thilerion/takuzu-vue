@@ -1,15 +1,9 @@
 <template>
-	<div
-	
-		class="
-			triangle
-			w-0 h-0
-			border-0 border-transparent"
-		:data-dir="dir"
-		:data-axis="axis"
-	>
-
-	</div>
+<div	
+	class="triangle w-0 h-0 border-0 border-transparent"
+	:data-dir="dir"
+	:data-axis="axis"
+></div>
 </template>
 
 <script setup lang="ts">

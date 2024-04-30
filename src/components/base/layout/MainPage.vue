@@ -1,23 +1,19 @@
 <template>
-	<div class="wrapper relative">
-		<div class="page -mb-2">
-			<main>
-				<router-view v-slot="{ Component }">
-					<transition name="fade" mode="out-in">
-							<component :is="Component" />
-					</transition>
-				</router-view>
-			</main>
-		</div>
-		<div class="sticky bottom-0 w-full inset-x-0 overflow-hidden pt-2">
-			<BottomNav />
-		</div>
+<div class="wrapper relative">
+	<div class="page -mb-2">
+		<main>
+			<router-view v-slot="{ Component }">
+				<transition name="fade" mode="out-in">
+					<component :is="Component" />
+				</transition>
+			</router-view>
+		</main>
 	</div>
+	<div class="sticky bottom-0 w-full inset-x-0 overflow-hidden pt-2">
+		<BottomNav />
+	</div>
+</div>
 </template>
-
-<script setup lang="ts">
-
-</script>
 
 <style>
 .wrapper, .wrapper > .page {

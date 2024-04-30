@@ -1,25 +1,32 @@
 <template>
-	<div>
-		<WarningMsg v-if="!isSupported">{{ $t('Settings.vibration.unsupported') }}</WarningMsg>
-		<InputToggle small v-model="enableVibrationToggleValue" id="vibrationEnabled">
-			<span class="setting-subheading">{{ $t('Settings.vibration.vibrate-when-toggling-cells') }}</span>
-		</InputToggle>
-		<div class="mt-3" :class="{'disabled': !enableVibration}">
-			<label for="vibrationStrength" class="mb-1 setting-subheading">{{ $t('Settings.vibration.vibration-strength') }} <span class="text-xs text-gray-500 dark:text-slate-300">{{vibrationStrengthPercentage}}</span></label>
-			<div class="flex gap-2">
-				<InputRange
-					min="0"
-					:max="sliderMax"
-					:step="1"
-					id="vibrationStrength"
-					:model-value="vibrationStrengthIdx"
-					@update:model-value="setVibrationStrength"
-					class="w-full flex-1"
-				/>
-				<BaseButton @click="vibrate" class="flex-0 w-14 text-sm !py-1 !px-0 !font-normal">{{ $t('test') }}</BaseButton>
-			</div>
+<div>
+	<WarningMsg v-if="!isSupported">{{ $t('Settings.vibration.unsupported') }}</WarningMsg>
+	<InputToggle
+		id="vibrationEnabled"
+		v-model="enableVibrationToggleValue"
+		small
+	>
+		<span class="setting-subheading">{{ $t('Settings.vibration.vibrate-when-toggling-cells') }}</span>
+	</InputToggle>
+	<div class="mt-3" :class="{'disabled': !enableVibration}">
+		<label
+			for="vibrationStrength"
+			class="mb-1 setting-subheading"
+		>{{ $t('Settings.vibration.vibration-strength') }} <span class="text-xs text-gray-500 dark:text-slate-300">{{ vibrationStrengthPercentage }}</span></label>
+		<div class="flex gap-2">
+			<InputRange
+				id="vibrationStrength"
+				min="0"
+				:max="sliderMax"
+				:step="1"
+				:model-value="vibrationStrengthIdx"
+				class="w-full flex-1"
+				@update:model-value="setVibrationStrength"
+			/>
+			<BaseButton class="flex-0 w-14 text-sm !py-1 !px-0 !font-normal" @click="vibrate">{{ $t('test') }}</BaseButton>
 		</div>
 	</div>
+</div>
 </template>
 
 <script setup lang="ts">

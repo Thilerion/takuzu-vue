@@ -1,31 +1,29 @@
 <template>
-	<BaseButton
-		@click="$emit('start')"
-		:disabled="disabled || loading"
-		class="btn-primary min-h-16 self-stretch h-full relative w-full mx-auto shadow disabled:shadow-none"
-	>
-		<transition name="fade-start" mode="out-in">
-			<div v-if="!loading">
+<BaseButton
+	:disabled="disabled || loading"
+	class="btn-primary min-h-16 self-stretch h-full relative w-full mx-auto shadow disabled:shadow-none"
+	@click="$emit('start')"
+>
+	<transition name="fade-start" mode="out-in">
+		<div v-if="!loading">
 			<template v-if="!disabled">
-				<div>{{ $t('NewPuzzle.StartGame.start-game') }} <small class="text-xs opacity-70 font-normal" v-if="replay">({{ $t('Game.replay') }})</small></div>
-				<div class="text-xs" v-if="!disabled">{{sizeStr}} - {{$t(difficultyLabelMsgKey, difficultyLabel)}} - {{difficultyStars}}*</div>
+				<div>{{ $t('NewPuzzle.StartGame.start-game') }} <small v-if="replay" class="text-xs opacity-70 font-normal">({{ $t('Game.replay') }})</small></div>
+				<div v-if="!disabled" class="text-xs">{{ sizeStr }} - {{ $t(difficultyLabelMsgKey, difficultyLabel) }} - {{ difficultyStars }}*</div>
 			</template>
 			<template v-else-if="disabled">
 				<div>{{ $t('NewPuzzle.StartGame.select-puzzle-size') }}</div>
 				<div class="text-xs font-normal text-wrap leading-tight">{{ $t('NewPuzzle.StartGame.some-puzzle-sizes-are-disabled-for-harder-puzzles') }}</div>
 			</template>
+		</div>
+		<div v-else-if="loading">
+			<div class="absolute inset-y-0 w-1/3 left-0 flex justify-center items-center">
+				<LoadingSpinner :size="32" />
 			</div>
-			<div v-else-if="loading">
-				<div class="absolute inset-y-0 w-1/3 left-0 flex justify-center items-center">
-					<LoadingSpinner
-						:size="32"
-					/>
-				</div>
-				<span v-if="!replay">{{ $t('NewPuzzle.StartGame.loading-creating-game') }}</span>
-				<span v-else>{{ $t('NewPuzzle.StartGame.loading-loading-replay') }}</span>
-			</div>
-		</transition>
-	</BaseButton>
+			<span v-if="!replay">{{ $t('NewPuzzle.StartGame.loading-creating-game') }}</span>
+			<span v-else>{{ $t('NewPuzzle.StartGame.loading-loading-replay') }}</span>
+		</div>
+	</transition>
+</BaseButton>
 </template>
 
 <script setup lang="ts">

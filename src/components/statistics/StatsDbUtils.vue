@@ -1,29 +1,30 @@
 <template>
-	<div class="flex justify-center items-center gap-2">
-		<button
-			class="text-btn"	
-			@click="exportStats"
-			:disabled="!numSolved || isBusy"
-		>Export data</button>
-		<button
-			class="text-btn"
-			@click="importStats"
-			:disabled="isBusy"
-		>Import stats</button>
-		<input
-			type="file"
-			ref="fileInput"
-			class="absolute"
-			@change="processStatsFile"
-			multiple
-			accept=".json"
-			hidden>
-		<button
-			class="text-btn danger"
-			@click="resetStats"
-			:disabled="!numSolved || isBusy"
-		>Reset stats</button>
-	</div>
+<div class="flex justify-center items-center gap-2">
+	<button
+		class="text-btn"	
+		:disabled="!numSolved || isBusy"
+		@click="exportStats"
+	>Export data</button>
+	<button
+		class="text-btn"
+		:disabled="isBusy"
+		@click="importStats"
+	>Import stats</button>
+	<input
+		ref="fileInput"
+		type="file"
+		class="absolute"
+		multiple
+		accept=".json"
+		hidden
+		@change="processStatsFile"
+	>
+	<button
+		class="text-btn danger"
+		:disabled="!numSolved || isBusy"
+		@click="resetStats"
+	>Reset stats</button>
+</div>
 </template>
 
 <script setup lang="ts">
@@ -207,7 +208,3 @@ const resetStats = async () => {
 	}
 }
 </script>
-
-<style scoped>
-
-</style>

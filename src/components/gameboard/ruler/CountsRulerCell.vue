@@ -1,12 +1,12 @@
 <template>
-	<div
-		class="ruler-cell"
-		:class="{ 'line-complete': complete, 'line-partly-complete': zero.complete || one.complete }"
-	>
-		<div class="count zero" :class="{'cell-complete': zero.complete, error: zero.error}">{{valueZero}}</div>
-		<div class="count-divider"></div>
-		<div class="count one" :class="{'cell-complete': one.complete, error: one.error}">{{valueOne}}</div>
-	</div>
+<div
+	class="ruler-cell"
+	:class="{ 'line-complete': complete, 'line-partly-complete': zero.complete || one.complete }"
+>
+	<div class="count zero" :class="{'cell-complete': zero.complete, error: zero.error}">{{ valueZero }}</div>
+	<div class="count-divider"></div>
+	<div class="count one" :class="{'cell-complete': one.complete, error: one.error}">{{ valueOne }}</div>
+</div>
 </template>
 
 <script setup lang="ts">

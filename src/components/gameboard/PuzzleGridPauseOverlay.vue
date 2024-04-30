@@ -1,15 +1,15 @@
 <template>
-	<transition name="fade-pause">
-		<div class="pause-overlay text-center" v-show="paused">
-			<div class="flex flex-col h-full px-2 pt-8 pb-6 max-w-full items-stretch">
-				<button
-					class="flex-auto mx-auto w-full flex justify-center pause-icon-wrapper place-items-center py-4 pointer-events-auto focus-visible:outline-black"
-					@click="$emit('resume')"
-				><icon-grommet-icons-pause-fill class="opacity-80" /></button>
-				<div class="pause-label-wrapper uppercase mb-2 py-2 break-all inline-block overflow-hidden">{{ pausedMessage }}</div>
-			</div>
+<transition name="fade-pause">
+	<div v-show="paused" class="pause-overlay text-center">
+		<div class="flex flex-col h-full px-2 pt-8 pb-6 max-w-full items-stretch">
+			<button
+				class="flex-auto mx-auto w-full flex justify-center pause-icon-wrapper place-items-center py-4 pointer-events-auto focus-visible:outline-black"
+				@click="$emit('resume')"
+			><icon-grommet-icons-pause-fill class="opacity-80" /></button>
+			<div class="pause-label-wrapper uppercase mb-2 py-2 break-all inline-block overflow-hidden">{{ pausedMessage }}</div>
 		</div>
-	</transition>
+	</div>
+</transition>
 </template>
 
 <script setup lang="ts">

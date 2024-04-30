@@ -1,45 +1,45 @@
 <template>
-	<div class="puzzle-controls" :class="{'paused': paused}">
-		<div class="control-btns">
+<div class="puzzle-controls" :class="{'paused': paused}">
+	<div class="control-btns">
 
-			<div class="grid grid-flow-col mt-auto w-full gap-x-2 px-6 max-w-screen-sm mx-auto">
+		<div class="grid grid-flow-col mt-auto w-full gap-x-2 px-6 max-w-screen-sm mx-auto">
 			<IconBtnText
-				@click="$emit('undo')"
 				:disabled="!canUndo || paused"
 				scale="1.125"
 				icon="md-undo"
 				vertical
+				@click="$emit('undo')"
 			>
-				<template v-slot:default><span class="text-xs whitespace-normal">{{ $t('PlayPuzzle.controls.undo') }}</span></template>
-				<template v-slot:icon>
-					<icon-ic-baseline-undo/>
+				<template #default><span class="text-xs whitespace-normal">{{ $t('PlayPuzzle.controls.undo') }}</span></template>
+				<template #icon>
+					<icon-ic-baseline-undo />
 				</template>
 			</IconBtnText>
 
 			<IconBtnText
-				@click="$emit('restart')"
 				scale="1.125"
 				icon="md-replay"
 				vertical
 				:disabled="!canRestart"
+				@click="$emit('restart')"
 			>
-				<template v-slot:default><span class="text-xs">{{ $t('PlayPuzzle.controls.restart') }}</span></template>
-				<template v-slot:icon>
-					<icon-ic-baseline-replay/>
+				<template #default><span class="text-xs">{{ $t('PlayPuzzle.controls.restart') }}</span></template>
+				<template #icon>
+					<icon-ic-baseline-replay />
 				</template>
 			</IconBtnText>
 
 			<IconBtnText
+				v-if="checkButtonEnabled"
 				scale="1.125"
 				icon="md-done"
 				vertical
-				@click="$emit('check')"
-				v-if="checkButtonEnabled"
 				:disabled="paused"
+				@click="$emit('check')"
 			>
-				<template v-slot:default><span class="text-xs">{{ $t('PlayPuzzle.controls.check') }}</span></template>
-				<template v-slot:icon>
-					<icon-ic-baseline-done/>
+				<template #default><span class="text-xs">{{ $t('PlayPuzzle.controls.check') }}</span></template>
+				<template #icon>
+					<icon-ic-baseline-done />
 				</template>
 			</IconBtnText>
 
@@ -47,17 +47,17 @@
 				scale="1.125"
 				icon="his-light-bulb"
 				vertical
-				@click="$emit('get-hint')"
 				:disabled="paused"
+				@click="$emit('get-hint')"
 			>
-				<template v-slot:default><span class="text-xs">{{ $t('PlayPuzzle.controls.hint') }}</span></template>
-				<template v-slot:icon>
-					<icon-his-light-bulb/>
+				<template #default><span class="text-xs">{{ $t('PlayPuzzle.controls.hint') }}</span></template>
+				<template #icon>
+					<icon-his-light-bulb />
 				</template>
 			</IconBtnText>
-			</div>
 		</div>
 	</div>
+</div>
 </template>
 
 <script setup lang="ts">

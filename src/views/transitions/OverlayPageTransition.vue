@@ -1,16 +1,16 @@
 <template>
-	<transition
-		:name="transitionName"
-		@before-enter="hideOverflow"
-		@after-enter="showOverflow"
-		@before-leave="hideOverflow"
-		@after-leave="showOverflow"
-		mode="out-in"
-	>
-		<template v-if="show">
-			<slot />		
-		</template>
-	</transition>
+<transition
+	:name="transitionName"
+	mode="out-in"
+	@before-enter="hideOverflow"
+	@after-enter="showOverflow"
+	@before-leave="hideOverflow"
+	@after-leave="showOverflow"
+>
+	<template v-if="show">
+		<slot />		
+	</template>
+</transition>
 </template>
 
 <script setup lang="ts">

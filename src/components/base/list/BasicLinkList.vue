@@ -1,14 +1,8 @@
 <template>
-	<ul
-		class="divide-y divide-gray-150 bg-white dark:divide-slate-700 dark:bg-slate-800 px-4 rounded-xl link-list-shadow"
-	>
-		<slot>List goes here</slot>
-	</ul>
+<ul
+	class="divide-y divide-gray-150 bg-white dark:divide-slate-700 dark:bg-slate-800 px-4 rounded-xl link-list-shadow"
+><slot>List goes here</slot></ul>
 </template>
-
-<script setup lang="ts">
-
-</script>
 
 <style scoped>
 .link-list-shadow {

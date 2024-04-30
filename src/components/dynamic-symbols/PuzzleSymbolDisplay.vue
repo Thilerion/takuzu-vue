@@ -1,5 +1,5 @@
 <template>
-	<span class="font-medium" :class="[colorClasses]">{{ $t(symbolString) }}</span>
+<span class="font-medium" :class="[colorClasses]">{{ $t(symbolString) }}</span>
 </template>
 
 <script setup lang="ts">
@@ -33,7 +33,3 @@ const { $p } = useDynamicPuzzleSymbolString(
 );
 const symbolString = computed(() => $p(props.v, props.mult));
 </script>
-
-<style scoped>
-
-</style>

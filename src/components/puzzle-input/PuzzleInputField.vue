@@ -1,18 +1,17 @@
 <template>
-	<input
-		type="text"
-		:value="computedInputValue"
-		class="w-full border-0 p-1 m-0 aspect-square h-full text-center"
+<input
+	ref="el"
+	type="text"
+	:value="computedInputValue"
+	class="w-full border-0 p-1 m-0 aspect-square h-full text-center"
 
-		@input="handleInputChange($event as InputEvent)"
-		@keydown="handleKeydown"
-		@keydown.delete="handleCellDelete"
-		@focus="handleFocus"
-		@blur="handleBlur($event as FocusEvent)"
-		@paste="handlePaste"
-
-		ref="el"
-	>
+	@input="handleInputChange($event as InputEvent)"
+	@keydown="handleKeydown"
+	@keydown.delete="handleCellDelete"
+	@focus="handleFocus"
+	@blur="handleBlur($event as FocusEvent)"
+	@paste="handlePaste"
+>
 </template>
 
 <script setup lang="ts">
@@ -103,7 +102,3 @@ const handleCellDelete = (ev: Event) => {
 	}
 }
 </script>
-
-<style scoped>
-
-</style>

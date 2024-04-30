@@ -1,31 +1,31 @@
 <template>
-	<nav class="bg-white w-full bg-opacity-90 dark:bg-slate-800 dark:border-t dark:border-slate-700 relative bottom-0">
-		<div class="flex justify-evenly h-full max-w-lg mx-auto">
-			<router-link
-				v-for="item in menuItems"
-				:key="item.label"
-				:to="item.to"
-				v-slot="{ isExactActive, href, navigate }"
-				custom
+<nav class="bg-white w-full bg-opacity-90 dark:bg-slate-800 dark:border-t dark:border-slate-700 relative bottom-0">
+	<div class="flex justify-evenly h-full max-w-lg mx-auto">
+		<router-link
+			v-for="item in menuItems"
+			:key="item.label"
+			v-slot="{ isExactActive, href, navigate }"
+			:to="item.to"
+			custom
+		>
+			<a
+				:href="href"
+				:class="{
+					'router-link-active': currentActive ? currentActive === item : isExactActive,
+				}"
+				class="nav-link"
+				@click="navigate"
 			>
-				<a
-					:href="href"
-					@click="navigate"
-					:class="{
-						'router-link-active': currentActive ? currentActive === item : isExactActive,
-					}"
-					class="nav-link"
-				>
-					<span class="nav-icon">
-						<BottomNavIcon :icon="item.icon" />
-					</span>
-					<span
-						class="nav-link-text"
-					>{{ item.label }}</span>
-				</a>
-			</router-link>
-		</div>
-	</nav>
+				<span class="nav-icon">
+					<BottomNavIcon :icon="item.icon" />
+				</span>
+				<span
+					class="nav-link-text"
+				>{{ item.label }}</span>
+			</a>
+		</router-link>
+	</div>
+</nav>
 </template>
 
 <script setup lang="ts">

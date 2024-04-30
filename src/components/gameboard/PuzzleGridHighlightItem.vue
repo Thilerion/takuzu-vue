@@ -1,18 +1,18 @@
 <template>
-	<div
-		class="highlight"
-		:class="{
-			'hl-cell': hlType === 'cell',
-			'hl-line': hlType === 'line',
-			'hl-area': hlType === 'area',
-			'hl-line-area': hlType !== 'cell',
-			primary: colorId === 1,
-			secondary: colorId === 2
-		}"
-		:style="[gridAreaStyle]"
-	>
-		<div class="inner"></div>
-	</div>
+<div
+	class="highlight"
+	:class="{
+		'hl-cell': hlType === 'cell',
+		'hl-line': hlType === 'line',
+		'hl-area': hlType === 'area',
+		'hl-line-area': hlType !== 'cell',
+		primary: colorId === 1,
+		secondary: colorId === 2
+	}"
+	:style="[gridAreaStyle]"
+>
+	<div class="inner"></div>
+</div>
 </template>
 
 <script setup lang="ts">

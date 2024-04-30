@@ -1,14 +1,11 @@
 <template>
-	<div class="tutorial flex flex-col">
-		<PageHeader>Tutorial</PageHeader>
-		<div class="content">
+<div class="tutorial flex flex-col">
+	<PageHeader>Tutorial</PageHeader>
+	<div class="content">
 			
-		</div>
 	</div>
+</div>
 </template>
-
-<script setup lang="ts">
-</script>
 
 <style scoped>
 .tutorial {

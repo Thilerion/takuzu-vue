@@ -1,24 +1,24 @@
 <template>
-	<div
-		class="cell"
-		:class="[valueClass, { locked }]"
-		:data-shade="shade"
-		:data-shade-type="shadeType"
+<div
+	class="cell"
+	:class="[valueClass, { locked }]"
+	:data-shade="shade"
+	:data-shade-type="shadeType"
+>
+	<transition
+		name="cell-color"
+		mode="in-out"
 	>
-		<transition
-			name="cell-color"
-			mode="in-out"
-		>
-			<div
-				class="cell-color-bg cell-inner-color"
-				:class="[value === ZERO ? 'color-0' : 'color-1']"
-				:key="value"
-				v-if="value !== EMPTY"
-			></div>
-		</transition>
-		<div class="incorrect-mark" v-if="incorrect"></div>
-		<div class="highlight-mark" v-if="highlighted"></div>
-	</div>
+		<div
+			v-if="value !== EMPTY"
+			:key="value"
+			class="cell-color-bg cell-inner-color"
+			:class="[value === ZERO ? 'color-0' : 'color-1']"
+		></div>
+	</transition>
+	<div v-if="incorrect" class="incorrect-mark"></div>
+	<div v-if="highlighted" class="highlight-mark"></div>
+</div>
 </template>
 
 <script setup lang="ts">

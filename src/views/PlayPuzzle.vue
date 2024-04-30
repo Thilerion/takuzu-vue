@@ -1,84 +1,85 @@
 <template>
-	<div class="play-puzzle fixed box-border overflow-auto inset-0 max-h-vh flex flex-col z-20 text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-white"
-		:class="{ 'puzzle-paused': paused, 'puzzle-finished': finished }">
-		<GameBoardHeader
-			@close="exitGame"
-			@dropdown-toggled="onDropdownToggled"
-			@pause="manualPauseGame"
-			@resume="manualResumeGame"
-		/>
-		<GameBoardWrapper
-			:ruler-height="rulerSize"
-			:ruler-width="rulerSize"
-			:info-height="21"
-			:padding-x="4"
-			:padding-y="6"
-			v-slot="{ width, height, cellSize }"
+<div
+	class="play-puzzle fixed box-border overflow-auto inset-0 max-h-vh flex flex-col z-20 text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-white"
+	:class="{ 'puzzle-paused': paused, 'puzzle-finished': finished }"
+>
+	<GameBoardHeader
+		@close="exitGame"
+		@dropdown-toggled="onDropdownToggled"
+		@pause="manualPauseGame"
+		@resume="manualResumeGame"
+	/>
+	<GameBoardWrapper
+		v-slot="{ width, height, cellSize }"
+		:ruler-height="rulerSize"
+		:ruler-width="rulerSize"
+		:info-height="21"
+		:padding-x="4"
+		:padding-y="6"
+	>
+		<GameBoard
+			v-if="started && board"
+			:paused="paused"
+			:rows="rows!"
+			:columns="columns!"
+			:board="board"
+			:grid-height="height"
+			:grid-width="width"
+			:cell-size="cellSize"
 		>
-			<GameBoard
-				v-if="started && board"
-				:paused="paused"
-				:rows="rows!"
-				:columns="columns!"
-				:board="board"
-				:grid-height="height"
-				:grid-width="width"
-				:cell-size="cellSize"
-			>
-				<template v-slot:puzzle-info>
-					<PuzzleInfo
-						:show-timer="showTimer"
-						:difficulty="(difficulty as DifficultyKey)"
-						:progress-ratio="puzzleStore.progress"
-						:has-border="showRulers"
-						:puzzle-paused="puzzleStore.paused"
-					/>
-				</template>
-				<template v-slot:ruler-rows>
-					<PuzzleRuler
-						:cell-size="cellSize"
-						:line-ids="board.rowIds"
-						ruler-line-type="rows"
-						:count-type="rulerCountType"
-						:component-type="rulerComponentType"
-					/>
-				</template>
-				<template v-slot:ruler-columns>
-					<PuzzleRuler
-						:cell-size="cellSize"
-						:line-ids="board.rowIds"
-						ruler-line-type="columns"
-						:count-type="rulerCountType"
-						:component-type="rulerComponentType"
-					/>
-				</template>
-			</GameBoard>
-		</GameBoardWrapper>
+			<template #puzzle-info>
+				<PuzzleInfo
+					:show-timer="showTimer"
+					:difficulty="(difficulty as DifficultyKey)"
+					:progress-ratio="puzzleStore.progress"
+					:has-border="showRulers"
+					:puzzle-paused="puzzleStore.paused"
+				/>
+			</template>
+			<template #ruler-rows>
+				<PuzzleRuler
+					:cell-size="cellSize"
+					:line-ids="board.rowIds"
+					ruler-line-type="rows"
+					:count-type="rulerCountType"
+					:component-type="rulerComponentType"
+				/>
+			</template>
+			<template #ruler-columns>
+				<PuzzleRuler
+					:cell-size="cellSize"
+					:line-ids="board.rowIds"
+					ruler-line-type="columns"
+					:count-type="rulerCountType"
+					:component-type="rulerComponentType"
+				/>
+			</template>
+		</GameBoard>
+	</GameBoardWrapper>
 
-		<div class="footer2 h-32 w-full relative">
-			<PuzzleControls
-				:can-undo="puzzleHistoryStore.canUndo"
-				:can-restart="puzzleStore.canRestart"
-				:paused="paused"
-				@undo="puzzleStore.undoLastMove"
-				@restart="puzzleStore.restartPuzzle"
-				@check="puzzleValidationStore.userCheck"
-				@get-hint="puzzleHintsStore.getHint"
-			/>
-			<PuzzleHintWrapper />
-		</div>
-
-		<router-view v-slot="{ Component }">
-			<OverlayPageTransition :show="Component != null">
-				<div
-					class="fixed inset-0 text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-white overflow-y-auto pb-8 z-40">
-					<component :is="Component" />
-				</div>
-			</OverlayPageTransition>
-		</router-view>
-
-		<PuzzleRecap :show="finished && puzzleRecapStore.modalShown" />
+	<div class="footer2 h-32 w-full relative">
+		<PuzzleControls
+			:can-undo="puzzleHistoryStore.canUndo"
+			:can-restart="puzzleStore.canRestart"
+			:paused="paused"
+			@undo="puzzleStore.undoLastMove"
+			@restart="puzzleStore.restartPuzzle"
+			@check="puzzleValidationStore.userCheck"
+			@get-hint="puzzleHintsStore.getHint"
+		/>
+		<PuzzleHintWrapper />
 	</div>
+
+	<router-view v-slot="{ Component }">
+		<OverlayPageTransition :show="Component != null">
+			<div class="fixed inset-0 text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-white overflow-y-auto pb-8 z-40">
+				<component :is="Component" />
+			</div>
+		</OverlayPageTransition>
+	</router-view>
+
+	<PuzzleRecap :show="finished && puzzleRecapStore.modalShown" />
+</div>
 </template>
 
 <script setup lang="ts">
@@ -240,6 +241,3 @@ onBeforeRouteUpdate((to) => {
 	setSettingsOpen(settingsShouldBeOpen);
 })
 </script>
-
-<style scoped>
-</style>

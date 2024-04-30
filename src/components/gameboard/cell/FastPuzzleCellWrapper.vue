@@ -1,16 +1,16 @@
 <template>
-	<component
-		:is="elementType"
-		@[eventName]="handleCellToggle"
-		class="cell-wrapper relative cell-btn aspect-square w-full touch-none"
-		:style="gridStyles"
-	>
-		<slot
-			:value="cellValue"
-			:locked="isLocked"
-			:incorrect="incorrect"
-		><div class="flex items-center justify-center">{{cellValue}}</div></slot>
-	</component>
+<component
+	:is="elementType"
+	class="cell-wrapper relative cell-btn aspect-square w-full touch-none"
+	:style="gridStyles"
+	@[eventName]="handleCellToggle"
+>
+	<slot
+		:value="cellValue"
+		:locked="isLocked"
+		:incorrect="incorrect"
+	><div class="flex items-center justify-center">{{ cellValue }}</div></slot>
+</component>
 </template>
 
 <script setup lang="ts">

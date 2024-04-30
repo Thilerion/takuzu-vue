@@ -1,14 +1,24 @@
 <template>
-	<label :for="id" class="toggle-wrapper mb-4" :class="[inline ? inlineClasses : blockClasses, {
+<label
+	:for="id"
+	class="toggle-wrapper mb-4"
+	:class="[inline ? inlineClasses : blockClasses, {
 		'flex-row-reverse': reverse,
 		small
-	}]">
-		<div class="toggle-text"><slot /></div>
-		<div class="relative">
-			<input class="sr-only" type="checkbox" :id="id" :checked="modelValue" @change="$emit('update:modelValue', ($event.target as HTMLInputElement).checked)">
-			<div class="toggle-bg"></div>
-		</div>
-	</label>
+	}]"
+>
+	<div class="toggle-text"><slot /></div>
+	<div class="relative">
+		<input
+			:id="id"
+			class="sr-only"
+			type="checkbox"
+			:checked="modelValue"
+			@change="$emit('update:modelValue', ($event.target as HTMLInputElement).checked)"
+		>
+		<div class="toggle-bg"></div>
+	</div>
+</label>
 </template>
 
 <script setup lang="ts">

@@ -1,15 +1,25 @@
 <template>
-	<div class="activity px-4">
-		<h2 class="text-gray-600 text-lg font-medium px-1 pt-2 pb-1">Play activity</h2>
-		<div class="bg-white rounded shadow-lg shadow-gray-600/10 divide-y pt-1" v-if="streaks != null">
-			<StatsHeatmap />
-			<div class="streaks flex flex-row h-fit w-full max-w-xl mx-auto divide-x">
-				<CurrentStreak :active="streaks.current.active" :from="streaks.current.from ?? undefined" :length="streaks.current.length" class="streak-container"></CurrentStreak>
-				<LongestStreak :length="streaks.longest.length" :from="streaks.longest.from ?? undefined" :to="streaks.longest.to ?? undefined" class="streak-container"></LongestStreak>
-			</div>
-			<MostRecentHistory />
+<div class="activity px-4">
+	<h2 class="text-gray-600 text-lg font-medium px-1 pt-2 pb-1">Play activity</h2>
+	<div v-if="streaks != null" class="bg-white rounded shadow-lg shadow-gray-600/10 divide-y pt-1">
+		<StatsHeatmap />
+		<div class="streaks flex flex-row h-fit w-full max-w-xl mx-auto divide-x">
+			<CurrentStreak
+				:active="streaks.current.active"
+				:from="streaks.current.from ?? undefined"
+				:length="streaks.current.length"
+				class="streak-container"
+			/>
+			<LongestStreak
+				:length="streaks.longest.length"
+				:from="streaks.longest.from ?? undefined"
+				:to="streaks.longest.to ?? undefined"
+				class="streak-container"
+			/>
 		</div>
+		<MostRecentHistory />
 	</div>
+</div>
 </template>
 
 <script setup lang="ts">

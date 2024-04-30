@@ -1,7 +1,19 @@
 <template>
-	<icon-bx-bxs-star v-if="filled" class="star-icon filled bx" :class="{'uncolored': gray }" />
-	<icon-bx-bxs-star-half v-else-if="half" class="star-icon filled bx" :class="{filled, 'uncolored': gray }" />
-	<icon-bx-bx-star v-else class="star-icon bx" :class="{'uncolored': gray }" />
+<icon-bx-bxs-star
+	v-if="filled"
+	class="star-icon filled bx"
+	:class="{'uncolored': gray }"
+/>
+<icon-bx-bxs-star-half
+	v-else-if="half"
+	class="star-icon filled bx"
+	:class="{filled, 'uncolored': gray }"
+/>
+<icon-bx-bx-star
+	v-else
+	class="star-icon bx"
+	:class="{'uncolored': gray }"
+/>
 </template>
 
 <script setup lang="ts">

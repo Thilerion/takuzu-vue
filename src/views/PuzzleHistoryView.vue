@@ -1,42 +1,66 @@
 <template>
-	<div class="flex flex-col overflow-y-auto">
-		<PageHeader
-			:back-options="{ type: 'force', prevRouteName: 'Statistics' }"
-		>{{ $t('Statistics.History.puzzle-history') }}</PageHeader>
+<div class="flex flex-col overflow-y-auto">
+	<PageHeader
+		:back-options="{ type: 'force', prevRouteName: 'Statistics' }"
+	>{{ $t('Statistics.History.puzzle-history') }}</PageHeader>
 
-		<div class="content flex-1 flex flex-col gap-2 pt-4">
-			<div class="select-inputs text-sm" ref="anchorEl">
-				<HistoryListDisplayOptions
-					:sort-type="dataOptions.sortBy"
-					:page-size="dataOptions.pageSize"
-					v-model:showFilters="showFilters"
-					@change-sort-type="changeSort"
-					@change-page-size="setPageSize"
-				/>
-				<HistoryListFilters v-model="showFilters" />
-			</div>
-			<BasePagination :modelValue="page" @update:modelValue="setActivePage" :length="currentItems?.length ?? 0"
-				:page-size="pageSize" />
-			<transition name="fade" mode="out-in">
-				<div class="list divide-y border-y relative" v-if="shownItems.length"
-					:key="JSON.stringify({ dataOptions })">
-					<HistoryListItem v-for="item in shownItems" :key="item.id" :item="item"
-						:time-record="isTimeRecord(item)" @favorite="(val) => markFavorite(item.id!, val)"
-						@save-note="(note) => saveNote(item.id!, note)"
-						@delete="() => deleteItem(item.id!)"></HistoryListItem>
-				</div>
-				<div class="py-4 text-lg px-8 text-center" v-else-if="historyItems.length" key="none-filtered">
-					{{ $t('Statistics.History.none-found-with-filters') }}
-				</div>
-				<div class="py-4 text-lg px-8 text-center" key="none" v-else>
-					{{ $t('Statistics.History.none-played-yet') }}
-				</div>
-			</transition>
+	<div class="content flex-1 flex flex-col gap-2 pt-4">
+		<div ref="anchorEl" class="select-inputs text-sm">
+			<HistoryListDisplayOptions
+				v-model:showFilters="showFilters"
+				:sort-type="dataOptions.sortBy"
+				:page-size="dataOptions.pageSize"
+				@change-sort-type="changeSort"
+				@change-page-size="setPageSize"
+			/>
+			<HistoryListFilters v-model="showFilters" />
 		</div>
-
-		<BasePagination :modelValue="page" @update:modelValue="setActivePage" :length="currentItems?.length ?? 0"
-			:page-size="pageSize" />
+		<BasePagination
+			:modelValue="page"
+			:length="currentItems?.length ?? 0"
+			:page-size="pageSize"
+			@update:modelValue="setActivePage"
+		/>
+		<transition name="fade" mode="out-in">
+			<div
+				v-if="shownItems.length"
+				:key="JSON.stringify({ dataOptions })"
+				class="list divide-y border-y relative"
+			>
+				<HistoryListItem
+					v-for="item in shownItems"
+					:key="item.id"
+					:item="item"
+					:time-record="isTimeRecord(item)"
+					@favorite="(val) => markFavorite(item.id!, val)"
+					@save-note="(note) => saveNote(item.id!, note)"
+					@delete="() => deleteItem(item.id!)"
+				/>
+			</div>
+			<div
+				v-else-if="historyItems.length"
+				key="none-filtered"
+				class="py-4 text-lg px-8 text-center"
+			>
+				{{ $t('Statistics.History.none-found-with-filters') }}
+			</div>
+			<div
+				v-else
+				key="none"
+				class="py-4 text-lg px-8 text-center"
+			>
+				{{ $t('Statistics.History.none-played-yet') }}
+			</div>
+		</transition>
 	</div>
+
+	<BasePagination
+		:modelValue="page"
+		:length="currentItems?.length ?? 0"
+		:page-size="pageSize"
+		@update:modelValue="setActivePage"
+	/>
+</div>
 </template>
 
 <script setup lang="ts">

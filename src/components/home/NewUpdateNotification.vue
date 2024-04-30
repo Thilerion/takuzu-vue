@@ -1,12 +1,12 @@
 <template>
-	<button
-		class="bg-slate-800/80 text-white rounded p-2 w-full text-left pl-4 max-w-md mx-auto flex flex-col"
-		v-show="show"
-		@click="updateAndReload"
-	>
-		<span>{{ $t('NewUpdate.new-version-is-available') }}</span>
-		<span class="text-xs">{{ $t('NewUpdate.click-here-to-update') }}</span>
-	</button>
+<button
+	v-show="show"
+	class="bg-slate-800/80 text-white rounded p-2 w-full text-left pl-4 max-w-md mx-auto flex flex-col"
+	@click="updateAndReload"
+>
+	<span>{{ $t('NewUpdate.new-version-is-available') }}</span>
+	<span class="text-xs">{{ $t('NewUpdate.click-here-to-update') }}</span>
+</button>
 </template>
 
 <script setup lang="ts">

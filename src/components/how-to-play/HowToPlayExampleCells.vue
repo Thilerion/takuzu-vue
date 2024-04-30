@@ -1,24 +1,24 @@
 <template>
-	<div
-		class="flex flex-nowrap max-w-full w-full gap-1"
-		:style="{
-			'--cell-rounding': '0.375rem',
-		}"
+<div
+	class="flex flex-nowrap max-w-full w-full gap-1"
+	:style="{
+		'--cell-rounding': '0.375rem',
+	}"
+>
+	<div 
+		v-for="(value, idx) in values"
+		:key="idx"
+		class="aspect-square flex-auto min-w-4 max-w-12 example-cell"
 	>
-		<div 
-			class="aspect-square flex-auto min-w-4 max-w-12 example-cell"
-			v-for="(value, idx) in values"
-			:key="idx"
-		>
-			<component
-				:is="cellComponent"
-				:value="value"
-				:locked="false"
-				:incorrect="incorrect.includes(idx)"
-				:highlighted="highlight.includes(idx)"
-			/>				
-		</div>
+		<component
+			:is="cellComponent"
+			:value="value"
+			:locked="false"
+			:incorrect="incorrect.includes(idx)"
+			:highlighted="highlight.includes(idx)"
+		/>				
 	</div>
+</div>
 </template>
 
 <script setup lang="ts">

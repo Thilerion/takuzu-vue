@@ -1,52 +1,72 @@
 <template>
 <div ref="tableWrapperEl" class="flex justify-center">
-<div
-	class="relative border-2 border-slate-800 inline-block"
-	:style="{
-		'font-size': `${approxBoxSize * 0.8}px`
-	}"
->
-	<table
-		class="table-fixed mx-auto border-0"
-		:style="{
-			width: tableWidth
-		}"
-		:data-width="width"
-		:data-height="height"
-		:data-odd="isOdd"
-		:data-even="isEven"
-		ref="tableEl"
-	>
-		<tbody>
-			<tr
-				v-for="(row, y) in grid"
-				:key="y"
-			>
-				<td
-					v-for="(cell, x) in row"
-					class="overflow-clip border border-slate-700 relative bg-gray-50 p-px text-center align-middle"
-					:class="[getMiddleLineClasses({ x, y })]"
-					:data-row="y"
-					:data-col="x"
-					:data-index="y * width + x"
-					:key="x"
-				>
-					<div class="aspect-square flex items-center justify-center relative -m-0.5">
-							<slot :x="x" :y="y" :index="y * width + x" />
-					</div>
-				</td>
-			</tr>
-		</tbody>
-	</table>
 	<div
-		class="absolute inset-0 w-full h-full z-10 grid justify-between text-slate-800 pointer-events-none"
+		class="relative border-2 border-slate-800 inline-block"
+		:style="{
+			'font-size': `${approxBoxSize * 0.8}px`
+		}"
 	>
-		<MiddleTriangle class="row-start-2 col-start-1 place-self-center" :size="`clamp(5px, ${triangleSize}px, 0.6rem)`" dir="right" />
-		<MiddleTriangle class="row-start-2 col-start-3 place-self-center" :size="`clamp(5px, ${triangleSize}px, 0.6rem)`" dir="left" />
-		<MiddleTriangle class="row-start-3 col-start-2 self-end" :size="`clamp(5px, ${triangleSize}px, 0.6rem)`" dir="up" />
-		<MiddleTriangle class="row-start-1 col-start-2 self-start" :size="`clamp(5px, ${triangleSize}px, 0.6rem)`" dir="down" />
+		<table
+			ref="tableEl"
+			class="table-fixed mx-auto border-0"
+			:style="{
+				width: tableWidth
+			}"
+			:data-width="width"
+			:data-height="height"
+			:data-odd="isOdd"
+			:data-even="isEven"
+		>
+			<tbody>
+				<tr
+					v-for="(row, y) in grid"
+					:key="y"
+				>
+					<td
+						v-for="(cell, x) in row"
+						:key="x"
+						class="overflow-clip border border-slate-700 relative bg-gray-50 p-px text-center align-middle"
+						:class="[getMiddleLineClasses({ x, y })]"
+						:data-row="y"
+						:data-col="x"
+						:data-index="y * width + x"
+					>
+						<div class="aspect-square flex items-center justify-center relative -m-0.5">
+							<slot
+								:x="x"
+								:y="y"
+								:index="y * width + x"
+							/>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div
+			class="absolute inset-0 w-full h-full z-10 grid justify-between text-slate-800 pointer-events-none"
+		>
+			<MiddleTriangle
+				class="row-start-2 col-start-1 place-self-center"
+				:size="`clamp(5px, ${triangleSize}px, 0.6rem)`"
+				dir="right"
+			/>
+			<MiddleTriangle
+				class="row-start-2 col-start-3 place-self-center"
+				:size="`clamp(5px, ${triangleSize}px, 0.6rem)`"
+				dir="left"
+			/>
+			<MiddleTriangle
+				class="row-start-3 col-start-2 self-end"
+				:size="`clamp(5px, ${triangleSize}px, 0.6rem)`"
+				dir="up"
+			/>
+			<MiddleTriangle
+				class="row-start-1 col-start-2 self-start"
+				:size="`clamp(5px, ${triangleSize}px, 0.6rem)`"
+				dir="down"
+			/>
+		</div>
 	</div>
-</div>
 </div>
 </template>
 
@@ -123,7 +143,3 @@ const getMiddleLineClasses = ({ x, y }: Vec) => {
 	}
 }
 </script>
-
-<style scoped>
-
-</style>

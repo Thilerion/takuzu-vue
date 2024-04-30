@@ -1,31 +1,37 @@
 <template>
-	<header class="flex justify-center items-stretch text-gray-700 dark:text-gray-100 flex-shrink-0" :class="[
+<header
+	class="flex justify-center items-stretch text-gray-700 dark:text-gray-100 flex-shrink-0"
+	:class="[
 		small ? 'h-16' : 'h-24',
 		{
 			'shadow-sm': mergedElevated,
 			'bg-white dark:bg-slate-800': !transparent
 		}
-	]">
-		<div class="header-group side left">
-			<IconBtn v-if="hasBackButton" @click="back">
-				<icon-mdi-arrow-left />
-			</IconBtn>
-			<IconBtn v-else-if="hasCloseButton" @click="close">
-				<icon-mdi-close />
-			</IconBtn>
-		</div>
-		<div class="header-group flex justify-center items-center flex-1">
-			<h1 class="font-medium leading-normal" :class="{
+	]"
+>
+	<div class="header-group side left">
+		<IconBtn v-if="hasBackButton" @click="back">
+			<icon-mdi-arrow-left />
+		</IconBtn>
+		<IconBtn v-else-if="hasCloseButton" @click="close">
+			<icon-mdi-close />
+		</IconBtn>
+	</div>
+	<div class="header-group flex justify-center items-center flex-1">
+		<h1
+			class="font-medium leading-normal"
+			:class="{
 				'text-xl': small,
 				'text-2xl': !small
-			}">
-				<slot/>
-			</h1>
-		</div>
-		<div class="header-group side right">
-			<slot name="right"/>
-		</div>
-	</header>
+			}"
+		>
+			<slot />
+		</h1>
+	</div>
+	<div class="header-group side right">
+		<slot name="right" />
+	</div>
+</header>
 </template>
 
 <script setup lang="ts">

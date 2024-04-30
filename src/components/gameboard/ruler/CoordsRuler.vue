@@ -1,20 +1,21 @@
 <template>
+<div
+	class="ruler coords"
+	:class="{
+		'ruler-rows': lineType === 'rows',
+		'ruler-columns': lineType === 'columns'
+	}"
+>
 	<div
-		class="ruler coords"
+		v-for="lineId in lineIds"
+		:key="lineId"
+		class="ruler-cell"
 		:class="{
-			'ruler-rows': lineType === 'rows',
-			'ruler-columns': lineType === 'columns'
-	}">
-		<div
-			class="ruler-cell"
-			v-for="lineId in lineIds"
-			:key="lineId"
-			:class="{
-				'error': linesWithError.includes(lineId),
-				'complete': completedLines.has(lineId)
-			}"
-		>{{lineId}}</div>
-	</div>
+			'error': linesWithError.includes(lineId),
+			'complete': completedLines.has(lineId)
+		}"
+	>{{ lineId }}</div>
+</div>
 </template>
 
 <script setup lang="ts">

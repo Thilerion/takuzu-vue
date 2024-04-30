@@ -1,16 +1,16 @@
 <template>
-	<div class="pointer-events-none fixed inset-0 z-10 grid place-content-center w-screen h-vh">
-		<div class="opacity-0 row-start-1 col-start-1 row-span-1 col-span-1 z-10 relative" ref="correctEl">
-			<div class="check-icon-wrapper">
-				<icon-ic-outline-check-circle class="text-green-600 dark:text-green-500 check-icon" />
-			</div>
-		</div>
-		<div class="opacity-0 row-start-1 col-start-1 row-span-1 col-span-1 z-10 relative" ref="incorrectEl">
-			<div class="check-icon-wrapper">
-				<icon-ic-outline-cancel class="text-red-700 dark:text-red-600 check-icon" />
-			</div>
+<div class="pointer-events-none fixed inset-0 z-10 grid place-content-center w-screen h-vh">
+	<div ref="correctEl" class="opacity-0 row-start-1 col-start-1 row-span-1 col-span-1 z-10 relative">
+		<div class="check-icon-wrapper">
+			<icon-ic-outline-check-circle class="text-green-600 dark:text-green-500 check-icon" />
 		</div>
 	</div>
+	<div ref="incorrectEl" class="opacity-0 row-start-1 col-start-1 row-span-1 col-span-1 z-10 relative">
+		<div class="check-icon-wrapper">
+			<icon-ic-outline-cancel class="text-red-700 dark:text-red-600 check-icon" />
+		</div>
+	</div>
+</div>
 </template>
 
 <script setup lang="ts">

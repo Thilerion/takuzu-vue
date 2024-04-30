@@ -1,28 +1,28 @@
 <template>
-	<div
-		class="cell"
-		:class="[
-			{ locked, incorrect: !!incorrect, highlighted: !!highlighted },
-			themeClasses
-		]"
-	>
-			<template v-if="symbolType === CellThemes.CLASSIC">
-				<transition name="cell-symbol">
-					<div v-if="symbolValue !== ''" class="number-icon-wrapper">
-						<icon-tabler-number-0 class="number-icon text-cyan-700 dark:text-cyan-500" v-if="symbolValue === '0'" />
-						<icon-tabler-number-1 class="number-icon text-gray-600 dark:text-gray-300" v-else-if="symbolValue === '1'" />
-					</div>
-				</transition>
-			</template>
-			<template v-else-if="symbolType === CellThemes.TICTACTOE">
-				<transition name="cell-symbol">
-					<div v-if="symbolValue !== ''" class="">
-						<span class="cell-symbol-value text-cyan-700 dark:text-cyan-500" v-if="symbolValue === 'O'">O</span>
-						<span class="cell-symbol-value text-gray-600 dark:text-gray-300" v-else-if="symbolValue === 'X'">X</span>
-					</div>
-				</transition>
-			</template>
-	</div>
+<div
+	class="cell"
+	:class="[
+		{ locked, incorrect: !!incorrect, highlighted: !!highlighted },
+		themeClasses
+	]"
+>
+	<template v-if="symbolType === CellThemes.CLASSIC">
+		<transition name="cell-symbol">
+			<div v-if="symbolValue !== ''" class="number-icon-wrapper">
+				<icon-tabler-number-0 v-if="symbolValue === '0'" class="number-icon text-cyan-700 dark:text-cyan-500" />
+				<icon-tabler-number-1 v-else-if="symbolValue === '1'" class="number-icon text-gray-600 dark:text-gray-300" />
+			</div>
+		</transition>
+	</template>
+	<template v-else-if="symbolType === CellThemes.TICTACTOE">
+		<transition name="cell-symbol">
+			<div v-if="symbolValue !== ''">
+				<span v-if="symbolValue === 'O'" class="cell-symbol-value text-cyan-700 dark:text-cyan-500">O</span>
+				<span v-else-if="symbolValue === 'X'" class="cell-symbol-value text-gray-600 dark:text-gray-300">X</span>
+			</div>
+		</transition>
+	</template>
+</div>
 </template>
 
 <script lang="ts">

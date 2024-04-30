@@ -1,11 +1,11 @@
 <template>
-	<input
-		type="range"
-		@input="(ev) => setTrackBackground(ev as InputEvent)"
-		:value="modelValue"
-		:min="min"
-		:max="max"
-	>
+<input
+	type="range"
+	:value="modelValue"
+	:min="min"
+	:max="max"
+	@input="(ev) => setTrackBackground(ev as InputEvent)"
+>
 </template>
 
 <script setup lang="ts">

@@ -1,25 +1,28 @@
 <template>
-	<div>
-		<div
-			class="w-full flex items-end justify-start relative py-1 -ml-1"
-			v-if="isEditing || hasNote || unsavedNote"
-		>
-			<div class="relative w-full">
-				<div
-					class="text-xs text-gray-600 w-full border-0 p-0 m-0 leading-loose max-w-full text-ellipsis overflow-x-hidden"
-					@click="startEditing"
-				><span v-if="noteStr">{{noteStr}}</span><div v-else class="opacity-0">Enter note here</div></div>
-				<transition name="t-fade">
+<div>
+	<div
+		v-if="isEditing || hasNote || unsavedNote"
+		class="w-full flex items-end justify-start relative py-1 -ml-1"
+	>
+		<div class="relative w-full">
+			<div
+				class="text-xs text-gray-600 w-full border-0 p-0 m-0 leading-loose max-w-full text-ellipsis overflow-x-hidden"
+				@click="startEditing"
+			>
+				<span v-if="noteStr">{{ noteStr }}</span>
+				<div v-else class="opacity-0">Enter note here</div>
+			</div>
+			<transition name="t-fade">
 				<div
 					v-if="isEditing"
 					class="h-full absolute inset-y-0 -inset-x-2 pl-1 flex -mr-2 justify-between items-center"
 				>
 					<input
-						type="text"
+						ref="inputEl"
 						v-model="unsavedNote"
+						type="text"
 						placeholder="Enter note here"
 						class="w-full border-0 p-0 m-0 text-xs h-full focus:border-0 focus:outline-none ring-2 ring-slate-500/30 focus:ring-2 focus:ring-slate-500/50 leading-loose max-w-full pl-1 rounded-sm transition duration-150"
-						ref="inputEl"
 						@blur="stopEditingOnBlur"
 						@keydown.enter="saveNote"
 					>
@@ -29,11 +32,11 @@
 						@click="clearNote"
 					><icon-ic-baseline-close /></IconBtn>
 				</div>
-				</transition>
-				
-			</div>
+			</transition>
+			
 		</div>
 	</div>
+</div>
 </template>
 
 <script setup lang="ts">

@@ -1,22 +1,22 @@
 <template>
-	<div class="examples" :class="[`cell-theme-${theme}`]">
-		<CellThemeProvider :config="{ theme }" v-slot="{ cellComponent }">
-			<div class="w-6 h-6 relative cell-example-wrapper">
-				<component
+<div class="examples" :class="[`cell-theme-${theme}`]">
+	<CellThemeProvider v-slot="{ cellComponent }" :config="{ theme }">
+		<div class="w-6 h-6 relative cell-example-wrapper">
+			<component
 				:is="cellComponent"
 				value="0"
 				class="zero"
-			></component>
-			</div>
-			<div class="w-6 h-6 relative cell-example-wrapper">
-				<component
+			/>
+		</div>
+		<div class="w-6 h-6 relative cell-example-wrapper">
+			<component
 				:is="cellComponent"
 				value="1"
 				class="one"
-			></component>
-			</div>
-		</CellThemeProvider>
-	</div>
+			/>
+		</div>
+	</CellThemeProvider>
+</div>
 </template>
 
 <script setup lang="ts">

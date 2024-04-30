@@ -1,115 +1,112 @@
 <template>
-	<div
-		class="fixed top-0 h-vh w-screen overflow-y-auto overflow-x-hidden"
-		id="new-puzzle-page"
+<div
+	id="new-puzzle-page"
+	class="fixed top-0 h-vh w-screen overflow-y-auto overflow-x-hidden"
+>
+	<PageHeader
+		:transparent="false"
+		elevated
+		small
+		:back-options="{ type: 'force', prevRouteName: 'Home' }"
 	>
-		<PageHeader
-			:transparent="false"
-			elevated
-			small
-			:back-options="{ type: 'force', prevRouteName: 'Home' }"
-		>
-			<template #default>{{ $t('NewPuzzle.title') }}</template>
-			<template #right v-if="debugModeEnabled">
-				<BaseDropdown
-					align-right
-					align-below
-				>
-					<template #trigger="{toggle}">
-						<IconBtn @click="toggle"><icon-ic-baseline-more-vert /></IconBtn>
-					</template>
-					<template #content>
-						<BaseDropdownItem v-if="debugModeEnabled">
-							<label class="flex items-center">
-								<input type="checkbox" v-model="autoReplayModeModel">
-								<span class="ml-2">{{ $t('NewPuzzle.options.automatic-replay-mode') }}</span>
-							</label>
-						</BaseDropdownItem>
-					</template>
-				</BaseDropdown>
-			</template>
-		</PageHeader>
+		<template #default>{{ $t('NewPuzzle.title') }}</template>
+		<template v-if="debugModeEnabled" #right>
+			<BaseDropdown
+				align-right
+				align-below
+			>
+				<template #trigger="{toggle}">
+					<IconBtn @click="toggle"><icon-ic-baseline-more-vert /></IconBtn>
+				</template>
+				<template #content>
+					<BaseDropdownItem v-if="debugModeEnabled">
+						<label class="flex items-center">
+							<input v-model="autoReplayModeModel" type="checkbox">
+							<span class="ml-2">{{ $t('NewPuzzle.options.automatic-replay-mode') }}</span>
+						</label>
+					</BaseDropdownItem>
+				</template>
+			</BaseDropdown>
+		</template>
+	</PageHeader>
 
-		<div
-			class="w-full px-4 pb-2 pt-3 space-y-4 puzzle-options"
-		>
-			<div>
-				<h2 class="text-base font-medium mb-1 dark:text-slate-100 text-gray-700/90 ml-4 tracking-wide">{{  $t('Game.difficulty.label') }}</h2>
-				<div class="content-block p-0">
-					<DifficultySelect
-						@decrease="decreaseDifficulty"
-						@increase="increaseDifficulty"
-						:labels="DIFFICULTY_LABELS"
-						:difficulty="selectedDifficulty"
-					/>
-				</div>
-			</div>
-			<div>
-				<h2 class="text-base font-medium mb-1 text-gray-700/90 dark:text-slate-100 ml-4 tracking-wide">{{ $t('Game.board-size.label') }}</h2>
-				<div
-					class="content-block py-4 flex-shrink-0 rounded shadow-sm px-4"
-				>
-					<div class="mb-1 font-medium text-sm text-gray-500">{{ $t('Game.board-size.normal') }}</div>
-					<PuzzleDimensionsBlock
-						:presets="squarePresets"
-						:selected-dimensions="selectedDimensions"
-						@select="selectDimensions"
-					/>
-					<div class="mb-1 font-medium text-sm text-gray-500">{{ $t('Game.board-size.tall') }}</div>
-					<PuzzleDimensionsBlock
-						:presets="rectPresets"
-						:selected-dimensions="selectedDimensions"
-						@select="selectDimensions"
-					/>
-					<div class="mb-1 font-medium text-sm text-gray-500">{{ $t('Game.board-size.odd') }}</div>
-					<PuzzleDimensionsBlock
-						:presets="oddPresets"
-						:selected-dimensions="selectedDimensions"
-						@select="selectDimensions"
-					/>
-				</div>
-			</div>
-		</div>
-
-		<div
-			class="w-full bg-gray-50 border-t dark:bg-slate-800 dark:border-slate-700 border-gray-200 px-4 pt-2 space-y-2 footer-wrapper sticky bottom-0"
-			:class="{ 'pt-4': !hasCurrentSavedGame }"
-		>
-			<div v-if="hasCurrentSavedGame" class="text-xs text-orange-700 dark:text-red-400 text-end">
-				<p>{{ $t('NewPuzzle.starting-a-new-puzzle-will-overwrite') }}</p>
-			</div>
-			<div class="bottom-grid gap-x-4 w-full h-20">
-				<router-link
-					custom
-					v-slot="{ href, navigate }"
-					:to="{ name: 'PlayPuzzle' }"
-				>
-					<BaseButton
-						elevated
-						element="a"
-						:href="href"
-						@click="navigate"
-						class="flex items-center flex-shrink overflow-hidden text-wrap text-sm"
-						v-if="hasCurrentSavedGame"
-					><span class="text-wrap">{{ $t('NewPuzzle.load-save') }}</span></BaseButton>
-				</router-link>
-				<StartGameButton
-					:class="{
-						'col-span-2': !hasCurrentSavedGame
-					}"
-					@start="startGame"
-
-					:size="selectedDimensions"
-					:difficulty-label="selectedDifficultyLabel"
-					:difficulty-stars="selectedDifficulty"
-					:disabled="startButtonDisabled"
-					:loading="puzzleIsLoading"
-					:replay="debugAutoReplayModeEnabled"
+	<div
+		class="w-full px-4 pb-2 pt-3 space-y-4 puzzle-options"
+	>
+		<div>
+			<h2 class="text-base font-medium mb-1 dark:text-slate-100 text-gray-700/90 ml-4 tracking-wide">{{ $t('Game.difficulty.label') }}</h2>
+			<div class="content-block p-0">
+				<DifficultySelect
+					:labels="DIFFICULTY_LABELS"
+					:difficulty="selectedDifficulty"
+					@decrease="decreaseDifficulty"
+					@increase="increaseDifficulty"
 				/>
 			</div>
-			
+		</div>
+		<div>
+			<h2 class="text-base font-medium mb-1 text-gray-700/90 dark:text-slate-100 ml-4 tracking-wide">{{ $t('Game.board-size.label') }}</h2>
+			<div
+				class="content-block py-4 flex-shrink-0 rounded shadow-sm px-4"
+			>
+				<div class="mb-1 font-medium text-sm text-gray-500">{{ $t('Game.board-size.normal') }}</div>
+				<PuzzleDimensionsBlock
+					:presets="squarePresets"
+					:selected-dimensions="selectedDimensions"
+					@select="selectDimensions"
+				/>
+				<div class="mb-1 font-medium text-sm text-gray-500">{{ $t('Game.board-size.tall') }}</div>
+				<PuzzleDimensionsBlock
+					:presets="rectPresets"
+					:selected-dimensions="selectedDimensions"
+					@select="selectDimensions"
+				/>
+				<div class="mb-1 font-medium text-sm text-gray-500">{{ $t('Game.board-size.odd') }}</div>
+				<PuzzleDimensionsBlock
+					:presets="oddPresets"
+					:selected-dimensions="selectedDimensions"
+					@select="selectDimensions"
+				/>
+			</div>
 		</div>
 	</div>
+
+	<div
+		class="w-full bg-gray-50 border-t dark:bg-slate-800 dark:border-slate-700 border-gray-200 px-4 pt-2 space-y-2 footer-wrapper sticky bottom-0"
+		:class="{ 'pt-4': !hasCurrentSavedGame }"
+	>
+		<div v-if="hasCurrentSavedGame" class="text-xs text-orange-700 dark:text-red-400 text-end">
+			<p>{{ $t('NewPuzzle.starting-a-new-puzzle-will-overwrite') }}</p>
+		</div>
+		<div class="bottom-grid gap-x-4 w-full h-20">
+			<router-link
+				v-slot="{ href, navigate }"
+				custom
+				:to="{ name: 'PlayPuzzle' }"
+			>
+				<BaseButton
+					v-if="hasCurrentSavedGame"
+					class="flex items-center flex-shrink overflow-hidden text-wrap text-sm"
+					elevated
+					element="a"
+					:href="href"
+					@click="navigate"
+				><span class="text-wrap">{{ $t('NewPuzzle.load-save') }}</span></BaseButton>
+			</router-link>
+			<StartGameButton
+				:class="{ 'col-span-2': !hasCurrentSavedGame }"
+				:size="selectedDimensions"
+				:difficulty-label="selectedDifficultyLabel"
+				:difficulty-stars="selectedDifficulty"
+				:disabled="startButtonDisabled"
+				:loading="puzzleIsLoading"
+				:replay="debugAutoReplayModeEnabled"
+				@start="startGame"
+			/>
+		</div>
+		
+	</div>
+</div>
 </template>
 
 <script setup lang="ts">

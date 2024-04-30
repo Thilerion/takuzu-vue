@@ -1,14 +1,14 @@
 <template>
-	<section>
-		<h2>Current streak</h2>
-		<div
-			class="streak-length border-4"
-			:class="[streakLengthClasses]"
-		><span :class="{
-			'text-xl': length >= 100
-		}">{{length}}</span></div>
-		<div class="text">{{currentStateText}}</div>
-	</section>
+<section>
+	<h2>Current streak</h2>
+	<div
+		class="streak-length border-4"
+		:class="[streakLengthClasses]"
+	>
+		<span :class="{ 'text-xl': length >= 100 }">{{ length }}</span>
+	</div>
+	<div class="text">{{ currentStateText }}</div>
+</section>
 </template>
 
 <script setup lang="ts">
@@ -59,7 +59,3 @@ const streakLengthClasses = computed(() => {
 	else return activeClasses;
 })
 </script>
-
-<style scoped>
-
-</style>

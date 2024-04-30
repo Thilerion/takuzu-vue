@@ -1,7 +1,7 @@
 <template>
-	<div class="time-box w-full text-white text-2xl text-center">
-		<span class="drop-shadow-sm"><slot/></span>
-	</div>
+<div class="time-box w-full text-white text-2xl text-center">
+	<span class="drop-shadow-sm"><slot /></span>
+</div>
 </template>
 
 <style scoped>

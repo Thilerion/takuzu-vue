@@ -21,11 +21,11 @@
 		<div
 			class="pl-4 pr-2 my-auto min-h-[4em] w-full flex-1 flex justify-stretch items-start flex-col text-xs leading-[1.5] overflow-x-hidden overflow-y-auto max-h-full h-full"
 		>
-		<transition name="stepchange" mode="out-in">
-			<p :key="step" class="my-auto"><slot name="message">Default slotted message</slot></p>
-		</transition>
+			<transition name="stepchange" mode="out-in">
+				<p :key="step" class="my-auto"><slot name="message">Default slotted message</slot></p>
+			</transition>
 		</div>
-		<div class="min-h-fit sticky bottom-0 mt-0.5 flex h-9 items-stretch border-t w-full" v-if="$slots.buttons != null">
+		<div v-if="$slots.buttons != null" class="min-h-fit sticky bottom-0 mt-0.5 flex h-9 items-stretch border-t w-full">
 			<div class="min-h-fit flex h-9 items-stretch w-full">
 				<slot name="buttons">Default slotted buttons / footer</slot>				
 			</div>

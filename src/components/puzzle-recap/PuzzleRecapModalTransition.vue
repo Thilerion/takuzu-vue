@@ -1,7 +1,7 @@
 <template>
-	<transition name="t-content">
-		<slot />
-	</transition>
+<transition name="t-content">
+	<slot />
+</transition>
 </template>
 
 <style scoped>

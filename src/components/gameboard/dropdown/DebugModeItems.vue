@@ -1,29 +1,29 @@
 <template>
-		<BaseDropdownItem @click="copyPuzzleString">
-			<template #icon>
-				<icon-heroicons-outline-clipboard-copy class="opacity-80 text-base" />
-			</template>
-			<span class="mt-px">{{ $t('PlayPuzzle.dd.copy-board-string') }}</span>
-			<span v-if="copyError" class="ml-2 text-xs text-red-700 mt-px">{{ copyError }}</span>
-		</BaseDropdownItem>
-		<BaseDropdownItem @click="solvePuzzle">
-			<span class="ml-8 mt-px">{{ $t('PlayPuzzle.dd.solve-puzzle') }}</span>
-		</BaseDropdownItem>
-		<BaseDropdownItem @click="solveInstantly">
-			<span class="ml-8 mt-px">{{ $t('PlayPuzzle.dd.solve-instantly') }}</span>
-		</BaseDropdownItem>
-		<BaseDropdownItem @click="increasePuzzleTime">
-			<template #icon>
-				<IconIcOutlineMoreTime class="opacity-80 text-base" />
-			</template>
-			<span class="mt-px">{{ $t('PlayPuzzle.dd.increase-time-by-n-s', { n: 10 }) }}</span>
-		</BaseDropdownItem>
-		<BaseDropdownItem @click="solveTrios">
-			<span class="ml-8 mt-px">{{ $t('PlayPuzzle.dd.solve-all-triples') }}</span>
-		</BaseDropdownItem>
-		<BaseDropdownItem @click="loadLastCorrectBoardState" :disabled="!canLoadLastCorrectState">
-			<span class="ml-8 mt-px">{{ $t('PlayPuzzle.dd.load-last-correct-board-state') }}</span>
-		</BaseDropdownItem>
+<BaseDropdownItem @click="copyPuzzleString">
+	<template #icon>
+		<icon-heroicons-outline-clipboard-copy class="opacity-80 text-base" />
+	</template>
+	<span class="mt-px">{{ $t('PlayPuzzle.dd.copy-board-string') }}</span>
+	<span v-if="copyError" class="ml-2 text-xs text-red-700 mt-px">{{ copyError }}</span>
+</BaseDropdownItem>
+<BaseDropdownItem @click="solvePuzzle">
+	<span class="ml-8 mt-px">{{ $t('PlayPuzzle.dd.solve-puzzle') }}</span>
+</BaseDropdownItem>
+<BaseDropdownItem @click="solveInstantly">
+	<span class="ml-8 mt-px">{{ $t('PlayPuzzle.dd.solve-instantly') }}</span>
+</BaseDropdownItem>
+<BaseDropdownItem @click="increasePuzzleTime">
+	<template #icon>
+		<IconIcOutlineMoreTime class="opacity-80 text-base" />
+	</template>
+	<span class="mt-px">{{ $t('PlayPuzzle.dd.increase-time-by-n-s', { n: 10 }) }}</span>
+</BaseDropdownItem>
+<BaseDropdownItem @click="solveTrios">
+	<span class="ml-8 mt-px">{{ $t('PlayPuzzle.dd.solve-all-triples') }}</span>
+</BaseDropdownItem>
+<BaseDropdownItem :disabled="!canLoadLastCorrectState" @click="loadLastCorrectBoardState">
+	<span class="ml-8 mt-px">{{ $t('PlayPuzzle.dd.load-last-correct-board-state') }}</span>
+</BaseDropdownItem>
 </template>
 
 <script setup lang="ts">
@@ -153,7 +153,3 @@ const loadLastCorrectBoardState = () => {
 	emit('close');
 }
 </script>
-
-<style scoped>
-
-</style>

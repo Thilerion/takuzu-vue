@@ -1,20 +1,28 @@
 <template>
-	<transition name="fade-scale" appear>
+<transition name="fade-scale" appear>
+	<div
+		v-if="isActive"
+		class="modal"
+		role="dialog"
+		@keydown.esc="keyClose"
+	>
+
 		<div
-			class="modal"
-			v-if="isActive"
-			role="dialog"
-			@keydown.esc="keyClose"
+			class="modal-background"
+			tabindex="-1"
+			@click="backdropClose"
+		></div>
+
+		<div
+			ref="modalContent"
+			class="modal-content"
+			tabindex="-1"
 		>
-
-			<div class="modal-background" @click="backdropClose" tabindex="-1"></div>
-
-			<div class="modal-content" ref="modalContent" tabindex="-1">
-				<slot :close="close" :open="open" />
-			</div>
-
+			<slot :close="close" :open="open" />
 		</div>
-	</transition>
+
+	</div>
+</transition>
 </template>
 
 <script setup lang="ts">

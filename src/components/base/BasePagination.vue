@@ -1,26 +1,34 @@
 <template>
-	<div class="flex flex-row text-sm py-2 gap-4 justify-center items-center px-2">
+<div class="flex flex-row text-sm py-2 gap-4 justify-center items-center px-2">
+	<div class="w-10"><button
+		v-if="modelValue > 0"
+		class="bg-white border rounded h-8 px-2"
+		@click="goToPage(-Infinity)"
+	><icon-mdi-chevron-double-left /></button></div>
 
-		<div class="w-10"><button class="bg-white border rounded h-8 px-2" @click="goToPage(-Infinity)" v-if="modelValue > 0"><icon-mdi-chevron-double-left /></button></div>
+	<div class="w-10"><button
+		v-if="modelValue > 0"
+		class="bg-white border rounded h-8 px-2"
+		@click="changePage(-1)"
+	><icon-mdi-chevron-left /></button></div>
 
-		<div class="w-10"
-		><button
-			class="bg-white border rounded h-8 px-2"
-			@click="changePage(-1)" v-if="modelValue > 0"
-		><icon-mdi-chevron-left /></button></div>
+	<div
+		class="flex-1 text-center h-8 pt-1 flex items-center justify-center"
+	><span v-if="length">{{ displayShowingItems }} of {{ length }}</span></div>
 
-		<div
-			class="flex-1 text-center h-8 pt-1 flex items-center justify-center"
-		><span v-if="length">{{displayShowingItems}} of {{length}}</span></div>
+	<div class="w-10"><button
+		v-if="modelValue < maxPage"
+		class="bg-white border rounded h-8 px-2"
+		@click="changePage(1)"
+	><icon-mdi-chevron-right /></button></div>
 
-		<div class="w-10"
-		><button
-			class="bg-white border rounded h-8 px-2"
-			@click="changePage(1)" v-if="modelValue < maxPage"
-		><icon-mdi-chevron-right /></button></div>
-
-		<div class="w-10"><button class="bg-white border rounded h-8 px-2" @click="goToPage(Infinity)" v-if="modelValue < maxPage"><icon-mdi-chevron-double-right /></button></div>
-	</div>
+	<div class="w-10"><button
+		v-if="modelValue < maxPage"
+		class="bg-white border rounded h-8 px-2"
+		@click="goToPage(Infinity)"
+	><icon-mdi-chevron-double-right /></button></div>
+	
+</div>
 </template>
 
 <script setup lang="ts">
@@ -62,7 +70,3 @@ const changePage = (increment: number) => {
 	emit('update:modelValue', newPage);
 }
 </script>
-
-<style scoped>
-
-</style>

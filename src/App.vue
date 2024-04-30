@@ -1,11 +1,11 @@
 <template>
-	<div class="root">
-		<router-view v-slot="{ Component, route }">
-			<OverlayPageTransition show>
-				<component :is="Component" :key="route.meta.usePuzzleKey ? puzzleKey : undefined" />
-			</OverlayPageTransition>
-		</router-view>
-	</div>
+<div class="root">
+	<router-view v-slot="{ Component, route }">
+		<OverlayPageTransition show>
+			<component :is="Component" :key="route.meta.usePuzzleKey ? puzzleKey : undefined" />
+		</OverlayPageTransition>
+	</router-view>
+</div>
 </template>
 
 <script setup lang="ts">

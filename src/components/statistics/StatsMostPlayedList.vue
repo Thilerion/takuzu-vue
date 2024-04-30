@@ -1,56 +1,81 @@
 <template>
-	<div class="mb-4 gap-y-4 grid v-grid-bleed bleed-grid-4">
-		<div class="text-sm">
-			<h3>Group by:</h3>
-			<div class="py-2">
-				<div class="pl-1.5 pr-4 py-1.5 inline-flex flex-row items-center gap-2 rounded-full bg-gray-200 radio-wrapper mr-2" :class="{checked: itemType === 'puzzleConfig'}">
-					<input type="radio" id="itemTypeRadioPuzzleConfig" value="puzzleConfig" v-model="itemType" />
-					<label for="itemTypeRadioPuzzleConfig">Size + difficulty</label>
-				</div>
-				<div class="pl-1.5 pr-4 py-1.5 inline-flex flex-row items-center gap-2 rounded-full bg-gray-200 radio-wrapper" :class="{checked: itemType === 'size'}">
-					<input type="radio" id="itemTypeRadioSize" value="size" v-model="itemType" />
-					<label for="itemTypeRadioSize">Size</label>
-				</div>
+<div class="mb-4 gap-y-4 grid v-grid-bleed bleed-grid-4">
+	<div class="text-sm">
+		<h3>Group by:</h3>
+		<div class="py-2">
+			<div class="pl-1.5 pr-4 py-1.5 inline-flex flex-row items-center gap-2 rounded-full bg-gray-200 radio-wrapper mr-2" :class="{checked: itemType === 'puzzleConfig'}">
+				<input
+					id="itemTypeRadioPuzzleConfig"
+					v-model="itemType"
+					type="radio"
+					value="puzzleConfig"
+				>
+				<label for="itemTypeRadioPuzzleConfig">Size + difficulty</label>
+			</div>
+			<div class="pl-1.5 pr-4 py-1.5 inline-flex flex-row items-center gap-2 rounded-full bg-gray-200 radio-wrapper" :class="{checked: itemType === 'size'}">
+				<input
+					id="itemTypeRadioSize"
+					v-model="itemType"
+					type="radio"
+					value="size"
+				>
+				<label for="itemTypeRadioSize">Size</label>
+			</div>
+		</div>
+
+		<h3 class="mt-2">Show statistics from:</h3>
+		<div class="flex flex-row flex-wrap gap-2 w-fit max-w-sm py-2">
+
+			<div class="pl-1.5 pr-4 py-1.5 inline-flex flex-row items-center gap-2 rounded-full bg-gray-200 radio-wrapper" :class="{checked: listType === 'allTime'}">
+				<input
+					id="allTimeRadio"
+					v-model="listType"
+					type="radio"
+					value="allTime"
+				>
+				<label for="allTimeRadio">All-time</label>
 			</div>
 
-			<h3 class="mt-2">Show statistics from:</h3>
-			<div class="flex flex-row flex-wrap gap-2 w-fit max-w-sm py-2">
+			<div class="pl-1.5 pr-4 py-1.5 inline-flex flex-row items-center gap-2 rounded-full bg-gray-200 radio-wrapper" :class="{checked: listType === 'recent90Days'}">
+				<input
+					id="recentRadio90"
+					v-model="listType"
+					type="radio"
+					value="recent90Days"
+				>
+				<label for="recentRadio90">Last 90 days</label>
+			</div>
 
-				<div class="pl-1.5 pr-4 py-1.5 inline-flex flex-row items-center gap-2 rounded-full bg-gray-200 radio-wrapper" :class="{checked: listType === 'allTime'}">
-					<input type="radio" id="allTimeRadio" value="allTime" v-model="listType" />
-					<label for="allTimeRadio">All-time</label>
-				</div>
-
-				<div class="pl-1.5 pr-4 py-1.5 inline-flex flex-row items-center gap-2 rounded-full bg-gray-200 radio-wrapper" :class="{checked: listType === 'recent90Days'}">
-					<input type="radio" id="recentRadio90" value="recent90Days" v-model="listType" />
-					<label for="recentRadio90">Last 90 days</label>
-				</div>
-
-				<div class="pl-1.5 pr-4 py-1.5 inline-flex flex-row items-center gap-2 rounded-full bg-gray-200 radio-wrapper" :class="{checked: listType === 'recent30Days'}">
-					<input type="radio" id="recentRadio30" value="recent30Days" v-model="listType" />
-					<label for="recentRadio30">Last 30 days</label>
-				</div>
-
+			<div class="pl-1.5 pr-4 py-1.5 inline-flex flex-row items-center gap-2 rounded-full bg-gray-200 radio-wrapper" :class="{checked: listType === 'recent30Days'}">
+				<input
+					id="recentRadio30"
+					v-model="listType"
+					type="radio"
+					value="recent30Days"
+				>
+				<label for="recentRadio30">Last 30 days</label>
 			</div>
 
 		</div>
-		<div class="mb-4 full-bleed" v-if="true">
-			<BaseTable
-				:columns="[
-					{ label: 'Size', sortable: !!mergeDifficulties, key: 'size' },
-					{ label: 'Count', sortable: true, key: 'count' },
-					{ label: 'Count%', sortable: true, key: 'pCount' },
-					{ label: 'Time%', sortable: true, key: 'pTime' },
-					{ label: 'Fav%', sortable: true, key: 'pFavScore' },
-					{ label: 'Cells', sortable: true, key: 'cells' },
-					{ label: 'Time/100 cells', sortable: true, key: 'timePer100Cells' }
-				]"
-				:rows="tableRows"
-				:current-sort="{ key: sortProp, dir: sortDir }"
-				@sort-header="(key: string) => setSortProp(key as keyof TableGroupData | 'size')"
-			/>
-		</div>
+
 	</div>
+	<div class="mb-4 full-bleed">
+		<BaseTable
+			:columns="[
+				{ label: 'Size', sortable: !!mergeDifficulties, key: 'size' },
+				{ label: 'Count', sortable: true, key: 'count' },
+				{ label: 'Count%', sortable: true, key: 'pCount' },
+				{ label: 'Time%', sortable: true, key: 'pTime' },
+				{ label: 'Fav%', sortable: true, key: 'pFavScore' },
+				{ label: 'Cells', sortable: true, key: 'cells' },
+				{ label: 'Time/100 cells', sortable: true, key: 'timePer100Cells' }
+			]"
+			:rows="tableRows"
+			:current-sort="{ key: sortProp, dir: sortDir }"
+			@sort-header="(key: string) => setSortProp(key as keyof TableGroupData | 'size')"
+		/>
+	</div>
+</div>
 </template>
 
 <script setup lang="ts">

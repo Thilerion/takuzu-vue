@@ -1,22 +1,26 @@
 <template>
-	<div class="text-left">
-		<BasicListHeader>Debug mode options</BasicListHeader>
-		<BasicLinkList>
-			<BasicLinkListItem>
+<div class="text-left">
+	<BasicListHeader>Debug mode options</BasicListHeader>
+	<BasicLinkList>
+		<BasicLinkListItem>
 			<router-link class="list-btn" to="/showcase">Open component showcase</router-link>
-			</BasicLinkListItem>
-			<BasicLinkListItem><button class="list-btn" @click="clearPuzzleDbAction">Clear pregen puzzle db</button></BasicLinkListItem>
-			<BasicLinkListItem><button class="list-btn" @click="initPregenPuzzles">Pregen puzzles</button></BasicLinkListItem>
-		</BasicLinkList>
-		<div class="db-results relative pt-4">
-			<transition-group name="t-note">
-				<div class="h-8 flex items-center justify-start overflow-hidden will-change-[height]" v-for="value in clearPuzzlesResult" :key="value.id">
-					<p class="text-sm text-left px-6 font-bold tracking-wider text-gray-600" >{{value.str}}</p>
-				</div>
+		</BasicLinkListItem>
+		<BasicLinkListItem><button class="list-btn" @click="clearPuzzleDbAction">Clear pregen puzzle db</button></BasicLinkListItem>
+		<BasicLinkListItem><button class="list-btn" @click="initPregenPuzzles">Pregen puzzles</button></BasicLinkListItem>
+	</BasicLinkList>
+	<div class="db-results relative pt-4">
+		<transition-group name="t-note">
+			<div
+				v-for="value in clearPuzzlesResult"
+				:key="value.id"
+				class="h-8 flex items-center justify-start overflow-hidden will-change-[height]"
+			>
+				<p class="text-sm text-left px-6 font-bold tracking-wider text-gray-600">{{ value.str }}</p>
+			</div>
 			
-			</transition-group>
-		</div>
+		</transition-group>
 	</div>
+</div>
 </template>
 
 <script setup lang="ts">

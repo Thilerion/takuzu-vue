@@ -1,13 +1,17 @@
 <template>
-	<div class="main justify-center items-center relative" ref="container">
-		<div
-			class="puzzle-wrapper"
-			:class="[`cell-size-${cellSizeCategory}`]"
-			v-show="validElDimensions"
-		>
-			<slot :cell-size="cellSize" :width="gridWidth" :height="gridHeight" />
-		</div>
+<div ref="container" class="main justify-center items-center relative">
+	<div
+		v-show="validElDimensions"
+		class="puzzle-wrapper"
+		:class="[`cell-size-${cellSizeCategory}`]"
+	>
+		<slot
+			:cell-size="cellSize"
+			:width="gridWidth"
+			:height="gridHeight"
+		/>
 	</div>
+</div>
 </template>
 
 <script setup lang="ts">

@@ -1,22 +1,26 @@
 <template>
-	<PuzzleHintBase @hide="$emit('hide')" v-show="show" :step="stepIdx">
-		<template #title>{{ $t(title, title) }}<span class="mr-[0.5ch]" v-if="subtitle">:</span><small class="text-sm opacity-80" v-if="subtitle">{{ $t(subtitle, subtitle) }}</small></template>
-		<template #message>{{ stepMessage }}</template>
-		<template #buttons>
-			<button
-				:disabled="isFirstStep"
-				@click="prevStep"
-				class="text-sm text-slate-700 bg-white border-r min-w-fit w-24 py-1 flex-grow max-w-[27%] disabled:text-slate-400 disabled:bg-slate-50"
-			><span class="mr-[1ch]">&#x3C;</span>{{ t('Hints.common.actionLabel.back') }}</button>
-			<div class="flex-1">
-				<!-- Space for secondary actions, or [Learn more] button, etc -->
-			</div>
-			<button
-				@click="onAction"
-				class="text-sm flex-grow text-slate-700 bg-white border-l min-w-fit w-24 py-1 max-w-[27%]"
-			><transition name="stepchange" mode="out-in"><span :key="stepIdx">{{ primaryActionLabel }}<span v-if="!isFinalStep" class="ml-[1ch]">&#x3E;</span></span></transition></button>
-		</template>
-	</PuzzleHintBase>
+<PuzzleHintBase
+	v-show="show"
+	:step="stepIdx"
+	@hide="$emit('hide')"
+>
+	<template #title>{{ $t(title, title) }}<span v-if="subtitle" class="mr-[0.5ch]">:</span><small v-if="subtitle" class="text-sm opacity-80">{{ $t(subtitle, subtitle) }}</small></template>
+	<template #message>{{ stepMessage }}</template>
+	<template #buttons>
+		<button
+			:disabled="isFirstStep"
+			class="text-sm text-slate-700 bg-white border-r min-w-fit w-24 py-1 flex-grow max-w-[27%] disabled:text-slate-400 disabled:bg-slate-50"
+			@click="prevStep"
+		><span class="mr-[1ch]">&#x3C;</span>{{ t('Hints.common.actionLabel.back') }}</button>
+		<div class="flex-1">
+			<!-- Space for secondary actions, or [Learn more] button, etc -->
+		</div>
+		<button
+			class="text-sm flex-grow text-slate-700 bg-white border-l min-w-fit w-24 py-1 max-w-[27%]"
+			@click="onAction"
+		><transition name="stepchange" mode="out-in"><span :key="stepIdx">{{ primaryActionLabel }}<span v-if="!isFinalStep" class="ml-[1ch]">&#x3E;</span></span></transition></button>
+	</template>
+</PuzzleHintBase>
 </template>
 
 <script setup lang="ts">

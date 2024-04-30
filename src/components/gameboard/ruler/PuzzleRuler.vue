@@ -1,15 +1,15 @@
 <template>
-	<CoordsRuler 
-		v-if="componentType === 'coords'"
-		:line-type="rulerLineType"
-		:line-ids="lineIds"
-	/>
-	<CountsRuler
-		v-else-if="componentType === 'count'"
-		:count-type="countType!"
-		:line-type="rulerLineType"
-		:cell-size="cellSize"
-	/>
+<CoordsRuler 
+	v-if="componentType === 'coords'"
+	:line-type="rulerLineType"
+	:line-ids="lineIds"
+/>
+<CountsRuler
+	v-else-if="componentType === 'count'"
+	:count-type="countType!"
+	:line-type="rulerLineType"
+	:cell-size="cellSize"
+/>
 </template>
 
 <script setup lang="ts">
@@ -25,7 +25,3 @@ defineProps<{
 	componentType: RulerComponentType
 }>();
 </script>
-
-<style scoped>
-
-</style>

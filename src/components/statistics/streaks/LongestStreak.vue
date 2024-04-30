@@ -1,15 +1,17 @@
 <template>
-	<section>
-		<h2>Longest streak</h2>
-		<div class="streak-length border-4" :class="[streakLengthClasses]"><span :class="{
-				'text-xl': length >= 100
-		}">{{length}}</span></div>
-		<div class="text">
-			<div v-if="fromStr && toStr">
-				<span class="whitespace-nowrap">{{fromStr}}</span> - <span class="whitespace-nowrap">{{toStr}}</span>
-			</div>
+<section>
+	<h2>Longest streak</h2>
+	<div class="streak-length border-4" :class="[streakLengthClasses]"><span
+		:class="{
+			'text-xl': length >= 100
+		}"
+	>{{ length }}</span></div>
+	<div class="text">
+		<div v-if="fromStr && toStr">
+			<span class="whitespace-nowrap">{{ fromStr }}</span> - <span class="whitespace-nowrap">{{ toStr }}</span>
 		</div>
-	</section>
+	</div>
+</section>
 </template>
 
 <script setup lang="ts">
@@ -69,6 +71,3 @@ const toStr = computed((): null | string => {
 	} else return formatRelativeDate(diffEndDate.value!);
 })
 </script>
-
-<style scoped>
-</style>

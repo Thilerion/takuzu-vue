@@ -1,13 +1,13 @@
 <template>
-	<div class="px-1 py-2 text-xs flex flex-row items-center justify-between gap-4 max-w-xl min-w-0 overflow-x-hidden">
-		<div class="min-w-max w-[18ch] flex-nowrap flex flex-row gap-4 text-left">
-			<div class="whitespace-nowrap flex-1">{{ fDateTime.date }}</div>
-			<div class="whitespace-nowrap flex-none">{{ fDateTime.time }}</div>
-		</div>
-		<div class="overflow-hidden text-ellipsis whitespace-nowrap inline-block text-center w-12">{{ dimensions }}</div>
-		<div class="overflow-hidden text-ellipsis whitespace-nowrap inline-block text-center w-7">{{ difficulty }}*</div>
-		<span class="inline-block text-right min-w-max w-1/5">{{ formattedTime }}</span>
+<div class="px-1 py-2 text-xs flex flex-row items-center justify-between gap-4 max-w-xl min-w-0 overflow-x-hidden">
+	<div class="min-w-max w-[18ch] flex-nowrap flex flex-row gap-4 text-left">
+		<div class="whitespace-nowrap flex-1">{{ fDateTime.date }}</div>
+		<div class="whitespace-nowrap flex-none">{{ fDateTime.time }}</div>
 	</div>
+	<div class="overflow-hidden text-ellipsis whitespace-nowrap inline-block text-center w-12">{{ dimensions }}</div>
+	<div class="overflow-hidden text-ellipsis whitespace-nowrap inline-block text-center w-7">{{ difficulty }}*</div>
+	<span class="inline-block text-right min-w-max w-1/5">{{ formattedTime }}</span>
+</div>
 </template>
 
 <script setup lang="ts">
@@ -83,6 +83,3 @@ const fDateTime = computed(() => {
 })
 const formattedTime = computed(() => formatTime(props.time));
 </script>
-
-<style scoped>
-</style>

@@ -1,27 +1,27 @@
 <template>
-	<div
-		class="difficulty-select grid pb-1 pt-2 px-0 overflow-hidden relative grid-rows-2"
-	>
-		<button
-			@click="$emit('decrease')"
-			class="arrow-left z-10 arrow-btn"
-		><IconBtn class="arrow-btn-inner" el="div"><icon-ic-baseline-keyboard-arrow-left :style="{'font-size': '24px'}"/></IconBtn></button>
-		<div class="label h-16 relative z-0 mt-1">
-			<transition :name="transitionName">
-				<DifficultyLabel
-					:stars="difficulty"
-					:label="currentLabel"
-					:key="difficulty"
-				/>
-			</transition>
-		</div>
-		<button
-			@click="$emit('increase')"
-			class="arrow-right z-10 arrow-btn"
-		>
-			<IconBtn class="arrow-btn-inner" el="div"><icon-ic-baseline-keyboard-arrow-right :style="{'font-size': '24px'}"/></IconBtn>
-		</button>
+<div
+	class="difficulty-select grid pb-1 pt-2 px-0 overflow-hidden relative grid-rows-2"
+>
+	<button
+		class="arrow-left z-10 arrow-btn"
+		@click="$emit('decrease')"
+	><IconBtn class="arrow-btn-inner" el="div"><icon-ic-baseline-keyboard-arrow-left :style="{'font-size': '24px'}" /></IconBtn></button>
+	<div class="label h-16 relative z-0 mt-1">
+		<transition :name="transitionName">
+			<DifficultyLabel
+				:key="difficulty"
+				:stars="difficulty"
+				:label="currentLabel"
+			/>
+		</transition>
 	</div>
+	<button
+		class="arrow-right z-10 arrow-btn"
+		@click="$emit('increase')"
+	>
+		<IconBtn class="arrow-btn-inner" el="div"><icon-ic-baseline-keyboard-arrow-right :style="{'font-size': '24px'}" /></IconBtn>
+	</button>
+</div>
 </template>
 
 <script setup lang="ts">

@@ -1,27 +1,27 @@
 <template>
-	<div
-		class="how-to-play flex flex-col pb-4"
-		ref="pageEl"
-	>
-		<div class="tabbed-header sticky top-0 z-50 mb-4 transition-shadow duration-200" :class="[elevateHeader ? 'shadow-md' : 'shadow-sm']">
-			<PageHeader
+<div
+	ref="pageEl"
+	class="how-to-play flex flex-col pb-4"
+>
+	<div class="tabbed-header sticky top-0 z-50 mb-4 transition-shadow duration-200" :class="[elevateHeader ? 'shadow-md' : 'shadow-sm']">
+		<PageHeader
 			class="flex-shrink-0 relative z-10"
 			:elevated="false"
 			:back-options="{ type: 'force', prevRouteName: 'Home' }"
 		>{{ $t('HowToPlay.page-title') }}</PageHeader>
 		<HowToPlayTabsList />
-		</div>
-		
-		<div>
-			
-			<div
-				class="bg-white dark:bg-slate-800 rounded-t-lg relative z-0 shadow-sm mb-6"
-			>
-				<router-view class="py-4" />
-			</div>
-		</div>
-		<ScrollToTop :el="pageEl" ref="scrollToTopComponent" />
 	</div>
+	
+	<div>
+		
+		<div
+			class="bg-white dark:bg-slate-800 rounded-t-lg relative z-0 shadow-sm mb-6"
+		>
+			<router-view class="py-4" />
+		</div>
+	</div>
+	<ScrollToTop ref="scrollToTopComponent" :el="pageEl" />
+</div>
 </template>
 
 <script setup lang="ts">

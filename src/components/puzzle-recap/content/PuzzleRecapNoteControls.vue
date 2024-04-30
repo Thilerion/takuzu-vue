@@ -1,24 +1,24 @@
 <template>
-	<div
-		class="inline-flex min-w-max items-end justify-end"
+<div
+	class="inline-flex min-w-max items-end justify-end"
+>
+	<IconBtn
+		v-if="isEditing"
+		class="text-xxs active:hover-none:bg-gray-300/20 text-gray-150/70"
+		scale="0.875"
+		@click="$emit('clear')"
+	><icon-ic-baseline-close /></IconBtn>
+
+	<IconBtn
+		class="text-xxs active:hover-none:bg-gray-300/20 text-gray-150/70"
+		scale="0.875"
+		@click="saveOrEdit"
 	>
-		<IconBtn
-			class="text-xxs active:hover-none:bg-gray-300/20 text-gray-150/70"
-			scale="0.875"
-			@click="$emit('clear')"
-			v-if="isEditing"
-		><icon-ic-baseline-close /></IconBtn>
+		<icon-ic-check v-if="isEditing" />
+		<icon-mdi-pencil v-else-if="!isEditing" />
 
-		<IconBtn
-			class="text-xxs active:hover-none:bg-gray-300/20 text-gray-150/70"
-			scale="0.875"
-			@click="saveOrEdit"
-		>
-			<icon-ic-check v-if="isEditing" />
-			<icon-mdi-pencil v-else-if="!isEditing" />
-
-		</IconBtn>
-	</div>
+	</IconBtn>
+</div>
 </template>
 
 <script setup lang="ts">
@@ -39,7 +39,3 @@ const saveOrEdit = () => {
 	}
 }
 </script>
-
-<style scoped>
-
-</style>

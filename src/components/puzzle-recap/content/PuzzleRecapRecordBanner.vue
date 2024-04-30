@@ -1,15 +1,16 @@
 <template>
-	<div class="relative banner-wrapper h-full">
-		<div
-			class="highscore-banner relative z-10 bg-white text-teal-700 text-base flex pr-2 pl-1 rounded-full font-medium justify-center items-center leading-none min-w-[13rem] h-full shadow-xl">
-			<div class="h-5 w-5 mb-[0.1em]">
-				<icon-fxemoji-trophy class="w-full h-full" />
-			</div>
-			<div class="text-base ml-2">
-				<slot/>
-			</div>
+<div class="relative banner-wrapper h-full">
+	<div
+		class="highscore-banner relative z-10 bg-white text-teal-700 text-base flex pr-2 pl-1 rounded-full font-medium justify-center items-center leading-none min-w-[13rem] h-full shadow-xl"
+	>
+		<div class="h-5 w-5 mb-[0.1em]">
+			<icon-fxemoji-trophy class="w-full h-full" />
+		</div>
+		<div class="text-base ml-2">
+			<slot />
 		</div>
 	</div>
+</div>
 </template>
 
 <style scoped>

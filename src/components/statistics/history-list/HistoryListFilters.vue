@@ -1,10 +1,14 @@
 <template>
-	<div class="bg-white px-2 py-0 border-y">
-		<ExpandTransition :show="showFilterInputs">
-			<div>
+<div class="bg-white px-2 py-0 border-y">
+	<ExpandTransition :show="showFilterInputs">
+		<div>
 			<div class="divide-y bg-blue-100/0">
 				<div class="py-2 px-2">
-					<InputToggle v-model="favoritesOnly" id="favoritesOnlyToggle" class="mb-0 w-full font-medium">Favorites only</InputToggle>
+					<InputToggle
+						id="favoritesOnlyToggle"
+						v-model="favoritesOnly"
+						class="mb-0 w-full font-medium"
+					>Favorites only</InputToggle>
 				</div>
 
 				<div class="py-2 px-2">
@@ -12,11 +16,15 @@
 					<div class="flex flex-row flex-wrap gap-x-6 gap-y-1">
 						<label
 							v-for="opt in timeRecordOpts"
-							class="max-w-1/2 min-w-max leading-loose"
 							:key="opt.label"
+							class="max-w-1/2 min-w-max leading-loose"
 						>
-							<input type="radio" :value="opt.value" v-model="timeRecordFilterValue">
-							<span class="ml-1.5">{{opt.label}}</span>
+							<input
+								v-model="timeRecordFilterValue"
+								type="radio"
+								:value="opt.value"
+							>
+							<span class="ml-1.5">{{ opt.label }}</span>
 						</label>
 					</div>
 				</div>
@@ -25,7 +33,11 @@
 					<div class="flex flex-row justify-between">
 						<h3 class="font-medium leading-loose">Difficulty</h3>
 						<transition name="t-fade">
-							<button @click="removeFilter('difficulty')" v-if="activeFilters.difficulty" class="text-xs uppercase tracking-wide font-medium opacity-60">Clear</button>
+							<button
+								v-if="activeFilters.difficulty"
+								class="text-xs uppercase tracking-wide font-medium opacity-60"
+								@click="removeFilter('difficulty')"
+							>Clear</button>
 						</transition>
 					</div>
 					<HistoryListFilterDifficulty v-model="difficultyFilterValues" :is-active="!!activeFilters.difficulty" />
@@ -34,32 +46,34 @@
 				<div class="py-2 px-2">
 					<label for="boardSizeSelect" class="font-medium leading-loose">Board size</label>
 					<Multiselect
-						mode="multiple"
 						id="boardSizeSelect"
+						v-model="boardSizeFilterValues"
+						mode="multiple"
 						placeholder="Choose dimensions for filter"
 						:closeOnSelect="false"
 						:hide-selected="false"
 						:multiple-label="getMultiLabel"
-						v-model="boardSizeFilterValues"
 						:options="boardSizeOpts"
 						class="h-12"
 					/>
 				</div>
 				
 			</div>
-			</div>
-		</ExpandTransition>
-		<div class="py-2 min-h-[2.75rem] text-center flex gap-x-3 gap-y-2 flex-wrap text-xs tracking-wider grayscale-[50%] contrast-150 brightness-90 w-full items-center justify-start border-t"
-				:class="hasActiveFilters && showFilterInputs ? ['border-gray-300', 'border-t'] : ['border-transparent']">
-			<transition-group name="t-filterbtns">
+		</div>
+	</ExpandTransition>
+	<div
+		class="py-2 min-h-[2.75rem] text-center flex gap-x-3 gap-y-2 flex-wrap text-xs tracking-wider grayscale-[50%] contrast-150 brightness-90 w-full items-center justify-start border-t"
+		:class="hasActiveFilters && showFilterInputs ? ['border-gray-300', 'border-t'] : ['border-transparent']"
+	>
+		<transition-group name="t-filterbtns">
 			<button
 				v-if="activeFilters.difficulty"
+				:key="activeFilters.difficulty.join(',')"
 				class="tracking-wider w-max py-1 pl-4 pr-2 font-medium bg-blue-200/90 rounded-full flex items-center hover-hover:hover:bg-blue-200/70 text-sky-900"
 				@click="removeFilter('difficulty')"
-				:key="activeFilters.difficulty.join(',')"
 			>
-				<span v-if="activeFilters.difficulty[0] === activeFilters.difficulty[1]">Difficulty: {{activeFilters.difficulty[0]}}*</span>
-				<span v-else>Difficulty: {{activeFilters.difficulty[0]}}* - {{activeFilters.difficulty[1]}}*</span>
+				<span v-if="activeFilters.difficulty[0] === activeFilters.difficulty[1]">Difficulty: {{ activeFilters.difficulty[0] }}*</span>
+				<span v-else>Difficulty: {{ activeFilters.difficulty[0] }}* - {{ activeFilters.difficulty[1] }}*</span>
 				<icon-ic-baseline-close class="block opacity-70 ml-2 w-4 h-4" />
 			</button>
 
@@ -75,29 +89,29 @@
 
 			<button
 				v-if="activeFilters.timeRecord"
+				:key="activeFilters.timeRecord"
 				class="tracking-wider w-max py-1 pl-4 pr-2 font-medium bg-purple-400/30 text-purple-900 rounded-full flex items-center hover-hover:hover:bg-purple-400/20"
 				@click="removeFilter('timeRecord')"
-				:key="activeFilters.timeRecord"
 			>
 				<span v-if="activeFilters.timeRecord === 'first'">Time record: only first</span>
 				<span v-else-if="activeFilters.timeRecord === 'record'">Time record: all</span>
 				<span v-else-if="activeFilters.timeRecord === 'current'">Time record: only current</span>
-				<span v-else>Time record: {{activeFilters.timeRecord}}</span>
+				<span v-else>Time record: {{ activeFilters.timeRecord }}</span>
 				<icon-ic-baseline-close class="block opacity-70 ml-2 w-4 h-4" />
 			</button>
 			<button
 				v-for="size in activeFilters?.boardSize ?? []"
+				:key="size"
 				class="tracking-wider w-max py-1 pl-4 pr-2 font-medium bg-emerald-400/30 text-emerald-900 rounded-full flex items-center hover-hover:hover:bg-emerald-400/20"
 				@click="removeSizeFromBoardSizeFilters(size)"
-				:key="size"
 			>
-				<span>{{size}}</span>
+				<span>{{ size }}</span>
 				<icon-ic-baseline-close class="block opacity-70 ml-2 w-4 h-4" />
 			</button>
 			<div v-if="!hasActiveFilters" class="!duration-[0ms] px-2">No active filters</div>
-			</transition-group>
-		</div>
+		</transition-group>
 	</div>
+</div>
 </template>
 
 <script setup lang="ts">

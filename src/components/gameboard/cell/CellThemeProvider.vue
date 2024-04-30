@@ -1,5 +1,5 @@
 <template>
-	<slot :theme-data="themeData" :cell-component="cellComponent" />
+<slot :theme-data="themeData" :cell-component="cellComponent" />
 </template>
 
 <script setup lang="ts">
@@ -12,7 +12,3 @@ const props = defineProps<{
 const { cellComponent, ...themeData } = useLocalCellThemeProvider(props.config);
 
 </script>
-
-<style scoped>
-
-</style>

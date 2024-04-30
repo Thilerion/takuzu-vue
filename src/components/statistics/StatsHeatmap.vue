@@ -1,46 +1,64 @@
 <template>
-	<div
-		class="heatmap-scroll-wrapper overflow-x-auto overflow-y-visible w-full mx-auto h-fit snap-both snap-proximity bg-white">
+<div class="heatmap-scroll-wrapper overflow-x-auto overflow-y-visible w-full mx-auto h-fit snap-both snap-proximity bg-white">
 
-		<div class="heatmap-wrapper grid w-fit snap-end mx-auto">
-			<div class="months relative">
-				<div class="month" v-for="(month, idx) in months" :key="`${idx}${month}`" :style="{
+	<div class="heatmap-wrapper grid w-fit snap-end mx-auto">
+		<div class="months relative">
+			<div
+				v-for="(month, idx) in months"
+				:key="`${idx}${month}`"
+				class="month"
+				:style="{
 					'grid-column': `${month.colStart} / span 3`,
 					'grid-row': '1 / span 1'
-				}">{{ month.name }}</div>
+				}"
+			>{{ month.name }}</div>
+		</div>
+		<div class="weekdays flex">
+			<div
+				v-for="day in weekdays"
+				:key="day.name"
+				class="weekday"
+			>
+				<span v-if="day.show">{{ day.name }}</span>
 			</div>
-			<div class="weekdays flex">
-				<div class="weekday" v-for="day in weekdays" :key="day.name">
-					<span v-if="day.show">{{ day.name }}</span>
-				</div>
-			</div>
-			<div class="squares grid grid-flow-col">
-				<div class="square bg-white" @click="toggleSelectedSquare(square.dateStr, square)"
-					:data-level="dateToScaleLevelMap.get(square.dateStr) ?? 0" :style="{
-						'grid-row': `${square.weekday + 1} / span 1`,
-						'grid-column': `${square.weekColumn + 1} / span 1`,
-					}" :class="{
-	'snap-start': square.index % 7 === 0,
-	'selected': square.dateStr === selectedSquare?.dateStr
-}" v-for="(square) in squares" :key="square.index">
-					<div class="w-full h-full pointer-events-none"></div>
-				</div>
+		</div>
+		<div class="squares grid grid-flow-col">
+			<div
+				v-for="(square) in squares"
+				:key="square.index"
+				class="square bg-white"
+				:data-level="dateToScaleLevelMap.get(square.dateStr) ?? 0"
+				:style="{
+					'grid-row': `${square.weekday + 1} / span 1`,
+					'grid-column': `${square.weekColumn + 1} / span 1`,
+				}"
+				:class="{
+					'snap-start': square.index % 7 === 0,
+					'selected': square.dateStr === selectedSquare?.dateStr
+				}"
+				@click="toggleSelectedSquare(square.dateStr, square)"
+			>
+				<div class="w-full h-full pointer-events-none"></div>
 			</div>
 		</div>
 	</div>
-	<div class="w-full" v-if="selectedDateValues != null">
-		<div class="flex flex-row gap-4 items-center justify-between text-xs max-w-md mx-auto px-3 py-1">
-			<div>{{ selectedDateValues.date }}</div>
-			<template v-if="selectedDateValues.played > 0">
-				<div>{{ selectedDateValues.played }} puzzles</div>
-				<div>playtime: {{ formatTime(selectedDateValues.time) }}</div>
-			</template>
-			<template v-else>
-				<div>No puzzles played</div>
-				<div></div>
-			</template>
-		</div>
+</div>
+<div
+	v-if="selectedDateValues != null"
+	class="w-full"
+>
+	<div class="flex flex-row gap-4 items-center justify-between text-xs max-w-md mx-auto px-3 py-1">
+		<div>{{ selectedDateValues.date }}</div>
+		<template v-if="selectedDateValues.played > 0">
+			<div>{{ selectedDateValues.played }} puzzles</div>
+			<div>playtime: {{ formatTime(selectedDateValues.time) }}</div>
+		</template>
+		<template v-else>
+			<div>No puzzles played</div>
+			<div></div>
+		</template>
 	</div>
+</div>
 </template>
 
 <script setup lang="ts">

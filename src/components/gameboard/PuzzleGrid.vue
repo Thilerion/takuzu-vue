@@ -1,25 +1,28 @@
 <template>
-	<div class="puzzle-grid" :inert="paused">
-		<FastPuzzleCellWrapper
-			v-for="{ listKey, key: xyKey, x, y, locked } in staticCellData"
-			:key="listKey"
-			@toggle="onCellClick"
-			:x :y :listKey :locked
-			:value="keyedGrid[xyKey]"
-			:incorrect="errorMarkKeys[xyKey]"
-			v-memo="[keyedGrid[xyKey], errorMarkKeys[xyKey]]"
-		>
-			<template v-slot="{ value, locked, incorrect }">
-				<component
-					v-if="cellComponent != null"
-					:is="cellComponent"
-					v-bind="{ value, locked, incorrect }"
-				></component>
-				<div v-else>{{ value }}</div>
-			</template>
-		</FastPuzzleCellWrapper>
-		<PuzzleGridHighlights />
-	</div>
+<div class="puzzle-grid" :inert="paused">
+	<FastPuzzleCellWrapper
+		v-for="{ listKey, key: xyKey, x, y, locked } in staticCellData"
+		:key="listKey"
+		v-memo="[keyedGrid[xyKey], errorMarkKeys[xyKey]]"
+		:x
+		:y
+		:listKey
+		:locked
+		:value="keyedGrid[xyKey]"
+		:incorrect="errorMarkKeys[xyKey]"
+		@toggle="onCellClick"
+	>
+		<template #default="{ value, locked: innerLocked, incorrect }">
+			<component
+				:is="cellComponent"
+				v-if="cellComponent != null"
+				v-bind="{ value, locked: innerLocked, incorrect }"
+			/>
+			<div v-else>{{ value }}</div>
+		</template>
+	</FastPuzzleCellWrapper>
+	<PuzzleGridHighlights />
+</div>
 </template>
 
 <script setup lang="ts">

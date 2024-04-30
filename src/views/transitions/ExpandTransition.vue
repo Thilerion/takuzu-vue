@@ -1,11 +1,11 @@
 <template>
-	<transition
-		name="t-expand"
-		@enter="(el) => enter(el as HTMLElement)"
-		@after-enter="(el) => afterEnter(el as HTMLElement)"
-		@leave="(el) => leave(el as HTMLElement)"
-		@after-leave="afterLeave"
-	><template v-if="show"><slot /></template></transition>
+<transition
+	name="t-expand"
+	@enter="(el) => enter(el as HTMLElement)"
+	@after-enter="(el) => afterEnter(el as HTMLElement)"
+	@leave="(el) => leave(el as HTMLElement)"
+	@after-leave="afterLeave"
+><template v-if="show"><slot /></template></transition>
 </template>
 
 <script setup lang="ts">
@@ -18,6 +18,7 @@ const props = withDefaults(defineProps<{
 	show?: boolean
 }>(), {
 	duration: 500,
+	durationPer100Px: undefined,
 	maxDuration: 1000,
 	show: true
 })

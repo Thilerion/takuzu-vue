@@ -1,33 +1,33 @@
 <template>
-	<div class="grid grid-cols-2 gap-3 px-4 cards-grid">
-		<StatsOverviewCard
-			:value="totalPlayed"
-		>
-			<template #title>Puzzles solved</template>
-			<template #footer>{{totalPlayedTodayStr}} solved today</template>
-		</StatsOverviewCard>
+<div class="grid grid-cols-2 gap-3 px-4 cards-grid">
+	<StatsOverviewCard
+		:value="totalPlayed"
+	>
+		<template #title>Puzzles solved</template>
+		<template #footer>{{ totalPlayedTodayStr }} solved today</template>
+	</StatsOverviewCard>
 
-		<StatsOverviewCard
-			:value="timePlayedFormatted"
-		>
-			<template #title>Time played</template>
-			<template #footer>{{averageTimePerDayFormatted}} average per day</template>
-		</StatsOverviewCard>
+	<StatsOverviewCard
+		:value="timePlayedFormatted"
+	>
+		<template #title>Time played</template>
+		<template #footer>{{ averageTimePerDayFormatted }} average per day</template>
+	</StatsOverviewCard>
 
-		<StatsOverviewCard
-			title="Days played"
-			:value="datesPlayed"
-			description="Days with 1+ puzzles solved"
-		>
-			<template #title>Days played</template>
-		</StatsOverviewCard>
+	<StatsOverviewCard
+		title="Days played"
+		:value="datesPlayed"
+		description="Days with 1+ puzzles solved"
+	>
+		<template #title>Days played</template>
+	</StatsOverviewCard>
 
-		<StatsOverviewCard
-			:value="abbrCellsFilled"
-		>
-			<template #title>Cells filled</template>
-		</StatsOverviewCard>
-	</div>
+	<StatsOverviewCard
+		:value="abbrCellsFilled"
+	>
+		<template #title>Cells filled</template>
+	</StatsOverviewCard>
+</div>
 </template>
 
 <script setup lang="ts">

@@ -1,21 +1,21 @@
 <template>
-	<div class="text-left">
-		<BasicListHeader>Feature Toggles</BasicListHeader>
-		<BasicLinkList>
-			<BasicLinkListItem
-				v-for="(feature) in features"
-				:key="feature.value.label"
-				:wrapper-classes="'relative'"
-			>
-				<label class="absolute inset-0 flex items-center justify-start gap-x-4 pl-2">
-					<input
-						type="checkbox"
-						@change="updateValueWithDelay(feature, $event)"
-						:checked="feature.value.toggleValue"
-					>{{feature.value.label}}</label>
-			</BasicLinkListItem>
-		</BasicLinkList>
-	</div>
+<div class="text-left">
+	<BasicListHeader>Feature Toggles</BasicListHeader>
+	<BasicLinkList>
+		<BasicLinkListItem
+			v-for="(feature) in features"
+			:key="feature.value.label"
+			:wrapper-classes="'relative'"
+		>
+			<label class="absolute inset-0 flex items-center justify-start gap-x-4 pl-2">
+				<input
+					type="checkbox"
+					:checked="feature.value.toggleValue"
+					@change="updateValueWithDelay(feature, $event)"
+				>{{ feature.value.label }}</label>
+		</BasicLinkListItem>
+	</BasicLinkList>
+</div>
 </template>
 
 <script setup lang="ts">

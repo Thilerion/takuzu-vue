@@ -1,7 +1,7 @@
 <template>
-	<div
-		class="loading-spinner"
-	></div>
+<div
+	class="loading-spinner"
+></div>
 </template>
 
 <script setup lang="ts">

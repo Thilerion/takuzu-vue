@@ -1,50 +1,50 @@
 <template>
-	<div class="flex flex-col items-center justify-start main-menu-buttons mx-auto max-w-sm">
-		<div class="primary-container flex flex-col justify-start w-full gap-y-6">
-			<router-link
+<div class="flex flex-col items-center justify-start main-menu-buttons mx-auto max-w-sm">
+	<div class="primary-container flex flex-col justify-start w-full gap-y-6">
+		<router-link
 			v-if="validSaveData"
+			v-slot="{ navigate }"
 			:to="{ name: 'PlayPuzzle' }"
 			custom
-			v-slot="{ navigate }"
 		><ContinueButton
-			@click="navigate"
 			class="btn-primary shadow-md route-btn route-primary continue-btn relative"
 			v-bind="validSaveData"
-		></ContinueButton></router-link>
+			@click="navigate"
+		/></router-link>
 
 		<router-link
+			v-slot="{ navigate }"
 			:to="{ name: 'NewPuzzleFreePlay' }"
 			custom
-			v-slot="{ navigate }"
 		><BaseButton
-			@click="navigate"
 			class="text-base uppercase route-btn route-primary"
 			:class="{'btn-primary': !canContinue, 'shadow-md': !canContinue, 'shadow-sm': canContinue }"
+			@click="navigate"
 		>{{ $t('Home.buttons.new-game') }}</BaseButton></router-link>
-		</div>
+	</div>
 		
 
-		<div class="flex w-full gap-x-6 secondary-container">
-			<router-link
-				custom
-				v-slot="{navigate}"
-				to="/help"
-			><BaseButton
-				@click="navigate"
-				class="route-btn route-secondary flex-1"
-			>{{ $t('Home.buttons.help') }}</BaseButton></router-link>
+	<div class="flex w-full gap-x-6 secondary-container">
+		<router-link
+			v-slot="{navigate}"
+			custom
+			to="/help"
+		><BaseButton
+			class="route-btn route-secondary flex-1"
+			@click="navigate"
+		>{{ $t('Home.buttons.help') }}</BaseButton></router-link>
 
-			<router-link
-				v-if="HAS_TUTORIAL_ROUTE"
-				custom
-				v-slot="{navigate}"
-				to="/help/tutorial"
-			><BaseButton
-				@click="navigate"
-				class="route-btn route-secondary flex-1"
-			>$t('Home.buttons.tutorial')</BaseButton></router-link>
-		</div>
+		<router-link
+			v-if="HAS_TUTORIAL_ROUTE"
+			v-slot="{navigate}"
+			custom
+			to="/help/tutorial"
+		><BaseButton
+			class="route-btn route-secondary flex-1"
+			@click="navigate"
+		>$t('Home.buttons.tutorial')</BaseButton></router-link>
 	</div>
+</div>
 </template>
 
 <script setup lang="ts">

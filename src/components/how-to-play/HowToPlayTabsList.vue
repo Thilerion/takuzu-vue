@@ -1,13 +1,13 @@
 <template>
-	<nav class="bg-white dark:bg-slate-800 flex gap-x-2">
-		<router-link
-			class="px-3 py-2 inline-block"
-			exact-active-class="border-b-2 border-b-teal-400 text-teal-600 dark:border-b-teal-300 dark:text-teal-300"
-			v-for="tab in tabs"
-			:to="{ name: tab.routeName }"
-			:key="tab.routeName"
-		>{{ tab.label.value }}</router-link>
-	</nav>
+<nav class="bg-white dark:bg-slate-800 flex gap-x-2">
+	<router-link
+		v-for="tab in tabs"
+		:key="tab.routeName"
+		class="px-3 py-2 inline-block"
+		exact-active-class="border-b-2 border-b-teal-400 text-teal-600 dark:border-b-teal-300 dark:text-teal-300"
+		:to="{ name: tab.routeName }"
+	>{{ tab.label.value }}</router-link>
+</nav>
 </template>
 
 <script setup lang="ts">
@@ -33,12 +33,8 @@ const tabs = [
 		routeName: 'AdvancedTechniques',
 		enabled: false
 	}
-].filter(t => {
-	return (t?.enabled ?? true);
+].filter(tab => {
+	return (tab?.enabled ?? true);
 })
 
 </script>
-
-<style scoped>
-
-</style>

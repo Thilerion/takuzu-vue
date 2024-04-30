@@ -1,39 +1,44 @@
 <template>
-	<BaseDropdown align-right align-below ref="dropdownRef" @toggled="dropdownToggled">
-		<template #trigger="{ toggle }">
-			<IconBtn @click="toggle" name="md-morevert">
-				<icon-ic-baseline-more-vert />
-			</IconBtn>
-		</template>
-		<template #content>
-			<GameBoardDdBookmarkItems
-				@close-dropdown="closeDD"
-				@toggle-bookmark-manager="setBookmarkManagerOpened"
+<BaseDropdown
+	ref="dropdownRef"
+	align-right
+	align-below
+	@toggled="dropdownToggled"
+>
+	<template #trigger="{ toggle }">
+		<IconBtn name="md-morevert" @click="toggle">
+			<icon-ic-baseline-more-vert />
+		</IconBtn>
+	</template>
+	<template #content>
+		<GameBoardDdBookmarkItems
+			@close-dropdown="closeDD"
+			@toggle-bookmark-manager="setBookmarkManagerOpened"
+		/>
+		<BaseDropdownDivider />
+		<BaseDropdownItem>
+			<template #icon>
+				<input v-model="showTimer" type="checkbox">
+			</template>
+			<span>{{ $t('Settings.show-timer') }}</span>
+		</BaseDropdownItem>
+		<BaseDropdownDivider />
+
+		<template v-if="debugModeEnabled">
+			<DebugModeItems
+				@close="closeDD"
 			/>
 			<BaseDropdownDivider />
-			<BaseDropdownItem>
-				<template #icon>
-					<input type="checkbox" v-model="showTimer">
-				</template>
-				<span class="">{{ $t('Settings.show-timer') }}</span>
-			</BaseDropdownItem>
-			<BaseDropdownDivider />
-
-			<template v-if="debugModeEnabled">
-				<DebugModeItems
-					@close="closeDD"
-				/>
-				<BaseDropdownDivider />
-			</template>
-
-			<BaseDropdownItem @click="goToSettings">
-				<template #icon>
-					<icon-ic-baseline-settings class="opacity-80" />
-				</template>
-				<span class="mt-px">{{ $t('routeButton.settings') }}</span>
-			</BaseDropdownItem>
 		</template>
-	</BaseDropdown>
+
+		<BaseDropdownItem @click="goToSettings">
+			<template #icon>
+				<icon-ic-baseline-settings class="opacity-80" />
+			</template>
+			<span class="mt-px">{{ $t('routeButton.settings') }}</span>
+		</BaseDropdownItem>
+	</template>
+</BaseDropdown>
 </template>
 
 <script setup lang="ts">
@@ -71,7 +76,3 @@ const setBookmarkManagerOpened = (val: boolean) => {
 	uiStateStore.setBookmarkManagerOpen(val);
 }
 </script>
-
-<style scoped>
-
-</style>

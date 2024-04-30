@@ -1,13 +1,14 @@
 <template>
-	<div
-		class="w-full bg-gray-400 bg-opacity-20 pointer-events-none h-[3px]"
-		:style="{ '--progress': cappedProgress }"
-		:class="{ 
-			error: props.error,
-			finished: finished,
-		}">
-		<div class="progress-value h-full w-full bg-teal-500 dark:bg-teal-600 transform origin-left"></div>
-	</div>
+<div
+	class="w-full bg-gray-400 bg-opacity-20 pointer-events-none h-[3px]"
+	:style="{ '--progress': cappedProgress }"
+	:class="{ 
+		error: props.error,
+		finished: finished,
+	}"
+>
+	<div class="progress-value h-full w-full bg-teal-500 dark:bg-teal-600 transform origin-left"></div>
+</div>
 </template>
 
 <script setup lang="ts">

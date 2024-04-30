@@ -1,9 +1,9 @@
 <template>
-	<div
-		class="timer text-center"
-		:class="{'animate-flicker': puzzlePaused}"
-	><span class="minutes">{{minutes}}</span>:<span class="seconds">{{seconds}}</span>
-	</div>
+<div
+	class="timer text-center"
+	:class="{'animate-flicker': puzzlePaused}"
+><span class="minutes">{{ minutes }}</span>:<span class="seconds">{{ seconds }}</span>
+</div>
 </template>
 
 <script setup lang="ts">

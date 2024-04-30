@@ -1,5 +1,5 @@
 <template>
-<div class="">
+<div>
 	<div class="flex flex-row justify-around px-1 transition-opacity duration-300 delay-150 gap-x-2 max-w-md mx-auto" :class="{'opacity-30': !isRunning}">
 		<div
 			class="flex flex-row px-4 rounded h-6 items-center leading-none text-xs transition-colors delay-150 duration-300 gap-x-4 w-fit whitespace-nowrap"
@@ -8,14 +8,14 @@
 				'bg-green-100 text-green-900': solutions === 1
 			}"
 		>
-			<div class="">Solutions</div>
-			<div>{{displayNumSolutions}}</div>
+			<div>Solutions</div>
+			<div>{{ displayNumSolutions }}</div>
 		</div>
 		<div
 			class="flex flex-row px-4 rounded h-6 items-center leading-none text-xs gap-x-4 w-fit whitespace-nowrap"
 		>
-			<div class="">Mask ratio</div>
-			<div>{{asPercentage(props.maskRatio ?? 1)}}</div>
+			<div>Mask ratio</div>
+			<div>{{ asPercentage(props.maskRatio ?? 1) }}</div>
 		</div>
 	</div>
 </div>
@@ -47,7 +47,3 @@ const displayNumSolutions = computed(() => {
 	} else return `${props.solutions}`;
 })
 </script>
-
-<style scoped>
-
-</style>

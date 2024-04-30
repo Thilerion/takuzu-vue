@@ -1,16 +1,16 @@
 <template>
-	<div
-		class="fixed bottom-0 inset-0 w-full min-h-full pointer-events-none z-20 h-full"
-	>
-		<transition name="t-slide-up">
-			<PuzzleHintStepped
-				v-if="currentHint != null"
-				:hint="currentHint"
-				:show="isHintShown"
-				@hide="hide"
-			/>
-		</transition>
-	</div>
+<div
+	class="fixed bottom-0 inset-0 w-full min-h-full pointer-events-none z-20 h-full"
+>
+	<transition name="t-slide-up">
+		<PuzzleHintStepped
+			v-if="currentHint != null"
+			:hint="currentHint"
+			:show="isHintShown"
+			@hide="hide"
+		/>
+	</transition>
+</div>
 </template>
 
 <script setup lang="ts">

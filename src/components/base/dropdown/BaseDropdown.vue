@@ -1,21 +1,35 @@
 <template>
-	<div class="dropdown" ref="menuRef">
-		<div class="dropdown-trigger">
-			<slot name="trigger" :open="openDropdown" :close="closeDropdown" :toggle="toggleDropdown">
-				<BaseButton @click="openDropdown">Dropdown</BaseButton>
-			</slot>
-		</div>
-		<transition name="drop">
-			<div class="dropdown-menu" v-show="state.isOpen" :class="{'menu-align-below': alignBelow, 'menu-align-right': alignRight}">
-				<div class="dropdown-content">
-					<slot name="content" :open="openDropdown" :close="closeDropdown" :toggle="toggleDropdown">
-						<BaseDropdownItem @click="closeDropdown">This dropdown menu is empty...</BaseDropdownItem>
-					</slot>
-				</div>
-			</div>
-		</transition>
+<div ref="menuRef" class="dropdown">
+	<div class="dropdown-trigger">
+		<slot
+			name="trigger"
+			:open="openDropdown"
+			:close="closeDropdown"
+			:toggle="toggleDropdown"
+		>
+			<BaseButton @click="openDropdown">Dropdown</BaseButton>
+		</slot>
 	</div>
-	<div v-if="!state.isClosed" class="fixed inset-0 pointer-events-auto touch-none z-10"></div>
+	<transition name="drop">
+		<div
+			v-show="state.isOpen"
+			class="dropdown-menu"
+			:class="{'menu-align-below': alignBelow, 'menu-align-right': alignRight}"
+		>
+			<div class="dropdown-content">
+				<slot
+					name="content"
+					:open="openDropdown"
+					:close="closeDropdown"
+					:toggle="toggleDropdown"
+				>
+					<BaseDropdownItem @click="closeDropdown">This dropdown menu is empty...</BaseDropdownItem>
+				</slot>
+			</div>
+		</div>
+	</transition>
+</div>
+<div v-if="!state.isClosed" class="fixed inset-0 pointer-events-auto touch-none z-10"></div>
 </template>
 
 <script setup lang="ts">

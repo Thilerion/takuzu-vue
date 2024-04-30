@@ -1,22 +1,22 @@
 <template>
-		<PuzzleGridHighlightItem
-			class="highlight hl-cell"
-			v-for="(cellHl, idx) in cellHighlights"
-			:key="`cell-${idx}`"
-			v-bind="cellHl"
-		/>
-		<PuzzleGridHighlightItem
-			class="highlight hl-line"
-			v-for="(lineHl, idx) in lineHighlights"
-			:key="`line-${idx}`"
-			v-bind="lineHl"
-		/>
-		<PuzzleGridHighlightItem
-			class="highlight hl-area"
-			v-for="(areaHl, idx) in areaHighlights"
-			:key="`area-${idx}`"
-			v-bind="areaHl"
-		/>
+<PuzzleGridHighlightItem
+	v-for="(cellHl, idx) in cellHighlights"
+	:key="`cell-${idx}`"
+	class="highlight hl-cell"
+	v-bind="cellHl"
+/>
+<PuzzleGridHighlightItem
+	v-for="(lineHl, idx) in lineHighlights"
+	:key="`line-${idx}`"
+	class="highlight hl-line"
+	v-bind="lineHl"
+/>
+<PuzzleGridHighlightItem
+	v-for="(areaHl, idx) in areaHighlights"
+	:key="`area-${idx}`"
+	class="highlight hl-area"
+	v-bind="areaHl"
+/>
 </template>
 
 <script setup lang="ts">
@@ -67,7 +67,3 @@ usePuzzleEvent('resume', () => {
 	}
 })
 </script>
-
-<style scoped>
-
-</style>

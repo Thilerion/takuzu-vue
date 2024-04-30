@@ -1,33 +1,36 @@
 <template>
-	<div
-		class="board inline-grid relative"
-	>
-		<div class="ruler-wrapper-columns" :class="{paused}"><slot name="ruler-columns" /></div>
-		<div class="ruler-wrapper-rows" :class="{paused}"><slot name="ruler-rows" /></div>
-		<div class="puzzle-info-wrapper">
-			<slot name="puzzle-info" />
-		</div>
-
-		<PuzzleGrid
-			v-if="initialBoard != null"
-			:key="puzzleGridForceReplaceKey"
-			:board :rows :columns :paused
-			:style="{
-				'max-width': gridWidth,
-				'max-height': gridHeight,
-			}"
-			:initial-grid="initialBoard.grid"
-			:error-marks="errorMarks"
-			@toggle-cell="toggleCell"
-		/>
-
-		<PuzzleGridPauseOverlay
-			:paused
-			@resume="resumeByUser"
-			class="pause-overlay"
-		/>
-		<PuzzleCheckIndicator />
+<div
+	class="board inline-grid relative"
+>
+	<div class="ruler-wrapper-columns" :class="{paused}"><slot name="ruler-columns" /></div>
+	<div class="ruler-wrapper-rows" :class="{paused}"><slot name="ruler-rows" /></div>
+	<div class="puzzle-info-wrapper">
+		<slot name="puzzle-info" />
 	</div>
+
+	<PuzzleGrid
+		v-if="initialBoard != null"
+		:key="puzzleGridForceReplaceKey"
+		:board
+		:rows
+		:columns
+		:paused
+		:style="{
+			'max-width': gridWidth,
+			'max-height': gridHeight,
+		}"
+		:initial-grid="initialBoard.grid"
+		:error-marks="errorMarks"
+		@toggle-cell="toggleCell"
+	/>
+
+	<PuzzleGridPauseOverlay
+		:paused
+		class="pause-overlay"
+		@resume="resumeByUser"
+	/>
+	<PuzzleCheckIndicator />
+</div>
 </template>
 
 <script setup lang="ts">

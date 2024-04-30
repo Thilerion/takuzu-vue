@@ -1,24 +1,24 @@
 <template>
-	<BasicLinkListItem wrapper-classes="py-1">
-		<button
-			@click="$emit('increment-debug-mode')"
-			:disabled="debugMode"
-			class="app-v-btn w-full h-full grid text-start gap-x-8 justify-start content-evenly"
-		>
-			<div
-				class="col-start-1 col-end-2 row-start-1 row-end-2"
-			>{{ $t('Settings.version.app') }}</div>
+<BasicLinkListItem wrapper-classes="py-1">
+	<button
+		:disabled="debugMode"
+		class="app-v-btn w-full h-full grid text-start gap-x-8 justify-start content-evenly"
+		@click="$emit('increment-debug-mode')"
+	>
+		<div
+			class="col-start-1 col-end-2 row-start-1 row-end-2"
+		>{{ $t('Settings.version.app') }}</div>
 
-			<div
-				class="text-ellipsis col-start-2 row-start-1 row-end-2"
-			>{{shownCurAppVersion[0]}}<span class="text-[0.875em] opacity-80 ml-px">+{{shownCurAppVersion[1]}}</span></div>
+		<div
+			class="text-ellipsis col-start-2 row-start-1 row-end-2"
+		>{{ shownCurAppVersion[0] }}<span class="text-[0.875em] opacity-80 ml-px">+{{ shownCurAppVersion[1] }}</span></div>
 
-			<template v-if="shownPrevAppVersion">
-				<div class="text-xs text-gray-800/50 col-start-1 col-end-2 row-start-2">{{ $t('Settings.version.previous') }}</div>			
-				<div class="text-xs text-gray-800/50 text-ellipsis col-start-2 row-start-2">{{shownPrevAppVersion}}</div>
-			</template>
-		</button>
-	</BasicLinkListItem>
+		<template v-if="shownPrevAppVersion">
+			<div class="text-xs text-gray-800/50 col-start-1 col-end-2 row-start-2">{{ $t('Settings.version.previous') }}</div>			
+			<div class="text-xs text-gray-800/50 text-ellipsis col-start-2 row-start-2">{{ shownPrevAppVersion }}</div>
+		</template>
+	</button>
+</BasicLinkListItem>
 </template>
 
 <script setup lang="ts">

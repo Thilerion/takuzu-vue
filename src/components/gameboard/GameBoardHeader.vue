@@ -1,34 +1,34 @@
 <template>
-	<header class="flex-shrink-0">
-		<div class="w-1/3">
-			<IconBtn @click="$emit('close')" name="md-close">
-				<icon-ic-baseline-close />
-			</IconBtn>
+<header class="flex-shrink-0">
+	<div class="w-1/3">
+		<IconBtn name="md-close" @click="$emit('close')">
+			<icon-ic-baseline-close />
+		</IconBtn>
+	</div>
+	<div class="h-full w-full flex flex-col items-center justify-center text-center relative" :class="{ 'pb-2': isReplayMode }">
+		<div class="font-medium tracking-wide text-xl">
+			{{ columns }}<span
+				class="px-1"
+			>x</span>{{ rows }}
 		</div>
-		<div class="h-full w-full flex flex-col items-center justify-center text-center relative" :class="{ 'pb-2': isReplayMode }">
-			<div class="font-medium tracking-wide text-xl">
-				{{columns}}<span
-					class="px-1"
-				>x</span>{{rows}}
-			</div>
-			<div v-if="isReplayMode" class="absolute inset-x-0 bottom-1 text-xs text-gray-500 tracking-wide">Replay</div>
-		</div>
-		<div class="flex flex-row w-1/3 justify-end">
-			<IconBtn @click="togglePause" class="opacity-80">
-				<icon-ic-baseline-pause v-if="!paused" />
-				<icon-ic-baseline-play-arrow v-else />
-			</IconBtn>
-			<GameBoardHeaderDropdown
-				@open-settings="openSettings"
-				@dropdown-toggled="dropdownToggled"
-			/>
-		</div>
-	</header>
-	<GameBoardHeaderProgressBar
-		v-show="puzzleStore.started"
-		:progress-ratio="puzzleStore.progress"
-		:error="puzzleStore.finishedWithMistakes"
-	/>
+		<div v-if="isReplayMode" class="absolute inset-x-0 bottom-1 text-xs text-gray-500 tracking-wide">Replay</div>
+	</div>
+	<div class="flex flex-row w-1/3 justify-end">
+		<IconBtn class="opacity-80" @click="togglePause">
+			<icon-ic-baseline-pause v-if="!paused" />
+			<icon-ic-baseline-play-arrow v-else />
+		</IconBtn>
+		<GameBoardHeaderDropdown
+			@open-settings="openSettings"
+			@dropdown-toggled="dropdownToggled"
+		/>
+	</div>
+</header>
+<GameBoardHeaderProgressBar
+	v-show="puzzleStore.started"
+	:progress-ratio="puzzleStore.progress"
+	:error="puzzleStore.finishedWithMistakes"
+/>
 </template>
 
 <script setup lang="ts">

@@ -1,13 +1,29 @@
 <template>
-	<div class="inline-grid gap-x-3 gap-y-1">
-		<label class="col-start-1 row-start-1" for="difficultyFilterMin">Min</label>
-		<input class="col-start-1 row-start-2"  min="1" :max="Math.min(maxValue, 5)" type="number" id="difficultyFilterMin" :value="minValue" @blur="setMinValue">
+<div class="inline-grid gap-x-3 gap-y-1">
+	<label class="col-start-1 row-start-1" for="difficultyFilterMin">Min</label>
+	<input
+		id="difficultyFilterMin"
+		class="col-start-1 row-start-2"
+		min="1"
+		:max="Math.min(maxValue, 5)"
+		type="number"
+		:value="minValue"
+		@blur="setMinValue"
+	>
 
-		<label class="col-start-3 row-start-1" for="difficultyFilterMax">Max</label>
-		<input max="5" class="col-start-3 row-start-2" :min="Math.max(minValue, 1)" type="number" id="difficultyFilterMax" :value="maxValue" @blur="setMaxValue">
-		
-		<div class="col-start-2 row-start-2 self-center mx-auto px-2">-</div>
-	</div>
+	<label class="col-start-3 row-start-1" for="difficultyFilterMax">Max</label>
+	<input
+		id="difficultyFilterMax"
+		max="5"
+		class="col-start-3 row-start-2"
+		:min="Math.max(minValue, 1)"
+		type="number"
+		:value="maxValue"
+		@blur="setMaxValue"
+	>
+	
+	<div class="col-start-2 row-start-2 self-center mx-auto px-2">-</div>
+</div>
 </template>
 
 <script setup lang="ts">
@@ -47,7 +63,3 @@ const setMaxValue = (ev: Event) => {
 	emitUpdateValue(range);
 }
 </script>
-
-<style scoped>
-
-</style>

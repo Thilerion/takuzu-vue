@@ -1,11 +1,11 @@
 <template>
-	<BaseButton class="flex flex-col px-2 text-center justify-around items-center w-full continue-btn">
-		<div class="uppercase text-base mt-auto">{{ $t('Home.buttons.continue') }}</div>
-		<div class="flex text-xs justify-center gap-4 w-full flex-initial leading-relaxed items-center">
-			<span>{{dimensions}} - {{ $t(`Game.difficulty.${diffLabelTKey}`, diffLabelTKey)}}</span>
-			<div class="flex items-center justify-start"><icon-uil-clock class="inline-block mr-1" />{{time}}</div>
-		</div>
-	</BaseButton>
+<BaseButton class="flex flex-col px-2 text-center justify-around items-center w-full continue-btn">
+	<div class="uppercase text-base mt-auto">{{ $t('Home.buttons.continue') }}</div>
+	<div class="flex text-xs justify-center gap-4 w-full flex-initial leading-relaxed items-center">
+		<span>{{ dimensions }} - {{ $t(`Game.difficulty.${diffLabelTKey}`, diffLabelTKey) }}</span>
+		<div class="flex items-center justify-start"><icon-uil-clock class="inline-block mr-1" />{{ time }}</div>
+	</div>
+</BaseButton>
 </template>
 
 <script setup lang="ts">

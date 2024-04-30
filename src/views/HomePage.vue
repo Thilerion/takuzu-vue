@@ -1,17 +1,21 @@
 <template>
-	<div class="main-menu h-full min-h-full flex flex-col text-center flex-1 relative z-0">
-		<div class="background-pattern-2"></div>
-		<div class="background-pattern"></div>
-		<div class="home-notifications min-h-[5rem] sticky top-2 inset-x-0 w-full z-10 mx-auto">
-			<NewUpdateNotification @displayed="(val) => newUpdateNotificationShown = val" />
-			<PwaInstallNotification v-if="!newUpdateNotificationShown" />
-		</div>
-		
-		<div class="flex flex-col title-wrapper justify-center bg-opacity-20 pt-2">
-			<app-title/>
-		</div>
-		<MainMenuButtons class="menu-wrapper relative" :can-continue="hasCurrentSavedGame" :save-data="savedPuzzle" />
+<div class="main-menu h-full min-h-full flex flex-col text-center flex-1 relative z-0">
+	<div class="background-pattern-2"></div>
+	<div class="background-pattern"></div>
+	<div class="home-notifications min-h-[5rem] sticky top-2 inset-x-0 w-full z-10 mx-auto">
+		<NewUpdateNotification @displayed="(val) => newUpdateNotificationShown = val" />
+		<PwaInstallNotification v-if="!newUpdateNotificationShown" />
 	</div>
+	
+	<div class="flex flex-col title-wrapper justify-center bg-opacity-20 pt-2">
+		<app-title />
+	</div>
+	<MainMenuButtons
+		class="menu-wrapper relative"
+		:can-continue="hasCurrentSavedGame"
+		:save-data="savedPuzzle"
+	/>
+</div>
 </template>
 
 <script setup lang="ts">

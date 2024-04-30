@@ -1,19 +1,18 @@
 <template>
-	<button class="icon-btn" :class="{ vertical }">
-		<span class="icon-wrapper">
-			<slot name="icon" />
-		</span>
-		<div class="btn-label whitespace-nowrap">
-			<slot />
-		</div>
-	</button>
+<button class="icon-btn" :class="{ vertical }">
+	<span class="icon-wrapper">
+		<slot name="icon" />
+	</span>
+	<div class="btn-label whitespace-nowrap">
+		<slot />
+	</div>
+</button>
 </template>
 
 <script setup lang="ts">
 const props = withDefaults(
 	defineProps<{
 		scale?: number | string,
-		icon?: string,
 		vertical?: boolean
 	}>(),
 	{

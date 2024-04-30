@@ -1,13 +1,21 @@
 <template>
-	<div class="flex flex-col px-1 justify-center m-auto items-center absolute w-full h-full select-none">
-		<div class="stars text-2xl">
-			<StarIcon filled v-for="n in fullStars" :key="n" />
-			<StarIcon half v-if="halfStar" key="half" />
-		</div>
-		<div class="label text-lg font-semibold tracking-wide pb-1">
-			{{ $t(`Game.difficulty.${label}`, label)}}
-		</div>
+<div class="flex flex-col px-1 justify-center m-auto items-center absolute w-full h-full select-none">
+	<div class="stars text-2xl">
+		<StarIcon
+			v-for="n in fullStars"
+			:key="n"
+			filled
+		/>
+		<StarIcon
+			v-if="halfStar"
+			key="half"
+			half
+		/>
 	</div>
+	<div class="label text-lg font-semibold tracking-wide pb-1">
+		{{ $t(`Game.difficulty.${label}`, label) }}
+	</div>
+</div>
 </template>
 
 <script setup lang="ts">

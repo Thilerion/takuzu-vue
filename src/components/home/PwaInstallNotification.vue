@@ -1,10 +1,10 @@
 <template>
-	<transition name="t-fade">
+<transition name="t-fade">
 	<div
 		v-show="enableInstallNotification"
 		class="bg-slate-800/80 text-white rounded p-2 pl-0.5 w-full text-left  max-w-md mx-auto grid not-grid gap-x-1"
 	>
-		<IconBtn @click="dismiss" class="self-center col-start-1 row-start-1 row-span-2 mr-auto">
+		<IconBtn class="self-center col-start-1 row-start-1 row-span-2 mr-auto" @click="dismiss">
 			<icon-ic-baseline-close />
 		</IconBtn>
 		<h2 class="col-start-2 row-start-1 w-full block text-sm font-medium tracking-wide">{{ $t('PwaInstallNotification.add-to-homescreen') }}</h2>
@@ -16,7 +16,7 @@
 		</div>
 		<div class="col-start-2 col-span-1 text-xs">{{ $t('PwaInstallNotification.pwa-install-pros') }}</div>
 	</div>
-	</transition>
+</transition>
 </template>
 
 <script setup lang="ts">

@@ -1,10 +1,10 @@
 <template>
-	<div>
-		<PageHeader
-			hide-back
-		>{{ $t('NotFound404.page-not-found') }}</PageHeader>	
-		<p>{{ $t('NotFound404.you-will-be-redirected-main-menu') }}</p>
-	</div>
+<div>
+	<PageHeader
+		hide-back
+	>{{ $t('NotFound404.page-not-found') }}</PageHeader>	
+	<p>{{ $t('NotFound404.you-will-be-redirected-main-menu') }}</p>
+</div>
 </template>
 
 <script setup lang="ts">
@@ -26,7 +26,3 @@ onUnmounted(() => {
 	}
 })
 </script>
-
-<style scoped>
-	
-</style>
