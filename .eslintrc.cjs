@@ -14,12 +14,20 @@ const config = {
 	},
 	extends: [
 		"eslint:recommended",
-		"plugin:vue/vue3-essential",
+		'plugin:@typescript-eslint/recommended',
+		"plugin:vue/vue3-recommended",
 		"@vue/eslint-config-typescript/recommended"
 	],
+	parser: "vue-eslint-parser",
 	parserOptions: {
-		ecmaVersion: "latest"
+		ecmaVersion: "latest",
+		parser: "@typescript-eslint/parser",
+		sourceType: "module",
 	},
+	plugins: [
+		"vue",
+		"@typescript-eslint"
+	],
 	rules: {
 		"@typescript-eslint/ban-ts-comment": [1, {
 			"ts-expect-error": "allow-with-description",
@@ -41,6 +49,33 @@ const config = {
 		"no-undef": "off",
 		"no-unused-vars": "off",
 		"prefer-const": ["error", {"destructuring": "all"}],
+		"vue/html-indent": [
+			"warn", "tab", {
+				"baseIndent": 0,				
+			}
+		],
+		"vue/multiline-html-element-content-newline": 0,
+		"vue/singleline-html-element-content-newline": 0,
+		"vue/max-attributes-per-line": ["warn", {
+			"singleline": {
+				"max": 2
+			},
+			"multiline": {
+				"max": 1,
+			}
+		}],
+		"vue/v-on-event-hyphenation": ["warn", "always", {
+			"autofix": false,
+			"ignore": ["update:modelValue"]
+		}],
+		"vue/attribute-hyphenation": 0,
+		"vue/html-self-closing": ["warn", {
+			"html": {
+				"void": "never",
+				"normal": "any",
+				"component": "always"
+			}
+		}]
 	},
 	"overrides": [
 		{
