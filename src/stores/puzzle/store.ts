@@ -1,4 +1,4 @@
-import { defineStore } from "pinia";
+import { defineStore, storeToRefs } from "pinia";
 import { reactive, computed, toRefs, shallowRef, ref, watch } from "vue";
 // Services and composables
 import { useSavedPuzzle } from "@/services/savegame/useSavedGame";
@@ -24,10 +24,10 @@ import { PuzzleTransformations } from "@/lib/transformations/PuzzleTransformatio
 import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings, GridCounts, Vec, BoardExportString } from "@/lib/types";
 import type { TransformationKey } from "@/lib/transformations/types.js";
 import type { PickOptional } from "@/types.js";
-import { usePuzzleEventEmitter } from "@/composables/puzzle-events.js";
 import { usePuzzleValidationStore } from "../assistance/validation.js";
+import { usePuzzleStatusStore } from "./status-store.js";
+import { usePuzzleEventEmitter } from "@/composables/puzzle-events.js";
 
-export type PuzzleStatus = 'none' | 'loading' | 'error_loading' | 'playing' | 'paused' | 'finished';
 export type PuzzleStoreState = {
 	difficulty: DifficultyKey | null,
 	transformations: null | {
@@ -37,13 +37,6 @@ export type PuzzleStoreState = {
 	},
 	gridCounts: GridCounts,
 	cheatsUsed: boolean,
-	initialized: boolean,
-	started: boolean,
-	finished: boolean,
-	pausedManually: boolean,
-	pausedAutomatically: boolean,
-	loading: boolean,
-	initializationError: { hasError: false, errorMessage?: undefined } | { hasError: true, errorMessage?: string }
 }
 export type PuzzleStoreSetAction = PickOptional<VecValueChange, 'prevValue'>;
 export type AssignToBoardOpts = {
@@ -75,17 +68,16 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		},
 		// state for recap/puzzleHistory/stats
 		cheatsUsed: false,
-		// play/ui state
-		initialized: false,
-		started: false,
-		finished: false,
-		// new "paused" state
-		pausedManually: false,
-		pausedAutomatically: false,
-		// game creation state/errors
-		loading: false,
-		initializationError: { hasError: false },
 	}) as PuzzleStoreState;
+	const statusStore = usePuzzleStatusStore();
+	const { setInitializationError } = statusStore;
+	const {
+		paused,
+		pausedManually, pausedAutomatically,
+		initialized, started, finished,
+		initializationError,
+		status,
+	} = storeToRefs(statusStore);
 
 	// Values dependent on the solution and initialBoard
 	const solutionBoardStr = ref(null as string | null);
@@ -104,7 +96,8 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 	const boardStr = computed((): BoardString | undefined => board.value?.toBoardString());
 	const boardExportStr = computed((): BoardExportString | undefined => board.value?.export());
 	const boardFilled = computed((): boolean => state.gridCounts[EMPTY] === 0);
-	const hasStarted = computed((): boolean => state.started && state.initialized && board.value != null);
+	// TODO: hasStarted might not actually be necessary?
+	const hasStarted = computed((): boolean => started.value && initialized.value && board.value != null);
 	const finishedAndSolved = computed((): boolean => {
 		if (!hasStarted.value || !boardFilled.value) return false;
 		return solutionBoardStr.value === boardStr.value;
@@ -120,50 +113,13 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		const progress = 1 - (currentEmpty / initEmpty);
 		return progress;
 	});
-	const paused = computed((): boolean => state.pausedManually || state.pausedAutomatically);
-	const hasInitializationError = computed((): boolean => state.initializationError.hasError);
-	const status = computed((): PuzzleStatus => {
-		if (!state.initialized) {
-			if (state.loading) return 'loading';
-			else if (hasInitializationError.value) return 'error_loading';
-			else return 'none';
-		}
-		// is initialized
-		if (state.finished) {
-			return 'finished';
-		} else if (paused.value) {
-			return 'paused';
-		} else if (board.value != null) {
-			return 'playing';
-		}
-		throw new Error('Unrecognized Puzzle status??!');
-	});
-	const puzzleEmitter = usePuzzleEventEmitter();
-	watch(status, (cur, prev) => {
-		if (cur === 'playing' && prev === 'paused') {
-			puzzleEmitter.emit('resume');
-		} else if (cur === 'paused' && prev === 'playing') {
-			puzzleEmitter.emit('pause');
-		}
-	})
+	
 	const canRestart = computed((): boolean => {
 		// Allow restarting only if status is "Playing". Then, there must be moves to be undone, or there must be progress in some way on the board.
 		// The "progress" check was added because a part of move history can be lost, or something else added to the board without adding to move history.
 		if (status.value !== 'playing') return false;
 		return progress.value > 0 || usePuzzleHistoryStore().canUndo;
 	});
-
-	// TODO: use initializationError in places other than "initPuzzle" and "replayRandomPuzzle"
-	function setInitializationError(val: boolean, errorMessage?: string): void {
-		if (val) {
-			state.initializationError = { hasError: true, errorMessage };
-		} else {
-			if (errorMessage != null) {
-				console.warn('Cannot set errorMessage when initializationError value itself is false!');
-			}
-			state.initializationError = { hasError: false };
-		}
-	}
 
 	function setDifficulty(difficulty: DifficultyKey): void {
 		state.difficulty = difficulty;
@@ -185,7 +141,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 	}
 
 	function reset(): void {
-		if (board.value != null && !state.initialized && !!board.value && !state.initializationError.hasError) {
+		if (board.value != null && !initialized.value && !!board.value && !statusStore.initializationError.hasError) {
 			console.log('puzzle not initialized. cannot reset');
 			return;
 		}
@@ -200,18 +156,16 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 				[EMPTY]: 0
 			},
 			cheatsUsed: false,
-			initialized: false,
-			started: false,
-			finished: false,
-			pausedManually: false,
-			pausedAutomatically: false,
-			loading: false,
-			initializationError: { hasError: false },
 		}
 		setAllBoards({ board: null, solution: null, initialBoard: null });
 		Object.assign(state, freshState);
+		statusStore.resetStatus();
 	}
 
+	/**
+	 * Reset all puzzle-related stores that are not directly used in this store.
+	 * For instance, puzzleStatusStore is not reset here, because it is a directly included part of this store.
+	 */
 	function resetChildStores(): void {
 		usePuzzleTimer().reset();
 		usePuzzleHistoryStore().reset();
@@ -243,7 +197,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		const visualCuesStore = usePuzzleVisualCuesStore();
 		for (const { x, y, value, prevValue } of changes) {
 			board.value!.assign(x, y, value);
-			puzzleEmitter.emit('value-change', { x, y, value, prevValue });
+			usePuzzleEventEmitter().emit('value-change', { x, y, value, prevValue });
 			if (handleGridCounts === "single") {
 				_updateGridCount(value, prevValue);
 			}
@@ -339,14 +293,14 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 	}
 
 	async function createPuzzle({ width, height, difficulty }: BasicPuzzleConfig): Promise<void> {
-		state.loading = true;
+		statusStore.loading = true;
 		try {
 			const {
 				board, solution, initialBoard
 			} = await fetchAndPreparePuzzle({ width, height, difficulty });			
 			setAllBoards({ board, solution, initialBoard });
 		} finally {
-			state.loading = false;
+			statusStore.loading = false;
 		}
 		// catch error in caller, which also sets initializationError property
 	}
@@ -355,7 +309,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		try {
 			setDifficulty(puzzleConfig.difficulty);
 			await createPuzzle(puzzleConfig);
-			state.initialized = true;
+			initialized.value = true;
 		} catch (e) {
 			reset();
 			const msg = e instanceof Error ? e.message : 'An error occurred in "initPuzzle()"';
@@ -403,11 +357,11 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		reset();
 		setDifficulty(difficulty);
 		setAllBoards({ board, solution, initialBoard });
-		state.initialized = true;
+		initialized.value = true;
 	}
 
 	async function finishPuzzle(): Promise<boolean> {
-		state.finished = true;
+		statusStore.finished = true;
 		const timer = usePuzzleTimer();
 		timer.pause();
 		const timeElapsed = timer.timeElapsed;
@@ -474,9 +428,9 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 	}
 
 	function startPuzzle(): void {
-		if (!state.initialized) throw new Error('Cannot start uninitialized game!');
-		if (state.started) throw new Error('Cannot start a game that already has started !');
-		state.started = true;
+		if (!initialized.value) throw new Error('Cannot start uninitialized game!');
+		if (started.value) throw new Error('Cannot start a game that already has started !');
+		started.value = true;
 		const timer = usePuzzleTimer();
 		timer.start();
 	}
@@ -501,7 +455,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		bookmarksStore.importBookmarks(saveData.bookmarks);
 		const hintsStore = usePuzzleHintsStore();
 		hintsStore.importHintSaveData(saveData.hints);
-		state.initialized = true;
+		initialized.value = true;
 	}
 
 	function loadBookmarkedPuzzleState(newBoard: SimpleBoard): void {
@@ -514,12 +468,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 
 	const {
 		difficulty, transformations,
-
-		cheatsUsed,
-
-		pausedManually, pausedAutomatically,
-		initialized, started, finished,
-		initializationError,
+		cheatsUsed,		
 	} = toRefs(state);
 
 	return {
