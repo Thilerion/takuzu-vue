@@ -60,12 +60,10 @@ export type MakePuzzleMovesOpts = {
 }
 
 export const usePuzzleStore = defineStore('puzzle', () => {
-	const allBoards = reactive({
-		board: null as SimpleBoard | null,
-		// solution and initialBoard only change as a whole, and their grids are not (should not be) changed after initialization
-		solution: shallowRef(null as SimpleBoard | null),
-		initialBoard: shallowRef(null as SimpleBoard | null),
-	});
+	const board = ref(null as SimpleBoard | null);
+	// solution and initialBoard only change as a whole, and their grids are not (should not be) changed after initialization
+	const solution = shallowRef(null as SimpleBoard | null);
+	const initialBoard = shallowRef(null as SimpleBoard | null);
 
 	const state: PuzzleStoreState = reactive<PuzzleStoreState>({
 		difficulty: null,
@@ -92,21 +90,21 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 	// Values dependent on the solution and initialBoard
 	const solutionBoardStr = ref(null as string | null);
 	const initialEmpty = ref(null as number | null); // initial empty is used for tracking progress, and not for anything else
-	watch([() => allBoards.solution, () => allBoards.initialBoard], ([solution, initialBoard]) => {
+	watch([solution, initialBoard], ([solution, initialBoard]) => {
 		solutionBoardStr.value = solution == null ? null : solution.toBoardString();
 		initialEmpty.value = initialBoard == null ? null : initialBoard.getNumEmpty();
 	})
 
 	const width = computed(() => {
-		return allBoards.board?.width ?? allBoards.solution?.width ?? null;
+		return board.value?.width ?? solution.value?.width ?? null;
 	});
 	const height = computed(() => {
-		return allBoards.board?.height ?? allBoards.solution?.height ?? null;
+		return board.value?.height ?? solution.value?.height ?? null;
 	});
-	const boardStr = computed((): BoardString | undefined => allBoards.board?.toBoardString());
-	const boardExportStr = computed((): BoardExportString | undefined => allBoards.board?.export());
+	const boardStr = computed((): BoardString | undefined => board.value?.toBoardString());
+	const boardExportStr = computed((): BoardExportString | undefined => board.value?.export());
 	const boardFilled = computed((): boolean => state.gridCounts[EMPTY] === 0);
-	const hasStarted = computed((): boolean => state.started && state.initialized && allBoards.board != null);
+	const hasStarted = computed((): boolean => state.started && state.initialized && board.value != null);
 	const finishedAndSolved = computed((): boolean => {
 		if (!hasStarted.value || !boardFilled.value) return false;
 		return solutionBoardStr.value === boardStr.value;
@@ -135,7 +133,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 			return 'finished';
 		} else if (paused.value) {
 			return 'paused';
-		} else if (allBoards.board != null) {
+		} else if (board.value != null) {
 			return 'playing';
 		}
 		throw new Error('Unrecognized Puzzle status??!');
@@ -167,34 +165,32 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		}
 	}
 
-	function setDifficulty({ difficulty }: Pick<BasicPuzzleConfig, 'difficulty'>): void {
+	function setDifficulty(difficulty: DifficultyKey): void {
 		state.difficulty = difficulty;
 	}
 
-	function setAllBoards({ board, solution, initialBoard }: AllPuzzleBoards): void {
-		allBoards.board = board;
-		allBoards.solution = solution;
-		allBoards.initialBoard = initialBoard;
-		state.gridCounts = calculateGridCounts(board);
+	function setAllBoards(boards: AllPuzzleBoards | Record<keyof AllPuzzleBoards, null>): void {
+		board.value = boards.board;
+		solution.value = boards.solution;
+		initialBoard.value = boards.initialBoard;
+		if (boards.board != null) {
+			state.gridCounts = calculateGridCounts(boards.board);
+		} else state.gridCounts = { [ZERO]: 0, [ONE]: 0, [EMPTY]: 0 };
 	}
 
 	/** Refresh grid counts, after multiple changes to the board at once, instead of manually adding and subtracting after each change. */
 	function refreshCounts(): void {
-		const gridCounts = calculateGridCounts(allBoards.board!);
+		const gridCounts = calculateGridCounts(board.value!);
 		state.gridCounts = gridCounts;
 	}
 
 	function reset(): void {
-		if (allBoards.board != null && !state.initialized && !!allBoards.board && !state.initializationError.hasError) {
+		if (board.value != null && !state.initialized && !!board.value && !state.initializationError.hasError) {
 			console.log('puzzle not initialized. cannot reset');
 			return;
 		}
-		resetSubStores();
-		const freshBoardsState = {
-			board: null,
-			solution: null,
-			initialBoard: null
-		}
+		resetChildStores();
+
 		const freshState: PuzzleStoreState = {
 			difficulty: null,
 			transformations: null,
@@ -212,12 +208,11 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 			loading: false,
 			initializationError: { hasError: false },
 		}
-		Object.assign(allBoards, freshBoardsState);
+		setAllBoards({ board: null, solution: null, initialBoard: null });
 		Object.assign(state, freshState);
 	}
 
-	function resetSubStores(): void {
-		// reset all sub-stores
+	function resetChildStores(): void {
 		usePuzzleTimer().reset();
 		usePuzzleHistoryStore().reset();
 		usePuzzleHintsStore().reset();
@@ -247,7 +242,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		const changes = Array.isArray(changeOrChanges) ? changeOrChanges : [changeOrChanges];
 		const visualCuesStore = usePuzzleVisualCuesStore();
 		for (const { x, y, value, prevValue } of changes) {
-			allBoards.board!.assign(x, y, value);
+			board.value!.assign(x, y, value);
 			puzzleEmitter.emit('value-change', { x, y, value, prevValue });
 			if (handleGridCounts === "single") {
 				_updateGridCount(value, prevValue);
@@ -270,7 +265,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 	): void {
 		const {
 			x, y, value,
-			prevValue = allBoards.board!.grid[y][x]
+			prevValue = board.value!.grid[y][x]
 		} = move;
 		if (prevValue === value) {
 			console.log('Previous value is equal to current value. This move will not be committed.');
@@ -289,7 +284,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 	): void {
 		const validatedMoves: VecValueChange[] = [];
 		for (const m of moves) {
-			const prev = m.prevValue ?? allBoards.board!.grid[m.y][m.x];
+			const prev = m.prevValue ?? board.value!.grid[m.y][m.x];
 			if (prev !== m.value) {
 				validatedMoves.push({ ...m, prevValue: prev });
 			}
@@ -309,7 +304,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 	function toggle(
 		{ x, y, prevValue }: Vec & { prevValue?: PuzzleValue, value?: never }
 	): void {
-		const previous = prevValue ?? allBoards.board!.grid[y][x];
+		const previous = prevValue ?? board.value!.grid[y][x];
 		const { toggle } = useSharedPuzzleToggle();
 		const value = toggle(previous);
 		makeMove({ x, y, value, prevValue: previous }, { historyCommitType: "commit" });
@@ -328,12 +323,12 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 				return { x, y, value: to, prevValue: from };
 			}).reverse();
 			// remove (invalid) moves, where previous value (what is expected to be on the board now) is not consistent with what is actually on the board
-			const validatedReverseMoves: VecValueChange[] = reverseMoves.filter(m => m.prevValue === allBoards.board!.grid[m.y][m.x]);
+			const validatedReverseMoves: VecValueChange[] = reverseMoves.filter(m => m.prevValue === board.value!.grid[m.y][m.x]);
 			makeMultipleMoves(validatedReverseMoves, { historyCommitType: "skip" });
 			return;
 		}
 		const { x, y, from, to } = move.getReverse(); // switch from and to because undoing === opposite move
-		if (from !== allBoards.board!.grid[y][x]) {
+		if (from !== board.value!.grid[y][x]) {
 			console.error('This is an invalid undo move, as its prevValue is not consistent with what is actually on the board. Ignoring this one.');
 			return;
 		}
@@ -358,7 +353,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 
 	async function initPuzzle(puzzleConfig: BasicPuzzleConfig): Promise<void> {
 		try {
-			setDifficulty(puzzleConfig);
+			setDifficulty(puzzleConfig.difficulty);
 			await createPuzzle(puzzleConfig);
 			state.initialized = true;
 		} catch (e) {
@@ -404,9 +399,9 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 	function loadPuzzle({
 		difficulty,
 		board, solution, initialBoard = board.copy()
-	}: BasicPuzzleConfig & PickOptional<AllPuzzleBoards, 'initialBoard'>): void {
+	}: Pick<BasicPuzzleConfig, 'difficulty'> & PickOptional<AllPuzzleBoards, 'initialBoard'>): void {
 		reset();
-		setDifficulty({ difficulty });
+		setDifficulty(difficulty);
 		setAllBoards({ board, solution, initialBoard });
 		state.initialized = true;
 	}
@@ -417,13 +412,13 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		timer.pause();
 		const timeElapsed = timer.timeElapsed;
 		// TODO: assistance from assistance store, with "checkData" etc
-		const { width, height } = allBoards.board!;
+		const { width, height } = board.value!;
 		const finishedPuzzleState: FinishedPuzzleState = {
 			width,
 			height,
 			difficulty: state.difficulty as DifficultyKey,
-			initialBoard: allBoards.initialBoard!,
-			solution: allBoards.solution!,
+			initialBoard: initialBoard.value!,
+			solution: solution.value!,
 			timeElapsed,
 			assistance: {
 				cheatsUsed: state.cheatsUsed
@@ -471,12 +466,8 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		const { deleteSavedPuzzle } = useSavedPuzzle();
 		deleteSavedPuzzle();
 		const { board, solution, initialBoard } = getRandomPuzzleTransformationOnRestart();
-	/* if (board.hasIncorrectValues(solution).hasMistakes) {
-		throw new Error('The transformed puzzle has mistakes after restart, when compared to the transformed solution. This should not happen!');
-	} else {
-		 */setAllBoards({ board, solution, initialBoard });
-		//}
-		resetSubStores();
+		setAllBoards({ board, solution, initialBoard });
+		resetChildStores();
 		// additionally requires starting the timer again
 		const timer = usePuzzleTimer();
 		timer.start();
@@ -498,7 +489,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		if (saveData == null) {
 			throw new Error('No saved puzzle found!');
 		}
-		setDifficulty(saveData.config);
+		setDifficulty(saveData.config.difficulty);
 		// set time elapsed
 		const { timeElapsed } = saveData;
 		const timer = usePuzzleTimer();
@@ -513,15 +504,14 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		state.initialized = true;
 	}
 
-	function loadBookmarkedPuzzleState(board: SimpleBoard): void {
-		allBoards.board = board.copy();
+	function loadBookmarkedPuzzleState(newBoard: SimpleBoard): void {
+		board.value = newBoard.copy();
 		usePuzzleHistoryStore().applyHistoryAction([], 'reset');
 		refreshCounts();
 		const visualCuesStore = usePuzzleVisualCuesStore();
 		visualCuesStore.clearErrorMarks();
 	}
 
-	const { initialBoard, board, solution } = toRefs(allBoards);
 	const {
 		difficulty, transformations,
 
