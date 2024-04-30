@@ -29,8 +29,6 @@ import { usePuzzleValidationStore } from "../assistance/validation.js";
 
 export type PuzzleStatus = 'none' | 'loading' | 'error_loading' | 'playing' | 'paused' | 'finished';
 export type PuzzleStoreState = {
-	width: number | null,
-	height: number | null,
 	difficulty: DifficultyKey | null,
 	transformations: null | {
 		previous: TransformationKey[],
@@ -70,8 +68,6 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 	});
 
 	const state: PuzzleStoreState = reactive<PuzzleStoreState>({
-		width: null,
-		height: null,
 		difficulty: null,
 		transformations: null,		
 		gridCounts: {
@@ -101,6 +97,12 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		initialEmpty.value = initialBoard == null ? null : initialBoard.getNumEmpty();
 	})
 
+	const width = computed(() => {
+		return allBoards.board?.width ?? allBoards.solution?.width ?? null;
+	});
+	const height = computed(() => {
+		return allBoards.board?.height ?? allBoards.solution?.height ?? null;
+	});
 	const boardStr = computed((): BoardString | undefined => allBoards.board?.toBoardString());
 	const boardExportStr = computed((): BoardExportString | undefined => allBoards.board?.export());
 	const boardFilled = computed((): boolean => state.gridCounts[EMPTY] === 0);
@@ -165,9 +167,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		}
 	}
 
-	function setPuzzleConfig({ width, height, difficulty }: BasicPuzzleConfig): void {
-		state.width = width;
-		state.height = height;
+	function setDifficulty({ difficulty }: Pick<BasicPuzzleConfig, 'difficulty'>): void {
 		state.difficulty = difficulty;
 	}
 
@@ -196,8 +196,6 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 			initialBoard: null
 		}
 		const freshState: PuzzleStoreState = {
-			width: null,
-			height: null,
 			difficulty: null,
 			transformations: null,
 			gridCounts: {
@@ -360,7 +358,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 
 	async function initPuzzle(puzzleConfig: BasicPuzzleConfig): Promise<void> {
 		try {
-			setPuzzleConfig(puzzleConfig);
+			setDifficulty(puzzleConfig);
 			await createPuzzle(puzzleConfig);
 			state.initialized = true;
 		} catch (e) {
@@ -404,11 +402,11 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 	}
 
 	function loadPuzzle({
-		width, height, difficulty,
+		difficulty,
 		board, solution, initialBoard = board.copy()
 	}: BasicPuzzleConfig & PickOptional<AllPuzzleBoards, 'initialBoard'>): void {
 		reset();
-		setPuzzleConfig({ width, height, difficulty });
+		setDifficulty({ difficulty });
 		setAllBoards({ board, solution, initialBoard });
 		state.initialized = true;
 	}
@@ -419,9 +417,10 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		timer.pause();
 		const timeElapsed = timer.timeElapsed;
 		// TODO: assistance from assistance store, with "checkData" etc
+		const { width, height } = allBoards.board!;
 		const finishedPuzzleState: FinishedPuzzleState = {
-			width: state.width!,
-			height: state.height!,
+			width,
+			height,
 			difficulty: state.difficulty as DifficultyKey,
 			initialBoard: allBoards.initialBoard!,
 			solution: allBoards.solution!,
@@ -499,7 +498,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		if (saveData == null) {
 			throw new Error('No saved puzzle found!');
 		}
-		setPuzzleConfig(saveData.config);
+		setDifficulty(saveData.config);
 		// set time elapsed
 		const { timeElapsed } = saveData;
 		const timer = usePuzzleTimer();
@@ -524,14 +523,13 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 
 	const { initialBoard, board, solution } = toRefs(allBoards);
 	const {
-		width, height, difficulty,		
-		transformations,		
+		difficulty, transformations,
 
 		cheatsUsed,
 
 		pausedManually, pausedAutomatically,
 		initialized, started, finished,
-		initializationError,	
+		initializationError,
 	} = toRefs(state);
 
 	return {
