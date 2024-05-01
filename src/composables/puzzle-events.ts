@@ -1,5 +1,5 @@
 import type { VecValueChange } from "@/lib/types.js";
-import { createSharedComposable, tryOnUnmounted } from "@vueuse/core";
+import { createSharedComposable, tryOnScopeDispose } from "@vueuse/core";
 import mitt, { type Handler } from "mitt";
 
 export type PuzzleEvents = {
@@ -23,7 +23,7 @@ export const usePuzzleEvent = <Key extends keyof PuzzleEvents>(
 ): () => void => {
 	emitter.on(event, handler);
 	const cleanup = () => emitter.off(event, handler);
-	tryOnUnmounted(() => {
+	tryOnScopeDispose(() => {
 		cleanup();
 	})
 	return cleanup;
@@ -54,7 +54,7 @@ export const usePuzzleEvents = <Key extends keyof PuzzleEvents>(
 			emitter.off(key, clonedMap[key]);
 		}
 	}
-	tryOnUnmounted(cleanup);
+	tryOnScopeDispose(cleanup);
 	return cleanup;
 }
 
