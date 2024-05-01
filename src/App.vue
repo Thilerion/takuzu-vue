@@ -15,6 +15,7 @@ import { useMainStore } from './stores/main';
 import { initListeners as initPWAInstallListeners } from './composables/use-deferred-install-prompt';
 import { initPregeneratedPuzzles } from './workers/pregen-puzzles/init';
 import { initGlobalCellThemeProvider } from './components/gameboard/composables/useCellThemeProvider.js';
+import { useUpdateThemeColorWithRouteAndTheme } from './composables/use-meta-theme-color.js';
 
 const store = useMainStore();
 const puzzleKey = toRef(store, 'puzzleKey');
@@ -23,6 +24,7 @@ const puzzleKey = toRef(store, 'puzzleKey');
 initSettingsPersistence();
 initGlobalCellThemeProvider();
 initPWAInstallListeners();
+useUpdateThemeColorWithRouteAndTheme();
 onMounted(() => {
 	initPregeneratedPuzzles();
 })

@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 declare module 'vue-router' {
 	interface RouteMeta {
 		metaThemeColor?: string;
+		metaThemeColors?: Record<BaseTheme, string>;
 		title?: string;
 		usePuzzleKey?: boolean;
 		prev?: RouteLocationNormalized | null;
@@ -25,10 +26,10 @@ import PlayPuzzle from '../views/PlayPuzzle.vue';
 import NotFound from '../views/NotFound.vue';
 
 import { useRouteDocumentTitle } from './useDocumentTitle';
-import { useMetaThemeColor } from './useMetaThemeColor';
 import { useSavedPuzzle } from '@/services/savegame/useSavedGame.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import type { RouteRecordRaw } from 'vue-router';
+import type { BaseTheme } from '@/composables/use-theme-preferences.js';
 
 const routes = [
 	{
@@ -36,7 +37,10 @@ const routes = [
 		name: 'TopLevelMain',
 		component: MainPage,
 		meta: {
-			metaThemeColor: 'white',
+			metaThemeColors: {
+				light: 'white',
+				dark: '#1e293b'
+			},
 			title: '', // use base title
 		},
 		children: [
@@ -45,7 +49,10 @@ const routes = [
 				name: 'Home',
 				component: HomePage,
 				meta: {
-					metaThemeColor: '#4DBA87',
+					metaThemeColors: {
+						light: '#4DBA87',
+						dark: '#0d9488'
+					},
 					title: '', // use base title
 				}
 			},
@@ -225,12 +232,10 @@ const { updateTitleWithRouteMeta } = useRouteDocumentTitle({
 	defaultTitle: 'Takuzu',
 	titlePrefix: 'Takuzu - '
 });
-const { updateThemeColorWithRouteMeta } = useMetaThemeColor();
 
 router.afterEach((to, from) => {
 	// set document title based on route
 	updateTitleWithRouteMeta(to);
-	updateThemeColorWithRouteMeta(to);
 
 	// set previous route, for better back-button navigation
 	if (from && from.matched && from.matched.length) {
