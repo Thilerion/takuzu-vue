@@ -8,6 +8,8 @@ import router from './router';
 import { i18n, i18nPiniaPropertyPlugin } from './i18n/index.js';
 
 import { registerSW } from 'virtual:pwa-register';
+import { themePreferencesPlugin } from './composables/use-theme-preferences.js';
+
 const SW_UPDATE_INTERVAL_MS = 30 * 60 * 1000; // 30 minutes
 registerSW({
 	immediate: true,
@@ -42,6 +44,7 @@ pinia.use(i18nPiniaPropertyPlugin);
 app.use(i18n);
 app.use(router);
 app.use(pinia);
+app.use(themePreferencesPlugin);
 
 if (import.meta.env.DEV) {
 	app.config.performance = true;

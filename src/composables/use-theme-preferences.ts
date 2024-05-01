@@ -1,6 +1,6 @@
 import { usePreferredColorScheme, useStorage } from "@vueuse/core";
-import { computed, inject, provide, watchEffect, type ComputedRef } from "vue";
-import type { InjectionKey } from 'vue'
+import { computed, inject, watchEffect, type ComputedRef } from "vue";
+import type { InjectionKey, Plugin } from 'vue'
 
 export const BASE_THEMES = {
 	dark: 'dark',
@@ -40,21 +40,29 @@ const {
 	setBaseThemeAttrs
 } = window.themePreferences;
 
-export const useInitThemePreferenceProvider = (): BaseThemeProvidedData => {
+// Plugin installation, provides theme preference data to the App.
+export const themePreferencesPlugin: Plugin = {
+	install(app) {
+		const baseThemeProvidedData = useInitThemePreferenceProvider();
+		app.provide(BASE_THEME_INJECTION_KEY, baseThemeProvidedData);
+	}
+}
+
+function useInitThemePreferenceProvider(): BaseThemeProvidedData {
 	const baseThemeUserPref = useStorage<BaseThemeUserPref>(STORAGE_KEY, DEFAULT_BASE_THEME, localStorage);
 	const preferredColorScheme = usePreferredColorScheme();
 	const baseThemeBrowserPref = computed(() => {
 		if (preferredColorScheme.value === 'no-preference') {
 			return DEFAULT_BASE_THEME;
 		} else return preferredColorScheme.value;
-	})
+	});
 
 	const baseTheme = computed(() => {
 		if (baseThemeUserPref.value === 'auto') {
 			return baseThemeBrowserPref.value;
 		}
 		return baseThemeUserPref.value;
-	})
+	});
 
 	const isDark = computed(() => baseTheme.value === 'dark');
 	const isLight = computed(() => baseTheme.value === 'light');
@@ -63,12 +71,12 @@ export const useInitThemePreferenceProvider = (): BaseThemeProvidedData => {
 	watchEffect(() => {
 		// console.log(`Color theme changed to: "${baseTheme.value}"`);
 		setBaseThemeAttrs(baseTheme.value);
-	})
+	});
 
 	const setBaseThemePreference = (value: BaseThemeUserPref) => {
 		console.log(`Setting user preferred color theme/base theme: ${value}`);
 		baseThemeUserPref.value = value;
-	}
+	};
 	const setBaseThemeDefault = () => setBaseThemePreference(DEFAULT_BASE_THEME);
 
 	const baseThemeProvidedData = {
@@ -81,10 +89,7 @@ export const useInitThemePreferenceProvider = (): BaseThemeProvidedData => {
 		baseThemeUserPref: computed(() => baseThemeUserPref.value),
 		baseTheme,
 		baseThemeBrowserPref
-	}
-
-	provide(BASE_THEME_INJECTION_KEY, baseThemeProvidedData);
-
+	};
 	return baseThemeProvidedData;
 }
 
