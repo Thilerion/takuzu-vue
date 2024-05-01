@@ -8,7 +8,7 @@
 >
 	<div
 		v-show="show"
-		class="banner-container bg-black text-white w-full my-auto flex justify-center items-center relative py-1"
+		class="banner-container bg-black dark:bg-slate-800 dark:text-slate-50 text-white w-full my-auto flex justify-center items-center relative py-1"
 	>
 		<div
 			class="banner min-h-[2rem] px-4 py-6"
@@ -61,8 +61,22 @@ const bannerText = ref(`Recap.compliments[${rndIndx}]`);
 </script>
 
 <style scoped>
+[data-base-theme="light"] .banner-container {
+	--container-shadow: rgba(0, 0, 0, 0.35) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+	--container-shadow-hidden: rgba(0, 0, 0, 0.35) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+[data-base-theme="dark"] .banner-container {
+	--c35: theme(colors.slate.600/35%);
+	--c12: theme(colors.slate.700/12%);
+	--c17: theme(colors.slate.700/17%);
+	--c9: theme(colors.slate.800/9%);
+	--c0: theme(colors.slate.800/0%);
+	--container-shadow: var(--c35) 0px 54px 55px, var(--c12) 0px -12px 30px, var(--c12) 0px 4px 6px, var(--c17) 0px 12px 13px, var(--c9) 0px -3px 5px;
+	--container-shadow-hidden: var(--c0) 0px 54px 55px, var(--c0) 0px -12px 30px, var(--c0) 0px 4px 6px, var(--c0) 0px 12px 13px, var(--c0) 0px -3px 5px;
+}
+
 .banner-container {
-	box-shadow: rgba(0, 0, 0, 0.35) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+	box-shadow: var(--container-shadow);
 }
 
 .t-banner-enter-active {
@@ -77,7 +91,7 @@ const bannerText = ref(`Recap.compliments[${rndIndx}]`);
 	transition: box-shadow v-bind(enterDurMs) ease;
 }
 .t-banner-enter-from .banner-container {
-	box-shadow: rgba(0, 0, 0, 0) 0px 54px 55px, rgba(0, 0, 0, 0) 0px -12px 30px, rgba(0, 0, 0, 0) 0px 4px 6px, rgba(0, 0, 0, 0) 0px 12px 13px, rgba(0, 0, 0, 0) 0px -3px 5px;
+	box-shadow: var(--container-shadow-hidden);
 }
 
 .t-banner-leave-active {

@@ -49,19 +49,19 @@
 			<div
 				class="content-block py-4 flex-shrink-0 rounded shadow-sm px-4"
 			>
-				<div class="mb-1 font-medium text-sm text-gray-500">{{ $t('Game.board-size.normal') }}</div>
+				<div class="mb-1 font-medium text-sm text-gray-500 dark:text-slate-100 dark:font-normal">{{ $t('Game.board-size.normal') }}</div>
 				<PuzzleDimensionsBlock
 					:presets="squarePresets"
 					:selected-dimensions="selectedDimensions"
 					@select="selectDimensions"
 				/>
-				<div class="mb-1 font-medium text-sm text-gray-500">{{ $t('Game.board-size.tall') }}</div>
+				<div class="mb-1 font-medium text-sm text-gray-500 dark:text-slate-100 dark:font-normal">{{ $t('Game.board-size.tall') }}</div>
 				<PuzzleDimensionsBlock
 					:presets="rectPresets"
 					:selected-dimensions="selectedDimensions"
 					@select="selectDimensions"
 				/>
-				<div class="mb-1 font-medium text-sm text-gray-500">{{ $t('Game.board-size.odd') }}</div>
+				<div class="mb-1 font-medium text-sm text-gray-500 dark:text-slate-100 dark:font-normal">{{ $t('Game.board-size.odd') }}</div>
 				<PuzzleDimensionsBlock
 					:presets="oddPresets"
 					:selected-dimensions="selectedDimensions"
@@ -75,7 +75,7 @@
 		class="w-full bg-gray-50 border-t dark:bg-slate-800 dark:border-slate-700 border-gray-200 px-4 pt-2 space-y-2 footer-wrapper sticky bottom-0"
 		:class="{ 'pt-4': !hasCurrentSavedGame }"
 	>
-		<div v-if="hasCurrentSavedGame" class="text-xs text-orange-700 dark:text-red-400 text-end">
+		<div v-if="hasCurrentSavedGame" class="text-xs text-orange-700 dark:text-red-300 text-end">
 			<p>{{ $t('NewPuzzle.starting-a-new-puzzle-will-overwrite') }}</p>
 		</div>
 		<div class="bottom-grid gap-x-4 w-full h-20">

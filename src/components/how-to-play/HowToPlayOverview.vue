@@ -1,6 +1,6 @@
 <template>
 <div
-	class="prose-a:text-teal-700 prose-a:underline prose-slate dark:prose-invert prose-sm md:prose lg:prose-lg xl:prose-xl mx-auto py-4 px-8"
+	class="prose-a:text-teal-700 dark:prose-a:text-teal-300 prose-a:underline prose-slate dark:prose-invert prose-sm md:prose lg:prose-lg xl:prose-xl mx-auto py-4 px-8"
 >
 	<h1 class="text-lg">{{ $t('HowToPlay.Overview.intro-heading') }}</h1>
 	<p>{{ $t('HowToPlay.Overview.intro-names') }}</p>

@@ -4,13 +4,13 @@
 		class="hint-inner
 		max-h-32
 		h-32
-		bg-white dark:bg-slate-700 text-slate-900 dark:text-white
+		bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100
 		w-full text-sm flex flex-col
 		pointer-events-auto flex-1 min-h-[6.5rem]
 		rounded-t-md
 		"
 	>
-		<header class="flex text-sm bg-slate-100/0 items-center pl-4 pr-1.5 h-8 min-h-fit relative pb-1">
+		<header class="flex text-sm items-center pl-4 pr-1.5 h-8 min-h-fit relative pb-1">
 			<h1 class="mt-2"><slot name="title">Default slotted title</slot></h1>
 			<IconBtn
 				scale="0.875"
@@ -25,7 +25,7 @@
 				<p :key="step" class="my-auto"><slot name="message">Default slotted message</slot></p>
 			</transition>
 		</div>
-		<div v-if="$slots.buttons != null" class="min-h-fit sticky bottom-0 mt-0.5 flex h-9 items-stretch border-t w-full">
+		<div v-if="$slots.buttons != null" class="min-h-fit sticky bottom-0 mt-0.5 flex h-9 items-stretch dark:border-slate-500 border-t w-full">
 			<div class="min-h-fit flex h-9 items-stretch w-full">
 				<slot name="buttons">Default slotted buttons / footer</slot>				
 			</div>
@@ -45,8 +45,11 @@ defineEmits<{
 </script>
 
 <style scoped>
-.hint-inner {
+[data-base-theme="light"] .hint-inner {
 	box-shadow: 0 5px 10px 10px rgba(0,0,0,0.03), 0 3px 3px 3px rgba(0,0,0,0.05);
+}
+[data-base-theme="dark"] .hint-inner {
+	box-shadow: 0;
 }
 </style>
 

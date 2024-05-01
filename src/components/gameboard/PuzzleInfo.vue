@@ -70,15 +70,15 @@ const difficultyLabelMsg = computed(() => {
 
 <style scoped>
 .puzzle-info {
-	@apply px-1 pb-1 text-xs text-gray-500 dark:text-gray-400 font-medium tracking-wider;
-
+	@apply px-1 pb-1 text-xs font-medium tracking-wider;
+	@apply text-gray-500 dark:text-slate-300;
 	@apply grid w-full;
 	grid-template-rows: 1fr;
 	grid-template-columns: calc(50% - 3ch) 6ch calc(50% - 3ch);
 }
 
 .puzzle-info.has-border {
-	@apply border-b border-gray-400 dark:border-gray-300 border-opacity-20 dark:border-opacity-10;
+	@apply border-b border-gray-400/20 dark:border-slate-100/20;
 }
 
 .progress-percentage {

@@ -3,7 +3,7 @@
 	class="bg-gray-50 dark:bg-slate-700 dark:border-slate-600 border rounded w-1/6 text-sm relative transition-colors"
 	:class="{
 		tall, square: !tall,
-		'bg-teal-600 border-teal-700 text-white': selected
+		'bg-teal-600 border-teal-700 text-white dark:bg-teal-600 dark:border-teal-600/30': selected
 	}"
 >
 	<div

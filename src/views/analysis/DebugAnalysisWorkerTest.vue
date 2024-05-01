@@ -123,6 +123,6 @@ onUnmounted(() => {
 }
 
 .test-btn {
-	@apply disabled:bg-gray-100 disabled:shadow-none disabled:border-gray-300 border border-transparent active:ring-2 transition-all duration-150 ring-blue-400 bg-white rounded p-2 shadow w-44 shrink-0 grow-1 font-medium;
+	@apply disabled:bg-gray-100 disabled:shadow-none disabled:border-gray-300 border border-transparent active:ring-2 transition-all duration-150 ring-blue-400 bg-white rounded p-2 shadow w-44 flex-shrink-0 flex-grow font-medium;
 }
 </style>

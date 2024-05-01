@@ -81,8 +81,14 @@ watch(value, (to, from) => {
 .color-0 {
 	--base-color: theme('colors.cell.blue.primary');
 }
+[data-base-theme="dark"] .color-0 {
+	--base-color: theme('colors.cell.blue.primaryDark');
+}
 .color-1 {
 	--base-color: theme('colors.cell.red.primary');
+}
+[data-base-theme="dark"] .color-1 {
+	--base-color: theme('colors.cell.red.primaryDark');
 }
 [data-shade-type="darken"] {
 	--mix-0: theme('colors.cell.blue.dark');

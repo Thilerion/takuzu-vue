@@ -8,7 +8,7 @@
 			<transition name="t-blur">
 				<div
 					v-if="showBackdrop"
-					class="bg-blur backdrop-blur-sm z-0 absolute w-full h-full inset-0"
+					class="bg-blur z-0 absolute w-full h-full inset-0"
 				></div>
 			</transition>
 
@@ -20,7 +20,7 @@
 				@banner-after-enter="bannerAfterEnter"
 			/>
 			<transition name="t-backdrop">
-				<div v-if="showBackdrop" class="backdrop inset-0 w-full h-full absolute z-0 opacity-90"></div>
+				<div v-if="showBackdrop" class="backdrop inset-0 w-full h-full absolute z-0"></div>
 			</transition>
 
 			<div class="absolute w-full h-full inset-0 z-20 p-6 flex justify-center items-center">
@@ -39,9 +39,9 @@
 </template>
 
 <script setup lang="ts">
+import { toRef } from 'vue';
 import { usePuzzleRecapModalActions } from './usePuzzleRecapModalAction.js';
 import { usePuzzleRecapTransitionTimings } from './usePuzzleRecapTransitionTimings.js';
-import { toRef } from 'vue';
 
 const props = defineProps<{
 	show: boolean
@@ -50,7 +50,7 @@ const shouldShow = toRef(props, 'show');
 
 const {
 	showBanner, showBackdrop, showContent,
-	bannerAfterEnter
+	bannerAfterEnter,
 } = usePuzzleRecapTransitionTimings({
 	enabled: shouldShow
 });
@@ -66,8 +66,16 @@ const { exitTo } = usePuzzleRecapModalActions();
 	opacity: 0;
 }
 
-.backdrop {
-	background: linear-gradient(rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.8) 35%, rgba(0, 0, 0, 0.9) 45%, rgba(0, 0, 0, 0.9) 50%, rgba(0, 0, 0, 0.9) 55%, rgba(0, 0, 0, 0.8) 65%, rgba(0, 0, 0, 0.75) 100%);
+[data-base-theme="light"] .backdrop {
+	background: linear-gradient(rgba(0, 0, 0, 0.75) 5%, rgba(0, 0, 0, 0.8) 35%, rgba(0, 0, 0, 0.9) 45%, rgba(0, 0, 0, 0.9) 50%, rgba(0, 0, 0, 0.9) 55%, rgba(0, 0, 0, 0.8) 65%, rgba(0, 0, 0, 0.75) 100%);
+	opacity: 0.9;
+}
+[data-base-theme="dark"] .backdrop {
+	--clr-a: theme(colors.slate.600/50%);
+	--clr-b: theme(colors.slate.900/80%);
+	--clr-c: theme(colors.slate.950/90%);
+	background: linear-gradient(var(--clr-a) 10%, var(--clr-b) 20%, var(--clr-c) 40%, var(--clr-c) 50%, var(--clr-c) 60%, var(--clr-b) 80%, var(--clr-a) 100%);
+	opacity: 0.95;
 }
 
 .bg-blur {

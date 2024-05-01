@@ -86,10 +86,10 @@ const checkButtonEnabled = toRef(settingsStore, 'checkButtonEnabled');
 	@apply flex-none flex text-sm text-center h-full overflow-hidden;
 	
 	@apply bg-transparent;
-	@apply text-gray-900/80 dark:text-white/90;
+	@apply text-gray-900/80 dark:text-slate-200/90;
 }
 .puzzle-paused .puzzle-controls, .puzzle-finished .puzzle-controls {
-	@apply pointer-events-none text-gray-700/60 dark:text-white/50;
+	@apply pointer-events-none text-gray-700/60 dark:text-slate-200/50;
 }
 
 .control-btns {

@@ -1,5 +1,5 @@
 <template>
-<div class="recap-modal scale-100 min-h-[200px] min-w-min max-w-sm w-full sm:w-max max-h-[90vh] rounded-xl flex flex-col m-auto bg-white text-gray-900 relative">
+<div class="recap-modal scale-100 min-h-[200px] min-w-min max-w-sm w-full sm:w-max max-h-[90vh] rounded-xl flex flex-col m-auto bg-white text-gray-900 dark:bg-slate-700 dark:text-slate-100 relative">
 	<div class="absolute right-1 -top-1 -translate-y-full text-sm flex items-end justify-end z-100 w-full pl-2 h-9">
 		<RecapContent.FavoriteNote
 			v-if="puzzleRecapStore.isSavedToDb"
@@ -15,12 +15,12 @@
 		/>
 	</div>
 
-	<div class="bg-gradient-to-t from-teal-100/70 via-teal-200/20 to-transparent bg-teal-600 text-white relative mb-2 rounded-t-xl" :class="[recordMessage != null ? 'pb-6' : 'pb-2']">
+	<div class="wavy-bg text-white relative mb-2 rounded-t-xl" :class="[recordMessage != null ? 'pb-6' : 'pb-2']">
 		<div class="h-full absolute inset-0 flex items-end justify-end z-0">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				preserveAspectRatio="none"
-				class="fill-white bottom-0 inset-x-0 h-8 w-full"
+				class="fill-white dark:fill-slate-700 bottom-0 inset-x-0 h-8 w-full"
 				viewBox="0 0 1440 320"
 			><path fill-opacity="1" d="M0,192L80,213.3C160,235,320,277,480,256C640,235,800,149,960,128C1120,107,1280,149,1360,170.7L1440,192L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z" /></svg>
 		</div>
@@ -68,7 +68,7 @@
 			<BaseButton
 				element="a"
 				:href="href"
-				class="text-gray-600 tracking-wider recap-btn text-xs row-span-1"
+				class=" tracking-wider recap-btn text-xs row-span-1"
 				@click.prevent="goBackToRoute({ name: 'Home' }, navigate)"
 			>{{ $t('routeButton.home') }}</BaseButton>
 		</router-link>
@@ -80,7 +80,7 @@
 			<BaseButton
 				element="a"
 				:href="href"
-				class="text-gray-600 tracking-wider recap-btn text-xs row-span-1"
+				class="tracking-wider recap-btn text-xs row-span-1"
 				@click.prevent="goBackToRoute({ name: 'NewPuzzleFreePlay' }, navigate)"
 			>{{ $t('Recap.change-level') }}</BaseButton>
 		</router-link>
@@ -198,7 +198,10 @@ const goBackToRoute: (to: { name: string }, navigate: () => Promise<void | Navig
 }
 
 .recap-btn {
-	@apply border border-gray-300/80 rounded py-0 h-8 flex items-center justify-center pt-1;
+	@apply border border-gray-300/80 dark:border-slate-400 rounded py-0 h-8 flex items-center justify-center pt-1;
+	@apply dark:bg-slate-700 dark:text-slate-100;
+	@apply hover-hover:hover:bg-gray-50 hover-hover:hover:border-gray-400 hover-none:active:bg-gray-50 hover-none:active:border-gray-400;
+	@apply dark:hover-hover:hover:bg-slate-600 dark:hover-none:active:bg-slate-600;
 }
 
 .fav-btn {
@@ -211,6 +214,11 @@ const goBackToRoute: (to: { name: string }, navigate: () => Promise<void | Navig
 }
 .fav-btn:active.is-fav {
 	@apply opacity-100;
+}
+
+.wavy-bg {
+	@apply bg-gradient-to-t from-teal-100/70 via-teal-200/20 to-transparent bg-teal-600;
+	@apply dark:from-teal-500/70 dark:via-teal-500/20 dark:to-transparent dark:bg-teal-700;
 }
 
 </style>

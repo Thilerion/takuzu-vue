@@ -9,14 +9,14 @@
 	<template #buttons>
 		<button
 			:disabled="isFirstStep"
-			class="text-sm text-slate-700 bg-white border-r min-w-fit w-24 py-1 flex-grow max-w-[27%] disabled:text-slate-400 disabled:bg-slate-50"
+			class="text-sm text-slate-700 bg-white dark:bg-slate-50/10 dark:text-slate-50 border-r dark:border-slate-500 min-w-fit w-24 py-1 flex-grow max-w-[27%] disabled:text-slate-400 disabled:bg-slate-50 dark:disabled:text-slate-300 dark:disabled:bg-slate-500/10"
 			@click="prevStep"
 		><span class="mr-[1ch]">&#x3C;</span>{{ t('Hints.common.actionLabel.back') }}</button>
 		<div class="flex-1">
 			<!-- Space for secondary actions, or [Learn more] button, etc -->
 		</div>
 		<button
-			class="text-sm flex-grow text-slate-700 bg-white border-l min-w-fit w-24 py-1 max-w-[27%]"
+			class="text-sm flex-grow text-slate-700 bg-white dark:bg-slate-50/10 dark:text-slate-50 border-l dark:border-slate-500 min-w-fit w-24 py-1 max-w-[27%]"
 			@click="onAction"
 		><transition name="stepchange" mode="out-in"><span :key="stepIdx">{{ primaryActionLabel }}<span v-if="!isFinalStep" class="ml-[1ch]">&#x3E;</span></span></transition></button>
 	</template>

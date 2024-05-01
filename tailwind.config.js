@@ -57,12 +57,14 @@ export default {
 				cell: {
 					blue: {
 						primary: 'hsl(207, 90%, 61%)',
+						primaryDark: 'hsl(207, 85%, 65%)',
 						dark: 'hsl(207, 70%, 55%)',
 						light: 'hsl(207, 80%, 66%)',
-						lighter: 'hsl(207, 80%, 76%)'
+						lighter: 'hsl(207, 80%, 76%)',
 					},
 					red: {
 						primary: 'hsl(7, 77%, 55%)',
+						primaryDark: 'hsl(7, 65%, 65%)',
 						dark: 'hsl(7, 50%, 47%)',
 						light: 'hsl(7, 70%, 59%)',
 						lighter: 'hsl(7, 70%, 69%)'
