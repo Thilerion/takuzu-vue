@@ -42,7 +42,7 @@
 		"options": {
 			"automatic-replay-mode": "Automatic Replay Mode"
 		},
-		"starting-a-new-puzzle-will-overwrite": "Starting a new puzzle will overwrite your current puzzle in progress.",
+		"starting-a-new-puzzle-will-overwrite": "A new puzzle will overwrite your saved progress.",
 		"title": "New Puzzle"
 	},
 	"PlayPuzzle": {

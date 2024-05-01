@@ -38,11 +38,11 @@
 			"some-puzzle-sizes-are-disabled-for-harder-puzzles": "Opmerking: sommige puzzelgroottes zijn uitgeschakeld voor moeilijkere puzzels.",
 			"start-game": "Start spel"
 		},
-		"load-save": "Hervat huidige puzzel",
+		"load-save": "Hervatten",
 		"options": {
 			"automatic-replay-mode": "Automatische Replay-modus"
 		},
-		"starting-a-new-puzzle-will-overwrite": "Een nieuwe puzzel starten zal de voortgang in je huidige puzzel overschrijven.",
+		"starting-a-new-puzzle-will-overwrite": "Een nieuwe puzzel overschrijft je huidige voortgang.",
 		"title": "Nieuwe Puzzel"
 	},
 	"PlayPuzzle": {
