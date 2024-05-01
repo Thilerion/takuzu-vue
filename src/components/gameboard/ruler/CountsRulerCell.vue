@@ -35,7 +35,7 @@ const valueOne = computed(() => props.one[props.type]);
 	width: var(--ruler-cell-size);
 	height: var(--ruler-cell-size);
 
-	@apply text-gray-600;
+	@apply text-gray-600 dark:text-slate-300;
 	--half-size: calc(var(--ruler-cell-size) * 0.3);
 	--font-size: clamp(10px, var(--half-size), 2rem);
 	--base-padding: calc(0.13 * var(--ruler-cell-size));
@@ -59,25 +59,22 @@ const valueOne = computed(() => props.one[props.type]);
 	@apply row-start-2 col-start-2 row-span-2 col-span-2 text-right mt-auto ml-auto;
 }
 .count-divider {
-	@apply w-px h-3/5 bg-gray-400 row-start-1 row-span-3 col-start-1 col-span-3 rotate-[50deg] origin-center place-self-center left-[5%] relative;
+	@apply w-px h-3/5 bg-gray-400 dark:bg-slate-500 row-start-1 row-span-3 col-start-1 col-span-3 rotate-[50deg] origin-center place-self-center left-[5%] relative;
 }
-.line-partly-complete .count-divider {
-	@apply bg-gray-300;
-}
-.line-complete .count-divider {
-	@apply bg-gray-300;
+.line-partly-complete .count-divider, .line-complete .count-divider {
+	@apply bg-gray-300 dark:bg-slate-300/30;
 }
 
 .cell-complete {
-	@apply text-gray-300;
+	@apply text-gray-300 dark:text-slate-300/30;
 }
 
 .puzzle-paused .count {
 	@apply relative invisible;
-	@apply after:absolute after:h-full after:inset-0 after:bg-gray-200 after:visible;
+	@apply after:absolute after:h-full after:inset-0 after:bg-gray-200 dark:after:bg-slate-600 after:visible;
 }
 .puzzle-paused .count-divider {
-	@apply bg-gray-300 transition-none;
+	@apply bg-gray-300 dark:bg-slate-600 transition-none;
 }
 
 

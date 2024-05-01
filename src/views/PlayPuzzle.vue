@@ -48,7 +48,7 @@
 			<template #ruler-columns>
 				<PuzzleRuler
 					:cell-size="cellSize"
-					:line-ids="board.rowIds"
+					:line-ids="board.columnIds"
 					ruler-line-type="columns"
 					:count-type="rulerCountType"
 					:component-type="rulerComponentType"

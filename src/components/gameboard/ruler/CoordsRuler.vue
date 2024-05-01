@@ -96,10 +96,10 @@ const completedLines = computed((): Set<LineId> => {
 	@apply text-center flex items-center justify-center h-full w-full transition-all duration-0 delay-0 decoration-transparent;
 }
 .ruler-cell.error {
-	@apply text-red-700 duration-300 delay-700;
+	@apply text-red-700 dark:text-red-400 duration-300 delay-700;
 }
-.ruler-cell.complete {
-	@apply text-black/70 duration-200 delay-0 underline decoration-black/30 underline-offset-2;
+.ruler-cell.complete:not(.error) {
+	@apply text-black/70 dark:text-slate-400 duration-200 delay-0 underline decoration-black/30 underline-offset-2;
 }
 .puzzle-paused :is(.ruler-cell.error, .ruler-cell.complete) {
 	@apply transition-none no-underline;
