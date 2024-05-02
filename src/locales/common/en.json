@@ -102,6 +102,12 @@
 			"puzzle-history": "Puzzle history",
 			"none-found-with-filters": "No puzzles found with current filters!",
 			"none-played-yet": "You haven't played any puzzles yet!"
+		},
+		"Overview": {
+			"puzzles-solved": "Puzzles solved",
+			"n-solved-today": "{n} solved today",
+			"time-played": "Time played",
+			"cells-filled": "Cells filled"
 		}
 	},
 	"NotFound404": {

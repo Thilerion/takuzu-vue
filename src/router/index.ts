@@ -65,6 +65,14 @@ const routes = [
 				}
 			},
 			{
+				path: '/statistics',
+				name: 'StatisticsNext',
+				component: () => import('../views/StatisticsPageNext.vue'),
+				meta: {
+					title: 'Statistics'
+				}
+			},
+			{
 				path: '/stats/history',
 				name: 'PuzzleHistory',
 				component: () => import('../views/PuzzleHistoryView.vue'),
