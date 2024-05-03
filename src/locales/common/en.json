@@ -107,7 +107,12 @@
 			"puzzles-solved": "Puzzles solved",
 			"n-solved-today": "{n} solved today",
 			"time-played": "Time played",
-			"cells-filled": "Cells filled"
+			"cells-filled": "Cells filled",
+			"time-parts-short": {
+				"minutes-seconds": "{minutes}m {seconds}s",
+				"hours-minutes": "{hours}h {minutes}m",
+				"days-hours": "{days}d {hours}h"
+			}
 		}
 	},
 	"NotFound404": {

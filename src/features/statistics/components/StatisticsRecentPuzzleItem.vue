@@ -13,9 +13,10 @@
 import type { DifficultyKey } from '@/lib/types.js';
 import { differenceInCalendarDays } from 'date-fns';
 import { useI18n } from 'vue-i18n';
-import { timeFormatter } from '@/utils/date.utils.js';
 import { computed } from 'vue';
 import { useNow } from '@vueuse/core';
+import { toRef } from 'vue';
+import { useFormattedDurationNarrow } from '../composables/format-duration.js';
 
 const props = defineProps<{
 	date: Date,
@@ -53,8 +54,10 @@ const formatDateRelative = (diffDays: number) => {
 const dateFormattedRelative = computed(() => formatDateRelative(daysDiff.value));
 
 const daysDiff = computed(() => differenceInCalendarDays(today.value, props.date));
-const formatTime = timeFormatter({});
-const formattedTime = computed(() => formatTime(props.time));
+
+// TODO: if 0 minutes, only show "{n}s"
+const timeMs = toRef(props, 'time');
+const formattedTime = useFormattedDurationNarrow(timeMs);
 </script>
 
 <style scoped>

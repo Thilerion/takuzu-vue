@@ -8,7 +8,7 @@
 
 	<div
 		class="text-2xl font-medium flex items-center justify-center py-2 text-teal-500 dark:text-teal-300"
-	><span>{{ value }}</span></div>
+	><slot>{{ value }}</slot></div>
 
 	<div
 		class="text-xs text-gray-500 dark:text-slate-100 self-end"
@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 defineProps<{
-	value: string | number
+	value?: string | number
 }>();
 </script>
 

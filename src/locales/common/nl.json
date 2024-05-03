@@ -102,7 +102,14 @@
 		"loading-statistics": "Statistieken laden...",
 		"none-solved-warning": "Je hebt nog geen puzzels opgelost! Ga er een paar spelen!",
 		"puzzle-statistics": "Puzzelstatistieken",
-		"title": "Statistieken"
+		"title": "Statistieken",
+		"Overview": {
+			"time-parts-short": {
+				"minutes-seconds": "{minutes}m {seconds}s",
+				"hours-minutes": "{hours}u {minutes}m",
+				"days-hours": "{days}d {hours}u"
+			}
+		}
 	},
 	"NotFound404": {
 		"page-not-found": "Pagina niet gevonden",

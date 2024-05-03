@@ -6,25 +6,22 @@
 			:value="statsNextStore.numSolved ?? 0"
 		>
 			<template #title>{{ $t('Statistics.Overview.puzzles-solved') }}</template>
-			<template #footer>{{ $t('Statistics.Overview.n-solved-today', { n: 'x'}) }}</template>
+			<template #footer>{{ $t('Statistics.Overview.n-solved-today', { n: amountPlayedToday}) }}</template>
 		</StatisticsOverviewTile>
 
-		<StatisticsOverviewTile
-			value="1h 23m"
-		>
+		<StatisticsOverviewTile>
+			<span>{{ formattedTimePlayed }}</span>
 			<template #title>{{ $t('Statistics.Overview.time-played') }}</template>
-			<template #footer>[x]m in last 30 days</template>
+			<!-- TODO: <template #footer>[x]m in last 30 days</template> -->
 		</StatisticsOverviewTile>
 
-		<StatisticsOverviewTile
-			:value="'xx,xk'"
-		>
+		<StatisticsOverviewTile>
+			<span><!-- TODO -->1k</span>
 			<template #title>{{ $t('Statistics.Overview.cells-filled') }}</template>
 		</StatisticsOverviewTile>
 
-		<StatisticsOverviewTile
-			value="8x12 - Hard"
-		>
+		<StatisticsOverviewTile>
+			<span><!-- TODO -->8x12 - Hard</span>
 			<template #title>Favorite puzzle <small>(30d)</small></template>
 			<template #footer>All-time: <span class="whitespace-nowrap">10x10 - Easy</span></template>
 		</StatisticsOverviewTile>
@@ -34,9 +31,25 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from 'pinia';
 import { useStatisticsNextStore } from '../store.js';
+import { computed } from 'vue';
+import { isToday } from 'date-fns';
+import { useFormattedDurationNarrow } from '../composables/format-duration.js';
 
 const statsNextStore = useStatisticsNextStore();
+
+const { itemsRecentFirst } = storeToRefs(statsNextStore);
+const amountPlayedToday = computed((): number => {
+	// Use itemsRecentFirst to find the index of the first item that was solved before today
+	const index = itemsRecentFirst.value.findIndex(item => !isToday(item.date));
+	return index === -1 ? itemsRecentFirst.value.length : index;
+})
+
+const timePlayedMs = computed(() => {
+	return itemsRecentFirst.value.reduce((acc, item) => acc + item.timeElapsed, 0);
+})
+const formattedTimePlayed = useFormattedDurationNarrow(timePlayedMs);
 </script>
 
 <style scoped>
