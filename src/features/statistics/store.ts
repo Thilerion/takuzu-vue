@@ -15,7 +15,12 @@ export const useStatisticsNextStore = defineStore('statisticsNext', () => {
 	const initializedAt = computed(() => initStatus.value.at);
 
 	// Store the history items
+	// TODO: Should I use shallowRef for the historyItems instead? Depends on the item update mechanism of the Statistics page components
 	const historyItems = ref<StatsDbExtendedStatisticDataEntry[] | null>(null);
+	const itemsRecentFirst = computed(() => {
+		if (!historyItems.value) return [];
+		return [...historyItems.value].sort((a, b) => b.timestamp - a.timestamp);
+	})
 
 	// Getters
 	const numSolved = computed(() => historyItems.value?.length ?? 0);
@@ -82,6 +87,7 @@ export const useStatisticsNextStore = defineStore('statisticsNext', () => {
 		noPuzzlesSolved,
 
 		historyItems,
+		itemsRecentFirst,
 
 		// Actions
 		initialize,

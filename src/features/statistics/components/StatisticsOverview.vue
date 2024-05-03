@@ -1,6 +1,6 @@
 <template>
-<div class="stats-overview mb-4 px-4">
-	<h2 class="text-gray-600 dark:text-slate-200 text-lg font-medium px-0 pb-1">Overview</h2>
+<div class="stats-overview">
+	<StatisticsBlockHeading>Overview</StatisticsBlockHeading>
 	<div class="grid gap-3 cards-grid max-w-screen-sm mx-auto">
 		<StatisticsOverviewTile
 			:value="statsNextStore.numSolved ?? 0"
@@ -46,9 +46,6 @@ const statsNextStore = useStatisticsNextStore();
 }
 
 @media (width < 360px) {
-	.stats-overview {
-		@apply px-2;
-	}
 	.cards-grid {
 		@apply gap-2;
 	}
