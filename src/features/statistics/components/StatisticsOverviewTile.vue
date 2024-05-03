@@ -1,6 +1,6 @@
 <template>
 <section
-	class="bg-white dark:bg-slate-700 dark:text-slate-100 rounded shadow-lg px-3 flex items-start flex-col justify-around py-2"
+	class="bg-white dark:bg-slate-700 dark:text-slate-100 rounded shadow-lg px-3 tile-inner-grid py-2"
 >
 	<header class="text-sm tracking-wide text-gray-500 dark:text-slate-100">
 		<h3><slot name="title"></slot></h3>
@@ -11,8 +11,7 @@
 	><span>{{ value }}</span></div>
 
 	<div
-		v-if="!!$slots.footer"
-		class="text-xs text-gray-500 dark:text-slate-100"
+		class="text-xs text-gray-500 dark:text-slate-100 self-end"
 	><slot name="footer"></slot></div>
 </section>
 </template>
@@ -22,3 +21,9 @@ defineProps<{
 	value: string | number
 }>();
 </script>
+
+<style scoped>
+.tile-inner-grid {
+	@apply grid auto-rows-auto grid-cols-1 justify-items-start;
+}
+</style>
