@@ -32,6 +32,7 @@ import { formatYYYYMMDD } from '@/utils/date.utils';
 import { computed, ref, toRef } from 'vue';
 import { statsDb } from '@/services/db/stats-db/init.js';
 import { importPeek, exportPuzzleHistoryDb, cleanImportPuzzleHistoryDb, importPuzzleHistoryItemsWithVersionUpgrade } from '@/services/db/stats-db/stats-db-import-export.js';
+import { iterateFiles } from '@/utils/file.utils.js';
 
 const props = defineProps({
 	numSolved: {
@@ -110,10 +111,7 @@ const processStatsFile = async (ev: Event) => {
 }
 
 function* eachFileInFilelist(list: FileList): Generator<File> {
-	const num = list.length;
-	for (let i = 0; i < num; i++) {
-		yield list.item(i) as File;
-	}
+	yield* iterateFiles(list);
 }
 
 const processMultipleStatsFiles = async (ev: Event) => {

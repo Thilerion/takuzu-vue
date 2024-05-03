@@ -33,3 +33,10 @@ export function writeObjToBlob(obj: Record<PropertyKey, unknown>) {
 		return null;
 	}	
 }
+
+export function* iterateFiles(list: FileList): Generator<File> {
+	const num = list.length;
+	for (let i = 0; i < num; i++) {
+		yield list[i];
+	}
+}

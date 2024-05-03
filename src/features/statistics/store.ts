@@ -12,6 +12,7 @@ export const useStatisticsNextStore = defineStore('statisticsNext', () => {
 	})
 	const isInitialized = computed(() => initStatus.value.isInitialized);
 	const isLoading = ref(false);
+	const initializedAt = computed(() => initStatus.value.at);
 
 	// Store the history items
 	const historyItems = ref<StatsDbExtendedStatisticDataEntry[] | null>(null);
@@ -75,7 +76,9 @@ export const useStatisticsNextStore = defineStore('statisticsNext', () => {
 	return {
 		isLoading,
 		isInitialized,
+		initializedAt,
 		
+		numSolved,
 		noPuzzlesSolved,
 
 		historyItems,
