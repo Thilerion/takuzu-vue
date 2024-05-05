@@ -16,7 +16,7 @@
 		</StatisticsOverviewTile>
 
 		<StatisticsOverviewTile>
-			<span><!-- TODO -->1k</span>
+			<span>{{ $n(cellsFilled, 'compactShort', { maximumFractionDigits: 1, minimumFractionDigits: 0 }) }}</span>
 			<template #title>{{ $t('Statistics.Overview.cells-filled') }}</template>
 		</StatisticsOverviewTile>
 
@@ -50,6 +50,13 @@ const timePlayedMs = computed(() => {
 	return itemsRecentFirst.value.reduce((acc, item) => acc + item.timeElapsed, 0);
 })
 const formattedTimePlayed = useFormattedDurationNarrow(timePlayedMs);
+
+// Approximate empty cells filled by converting a puzzle's widthXheight with an approximate masked ratio
+const APPROX_MASK_RATIO = 0.7;
+const cellsFilled = computed(() => {
+	const totalCells = itemsRecentFirst.value.reduce((acc, item) => acc + item.numCells, 0);
+	return Math.round(totalCells * APPROX_MASK_RATIO);
+})
 </script>
 
 <style scoped>
