@@ -21,9 +21,9 @@
 		</StatisticsOverviewTile>
 
 		<StatisticsOverviewTile>
-			<span><!-- TODO -->8x12 - Hard</span>
-			<template #title>Favorite puzzle <small>(30d)</small></template>
-			<template #footer>All-time: <span class="whitespace-nowrap">10x10 - Easy</span></template>
+			<span>{{ mostPlayed30 ?? '---' }}</span>
+			<template #title>Most played <small>(30d)</small></template>
+			<template #footer>All-time: <span class="whitespace-nowrap">{{ mostPlayedAll ?? '---' }}</span></template>
 		</StatisticsOverviewTile>
 	</div>
 </div>
@@ -34,8 +34,9 @@
 import { storeToRefs } from 'pinia';
 import { useStatisticsNextStore } from '../store.js';
 import { computed } from 'vue';
-import { isToday } from 'date-fns';
+import { isToday, subDays } from 'date-fns';
 import { useFormattedDurationNarrow } from '../composables/format-duration.js';
+import { getMostPlayedPuzzleConfig, summarizeByPuzzleConfig, type PuzzleConfigSummaries } from '../services/HistorySummaries.service.js';
 
 const statsNextStore = useStatisticsNextStore();
 
@@ -56,6 +57,28 @@ const APPROX_MASK_RATIO = 0.7;
 const cellsFilled = computed(() => {
 	const totalCells = itemsRecentFirst.value.reduce((acc, item) => acc + item.numCells, 0);
 	return Math.round(totalCells * APPROX_MASK_RATIO);
+})
+
+
+// TODO: Move to composable; combine "mostPlayed" by count and "longestPlaytime"
+const summariesAll = computed(() => {
+	return summarizeByPuzzleConfig(itemsRecentFirst.value);
+})
+const mostPlayedAll = computed(() => {
+	return getMostPlayedPuzzleConfig(summariesAll.value);
+})
+
+const itemsRecent30Days = computed(() => {
+	const thirtyDaysAgo = subDays(new Date(), 30);
+	return itemsRecentFirst.value.filter(item => item.date >= thirtyDaysAgo);
+})
+const summaries30 = computed((): PuzzleConfigSummaries => {
+	if (itemsRecent30Days.value.length === 0) return new Map();
+	return summarizeByPuzzleConfig(itemsRecent30Days.value);
+})
+const mostPlayed30 = computed(() => {
+	if (summaries30.value.size === 0) return null;
+	return getMostPlayedPuzzleConfig(summaries30.value);
 })
 </script>
 
