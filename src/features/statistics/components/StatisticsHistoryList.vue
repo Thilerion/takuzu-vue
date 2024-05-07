@@ -34,13 +34,9 @@
 <script setup lang="ts">
 import type { StatsDbExtendedStatisticDataEntry } from '@/services/db/stats-db/models.js';
 
-const props = defineProps<{
+defineProps<{
 	listKey: string,
 	shownItems: StatsDbExtendedStatisticDataEntry[],
 	numTotal: number,
 }>();
 </script>
-
-<style scoped>
-
-</style>

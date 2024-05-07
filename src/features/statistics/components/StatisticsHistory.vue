@@ -1,5 +1,11 @@
 <template>
 <div class="content flex-1 flex flex-col gap-2 pt-4">
+	
+	<StatisticsHistoryListDisplayOpts
+		v-model:sort-selection="sortSelection"
+		v-model:page-size="pageSizeComp"
+	/>
+
 	<BasePagination
 		:modelValue="currentPage - 1"
 		:length="numItemsFiltered"
@@ -7,31 +13,20 @@
 		@update:model-value="(val) => currentPage = val + 1"
 	/>
 
-	<div>
-		<label class="text-sm flex flex-row items-center px-2 pb-4"><span>Sort by:</span>
-			<select
-				v-model="sortSelection"
-				class="form-select text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-1 text-sm"
-			>
-				<option value="date;desc">Newest first</option>
-				<option value="date;asc">Oldest first</option>
-				<option value="time;asc">Fastest time solved</option>
-				<option value="time;desc">Slowest time solved</option>
-			</select>
-		</label>
-	</div>
 	<StatisticsHistoryList
 		:list-key="JSON.stringify({ page, pageSize, sortBy, sortDir, filters })"
 		:shown-items="shownItems"
 		:num-total="historyItems?.length ?? 0"
 	/>
+
+	<BasePagination
+		:modelValue="currentPage - 1"
+		:length="numItemsFiltered"
+		:page-size="currentPageSize"
+		@update:model-value="(val) => currentPage = val + 1"
+	/>
+
 </div>
-<BasePagination
-	:modelValue="currentPage - 1"
-	:length="numItemsFiltered"
-	:page-size="currentPageSize"
-	@update:model-value="(val) => currentPage = val + 1"
-/>
 </template>
 
 <script setup lang="ts">
@@ -59,8 +54,14 @@ const sortSelection = computed<HistorySortSelection>({
 		page.value = 1;
 	}
 })
+const pageSizeComp = computed<number>({
+	get: () => pageSize.value,
+	set: (val) => {
+		pageSize.value = val;
+		page.value = 1;
+	}
+})
 // TODO: on filter change, set page to 1
-// TODO: on pageSize change, set page to 1
 
 const statsNextStore = useStatisticsNextStore();
 const { historyItems } = storeToRefs(statsNextStore);
