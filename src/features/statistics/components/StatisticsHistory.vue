@@ -14,7 +14,7 @@
 	/>
 
 	<StatisticsHistoryList
-		:list-key="JSON.stringify({ page, pageSize, sortBy, sortDir, filters })"
+		:list-key="JSON.stringify({ page, pageSize, sortBy, sortDir })"
 		:shown-items="shownItems"
 		:num-total="historyItems?.length ?? 0"
 	/>
@@ -41,7 +41,6 @@ const page = defineModel<number>('page', { required: true });
 const pageSize = defineModel<number>('pageSize', { required: true });
 const sortBy = defineModel<HistorySortBy>('sortBy', { required: true });
 const sortDir = defineModel<HistorySortDir>('sortDir', { required: true });
-const filters = defineModel<unknown[]>('filters', { required: true });
 
 const sortSelection = computed<HistorySortSelection>({
 	get: () => {

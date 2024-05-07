@@ -10,14 +10,16 @@
 			v-model:pageSize="data.pageSize"
 			v-model:sortBy="data.sortBy"
 			v-model:sortDir="data.sortDir"
-			v-model:filters="data.filters"
 		/>
 	</StatisticsStoreLoader>
 </div>
 </template>
 
 <script setup lang="ts">
+import { isDifficultyKey } from '@/config.js';
+import type { HistoryFilterData } from '@/features/statistics/helpers/history-filter.js';
 import { isSortDir, isSortByKey, type HistorySortBy, type HistorySortDir } from '@/features/statistics/helpers/history-sort.js';
+import type { DimensionStr } from '@/lib/types.js';
 import { onBeforeMount, reactive, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -26,15 +28,18 @@ type HistoryParsedQueryData = {
 	pageSize: number;
 	sortBy: HistorySortBy;
 	sortDir: HistorySortDir;
-	filters: unknown[];
-};
+} & HistoryFilterData;
 
 const getDefaults = (): HistoryParsedQueryData => ({
 	page: 1,
 	pageSize: 10,
 	sortBy: 'date',
 	sortDir: 'desc',
-	filters: [],
+	
+	difficulty: null,
+	dimensions: null,
+	favorite: null,
+	records: null,
 });
 const data = reactive<HistoryParsedQueryData>(getDefaults());
 
@@ -43,7 +48,19 @@ function applyParsedQueryParams(updatedData: Partial<HistoryParsedQueryData>) {
 	data.pageSize = updatedData.pageSize ?? data.pageSize;
 	data.sortBy = updatedData.sortBy ?? data.sortBy;
 	data.sortDir = updatedData.sortDir ?? data.sortDir;
-	data.filters = updatedData.filters ?? data.filters;
+	
+	if (updatedData.difficulty !== undefined) {
+		data.difficulty = updatedData.difficulty;
+	}
+	if (updatedData.dimensions !== undefined) {
+		data.dimensions = updatedData.dimensions;
+	}
+	if (updatedData.favorite !== undefined) {
+		data.favorite = updatedData.favorite;
+	}
+	if (updatedData.records !== undefined) {
+		data.records = updatedData.records;
+	}
 }
 
 function parseQueryParams(q: Record<string, string | null | (string | null)[]>): Partial<HistoryParsedQueryData> {
@@ -84,12 +101,37 @@ function parseQueryParams(q: Record<string, string | null | (string | null)[]>):
 		}
 	}
 
-	const parsedFilters: HistoryParsedQueryData['filters'] = [];
-	// TODO: parse filters from query params
-
-	if (parsedFilters.length) {
-		result.filters = parsedFilters;
+	if (q.difficulty) {
+		const diffInt = parseInt(q.difficulty as string);
+		if (isDifficultyKey(diffInt)) {
+			result.difficulty = diffInt;
+		} else {
+			result.difficulty = null;
+		}
 	}
+	if (q.dimensions) {
+		if (typeof q.dimensions === 'string') {
+			result.dimensions = q.dimensions as DimensionStr;
+		} else {
+			result.dimensions = null;
+		}	
+	}
+	if (q.favorite) {
+		const favBool = q.favorite === 'true';
+		if (favBool) {
+			result.favorite = favBool;
+		} else {
+			result.favorite = null;
+		}
+	}
+	if (q.records) {
+		if (typeof q.record === 'string') {
+			result.records = q.records as any;
+		} else {
+			result.records = null;
+		}
+	}
+
 	return result;
 }
 
