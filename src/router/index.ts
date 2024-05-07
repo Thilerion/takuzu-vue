@@ -78,7 +78,7 @@ const routes = [
 					{
 						path: 'history',
 						name: 'StatisticsHistory',
-						component: () => import('../views/StatisticsPuzzleHistory.vue'),
+						component: () => import('../views/StatisticsPuzzleHistoryPage.vue'),
 						meta: {
 							title: 'Statistics - Puzzle History'
 						}

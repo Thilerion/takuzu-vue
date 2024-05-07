@@ -59,7 +59,3 @@ const daysDiff = computed(() => differenceInCalendarDays(today.value, props.date
 const timeMs = toRef(props, 'time');
 const formattedTime = useFormattedDurationNarrow(timeMs);
 </script>
-
-<style scoped>
-
-</style>
