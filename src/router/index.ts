@@ -66,11 +66,24 @@ const routes = [
 			},
 			{
 				path: '/statistics',
-				name: 'StatisticsNext',
-				component: () => import('../views/StatisticsPageNext.vue'),
-				meta: {
-					title: 'Statistics'
-				}
+				children: [
+					{
+						path: '',
+						name: 'StatisticsNext',
+						component: () => import('../views/StatisticsPageNext.vue'),
+						meta: {
+							title: 'Statistics'
+						}
+					},
+					{
+						path: 'history',
+						name: 'StatisticsHistory',
+						component: () => import('../views/StatisticsPuzzleHistory.vue'),
+						meta: {
+							title: 'Statistics - Puzzle History'
+						}
+					}
+				]
 			},
 			{
 				path: '/stats/history',
