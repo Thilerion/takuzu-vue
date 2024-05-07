@@ -61,10 +61,14 @@ export const useStatisticsNextStore = defineStore('statisticsNext', () => {
 		isLoading.value = true;
 
 		try {
-			const numSolved = await statsDb.getTotalSolved();
-			if (!numSolved) {
+			const currentNumSolved = await statsDb.getTotalSolved();
+			if (!currentNumSolved) {
 				// No puzzles solved
 				historyItems.value = [];
+				setInitialized(true);
+				return;
+			} else if (currentNumSolved === numSolved.value) {
+				// No new puzzles solved, assume the data is up-to-date
 				setInitialized(true);
 				return;
 			}

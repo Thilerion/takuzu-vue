@@ -4,69 +4,71 @@
 		:back-options="{ type: 'force', prevRouteName: 'StatisticsNext' }"
 	>{{ $t('Statistics.History.puzzle-history') }}</PageHeader>
 
-	<div class="content flex-1 flex flex-col gap-2 pt-4">
+	<StatisticsStoreLoader>
+		<div class="content flex-1 flex flex-col gap-2 pt-4">
+			<BasePagination
+				:modelValue="currentPage - 1"
+				:length="numItemsTotal"
+				:page-size="currentPageSize"
+				@update:model-value="(val) => currentPage = val + 1"
+			/>
+			<div>
+				<label class="text-sm flex flex-row items-center px-2 pb-4"><span>Sort by:</span>
+					<select
+						:value="sortSelection"
+						class="form-select text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-1 text-sm"
+						@change="changeSort(($event.target as HTMLSelectElement).value as SortSelection)"
+					>
+						<option value="newest">Newest first</option>
+						<option value="oldest">Oldest first</option>
+						<option value="fastestTime">Fastest time solved</option>
+						<option value="slowestTime">Slowest time solved</option>
+					</select>
+				</label>
+			</div>
+			<transition name="fade" mode="out-in">
+				<div
+					v-if="shownItems.length"
+					:key="JSON.stringify({
+						currentPage, sortOptions
+					})"
+					class="list divide-y border-y relative"
+				>
+					<HistoryListItem
+						v-for="item in shownItems"
+						:key="item.id"
+						:item="item"
+						:time-record="null"
+					/>
+				</div>
+				<div
+					v-else-if="historyItems && historyItems.length"
+					key="none-filtered"
+					class="py-4 text-lg px-8 text-center"
+				>
+					{{ $t('Statistics.History.none-found-with-filters') }}
+				</div>
+				<div
+					v-else
+					key="none"
+					class="py-4 text-lg px-8 text-center"
+				>
+					{{ $t('Statistics.History.none-played-yet') }}
+				</div>
+			</transition>
+		</div>
 		<BasePagination
 			:modelValue="currentPage - 1"
 			:length="numItemsTotal"
 			:page-size="currentPageSize"
 			@update:model-value="(val) => currentPage = val + 1"
 		/>
-		<div>
-			<label class="text-sm flex flex-row items-center px-2 pb-4"><span>Sort by:</span>
-				<select
-					:value="sortSelection"
-					class="form-select text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-1 text-sm"
-					@change="changeSort(($event.target as HTMLSelectElement).value as SortSelection)"
-				>
-					<option value="newest">Newest first</option>
-					<option value="oldest">Oldest first</option>
-					<option value="fastestTime">Fastest time solved</option>
-					<option value="slowestTime">Slowest time solved</option>
-				</select>
-			</label>
-		</div>
-		<transition name="fade" mode="out-in">
-			<div
-				v-if="shownItems.length"
-				:key="JSON.stringify({
-					currentPage, sortOptions
-				})"
-				class="list divide-y border-y relative"
-			>
-				<HistoryListItem
-					v-for="item in shownItems"
-					:key="item.id"
-					:item="item"
-					:time-record="null"
-				/>
-			</div>
-			<div
-				v-else-if="historyItems && historyItems.length"
-				key="none-filtered"
-				class="py-4 text-lg px-8 text-center"
-			>
-				{{ $t('Statistics.History.none-found-with-filters') }}
-			</div>
-			<div
-				v-else
-				key="none"
-				class="py-4 text-lg px-8 text-center"
-			>
-				{{ $t('Statistics.History.none-played-yet') }}
-			</div>
-		</transition>
-	</div>
-	<BasePagination
-		:modelValue="currentPage - 1"
-		:length="numItemsTotal"
-		:page-size="currentPageSize"
-		@update:model-value="(val) => currentPage = val + 1"
-	/>
+	</StatisticsStoreLoader>
 </div>
 </template>
 
 <script setup lang="ts">
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { useStatisticsNextStore } from '@/features/statistics/store.js';
 import { computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
@@ -77,7 +79,6 @@ import { onBeforeMount } from 'vue';
 const statsNextStore = useStatisticsNextStore();
 statsNextStore.initialize({ forceUpdate: false });
 const route = useRoute();
-const router = useRouter();
 
 const { historyItems } = storeToRefs(statsNextStore);
 const numItemsTotal = computed(() => historyItems.value?.length ?? 0);
@@ -208,7 +209,3 @@ onBeforeMount(() => {
 	}
 })
 </script>
-
-<style scoped>
-
-</style>
