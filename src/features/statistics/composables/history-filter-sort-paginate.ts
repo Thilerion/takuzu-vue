@@ -70,6 +70,13 @@ export const useHistoryFilterSortPaginate = createSharedComposable(() => {
 		}
 	})
 
+	const filterData = computed(() => {
+		const {
+			difficulty, dimensions, favorite, records,
+		} = data;
+		return { difficulty, dimensions, favorite, records };
+	})
+
 	const {
 		page,
 		sortBy, sortDir,
@@ -88,6 +95,7 @@ export const useHistoryFilterSortPaginate = createSharedComposable(() => {
 		difficulty, dimensions, favorite, records,
 		// readonly refs
 		sortBy: readonly(sortBy), sortDir: readonly(sortDir),
+		filterData,
 
 		getDefaults,
 	};

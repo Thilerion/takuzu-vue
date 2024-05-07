@@ -33,26 +33,29 @@ import { useStatisticsNextStore } from '../store.js';
 import { getSortFn } from '../helpers/history-sort.js';
 import type { StatsDbExtendedStatisticDataEntry } from '@/services/db/stats-db/models.js';
 import { useHistoryFilterSortPaginate } from '../composables/history-filter-sort-paginate.js';
+import { getFilterFn } from '../helpers/history-filter.js';
 
 const { 
 	page,
 	pageSize,
 	pageItemStart, pageItemEnd,
 	sortSelection,
+	filterData,
 } = useHistoryFilterSortPaginate();
 
 const statsNextStore = useStatisticsNextStore();
 const { historyItems } = storeToRefs(statsNextStore);
 
+const sortFn = computed(() => getSortFn(sortSelection.value));
+const filterFn = computed(() => getFilterFn(filterData.value));
+
 const filteredItems = computed((): StatsDbExtendedStatisticDataEntry[] => {
 	if (!historyItems.value) return [];
-	// TODO: apply filters
-	return [...historyItems.value];
+	return [...historyItems.value].filter(val => filterFn.value(val));
 })
 const numItemsFiltered = computed(() => filteredItems.value.length);
 
-// Pagination
-const sortFn = computed(() => getSortFn(sortSelection.value))
+
 const sortedItems = computed(() => {
 	const items = filteredItems.value;
 	if (!items.length) return [];

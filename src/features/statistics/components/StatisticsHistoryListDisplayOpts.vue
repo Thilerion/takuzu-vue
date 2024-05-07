@@ -22,13 +22,26 @@
 			<option value="time;desc">Slowest > Fastest</option>
 		</select>
 	</label>
+	<div class="py-2 px-2">
+		<InputToggle
+			id="favoritesOnlyToggle"
+			:model-value="favorite === true"
+			class="mb-0 w-full font-medium"
+			@update:model-value="setFavoritesOnly"
+		>Favorites only</InputToggle>
+	</div>
 </div>
 </template>
 
 <script setup lang="ts">
 import { useHistoryFilterSortPaginate } from '../composables/history-filter-sort-paginate.js';
 
-const { sortSelection, pageSize } = useHistoryFilterSortPaginate();
+const { sortSelection, pageSize, favorite } = useHistoryFilterSortPaginate();
+
+const setFavoritesOnly = (val: boolean) => {
+	if (val) favorite.value = true;
+	else favorite.value = null;
+}
 </script>
 
 <style scoped>
