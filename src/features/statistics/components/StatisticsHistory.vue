@@ -95,7 +95,7 @@ const sortedItems = computed(() => {
 	return [...items].sort(sortFn.value);
 });
 const shownItems = computed(() => {
-	const start = currentPage.value * currentPageSize.value;
+	const start = (currentPage.value - 1) * currentPageSize.value;
 	const end = start + currentPageSize.value;
 	return sortedItems.value.slice(start, end);
 });
