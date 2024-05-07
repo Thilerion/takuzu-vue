@@ -5,7 +5,7 @@
 	>{{ $t('Statistics.History.puzzle-history') }}</PageHeader>
 
 	<StatisticsStoreLoader>
-		<StatisticsPuzzleHistory
+		<StatisticsHistory
 			v-model:page="data.page"
 			v-model:pageSize="data.pageSize"
 			v-model:sortBy="data.sortBy"
@@ -17,17 +17,15 @@
 </template>
 
 <script setup lang="ts">
+import { isSortDir, isSortByKey, type HistorySortBy, type HistorySortDir } from '@/features/statistics/helpers/history-sort.js';
 import { onBeforeMount, reactive, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-
-type SortKey = 'date' | 'time';
-type SortDir = 'asc' | 'desc';
 
 type HistoryParsedQueryData = {
 	page: number;
 	pageSize: number;
-	sortBy: 'date' | 'time';
-	sortDir: 'asc' | 'desc';
+	sortBy: HistorySortBy;
+	sortDir: HistorySortDir;
 	filters: unknown[];
 };
 
@@ -39,13 +37,6 @@ const getDefaults = (): HistoryParsedQueryData => ({
 	filters: [],
 });
 const data = reactive<HistoryParsedQueryData>(getDefaults());
-
-function isSortKey(value: unknown): value is SortKey {
-	return typeof value === 'string' && ['date', 'time'].includes(value);
-}
-function isSortDir(value: unknown): value is SortDir {
-	return typeof value === 'string' && ['asc', 'desc'].includes(value);
-}
 
 function applyParsedQueryParams(updatedData: Partial<HistoryParsedQueryData>) {
 	data.page = updatedData.page ?? data.page;
@@ -59,7 +50,7 @@ function parseQueryParams(q: Record<string, string | null | (string | null)[]>):
 	const result: Partial<HistoryParsedQueryData> = {};
 	// Set initial sort and filters based on route query
 	if (q.sort) {
-		if (isSortKey(q.sort)) {
+		if (isSortByKey(q.sort)) {
 			result.sortBy = q.sort;
 		} else {
 			// TODO: remove from query
@@ -141,8 +132,6 @@ function updateRouteQuery(actual: HistoryParsedQueryData) {
 }
 
 watch(data, (value) => {
-	// TODO: If filters/sorting change, reset page to 1
-
 	// Update route query params based on data
 	updateRouteQuery(value);
 }, { deep: true });
