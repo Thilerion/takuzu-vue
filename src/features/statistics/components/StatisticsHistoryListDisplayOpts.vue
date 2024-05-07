@@ -26,11 +26,9 @@
 </template>
 
 <script setup lang="ts">
-import type { HistorySortSelection } from '../helpers/history-sort.js';
+import { useHistoryFilterSortPaginate } from '../composables/history-filter-sort-paginate.js';
 
-const sortSelection = defineModel<HistorySortSelection>('sortSelection', { required: true });
-const pageSize = defineModel<number>('pageSize', { required: true });
-
+const { sortSelection, pageSize } = useHistoryFilterSortPaginate();
 </script>
 
 <style scoped>
