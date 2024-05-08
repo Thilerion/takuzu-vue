@@ -16,17 +16,10 @@
 			:disabled="difficulty == null"
 			@click="difficulty = null"
 		><icon-ic-baseline-close class="inline-block" />{{ $t('Statistics.History.filter.remove-filter') }}</button>
-		<select
+		<HistoryListDifficultyFilter
 			id="difficultySelect"
 			v-model="difficulty"
-			class="w-full text-sm"
-		>
-			<option 
-				v-for="opt in difficultyOptions"
-				:key="opt.value ?? 'any'"
-				:value="opt.value"
-			><span v-if="opt.value != null">{{ opt.value }}* - </span>{{ opt.label }}</option>
-		</select>
+		/>
 	</div>
 
 	<div class="history-select-filter">
@@ -45,29 +38,11 @@
 </template>
 
 <script setup lang="ts">
-import { DIFFICULTY_LABELS } from '@/config.js';
 import type { DifficultyKey, DimensionStr } from '@/lib/types.js';
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
 
 const favoritesOnly = defineModel<boolean>('favorite', { required: true });
 const difficulty = defineModel<DifficultyKey | null>('difficulty', { required: true });
 const dimensions = defineModel<DimensionStr | null>('dimensions', { required: true });
-
-const { t } = useI18n();
-const difficultyOptions = computed(() => {
-	const keys = Object.keys(DIFFICULTY_LABELS) as any[] as DifficultyKey[];
-	const result: { value: DifficultyKey | null, label: string }[] = [
-		{ value: null, label: t('Statistics.History.filter.any') }
-	];
-
-	for (const key of keys) {
-		const label = DIFFICULTY_LABELS[key];
-		const labelMsg = t(`Game.difficulty.${label}`);
-		result.push({ value: key, label: labelMsg });
-	}
-	return result;
-})
 </script>
 
 <style scoped>
