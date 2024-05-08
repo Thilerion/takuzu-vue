@@ -6,11 +6,14 @@
 			:key="listKey"
 			class="list divide-y border-y relative"
 		>
-			<HistoryListItem
+			<HistoryListPuzzleItem
 				v-for="item in shownItems"
 				:key="item.id"
 				:item="item"
 				:time-record="null"
+				:record-first="recordData.first.has(item.id!)"
+				:record-current="recordData.timeCurrent.has(item.id!)"
+				:record-all="recordData.timeAll.has(item.id!)"
 			/>
 		</div>
 		<div
