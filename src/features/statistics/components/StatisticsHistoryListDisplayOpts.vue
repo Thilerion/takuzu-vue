@@ -1,6 +1,6 @@
 <template>
-<div class="bg-white pt-4">
-	<label class="text-xs flex flex-row items-center px-4 pb-2"><span>Amount per page:</span>
+<div class="bg-white dark:bg-slate-800 pt-4">
+	<label class="text-xs flex flex-row items-center px-4 pb-2"><span>{{ $t('Paginate.amount-per-page') }}:</span>
 		<select
 			v-model.number="pageSize"
 			class="form-select text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-1 text-xs"
@@ -11,27 +11,34 @@
 			<option value="100">100</option>
 		</select>
 	</label>
-	<div class="bg-white border-b pb-2">
+	<div class="bg-white dark:bg-slate-800 border-b dark:border-slate-600 pb-2">
 		<div class="px-4 pt-2 pb-2 flex items-center justify-between">
-			<label class="text-xs flex flex-row items-center"><span>Sort by:</span>
+			<label class="text-xs flex flex-row items-center whitespace-nowrap"><span>{{ $t('Statistics.History.sort.sort-by') }}</span>
 				<select
 					v-model="sortSelection"
 					class="form-select text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-1 text-xs"
 				>
-					<option value="date;desc">Newest first</option>
-					<option value="date;asc">Oldest first</option>
-					<option value="time;asc">Time: fastest first</option>
-					<option value="time;desc">Time: slowest first</option>
+					<option value="date;desc">{{ $t('Statistics.History.sort.newest-first') }}</option>
+					<option value="date;asc">{{ $t('Statistics.History.sort.oldest-first') }}</option>
+					<option value="time;asc">{{ $t('Statistics.History.sort.time-fastest-first') }}</option>
+					<option value="time;desc">{{ $t('Statistics.History.sort.time-slowest-first') }}</option>
 				</select>
 			</label>
-			<BaseButton
-				class="text-sm"
-				:class="{ 'btn-primary': showFilters }"
+		</div>
+		<div class="pl-2 pr-4 pt-2 w-full border-t mt-2 dark:border-slate-600">
+			<button
+				class="flex whitespace-nowrap items-center text-xs text-start px-2 py-1 w-max"
 				@click="() => showFilters = !showFilters"
 			>
-				<span v-if="showFilters">Hide filters</span>
-				<span v-else>Show filters</span>
-			</BaseButton>
+				<div class="flex-1 min-w-28">
+					<span v-if="showFilters">{{ $t('Statistics.History.filter.hide-filters') }}</span>
+					<span v-else>{{ $t('Statistics.History.filter.show-filters') }}</span>
+				</div>
+				<icon-ic-outline-keyboard-arrow-down
+					class="transition-transform duration-500"
+					:class="showFilters ? 'rotate-180' : 'rotate-0'"
+				/>
+			</button>
 		</div>
 
 		<ExpandTransition :show="showFilters">

@@ -96,7 +96,21 @@
 		"History": {
 			"puzzle-history": "Spelgeschiedenis",
 			"none-found-with-filters": "Geen puzzels gevonden met de huidige filters!",
-			"none-played-yet": "Je hebt nog geen puzzels gespeeld!"
+			"none-played-yet": "Je hebt nog geen puzzels gespeeld!",
+			"filter": {
+				"any": "Alle",
+				"favorites-only": "Alleen favorieten",
+				"hide-filters": "Filters verbergen",
+				"remove-filter": "Verwijder",
+				"show-filters": "Filters weergeven"
+			},
+			"sort": {
+				"newest-first": "Nieuwste eerst",
+				"oldest-first": "Oudste eerst",
+				"sort-by": "Sorteer op:",
+				"time-fastest-first": "Tijd: snelste eerst",
+				"time-slowest-first": "Tijd: langzaamste eerst"
+			}
 		},
 		"fallback-error-msg": "Oeps... er is iets misgegaan",
 		"loading-statistics": "Statistieken laden...",
@@ -108,11 +122,18 @@
 				"minutes-seconds": "{minutes}m {seconds}s",
 				"hours-minutes": "{hours}u {minutes}m",
 				"days-hours": "{days}d {hours}u"
-			}
+			},
+			"cells-filled": "Cellen gevuld",
+			"n-solved-today": "{n} vandaag opgelost",
+			"puzzles-solved": "Puzzels opgelost",
+			"time-played": "Tijd gespeeld"
 		}
 	},
 	"NotFound404": {
 		"page-not-found": "Pagina niet gevonden",
 		"you-will-be-redirected-main-menu": "Je wordt nu doorgestuurd naar het hoofdmenu..."
+	},
+	"Paginate": {
+		"amount-per-page": "Per pagina"
 	}
 }

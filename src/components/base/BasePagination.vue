@@ -2,13 +2,13 @@
 <div class="flex flex-row text-sm py-2 gap-4 justify-center items-center px-2">
 	<div class="w-10"><button
 		v-if="modelValue > 0"
-		class="bg-white border rounded h-8 px-2"
+		class="page-btn"
 		@click="goToPage(-Infinity)"
 	><icon-mdi-chevron-double-left /></button></div>
 
 	<div class="w-10"><button
 		v-if="modelValue > 0"
-		class="bg-white border rounded h-8 px-2"
+		class="page-btn"
 		@click="changePage(-1)"
 	><icon-mdi-chevron-left /></button></div>
 
@@ -18,13 +18,13 @@
 
 	<div class="w-10"><button
 		v-if="modelValue < maxPage"
-		class="bg-white border rounded h-8 px-2"
+		class="page-btn"
 		@click="changePage(1)"
 	><icon-mdi-chevron-right /></button></div>
 
 	<div class="w-10"><button
 		v-if="modelValue < maxPage"
-		class="bg-white border rounded h-8 px-2"
+		class="page-btn"
 		@click="goToPage(Infinity)"
 	><icon-mdi-chevron-double-right /></button></div>
 	
@@ -70,3 +70,9 @@ const changePage = (increment: number) => {
 	emit('update:modelValue', newPage);
 }
 </script>
+
+<style scoped>
+.page-btn {
+	@apply bg-white dark:bg-slate-700 border dark:border-slate-700 rounded h-8 px-2;
+}
+</style>

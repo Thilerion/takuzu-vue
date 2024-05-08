@@ -6,20 +6,20 @@
 			v-model="favoritesOnly"
 			class="mb-0 w-full font-medium text-sm"
 			small
-		>Favorites only</InputToggle>
+		>{{ $t('Statistics.History.filter.favorites-only') }}</InputToggle>
 	</div>
 
 	<div class="history-select-filter">
-		<label for="difficultySelect" class="block font-medium mb-2">Difficulty:</label>
+		<label for="difficultySelect" class="block font-medium mb-2">{{ $t('Game.difficulty.label') }}:</label>
 		<button
 			class="clear-btn"
 			:disabled="difficulty == null"
 			@click="difficulty = null"
-		>Remove</button>
+		>{{ $t('Statistics.History.filter.remove-filter') }}</button>
 		<select
 			id="difficultySelect"
 			v-model="difficulty"
-			class="w-full max-w-xs text-sm"
+			class="form-select w-full text-sm"
 		>
 			<option 
 				v-for="opt in difficultyOptions"
@@ -30,16 +30,16 @@
 	</div>
 
 	<div class="history-select-filter">
-		<label for="dimensionsSelect" class="block font-medium mb-2">Board size:</label>
+		<label for="dimensionsSelect" class="block font-medium mb-2">{{ $t('Game.board-size.label') }}:</label>
 		<button
 			class="clear-btn"
 			:disabled="dimensions == null"
 			@click="dimensions = null"
-		>Remove</button>
+		>{{ $t('Statistics.History.filter.remove-filter') }}</button>
 		<select
 			id="dimensionsSelect"
 			v-model="dimensions"
-			class="w-full max-w-xs text-sm"
+			class="w-full text-sm"
 		>
 			<option :value="null">{{ t('Statistics.History.filter.any') }}</option>
 			<option 
@@ -86,6 +86,9 @@ const boardSizeOptions = computed((): DimensionStr[] => [
 </script>
 
 <style scoped>
+.filters-box {
+	@apply max-w-md mr-auto;
+}
 .filters-box > *:last-child {
 	@apply pb-4;
 }
@@ -105,7 +108,7 @@ const boardSizeOptions = computed((): DimensionStr[] => [
 }
 .history-select-filter .clear-btn {
 	grid-area: clear;
-	@apply transition-all text-red-600 disabled:opacity-40 disabled:text-black;
+	@apply transition-all text-red-600 dark:text-red-400 disabled:opacity-40 disabled:text-black dark:disabled:text-slate-100;
 }
 
 </style>
