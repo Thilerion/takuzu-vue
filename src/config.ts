@@ -10,7 +10,11 @@ export type BoardType = typeof boardTypes[keyof typeof boardTypes];
 export class BoardPreset {
 	type: BoardType;
 
-	constructor(public width: number, public height: number, public maxDifficulty: DifficultyKey) {
+	constructor(
+		public width: number,
+		public height: number,
+		public maxDifficulty: DifficultyKey
+	) {
 		this.type = dimensionsToBoardType(width, height);
 	}
 

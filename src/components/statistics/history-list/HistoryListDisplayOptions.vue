@@ -4,7 +4,7 @@
 		<label class="text-sm flex flex-row items-center gap-3"><span>Per page:</span>
 			<select
 				:value="pageSize"
-				class="form-select text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-1 text-sm"
+				class="text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-1 text-sm"
 				@change="updatePageSize(parseInt(($event.target as HTMLSelectElement).value))"
 			>
 				<option :value="15">15</option>
@@ -25,7 +25,7 @@
 	<label class="text-sm flex flex-row items-center px-2 pb-4"><span>Sort by:</span>
 		<select
 			:value="sortType"
-			class="form-select text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-1 text-sm"
+			class="text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-1 text-sm"
 			@change="$emit('change-sort-type', ($event.target as HTMLSelectElement).value as SortType)"
 		>
 			<option value="newest">Newest first</option>

@@ -19,7 +19,7 @@
 		<select
 			id="difficultySelect"
 			v-model="difficulty"
-			class="form-select w-full text-sm"
+			class="w-full text-sm"
 		>
 			<option 
 				v-for="opt in difficultyOptions"
@@ -36,18 +36,10 @@
 			:disabled="dimensions == null"
 			@click="dimensions = null"
 		>{{ $t('Statistics.History.filter.remove-filter') }}</button>
-		<select
+		<HistoryListBoardSizeFilter
 			id="dimensionsSelect"
 			v-model="dimensions"
-			class="w-full text-sm"
-		>
-			<option :value="null">{{ t('Statistics.History.filter.any') }}</option>
-			<option 
-				v-for="opt in boardSizeOptions"
-				:key="opt"
-				:value="opt"
-			>{{ opt }}</option>
-		</select>
+		/>
 	</div>
 </div>
 </template>
@@ -76,13 +68,6 @@ const difficultyOptions = computed(() => {
 	}
 	return result;
 })
-
-// TODO: get all played board sizes, and give correct ordering
-const boardSizeOptions = computed((): DimensionStr[] => [
-	'6x6', '8x8', '10x10', '12x12', '14x14',
-	'7x7', '9x9', '11x11', '13x13',
-	'6x10', '8x12', '10x14', '12x16'
-]);
 </script>
 
 <style scoped>

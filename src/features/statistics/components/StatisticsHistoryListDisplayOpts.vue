@@ -3,7 +3,7 @@
 	<label class="text-xs flex flex-row items-center px-4 pb-2"><span>{{ $t('Paginate.amount-per-page') }}:</span>
 		<select
 			v-model.number="pageSize"
-			class="form-select text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-1 text-xs"
+			class="ml-4 text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-1 text-xs"
 		>
 			<option value="10">10</option>
 			<option value="25">25</option>
@@ -16,7 +16,7 @@
 			<label class="text-xs flex flex-row items-center whitespace-nowrap"><span>{{ $t('Statistics.History.sort.sort-by') }}</span>
 				<select
 					v-model="sortSelection"
-					class="form-select text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-1 text-xs"
+					class="ml-4 text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-1 text-xs"
 				>
 					<option value="date;desc">{{ $t('Statistics.History.sort.newest-first') }}</option>
 					<option value="date;asc">{{ $t('Statistics.History.sort.oldest-first') }}</option>
@@ -95,9 +95,3 @@ const dimensionsModel = computed({
 
 const showFilters = ref(false);
 </script>
-
-<style scoped>
-.form-select {
-	@apply ml-4;
-}
-</style>
