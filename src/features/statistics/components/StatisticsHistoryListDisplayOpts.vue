@@ -11,7 +11,7 @@
 			<option value="100">100</option>
 		</select>
 	</label>
-	<div class="bg-white dark:bg-slate-800 border-b dark:border-slate-600 pb-2">
+	<div class="bg-white dark:bg-slate-800 border-b dark:border-slate-600 pb-1">
 		<div class="px-4 pt-2 pb-2 flex items-center justify-between">
 			<label class="text-xs flex flex-row items-center whitespace-nowrap"><span>{{ $t('Statistics.History.sort.sort-by') }}</span>
 				<select
@@ -25,9 +25,9 @@
 				</select>
 			</label>
 		</div>
-		<div class="pl-2 pr-4 pt-2 w-full border-t mt-2 dark:border-slate-600">
+		<div class="px-0 w-full border-t mt-2 dark:border-slate-600">
 			<button
-				class="flex whitespace-nowrap items-center text-xs text-start px-2 py-1 w-max"
+				class="flex whitespace-nowrap items-center text-xs text-start px-4 pb-2 pt-3 w-full"
 				@click="() => showFilters = !showFilters"
 			>
 				<div class="flex-1 min-w-28">
@@ -35,7 +35,7 @@
 					<span v-else>{{ $t('Statistics.History.filter.show-filters') }}</span>
 				</div>
 				<icon-ic-outline-keyboard-arrow-down
-					class="transition-transform duration-500"
+					class="transition-transform duration-500 text-base text-gray-700 dark:text-slate-200"
 					:class="showFilters ? 'rotate-180' : 'rotate-0'"
 				/>
 			</button>

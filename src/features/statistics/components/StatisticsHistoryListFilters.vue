@@ -93,7 +93,7 @@ const difficultyOptions = computed(() => {
 }
 .history-select-filter .clear-btn {
 	grid-area: clear;
-	@apply transition-all text-red-600 dark:text-red-400 disabled:opacity-40 disabled:text-black dark:disabled:text-slate-100;
+	@apply transition-all text-red-600 dark:text-red-400 disabled:opacity-40 dark:disabled:opacity-100 disabled:text-black dark:disabled:text-slate-400;
 }
 
 </style>
