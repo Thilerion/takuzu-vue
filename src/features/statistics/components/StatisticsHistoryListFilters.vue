@@ -15,7 +15,7 @@
 			class="clear-btn"
 			:disabled="difficulty == null"
 			@click="difficulty = null"
-		>{{ $t('Statistics.History.filter.remove-filter') }}</button>
+		><icon-ic-baseline-close class="inline-block" />{{ $t('Statistics.History.filter.remove-filter') }}</button>
 		<select
 			id="difficultySelect"
 			v-model="difficulty"
@@ -35,7 +35,7 @@
 			class="clear-btn"
 			:disabled="dimensions == null"
 			@click="dimensions = null"
-		>{{ $t('Statistics.History.filter.remove-filter') }}</button>
+		><icon-ic-baseline-close class="inline-block" />{{ $t('Statistics.History.filter.remove-filter') }}</button>
 		<HistoryListBoardSizeFilter
 			id="dimensionsSelect"
 			v-model="dimensions"
@@ -93,7 +93,13 @@ const difficultyOptions = computed(() => {
 }
 .history-select-filter .clear-btn {
 	grid-area: clear;
+}
+.clear-btn {
 	@apply transition-all text-red-600 dark:text-red-400 disabled:opacity-40 dark:disabled:opacity-100 disabled:text-black dark:disabled:text-slate-400;
+	@apply flex items-center justify-center gap-x-1;
+}
+.clear-btn svg {
+	@apply inline-block mb-0.5;
 }
 
 </style>

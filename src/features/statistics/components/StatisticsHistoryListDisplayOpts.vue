@@ -1,35 +1,38 @@
 <template>
 <div class="bg-white dark:bg-slate-800 pt-4">
-	<label class="text-xs flex flex-row items-center px-4 pb-2"><span>{{ $t('Paginate.amount-per-page') }}:</span>
-		<select
-			v-model.number="pageSize"
-			class="ml-4 text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-1 text-xs"
-		>
-			<option value="10">10</option>
-			<option value="25">25</option>
-			<option value="50">50</option>
-			<option value="100">100</option>
-		</select>
-	</label>
+	<div class="pagesize-sort px-4 gap-y-2 gap-x-3 pb-2 max-w-md">
+		<label class="text-xs flex flex-row items-center"><span>{{ $t('Paginate.amount-per-page') }}:</span>
+			<select
+				v-model.number="pageSize"
+				class="text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-2 text-xs min-w-fit"
+			>
+				<option value="10">10</option>
+				<option value="25">25</option>
+				<option value="50">50</option>
+				<option value="100">100</option>
+			</select>
+		</label>
+		<label class="text-xs flex flex-row items-center whitespace-nowrap">
+			
+			<div class="flex items-center gap-x-1"><icon-ic-baseline-sort class="inline-block" />{{ $t('Statistics.History.sort.sort-by') }}</div>
+			<select
+				v-model="sortSelection"
+				class="text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-2 text-xs min-w-fit"
+			>
+				<option value="date;desc">{{ $t('Statistics.History.sort.newest-first') }}</option>
+				<option value="date;asc">{{ $t('Statistics.History.sort.oldest-first') }}</option>
+				<option value="time;asc">{{ $t('Statistics.History.sort.time-fastest-first') }}</option>
+				<option value="time;desc">{{ $t('Statistics.History.sort.time-slowest-first') }}</option>
+			</select>
+		</label>
+	</div>
 	<div class="bg-white dark:bg-slate-800 border-b dark:border-slate-600 pb-1">
-		<div class="px-4 pt-2 pb-2 flex items-center justify-between">
-			<label class="text-xs flex flex-row items-center whitespace-nowrap"><span>{{ $t('Statistics.History.sort.sort-by') }}</span>
-				<select
-					v-model="sortSelection"
-					class="ml-4 text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-1 text-xs"
-				>
-					<option value="date;desc">{{ $t('Statistics.History.sort.newest-first') }}</option>
-					<option value="date;asc">{{ $t('Statistics.History.sort.oldest-first') }}</option>
-					<option value="time;asc">{{ $t('Statistics.History.sort.time-fastest-first') }}</option>
-					<option value="time;desc">{{ $t('Statistics.History.sort.time-slowest-first') }}</option>
-				</select>
-			</label>
-		</div>
 		<div class="px-0 w-full border-t mt-2 dark:border-slate-600">
 			<button
 				class="flex whitespace-nowrap items-center text-xs text-start px-4 pb-2 pt-3 w-full"
 				@click="() => showFilters = !showFilters"
 			>
+				<icon-ic-outline-filter-list class="flex-none mb-0.5 mr-1 w-5 h-5 inline-block text-sm text-gray-600 dark:text-slate-300" />
 				<div class="flex-1 min-w-28">
 					<span v-if="showFilters">{{ $t('Statistics.History.filter.hide-filters') }}</span>
 					<span v-else>{{ $t('Statistics.History.filter.show-filters') }}</span>
@@ -95,3 +98,16 @@ const dimensionsModel = computed({
 
 const showFilters = ref(false);
 </script>
+
+<style scoped>
+.pagesize-sort {
+	@apply grid;
+	grid-template-rows: auto auto;
+	grid-template-columns: auto auto;
+}
+.pagesize-sort > * {
+	grid-row: 1 / -1;
+	display: grid;
+	grid-template-rows: subgrid;
+}
+</style>
