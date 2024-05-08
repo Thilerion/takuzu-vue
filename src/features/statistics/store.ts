@@ -82,6 +82,21 @@ export const useStatisticsNextStore = defineStore('statisticsNext', () => {
 		}
 	}
 
+	// Actions that update/change the database items themselves
+	async function updateNote(itemId: number, note: string | undefined) {
+		const success = await statsDb.updateItem(itemId, { note });
+		if (!success) {
+			console.error('Failed to save note to database.', { itemId, note });
+			return false;
+		}
+		const item = historyItems.value!.find(i => i.id === itemId);
+		if (item == null) {
+			throw new Error('Updated item note, but it was not found in the store.');
+		}
+		item.note = note;
+		return true;
+	}
+
 	return {
 		isLoading,
 		isInitialized,
@@ -96,6 +111,8 @@ export const useStatisticsNextStore = defineStore('statisticsNext', () => {
 		// Actions
 		initialize,
 		reset,
+
+		updateNote,
 	}
 })
 

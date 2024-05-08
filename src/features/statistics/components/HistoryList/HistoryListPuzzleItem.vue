@@ -3,14 +3,14 @@
 	<div class="flex flex-row items-center justify-between min-h-6">
 		<div class="text-gray-500 dark:text-slate-100">{{ $d(date, 'long') }}</div>
 		<div class="flex flex-row">
-			<!-- <IconBtn
+			<IconBtn
 				class="text-xs text-gray-500"
 				scale="1"
-				@click="editNote"
+				@click="startEditing(item.id!)"
 			>
 				<icon-mdi-pencil />
 			</IconBtn>
-			<IconBtn
+			<!-- <IconBtn
 				class="text-xs"
 				scale="1"
 				@click="replayPuzzle"
@@ -55,10 +55,9 @@
 		<div v-else-if="firstTimeRecord" class="ml-1">First time solved</div>
 		<div v-else-if="previousTimeRecord" class="ml-1">Previous time record</div>
 	</div>
-	<HistoryListItemNote
-		:id="props.item.id"
+	<HistoryListPuzzleItemNote
+		:id="props.item.id!"
 		:note="item.note"
-		@save-note="(note) => $emit('save-note', note)"
 	/>
 	<div class="h-2"></div>
 </div>
@@ -69,6 +68,7 @@ import { formatDurationMMSSss } from '@/utils/duration.utils';
 import { computed } from 'vue';
 import { toRefs } from '@vueuse/core';
 import type { StatsDbExtendedStatisticDataEntry } from '@/services/db/stats-db/models.js';
+import { useNoteEditing } from '../../composables/note-editing.js';
 
 const formatTime = (ms: number) => formatDurationMMSSss(ms, { padFirst: true });
 
@@ -95,6 +95,10 @@ const timeElapsedFormatted = computed(() => {
 	const [minsec, ms] = timeStr.split('.');
 	return {minsec, ms};
 })
+
+const {
+	startEditing,
+} = useNoteEditing();
 </script>
 
 <style scoped>
