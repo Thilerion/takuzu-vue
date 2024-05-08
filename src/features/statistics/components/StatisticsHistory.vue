@@ -1,5 +1,5 @@
 <template>
-<div class="content flex-1 flex flex-col gap-2 pt-4">
+<div class="content flex-1 flex flex-col gap-2">
 	
 	<StatisticsHistoryListDisplayOpts />
 
