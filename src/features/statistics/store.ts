@@ -96,6 +96,25 @@ export const useStatisticsNextStore = defineStore('statisticsNext', () => {
 		item.note = note;
 		return true;
 	}
+	async function toggleFavorite(itemId: number, value: boolean) {
+		const dbVal = value ? 1 : 0;
+		const success = await statsDb.updateItem(itemId, {
+			'flags.favorite': dbVal
+		});
+		if (!success) {
+			console.error('Failed to save favorite status to database.', { itemId, value, dbVal });
+			return false;
+		}
+		const item = historyItems.value!.find(i => i.id === itemId);
+		if (item == null) {
+			throw new Error('Updated item favorite status, but it was not found in the store.');
+		}
+		item.flags = {
+			...item.flags,
+			favorite: !!dbVal
+		}
+		return true;
+	}
 
 	return {
 		isLoading,
@@ -113,6 +132,7 @@ export const useStatisticsNextStore = defineStore('statisticsNext', () => {
 		reset,
 
 		updateNote,
+		toggleFavorite,
 	}
 })
 

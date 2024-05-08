@@ -20,7 +20,7 @@
 				class="text-xs"
 				scale="1"
 				@click="initDeleteItem"
-			><icon-ic-outline-delete-forever class="text-gray-500" /></IconBtn>
+			><icon-ic-outline-delete-forever class="text-gray-500" /></IconBtn> -->
 			<IconBtn
 				class="text-xs"
 				scale="1"
@@ -31,7 +31,7 @@
 					:filled="isFavorite"
 					:gray="!isFavorite"
 				/>
-			</IconBtn> -->
+			</IconBtn>
 		</div>
 	</div>
 	<div class="flex flex-row gap-6 justify-start last-of-type:pb-3">
@@ -65,10 +65,11 @@
 
 <script setup lang="ts">
 import { formatDurationMMSSss } from '@/utils/duration.utils';
-import { computed } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { toRefs } from '@vueuse/core';
 import type { StatsDbExtendedStatisticDataEntry } from '@/services/db/stats-db/models.js';
 import { useNoteEditing } from '../../composables/note-editing.js';
+import { useStatisticsNextStore } from '../../store.js';
 
 const formatTime = (ms: number) => formatDurationMMSSss(ms, { padFirst: true });
 
@@ -99,6 +100,26 @@ const timeElapsedFormatted = computed(() => {
 const {
 	startEditing,
 } = useNoteEditing();
+
+const statsNextStore = useStatisticsNextStore();
+
+const favoriteFlag = computed(() => !!(props.item?.flags?.favorite));
+const tempIsFavorite = ref<boolean | null>(favoriteFlag.value);
+const isFavorite = computed(() => {
+	if (tempIsFavorite.value != null) {
+		return tempIsFavorite.value;
+	}
+	return favoriteFlag.value;
+})
+const toggleFavorite = async () => {
+	tempIsFavorite.value = !tempIsFavorite.value;
+	await statsNextStore.toggleFavorite(props.item.id!, tempIsFavorite.value);
+	await nextTick();
+	tempIsFavorite.value = favoriteFlag.value;
+}
+watch(favoriteFlag, () => {
+	tempIsFavorite.value = null;
+})
 </script>
 
 <style scoped>
