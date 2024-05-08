@@ -5,11 +5,27 @@
 	class="w-full text-sm"
 >
 	<option :value="null">{{ $t('Statistics.History.filter.any') }}</option>
-	<option 
-		v-for="opt in boardSizeOptions"
-		:key="opt.value"
-		:value="opt.value"
-	>{{ opt.value }}</option>
+	<optgroup :label="$t('Game.board-size.normal')">
+		<option 
+			v-for="opt in boardSizeOptionsByType.Normal"
+			:key="opt.value"
+			:value="opt.value"
+		>{{ opt.value }}</option>
+	</optgroup>
+	<optgroup :label="$t('Game.board-size.tall')">
+		<option 
+			v-for="opt in boardSizeOptionsByType.Rectangular"
+			:key="opt.value"
+			:value="opt.value"
+		>{{ opt.value }}</option>
+	</optgroup>
+	<optgroup :label="$t('Game.board-size.odd')">
+		<option 
+			v-for="opt in boardSizeOptionsByType.Odd"
+			:key="opt.value"
+			:value="opt.value"
+		>{{ opt.value }}</option>
+	</optgroup>
 </select>
 </template>
 
@@ -29,19 +45,23 @@ const boardSizePresets = PRESET_BOARD_SIZES.map(preset => {
 	const numCells = width * height;
 	return { type, value, numCells };
 })
-const boardSizeOptions = computed(() => {
-	const boardTypeOrdering: Record<BoardType, number> = {
-		Normal: 0,
-		Rectangular: 1,
-		Odd: 2,
+
+const boardSizeOptionsByType = computed(() => {
+	const result: Record<BoardType, typeof boardSizePresets> = {
+		'Normal': [],
+		'Rectangular': [],
+		'Odd': [],
+	}
+	
+	for (const preset of boardSizePresets) {
+		result[preset.type].push(preset);
 	}
 	// TODO: add any additional non-preset board-sizes that have been played
-	// Sort first by "type" (normal > rect > odd), then by numCells
-	return [...boardSizePresets].sort((a, b) => {
-		if (a.type !== b.type) {
-			return boardTypeOrdering[a.type] - boardTypeOrdering[b.type];
-		}
-		return a.numCells - b.numCells;
-	})
+
+	result.Normal.sort((a, b) => a.numCells - b.numCells);
+	result.Rectangular.sort((a, b) => a.numCells - b.numCells);
+	result.Odd.sort((a, b) => a.numCells - b.numCells);
+
+	return result;
 })
 </script>
