@@ -9,6 +9,7 @@ import { markRaw, watch } from 'vue';
 import { DEFAULT_FALLBACK_LOCALE, SUPPORTED_LOCALES, type SupportedLocale } from './constants.js';
 import { getInitialLocale } from './helpers.js';
 import { numberFormats } from './number-formats.js';
+import { datetimeFormats } from './datetime-formats.js';
 
 const mergedMessages = {
 	en: {
@@ -29,7 +30,8 @@ const i18n = createI18n({
 	// TODO: lazy load locales
 	// TODO: separate some messages by component/route
 	messages: mergedMessages,
-	numberFormats: numberFormats
+	numberFormats: numberFormats,
+	datetimeFormats: datetimeFormats,
 })
 export type AppI18n = typeof i18n;
 

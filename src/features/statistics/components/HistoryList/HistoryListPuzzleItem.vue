@@ -1,7 +1,7 @@
 <template>
-<div class="bg-white px-4 pt-3 text-sm flex flex-col w-full">
+<div class="bg-white dark:bg-slate-800 px-4 pt-3 text-sm flex flex-col w-full">
 	<div class="flex flex-row items-center justify-between min-h-6">
-		<div class="text-gray-500">{{ dateFormatted }}</div>
+		<div class="text-gray-500 dark:text-slate-100">{{ $d(date, 'long') }}</div>
 		<div class="flex flex-row">
 			<!-- <IconBtn
 				class="text-xs text-gray-500"
@@ -36,20 +36,20 @@
 	</div>
 	<div class="flex flex-row gap-6 justify-start last-of-type:pb-3">
 		<div class="flex flex-col w-1/4">
-			<div class="text-sm text-gray-600">Size</div>
-			<div class="text-lg text-black">{{ dimensions }}</div>
+			<div class="text-sm text-gray-600 dark:text-slate-300">Size</div>
+			<div class="text-lg text-black dark:text-slate-100">{{ dimensions }}</div>
 		</div>
 		<div class="flex flex-col w-1/4">
-			<div class="text-sm text-gray-600">Difficulty</div>
-			<div class="text-lg text-black">{{ difficulty }}*</div>
+			<div class="text-sm text-gray-600 dark:text-slate-300">Difficulty</div>
+			<div class="text-lg text-black dark:text-slate-100">{{ difficulty }}*</div>
 		</div>
 		<div class="flex flex-col w-1/3">
-			<div class="text-sm text-gray-600">Time</div>
-			<div class="text-lg text-black">
+			<div class="text-sm text-gray-600 dark:text-slate-300">Time</div>
+			<div class="text-lg text-black dark:text-slate-100">
 				{{ timeElapsedFormatted.minsec }}<small class="opacity-80">.{{ timeElapsedFormatted.ms }}</small></div>
 		</div>
 	</div>
-	<div v-if="recordAll" class="inline-flex flex-row mb-2 text-xs mt-1 items-center bg-gray-100 rounded-full mr-auto px-4 py-2">
+	<div v-if="recordAll" class="inline-flex flex-row mb-2 text-xs mt-1 items-center bg-gray-100 dark:bg-slate-700 dark:text-slate-50 rounded-full mr-auto px-4 py-2">
 		<icon-fxemoji-trophy class="text-xs" />
 		<div v-if="currentTimeRecord" class="ml-1">Current time record!</div>
 		<div v-else-if="firstTimeRecord" class="ml-1">First time solved</div>
@@ -70,22 +70,7 @@ import { computed } from 'vue';
 import { toRefs } from '@vueuse/core';
 import type { StatsDbExtendedStatisticDataEntry } from '@/services/db/stats-db/models.js';
 
-defineOptions({
-	inheritAttrs: false
-})
-
 const formatTime = (ms: number) => formatDurationMMSSss(ms, { padFirst: true });
-
-const dateTimeOpts: Intl.DateTimeFormatOptions = {
-	weekday: 'short',
-	year: 'numeric',
-	month: 'long',
-	day: 'numeric',
-	hour: 'numeric',
-	minute: 'numeric',
-	second: 'numeric'
-}
-const formatDate = (date: Date) => date.toLocaleString(undefined, dateTimeOpts);
 
 type HistoryListItemProps = {
 	item: StatsDbExtendedStatisticDataEntry;
@@ -105,9 +90,6 @@ const currentTimeRecord = computed(() => props.recordCurrent && !props.recordFir
 const firstTimeRecord = computed(() => props.recordFirst);
 const previousTimeRecord = computed(() => props.recordAll && !props.recordFirst && !props.recordCurrent);
 
-const dateFormatted = computed(() => {
-	return formatDate(date.value);
-})
 const timeElapsedFormatted = computed(() => {
 	const timeStr = formatTime(timeElapsed.value);
 	const [minsec, ms] = timeStr.split('.');

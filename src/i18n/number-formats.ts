@@ -8,7 +8,7 @@ export const numberFormats: Record<SupportedLocale, IntlNumberFormat> = {
 		},
 		'compactShort': {
 			notation: 'compact', compactDisplay: 'short'
-		}
+		},
 	},
 	nl: {
 		'percent': {
@@ -16,6 +16,6 @@ export const numberFormats: Record<SupportedLocale, IntlNumberFormat> = {
 		},
 		'compactShort': {
 			notation: 'compact', compactDisplay: 'short'
-		}
+		},
 	}
 }

@@ -4,13 +4,12 @@
 		<div
 			v-if="shownItems.length > 0"
 			:key="listKey"
-			class="list divide-y border-y relative"
+			class="list divide-y border-y dark:divide-slate-600 dark:border-slate-600 relative"
 		>
 			<HistoryListPuzzleItem
 				v-for="item in shownItems"
 				:key="item.id"
 				:item="item"
-				:time-record="null"
 				:record-first="recordData.first.has(item.id!)"
 				:record-current="recordData.timeCurrent.has(item.id!)"
 				:record-all="recordData.timeAll.has(item.id!)"
