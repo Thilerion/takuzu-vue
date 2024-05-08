@@ -6,7 +6,7 @@
 	>
 		<div class="relative w-full">
 			<div
-				class="text-xs text-gray-600 w-full border-0 p-0 m-0 leading-loose max-w-full text-ellipsis overflow-x-hidden"
+				class="text-xs text-gray-600 dark:text-slate-100 w-full border-0 p-0 m-0 leading-loose max-w-full text-ellipsis overflow-x-hidden"
 				@click="startEditing"
 			>
 				<span v-if="placeholderWhileSavingNote">{{ placeholderWhileSavingNote }}</span>
@@ -17,17 +17,22 @@
 			<transition name="t-fade">
 				<div
 					v-if="isEditingCurrent"
-					class="h-full absolute inset-y-0 -inset-x-2 pl-1 flex -mr-2 justify-between items-center"
+					class="h-full absolute inset-y-0 -inset-x-2 pl-2 flex -mr-2 justify-between items-center"
 				>
 					<input
 						ref="inputEl"
 						v-model="unsavedNote"
 						type="text"
 						placeholder="Enter note here"
-						class="w-full border-0 p-0 m-0 text-xs h-full focus:border-0 focus:outline-none ring-2 ring-slate-500/30 focus:ring-2 focus:ring-slate-500/50 leading-loose max-w-full pl-1 rounded-sm transition duration-150"
+						class="w-full border-0 p-0 m-0 text-xs h-full focus:border-0 focus:outline-none ring-2 ring-slate-500/30 focus:ring-2 focus:ring-slate-500/50 leading-loose max-w-full pl-1 rounded-sm transition duration-150 dark:bg-slate-600 dark:text-slate-200 dark:placeholder:text-slate-300"
 						@blur="saveNoteOnBlur"
 						@keydown.enter="saveNote"
 					>
+					<IconBtn
+						class="text-xxs active:hover-none:bg-gray-300/20 text-gray-800/70 dark:text-slate-200 h-8 w-8 flex-none ml-1"
+						scale="0.875"
+						@click="clearNote"
+					><icon-ic-baseline-close /></IconBtn>
 				</div>
 			</transition>
 		</div>
@@ -77,6 +82,10 @@ const startEditing = async () => {
 	if (inputEl.value) {
 		inputEl.value.focus();
 	}
+}
+const clearNote = () => {
+	unsavedNote.value = '';
+	saveNote();
 }
 
 watch(isEditingCurrent, (val, prev) => {

@@ -4,30 +4,30 @@
 		<div class="text-gray-500 dark:text-slate-100">{{ $d(date, 'long') }}</div>
 		<div class="flex flex-row">
 			<IconBtn
-				class="text-xs text-gray-500"
+				class="text-xs text-gray-500 dark:text-slate-400"
 				scale="1"
 				@click="startEditing(item.id!)"
 			>
 				<icon-mdi-pencil />
 			</IconBtn>
-			<!-- <IconBtn
-				class="text-xs"
+			<IconBtn
+				class="text-xs text-gray-500 dark:text-slate-400"
 				scale="1"
 				@click="replayPuzzle"
-			><icon-icon-park-replay-music class="text-gray-500 icon-stroke-current" /></IconBtn>
+			><icon-icon-park-replay-music class="icon-stroke-current" /></IconBtn>
 			<IconBtn
-				v-if="canDelete"
-				class="text-xs"
+				v-if="mainStore.debugMode"
+				class="text-xs text-gray-500 dark:text-slate-400"
 				scale="1"
-				@click="initDeleteItem"
-			><icon-ic-outline-delete-forever class="text-gray-500" /></IconBtn> -->
+				@click="deleteItem"
+			><icon-ic-outline-delete-forever /></IconBtn>
 			<IconBtn
 				class="text-xs"
 				scale="1"
 				@click="toggleFavorite"
 			>
 				<StarIcon
-					:class="{ 'text-gray-400': !isFavorite }"
+					:class="{ 'text-gray-400 dark:text-slate-500': !isFavorite }"
 					:filled="isFavorite"
 					:gray="!isFavorite"
 				/>
@@ -70,8 +70,10 @@ import { toRefs } from '@vueuse/core';
 import type { StatsDbExtendedStatisticDataEntry } from '@/services/db/stats-db/models.js';
 import { useNoteEditing } from '../../composables/note-editing.js';
 import { useStatisticsNextStore } from '../../store.js';
-
-const formatTime = (ms: number) => formatDurationMMSSss(ms, { padFirst: true });
+import { useMainStore } from '@/stores/main.js';
+import { useRouter } from 'vue-router';
+import { usePuzzleStore } from '@/stores/puzzle/store.js';
+import { awaitTimeout } from '@/utils/delay.utils.js';
 
 type HistoryListItemProps = {
 	item: StatsDbExtendedStatisticDataEntry;
@@ -85,12 +87,14 @@ const emit = defineEmits<{
 	delete: [],
 	'save-note': [note: string | undefined]
 }>();
-const { difficulty, dimensions, date, timeElapsed } = toRefs(props.item);
+const { difficulty, dimensions, date, timeElapsed, width, height } = toRefs(props.item);
+const mainStore = useMainStore();
 
 const currentTimeRecord = computed(() => props.recordCurrent && !props.recordFirst);
 const firstTimeRecord = computed(() => props.recordFirst);
 const previousTimeRecord = computed(() => props.recordAll && !props.recordFirst && !props.recordCurrent);
 
+const formatTime = (ms: number) => formatDurationMMSSss(ms, { padFirst: true });
 const timeElapsedFormatted = computed(() => {
 	const timeStr = formatTime(timeElapsed.value);
 	const [minsec, ms] = timeStr.split('.');
@@ -120,10 +124,37 @@ const toggleFavorite = async () => {
 watch(favoriteFlag, () => {
 	tempIsFavorite.value = null;
 })
+
+function deleteItem() {
+	// TODO: replace confirm dialog with modal
+	const confirmed = window.confirm('Are you sure? Deleting this history entry can not be undone!');
+	if (!confirmed) return;
+
+	statsNextStore.deleteItem(props.item.id!);
+}
+
+const puzzleConfig = computed(() => {
+	return { width: width.value, height: height.value, difficulty: difficulty.value };
+})
+const router = useRouter();
+const goToPlayPuzzleRoute = () => router.push({ name: 'PlayPuzzle' });
+async function replayPuzzle() {
+	// TODO: SET REPLAY_MODE IN ROUTE, so game board header knows this, etc
+	const boardStrings = {
+		board: props.item.initialBoard,
+		solution: props.item.solution
+	};
+	const puzzleStore = usePuzzleStore();
+	puzzleStore.replayPuzzle({ puzzleConfig: puzzleConfig.value, boardStrings });
+	await awaitTimeout(1000 / 60 * 2);
+	goToPlayPuzzleRoute();
+}
 </script>
 
 <style scoped>
 ::v-deep(.icon-stroke-current > *) {
 	stroke: currentColor;
 }
-</style>
+</style>import { usePuzzleStore } from '@/stores/puzzle/store.js';
+import { awaitTimeout } from '@/utils/delay.utils.js';
+import { useRouter } from 'vue-router';

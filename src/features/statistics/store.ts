@@ -115,6 +115,15 @@ export const useStatisticsNextStore = defineStore('statisticsNext', () => {
 		}
 		return true;
 	}
+	async function deleteItem(itemId: number) {
+		const idx = historyItems.value!.findIndex(val => val.id === itemId);
+		if (idx < 0) {
+			console.warn('No item found with this id. Cannot delete it.');
+			return;
+		}
+		await statsDb.deleteEntry(itemId);
+		historyItems.value!.splice(idx, 1);
+	}
 
 	return {
 		isLoading,
@@ -133,6 +142,7 @@ export const useStatisticsNextStore = defineStore('statisticsNext', () => {
 
 		updateNote,
 		toggleFavorite,
+		deleteItem,
 	}
 })
 
