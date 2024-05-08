@@ -13,7 +13,8 @@
 	<StatisticsHistoryList
 		:list-key="JSON.stringify({ page, pageSize, sortSelection, filterData })"
 		:shown-items="shownItems"
-		:num-total="historyItems?.length ?? 0"
+		:num-total="itemsRecentFirst?.length ?? 0"
+		:record-data="recordData"
 	/>
 
 	<BasePagination
@@ -34,6 +35,7 @@ import { getSortFn } from '../helpers/history-sort.js';
 import type { StatsDbExtendedStatisticDataEntry } from '@/services/db/stats-db/models.js';
 import { useHistoryFilterSortPaginate } from '../composables/history-filter-sort-paginate.js';
 import { getFilterFn } from '../helpers/history-filter.js';
+import { useHistoryListRecords } from '../composables/history-list-records.js';
 
 const { 
 	page,
@@ -44,14 +46,18 @@ const {
 } = useHistoryFilterSortPaginate();
 
 const statsNextStore = useStatisticsNextStore();
-const { historyItems } = storeToRefs(statsNextStore);
+const { itemsRecentFirst } = storeToRefs(statsNextStore);
+
+const itemsOldestFirst = computed(() => itemsRecentFirst.value.toReversed());
+const recordData = useHistoryListRecords(itemsOldestFirst);
 
 const sortFn = computed(() => getSortFn(sortSelection.value));
 const filterFn = computed(() => getFilterFn(filterData.value));
 
 const filteredItems = computed((): StatsDbExtendedStatisticDataEntry[] => {
-	if (!historyItems.value) return [];
-	return [...historyItems.value].filter(val => filterFn.value(val));
+	if (!itemsRecentFirst.value) return [];
+	const ctx = { records: recordData.value }
+	return [...itemsRecentFirst.value].filter(val => filterFn.value(val, ctx));
 })
 const numItemsFiltered = computed(() => filteredItems.value.length);
 

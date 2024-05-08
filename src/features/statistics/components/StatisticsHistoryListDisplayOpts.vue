@@ -49,6 +49,7 @@
 				v-model:favorite="favoriteModel"
 				v-model:difficulty="difficultyModel"
 				v-model:dimensions="dimensionsModel"
+				v-model:records="recordsModel"
 			/>
 		</ExpandTransition>
 
@@ -61,6 +62,7 @@ import { ref } from 'vue';
 import { useHistoryFilterSortPaginate } from '../composables/history-filter-sort-paginate.js';
 import { computed } from 'vue';
 import type { DifficultyKey, DimensionStr } from '@/lib/types.js';
+import type { HistoryRecordFilter } from '../helpers/history-filter.js';
 
 const {
 	sortSelection,
@@ -68,6 +70,7 @@ const {
 	favorite,
 	dimensions,
 	difficulty,
+	records,
 } = useHistoryFilterSortPaginate();
 
 const favoriteModel = computed({
@@ -93,6 +96,18 @@ const dimensionsModel = computed({
 	set: (val: string | number | null) => {
 		if (val === 'null' || val == null) dimensions.value = null;
 		else dimensions.value = val as DimensionStr;
+	}
+})
+
+const recordsModel = computed({
+	get: () => {
+		const v = records.value;
+		if (v == null) return '';
+		return v;
+	},
+	set: (val: NonNullable<HistoryRecordFilter> | '' | 'null') => {
+		if (val == null || val === 'null' || val === '') records.value = null;
+		else records.value = val as HistoryRecordFilter;
 	}
 })
 

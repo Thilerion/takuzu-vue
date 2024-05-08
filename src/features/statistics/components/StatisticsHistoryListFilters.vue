@@ -34,15 +34,25 @@
 			v-model="dimensions"
 		/>
 	</div>
+
+	<div>
+		<label for="recordsSelect" class="block font-medium mb-2">{{ $t('Statistics.History.filter.record') }}:</label>
+		<HistoryListRecordFilter
+			id="recordsSelect"
+			v-model="records"
+		/>
+	</div>
 </div>
 </template>
 
 <script setup lang="ts">
 import type { DifficultyKey, DimensionStr } from '@/lib/types.js';
+import type { HistoryRecordFilter } from '../helpers/history-filter.js';
 
 const favoritesOnly = defineModel<boolean>('favorite', { required: true });
 const difficulty = defineModel<DifficultyKey | null>('difficulty', { required: true });
 const dimensions = defineModel<DimensionStr | null>('dimensions', { required: true });
+const records = defineModel<NonNullable<HistoryRecordFilter> | ''>('records', { required: true });
 </script>
 
 <style scoped>

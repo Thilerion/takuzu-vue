@@ -107,7 +107,12 @@
 				"favorites-only": "Favorites only",
 				"remove-filter": "Remove",
 				"hide-filters": "Hide filters",
-				"show-filters": "Show filters"
+				"show-filters": "Show filters",
+				"no-filter": "No filter",
+				"all-time-records": "All time records",
+				"only-current-records": "Current time records",
+				"only-first-solves": "Only first solves",
+				"record": "Records"
 			},
 			"sort": {
 				"sort-by": "Sort by:",

@@ -102,7 +102,12 @@
 				"favorites-only": "Alleen favorieten",
 				"hide-filters": "Filters verbergen",
 				"remove-filter": "Verwijder",
-				"show-filters": "Filters weergeven"
+				"show-filters": "Filters weergeven",
+				"record": "Records",
+				"all-time-records": "Alle tijdrecords",
+				"no-filter": "Geen filter",
+				"only-current-records": "Huidige tijdrecords",
+				"only-first-solves": "Eerste keren opgelost"
 			},
 			"sort": {
 				"newest-first": "Nieuwste eerst",
