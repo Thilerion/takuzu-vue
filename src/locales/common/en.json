@@ -101,7 +101,10 @@
 		"History": {
 			"puzzle-history": "Puzzle history",
 			"none-found-with-filters": "No puzzles found with current filters!",
-			"none-played-yet": "You haven't played any puzzles yet!"
+			"none-played-yet": "You haven't played any puzzles yet!",
+			"filter": {
+				"any": "Any"
+			}
 		},
 		"Overview": {
 			"puzzles-solved": "Puzzles solved",

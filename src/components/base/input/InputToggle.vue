@@ -1,7 +1,7 @@
 <template>
 <label
 	:for="id"
-	class="toggle-wrapper mb-4"
+	class="toggle-wrapper"
 	:class="[inline ? inlineClasses : blockClasses, {
 		'flex-row-reverse': reverse,
 		small

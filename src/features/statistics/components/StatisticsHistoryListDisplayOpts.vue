@@ -11,7 +11,7 @@
 			<option value="100">100</option>
 		</select>
 	</label>
-	<div class="bg-white border-b pb-4">
+	<div class="bg-white border-b pb-2">
 		<div class="px-4 pt-2 pb-2 flex items-center justify-between">
 			<label class="text-xs flex flex-row items-center"><span>Sort by:</span>
 				<select
@@ -35,9 +35,11 @@
 		</div>
 
 		<ExpandTransition :show="showFilters">
-			<div>
-			
-			</div>
+			<StatisticsHistoryListFilters
+				v-model:favorite="favoriteModel"
+				v-model:difficulty="difficultyModel"
+				v-model:dimensions="dimensionsModel"
+			/>
 		</ExpandTransition>
 
 	</div>
@@ -47,13 +49,42 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useHistoryFilterSortPaginate } from '../composables/history-filter-sort-paginate.js';
+import { computed } from 'vue';
+import type { DifficultyKey, DimensionStr } from '@/lib/types.js';
 
-const { sortSelection, pageSize, favorite } = useHistoryFilterSortPaginate();
+const {
+	sortSelection,
+	pageSize,
+	favorite,
+	dimensions,
+	difficulty,
+} = useHistoryFilterSortPaginate();
 
-const setFavoritesOnly = (val: boolean) => {
-	if (val) favorite.value = true;
-	else favorite.value = null;
-}
+const favoriteModel = computed({
+	get: () => favorite.value === true,
+	set: (val: boolean) => {
+		if (val) favorite.value = true;
+		else favorite.value = null;
+	}
+})
+const difficultyModel = computed({
+	get: () => difficulty.value,
+	set: (val: string | number | null) => {
+		if (val === 'null' || val == null) difficulty.value = null;
+		else if (typeof val === 'number') {
+			difficulty.value = val as DifficultyKey;
+		} else {
+			difficulty.value = Number(val) as DifficultyKey;
+		}
+	}
+})
+const dimensionsModel = computed({
+	get: () => dimensions.value,
+	set: (val: string | number | null) => {
+		if (val === 'null' || val == null) dimensions.value = null;
+		else dimensions.value = val as DimensionStr;
+	}
+})
 
 const showFilters = ref(false);
 </script>

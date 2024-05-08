@@ -11,7 +11,7 @@
 	/>
 
 	<StatisticsHistoryList
-		:list-key="JSON.stringify({ page, pageSize, sortSelection })"
+		:list-key="JSON.stringify({ page, pageSize, sortSelection, filterData })"
 		:shown-items="shownItems"
 		:num-total="historyItems?.length ?? 0"
 	/>
