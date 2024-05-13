@@ -3,6 +3,7 @@
 	
 	<StatisticsHistoryListDisplayOpts />
 
+	<div ref="topAnchorEl" class="h-0 w-0"></div>
 	<BasePagination
 		:model-value="page - 1"
 		:length="numItemsFiltered"
@@ -29,7 +30,7 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useStatisticsNextStore } from '../store.js';
 import { getSortFn } from '../helpers/history-sort.js';
 import type { StatsDbExtendedStatisticDataEntry } from '@/services/db/stats-db/models.js';
@@ -70,4 +71,20 @@ const sortedItems = computed(() => {
 const shownItems = computed(() => {
 	return sortedItems.value.slice(pageItemStart.value, pageItemEnd.value);
 });
+
+
+function scrollToList(el: HTMLElement) {
+	// Check if above or below viewport. If below, do nothing, is the user is already required to scroll (possibly due to filters being visible)
+	// If above, scroll to anchor. This is so that, when the page changes using the bottom pagination element, the new items are immediately visible.
+	const rect = el.getBoundingClientRect();
+	if (rect.top > 0) return;
+	el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+const topAnchorEl = ref<null | HTMLElement>(null);
+watch(page, (cur, prev) => {
+	if (cur === prev) return;
+	if (topAnchorEl.value) {
+		scrollToList(topAnchorEl.value);
+	}
+})
 </script>
