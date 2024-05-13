@@ -135,7 +135,10 @@
 			"puzzles-solved": "Puzzels opgelost",
 			"time-played": "Tijd gespeeld",
 			"time-played-30-days": "{time} in afg. 30 dagen"
-		}
+		},
+		"export-data": "Backup data",
+		"import-stats": "Importeer data",
+		"reset-stats": "Reset stats"
 	},
 	"NotFound404": {
 		"page-not-found": "Pagina niet gevonden",

@@ -135,7 +135,10 @@
 				"days-hours": "{days}d {hours}h"
 			},
 			"time-played-30-days": "{time} in last 30 days"
-		}
+		},
+		"export-data": "Backup data",
+		"import-stats": "Import stats",
+		"reset-stats": "Reset stats"
 	},
 	"NotFound404": {
 		"page-not-found": "Page not found",

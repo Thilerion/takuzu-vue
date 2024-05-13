@@ -8,7 +8,7 @@
 		class="text-btn"
 		:disabled="!numSolved || isBusy"
 		@click="exportStats"
-	>Export data</button>
+	>{{ $t('Statistics.export-data') }}</button>
 
 	<input
 		ref="fileInputRef"
@@ -23,13 +23,13 @@
 		class="text-btn"
 		:disabled="isBusy"
 		@click="openFileDialog"
-	>Import stats</button>
+	>{{ $t('Statistics.import-stats') }}</button>
 
 	<button
 		class="text-btn danger"
 		:disabled="!numSolved || isBusy"
 		@click="resetStats"
-	>Reset stats</button>
+	>{{ $t('Statistics.reset-stats') }}</button>
 
 </div>
 </template>
