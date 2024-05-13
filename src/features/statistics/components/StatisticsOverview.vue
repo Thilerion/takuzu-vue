@@ -12,7 +12,7 @@
 		<StatisticsOverviewTile>
 			<span>{{ formattedTimePlayed }}</span>
 			<template #title>{{ $t('Statistics.Overview.time-played') }}</template>
-			<!-- TODO: <template #footer>[x]m in last 30 days</template> -->
+			<template #footer>{{ $t('Statistics.Overview.time-played-30-days', { time: formattedTimePlayed30Days }) }}</template>
 		</StatisticsOverviewTile>
 
 		<StatisticsOverviewTile>
@@ -41,6 +41,11 @@ import { getMostPlayedPuzzleConfig, summarizeByPuzzleConfig, type PuzzleConfigSu
 const statsNextStore = useStatisticsNextStore();
 
 const { itemsRecentFirst } = storeToRefs(statsNextStore);
+const itemsRecent30Days = computed(() => {
+	const thirtyDaysAgo = subDays(new Date(), 30);
+	return itemsRecentFirst.value.filter(item => item.date >= thirtyDaysAgo);
+})
+
 const amountPlayedToday = computed((): number => {
 	// Use itemsRecentFirst to find the index of the first item that was solved before today
 	const index = itemsRecentFirst.value.findIndex(item => !isToday(item.date));
@@ -50,7 +55,11 @@ const amountPlayedToday = computed((): number => {
 const timePlayedMs = computed(() => {
 	return itemsRecentFirst.value.reduce((acc, item) => acc + item.timeElapsed, 0);
 })
+const timePlayedMs30Days = computed(() => {
+	return itemsRecent30Days.value.reduce((acc, item) => acc + item.timeElapsed, 0);
+})
 const formattedTimePlayed = useFormattedDurationNarrow(timePlayedMs);
+const formattedTimePlayed30Days = useFormattedDurationNarrow(timePlayedMs30Days);
 
 // Approximate empty cells filled by converting a puzzle's widthXheight with an approximate masked ratio
 const APPROX_MASK_RATIO = 0.7;
@@ -68,10 +77,6 @@ const mostPlayedAll = computed(() => {
 	return getMostPlayedPuzzleConfig(summariesAll.value);
 })
 
-const itemsRecent30Days = computed(() => {
-	const thirtyDaysAgo = subDays(new Date(), 30);
-	return itemsRecentFirst.value.filter(item => item.date >= thirtyDaysAgo);
-})
 const summaries30 = computed((): PuzzleConfigSummaries => {
 	if (itemsRecent30Days.value.length === 0) return new Map();
 	return summarizeByPuzzleConfig(itemsRecent30Days.value);

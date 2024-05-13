@@ -133,7 +133,8 @@
 			"cells-filled": "Cellen gevuld",
 			"n-solved-today": "{n} vandaag opgelost",
 			"puzzles-solved": "Puzzels opgelost",
-			"time-played": "Tijd gespeeld"
+			"time-played": "Tijd gespeeld",
+			"time-played-30-days": "{time} in afg. 30 dagen"
 		}
 	},
 	"NotFound404": {
