@@ -1,6 +1,6 @@
 <template>
 <div class="py-0 filters-box px-4 grid gap-4 text-sm">
-	<div class="pt-4">
+	<div>
 		<InputToggle
 			id="favoritesOnlyToggle"
 			v-model="favoritesOnly"
@@ -42,12 +42,26 @@
 			v-model="records"
 		/>
 	</div>
+	<div class="w-full">
+		<button
+			class="inline-block w-fit pt-2 text-red-600 disabled:text-gray-400 clear-btn"
+			:disabled="!activeFilters"
+			@click="$emit('clear-filters')"
+		><icon-ic-baseline-close class="inline-block" />{{ $t('Statistics.History.filter.remove-all-filters') }}</button>
+	</div>
 </div>
 </template>
 
 <script setup lang="ts">
 import type { DifficultyKey, DimensionStr } from '@/lib/types.js';
 import type { HistoryRecordFilter } from '../../helpers/history-filter.js';
+
+defineEmits<{
+	(e: 'clear-filters'): void;
+}>();
+defineProps<{
+	activeFilters: number;
+}>();
 
 const favoritesOnly = defineModel<boolean>('favorite', { required: true });
 const difficulty = defineModel<DifficultyKey | null>('difficulty', { required: true });
@@ -58,6 +72,9 @@ const records = defineModel<NonNullable<HistoryRecordFilter> | ''>('records', { 
 <style scoped>
 .filters-box {
 	@apply max-w-md mr-auto;
+}
+.filters-box > *:first-child {
+	@apply pt-4;
 }
 .filters-box > *:last-child {
 	@apply pb-4;

@@ -10,16 +10,20 @@ export type HistoryFilterSortPaginateData = {
 	sortDir: HistorySortDir;
 } & HistoryFilterData;
 
+const getFilterDefaults = () => ({
+	difficulty: null,
+	dimensions: null,
+	favorite: null,
+	records: null,
+});
+
 const getDefaults = (): HistoryFilterSortPaginateData => ({
 	page: 1,
 	pageSize: 10,
 	sortBy: 'date',
 	sortDir: 'desc',
 	
-	difficulty: null,
-	dimensions: null,
-	favorite: null,
-	records: null,
+	...getFilterDefaults(),
 });
 
 export const useHistoryFilterSortPaginate = createSharedComposable(() => {
@@ -82,7 +86,10 @@ export const useHistoryFilterSortPaginate = createSharedComposable(() => {
 			if (val == null) return acc;
 			return acc + 1;
 		}, 0);
-	})
+	});
+	const clearAllFilters = () => {
+		Object.assign(data, getFilterDefaults());
+	}
 
 	const {
 		page,
@@ -106,5 +113,6 @@ export const useHistoryFilterSortPaginate = createSharedComposable(() => {
 		numActiveFilters,
 
 		getDefaults,
+		clearAllFilters,
 	};
 })

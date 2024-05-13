@@ -108,7 +108,8 @@
 				"no-filter": "Geen filter",
 				"only-current-records": "Huidige tijdrecords",
 				"only-first-solves": "Eerste keren opgelost",
-				"n-active-filters": "({0} actief)"
+				"n-active-filters": "({0} actief)",
+				"remove-all-filters": "Verwijder alle filters"
 			},
 			"sort": {
 				"newest-first": "Nieuwste eerst",

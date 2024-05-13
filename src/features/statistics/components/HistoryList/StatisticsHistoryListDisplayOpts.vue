@@ -54,6 +54,8 @@
 				v-model:difficulty="difficultyModel"
 				v-model:dimensions="dimensionsModel"
 				v-model:records="recordsModel"
+				:active-filters="numActiveFilters"
+				@clear-filters="clearAllFilters"
 			/>
 		</ExpandTransition>
 
@@ -76,6 +78,7 @@ const {
 	difficulty,
 	records,
 	numActiveFilters,
+	clearAllFilters,
 } = useHistoryFilterSortPaginate();
 
 const favoriteModel = computed({
