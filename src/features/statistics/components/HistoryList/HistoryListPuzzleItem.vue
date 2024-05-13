@@ -6,7 +6,7 @@
 			<IconBtn
 				class="text-xs text-gray-500 dark:text-slate-400"
 				scale="1"
-				@click="startEditing(item.id!)"
+				@click="isEditing = !isEditing"
 			>
 				<icon-mdi-pencil />
 			</IconBtn>
@@ -57,6 +57,7 @@
 	</div>
 	<HistoryListPuzzleItemNote
 		:id="props.item.id!"
+		v-model:editing="isEditing"
 		:note="item.note"
 	/>
 	<div class="h-2"></div>
@@ -68,7 +69,6 @@ import { formatDurationMMSSss } from '@/utils/duration.utils';
 import { computed, nextTick, ref, watch } from 'vue';
 import { toRefs } from '@vueuse/core';
 import type { StatsDbExtendedStatisticDataEntry } from '@/services/db/stats-db/models.js';
-import { useNoteEditing } from '../../composables/note-editing.js';
 import { useStatisticsNextStore } from '../../store.js';
 import { useMainStore } from '@/stores/main.js';
 import { useRouter } from 'vue-router';
@@ -101,11 +101,9 @@ const timeElapsedFormatted = computed(() => {
 	return {minsec, ms};
 })
 
-const {
-	startEditing,
-} = useNoteEditing();
-
 const statsNextStore = useStatisticsNextStore();
+
+const isEditing = ref(false);
 
 const favoriteFlag = computed(() => !!(props.item?.flags?.favorite));
 const tempIsFavorite = ref<boolean | null>(favoriteFlag.value);
@@ -155,6 +153,4 @@ async function replayPuzzle() {
 ::v-deep(.icon-stroke-current > *) {
 	stroke: currentColor;
 }
-</style>import { usePuzzleStore } from '@/stores/puzzle/store.js';
-import { awaitTimeout } from '@/utils/delay.utils.js';
-import { useRouter } from 'vue-router';
+</style>

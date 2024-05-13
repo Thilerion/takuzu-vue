@@ -59,10 +59,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useHistoryFilterSortPaginate } from '../composables/history-filter-sort-paginate.js';
+import { useHistoryFilterSortPaginate } from '../../composables/history-filter-sort-paginate.js';
 import { computed } from 'vue';
 import type { DifficultyKey, DimensionStr } from '@/lib/types.js';
-import type { HistoryRecordFilter } from '../helpers/history-filter.js';
+import type { HistoryRecordFilter } from '../../helpers/history-filter.js';
 
 const {
 	sortSelection,

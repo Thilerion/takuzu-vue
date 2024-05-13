@@ -47,7 +47,7 @@
 
 <script setup lang="ts">
 import type { DifficultyKey, DimensionStr } from '@/lib/types.js';
-import type { HistoryRecordFilter } from '../helpers/history-filter.js';
+import type { HistoryRecordFilter } from '../../helpers/history-filter.js';
 
 const favoritesOnly = defineModel<boolean>('favorite', { required: true });
 const difficulty = defineModel<DifficultyKey | null>('difficulty', { required: true });

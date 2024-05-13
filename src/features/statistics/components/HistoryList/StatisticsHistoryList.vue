@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
 import type { StatsDbExtendedStatisticDataEntry } from '@/services/db/stats-db/models.js';
-import type { HistoryListRecordsLists } from '../composables/history-list-records.js';
+import type { HistoryListRecordsLists } from '../../composables/history-list-records.js';
 
 defineProps<{
 	listKey: string,
