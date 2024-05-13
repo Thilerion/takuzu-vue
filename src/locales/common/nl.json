@@ -107,7 +107,8 @@
 				"all-time-records": "Alle tijdrecords",
 				"no-filter": "Geen filter",
 				"only-current-records": "Huidige tijdrecords",
-				"only-first-solves": "Eerste keren opgelost"
+				"only-first-solves": "Eerste keren opgelost",
+				"n-active-filters": "({0} actief)"
 			},
 			"sort": {
 				"newest-first": "Nieuwste eerst",

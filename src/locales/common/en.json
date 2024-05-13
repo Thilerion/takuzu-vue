@@ -112,7 +112,8 @@
 				"all-time-records": "All time records",
 				"only-current-records": "Current time records",
 				"only-first-solves": "Only first solves",
-				"record": "Records"
+				"record": "Records",
+				"n-active-filters": "({0} active)"
 			},
 			"sort": {
 				"sort-by": "Sort by:",

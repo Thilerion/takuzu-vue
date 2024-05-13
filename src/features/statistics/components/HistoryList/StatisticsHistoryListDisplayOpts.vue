@@ -33,9 +33,13 @@
 				@click="() => showFilters = !showFilters"
 			>
 				<icon-ic-outline-filter-list class="flex-none mb-0.5 mr-1 w-5 h-5 inline-block text-sm text-gray-600 dark:text-slate-300" />
-				<div class="flex-1 min-w-28">
+				<div class="flex-1 min-w-32">
 					<span v-if="showFilters">{{ $t('Statistics.History.filter.hide-filters') }}</span>
 					<span v-else>{{ $t('Statistics.History.filter.show-filters') }}</span>
+					<span
+						class="ml-1 transition-opacity opacity-100 font-medium"
+						:class="{ 'opacity-70 font-base': numActiveFilters === 0 }"
+					>{{ $t('Statistics.History.filter.n-active-filters', [numActiveFilters]) }}</span>
 				</div>
 				<icon-ic-outline-keyboard-arrow-down
 					class="transition-transform duration-500 text-base text-gray-700 dark:text-slate-200"
@@ -71,6 +75,7 @@ const {
 	dimensions,
 	difficulty,
 	records,
+	numActiveFilters,
 } = useHistoryFilterSortPaginate();
 
 const favoriteModel = computed({
