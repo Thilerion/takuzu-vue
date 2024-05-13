@@ -11,6 +11,7 @@
 			v-model="modelValue"
 			type="radio"
 			:value="opt.value"
+			name="timeRecordFilterRadio"
 		>
 		<span class="ml-1.5 whitespace-nowrap">{{ opt.label }}</span>
 	</label>
@@ -23,9 +24,7 @@ import type { HistoryRecordFilter } from '../../helpers/history-filter.js';
 import { useI18n } from 'vue-i18n';
 
 const modelValue = defineModel<NonNullable<HistoryRecordFilter> | ''>({ required: true });
-defineProps<{
-	id: string
-}>();
+
 const { t } = useI18n();
 const timeRecordOpts = computed((): { value: NonNullable<HistoryRecordFilter> | '', label: string }[] => [
 	{ label: t('Statistics.History.filter.no-filter'), value: '' },

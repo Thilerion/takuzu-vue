@@ -1,5 +1,6 @@
 <template>
 <select
+	:id="id"
 	v-model="modelValue"
 	class="w-full text-sm"
 >

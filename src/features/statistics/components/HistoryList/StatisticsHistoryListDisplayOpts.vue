@@ -4,6 +4,7 @@
 		<label class="text-xs flex flex-row items-center"><span>{{ $t('Paginate.amount-per-page') }}:</span>
 			<select
 				v-model.number="pageSize"
+				name="pageSizeSelect"
 				class="text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-2 text-xs min-w-fit"
 			>
 				<option value="10">10</option>
@@ -17,6 +18,7 @@
 			<div class="flex items-center gap-x-1"><icon-ic-baseline-sort class="inline-block" />{{ $t('Statistics.History.sort.sort-by') }}</div>
 			<select
 				v-model="sortSelection"
+				name="sortSelect"
 				class="text-black rounded border border-gray-400 py-1 pr-[4.5ch] pl-2 text-xs min-w-fit"
 			>
 				<option value="date;desc">{{ $t('Statistics.History.sort.newest-first') }}</option>

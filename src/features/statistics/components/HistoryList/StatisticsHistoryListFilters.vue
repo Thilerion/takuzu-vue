@@ -36,9 +36,8 @@
 	</div>
 
 	<div>
-		<label for="recordsSelect" class="block font-medium mb-2">{{ $t('Statistics.History.filter.record') }}:</label>
+		<div class="block font-medium mb-2">{{ $t('Statistics.History.filter.record') }}:</div>
 		<HistoryListRecordFilter
-			id="recordsSelect"
 			v-model="records"
 		/>
 	</div>
