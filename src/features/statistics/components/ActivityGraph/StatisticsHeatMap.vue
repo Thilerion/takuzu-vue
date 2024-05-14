@@ -7,7 +7,7 @@
 		:cells="heatmapCells"
 		row="month-start / month-end"
 		:column="`cell-col-start / span ${numWeeks}`"
-		class="z-10"
+		class="z-10 pt-2"
 	/>
 	<StatisticsHeatMapWeekdays
 		row="1 / span 8"
@@ -20,25 +20,34 @@
 		:style="{
 			'grid-row': `cell-row-start ${cell.weekday + 1} / cell-row-end ${cell.weekday + 1}`,
 			'grid-column': `cell-col-start ${cell.weekIndex + 1} / cell-col-end ${cell.weekIndex + 1}`,
-			'opacity': `${cell.weekIndex / 53}`
 		}"
 		class="heatmap-item"
-		:class="{
-			'bg-purple-700': cell.weekday === 0,
-			'bg-orange-600': cell.weekday === 1,
-			'bg-orange-500': cell.weekday === 2,
-			'bg-orange-400': cell.weekday === 3,
-			'bg-orange-300': cell.weekday === 4,
-			'bg-orange-200': cell.weekday === 5,
-			'bg-green-200': cell.weekday === 6,
-		}"
+		:data-level="getLevelFromDate(cell.dateStr)"
 	></div>
 </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { createHeatmapRange, createHeatmapRangeCells } from '../../helpers/heatmap-base-data.js';
+import type { StatsDbExtendedStatisticDataEntry } from '@/services/db/stats-db/models.js';
+import { createDailyActivitySummaries, rankDailyActivitySummaries } from '../../helpers/activity-summaries.js';
+
+const props = defineProps<{
+	items: StatsDbExtendedStatisticDataEntry[]
+}>();
+
+const activitySummaries = computed(() => createDailyActivitySummaries(props.items));
+const activityRanks = computed(() => {
+	return rankDailyActivitySummaries(activitySummaries.value);
+})
+onMounted(() => console.log(activitySummaries.value, activityRanks.value));
+
+const getLevelFromDate = (date: string) => {
+	const rankVal = activityRanks.value.get(date);
+	if (rankVal == null) return 0;
+	return rankVal + 1;
+}
 
 const range = ref(createHeatmapRange());
 const heatmapCells = ref(createHeatmapRangeCells(range.value));
@@ -69,6 +78,38 @@ watch(heatmapGridEl, (el) => {
 }
 
 .heatmap-item {
-	@apply w-4 h-4 aspect-square;
+	@apply w-4 h-4 aspect-square rounded-[1px];
+	background-color: var(--bg);
+	box-shadow: inset 0 0 var(--shadow-blur) 0 rgb(0 0 0 / var(--shadow-opacity));
+}
+
+[data-level] {
+	--bg-opacity: 1;
+	--shadow-opacity: 0.1;
+}
+
+[data-level="0"] {
+	--bg: hsl(193, 44%, 96%);
+	--shadow-opacity: 0.05;
+}
+
+[data-level="1"] {
+	--bg: #9ebcda;
+}
+
+[data-level="2"] {
+	--bg: #8c96c6;
+}
+
+[data-level="3"] {
+	--bg: #8c6bb1;
+}
+
+[data-level="4"] {
+	--bg: #88419d;
+}
+
+[data-level="5"] {
+	--bg: #6e016b;
 }
 </style>

@@ -6,6 +6,15 @@ export interface DataAnalysisCache<T extends number = number> {
 
 export const min = (arr: number[]) => Math.min(...arr);
 export const max = (arr: number[]) => Math.max(...arr);
+export const getExtent = (arr: number[]): [min: number, max: number] => {
+	let min = Infinity;
+	let max = -Infinity;
+	for (const val of arr) {
+		if (val < min) min = val;
+		if (val > max) max = val;
+	}
+	return [min, max];
+};
 export const sum = (arr: number[]) => arr.reduce((acc, val) => acc + val, 0);
 
 export const minMaxSum = (arr: number[]) => arr.reduce((acc, val) => {
