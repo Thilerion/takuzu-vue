@@ -1,6 +1,7 @@
 <template>
 <div class="space-y-6">
 	<StatisticsOverview class="content-block" />
+	<StatisticsActivity class="content-block" />
 	<StatisticsRecentPuzzles class="content-block" />
 </div>
 </template>
