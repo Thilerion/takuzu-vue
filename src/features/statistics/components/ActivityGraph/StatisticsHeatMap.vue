@@ -1,7 +1,7 @@
 <template>
 <div
 	ref="heatmapGridEl"
-	class="heatmap grid min-w-40 max-w-full overflow-x-auto overflow-y-hidden relative"
+	class="heatmap pr-2 pb-2 grid min-w-40 max-w-full overflow-x-auto relative"
 >
 	<StatisticsHeatMapMonths
 		:cells="heatmapCells"
@@ -33,13 +33,6 @@
 			'bg-green-200': cell.weekday === 6,
 		}"
 	></div>
-	<!-- <div
-		class="bg-blue-100"
-		:style="{
-			'grid-row': '1 / -1',
-			'grid-column': '-1 / span 1'
-		}"
-	></div> -->
 </div>
 </template>
 
