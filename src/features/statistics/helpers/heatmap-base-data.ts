@@ -45,7 +45,7 @@ export function createHeatmapRangeCells(range: HeatmapRange): HeatmapRangeBaseCe
 		}
 		const cell: HeatmapRangeBaseCell = {
 			year: intDay.getFullYear(),
-			month: intDay.getMonth() + 1,
+			month: intDay.getMonth(),
 			weekday: weekday,
 			day: intDay.getDate(),
 			dayIndex: dayIndex++,

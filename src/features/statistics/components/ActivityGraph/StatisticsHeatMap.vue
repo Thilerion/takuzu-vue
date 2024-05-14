@@ -3,20 +3,17 @@
 	ref="heatmapGridEl"
 	class="heatmap grid min-w-40 max-w-full overflow-x-auto overflow-y-hidden relative"
 >
-	<div
-		class="bg-gray-400 h-3"
-		:style="{
-			'grid-row': 'month-start / month-end',
-			'grid-column': `cell-col-start / span ${numWeeks}`
-		}"
-	></div>
-	<div
-		class="bg-blue-400 w-8 sticky left-0 top-0 h-full"
-		:style="{
-			'grid-row': '2 / span 7',
-			'grid-column': '1 / span 1'
-		}"
-	></div>
+	<StatisticsHeatMapMonths
+		:cells="heatmapCells"
+		row="month-start / month-end"
+		:column="`cell-col-start / span ${numWeeks}`"
+		class="z-10"
+	/>
+	<StatisticsHeatMapWeekdays
+		row="1 / span 8"
+		column="1 / span 1"
+		class="z-10"
+	/>
 	<div
 		v-for="cell in heatmapCells"
 		:key="cell.dateStr"
@@ -73,8 +70,8 @@ watch(heatmapGridEl, (el) => {
 
 <style scoped>
 .heatmap {
-	grid-template-rows: [month-start] auto [month-end] repeat(v-bind(numRows), [cell-row-start] auto [cell-row-end]);
-	grid-template-columns: [day-start] auto [day-end] repeat(v-bind(numCols), [cell-col-start] auto [cell-col-end]);
+	grid-template-rows: [month-start] auto [month-end] repeat(v-bind(numRows), [cell-row-start] 1rem [cell-row-end]);
+	grid-template-columns: [day-start] auto [day-end] repeat(v-bind(numCols), [cell-col-start] 1rem [cell-col-end]);
 	@apply gap-0.5;
 }
 
