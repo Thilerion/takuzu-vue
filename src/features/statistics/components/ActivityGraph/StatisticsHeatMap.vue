@@ -22,7 +22,10 @@
 			'grid-column': `cell-col-start ${cell.weekIndex + 1} / cell-col-end ${cell.weekIndex + 1}`,
 		}"
 		class="heatmap-item"
+		:class="{ 'is-selected': cell.dateStr === selected }"
 		:data-level="getLevelFromDate(cell.dateStr)"
+		:data-has-data="items.has(cell.dateStr)"
+		@click="emit('toggle', items.get(cell.dateStr)!)"
 	></div>
 </div>
 </template>
@@ -31,15 +34,29 @@
 import { computed, onMounted, ref } from 'vue';
 import { createHeatmapRangeCells } from '../../helpers/heatmap-base-data.js';
 
-const props = defineProps<{
-	ranks: Map<string, number>,
-	range: { start: Date, end: Date },
+export type HeatMapItem = {
+	dateStr: string,
+	level: number,
+	data: {
+		puzzlesPlayed: number,
+		totalTime: number
+	}
+}
+
+const emit = defineEmits<{
+	(e: 'toggle', value: HeatMapItem): void
 }>();
 
-const getLevelFromDate = (date: string) => {
-	const rankVal = props.ranks.get(date);
-	if (rankVal == null) return 0;
-	return rankVal + 1;
+const props = defineProps<{
+	range: { start: Date, end: Date },
+	items: Map<string, HeatMapItem>,
+	selected?: string | undefined, // DateStr or undefined
+}>();
+
+const getLevelFromDate = (dateStr: string) => {
+	const item = props.items.get(dateStr);
+	if (item == null) return 0;
+	return item.level;
 }
 
 const heatmapCells = ref(createHeatmapRangeCells(props.range));
@@ -107,5 +124,12 @@ onMounted(() => {
 
 [data-level="5"] {
 	--bg: #6e016b;
+}
+
+[data-has-data="true"] {
+	@apply transition-shadow duration-75 hover-hover:hover:duration-200 cursor-pointer ring-1 ring-transparent hover-hover:hover:ring-purple-950;
+}
+.is-selected {
+	@apply ring-purple-950 ring-[2px] z-20 rounded-sm;
 }
 </style>

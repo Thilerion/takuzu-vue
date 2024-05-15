@@ -1,17 +1,20 @@
 <template>
 <StatisticsHeatMap
-	:ranks="activityRanks"
 	:range="graphRange"
+	:items="items"
+	:selected="selectedItem"
+	@toggle="toggleItem($event)"
 />
 </template>
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { startOfDay, subDays, subYears } from 'date-fns';
 import { useStatisticsNextStore } from '../../store.js';
 import { createDailyActivitySummaries, rankDailyActivitySummaries } from '../../helpers/activity-summaries.js';
 import { createHeatmapRange } from '../../helpers/heatmap-base-data.js';
+import type { HeatMapItem } from './StatisticsHeatMap.vue';
 
 const statsNextStore = useStatisticsNextStore();
 const { itemsRecentFirst } = storeToRefs(statsNextStore);
@@ -28,4 +31,30 @@ const activityRanks = computed(() => {
 })
 
 const graphRange = computed(() => createHeatmapRange());
+
+const items = computed(() => {
+	const result: Map<string, HeatMapItem> = new Map();
+
+	for (const [dateStr, summary] of activitySummaries.value) {
+		const rank = activityRanks.value.get(dateStr)!;
+		result.set(dateStr, {
+			dateStr,
+			level: rank + 1,
+			data: {
+				puzzlesPlayed: summary.puzzlesPlayed,
+				totalTime: summary.totalTime,
+			}
+		})
+	}
+	return result;
+})
+
+const selectedItem = ref<string | undefined>();
+function toggleItem(item: HeatMapItem) {
+	if (selectedItem.value === item.dateStr) {
+		selectedItem.value = undefined;
+	} else {
+		selectedItem.value = item.dateStr;
+	}
+}
 </script>
