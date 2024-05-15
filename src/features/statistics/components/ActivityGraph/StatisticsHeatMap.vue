@@ -121,31 +121,50 @@ onMounted(() => {
 	--bg: hsl(193, 44%, 96%);
 	--shadow-opacity: 0.05;
 }
-
 [data-level="1"] {
 	--bg: #9ebcda;
 }
-
 [data-level="2"] {
 	--bg: #8c96c6;
 }
-
 [data-level="3"] {
 	--bg: #8c6bb1;
 }
-
 [data-level="4"] {
 	--bg: #88419d;
 }
-
 [data-level="5"] {
 	--bg: #6e016b;
 }
 
+:where([data-base-theme="dark"] [data-level]) {
+	--color-from: #594e86;
+	--color-to: #dd87ff;
+}
+:where([data-base-theme="dark"]) [data-level="0"] {
+	--bg: hsl(253 15% 38% / 0.7);
+	--shadow-opacity: 0.05;
+}
+:where([data-base-theme="dark"]) [data-level="1"] {
+	--bg: color-mix(in lch, var(--color-from) 80%, var(--color-to));
+}
+:where([data-base-theme="dark"]) [data-level="2"] {
+	--bg: color-mix(in lch, var(--color-from) 70%, var(--color-to));
+}
+:where([data-base-theme="dark"]) [data-level="3"] {
+	--bg: color-mix(in lch, var(--color-from) 50%, var(--color-to));
+}
+:where([data-base-theme="dark"]) [data-level="4"] {
+	--bg: color-mix(in lch, var(--color-from) 30%, var(--color-to));
+}
+:where([data-base-theme="dark"]) [data-level="5"] {
+	--bg: var(--color-to);
+}
+
 [data-has-data="true"] {
-	@apply transition-shadow duration-75 hover-hover:hover:duration-200 cursor-pointer ring-1 ring-transparent hover-hover:hover:ring-purple-950;
+	@apply transition-shadow duration-75 hover-hover:hover:duration-200 cursor-pointer ring-1 ring-transparent hover-hover:hover:ring-purple-950 dark:hover-hover:hover:ring-slate-100;
 }
 .is-selected {
-	@apply ring-purple-950 ring-[2px] z-20 rounded-sm;
+	@apply ring-purple-950 dark:ring-slate-100 ring-[2px] z-20 rounded-sm;
 }
 </style>

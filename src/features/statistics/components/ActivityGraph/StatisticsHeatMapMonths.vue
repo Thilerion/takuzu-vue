@@ -1,6 +1,6 @@
 <template>
 <div
-	class="bg-white text-gray-500 h-auto leading-none months text-xxs"
+	class="bg-white dark:bg-slate-700 text-gray-500 dark:text-slate-300 h-auto leading-none months text-xxs"
 	:style="{
 		'grid-row': row,
 		'grid-column': column,

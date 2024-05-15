@@ -4,14 +4,14 @@
 		Recently Played
 		<template #right>
 			<router-link
-				class="self-center text-teal-700 hover-hover:hover:text-teal-500 active:text-teal-500 flex flex-row items-center"
+				class="self-center text-teal-700 dark:text-teal-300 hover-hover:hover:text-teal-500 active:text-teal-500 dark:hover-hover:hover:text-teal-200 dark:active:text-teal-100 flex flex-row items-center"
 				:to="{ name: 'StatisticsHistory' }"
 			><div class="text-xs font-medium uppercase tracking-wider">View all</div><icon-ic-baseline-chevron-right class="text-xs w-5 h-5" /></router-link>
 		</template>
 	</StatisticsBlockHeading>
 
-	<div class="bg-white rounded shadow-lg shadow-gray-600/10 py-2">
-		<ol class="list-grid divide-y divide-gray-100">
+	<div class="bg-white dark:bg-slate-700 rounded shadow-lg shadow-gray-600/10 py-2">
+		<ol class="list-grid divide-y divide-gray-100 dark:divide-slate-400">
 			<StatisticsRecentPuzzleItem
 				v-for="(item) in recentItems"
 				:key="item.id"

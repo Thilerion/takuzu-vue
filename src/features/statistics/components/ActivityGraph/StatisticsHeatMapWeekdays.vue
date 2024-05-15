@@ -1,6 +1,6 @@
 <template>
 <div
-	class="bg-gradient-to-r from-80% from-white to-transparent text-gray-500 text-right pr-[0.75rem] pl-1 w-fit sticky left-0 top-0 h-full weekdays text-xxs"
+	class="bg-gradient-to-r from-80% from-white dark:from-slate-700 to-transparent text-gray-500 dark:text-slate-300 text-right pr-[0.75rem] pl-1 w-fit sticky left-0 top-0 h-full weekdays text-xxs"
 	:style="{
 		'grid-row': row,
 		'grid-column': column,
