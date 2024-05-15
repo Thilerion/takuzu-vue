@@ -1,18 +1,18 @@
 <template>
 <div
 	ref="heatmapGridEl"
-	class="heatmap pr-2 pb-2 grid min-w-40 max-w-full overflow-x-auto relative"
+	class="heatmap pr-0.5 pb-2 grid min-w-40 max-w-full overflow-x-auto relative touch-pan-x"
 >
 	<StatisticsHeatMapMonths
 		:cells="heatmapCells"
 		row="month-start / month-end"
 		:column="`cell-col-start / span ${numWeeks}`"
-		class="z-10 pt-2"
+		class="z-10 pt-2 snap-both"
 	/>
 	<StatisticsHeatMapWeekdays
 		row="1 / span 8"
 		column="1 / span 1"
-		class="z-10"
+		class="z-10 snap-both"
 	/>
 	<div
 		v-for="cell in heatmapCells"
@@ -21,7 +21,7 @@
 			'grid-row': `cell-row-start ${cell.weekday + 1} / cell-row-end ${cell.weekday + 1}`,
 			'grid-column': `cell-col-start ${cell.weekIndex + 1} / cell-col-end ${cell.weekIndex + 1}`,
 		}"
-		class="heatmap-item"
+		class="heatmap-item snap-end"
 		:class="{ 'is-selected': cell.dateStr === selected }"
 		:data-level="getLevelFromDate(cell.dateStr)"
 		:data-has-data="items.has(cell.dateStr)"
@@ -87,6 +87,10 @@ onMounted(() => {
 	grid-template-rows: [month-start] auto [month-end] repeat(v-bind(numRows), [cell-row-start] var(--cellsize) [cell-row-end]);
 	grid-template-columns: [day-start] auto [day-end] repeat(v-bind(numCols), [cell-col-start] var(--cellsize) [cell-col-end]);
 	@apply gap-0.5;
+
+	/* Seems buggy when using proximity */
+	scroll-snap-type: x mandatory;
+	scroll-padding: 2px;
 }
 
 .heatmap-item {
@@ -95,6 +99,8 @@ onMounted(() => {
 	height: var(--cellsize);
 	background-color: var(--bg);
 	box-shadow: inset 0 0 var(--shadow-blur) 0 rgb(0 0 0 / var(--shadow-opacity));
+
+	scroll-snap-align: end;
 }
 
 [data-level] {
