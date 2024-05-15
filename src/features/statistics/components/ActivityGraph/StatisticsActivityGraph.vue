@@ -25,10 +25,10 @@ import { storeToRefs } from 'pinia';
 import { computed, ref } from 'vue';
 import { startOfDay, subDays, subYears } from 'date-fns';
 import { useStatisticsNextStore } from '../../store.js';
-import { createDailyActivitySummaries, rankDailyActivitySummaries } from '../../helpers/activity-summaries.js';
 import { createHeatmapRange } from '../../helpers/heatmap-base-data.js';
 import type { HeatMapItem } from './StatisticsHeatMap.vue';
 import { useFormattedDurationNarrow } from '../../composables/format-duration.js';
+import { createDailyActivitySummaries, rankDailyActivitySummaries } from '../../services/DailyActivityScores.service.js';
 
 const statsNextStore = useStatisticsNextStore();
 const { itemsRecentFirst } = storeToRefs(statsNextStore);
