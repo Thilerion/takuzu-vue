@@ -1,7 +1,7 @@
 <template>
 <div
 	ref="heatmapGridEl"
-	class="heatmap pr-0.5 pb-2 grid min-w-40 max-w-full overflow-x-auto relative touch-pan-x"
+	class="heatmap pr-0.5 pb-2 grid min-w-40 max-w-full overflow-x-auto relative"
 >
 	<StatisticsHeatMapMonths
 		:cells="heatmapCells"
