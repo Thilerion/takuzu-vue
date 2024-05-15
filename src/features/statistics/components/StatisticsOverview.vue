@@ -1,6 +1,5 @@
 <template>
 <div class="stats-overview">
-	<StatisticsBlockHeading>Overview</StatisticsBlockHeading>
 	<div class="grid gap-3 cards-grid max-w-screen-sm mx-auto">
 		<StatisticsOverviewTile
 			:value="statsNextStore.numSolved ?? 0"
@@ -22,8 +21,8 @@
 
 		<StatisticsOverviewTile>
 			<span>{{ mostPlayed30 ?? '---' }}</span>
-			<template #title>Most played <small>(30d)</small></template>
-			<template #footer>All-time: <span class="whitespace-nowrap">{{ mostPlayedAll ?? '---' }}</span></template>
+			<template #title>{{ $t('Statistics.Overview.most-played') }} <small>{{ $t('Statistics.overview.30d') }}</small></template>
+			<template #footer>{{ $t('Statistics.Overview.all-time') }} <span class="whitespace-nowrap">{{ mostPlayedAll ?? '---' }}</span></template>
 		</StatisticsOverviewTile>
 	</div>
 </div>

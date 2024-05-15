@@ -36,24 +36,24 @@
 	</div>
 	<div class="flex flex-row gap-6 justify-start last-of-type:pb-3">
 		<div class="flex flex-col w-1/4">
-			<div class="text-sm text-gray-600 dark:text-slate-300">Size</div>
+			<div class="text-sm text-gray-600 dark:text-slate-300">{{ $t('Statistics.History.size') }}</div>
 			<div class="text-lg text-black dark:text-slate-100">{{ dimensions }}</div>
 		</div>
 		<div class="flex flex-col w-1/4">
-			<div class="text-sm text-gray-600 dark:text-slate-300">Difficulty</div>
+			<div class="text-sm text-gray-600 dark:text-slate-300">{{ $t('Game.difficulty.label') }}</div>
 			<div class="text-lg text-black dark:text-slate-100">{{ difficulty }}*</div>
 		</div>
 		<div class="flex flex-col w-1/3">
-			<div class="text-sm text-gray-600 dark:text-slate-300">Time</div>
+			<div class="text-sm text-gray-600 dark:text-slate-300">{{ $t('Statistics.History.time') }}</div>
 			<div class="text-lg text-black dark:text-slate-100">
 				{{ timeElapsedFormatted.minsec }}<small class="opacity-80">.{{ timeElapsedFormatted.ms }}</small></div>
 		</div>
 	</div>
 	<div v-if="recordAll" class="inline-flex flex-row mb-2 text-xs mt-1 items-center bg-gray-100 dark:bg-slate-700 dark:text-slate-50 rounded-full mr-auto px-4 py-2">
 		<icon-fxemoji-trophy class="text-xs" />
-		<div v-if="currentTimeRecord" class="ml-1">Current time record!</div>
-		<div v-else-if="firstTimeRecord" class="ml-1">First time solved</div>
-		<div v-else-if="previousTimeRecord" class="ml-1">Previous time record</div>
+		<div v-if="currentTimeRecord" class="ml-1">{{ $t('Statistics.History.record.time-current') }}</div>
+		<div v-else-if="firstTimeRecord" class="ml-1">{{ $t('Statistics.History.record.first-solved') }}</div>
+		<div v-else-if="previousTimeRecord" class="ml-1">{{ $t('Statistics.History.record.time-previous') }}</div>
 	</div>
 	<HistoryListPuzzleItemNote
 		:id="props.item.id!"

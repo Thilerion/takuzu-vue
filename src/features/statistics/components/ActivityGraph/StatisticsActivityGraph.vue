@@ -12,7 +12,7 @@
 			class="text-xs flex gap-x-3 max-w-sm text-center mx-auto"
 		>
 			<div class="flex-1 w-1/4">{{ $d(selectedItem.date, 'date-short') }}</div>
-			<div class="flex-1 w-1/2">{{ selectedItem.data.puzzlesPlayed }} puzzles</div>
+			<div class="flex-1 w-1/2">{{ $t('Statistics.n-puzzles', [selectedItem.data.puzzlesPlayed]) }}</div>
 			<div class="flex-1 w-1/4">{{ formattedTimePlayed }}</div>
 		</div>
 	</div>

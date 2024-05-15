@@ -1,12 +1,12 @@
 <template>
 <div>
 	<StatisticsBlockHeading>
-		Recently Played
+		<span>{{ $t('Statistics.recently-played') }}</span>
 		<template #right>
 			<router-link
 				class="self-center text-teal-700 dark:text-teal-300 hover-hover:hover:text-teal-500 active:text-teal-500 dark:hover-hover:hover:text-teal-200 dark:active:text-teal-100 flex flex-row items-center"
 				:to="{ name: 'StatisticsHistory' }"
-			><div class="text-xs font-medium uppercase tracking-wider">View all</div><icon-ic-baseline-chevron-right class="text-xs w-5 h-5" /></router-link>
+			><div class="text-xs font-medium uppercase tracking-wider">{{ $t('Statistics.view-all') }}</div><icon-ic-baseline-chevron-right class="text-xs w-5 h-5" /></router-link>
 		</template>
 	</StatisticsBlockHeading>
 

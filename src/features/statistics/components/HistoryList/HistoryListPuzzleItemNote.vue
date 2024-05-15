@@ -11,7 +11,7 @@
 				@click="startEditing"
 			>
 				<span v-if="displayedNote">{{ displayedNote }}</span>
-				<div v-else class="opacity-0">Enter note here</div>
+				<div v-else class="opacity-0">{{ $t('Statistics.History.enter-note-here') }}</div>
 			</div>
 
 			<transition name="t-fade">
@@ -23,7 +23,7 @@
 						ref="inputEl"
 						v-model="unsavedNote"
 						type="text"
-						placeholder="Enter note here"
+						:placeholder="$t('Statistics.History.enter-note-here')"
 						class="flex-1 border-0 py-0 px-1 m-0 text-xs h-full focus:border-0 focus:outline-none ring-2 ring-slate-500/30 focus:ring-2 focus:ring-slate-500/50 leading-loose max-w-full rounded-sm transition duration-150 dark:bg-slate-600 dark:text-slate-200 dark:placeholder:text-slate-300"
 						@blur="saveNoteOnBlur"
 						@keydown.enter="saveNote"

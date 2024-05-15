@@ -117,7 +117,15 @@
 				"sort-by": "Sorteer op:",
 				"time-fastest-first": "Tijd: snelste eerst",
 				"time-slowest-first": "Tijd: langzaamste eerst"
-			}
+			},
+			"record": {
+				"first-solved": "Eerste keer opgelost",
+				"time-current": "Huidig tijdrecord!",
+				"time-previous": "Vorig tijdrecord"
+			},
+			"size": "Grootte",
+			"time": "Tijd",
+			"enter-note-here": "Voer hier een notitie in"
 		},
 		"fallback-error-msg": "Oeps... er is iets misgegaan",
 		"loading-statistics": "Statistieken laden...",
@@ -134,11 +142,20 @@
 			"n-solved-today": "{n} vandaag opgelost",
 			"puzzles-solved": "Puzzels opgelost",
 			"time-played": "Tijd gespeeld",
-			"time-played-30-days": "{time} in afg. 30 dagen"
+			"time-played-30-days": "{time} in afg. 30 dagen",
+			"all-time": "Allertijden:",
+			"most-played": "Meest gespeeld"
 		},
 		"export-data": "Backup data",
 		"import-stats": "Importeer data",
-		"reset-stats": "Reset stats"
+		"reset-stats": "Reset stats",
+		"overview": {
+			"30d": "(30d)"
+		},
+		"play-activity": "Spelactiviteit",
+		"recently-played": "Recent Gespeeld",
+		"view-all": "Alles bekijken",
+		"n-puzzles": "{0} puzzels"
 	},
 	"NotFound404": {
 		"page-not-found": "Pagina niet gevonden",
