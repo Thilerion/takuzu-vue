@@ -101,11 +101,50 @@
 		"History": {
 			"puzzle-history": "Puzzle history",
 			"none-found-with-filters": "No puzzles found with current filters!",
-			"none-played-yet": "You haven't played any puzzles yet!"
-		}
+			"none-played-yet": "You haven't played any puzzles yet!",
+			"filter": {
+				"any": "Any",
+				"favorites-only": "Favorites only",
+				"remove-filter": "Remove",
+				"hide-filters": "Hide filters",
+				"show-filters": "Show filters",
+				"no-filter": "No filter",
+				"all-time-records": "All time records",
+				"only-current-records": "Current time records",
+				"only-first-solves": "Only first solves",
+				"record": "Records",
+				"n-active-filters": "({0} active)",
+				"remove-all-filters": "Remove all filters"
+			},
+			"sort": {
+				"sort-by": "Sort by:",
+				"newest-first": "Newest first",
+				"oldest-first": "Oldest first",
+				"time-fastest-first": "Time: fastest first",
+				"time-slowest-first": "Time: slowest first"
+			}
+		},
+		"Overview": {
+			"puzzles-solved": "Puzzles solved",
+			"n-solved-today": "{n} solved today",
+			"time-played": "Time played",
+			"cells-filled": "Cells filled",
+			"time-parts-short": {
+				"minutes-seconds": "{minutes}m {seconds}s",
+				"hours-minutes": "{hours}h {minutes}m",
+				"days-hours": "{days}d {hours}h"
+			},
+			"time-played-30-days": "{time} in last 30 days"
+		},
+		"export-data": "Backup data",
+		"import-stats": "Import stats",
+		"reset-stats": "Reset stats"
 	},
 	"NotFound404": {
 		"page-not-found": "Page not found",
 		"you-will-be-redirected-main-menu": "You will now be redirected to the main menu..."
+	},
+	"Paginate": {
+		"amount-per-page": "Amount per page"
 	}
 }

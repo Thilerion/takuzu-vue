@@ -66,8 +66,8 @@ class StatsDB extends Dexie implements WithStatsDbTable {
 		return !!success;
 	}
 
-	clearTable(table: StatsDbTableKey = 'puzzleHistory') { 
-		this[table].clear();
+	async clearTable(table: StatsDbTableKey = 'puzzleHistory'): Promise<void> { 
+		return await this[table].clear();
 	}
 }
 

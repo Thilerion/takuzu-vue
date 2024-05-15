@@ -1,4 +1,4 @@
-import type { DifficultyKey } from "./lib/types.js";
+import type { DifficultyKey, DimensionStr } from "./lib/types.js";
 
 export const boardTypes = {
 	NORMAL: 'Normal',
@@ -10,7 +10,11 @@ export type BoardType = typeof boardTypes[keyof typeof boardTypes];
 export class BoardPreset {
 	type: BoardType;
 
-	constructor(public width: number, public height: number, public maxDifficulty: DifficultyKey) {
+	constructor(
+		public width: number,
+		public height: number,
+		public maxDifficulty: DifficultyKey
+	) {
 		this.type = dimensionsToBoardType(width, height);
 	}
 
@@ -72,6 +76,10 @@ export const getAllBoardPresetSizes = () => {
 	return PRESET_BOARD_SIZES.map(val => {
 		return { width: val.width, height: val.height };
 	})
+}
+// TODO: test isDimensionStr
+export const isDimensionStr = (val: string): val is DimensionStr => {
+	return /^\d+x\d+$/.test(val);
 }
 
 export const getAllPresetSizeDifficultyCombinations = () => {

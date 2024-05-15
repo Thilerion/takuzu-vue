@@ -10,7 +10,15 @@ export type ImportPuzzleHistoryDbOpts = Partial<Omit<ImportOptions, 'chunkSizeBy
 
 const TEMP_STATS_DB_NAME = 'tempStatsDb';
 
-export async function importPeek(blob: Blob) {
+export async function importPeek(blob: Blob): Promise<{
+	databaseName: string;
+	databaseVersion: number;
+	tables: {
+		name: string;
+		schema: string;
+		rowCount: number;
+	}[];
+}> {
 	const importMeta = await peakImportFile(blob);
 	const { data } = importMeta;
 	const { databaseName, databaseVersion, tables } = data;
@@ -22,7 +30,7 @@ export async function importPeek(blob: Blob) {
 	console.log(`Tables: ${tableStr}`);
 	console.groupEnd();
 
-	return { databaseName, databaseVersion, tables, _importMeta: importMeta };
+	return { databaseName, databaseVersion, tables };
 }
 
 export function exportPuzzleHistoryDb(db: StatsDB, options: ExportPuzzleHistoryDbOpts = {}) {
@@ -34,8 +42,11 @@ export function exportPuzzleHistoryDb(db: StatsDB, options: ExportPuzzleHistoryD
 	return exportDB(db, mergedOpts);
 }
 
-export async function cleanImportPuzzleHistoryDb(db: StatsDB, blob: Blob, options: ImportPuzzleHistoryDbOpts = {}) {
-	console.warn('WARNING: this function clears the database before importing.');
+export async function cleanImportPuzzleHistoryDb(db: StatsDB, blob: Blob, options: ImportPuzzleHistoryDbOpts = {}) {	
+	const curCount = await db.puzzleHistory.count();
+	if (curCount > 0) {
+		console.warn('WARNING: this function clears the database before importing.');		
+	}
 
 	const mergedOpts = {
 		acceptVersionDiff: false,
