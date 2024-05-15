@@ -9,6 +9,15 @@
 		>{{ $t('Statistics.History.filter.favorites-only') }}</InputToggle>
 	</div>
 
+	<div>
+		<InputToggle
+			id="hasNoteToggle"
+			v-model="hasNote"
+			class="mb-0 w-full font-medium text-sm"
+			small
+		>{{ $t('Statistics.History.filter.has-note') }}</InputToggle>
+	</div>
+
 	<div class="history-select-filter">
 		<label for="difficultySelect" class="block font-medium mb-2">{{ $t('Game.difficulty.label') }}:</label>
 		<button
@@ -66,6 +75,7 @@ const favoritesOnly = defineModel<boolean>('favorite', { required: true });
 const difficulty = defineModel<DifficultyKey | null>('difficulty', { required: true });
 const dimensions = defineModel<DimensionStr | null>('dimensions', { required: true });
 const records = defineModel<NonNullable<HistoryRecordFilter> | ''>('records', { required: true });
+const hasNote = defineModel<boolean>('hasNote', { required: true });
 </script>
 
 <style scoped>

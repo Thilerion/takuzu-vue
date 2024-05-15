@@ -14,6 +14,7 @@ const getFilterDefaults = () => ({
 	difficulty: null,
 	dimensions: null,
 	favorite: null,
+	hasNote: null,
 	records: null,
 });
 
@@ -66,6 +67,13 @@ export const useHistoryFilterSortPaginate = createSharedComposable(() => {
 			data.page = 1;
 		}
 	})
+	const hasNote = computed({
+		get: () => data.hasNote,
+		set: (val: HistoryFilterData['hasNote']) => {
+			data.hasNote = val;
+			data.page = 1;
+		}
+	})
 	const records = computed({
 		get: () => data.records,
 		set: (val: HistoryFilterData['records']) => {
@@ -76,9 +84,9 @@ export const useHistoryFilterSortPaginate = createSharedComposable(() => {
 
 	const filterData = computed(() => {
 		const {
-			difficulty, dimensions, favorite, records,
+			difficulty, dimensions, favorite, records, hasNote,
 		} = data;
-		return { difficulty, dimensions, favorite, records };
+		return { difficulty, dimensions, favorite, records, hasNote };
 	})
 	const numActiveFilters = computed(() => {
 		const filters = filterData.value;
@@ -106,7 +114,7 @@ export const useHistoryFilterSortPaginate = createSharedComposable(() => {
 		pageItemStart, pageItemEnd,
 		pageSize,
 		sortSelection,
-		difficulty, dimensions, favorite, records,
+		difficulty, dimensions, favorite, records, hasNote,
 		// readonly refs
 		sortBy: readonly(sortBy), sortDir: readonly(sortDir),
 		filterData,

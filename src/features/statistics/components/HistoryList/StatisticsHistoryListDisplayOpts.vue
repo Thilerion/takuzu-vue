@@ -53,6 +53,7 @@
 		<ExpandTransition :show="showFilters">
 			<StatisticsHistoryListFilters
 				v-model:favorite="favoriteModel"
+				v-model:hasNote="hasNoteModel"
 				v-model:difficulty="difficultyModel"
 				v-model:dimensions="dimensionsModel"
 				v-model:records="recordsModel"
@@ -76,6 +77,7 @@ const {
 	sortSelection,
 	pageSize,
 	favorite,
+	hasNote,
 	dimensions,
 	difficulty,
 	records,
@@ -88,6 +90,13 @@ const favoriteModel = computed({
 	set: (val: boolean) => {
 		if (val) favorite.value = true;
 		else favorite.value = null;
+	}
+})
+const hasNoteModel = computed({
+	get: () => hasNote.value === true,
+	set: (val: boolean) => {
+		if (val) hasNote.value = true;
+		else hasNote.value = null;
 	}
 })
 const difficultyModel = computed({

@@ -43,5 +43,8 @@
     "i18n-ally.sortKeys": false,
     "npm.packageManager": "pnpm",
     "i18n-ally.extract.autoDetect": true,
-    "vue.format.template.initialIndent": false
+    "vue.format.template.initialIndent": false,
+    "i18n-ally.regex.usageMatchAppend": [
+        "(?:i18n(?:-\\\\w+)?[ \\\\n]\\\\s*(?:\\\\w+=[\\'\"][^\\'\"]*[\\'\"][ \\\\n]\\\\s*)?(?:key)?path=|v-t=[\\'\"`{]|(?:this\\\\.|\\\\$|i18n\\\\.|[^\\\\w\\\\d])(?:t|tc|te)\\\\()\\\\s*[\\'\"`]({key})[\\'\"`])"
+    ]
 }

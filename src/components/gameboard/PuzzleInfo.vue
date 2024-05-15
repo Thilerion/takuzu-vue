@@ -12,7 +12,7 @@
 		:puzzle-paused="puzzlePaused"
 	/>
 
-	<i18n-t
+	<i18n-t 
 		keypath="PlayPuzzle.progress-percentage"
 		tag="div"
 		scope="global"

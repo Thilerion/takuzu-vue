@@ -112,7 +112,8 @@
 				"only-first-solves": "Only first solves",
 				"record": "Records",
 				"n-active-filters": "({0} active)",
-				"remove-all-filters": "Remove all filters"
+				"remove-all-filters": "Remove all filters",
+				"has-note": "Has note"
 			},
 			"sort": {
 				"sort-by": "Sort by:",

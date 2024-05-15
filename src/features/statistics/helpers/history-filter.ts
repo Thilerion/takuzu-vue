@@ -5,6 +5,7 @@ import type { StatsDbExtendedStatisticDataEntry } from "@/services/db/stats-db/m
 export type HistoryDifficultyFilter = DifficultyKey | null;
 export type HistoryDimensionsFilter = DimensionStr | /* DimensionStr[] |  */null;
 export type HistoryFavoriteFilter = true | null;
+export type HistoryHasNoteFilter = true | null;
 export type HistoryRecordFilter = 'time-current' | 'time-all' | 'first' | null;
 
 export type HistoryFilterData = {
@@ -14,6 +15,8 @@ export type HistoryFilterData = {
 	dimensions: HistoryDimensionsFilter;
 	/** Show only favorites, or null if no filter */
 	favorite: HistoryFavoriteFilter;
+	/** Show only puzzles with notes, or null if no filter */
+	hasNote: HistoryHasNoteFilter;
 	/** Show only puzzles with a specific record type (timeRecord: current or all; first time played) or null if no filter */
 	records: HistoryRecordFilter;
 };
@@ -24,6 +27,7 @@ type FilterableItem = {
 	flags?: {
 		favorite?: boolean | 1 | 0;
 	},
+	note?: string | undefined;
 	id?: StatsDbExtendedStatisticDataEntry['id']
 }
 type FilterFn = (item: FilterableItem, ctx: { records: HistoryListRecordsLists }) => boolean;
@@ -43,6 +47,10 @@ function getFavoriteFilter(value: HistoryFavoriteFilter): FilterFn {
 		const flagValue = item.flags?.favorite;
 		return !!flagValue;
 	}
+}
+function getHasNoteFilter(value: HistoryHasNoteFilter): FilterFn {
+	if (!value) return identity;
+	return (item: FilterableItem) => !!item.note;
 }
 function getRecordFilter(value: HistoryRecordFilter): FilterFn {
 	if (value == null) return identity;
@@ -68,10 +76,11 @@ function getRecordFilter(value: HistoryRecordFilter): FilterFn {
 export function getFilterFn(data: HistoryFilterData) {
 	const dimensionsFilter = getDimensionsFilter(data.dimensions);
 	const difficultyFilter = getDifficultyFilter(data.difficulty);
+	const hasNoteFilter = getHasNoteFilter(data.hasNote);
 	const favoriteFilter = getFavoriteFilter(data.favorite);
 	const recordFilter = getRecordFilter(data.records);
 
 	return (item: FilterableItem, ctx: { records: HistoryListRecordsLists }) => {
-		return dimensionsFilter(item, ctx) && difficultyFilter(item, ctx) && recordFilter(item, ctx) && favoriteFilter(item, ctx);
+		return hasNoteFilter(item, ctx) && dimensionsFilter(item, ctx) && difficultyFilter(item, ctx) && recordFilter(item, ctx) && favoriteFilter(item, ctx);
 	}
 }

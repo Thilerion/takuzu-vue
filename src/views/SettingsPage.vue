@@ -65,7 +65,7 @@
 								name="radio-toggle-mode"
 								value="0"
 							>
-							<i18n-t
+							<i18n-t 
 								keypath="Settings.input-mode.toggle-symbol-first"
 								tag="span"
 								class="ml-2"
@@ -86,7 +86,7 @@
 								name="radio-toggle-mode"
 								value="1"
 							>
-							<i18n-t
+							<i18n-t 
 								keypath="Settings.input-mode.toggle-symbol-first"
 								tag="span"
 								class="ml-2"
