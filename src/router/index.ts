@@ -15,7 +15,6 @@ import MainPage from '@/components/base/layout/MainPage.vue';
 import HomePage from '../views/HomePage.vue';
 const HowToPlay = () => import('../views/HowToPlay.vue');
 const TutorialPage = () => import('../views/TutorialPage.vue');
-const StatisticsPage = () => import('../views/StatisticsPage.vue');
 const SettingsPage = () => import('../views/SettingsPage.vue');
 
 // NESTED PAGES / OVERLAY PAGES
@@ -57,19 +56,15 @@ const routes = [
 				}
 			},
 			{
-				path: '/stats',
-				name: 'Statistics',
-				component: StatisticsPage,
-				meta: {
-					title: 'Statistics'
-				}
+				path: '/statistics',
+				redirect: '/stats',
 			},
 			{
-				path: '/statistics',
+				path: '/stats',
 				children: [
 					{
 						path: '',
-						name: 'StatisticsNext',
+						name: 'Statistics',
 						component: () => import('../views/StatisticsPageNext.vue'),
 						meta: {
 							title: 'Statistics'
@@ -84,22 +79,6 @@ const routes = [
 						}
 					}
 				]
-			},
-			{
-				path: '/stats/history',
-				name: 'PuzzleHistory',
-				component: () => import('../views/PuzzleHistoryView.vue'),
-				meta: {
-					title: 'Statistics - Puzzle History'
-				}
-			},
-			{
-				path: '/stats/table',
-				name: 'PuzzleStatisticsTable',
-				component: () => import('../views/PuzzleStatisticsTable.vue'),
-				meta: {
-					title: 'Statistics - Puzzles'
-				}
 			},
 			{
 				path: '/settings',
