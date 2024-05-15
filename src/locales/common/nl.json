@@ -80,7 +80,6 @@
 		"tools": "Gereedschap"
 	},
 	"test": "Test",
-	"tip": "Tip",
 	"unknown": "onbekend",
 	"Unknown": "Onbekend",
 	"NewUpdate": {
@@ -130,7 +129,6 @@
 		"fallback-error-msg": "Oeps... er is iets misgegaan",
 		"loading-statistics": "Statistieken laden...",
 		"none-solved-warning": "Je hebt nog geen puzzels opgelost! Ga er een paar spelen!",
-		"puzzle-statistics": "Puzzelstatistieken",
 		"title": "Statistieken",
 		"Overview": {
 			"time-parts-short": {

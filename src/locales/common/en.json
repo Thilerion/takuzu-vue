@@ -80,7 +80,6 @@
 		"tools": "Tools"
 	},
 	"test": "Test",
-	"tip": "Tip",
 	"unknown": "unknown",
 	"Unknown": "Unknown",
 	"NewUpdate": {
@@ -97,7 +96,6 @@
 		"loading-statistics": "Loading statistics...",
 		"none-solved-warning": "You haven't solved any puzzles yet! Go play some!",
 		"fallback-error-msg": "Woops... something went wrong",
-		"puzzle-statistics": "Puzzle statistics",
 		"History": {
 			"puzzle-history": "Puzzle history",
 			"none-found-with-filters": "No puzzles found with current filters!",
