@@ -3,7 +3,7 @@
 	class="bg-white dark:bg-slate-700 dark:text-slate-100 rounded shadow-lg px-3 tile-inner-grid py-2"
 >
 	<header class="text-sm tracking-wide text-gray-500 dark:text-slate-100">
-		<h3><slot name="title"></slot></h3>
+		<h3 class="whitespace-nowrap"><slot name="title"></slot></h3>
 	</header>
 
 	<div
@@ -24,6 +24,8 @@ defineProps<{
 
 <style scoped>
 .tile-inner-grid {
-	@apply grid auto-rows-auto grid-cols-1 justify-items-start;
+	@apply grid justify-items-start;
+	grid-template-columns: 1fr;
+	grid-template-rows: auto 1fr auto
 }
 </style>
