@@ -1,10 +1,23 @@
 <template>
-<StatisticsHeatMap
-	:range="graphRange"
-	:items="items"
-	:selected="selectedItem"
-	@toggle="toggleItem($event)"
-/>
+<div>
+	<StatisticsHeatMap
+		:range="graphRange"
+		:items="items"
+		:selected="selectedItemDateStr"
+		@toggle="toggleItem($event)"
+	/>
+	<div class="h-6 w-full px-2 my-2">
+		<div
+			v-if="selectedItem != null"
+			class="text-xs flex gap-x-3 max-w-sm text-center mx-auto"
+		>
+			<div class="flex-1 w-1/4">{{ $d(selectedItem.date, 'date-short') }}</div>
+			<div class="flex-1 w-1/2">{{ selectedItem.data.puzzlesPlayed }} puzzles</div>
+			<div class="flex-1 w-1/4">{{ formattedTimePlayed }}</div>
+		</div>
+	</div>
+	
+</div>
 </template>
 
 <script setup lang="ts">
@@ -15,6 +28,7 @@ import { useStatisticsNextStore } from '../../store.js';
 import { createDailyActivitySummaries, rankDailyActivitySummaries } from '../../helpers/activity-summaries.js';
 import { createHeatmapRange } from '../../helpers/heatmap-base-data.js';
 import type { HeatMapItem } from './StatisticsHeatMap.vue';
+import { useFormattedDurationNarrow } from '../../composables/format-duration.js';
 
 const statsNextStore = useStatisticsNextStore();
 const { itemsRecentFirst } = storeToRefs(statsNextStore);
@@ -38,6 +52,7 @@ const items = computed(() => {
 	for (const [dateStr, summary] of activitySummaries.value) {
 		const rank = activityRanks.value.get(dateStr)!;
 		result.set(dateStr, {
+			date: summary.date,
 			dateStr,
 			level: rank + 1,
 			data: {
@@ -49,12 +64,23 @@ const items = computed(() => {
 	return result;
 })
 
-const selectedItem = ref<string | undefined>();
-function toggleItem(item: HeatMapItem) {
-	if (selectedItem.value === item.dateStr) {
-		selectedItem.value = undefined;
+const selectedItemDateStr = ref<string | undefined>();
+const selectedItem = computed((): HeatMapItem | undefined => {
+	if (selectedItemDateStr.value == null) return undefined;
+	return items.value.get(selectedItemDateStr.value)!;
+})
+const selectedItemTimePlayed = computed(() => {
+	if (selectedItem.value == null) return undefined;
+	return selectedItem.value.data.totalTime;
+})
+const formattedTimePlayed = useFormattedDurationNarrow(selectedItemTimePlayed);
+function toggleItem(dateStr: string) {
+	if (selectedItemDateStr.value === dateStr) {
+		selectedItemDateStr.value = undefined;
+	} else if (!items.value.has(dateStr)) {
+		selectedItemDateStr.value = undefined;
 	} else {
-		selectedItem.value = item.dateStr;
+		selectedItemDateStr.value = dateStr;
 	}
 }
 </script>

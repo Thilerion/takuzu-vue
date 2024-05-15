@@ -25,7 +25,7 @@
 		:class="{ 'is-selected': cell.dateStr === selected }"
 		:data-level="getLevelFromDate(cell.dateStr)"
 		:data-has-data="items.has(cell.dateStr)"
-		@click="emit('toggle', items.get(cell.dateStr)!)"
+		@click="emit('toggle', cell.dateStr)"
 	></div>
 </div>
 </template>
@@ -36,6 +36,7 @@ import { createHeatmapRangeCells } from '../../helpers/heatmap-base-data.js';
 
 export type HeatMapItem = {
 	dateStr: string,
+	date: Date,
 	level: number,
 	data: {
 		puzzlesPlayed: number,
@@ -44,7 +45,7 @@ export type HeatMapItem = {
 }
 
 const emit = defineEmits<{
-	(e: 'toggle', value: HeatMapItem): void
+	(e: 'toggle', value: string): void
 }>();
 
 const props = defineProps<{

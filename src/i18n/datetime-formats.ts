@@ -6,12 +6,18 @@ export const datetimeFormats: Record<SupportedLocale, IntlDateTimeFormat> = {
 		'long': {
 			year: 'numeric', month: 'long', weekday: 'short', day: 'numeric',
 			hour: 'numeric', minute: 'numeric', second: 'numeric'
+		},
+		'date-short': {
+			dateStyle: 'medium'
 		}
 	},
 	'nl': {
 		'long': {
 			year: 'numeric', month: 'long', weekday: 'short', day: 'numeric',
 			hour: 'numeric', minute: 'numeric', second: 'numeric'
+		},
+		'date-short': {
+			dateStyle: 'medium'
 		}
 	}
 }

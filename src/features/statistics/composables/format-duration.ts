@@ -1,13 +1,15 @@
 import { computed, type ComputedRef, type Ref } from "vue";
 import { useI18n } from "vue-i18n";
 
-export const useFormattedDurationNarrow = (timeMs: Ref<number>): ComputedRef<string> => {
-	const durationPartsResult = computed<DurationFormattedParts>(() => {
+export const useFormattedDurationNarrow = (timeMs: Ref<number | undefined>): ComputedRef<string> => {
+	const durationPartsResult = computed<DurationFormattedParts | null>(() => {
+		if (timeMs.value == null) return null;
 		return getDurationParts(timeMs.value);
 	});
 	const { t } = useI18n();
 	const message = computed(() => {
-		const { type, ...parts } = durationPartsResult.value;
+		if (timeMs.value == null) return '';
+		const { type, ...parts } = durationPartsResult.value!;
 		switch (type) {
 			case 'minutes-seconds':
 				return t('Statistics.Overview.time-parts-short.minutes-seconds', parts);

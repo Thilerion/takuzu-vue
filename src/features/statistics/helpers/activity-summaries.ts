@@ -1,7 +1,9 @@
 import type { StatsDbExtendedStatisticDataEntry } from "@/services/db/stats-db/models.js";
 import { getExtent } from "@/utils/data-analysis.utils.js";
+import { startOfDay } from "date-fns";
 
 export type ActivitySummary = {
+	date: Date;
 	localDateStr: string;
 	puzzlesPlayed: number;
 	totalCells: number;
@@ -17,6 +19,7 @@ export function createDailyActivitySummaries(itemsRecentFirst: StatsDbExtendedSt
 		const localDateStr = item.localDateStr;
 		if (!result.has(localDateStr)) {
 			result.set(localDateStr, {
+				date: startOfDay(new Date(item.date)),
 				localDateStr,
 				puzzlesPlayed: 0,
 				totalCells: 0,
