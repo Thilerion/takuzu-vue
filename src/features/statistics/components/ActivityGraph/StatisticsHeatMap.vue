@@ -28,57 +28,53 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
-import { createHeatmapRange, createHeatmapRangeCells } from '../../helpers/heatmap-base-data.js';
-import type { StatsDbExtendedStatisticDataEntry } from '@/services/db/stats-db/models.js';
-import { createDailyActivitySummaries, rankDailyActivitySummaries } from '../../helpers/activity-summaries.js';
+import { computed, onMounted, ref } from 'vue';
+import { createHeatmapRangeCells } from '../../helpers/heatmap-base-data.js';
 
 const props = defineProps<{
-	items: StatsDbExtendedStatisticDataEntry[]
+	ranks: Map<string, number>,
+	range: { start: Date, end: Date },
 }>();
 
-const activitySummaries = computed(() => createDailyActivitySummaries(props.items));
-const activityRanks = computed(() => {
-	return rankDailyActivitySummaries(activitySummaries.value);
-})
-onMounted(() => console.log(activitySummaries.value, activityRanks.value));
-
 const getLevelFromDate = (date: string) => {
-	const rankVal = activityRanks.value.get(date);
+	const rankVal = props.ranks.get(date);
 	if (rankVal == null) return 0;
 	return rankVal + 1;
 }
 
-const range = ref(createHeatmapRange());
-const heatmapCells = ref(createHeatmapRangeCells(range.value));
+const heatmapCells = ref(createHeatmapRangeCells(props.range));
 const numWeeks = computed(() => {
 	const lastCell = heatmapCells.value.at(-1);
 	if (lastCell == null) return 0;
 	return lastCell.weekIndex + 1;
 })
 
-const numRows = ref(7);
+const numRows = 7;
 const numCols = computed(() => numWeeks.value);
 
+// Set element scrolled to the end
 const heatmapGridEl = ref<HTMLElement | null>(null);
 const scrollToEnd = async (el: HTMLElement) => {
 	el.scrollTo(el.scrollWidth, 0);
 };
-watch(heatmapGridEl, (el) => {
-	if (el == null) return;
-	scrollToEnd(el);
+onMounted(() => {
+	if (heatmapGridEl.value == null) return;
+	scrollToEnd(heatmapGridEl.value);
 });
 </script>
 
 <style scoped>
 .heatmap {
-	grid-template-rows: [month-start] auto [month-end] repeat(v-bind(numRows), [cell-row-start] 1rem [cell-row-end]);
-	grid-template-columns: [day-start] auto [day-end] repeat(v-bind(numCols), [cell-col-start] 1rem [cell-col-end]);
+	--cellsize: 1.25rem;
+	grid-template-rows: [month-start] auto [month-end] repeat(v-bind(numRows), [cell-row-start] var(--cellsize) [cell-row-end]);
+	grid-template-columns: [day-start] auto [day-end] repeat(v-bind(numCols), [cell-col-start] var(--cellsize) [cell-col-end]);
 	@apply gap-0.5;
 }
 
 .heatmap-item {
-	@apply w-4 h-4 aspect-square rounded-[1px];
+	@apply aspect-square rounded-[1px];
+	width: var(--cellsize);
+	height: var(--cellsize);
 	background-color: var(--bg);
 	box-shadow: inset 0 0 var(--shadow-blur) 0 rgb(0 0 0 / var(--shadow-opacity));
 }

@@ -1,7 +1,7 @@
 import type { StatsDbExtendedStatisticDataEntry } from "@/services/db/stats-db/models.js";
 import { getExtent } from "@/utils/data-analysis.utils.js";
 
-type ActivitySummary = {
+export type ActivitySummary = {
 	localDateStr: string;
 	puzzlesPlayed: number;
 	totalCells: number;
@@ -77,7 +77,6 @@ const normalizeScores = (scores: number[]) => {
 
 const assignRanks = (normalizedScores: number[], numRanks = 5) => {
 	const rankBoundaries = new Array(numRanks).fill(0).map((_, i) => i / numRanks);
-	console.log({ normalizedScores, rankBoundaries });
 	return normalizedScores.map(score => {
 		for (let rank = numRanks - 1; rank >= 0; rank--) {
 			if (score >= rankBoundaries[rank]) {

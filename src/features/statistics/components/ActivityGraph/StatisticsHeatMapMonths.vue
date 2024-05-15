@@ -9,6 +9,7 @@
 	<div
 		v-for="range in monthColumnRanges"
 		:key="range.colStart"
+		class="pb-px pl-px"
 		:class="{ 'text-right': range.alignRight }"
 		:style="{
 			'grid-column-start': `${range.colStart + 1}`,

@@ -1,5 +1,5 @@
 import { formatBasicSortableDateKey, getWeekdayFromDate } from "@/utils/date.utils.js";
-import { addDays, eachDayOfInterval, startOfDay, subYears } from "date-fns";
+import { addDays, addHours, eachDayOfInterval, startOfDay, subYears } from "date-fns";
 
 type DateParts = {
 	year: number;
@@ -19,8 +19,8 @@ export type HeatmapRange = {
 }
 
 export function createHeatmapRange(): HeatmapRange {
-	const today = startOfDay(new Date());
-	const oneYearAgo = addDays(subYears(today, 1), 1);
+	const today = addHours(startOfDay(new Date()), 12);
+	const oneYearAgo = addDays(subYears(today, 1), 2);
 	return {
 		start: oneYearAgo,
 		end: today,
