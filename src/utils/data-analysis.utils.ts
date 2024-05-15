@@ -154,3 +154,41 @@ export function isPotentialOutlierFromDataset(
 	const stdDev = getStdDev(dataset, { type: 'sample' });
 	return isPotentialOutlier(target, mean, stdDev, threshold);
 }
+
+/**
+ * Calculates the quantile of a sorted array using linear interpolation.
+ *
+ * @param arr - A sorted array of numbers. Must have at least 4 elements.
+ * @param q - The quantile value (must be between 0 and 1).
+ * @returns The value at the specified quantile position.
+ * @throws Will throw an error if the quantile value is not between 0 and 1 or if the array is empty.
+ *
+ * @example
+ * ```typescript
+ * const sortedArray = [1, 2, 3, 4, 5];
+ * const qValue = 0.25;
+ * console.log(quantile(sortedArray, qValue)); // Output: 2
+ * ```
+ */
+export function quantile(arr: number[], q: number): number {
+    if (q < 0 || q > 1) {
+        throw new Error("Quantile value must be between 0 and 1");
+    }
+
+    const len = arr.length;
+    if (len === 0) {
+        throw new Error("Array cannot be empty");
+    } else if (len < 4) {
+		throw new Error("Array must have at least 4 elements");
+	}
+
+    const pos = (len - 1) * q;
+    const base = Math.floor(pos);
+    const rest = pos - base;
+
+    if (base + 1 < len) {
+        return arr[base] + rest * (arr[base + 1] - arr[base]);
+    } else {
+        return arr[base];
+    }
+}

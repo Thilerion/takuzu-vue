@@ -1,6 +1,6 @@
 import { MINUTE } from "@/utils/time.utils.js";
 import type { WithScore, WithLevel, ActivityLevel, DetermineLevelFn, ActivitySummary } from "./types.js";
-import { getExtent } from "@/utils/data-analysis.utils.js";
+import { getExtent, quantile } from "@/utils/data-analysis.utils.js";
 
 export function assignActivityLevels(
 	scoredMap: Map<string, WithScore<ActivitySummary>>,
@@ -22,8 +22,10 @@ export function assignActivityLevels(
 function getDetermineLevelFn(scoredMap: Map<string, WithScore<ActivitySummary>>): DetermineLevelFn {
 	if (scoredMap.size === 1) {
 		return determineActivityLevelSingleDay();
+	} else if (scoredMap.size <= 12) {
+		return determineActivityLevelFewDays(scoredMap);
 	} else {
-		return legacyDetermineActivityLevel(scoredMap);
+		return determineActivityLevelManyDays(scoredMap);
 	}
 }
 
@@ -44,7 +46,7 @@ const determineActivityLevelSingleDay = (): DetermineLevelFn => (summary: Activi
 	}
 }
 
-const legacyDetermineActivityLevel = (
+const determineActivityLevelFewDays = (
 	summaryMap: Map<string, WithScore<ActivitySummary>>
 ): DetermineLevelFn => {
 	const summaries = Array.from(summaryMap.values());
@@ -70,4 +72,52 @@ function createNormalizeScore(scores: number[]) {
 	const [minScore, maxScore] = getExtent(scores);
 	const scoreRange = maxScore - minScore;
 	return (score: number) => (score - minScore) / scoreRange;
+}
+
+function determineActivityLevelManyDays(
+	summaryMap: Map<string, WithScore<ActivitySummary>>
+): DetermineLevelFn {
+	// Sort the summaries by score (lowest > highest)
+	const sortedSummaries = Array
+		.from(summaryMap.values())
+		.sort((a, b) => a.score - b.score);
+	const sortedScores = sortedSummaries.map(summary => summary.score);
+
+	// The lowest 35% of scores are level 1, or all scores with a score lower than 20 (if that includes more items)
+	const q35 = quantile(sortedScores, 0.35);
+	const maxScoreRankOne = q35 > 20 ? q35 : 20;
+	
+	const isRankOne = (summary: WithScore<ActivitySummary>) => {
+		return summary.score <= maxScoreRankOne;
+	}
+	
+	const q90 = quantile(sortedScores, 0.9);
+	// The highest 10% of scores are level 5 (uses q90)
+	const isRankFive = (summary: WithScore<ActivitySummary>) => {
+		return summary.score >= q90;
+	}
+
+	// spread rest between levels 2, 3, and 4
+	const indexStart = sortedScores.findIndex(s => s > maxScoreRankOne);
+	const indexEnd = sortedScores.findIndex(s => s >= q90);
+	const range = indexEnd - indexStart;
+	const perLevel = range / 3;
+	
+	const indexLevelTwo = indexStart + Math.floor(perLevel);
+	const indexLevelThree = indexLevelTwo + Math.floor(perLevel);
+	const getLevelMiddle = (summary: WithScore<ActivitySummary>, idx: number) => {
+		if (idx <= indexLevelTwo) return 2;
+		else if (idx <= indexLevelThree) return 3;
+		else return 4;
+	}
+
+	return (summary) => {
+		const sortedIndex = sortedSummaries.findIndex(s => s.localDateStr === summary.localDateStr);
+		if (sortedIndex === -1) {
+			throw new Error("Summary not found in sorted summaries");
+		}
+		if (isRankOne(summary)) return 1;
+		else if (isRankFive(summary)) return 5;
+		else return getLevelMiddle(summary, sortedIndex);		
+	};
 }
