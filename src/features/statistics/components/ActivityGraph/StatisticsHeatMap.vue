@@ -138,11 +138,11 @@ onMounted(() => {
 }
 
 :where([data-base-theme="dark"] [data-level]) {
-	--color-from: #594e86;
-	--color-to: #dd87ff;
+	--color-from: hsl(286, 47%, 33%);
+	--color-to: hsl(332, 100%, 88%);
 }
 :where([data-base-theme="dark"]) [data-level="0"] {
-	--bg: hsl(253 15% 38% / 0.7);
+	--bg: rgb(200 200 200 / 0.07);
 	--shadow-opacity: 0.05;
 }
 :where([data-base-theme="dark"]) [data-level="1"] {
