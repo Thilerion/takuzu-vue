@@ -22,7 +22,10 @@
 			'grid-column': `cell-col-start ${cell.weekIndex + 1} / cell-col-end ${cell.weekIndex + 1}`,
 		}"
 		class="heatmap-item snap-end"
-		:class="{ 'is-selected': cell.dateStr === selected }"
+		:class="{
+			'is-selected': cell.dateStr === selected,
+			'last-column': cell.weekIndex === numCols - 1,
+		}"
 		:data-level="getLevelFromDate(cell.dateStr)"
 		:data-has-data="items.has(cell.dateStr)"
 		@click="emit('toggle', cell.dateStr)"
@@ -84,13 +87,16 @@ onMounted(() => {
 <style scoped>
 .heatmap {
 	--cellsize: 1.25rem;
+	--gap: 2px;
+	--padding-right: 0.6rem;
+
 	grid-template-rows: [month-start] auto [month-end] repeat(v-bind(numRows), [cell-row-start] var(--cellsize) [cell-row-end]);
 	grid-template-columns: [day-start] auto [day-end] repeat(v-bind(numCols), [cell-col-start] var(--cellsize) [cell-col-end]);
-	@apply gap-0.5;
+	@apply gap-[--gap] pr-[--padding-right];
 
 	/* Seems buggy when using proximity */
 	scroll-snap-type: x mandatory;
-	scroll-padding: 2px;
+	scroll-padding: 0 var(--gap) 0 0;
 }
 
 .heatmap-item {
@@ -101,6 +107,9 @@ onMounted(() => {
 	box-shadow: inset 0 0 var(--shadow-blur) 0 rgb(0 0 0 / var(--shadow-opacity));
 
 	scroll-snap-align: end;
+}
+.last-column {
+	scroll-margin-right: var(--padding-right);
 }
 
 [data-level] {
