@@ -28,7 +28,10 @@ import { useStatisticsNextStore } from '../../store.js';
 import { createHeatmapRange } from '../../helpers/heatmap-base-data.js';
 import type { HeatMapItem } from './StatisticsHeatMap.vue';
 import { useFormattedDurationNarrow } from '../../composables/format-duration.js';
-import { createDailyActivitySummaries, rankDailyActivitySummaries } from '../../services/DailyActivityScores.service.js';
+import { createDailyActivitySummaries } from '../../services/DailyActivity/summaries.service.js';
+import { assignActivityScores } from '../../services/DailyActivity/scores.service.js';
+import { assignActivityLevels } from '../../services/DailyActivity/activity-levels.service.js';
+import type { ActivitySummaryComplete } from '../../services/DailyActivity/types.js';
 
 const statsNextStore = useStatisticsNextStore();
 const { itemsRecentFirst } = storeToRefs(statsNextStore);
@@ -40,8 +43,9 @@ const itemsPastYear = computed(() => {
 })
 
 const activitySummaries = computed(() => createDailyActivitySummaries(itemsPastYear.value));
-const activityRanks = computed(() => {
-	return rankDailyActivitySummaries(activitySummaries.value);
+const withScoresAndLevels = computed((): Map<string, ActivitySummaryComplete> => {
+	const withScores = assignActivityScores(activitySummaries.value);
+	return assignActivityLevels(withScores);
 })
 
 const graphRange = computed(() => createHeatmapRange());
@@ -49,15 +53,15 @@ const graphRange = computed(() => createHeatmapRange());
 const items = computed(() => {
 	const result: Map<string, HeatMapItem> = new Map();
 
-	for (const [dateStr, summary] of activitySummaries.value) {
-		const rank = activityRanks.value.get(dateStr)!;
+	for (const [dateStr, summary] of withScoresAndLevels.value) {
+		const { date, level, totalTime, puzzlesPlayed } = summary;
 		result.set(dateStr, {
-			date: summary.date,
+			date: date,
 			dateStr,
-			level: rank + 1,
+			level,
 			data: {
-				puzzlesPlayed: summary.puzzlesPlayed,
-				totalTime: summary.totalTime,
+				puzzlesPlayed: puzzlesPlayed,
+				totalTime: totalTime,
 			}
 		})
 	}
