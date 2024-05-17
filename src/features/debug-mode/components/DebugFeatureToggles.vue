@@ -19,10 +19,10 @@
 </template>
 
 <script setup lang="ts">
-import type { FeatureData } from '@/stores/composables/useFeatureToggle';
-import { useMainStore } from '@/stores/main';
+import { useMainStore } from '@/stores/main.js';
 import { useDebounceFn } from '@vueuse/core';
 import { toRefs, type Ref } from 'vue';
+import type { FeatureData } from '../composables/debug-mode-features.js';
 
 const mainStore = useMainStore();
 const features = toRefs(mainStore.featureToggles);

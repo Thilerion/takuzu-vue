@@ -45,12 +45,12 @@
 	<BasicLinkList>
 		<AppVersionDisplay
 			:debug-mode="isDebugModeEnabled"
-			@increment-debug-mode="toggleDebugMode(true, { immediate: false })"
+			@increment-debug-mode="toggleWithCounter(true)"
 		/>
 		<BasicLinkListItem v-if="isDebugModeEnabled"><router-link to="/debug-options">{{
 			$t('Settings.dev.developer-options') }}</router-link></BasicLinkListItem>
 		<BasicLinkListItem v-if="isDebugModeEnabled">
-			<button @click="toggleDebugMode(false, { immediate: true })">
+			<button @click="toggleWithCounter(false)">
 				{{ $t('Settings.dev.disable-developer-mode') }}</button>
 		</BasicLinkListItem>
 	</BasicLinkList>
@@ -58,11 +58,11 @@
 </template>
 
 <script setup lang="ts">
-import { useDebugMode } from '@/stores/composables/useDebugMode.js';
+import { useDebugMode } from '@/features/debug-mode/composables/debug-mode-enabled.js';
 import { useSettingsStore } from '../store.js';
 import { storeToRefs } from 'pinia';
 
-const { enabled: isDebugModeEnabled, toggleDebugMode } = useDebugMode();
+const { enabled: isDebugModeEnabled, toggleWithCounter } = useDebugMode();
 
 const settingsStore = useSettingsStore();
 const { cellTheme, checkButton, toggleMode, showLineInfo, enableWakeLock, showTimer, language } = storeToRefs(settingsStore);

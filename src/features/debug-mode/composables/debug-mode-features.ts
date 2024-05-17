@@ -1,12 +1,12 @@
+import { useIsDebugModeEnabled } from "@/features/debug-mode/composables/debug-mode-enabled.js";
 import { useStorage } from "@vueuse/core";
 import { computed, reactive, ref, watch } from "vue"
-import { useDebugMode } from "./useDebugMode";
 
 export type FeatureToggleKey = 'addPuzzleToHistoryWithCheats' | 'analysisTool' | 'customPuzzleTool';
 export type FeatureData = ReturnType<typeof useFeatureToggle>;
 
 export const useFeatureToggles = () => {
-	const { enabled: debugModeEnabled } = useDebugMode();
+	const debugModeEnabled = useIsDebugModeEnabled();
 
 	const storageState = useStorage<Record<string, boolean>>('takuzu_feature-toggles', {}, localStorage, {
 		writeDefaults: true,
@@ -59,7 +59,7 @@ interface FeatureToggleProps {
 export const useFeatureToggle = ({
 	defaultValue, requiresDebugMode, label
 }: FeatureToggleProps) => {
-	const { enabled: debugModeEnabled } = useDebugMode();
+	const debugModeEnabled = useIsDebugModeEnabled();
 
 	const toggleValue = ref(defaultValue);
 	const isEnabled = requiresDebugMode ? computed({

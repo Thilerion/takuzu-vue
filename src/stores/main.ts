@@ -3,15 +3,13 @@ import { useDeviceOrientation } from "./composables/useDeviceOrientation";
 import { useViewportSize } from "./composables/useViewportSize";
 import { usePageVisibility } from "./composables/usePageVisibility";
 import { useBuildModeFlags } from "./composables/useBuildModeFlags";
-import { useDebugMode } from "./composables/useDebugMode";
-import { useFeatureToggles } from "./composables/useFeatureToggle";
 import { useTouchDetection } from "./composables/useDetectTouch";
 import { useIsPwaInstalled } from "./composables/useIsPwaInstalled";
 import { useIsFirstVisit } from "./composables/useIsFirstVisit";
 import { useUserAgentData } from "./composables/useUserAgentData";
 import { useBuildVersionDetails } from "./composables/version/useBuildVersionDetails";
-
-const { enabled: debugModeEnabled } = useDebugMode();
+import { useFeatureToggles } from "@/features/debug-mode/composables/debug-mode-features.js";
+import { useIsDebugModeEnabled } from "@/features/debug-mode/composables/debug-mode-enabled.js";
 
 const useAppContext = () => {
 	const uaData = useUserAgentData();
@@ -50,7 +48,7 @@ export const useMainStore = defineStore('main', {
 		puzzleKey: 0,
 		context: useAppContext(),
 		buildModeFlags: useBuildModeFlags(),
-		debugMode: debugModeEnabled,
+		debugMode: useIsDebugModeEnabled(),
 		featureToggles: useFeatureToggles(),
 		visitData: useIsFirstVisit(),
 		buildDetails: useBuildVersionDetails()
