@@ -1,7 +1,7 @@
 <template>
 <div class="content flex-1 flex flex-col gap-2">
 	
-	<StatisticsHistoryListDisplayOpts />
+	<HistoryListDisplayOpts />
 
 	<div ref="topAnchorEl" class="h-0 w-0"></div>
 	<BasePagination
@@ -11,7 +11,7 @@
 		@update:model-value="page = $event + 1"
 	/>
 
-	<StatisticsHistoryList
+	<HistoryList
 		:list-key="JSON.stringify({ page, pageSize, sortSelection, filterData })"
 		:shown-items="shownItems"
 		:num-total="itemsRecentFirst?.length ?? 0"

@@ -51,7 +51,7 @@
 		</div>
 
 		<ExpandTransition :show="showFilters">
-			<StatisticsHistoryListFilters
+			<HistoryListFilters
 				v-model:favorite="favoriteModel"
 				v-model:hasNote="hasNoteModel"
 				v-model:difficulty="difficultyModel"
