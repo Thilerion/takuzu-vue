@@ -10,19 +10,10 @@
 		@click="exportStats"
 	>{{ $t('Statistics.export-data') }}</button>
 
-	<input
-		ref="fileInputRef"
-		type="file"
-		class="absolute"
-		multiple
-		accept=".json,application/json"
-		hidden
-		@change="startImport"
-	>
 	<button
 		class="text-btn"
 		:disabled="isBusy"
-		@click="openFileDialog"
+		@click="openFileDialogIfNotBusy"
 	>{{ $t('Statistics.import-stats') }}</button>
 
 	<button
@@ -43,6 +34,7 @@ import { StatsDbDataUtils } from '../services/StatsDbDataUtils.service.js';
 import { awaitTimeout } from '@/utils/delay.utils.js';
 import { iterateFiles } from '@/utils/file.utils.js';
 import { ref, computed } from 'vue';
+import { useFileDialog } from '../composables/file-dialog.js';
 
 const statsNextStore = useStatisticsNextStore();
 const { numSolved } = storeToRefs(statsNextStore);
@@ -86,12 +78,6 @@ async function resetStats() {
 	}
 }
 
-const fileInputRef = ref<HTMLInputElement | null>(null);
-function openFileDialog() {
-	if (isBusy.value) return;
-	fileInputRef.value?.click();
-}
-
 async function exportStats() {
 	try {
 		dbActionStatus.value = 'export';
@@ -117,9 +103,25 @@ async function exportStats() {
 	}	
 }
 
+const {
+	reset: resetFileDialog,
+	open: openFileDialog
+} = useFileDialog({
+	multiple: true,
+	accept: '.json,application/json',
+	onChange: startImport
+})
+
+function openFileDialogIfNotBusy() {
+	if (isBusy.value) return;
+	openFileDialog({ reset: true });
+}
+
+
 /** Import stats db files, and update/initialize statsStore if import was successful */
-async function startImport(ev: Event) {
-	const result = await importStatsDbFiles(ev);
+async function startImport(files: FileList | null) {
+	if (!files) return;
+	const result = await importStatsDbFiles(files);
 	if (result) {
 		// update stats
 		await statsNextStore.initialize({ forceUpdate: true });
@@ -132,15 +134,10 @@ async function startImport(ev: Event) {
  * Else, if the database is not empty, it tries to perform a merge with a potential version upgrade.
  * Finally, it resets the file input element's value.
  */
-async function importStatsDbFiles(ev: Event): Promise<boolean> {
+async function importStatsDbFiles(fileList: FileList): Promise<boolean> {
 	// TODO: set minimum timeout to prevent flickering of loading spinner
-	const tg = ev?.target as HTMLInputElement | null;
 	try {
 		dbActionStatus.value = 'import';
-		if (tg == null) {
-			throw new Error('Cannot import stats; event target is null.');
-		}
-		const fileList: FileList | null = tg.files;		
 		const { files, version, isCurrentVersion } = await validateStatsDbFileList(fileList);
 		if (files.length === 0) {
 			return true;
@@ -166,13 +163,11 @@ async function importStatsDbFiles(ev: Event): Promise<boolean> {
 			dbActionStatus.value = null;
 		}
 
-		if (tg != null) {
-			tg.value = '';
-		}
+		resetFileDialog();
 	}
 }
 
-async function validateStatsDbFileList(list: FileList | null): Promise<{ files: File[], version: number, isCurrentVersion: boolean }> {
+async function validateStatsDbFileList(list: FileList): Promise<{ files: File[], version: number, isCurrentVersion: boolean }> {
 	if (list == null) {
 		throw new Error('HTML File element files property is null.');
 	} else if (list.length === 0) {
