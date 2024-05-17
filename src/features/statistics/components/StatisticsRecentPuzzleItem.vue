@@ -1,11 +1,11 @@
 <template>
-<li>
-	<div v-if="daysDiff < 2">{{ dateFormattedRelative }}</div>
-	<div v-else>{{ date.toLocaleDateString(intlLocaleList, { dateStyle: 'short' }) }}</div>
-	<div class="pl-2 mr-auto">{{ date.toLocaleTimeString(intlLocaleList, { timeStyle: 'short' }) }}</div>
-	<div class="text-center">{{ dimensions }}</div>
-	<div class="text-center">{{ difficulty }}*</div>
-	<div class="text-end">{{ formattedTime }}</div>
+<li class="whitespace-nowrap">
+	<span v-if="daysDiff < 2">{{ dateFormattedRelative }}</span>
+	<span v-else>{{ date.toLocaleDateString(intlLocaleList, { dateStyle: 'short' }) }}</span>
+	<span class="pl-2 mr-auto">{{ date.toLocaleTimeString(intlLocaleList, { timeStyle: 'short' }) }}</span>
+	<span class="text-center">{{ dimensions }}</span>
+	<span class="text-center">{{ difficulty }}*</span>
+	<span class="text-end">{{ formattedTime }}</span>
 </li>
 </template>
 
@@ -13,9 +13,8 @@
 import type { DifficultyKey } from '@/lib/types.js';
 import { differenceInCalendarDays } from 'date-fns';
 import { useI18n } from 'vue-i18n';
-import { computed } from 'vue';
+import { computed, toRef } from 'vue';
 import { useNow } from '@vueuse/core';
-import { toRef } from 'vue';
 import { useFormattedDurationNarrow } from '../composables/format-duration.js';
 
 const props = defineProps<{
