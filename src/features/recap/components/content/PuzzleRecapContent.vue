@@ -99,8 +99,8 @@
 <script setup lang="ts">
 
 import { DIFFICULTY_LABELS } from '@/config';
-import { getRecapMessage } from '@/services/puzzle-recap/recapMessage.js';
-import type { RecapI18nMessageData } from '@/services/puzzle-recap/types.js';
+import { getRecapMessage } from '@/features/recap/services/recapMessage.js';
+import type { RecapI18nMessageData } from '@/features/recap/services/types.js';
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -108,9 +108,9 @@ import * as RecapContent from './recap-content-elements';
 import { formatTimeMMSSWithRounding } from '@/utils/time.utils';
 import type { NavigationFailure } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { usePuzzleRecapStore } from '@/stores/puzzle-recap';
+import { usePuzzleRecapStore } from '@/features/recap/store.js';
 import type { SupportedLocale } from '@/i18n/constants.js';
-import { getRecordMessage } from '@/services/puzzle-recap/recordMessage.js';
+import { getRecordMessage } from '@/features/recap/services/recordMessage.js';
 import type { RecapScoresDataProp } from './PuzzleRecapRecapScores.vue';
 
 const formatTimeMMSS = formatTimeMMSSWithRounding(200);
@@ -221,4 +221,4 @@ const goBackToRoute: (to: { name: string }, navigate: () => Promise<void | Navig
 	@apply dark:from-teal-500/70 dark:via-teal-500/20 dark:to-transparent dark:bg-teal-700;
 }
 
-</style>
+</style>@/features/recap/services/recapMessage.js@/features/recap/services/types.js@/features/recap/services/recordMessage.js@/features/recap/puzzle-recap

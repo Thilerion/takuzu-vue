@@ -99,7 +99,7 @@ import { usePlayPuzzleAutoPause } from './usePlayPuzzleAutoPause.js';
 import { useGameCompletion } from './usePlayPuzzleCompletion.js';
 import { usePuzzlePlayHotkeys } from '@/components/gameboard/composables/usePuzzlePlayHotkeys.js';
 import { useSettingsStore } from '@/stores/settings/store.js';
-import { usePuzzleRecapStore } from '@/stores/puzzle-recap.js';
+import { usePuzzleRecapStore } from '@/features/recap/store.js';
 import { usePuzzleValidationStore } from '@/stores/assistance/validation.js';
 
 const puzzleUiStateStore = usePlayPuzzleUiStateStore();
@@ -240,4 +240,4 @@ onBeforeRouteUpdate((to) => {
 	const settingsShouldBeOpen = typeof toName === 'string' && toName.toLowerCase().includes('settings');
 	setSettingsOpen(settingsShouldBeOpen);
 })
-</script>
+</script>@/features/recap/puzzle-recap.js

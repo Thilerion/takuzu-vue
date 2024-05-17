@@ -1,5 +1,5 @@
 import type { BasicPuzzleConfig, BoardShape, DifficultyKey } from "@/lib/types.js";
-import type { StatsDbHistoryEntry, StatsDbHistoryEntryWithId } from "../db/stats-db/models.js";
+import type { StatsDbHistoryEntry, StatsDbHistoryEntryWithId } from "../../../services/db/stats-db/models.js";
 import { getPreviousItemsWithPuzzleConfig, getPuzzleCurrentCounts, getHistoryTotals, getUniquePlayedPuzzleConfigs, getPuzzleReplayStats, getPuzzleTimeStatisticsFromItems } from "./stats-helpers.js";
 import { getPercentageFaster, getPercentageSlower } from "./helpers.js";
 import type { PickRequired } from "@/types.js";

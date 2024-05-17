@@ -1,7 +1,7 @@
 import type { BasicPuzzleConfig, BoardShape, DifficultyKey } from "@/lib/types";
 import { startOfDay } from "date-fns";
-import { statsDb } from "../db/stats-db/init";
-import type { StatsDbHistoryEntryWithId, StatsDbHistoryEntry } from "../db/stats-db/models";
+import { statsDb } from "../../../services/db/stats-db/init";
+import type { StatsDbHistoryEntryWithId, StatsDbHistoryEntry } from "../../../services/db/stats-db/models";
 import type { IPuzzleConfigCounts, IHistoryTotals, IUniquePuzzleConfigurationPlayed, IPuzzleReplayStatistics, IPuzzleTimeStatistics } from "./GameEndStats";
 
 /**

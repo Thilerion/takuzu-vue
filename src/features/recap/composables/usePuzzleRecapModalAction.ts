@@ -1,5 +1,5 @@
 import { useMainStore } from "@/stores/main";
-import { usePuzzleRecapStore } from "@/stores/puzzle-recap";
+import { usePuzzleRecapStore } from "@/features/recap/store";
 import { usePuzzleStore } from "@/stores/puzzle/store.js";
 import { useRoute, useRouter } from "vue-router";
 

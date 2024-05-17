@@ -1,5 +1,5 @@
-import type { GameEndStats } from "@/services/puzzle-recap/GameEndStats.js";
-import { recapMessageConfigs } from "@/services/puzzle-recap/message-configs.js"
+import type { GameEndStats } from "@/features/recap/services/GameEndStats.js";
+import { recapMessageConfigs } from "@/features/recap/services/message-configs.js"
 
 describe('recapMessageConfigs array', () => {
 	it('is already sorted by priority', () => {

@@ -1,5 +1,5 @@
-import type { IPuzzleConfigCounts } from "@/services/puzzle-recap/GameEndStats.js";
-import { hasSolvedAmountInTotal, hasSolvedAmountToday, hasSolvedAmountWithConfigInTotal, hasSolvedAmountWithConfigToday, isFirstSolvedTodayGeneric, isFirstSolvedTodayInMorning } from "@/services/puzzle-recap/message-conditions/num-plays.condition.js";
+import type { IPuzzleConfigCounts } from "@/features/recap/services/GameEndStats.js";
+import { hasSolvedAmountInTotal, hasSolvedAmountToday, hasSolvedAmountWithConfigInTotal, hasSolvedAmountWithConfigToday, isFirstSolvedTodayGeneric, isFirstSolvedTodayInMorning } from "@/features/recap/services/message-conditions/num-plays.condition.js";
 
 describe('num-plays.condition', () => {
 	

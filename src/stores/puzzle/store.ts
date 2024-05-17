@@ -15,7 +15,7 @@ import { usePuzzleVisualCuesStore } from "../puzzle-visual-cues.js";
 import { usePuzzleBookmarksStore } from "../bookmarks.js";
 import { usePuzzleHistoryStore, type PostMoveHistoryAction } from "../puzzle-history/history-store.js";
 // Other stores
-import { usePuzzleRecapStore } from "../puzzle-recap.js";
+import { usePuzzleRecapStore } from "../../features/recap/store.js";
 import { useMainStore } from "../main.js";
 // Lib imports and misc.
 import { SimpleBoard } from "@/lib/board/Board.js";

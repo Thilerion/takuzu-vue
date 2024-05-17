@@ -1,7 +1,7 @@
-import { StatsDbHistoryEntry, type StatsDbHistoryEntryWithId } from "@/services/db/stats-db/models";
+import { StatsDbHistoryEntry, type StatsDbHistoryEntryWithId } from "@/services/db/stats-db/models.js";
 import { defineStore } from "pinia";
-import { statsDb } from "@/services/db/stats-db/init";
-import { GameEndStats } from "@/services/puzzle-recap/GameEndStats";
+import { statsDb } from "@/services/db/stats-db/init.js";
+import { GameEndStats } from "@/features/recap/services/GameEndStats.js";
 
 export const usePuzzleRecapStore = defineStore('puzzleRecap', {
 	state: () => ({

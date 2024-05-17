@@ -1,4 +1,4 @@
-import { isInTop5PercentOfTimes } from "@/services/puzzle-recap/message-conditions/rank.condition.js"
+import { isInTop5PercentOfTimes } from "@/features/recap/services/message-conditions/rank.condition.js"
 
 describe('isInTop5PercentOfTimes', () => {
 	it('returns false if amount solved is less than 20', () => {

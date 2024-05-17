@@ -1,5 +1,5 @@
-import type { IHistoryTotals } from "@/services/puzzle-recap/GameEndStats.js";
-import { isFirstEverSolved, isFirstOfDifficultySolved, isFirstSolvedWithPuzzleConfig, isFirstWithDimensionsSolved, isHardestEverSolved } from "@/services/puzzle-recap/message-conditions/firsts.condition.js";
+import type { IHistoryTotals } from "@/features/recap/services/GameEndStats.js";
+import { isFirstEverSolved, isFirstOfDifficultySolved, isFirstSolvedWithPuzzleConfig, isFirstWithDimensionsSolved, isHardestEverSolved } from "@/features/recap/services/message-conditions/firsts.condition.js";
 
 describe('firsts.condition', () => {
 	describe('isFirstEverSolved', () => {

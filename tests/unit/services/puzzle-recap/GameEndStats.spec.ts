@@ -1,4 +1,4 @@
-import { PersonalBestGameEndStats } from "@/services/puzzle-recap/GameEndStats.js"
+import { PersonalBestGameEndStats } from "@/features/recap/services/GameEndStats.js"
 
 describe('PersonalBestGameEndStats class', () => {
 	describe('isTimeRecord()', () => {

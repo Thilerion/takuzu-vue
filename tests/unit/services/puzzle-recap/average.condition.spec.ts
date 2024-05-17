@@ -1,5 +1,5 @@
-import { AverageTimeGameEndStats, type PersonalBestGameEndStats } from "@/services/puzzle-recap/GameEndStats.js"
-import { wasSolvedFasterThanAverageTime, wasSolvedMuchFasterThanAverageTime } from "@/services/puzzle-recap/message-conditions/average.condition.js"
+import { AverageTimeGameEndStats, type PersonalBestGameEndStats } from "@/features/recap/services/GameEndStats.js"
+import { wasSolvedFasterThanAverageTime, wasSolvedMuchFasterThanAverageTime } from "@/features/recap/services/message-conditions/average.condition.js"
 
 describe('wasSolvedFasterThanAverageTime', () => {
 	it('returns false if count is <4', () => {

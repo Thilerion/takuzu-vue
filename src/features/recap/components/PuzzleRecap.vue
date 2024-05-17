@@ -40,8 +40,8 @@
 
 <script setup lang="ts">
 import { toRef } from 'vue';
-import { usePuzzleRecapModalActions } from './usePuzzleRecapModalAction.js';
-import { usePuzzleRecapTransitionTimings } from './usePuzzleRecapTransitionTimings.js';
+import { usePuzzleRecapModalActions } from '@/features/recap/composables/usePuzzleRecapModalAction.js';
+import { usePuzzleRecapTransitionTimings } from '@/features/recap/composables/usePuzzleRecapTransitionTimings.js';
 
 const props = defineProps<{
 	show: boolean

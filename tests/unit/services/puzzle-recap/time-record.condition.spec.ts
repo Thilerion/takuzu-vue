@@ -1,5 +1,5 @@
-import { PersonalBestGameEndStats, type IPuzzleConfigCounts } from "@/services/puzzle-recap/GameEndStats.js"
-import { isAlmostTimeRecord, isSolvedWithLargeTimeRecordImprovement, isSolvedWithTimeRecordImprovement } from "@/services/puzzle-recap/message-conditions/time-record.condition.js"
+import { PersonalBestGameEndStats } from "@/features/recap/services/GameEndStats.js"
+import { isAlmostTimeRecord, isSolvedWithLargeTimeRecordImprovement, isSolvedWithTimeRecordImprovement } from "@/features/recap/services/message-conditions/time-record.condition.js"
 
 describe('time-record.condition', () => {
 	describe('isSolvedWithLargeTimeRecordImprovement', () => {
