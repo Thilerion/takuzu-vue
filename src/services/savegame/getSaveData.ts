@@ -4,7 +4,7 @@ import { isDifficultyKey } from "@/config.js";
 import { exportMoveList } from "@/stores/puzzle-history/history-store.js";
 import { usePuzzleStore } from "@/stores/puzzle/store.js";
 import { getTotalTimeElapsed } from "@/stores/puzzle/timer-store.js";
-import { exportHintSaveData } from "@/stores/hints/store.js";
+import { exportHintSaveData } from "@/features/hints/store.js";
 
 export const getSaveData = (): SaveData => {
 	return {

@@ -1,6 +1,6 @@
 import type { AllPuzzleBoardExportStrings, AllPuzzleBoards, BasicPuzzleConfig } from "@/lib/types";
 import type { UserBookmark } from "@/stores/bookmarks.js";
-import type { HintSaveData } from "@/stores/hints/store.js";
+import type { HintSaveData } from "@/features/hints/store.js";
 import type { MoveExport } from "@/stores/puzzle-history/models.js";
 
 

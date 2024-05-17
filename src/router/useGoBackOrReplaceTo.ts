@@ -7,17 +7,6 @@ export const useGoBackOrReplaceTo = (to: { name: string }) => {
 }
 
 const goBackOrReplaceTo = (to: { name: string }, router: Router, route: RouteLocationNormalizedLoaded) => {
-	/* if (route.meta?.prev == null) {
-		router.replace(to);
-	} else {
-		const resolvedTo = router.resolve(to);
-		const historyState = router.options.history.state;
-		if (historyState.back != null && historyState.back === resolvedTo.fullPath) {
-			router.go(-1);
-		} else {
-			router.replace(to);
-		}
-	} */
 	if (route.meta?.prev == null) {
 		router.replace(to);
 	} else if (route.meta?.prev.name !== to.name) {

@@ -11,7 +11,7 @@
 		"
 	>
 		<header class="flex text-sm items-center pl-4 pr-1.5 h-8 min-h-fit relative pb-1">
-			<h1 class="mt-2"><slot name="title">Default slotted title</slot></h1>
+			<h1 class="mt-2"><slot name="title">Hint</slot></h1>
 			<IconBtn
 				scale="0.875"
 				class="aspect-square ml-auto absolute top-0 right-0"
@@ -22,7 +22,7 @@
 			class="pl-4 pr-2 my-auto min-h-[4em] w-full flex-1 flex justify-stretch items-start flex-col text-xs leading-[1.5] overflow-x-hidden overflow-y-auto max-h-full h-full"
 		>
 			<transition name="stepchange" mode="out-in">
-				<p :key="step" class="my-auto"><slot name="message">Default slotted message</slot></p>
+				<p :key="step" class="my-auto"><slot name="message">Uh-oh... This hint has no message.</slot></p>
 			</transition>
 		</div>
 		<div v-if="$slots.buttons != null" class="min-h-fit sticky bottom-0 mt-0.5 flex h-9 items-stretch dark:border-slate-500 border-t w-full">

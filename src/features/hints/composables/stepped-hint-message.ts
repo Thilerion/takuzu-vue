@@ -1,12 +1,12 @@
 import type { ToDynamicPuzzleString } from "@/components/dynamic-symbols/useDynamicPuzzleSymbolString.js";
 import { ONE, ROW, ZERO } from "@/lib/constants.js";
 import { lineSizeToNumRequired, lineTypeFromLineId } from "@/lib/utils/puzzle-line.utils";
-import type { BalanceSteppedHint } from "@/services/hints/SteppedHint/BalanceHint.js";
-import type { GenericDuplicateLineSteppedHint } from "@/services/hints/SteppedHint/GenericDuplicateLineHint.js";
-import type { GenericEliminationSteppedHint } from "@/services/hints/SteppedHint/GenericEliminationHint.js";
-import type { IncorrectValuesSteppedHint } from "@/services/hints/SteppedHint/IncorrectValuesHint.js";
-import type { TriplesSteppedHint } from "@/services/hints/SteppedHint/TriplesHint.js";
-import type { SteppedHint } from "@/services/hints/SteppedHint/types.js";
+import type { BalanceSteppedHint } from "@/features/hints/services/SteppedHint/BalanceHint.js";
+import type { GenericDuplicateLineSteppedHint } from "@/features/hints/services/SteppedHint/GenericDuplicateLineHint.js";
+import type { GenericEliminationSteppedHint } from "@/features/hints/services/SteppedHint/GenericEliminationHint.js";
+import type { IncorrectValuesSteppedHint } from "@/features/hints/services/SteppedHint/IncorrectValuesHint.js";
+import type { TriplesSteppedHint } from "@/features/hints/services/SteppedHint/TriplesHint.js";
+import type { SteppedHint } from "@/features/hints/services/SteppedHint/types.js";
 import { usePuzzleStore } from "@/stores/puzzle/store.js";
 import { type Ref, computed } from "vue";
 

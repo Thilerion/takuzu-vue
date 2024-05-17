@@ -92,7 +92,7 @@ import { useGoBackOrReplaceTo } from '@/router/useGoBackOrReplaceTo.js';
 import { usePuzzlePauseResume } from '@/stores/puzzle/usePuzzlePauseResume.js';
 import { usePuzzleHistoryStore } from '@/stores/puzzle-history/history-store.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
-import { usePuzzleHintsStore } from '@/stores/hints/store.js';
+import { usePuzzleHintsStore } from '@/features/hints/store.js';
 import { usePlayPuzzleUiStateStore } from '@/stores/puzzle/play-ui-state-store.js';
 import { usePlayPuzzleSaveHandler } from './usePlayPuzzleSaveHandler.js';
 import { usePlayPuzzleAutoPause } from './usePlayPuzzleAutoPause.js';

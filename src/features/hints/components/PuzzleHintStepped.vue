@@ -25,12 +25,12 @@
 
 <script setup lang="ts">
 import { computed, toRef, watch } from 'vue';
-import { useStepThroughSteppedHint } from './step-through.js';
+import { useStepThroughSteppedHint } from '@/features/hints/composables/step-through.js';
 import { useDynamicPuzzleSymbolString } from '@/components/dynamic-symbols/useDynamicPuzzleSymbolString.js';
-import { injectCellThemeData } from '../composables/useCellThemeProvider.js';
-import { useSteppedHintMessage } from './stepped-hint-message.js';
+import { injectCellThemeData } from '@/components/gameboard/composables/useCellThemeProvider.js';
+import { useSteppedHintMessage } from '@/features/hints/composables/stepped-hint-message.js';
 import { useI18n } from 'vue-i18n';
-import type { SteppedHint } from '@/services/hints/SteppedHint/types.js';
+import type { SteppedHint } from '@/features/hints/services/SteppedHint/types.js';
 
 const emit = defineEmits<{
 	(e: 'hide'): void;
@@ -160,9 +160,3 @@ watch(() => props.show, (val, prev) => {
 	}
 }, { immediate: true });
 </script>
-
-<style scoped>
-/* 
-.step-change transition classes come from "PuzzleHintBase.vue"
-} */
-</style>

@@ -8,7 +8,7 @@ import { getRandomPuzzleTransformationOnRestart } from "./useRandomPuzzleTransfo
 import { StatsDbHistoryEntry, type FinishedPuzzleState, type StatsDbHistoryEntryWithId } from "@/services/db/stats-db/models.js";
 import { statsDb } from "@/services/db/stats-db/init.js";
 // Puzzle substores
-import { usePuzzleHintsStore } from "../hints/store.js";
+import { usePuzzleHintsStore } from "@/features/hints/store.js";
 import { usePuzzleTimer } from "./timer-store.js";
 import { usePuzzleAssistanceStore } from "../assistance/store.js";
 import { usePuzzleVisualCuesStore } from "../puzzle-visual-cues.js";

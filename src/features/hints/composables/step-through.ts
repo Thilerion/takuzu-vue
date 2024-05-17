@@ -1,5 +1,5 @@
-import type { SteppedHint } from "@/services/hints/SteppedHint/types.js";
-import { useSteppedHintEvents } from "@/services/hints/useSteppedHintEvents.js";
+import type { SteppedHint } from "@/features/hints/services/SteppedHint/types.js";
+import { useSteppedHintEvents } from "@/features/hints/services/useSteppedHintEvents.js";
 import { computed, nextTick, ref, watch, type Ref } from "vue";
 
 export const useStepThroughSteppedHint = (
