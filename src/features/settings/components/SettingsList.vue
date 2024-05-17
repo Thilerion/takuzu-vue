@@ -20,24 +20,11 @@
 			<div class="px-2 pb-4">
 				<GameplayInputModeSetting v-model="toggleMode" />	
 			</div>
-			<div class="px-2 flex items-center h-14">
-				<InputToggle
-					id="wakeLockToggle"
-					v-model="enableWakeLock"
-					class="!m-0"
-					small
-				>{{
-					$t('Settings.wake-lock')
-				}}</InputToggle>
+			<div class="px-2">
+				<WakeLockSetting v-model="enableWakeLock" />
 			</div>
-			<div class="px-2 flex items-center h-14">
-				<InputToggle
-					id="timerToggle"
-					v-model="showTimer"
-					class="!m-0"
-					small
-				>{{ $t('Settings.show-timer') }}
-				</InputToggle>
+			<div class="px-2">
+				<ShowTimerSetting v-model="showTimer" />
 			</div>
 			<VibrationSetting class="px-2 pt-4" />
 		</BasicLinkList>
@@ -79,6 +66,4 @@ const { enabled: isDebugModeEnabled, toggleDebugMode } = useDebugMode();
 
 const settingsStore = useSettingsStore();
 const { cellTheme, checkButton, toggleMode, showLineInfo, enableWakeLock, showTimer, language } = storeToRefs(settingsStore);
-
-
 </script>
