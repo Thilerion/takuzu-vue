@@ -1,6 +1,6 @@
-import { CellThemeTypes } from "@/stores/settings/options.js";
-import { useSettingsStore } from "@/stores/settings/store.js";
-import { cellThemeTypeMap, type CellTheme, type CellThemeType } from "@/stores/settings/types.js";
+import { CellThemeTypes } from "@/features/settings/options.js";
+import { useSettingsStore } from "@/features/settings/store.js";
+import { cellThemeTypeMap, type CellTheme, type CellThemeType } from "@/features/settings/types.js";
 import { storeToRefs } from "pinia";
 import type { ComputedRef, InjectionKey, MaybeRef, Ref } from "vue";
 import { computed, defineAsyncComponent, inject, markRaw, provide, readonly, shallowRef, unref, watchEffect } from "vue";

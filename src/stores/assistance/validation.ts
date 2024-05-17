@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { usePuzzleStore } from "../puzzle/store.js";
 import { findIncorrectValuesFromSolution } from "@/lib/mistakes/incorrect-values.js";
 import type { BalancedLinesRuleViolation, FoundIncorrectValue, MaxConsecutiveRuleViolation, RuleViolation, UniqueLinesRuleViolation } from "@/lib/mistakes/types.js";
-import { useSettingsStore } from "../settings/store.js";
+import { useSettingsStore } from "../../features/settings/store.js";
 import { usePuzzleVisualCuesStore } from "../puzzle-visual-cues.js";
 import { filterUnnecessaryRuleViolations, findRuleViolations, type RuleViolationsByTypeRecord } from "@/lib/mistakes/rule-violations.js";
 import { createAreaHighlightFromCorners, createLineHighlightFromLineId, type AreaHighlight, type LineHighlight, type PuzzleBoardHighlight } from "@/helpers/puzzle-visual-cues.js";

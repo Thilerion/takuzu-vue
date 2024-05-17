@@ -1,6 +1,6 @@
 import { defineStore, storeToRefs } from "pinia";
 import { useMainStore } from "../main.js";
-import { useSettingsStore } from "../settings/store.js";
+import { useSettingsStore } from "../../features/settings/store.js";
 import { computed, reactive, readonly, toRefs } from "vue";
 
 export const usePlayPuzzleUiStateStore = defineStore('puzzleUiState', () => {

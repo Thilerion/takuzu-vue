@@ -1,5 +1,5 @@
-import { parseSettingsFromStorage, loadSettingsFromStorage, SETTINGS_STORAGE_KEY, loadSettings, getDefaultSettings } from "@/stores/settings/settings-ls";
-import type { SettingsState } from "@/stores/settings/types";
+import { parseSettingsFromStorage, loadSettingsFromStorage, SETTINGS_STORAGE_KEY, loadSettings, getDefaultSettings } from "@/features/settings/settings-ls";
+import type { SettingsState } from "@/features/settings/types";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe('settings localStorage module', () => {

@@ -43,11 +43,11 @@
 
 <script setup lang="ts">
 import { useMainStore } from '@/stores/main.js';
-import { useSettingsStore } from '@/stores/settings/store.js';
 import { ref } from 'vue';
 import { toRef } from 'vue';
 import type BaseDropdown from '@/components/base/dropdown/BaseDropdown.vue';
 import { usePlayPuzzleUiStateStore } from '@/stores/puzzle/play-ui-state-store.js';
+import { useSettingsStore } from '@/features/settings/store.js';
 
 const settingsStore = useSettingsStore();
 const showTimer = toRef(settingsStore, 'showTimer');

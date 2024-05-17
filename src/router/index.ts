@@ -28,7 +28,7 @@ import { useRouteDocumentTitle } from './useDocumentTitle';
 import { useSavedPuzzle } from '@/services/savegame/useSavedGame.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import type { RouteRecordRaw } from 'vue-router';
-import type { BaseTheme } from '@/composables/use-theme-preferences.js';
+import type { BaseTheme } from '@/features/settings/composables/use-theme-preferences.js';
 
 const routes = [
 	{

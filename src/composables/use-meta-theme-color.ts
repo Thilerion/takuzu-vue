@@ -1,4 +1,4 @@
-import { useThemePreferences, type BaseTheme } from "@/composables/use-theme-preferences.js";
+import { useThemePreferences, type BaseTheme } from "@/features/settings/composables/use-theme-preferences.js";
 import { createSharedComposable } from "@vueuse/core";
 import { computed, readonly, ref, watch, type Ref } from "vue";
 import { useRoute } from 'vue-router';

@@ -22,9 +22,9 @@
 </template>
 
 <script setup lang="ts">
-import type { CellTheme } from '@/stores/settings/types.js';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import type { CellTheme } from '../types.js';
 
 const { t } = useI18n();
 

@@ -1,5 +1,5 @@
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
-import { useSettingsStore } from '@/stores/settings/store';
+import { useSettingsStore } from '@/features/settings/store';
 import { useWakeLock, useIdle } from "@vueuse/core";
 import { computed, onMounted, onUnmounted, provide, ref, toRef, watch } from "vue";
 

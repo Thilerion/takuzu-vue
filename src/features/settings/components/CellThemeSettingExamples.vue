@@ -20,7 +20,8 @@
 </template>
 
 <script setup lang="ts">
-import type { CellTheme } from '@/stores/settings/types.js';
+import type { CellTheme } from '../types.js';
+
 
 defineProps<{
 	theme: CellTheme

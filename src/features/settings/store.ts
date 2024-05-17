@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { toRaw } from "vue";
-import { getDefaultSettings, loadSettings, saveSettings } from "./settings-ls";
-import { cellThemeTypeMap, type SettingsState } from "./types";
+import { getDefaultSettings, loadSettings, saveSettings } from "./settings-ls.js";
+import { cellThemeTypeMap, type SettingsState } from "./types.js";
 
 export type RulerComponentType = 'coords' | 'count' | null;
 

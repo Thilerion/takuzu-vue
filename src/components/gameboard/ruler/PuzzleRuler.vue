@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import type { RulerCountType } from './CountsRuler.vue';
 import type { LineId } from '@/lib/types.js';
-import type { RulerComponentType } from '@/stores/settings/store.js';
+import type { RulerComponentType } from '@/features/settings/store.js';
 
 defineProps<{
 	rulerLineType: 'rows' | 'columns',

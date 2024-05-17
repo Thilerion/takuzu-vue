@@ -43,13 +43,15 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { useThemePreferences } from '@/composables/use-theme-preferences';
 import { debouncedWatch } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
+import { useThemePreferences } from '../composables/use-theme-preferences.js';
 
-
-
-const { baseThemeUserPref: themeValue, setBaseThemePreference: setTheme, baseThemeBrowserPref: currentBrowserPreference } = useThemePreferences();
+const {
+	baseThemeUserPref: themeValue,
+	setBaseThemePreference: setTheme,
+	baseThemeBrowserPref: currentBrowserPreference
+} = useThemePreferences();
 
 const { t } = useI18n();
 const currentBrowserPrefMessage = computed(() => {

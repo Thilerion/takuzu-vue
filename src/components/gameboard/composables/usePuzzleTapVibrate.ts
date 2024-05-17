@@ -1,5 +1,5 @@
 import { useTapVibrate } from "@/composables/use-tap-vibrate.js";
-import { useSettingsStore } from "@/stores/settings/store.js";
+import { useSettingsStore } from "@/features/settings/store.js";
 import { storeToRefs } from "pinia";
 import { computed, type Ref } from "vue";
 

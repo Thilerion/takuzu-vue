@@ -1,4 +1,4 @@
-import { loadSettingsFromStorage } from "@/stores/settings/settings-ls.js";
+import { loadSettingsFromStorage } from "@/features/settings/settings-ls.js";
 import { DEFAULT_FALLBACK_LOCALE, SUPPORTED_LOCALES, type SupportedLocale } from "./constants.js";
 
 export function isLocaleSupported(locale: string): locale is SupportedLocale {

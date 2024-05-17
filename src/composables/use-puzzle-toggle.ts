@@ -1,5 +1,5 @@
 import { EMPTY, ONE, ZERO, type PuzzleSymbol, type PuzzleValue } from "@/lib/constants";
-import { useSettingsStore } from "@/stores/settings/store"
+import { useSettingsStore } from "@/features/settings/store"
 import { computed } from "vue";
 
 type ToggleOrder = [typeof EMPTY, PuzzleSymbol, PuzzleSymbol];

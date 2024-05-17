@@ -1,6 +1,5 @@
 import type { CellTheme, CellThemeType, RulerType } from './types';
 
-export { validVibrationStrengths, cellThemeTypeMap as CellThemeTypeMap } from './types';
 export const rulerType = {
 	NONE: '',
 	COORDS: 'coords',

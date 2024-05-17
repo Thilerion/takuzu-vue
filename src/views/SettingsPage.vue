@@ -170,12 +170,12 @@
 </template>
 
 <script setup lang="ts">
-import { useThemePreferences } from '@/composables/use-theme-preferences.js';
+import { useThemePreferences } from '@/features/settings/composables/use-theme-preferences.js';
+import { CheckButtonOption, rulerType } from '@/features/settings/options.js';
+import { useSettingsStore } from '@/features/settings/store.js';
 import { SUPPORTED_LOCALES, localeSettings } from '@/i18n/constants.js';
 import { ZERO, ONE } from '@/lib/constants.js';
 import { useDebugMode } from '@/stores/composables/useDebugMode.js';
-import { CheckButtonOption, rulerType } from '@/stores/settings/options.js';
-import { useSettingsStore } from '@/stores/settings/store.js';
 import { storeToRefs } from 'pinia';
 import { onBeforeUnmount, computed } from 'vue';
 import { useI18n } from 'vue-i18n';

@@ -31,10 +31,10 @@
 
 <script setup lang="ts">
 import { useTapVibrate } from '@/composables/use-tap-vibrate';
-import { useSettingsStore } from '@/stores/settings/store';
-import { validVibrationStrengths } from '@/stores/settings/options';
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
+import { validVibrationStrengths } from '../types.js';
+import { useSettingsStore } from '../store.js';
 
 const settingsStore = useSettingsStore();
 const { enableVibration, vibrationStrength } = storeToRefs(settingsStore);

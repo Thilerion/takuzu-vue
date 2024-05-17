@@ -8,7 +8,7 @@ import router from './router';
 import { i18n, i18nPiniaPropertyPlugin } from './i18n/index.js';
 
 import { registerSW } from 'virtual:pwa-register';
-import { themePreferencesPlugin } from './composables/use-theme-preferences.js';
+import { themePreferencesPlugin } from './features/settings/composables/use-theme-preferences.js';
 
 const SW_UPDATE_INTERVAL_MS = 30 * 60 * 1000; // 30 minutes
 registerSW({

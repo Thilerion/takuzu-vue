@@ -1,6 +1,6 @@
 import { ZERO, type PuzzleSymbol } from "@/lib/constants.js";
 import { isPuzzleValue } from "@/lib/utils/puzzle-value.utils";
-import type { CellTheme, CellThemeType } from "@/stores/settings/types.js";
+import type { CellTheme, CellThemeType } from "@/features/settings/types.js";
 import type { Ref } from "vue";
 import { computed } from "vue";
 

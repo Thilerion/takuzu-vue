@@ -1,7 +1,7 @@
 import { setActivePinia } from 'pinia';
 import { useSharedPuzzleToggle } from '@/composables/use-puzzle-toggle.js';
 import { createTestingPinia } from '@pinia/testing';
-import { useSettingsStore } from '@/stores/settings/store.js';
+import { useSettingsStore } from '@/features/settings/store.js';
 
 describe('usePuzzleToggle', () => {
 	beforeEach(() => {

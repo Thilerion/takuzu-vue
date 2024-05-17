@@ -40,9 +40,9 @@ const BinarySymbols = {
 
 <script setup lang="ts">
 import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
-import { CellThemes } from "@/stores/settings/options";
 import { computed, toRefs } from "vue";
 import { injectCellThemeData } from "../composables/useCellThemeProvider.js";
+import { CellThemes } from "@/features/settings/options.js";
 
 const props = defineProps<{
 	value: PuzzleValue,

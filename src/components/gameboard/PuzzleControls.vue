@@ -61,8 +61,8 @@
 </template>
 
 <script setup lang="ts">
-import { useSettingsStore } from '@/stores/settings/store';
 import { toRef } from 'vue';
+import { useSettingsStore } from '@/features/settings/store.js';
 
 defineProps<{
 	canUndo: boolean,
@@ -106,4 +106,4 @@ const checkButtonEnabled = toRef(settingsStore, 'checkButtonEnabled');
 .control-btns > .grid {
 	grid-auto-columns: 1fr;
 }
-</style>, toRef
+</style>
