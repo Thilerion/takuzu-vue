@@ -3,17 +3,7 @@
 	<div class="py-2">
 		<BasicLinkList class="px-4 pb-2 pt-4 flex flex-col">
 			<div class="px-2 pb-4">
-				<h3>{{ $t('Settings.language') }}</h3>
-				<div class="mt-2">
-					<select v-model="language" class="block w-full mt-1">
-						<option
-							v-for="opt in SUPPORTED_LOCALES"
-							:key="opt"
-							:value="opt"
-						>{{ localeSettings[opt] }}
-						</option>
-					</select>
-				</div>
+				<LanguageSetting v-model="language" />
 			</div>
 			<div class="px-2 pb-4 pt-4">
 				<DarkModeSetting />
@@ -151,7 +141,6 @@ import { useSettingsStore } from '../store.js';
 import { useI18n } from 'vue-i18n';
 import { computed } from 'vue';
 import { CheckButtonOption, rulerType } from '../options.js';
-import { SUPPORTED_LOCALES, localeSettings } from '@/i18n/constants.js';
 import { ZERO, ONE } from '@/lib/constants.js';
 import { storeToRefs } from 'pinia';
 
