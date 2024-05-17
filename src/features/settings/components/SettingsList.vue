@@ -9,10 +9,7 @@
 				<DarkModeSetting />
 			</div>
 			<div class="px-2 pt-4 pb-4">
-				<h2>{{ $t('Settings.themes.cell-theme') }}</h2>
-				<div class="px-0">
-					<CellThemeSetting v-model="cellTheme" />
-				</div>
+				<CellThemeSetting v-model="cellTheme" />
 			</div>
 		</BasicLinkList>
 	</div>

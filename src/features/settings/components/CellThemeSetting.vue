@@ -1,23 +1,26 @@
 <template>
-<div class="mt-2 flex items-center gap-x-2 max-w-md sm:px-0 sm:mx-0 mx-auto">
-	<label
-		v-for="(theme) in orderedCellThemes"
-		:key="theme"
-		:class="{ selected: cellTheme === theme }"
-		class="flex flex-1 items-center cell-theme-box"
-	>
-		<CellThemeSettingExamples
-			:theme="theme"
-		/>
-		<input
-			v-model="cellTheme"
-			class="radio"
-			type="radio"
-			name="radio-cell-theme"
-			:value="theme"
+<div>
+	<h2>{{ $t('Settings.themes.cell-theme') }}</h2>
+	<div class="mt-2 flex items-center gap-x-2 max-w-md sm:px-0 sm:mx-0 mx-auto">
+		<label
+			v-for="(theme) in orderedCellThemes"
+			:key="theme"
+			:class="{ selected: cellTheme === theme }"
+			class="flex flex-1 items-center cell-theme-box"
 		>
-		<span class="label px-1">{{ cellThemeData[theme].label.value }}</span>
-	</label>
+			<CellThemeSettingExamples
+				:theme="theme"
+			/>
+			<input
+				v-model="cellTheme"
+				class="radio"
+				type="radio"
+				name="radio-cell-theme"
+				:value="theme"
+			>
+			<span class="label px-1">{{ cellThemeData[theme].label.value }}</span>
+		</label>
+	</div>
 </div>
 </template>
 
