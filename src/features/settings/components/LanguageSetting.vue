@@ -19,7 +19,3 @@ import { SUPPORTED_LOCALES, localeSettings, type SupportedLocale } from '@/i18n/
 
 const language = defineModel<SupportedLocale>({ required: true });
 </script>
-
-<style scoped>
-
-</style>
