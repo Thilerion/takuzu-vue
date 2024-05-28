@@ -44,6 +44,7 @@ export const yToRowId = (y: number): RowId => {
 	return String.fromCharCode(65 + y);
 }
 export const xToColumnId = (x: number): ColumnId => `${x + 1}`;
+export const lineIndexToLineId = (type: LineType, idx: number): LineId => type === ROW ? yToRowId(idx) : xToColumnId(idx);
 
 export const isLineIdRow = (lineId: LineId): lineId is RowId => /^[A-Z]$/.test(lineId);
 export const isLineIdColumn = (lineId: LineId): lineId is ColumnId => /^\d+$/.test(lineId);

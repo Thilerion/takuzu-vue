@@ -1,8 +1,11 @@
-import { generateSolutionBoard } from '@/lib/generation/solution.js';
+import { generateSolutionBoard, getInitialFillData, getInitialLinesToFill } from '@/lib/generation/solution.js';
 import { SimpleBoard } from '@/lib/board/Board.js';
 import seedrandom from 'seedrandom';
+import { COLUMN, ROW } from '@/lib/constants.js';
+import { isLineIdColumn, isLineIdRow } from '@/lib/utils/puzzle-line.utils.js';
+import type { LineId } from '@/lib/types.js';
 
-describe('generateBoard', () => {
+describe('generateSolutionBoard', () => {
 	const origRandom = Math.random;
 	beforeEach(() => {
 		Math.random = seedrandom('test', { global: false });
@@ -100,5 +103,43 @@ describe('generateBoard', () => {
 		expect(result!.width).toBe(14);
 		expect(result!.height).toBe(14);
 		expect(result?.isSolved()).toBe(true);
+	})
+})
+
+describe('getInitialFillData', () => {
+	describe('axis', () => {
+		test('it fills entire rows when width is smaller than height', () => {
+			const result = getInitialFillData(8, 12);
+			expect(result.axis).toBe(ROW);
+			expect(isLineIdRow(result.linesToFill[0])).toBe(true);
+			expect(result.possibleLines[0]).toHaveLength(8);
+		})
+
+		test('it fills entire columns when height is smaller', () => {
+			const result = getInitialFillData(12, 8);
+			expect(result.axis).toBe(COLUMN);
+			expect(isLineIdColumn(result.linesToFill[0])).toBe(true);
+			expect(result.possibleLines[0]).toHaveLength(8);
+		})
+	})
+
+	describe('linesToFill', () => {
+		test('it never chooses the first and last lines, and starts at the second line', () => {
+			const lineFirst = '1';
+			const lineFilled = '2';
+			const results = new Map<number, LineId[]>();
+			for (let i = 4; i < 14; i++) {
+				const result = getInitialLinesToFill(COLUMN, { width: i, height: i });
+				expect(result).not.toContain(lineFirst);
+				expect(result).not.toContain(`${i}`);
+				expect(result).toContain(lineFilled);
+				results.set(i, result);
+			}
+		})
+
+		test('it always leaves 2 empty lines between each filled line', () => {
+			const result = getInitialLinesToFill(ROW, { width: 8, height: 14 });
+			expect(result).toEqual(['B', 'E', 'H', 'K']); // 1, 4, 7, 10; NOT 13 as it is the last line
+		})
 	})
 })
