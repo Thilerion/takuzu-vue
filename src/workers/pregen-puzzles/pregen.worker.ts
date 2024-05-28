@@ -140,7 +140,7 @@ async function findPresetsWithoutPuzzlesAndGenerateMissing({ lazy = true, verbos
 }
 
 async function generatePuzzleForPreset(preset: BasicPuzzleConfig) {
-	console.log('requesting for preset');
+	console.log(`Requesting puzzle for preset: ${preset.width}x${preset.height}-${preset.difficulty}`);
 	const { width, height, difficulty } = preset;
 	try {
 		const { boardStr, solutionStr } = await puzzleWorker.request('single', { width, height, difficulty })

@@ -36,9 +36,16 @@ export class SimpleBoard {
 		return [...this.rowIds, ...this.columnIds];
 	}
 
-	static empty(width: number, height = width) {
-		const grid: PuzzleGrid = array2d(width, height, EMPTY);
-		return new SimpleBoard(grid);
+	static empty(shape: BoardShape): SimpleBoard;
+	static empty(width: number, height?: number): SimpleBoard;
+	static empty(widthOrShape: number | BoardShape, maybeHeight?: number) {
+		if (typeof widthOrShape === 'number') {
+			const grid: PuzzleGrid = array2d(widthOrShape, maybeHeight ?? widthOrShape, EMPTY);
+			return new SimpleBoard(grid);
+		} else {
+			const { width, height } = widthOrShape;
+			return new SimpleBoard(array2d(width, height, EMPTY));
+		}
 	}
 
 	static fromGrid(grid: PuzzleGrid) {

@@ -151,6 +151,32 @@ export class ConstraintSolver {
 			}
 		}
 	}
+
+	static quickFindAnySolution(
+		board: SimpleBoard,
+		opts: {
+			// default DFS options, without enabled as it is permanently enabled here
+			dfs?: Omit<NonNullable<ConstraintSolverOpts['dfs']>, 'enabled'>,
+		}
+	) {
+		/* Use the same constraints as "findAmountOfSolutions", which should hopefully be the fastest way to get a solution. */
+		const mergedOpts: ConstraintSolverOpts = {
+			constraints: [
+				applyEliminationConstraintWithOpts({
+					leastRemainingRange: [0, 10],
+					singleAction: false,
+					maxEmptyCells: Infinity
+				})
+			],
+			maxSolutions: 1,
+			dfs: {
+				enabled: true,
+				...opts.dfs,
+			}
+		}
+		return ConstraintSolver.run(board, mergedOpts);
+	}
+
 	/**
 	 * Runs the solver using DFS and a static list of constraints, and returns the amount of solutions the puzzle has (by default up to 200 solutions).
 	 * Allows for settings timeout options, and a maximum amount of solutions to search for.

@@ -1,4 +1,4 @@
-import { SimpleBoard } from '@/lib';
+import { SimpleBoard } from '@/lib/board/Board.js';
 import { ONE, ZERO } from '@/lib/constants';
 import { ConstraintSolver } from '@/lib/solvers/constraint-solver/ConstraintSolver.js';
 import { applyEliminationConstraintWithOpts } from '@/lib/solvers/constraint-solver/constraints/EliminationConstraint.js';

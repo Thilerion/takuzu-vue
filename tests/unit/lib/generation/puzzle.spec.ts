@@ -18,8 +18,8 @@ describe('createPuzzle', () => {
 			width: 6, height: 6,
 			difficulty: 1
 		});
-		expect(result?.solution.toBoardString()).toMatchInlineSnapshot(`"101100110010011001100110001101010011"`);
-		expect(result?.board.toBoardString()).toMatchInlineSnapshot(`"....0.11.......00.......0...0...0..1"`);
+		expect(result?.solution.toBoardString()).toMatchInlineSnapshot(`"101100110010011001100101010110001011"`);
+		expect(result?.board.toBoardString()).toMatchInlineSnapshot(`".0...01....00........1.10.0....0...."`);
 
 		const solveResult = ConstraintSolver.run(result!.board, {
 			maxSolutions: 1,

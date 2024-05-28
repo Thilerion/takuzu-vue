@@ -1,6 +1,6 @@
 import type { SimpleBoard } from "../board/Board.js";
+import { generateSolutionBoard } from "./solution.js";
 import type { BasicPuzzleConfig, BoardAndSolutionBoards } from "../types";
-import { generateBoard } from "./board.js";
 import { createMaskWithDifficulty } from "./mask.js";
 import { getOptimalMaskRatio, getMaskQuality } from "./quality.js";
 
@@ -84,7 +84,8 @@ function createBoardAndMaskOnce(opts: CreateBoardAndMaskOnceOpts, maxTime = 1000
 	let dataquality: null | ReturnType<typeof getMaskQuality> = null;
 
 	while (!datasolution && !timeoutReached()) {
-		const result = generateBoard(width, height);
+		// const result = generateBoard(width, height);
+		const result = generateSolutionBoard(width, height, 5);
 		if (result) datasolution = result;
 	}
 
