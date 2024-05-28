@@ -48,6 +48,12 @@ const CONSTRAINTS = {
 		leastRemainingRange: [1, Infinity],
 		useDuplicateLines: false,
 	}),
+	dupe1_single: applyEliminationConstraintWithOpts({
+		singleAction: false,
+		leastRemainingRange: [1, 1],
+		useDuplicateLines: true,
+		maxEmptyCells: 2, // So only comparing a line to another line that has 1 remaining of both symbols
+	}),
 	dupe1: applyEliminationConstraintWithOpts({
 		singleAction: false,
 		leastRemainingRange: [1, 1],
@@ -124,7 +130,7 @@ export const difficultyConfigs: DifficultyConfigMap = {
 					backtracking: false,
 					constraints: [
 						...origMax.constraints,
-						CONSTRAINTS.dupe1
+						CONSTRAINTS.dupe1_single
 					]
 				}
 				return { min: newMin, max: newMax }
@@ -146,7 +152,7 @@ export const difficultyConfigs: DifficultyConfigMap = {
 				CONSTRAINTS.triples,
 				CONSTRAINTS.balance,
 				CONSTRAINTS.elim1_inf,
-				CONSTRAINTS.dupe1,
+				CONSTRAINTS.dupe1_single,
 			]
 		},
 		overrides: []
