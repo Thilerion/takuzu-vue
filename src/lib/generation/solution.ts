@@ -15,12 +15,18 @@ export function generateSolutionBoard(
 	const fillData = getInitialFillData(width, height);
 	const shape = { width, height };
 
-	for (let i = 0; i < maxAttempts; i++) {
-		const board = initialFillEmptyBoard(shape, fillData);
-		const solution = runSolverToFindSolution(board, solverTimeout);
-
-		if (solution) return solution;
+	try {
+		for (let i = 0; i < maxAttempts; i++) {
+			const board = initialFillEmptyBoard(shape, fillData);
+			const solution = runSolverToFindSolution(board, solverTimeout);
+	
+			if (solution) return solution;
+		}
+	} catch(e) {
+		console.error(`An error occurred while generating a solution board: ${e}. This is possibly a timeout error?`);
+		return null;
 	}
+	
 	console.warn(`Failed to generate a solution board after ${maxAttempts} attempts, with a max time of ${solverTimeout}ms per attempt.`);
 	return null;
 }
