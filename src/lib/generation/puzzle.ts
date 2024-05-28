@@ -7,24 +7,15 @@ import { getOptimalMaskRatio, getMaskQuality } from "./quality.js";
 const minMaskedRatioQuality = 0.94;
 const minSymbolDistributionQuality = 0.36;
 
-// const _tryDurations = [250, 1000, 1750, 2000];
-// const _totalMaxDuration = _tryDurations.reduce((acc, val) => acc + val, 0);
-// const _maxTries = 20;
-
-
-/**
- * 
- * @param {Object} puzzleConfig 
- * @param {number} puzzleConfig.width
- * @param {number} puzzleConfig.height
- * @param {1|2|3|4|5} puzzleConfig.difficulty
- */
 interface CreatePuzzleOpts {
 	maxTries?: number,
 	totalMaxDuration?: number,
 	tryDurations?: number[]
 }
-export function createPuzzle(puzzleConfig: BasicPuzzleConfig, opts: CreatePuzzleOpts = {}): (BoardAndSolutionBoards & { quality: null | ReturnType<typeof getMaskQuality> }) | undefined {
+export function createPuzzle(
+	puzzleConfig: BasicPuzzleConfig,
+	opts: CreatePuzzleOpts = {}
+): (BoardAndSolutionBoards & { quality: null | ReturnType<typeof getMaskQuality> }) | undefined {
 	const { width, height, difficulty } = puzzleConfig;
 	const {
 		maxTries = 20,
@@ -57,15 +48,6 @@ export function createPuzzle(puzzleConfig: BasicPuzzleConfig, opts: CreatePuzzle
 	return;
 }
 
-/**
- * 
- * @param {Object} opts
- * @param {number} opts.width 
- * @param {number} opts.height 
- * @param {number} opts.optimalMaskedRatio
- * @param {1|2|3|4|5} opts.difficulty
- * @param {number} maxTime 
- */
 interface CreateBoardAndMaskOnceOpts extends BasicPuzzleConfig {
 	optimalMaskedRatio: number
 }
