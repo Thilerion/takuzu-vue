@@ -1,8 +1,9 @@
 import type { SimpleBoard } from "../board/Board.js";
 import { generateSolutionBoard } from "./solution.js";
 import type { BasicPuzzleConfig, BoardAndSolutionBoards } from "../types";
-import { createMaskWithDifficulty } from "./mask.js";
 import { getOptimalMaskRatio, getMaskQuality } from "./quality.js";
+import { createMaskWithDifficulty } from "../generation2/mask.js";
+import { MaskDifficultyValidation } from "../generation2/mask-validation.js";
 
 const minMaskedRatioQuality = 0.94;
 const minSymbolDistributionQuality = 0.36;
@@ -28,6 +29,7 @@ export function createPuzzle(
 	const shouldEnd = () => performance.now() >= end;
 
 	const optimalMaskedRatio = getOptimalMaskRatio(width, height, difficulty);
+	const difficultyValidator = MaskDifficultyValidation.fromPuzzleConfig(puzzleConfig);
 
 	for (let i = 0; i < maxTries; i++) {
 		if (shouldEnd()) break;
@@ -35,7 +37,11 @@ export function createPuzzle(
 		if (i < tryDurations.length) {
 			maxTime = tryDurations[i];
 		}
-		const genResult = createBoardAndMaskOnce({ optimalMaskedRatio, width, height, difficulty }, maxTime);
+		const genResult = createBoardAndMaskOnce(
+			{ optimalMaskedRatio, width, height, difficulty },
+			difficultyValidator,
+			maxTime
+		);
 		const { success } = genResult;
 
 
@@ -54,8 +60,12 @@ interface CreateBoardAndMaskOnceOpts extends BasicPuzzleConfig {
 type CreateBoardAndMaskOnceReturns =
 	| { error: string, success: false }
 	| ({ success: true, quality: null | ReturnType<typeof getMaskQuality>} & BoardAndSolutionBoards);
-function createBoardAndMaskOnce(opts: CreateBoardAndMaskOnceOpts, maxTime = 1000): CreateBoardAndMaskOnceReturns  {
-	const { width, height, difficulty, optimalMaskedRatio } = opts;
+function createBoardAndMaskOnce(
+	opts: CreateBoardAndMaskOnceOpts,
+	difficultyValidator: MaskDifficultyValidation,
+	maxTime = 1000
+): CreateBoardAndMaskOnceReturns  {
+	const { width, height, optimalMaskedRatio } = opts;
 	const start = performance.now();
 	const timeoutAfter = start + maxTime;
 
@@ -76,7 +86,7 @@ function createBoardAndMaskOnce(opts: CreateBoardAndMaskOnceOpts, maxTime = 1000
 	}
 
 	while (!databoard && !timeoutReached()) {
-		const maskResult = createMaskWithDifficulty(datasolution, difficulty);
+		const maskResult = createMaskWithDifficulty(datasolution, difficultyValidator, {});
 
 		if (!maskResult) continue;
 
