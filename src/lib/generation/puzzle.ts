@@ -2,8 +2,8 @@ import type { SimpleBoard } from "../board/Board.js";
 import { generateSolutionBoard } from "./solution.js";
 import type { BasicPuzzleConfig, BoardAndSolutionBoards } from "../types";
 import { getOptimalMaskRatio, getMaskQuality } from "./quality.js";
-import { createMaskWithDifficulty } from "../generation2/mask.js";
-import { MaskDifficultyValidation } from "../generation2/mask-validation.js";
+import { createMaskWithDifficulty } from "./mask.js";
+import { MaskDifficultyValidation } from "./mask-validation.js";
 
 const minMaskedRatioQuality = 0.94;
 const minSymbolDistributionQuality = 0.36;
@@ -60,6 +60,12 @@ interface CreateBoardAndMaskOnceOpts extends BasicPuzzleConfig {
 type CreateBoardAndMaskOnceReturns =
 	| { error: string, success: false }
 	| ({ success: true, quality: null | ReturnType<typeof getMaskQuality>} & BoardAndSolutionBoards);
+
+/**
+ * Create a complete puzzle, consisting of a solution (filled board) and a puzzle (masked) board.
+ * The masked board is created according to the difficulty setting selected.
+ * Additionally, the quality of the masked board is evaluated, including the distribution of symbols and the ratio of masked cells.
+ */
 function createBoardAndMaskOnce(
 	opts: CreateBoardAndMaskOnceOpts,
 	difficultyValidator: MaskDifficultyValidation,
