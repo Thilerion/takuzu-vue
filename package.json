@@ -6,6 +6,7 @@
   "scripts": {
     "serve": "vite",
     "dev": "vite",
+    "pregenerate": "vite-node scripts/pregenerate-puzzles.ts",
     "build": "vite build",
     "build:alpha": "vite build --mode alpha",
     "build:beta": "vite build --mode beta",
@@ -73,6 +74,7 @@
     "unplugin-icons": "^0.18.2",
     "unplugin-vue-components": "^0.26.0",
     "vite": "^5.0.11",
+    "vite-node": "^1.6.0",
     "vite-plugin-pwa": "^0.17.5",
     "vite-plugin-static-copy": "^1.0.0",
     "vite-plugin-vue-devtools": "^7.0.27",

@@ -150,6 +150,9 @@ importers:
       vite:
         specifier: ^5.0.11
         version: 5.2.8(@types/node@20.12.7)(terser@5.30.3)
+      vite-node:
+        specifier: ^1.6.0
+        version: 1.6.0(@types/node@20.12.7)(terser@5.30.3)
       vite-plugin-pwa:
         specifier: ^0.17.5
         version: 0.17.5(vite@5.2.8(@types/node@20.12.7)(terser@5.30.3))(workbox-build@7.0.0)(workbox-window@7.0.0)
@@ -3365,6 +3368,11 @@ packages:
 
   vite-node@1.5.0:
     resolution: {integrity: sha512-tV8h6gMj6vPzVCa7l+VGq9lwoJjW8Y79vst8QZZGiuRAfijU+EEWuc0kFpmndQrWhMMhet1jdSF+40KSZUqIIw==}
+    engines: {node: ^18.0.0 || >=20.0.0}
+    hasBin: true
+
+  vite-node@1.6.0:
+    resolution: {integrity: sha512-de6HJgzC+TFzOu0NTC4RAIsyf/DY/ibWDYQUcuEA84EMHhcefTUGkjFHKKEJhQN4A+6I0u++kr3l36ZF2d7XRw==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
 
@@ -7155,6 +7163,23 @@ snapshots:
       vite: 5.2.8(@types/node@20.12.7)(terser@5.30.3)
 
   vite-node@1.5.0(@types/node@20.12.7)(terser@5.30.3):
+    dependencies:
+      cac: 6.7.14
+      debug: 4.3.4
+      pathe: 1.1.2
+      picocolors: 1.0.0
+      vite: 5.2.8(@types/node@20.12.7)(terser@5.30.3)
+    transitivePeerDependencies:
+      - '@types/node'
+      - less
+      - lightningcss
+      - sass
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+
+  vite-node@1.6.0(@types/node@20.12.7)(terser@5.30.3):
     dependencies:
       cac: 6.7.14
       debug: 4.3.4
