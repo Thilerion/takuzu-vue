@@ -149,7 +149,7 @@ async function generatePuzzleForPreset(preset: BasicPuzzleConfig) {
 		}
 	} catch (e) {
 		console.warn(`Could not pregenerate puzzle for preset: ${width}x${height}-${difficulty}`);
-		console.error(e);
+		console.warn(e);
 		return null;
 	}
 }

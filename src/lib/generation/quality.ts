@@ -1,7 +1,7 @@
 import { arrayCountValuesAsMap } from "@/utils/array.ts.utils";
 import type { SimpleBoard } from "../board/Board";
 import { ONE, ZERO } from "../constants";
-import type { DifficultyKey } from "../types";
+import type { DifficultyKey, DimensionStr } from "../types";
 
 // empirically found mask ratios, puzzles can be generated in a reasonable amount of time with this ratio of masked/unmasked cells
 const defaultMaskRatio = 0.6875;
@@ -17,12 +17,36 @@ const optimalMaskRatios = new Map<number | 'default', number>([
 	['default', defaultMaskRatio],
 ]);
 
+const maskRatioTargets = new Map<DimensionStr | 'default', { min: number, optimal: number }>([
+	['default', { min: 0.70, optimal: 0.78 }],
+
+	['4x4', { min: 0.65, optimal: 0.6875 }],
+	['6x6', { min: 0.72, optimal: 0.81 }],
+	['8x8', { min: 0.72, optimal: 0.81 }],
+	['10x10', { min: 0.72, optimal: 0.81 }],
+	['12x12', { min: 0.72, optimal: 0.76 }],
+	['14x14', { min: 0.72, optimal: 0.75 }],
+	['16x16', { min: 0.72, optimal: 0.74 }],
+
+	['5x5', { min: 0.68, optimal: 0.72 }],
+	['7x7', { min: 0.72, optimal: 0.81 }],
+	['9x9', { min: 0.72, optimal: 0.81 }],
+	['11x11', { min: 0.72, optimal: 0.75 }],
+	['13x13', { min: 0.72, optimal: 0.74 }],
+
+	['6x10', { min: 0.72, optimal: 0.81 }],
+	['8x12', { min: 0.72, optimal: 0.81 }],
+	['10x14', { min: 0.72, optimal: 0.79 }],
+	['12x16', { min: 0.72, optimal: 0.78 }],
+
+])
+
 // for puzzles with a lower difficulty (eg only doubles and line balance),
 //  it is harder to mask a lot of cells
 const maskRatioDifficultyModifiers: Record<DifficultyKey, number> = {
-	1: 0.94,
-	2: 0.96,
-	3: 0.98,
+	1: 0.97,
+	2: 0.98,
+	3: 0.97,
 	4: 1,
 	5: 1
 };
@@ -36,6 +60,11 @@ export function getOptimalMaskRatio(width: number, height: number, difficulty: D
 
 	const optimalRatio = sizeRatio * difficultyMod;
 	return optimalRatio;
+}
+export function getMinMaskRatio(width: number, height: number/* , difficulty: DifficultyKey */): number {
+	const key = `${width}x${height}` as DimensionStr;
+	const { min } = maskRatioTargets.get(key) ?? maskRatioTargets.get('default')!;
+	return min;
 }
 
 function normalizeValue(value: number, min = 0, max = 1) {
