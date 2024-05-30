@@ -2,12 +2,29 @@ import { getAllPresetSizeDifficultyCombinations } from "@/config.js";
 import { createPuzzleWithPuzzleConfig } from "@/lib/generation/puzzle.js";
 import type { BasicPuzzleConfig } from "@/lib/types.js";
 import type { IPregenPuzzle } from "@/services/db/puzzles-db/models.js";
-import { existsSync, mkdirSync, writeFileSync } from "fs";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
 
 // Configuration
 const OUTPUT_PATH = '../src/services/db/puzzles-db/pregenerated.json';
+// Parse arguments
+const MAX_ATTEMPTS_ARG = process.argv.find(arg => arg.startsWith('--max-attempts=')) ?? '=50';
+const MAX_ATTEMPTS = parseInt(MAX_ATTEMPTS_ARG.split('=')[1]);
+if (Number.isNaN(MAX_ATTEMPTS)) {
+	throw new Error('Max attempts must be a number.');
+} else if (MAX_ATTEMPTS < 5) {
+	throw new Error('Max attempts needs to be at least 5.');
+}
+
+const ATTEMPT_TIMEOUT_ARG = process.argv.find(arg => arg.startsWith('--attempt-timeout=')) ?? '=5000';
+const ATTEMPT_TIMEOUT = parseInt(ATTEMPT_TIMEOUT_ARG.split('=')[1]);
+if (Number.isNaN(ATTEMPT_TIMEOUT)) {
+	throw new Error('Attempt timeout must be a number.');
+} else if (ATTEMPT_TIMEOUT < 1000 || ATTEMPT_TIMEOUT > 30_000) {
+	throw new Error('Attempt timeout must be between 1000 and 30,000.');
+}
 
 const createProgressTracker = (requested: number) => {
 	let progressRatio = 0;
@@ -32,7 +49,7 @@ const createProgressTracker = (requested: number) => {
 
 // Function to create a single pre-generated puzzle
 function createPregenPuzzle(conf: BasicPuzzleConfig, puzzles: IPregenPuzzle[]): boolean {
-	const puzzle = createPuzzleWithPuzzleConfig(conf, { maxAttempts: 50, timeout: 5000 });
+	const puzzle = createPuzzleWithPuzzleConfig(conf, { maxAttempts: MAX_ATTEMPTS, timeout: ATTEMPT_TIMEOUT });
 	if (!puzzle) return false;
 
 	const { board, solution } = puzzle;
