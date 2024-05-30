@@ -51,13 +51,18 @@ const maskRatioDifficultyModifiers: Record<DifficultyKey, number> = {
 	5: 1
 };
 
-export function getOptimalMaskRatio(width: number, height: number, difficulty: DifficultyKey): number {
+export function getOptimalMaskRatio(width: number, height: number, difficulty: DifficultyKey | undefined): number {
 	const avgBoardSize = (width + height) / 2;
 	const roundedAvgBoardSize = 2 * Math.ceil(avgBoardSize / 2);
 
 	const sizeRatio: number = optimalMaskRatios.get(roundedAvgBoardSize) ?? optimalMaskRatios.get('default')!;
-	const difficultyMod = maskRatioDifficultyModifiers[difficulty] ?? 1;
 
+	if (difficulty === undefined) {
+		// Custom difficulty config is used, do not apply modifier for difficulty.
+		return sizeRatio;
+	}
+
+	const difficultyMod = maskRatioDifficultyModifiers[difficulty] ?? 1;
 	const optimalRatio = sizeRatio * difficultyMod;
 	return optimalRatio;
 }

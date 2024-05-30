@@ -1,5 +1,5 @@
 import { getAllPresetSizeDifficultyCombinations } from "@/config.js";
-import { createPuzzle } from "@/lib/generation/puzzle.js";
+import { createPuzzleWithPuzzleConfig } from "@/lib/generation/puzzle.js";
 import type { BasicPuzzleConfig } from "@/lib/types.js";
 import type { IPregenPuzzle } from "@/services/db/puzzles-db/models.js";
 import { existsSync, mkdirSync, writeFileSync } from "fs";
@@ -32,7 +32,7 @@ const createProgressTracker = (requested: number) => {
 
 // Function to create a single pre-generated puzzle
 function createPregenPuzzle(conf: BasicPuzzleConfig, puzzles: IPregenPuzzle[]): boolean {
-	const puzzle = createPuzzle(conf, { maxAttempts: 50, timeout: 5000 });
+	const puzzle = createPuzzleWithPuzzleConfig(conf, { maxAttempts: 50, timeout: 5000 });
 	if (!puzzle) return false;
 
 	const { board, solution } = puzzle;

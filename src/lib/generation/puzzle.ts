@@ -1,5 +1,5 @@
-import type { BasicPuzzleConfig, BoardAndSolutionBoards } from "../types.js";
-import { MaskDifficultyValidation } from "./mask-validation.js";
+import type { BasicPuzzleConfig, BoardAndSolutionBoards, BoardShape } from "../types.js";
+import { MaskDifficultyValidation, type CreateMaskValidatorsOpts } from "./mask-validation.js";
 import { createMaskWithDifficulty } from "./mask.js";
 import { getMaskQuality, getOptimalMaskRatio } from "./quality.js";
 import { generateSolutionBoard } from "./solution.js";
@@ -12,8 +12,9 @@ export type CreatePuzzleReturn = BoardAndSolutionBoards & {
 	quality: { maskedRatio: number, symbolDistribution: number }
 };
 
-export function createPuzzle(
-	{ width, height, difficulty }: BasicPuzzleConfig,
+function createPuzzle(
+	{ width, height }: BoardShape,
+	difficultyValidator: MaskDifficultyValidation,
 	opts: CreatePuzzleOpts = {}
 ): CreatePuzzleReturn | null {
 	const {
@@ -26,8 +27,7 @@ export function createPuzzle(
 	let attemptsLeft = maxAttempts;
 
 	// Setup required data
-	const difficultyValidator = MaskDifficultyValidation.fromPuzzleConfig({ width, height, difficulty });
-	const optimalMaskedRatio = getOptimalMaskRatio(width, height, difficulty);
+	const optimalMaskedRatio: number = getOptimalMaskRatio(width, height, undefined);
 
 	// Attempt to create a valid puzzle within the specified time and attempts.
 	while (!hasTimedOut() && attemptsLeft > 0) {
@@ -73,6 +73,29 @@ export function createPuzzle(
 		console.warn('Could not create a valid puzzle in "createPuzzle", with an unknown reason.');
 	}
 	return null;
+}
+
+export function createPuzzleWithCustomDifficulty(
+	{ width, height }: BoardShape,
+	difficultyConfig: CreateMaskValidatorsOpts | MaskDifficultyValidation,
+	opts?: CreatePuzzleOpts
+): CreatePuzzleReturn | null {
+	let difficultyValidator: MaskDifficultyValidation;
+	if (difficultyConfig instanceof MaskDifficultyValidation) {
+		difficultyValidator = difficultyConfig;
+	} else {
+		difficultyValidator = new MaskDifficultyValidation({ width, height }, difficultyConfig);
+	}
+	return createPuzzle({ width, height }, difficultyValidator, opts);
+}
+
+export function createPuzzleWithPuzzleConfig(
+	puzzleConfig: BasicPuzzleConfig,
+	opts: CreatePuzzleOpts = {}
+): CreatePuzzleReturn | null {
+	const difficultyConfig = MaskDifficultyValidation.fromPuzzleConfig(puzzleConfig);
+	const { width, height } = puzzleConfig;
+	return createPuzzle({ width, height }, difficultyConfig, opts);
 }
 
 function createTimeoutHandler(timeout: number) {

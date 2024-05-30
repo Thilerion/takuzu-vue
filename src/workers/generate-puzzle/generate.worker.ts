@@ -1,10 +1,10 @@
 import type { BasicPuzzleConfig, BoardExportString } from "@/lib/types.js";
 import { setupWorker } from "../utils/workerSetup.js";
-import { createPuzzle } from "@/lib/generation/puzzle.js";
+import { createPuzzleWithPuzzleConfig } from "@/lib/generation/puzzle.js";
 
 const generateSinglePuzzle = (data: BasicPuzzleConfig): GeneratedPuzzleResult => {
 	const { width, height, difficulty } = data;
-	const result = createPuzzle({ width, height, difficulty });
+	const result = createPuzzleWithPuzzleConfig({ width, height, difficulty });
 
 	if (result != null && result.board != null) {
 		const { solution, board } = result;

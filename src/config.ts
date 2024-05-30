@@ -69,7 +69,7 @@ export const DIFFICULTY_KEYS = Object.keys(DIFFICULTY_LABELS).map(str => parseIn
 export const getAllDifficultyValues = () => {
 	return Object.keys(DIFFICULTY_LABELS);
 }
-export const isDifficultyKey = (val: number): val is DifficultyKey => {
+export const isDifficultyKey = (val: number | string): val is DifficultyKey => {
 	return DIFFICULTY_KEYS.includes(val as any);
 }
 export const getAllBoardPresetSizes = () => {

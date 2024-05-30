@@ -1,10 +1,10 @@
-import { createPuzzle } from '@/lib/generation/puzzle.js';
+import { createPuzzleWithPuzzleConfig } from '@/lib/generation/puzzle.js';
 import { ConstraintSolver } from '@/lib/solvers/constraint-solver/ConstraintSolver.js';
 import { applyLineBalanceConstraintWithOpts } from '@/lib/solvers/constraint-solver/constraints/LineBalanceConstraint.js';
 import { applyTriplesConstraintWithOpts } from '@/lib/solvers/constraint-solver/constraints/TriplesConstraint.js';
 import seedrandom from 'seedrandom';
 
-describe('createPuzzle', () => {
+describe('createPuzzleWithPuzzleConfig', () => {
 	const origRandom = Math.random;
 	beforeEach(() => {
 		Math.random = seedrandom('test', { global: false });
@@ -14,7 +14,7 @@ describe('createPuzzle', () => {
 	})
 
 	it('can generate an easy 6x6 puzzle, solvable with just triples and balance', () => {
-		const result = createPuzzle({
+		const result = createPuzzleWithPuzzleConfig({
 			width: 6, height: 6,
 			difficulty: 1
 		});
