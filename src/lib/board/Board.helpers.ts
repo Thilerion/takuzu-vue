@@ -1,6 +1,6 @@
 import { range } from "@/utils/array.ts.utils.js";
 import { memoize } from "../utils/memoize.utils.js";
-import type { ColumnId, RowId, Vec } from "../types.js";
+import type { BoardShape, ColumnId, RowId, Vec } from "../types.js";
 import { xToColumnId, yToRowId } from "../utils/puzzle-line.utils.js";
 
 /**
@@ -94,3 +94,14 @@ export const generateBoardCoords = memoize(
 	},
 	(width: number, height: number) => `${width},${height}`
 )
+
+/**
+ * Get the ratio of empty cells in a board.
+ * @param board 
+ */
+export function getMaskRatio(board: BoardShape & { getNumEmpty: () => number }): number {
+	const { width, height } = board;
+	const numEmpty = board.getNumEmpty();
+	const numCells = width * height;
+	return numEmpty / numCells;
+}

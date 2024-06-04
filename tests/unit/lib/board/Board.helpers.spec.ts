@@ -1,4 +1,5 @@
-import { deducePuzzleDimensions } from "@/lib/board/Board.helpers.js";
+import { deducePuzzleDimensions, getMaskRatio } from "@/lib/board/Board.helpers.js";
+import { SimpleBoard } from "@/lib/board/Board.js";
 import { isExportString } from "@/lib/board/board-conversion.helpers.js";
 
 describe('isExportString', () => {
@@ -78,5 +79,37 @@ describe('deducePuzzleDimensions', () => {
 
 		expect(result48A).toStrictEqual(result48B);
 		expect(result48A).toStrictEqual({ width: 6, height: 8 });
+	})
+})
+
+describe('misc Board helpers', () => {
+	describe('getMaskRatio', () => {
+		it('returns 0 for a board without empty cells', () => {
+			const board = SimpleBoard.fromArrayOfLines([
+				'1010',
+				'1100',
+				'0011',
+				'0101'
+			]);
+			expect(getMaskRatio(board)).toBe(0);
+		})
+		it('returns 1 for an empty board', () => {
+			const board = SimpleBoard.fromArrayOfLines([
+				'......',
+				'......',
+				'......',
+				'......'
+			]);
+			expect(getMaskRatio(board)).toBe(1);
+		})
+		it('returns 0.5 for a board where half the cells are empty', () => {
+			const board = SimpleBoard.fromArrayOfLines([
+				'10..',
+				'10..',
+				'10..',
+				'10..'
+			]);
+			expect(getMaskRatio(board)).toBe(0.5);
+		})
 	})
 })

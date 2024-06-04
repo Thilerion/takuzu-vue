@@ -3,6 +3,7 @@ import type { SimpleBoard } from "../board/Board.js";
 import { ZERO, ONE } from "../constants.js";
 import type { BoardShape, DimensionStr } from "../types.js";
 import { normalize } from "@/utils/number.utils.js";
+import { getMaskRatio } from "../board/Board.helpers.js";
 
 const maskRatioTargets = new Map<DimensionStr | 'default', { min: number, optimal: number }>([
 	['default', { min: 0.70, optimal: 0.78 }],
@@ -73,13 +74,6 @@ export function getMaskQualityChecker(
 			success,
 		}
 	}
-}
-
-function getMaskRatio(board: SimpleBoard): number {
-	const { width, height } = board;
-	const numEmpty = board.getNumEmpty();
-	const numCells = width * height;
-	return numEmpty / numCells;
 }
 
 /** Gives the (normalized) symbol distribution, with 0 meaning all given values are the same, and 1 meaning they are equally distributed. */
