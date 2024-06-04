@@ -4,10 +4,12 @@
     ],
     "testing.automaticallyOpenPeekView": "never",
     "i18n-ally.keystyle": "nested",
-    "i18n-ally.pathMatcher": "{namespace}/{locale}.{ext}",
+    "i18n-ally.pathMatcher": "{namespaces?}/{locale}.{ext}",
     "i18n-ally.localesPaths": [
+        "src/features/**/",
         "src/locales"
     ],
+    "i18n-ally.namespace": false,
     "i18n-ally.extract.ignoredByFiles": {
         "src\\components\\settings\\VibrationSetting.vue": [
             "${vibrationStrengthIdx.value / 5 * 100}%"

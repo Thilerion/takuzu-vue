@@ -63,6 +63,8 @@ export default defineConfig(({ command, mode }) => {
 				include: [
 					// including js/ts files seems to be bugged when imported using "import messages from @intlify/.../messages", see: https://github.com/intlify/bundle-tools/issues/266. So best to import these separately
 					fileURLToPath(new URL('./src/locales/**', import.meta.url)),
+					// also: any "locales" folder inside src/features
+					fileURLToPath(new URL('./src/features/**/locales/**', import.meta.url))
 				]
 			}),
 			copyFallback200
