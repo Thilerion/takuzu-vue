@@ -5,10 +5,10 @@ import type { BalanceSteppedHint } from "./BalanceHint.js";
 import type { IncorrectValuesSteppedHint } from "./IncorrectValuesHint.js";
 import type { NoHintsFoundSteppedHint } from "./NoHintsFoundHint.js";
 import type { GenericEliminationSteppedHint } from "./GenericEliminationHint.js";
-import type { usePuzzleVisualCuesStore } from "@/stores/puzzle-visual-cues.js";
-import type { PuzzleBoardHighlight } from "@/helpers/puzzle-visual-cues.js";
+import type { usePuzzleVisualCuesStore } from "@/features/puzzle-visual-cues/store.js";
 import type { GenericDuplicateLineSteppedHint } from "./GenericDuplicateLineHint.js";
 import type { WritableComputedRef } from "vue";
+import type { PuzzleBoardHighlight } from "@/features/puzzle-visual-cues/helpers/highlights.js";
 
 export type SteppedHintType = 'ruleViolation' | 'incorrectValues' | 'triples' | 'balance' | 'eliminationGeneric' | 'duplicateLineGeneric' | 'noHintsFound';
 export type HintStepEventCallbackCtxParam = BoardAndSolutionBoards;

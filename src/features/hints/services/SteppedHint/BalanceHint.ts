@@ -6,7 +6,7 @@ import { type LineType, type PuzzleSymbol, EMPTY } from "@/lib/constants.js";
 import { BoardLine } from "@/lib/board/BoardLine.js";
 import { getOppositeSymbol } from "@/lib/utils/puzzle-value.utils.js";
 import { lineTypeFromLineId } from "@/lib/utils/puzzle-line.utils.js";
-import { type CellHighlight, createLineHighlightFromLineId, createCellHighlight } from "@/helpers/puzzle-visual-cues.js";
+import { createLineHighlightFromLineId, type CellHighlight, createCellHighlight } from "@/features/puzzle-visual-cues/helpers/highlights.js";
 
 export class BalanceSteppedHint extends BaseSteppedHint {
 	readonly targets: Target[]; // the cells and values that are affected by this hint, that can be set

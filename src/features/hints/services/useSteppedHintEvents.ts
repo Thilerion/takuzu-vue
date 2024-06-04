@@ -2,8 +2,8 @@ import { computed, toValue } from "vue";
 import type { ReadonlyRefOrGetter } from "@vueuse/core";
 import type { HintStep, HintStepEventCallback, HintStepEvent, HintStepEventCallbackActionsParam, HintStepEventCallbackCtxParam } from "./SteppedHint/types.js";
 import { usePuzzleStore } from "@/stores/puzzle/store.js";
-import { usePuzzleVisualCuesStore } from "@/stores/puzzle-visual-cues.js";
-import type { PuzzleBoardHighlight } from "@/helpers/puzzle-visual-cues.js";
+import { usePuzzleVisualCuesStore } from "@/features/puzzle-visual-cues/store.js";
+import type { PuzzleBoardHighlight } from "@/features/puzzle-visual-cues/helpers/highlights.js";
 
 export const useSteppedHintEvents = (
 	stepRef: ReadonlyRefOrGetter<HintStep | null | undefined>

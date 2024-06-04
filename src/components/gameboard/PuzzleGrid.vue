@@ -32,8 +32,8 @@ import { useStaticGridCellData } from './composables/useGridCellData.js';
 import { usePuzzleTapVibrate } from './composables/usePuzzleTapVibrate.js';
 import { injectCellThemeData } from './composables/useCellThemeProvider.js';
 import type { PuzzleValue } from '@/lib/constants.js';
-import type { ErrorMark } from '@/helpers/puzzle-visual-cues.js';
 import type { SimpleBoard } from '@/lib/board/Board.js';
+import type { ErrorMark } from '@/features/puzzle-visual-cues/helpers/error-marks.js';
 
 const props = defineProps<{
 	board: SimpleBoard,

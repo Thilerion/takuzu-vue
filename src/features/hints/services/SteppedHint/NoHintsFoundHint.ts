@@ -1,7 +1,7 @@
 import type { VecValue } from "@/lib/types.js";
 import { BaseSteppedHint, type HintStepsData } from "./SteppedHint.js";
 import type { HintStepFinal } from "./types.js";
-import { createCellHighlight } from "@/helpers/puzzle-visual-cues.js";
+import { createCellHighlight } from "@/features/puzzle-visual-cues/helpers/highlights.js";
 
 export class NoHintsFoundSteppedHint extends BaseSteppedHint {
 	readonly steps: HintStepsData;

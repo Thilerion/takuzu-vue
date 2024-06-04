@@ -11,7 +11,7 @@ import { statsDb } from "@/services/db/stats-db/init.js";
 import { usePuzzleHintsStore } from "@/features/hints/store.js";
 import { usePuzzleTimer } from "./timer-store.js";
 import { usePuzzleAssistanceStore } from "../assistance/store.js";
-import { usePuzzleVisualCuesStore } from "../puzzle-visual-cues.js";
+import { usePuzzleVisualCuesStore } from "../../features/puzzle-visual-cues/store.js";
 import { usePuzzleBookmarksStore } from "../bookmarks.js";
 import { usePuzzleHistoryStore, type PostMoveHistoryAction } from "../puzzle-history/history-store.js";
 // Other stores

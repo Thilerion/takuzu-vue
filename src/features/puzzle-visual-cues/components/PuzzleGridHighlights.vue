@@ -22,9 +22,9 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
-import { usePuzzleVisualCuesStore } from '@/stores/puzzle-visual-cues.js';
-import type { PuzzleBoardHighlight, CellHighlight, LineHighlight, AreaHighlight } from '@/helpers/puzzle-visual-cues.js';
+import { usePuzzleVisualCuesStore } from '@/features/puzzle-visual-cues/store.js';
 import { usePuzzleEvent } from '@/composables/puzzle-events.js';
+import type { PuzzleBoardHighlight, CellHighlight, LineHighlight, AreaHighlight } from '../helpers/highlights.js';
 
 const visualCuesStore = usePuzzleVisualCuesStore();
 const { highlights, highlightsVisible } = storeToRefs(visualCuesStore);

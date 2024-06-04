@@ -1,5 +1,5 @@
-import type { BoardShape, LineId, Vec, XYKey } from "@/lib/types.js"
-import { columnIdToX, getLineDataFromId, rowIdToY } from "@/lib/utils/puzzle-line.utils.js"
+import type { BoardShape, LineId, Vec } from "@/lib/types.js"
+import { getLineDataFromId, rowIdToY, columnIdToX } from "@/lib/utils/puzzle-line.utils.js"
 
 type HighlightBase = {
 	type: 'highlight',
@@ -24,18 +24,6 @@ export type AreaHighlight = HighlightBase & {
 }
 export type PuzzleBoardHighlight = CellHighlight | LineHighlight | AreaHighlight;
 export type PuzzleBoardHighlightSource = PuzzleBoardHighlight['source'];
-
-type ErrorMarkBase = {
-	cell: Vec,
-	id: XYKey,
-	type: 'error'
-}
-export type IncorrectValueErrorMark = ErrorMarkBase & {
-	errorType: 'incorrectValue', // only incorrect values for now
-}
-export type ErrorMark = IncorrectValueErrorMark; // for now, incorrectValue is the only marked error
-export type ErrorMarkErrorType = ErrorMark['errorType'];
-export type PuzzleBoardCellMark = ErrorMark; // for now, only type of mark is the error mark
 
 export const createCellHighlight = (
 	cell: Vec,

@@ -17,8 +17,8 @@
 
 <script setup lang="ts">
 import type { Vec } from '@/lib/types.js';
-import type { PuzzleBoardHighlight } from '@/helpers/puzzle-visual-cues.js';
 import { computed } from 'vue';
+import type { PuzzleBoardHighlight } from '../helpers/highlights.js';
 
 const props = defineProps<{
 	highlightAreaType: PuzzleBoardHighlight['highlightAreaType'],

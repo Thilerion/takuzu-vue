@@ -1,7 +1,8 @@
-import type { PuzzleBoardHighlight, PuzzleBoardCellMark, ErrorMark } from "@/helpers/puzzle-visual-cues.js";
+import type { PuzzleBoardCellMark, ErrorMark } from "@/features/puzzle-visual-cues/helpers/error-marks.js";
 import type { Vec } from "@/lib/types.js";
 import { defineStore } from "pinia";
 import { ref } from "vue";
+import type { PuzzleBoardHighlight } from "./helpers/highlights.js";
 
 export const usePuzzleVisualCuesStore = defineStore('puzzleVisualCues', () => {
 	// state
@@ -10,25 +11,29 @@ export const usePuzzleVisualCuesStore = defineStore('puzzleVisualCues', () => {
 	const cellMarks = ref<PuzzleBoardCellMark[]>([]);
 
 	// clear/reset actions
-	const clearHighlights = () => highlights.value = [];
-	const clearMarks = () => cellMarks.value = [];
-	const clearAll = () => {
+	const clearHighlights = (): void => {
+		highlights.value = [];
+	}
+	const clearMarks = (): void => {
+		cellMarks.value = [];
+	}
+	const clearAll = (): void => {
 		clearHighlights();
 		clearMarks();
 	}
 	// specific clear/remove actions for highlights
-	const clearHighlightsFromHints = () => {
+	const clearHighlightsFromHints = (): void => {
 		highlights.value = highlights.value.filter(highlight => highlight.source !== 'hint');
 	}
-	const clearHighlightsFromRuleViolations = () => {
+	const clearHighlightsFromRuleViolations = (): void => {
 		highlights.value = highlights.value.filter(highlight => highlight.source !== 'ruleViolationCheck');
 	}
 
 	// specific clear/remove actions for marks
-	const clearErrorMarks = () => {
+	const clearErrorMarks = (): void => {
 		cellMarks.value = cellMarks.value.filter(mark => mark.errorType !== 'incorrectValue');
 	}
-	const removeCellMarkAtCell = (cell: Vec) => {
+	const removeCellMarkAtCell = (cell: Vec): void => {
 		cellMarks.value = cellMarks.value.filter(mark => {
 			const { x, y } = mark.cell;
 			return !(cell.x === x && cell.y === y);
@@ -36,10 +41,10 @@ export const usePuzzleVisualCuesStore = defineStore('puzzleVisualCues', () => {
 	}
 
 	// add/set actions
-	const addErrorMarks = (marks: ErrorMark[]) => {
+	const addErrorMarks = (marks: ErrorMark[]): void => {
 		cellMarks.value = [...cellMarks.value, ...marks];
 	}
-	const addErrorMarksFromCells = (type: ErrorMark['errorType'], cells: Vec[]) => {
+	const addErrorMarksFromCells = (type: ErrorMark['errorType'], cells: Vec[]): void => {
 		const marks: ErrorMark[] = cells.map(({ x, y }): ErrorMark => ({
 			type: 'error',
 			cell: { x, y }, // don't simply add the cell, it needs to be cloned at the least
@@ -51,13 +56,13 @@ export const usePuzzleVisualCuesStore = defineStore('puzzleVisualCues', () => {
 		})
 		addErrorMarks(marks);
 	}
-	const addHintHighlights = (values: PuzzleBoardHighlight[]) => {
+	const addHintHighlights = (values: PuzzleBoardHighlight[]): void => {
 		highlights.value = [...highlights.value, ...values];
 	}
 	const setHintHighlights = (
 		values: PuzzleBoardHighlight[],
 		{ setVisible }: { setVisible: boolean } = { setVisible: true }
-	) => {
+	): void => {
 		clearHighlightsFromHints();
 		
 		if (values.length > 0) {
@@ -70,7 +75,7 @@ export const usePuzzleVisualCuesStore = defineStore('puzzleVisualCues', () => {
 	const setRuleViolationHighlights = (
 		values: PuzzleBoardHighlight[],
 		{ setVisible }: { setVisible: boolean } = { setVisible: true }
-	) => {
+	): void => {
 		clearHighlightsFromRuleViolations();
 		
 		if (values.length > 0) {
@@ -82,13 +87,15 @@ export const usePuzzleVisualCuesStore = defineStore('puzzleVisualCues', () => {
 	}
 	
 	// highlights visibility state
-	const toggleHighlightsVisibility = () => {
+	const toggleHighlightsVisibility = (): void => {
 		highlightsVisible.value = !highlightsVisible.value;
 	}
-	const showHighlights = () => {
+	const showHighlights = (): void => {
 		highlightsVisible.value = true;
 	}
-	const hideHighlights = () => highlightsVisible.value = false;
+	const hideHighlights = (): void => {
+		highlightsVisible.value = false;
+	}
 
 	return {
 		// state

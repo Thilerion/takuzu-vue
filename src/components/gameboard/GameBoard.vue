@@ -37,7 +37,7 @@
 import type { SimpleBoard } from '@/lib/board/Board.js';
 import PuzzleGrid from './PuzzleGrid.vue';
 import type { VecValue } from '@/lib/types.js';
-import { usePuzzleVisualCuesStore } from '@/stores/puzzle-visual-cues.js';
+import { usePuzzleVisualCuesStore } from '@/features/puzzle-visual-cues/store.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { usePuzzlePauseResume } from '@/stores/puzzle/usePuzzlePauseResume.js';
 import { watch, computed, ref, toRef } from 'vue';

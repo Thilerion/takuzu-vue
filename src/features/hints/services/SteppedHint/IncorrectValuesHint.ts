@@ -3,7 +3,7 @@ import { BaseSteppedHint, type HintStepsData } from "./SteppedHint.js";
 import type { FoundIncorrectValue } from "@/lib/mistakes/types.js";
 import type { HintStepFinal, HintStepIntermediate } from "./types.js";
 import { EMPTY } from "@/lib/constants.js";
-import { createCellHighlight, type CellHighlight } from "@/helpers/puzzle-visual-cues.js";
+import { type CellHighlight, createCellHighlight } from "@/features/puzzle-visual-cues/helpers/highlights.js";
 
 export class IncorrectValuesSteppedHint extends BaseSteppedHint {
 	readonly type = 'incorrectValues' as const;

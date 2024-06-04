@@ -2,7 +2,7 @@ import type { BoardString } from "@/lib/types.js";
 import { defineStore } from "pinia";
 import { usePuzzleStore } from "../../stores/puzzle/store.js";
 import { computed, reactive, readonly, ref } from "vue";
-import { usePuzzleVisualCuesStore } from "../../stores/puzzle-visual-cues.js";
+import { usePuzzleVisualCuesStore } from "../puzzle-visual-cues/store.js";
 
 import type { SteppedHint, SteppedHintRawData } from "@/features/hints/services/SteppedHint/types.js";
 import { searchForHint } from "@/features/hints/services/search.js";

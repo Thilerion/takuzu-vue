@@ -3,7 +3,7 @@ import { BaseSteppedHint, type HintStepsData } from "./SteppedHint.js";
 import type { GenericDuplicateLineTechniqueResult } from "@/lib/solvers/human-solver/techniques/GenericDuplicateLineTechnique.js";
 import type { HintStepFinal, HintStepIntermediate } from "./types.js";
 import { EMPTY } from "@/lib/constants.js";
-import { createCellHighlight, createLineHighlightFromLineId, type CellHighlight } from "@/helpers/puzzle-visual-cues.js";
+import { createLineHighlightFromLineId, type CellHighlight, createCellHighlight } from "@/features/puzzle-visual-cues/helpers/highlights.js";
 
 export class GenericDuplicateLineSteppedHint extends BaseSteppedHint {
 	readonly type = 'duplicateLineGeneric' as const;

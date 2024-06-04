@@ -4,7 +4,7 @@ import type { HintStepIntermediate, HintStepFinal, HintStepEventCallbackActionsP
 import { BaseSteppedHint, type HintStepsData } from "./SteppedHint.js";
 import { getOppositeSymbol } from "@/lib/utils/puzzle-value.utils.js";
 import type { TriplesTechniqueResult } from "@/lib/solvers/human-solver/techniques/TriplesTechnique.js";
-import { createCellHighlight, type AreaHighlight, createAreaHighlightFromCorners } from "@/helpers/puzzle-visual-cues.js";
+import { type AreaHighlight, createAreaHighlightFromCorners, createCellHighlight } from "@/features/puzzle-visual-cues/helpers/highlights.js";
 
 export class TriplesSteppedHint extends BaseSteppedHint {
 	readonly subType: 'double' | 'sandwich';

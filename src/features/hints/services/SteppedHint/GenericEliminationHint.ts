@@ -4,7 +4,7 @@ import { BoardLine } from "@/lib/board/BoardLine.js";
 import { EMPTY } from "@/lib/constants.js";
 import type { GenericEliminationTechniqueResult } from "@/lib/solvers/human-solver/techniques/GenericEliminationTechnique.js";
 import type { HintStepFinal, HintStepIntermediate } from "./types.js";
-import { type CellHighlight, createLineHighlightFromLineId, createCellHighlight } from "@/helpers/puzzle-visual-cues.js";
+import { createLineHighlightFromLineId, type CellHighlight, createCellHighlight } from "@/features/puzzle-visual-cues/helpers/highlights.js";
 
 export class GenericEliminationSteppedHint extends BaseSteppedHint {
 	readonly type = 'eliminationGeneric' as const;

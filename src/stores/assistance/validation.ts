@@ -3,9 +3,9 @@ import { usePuzzleStore } from "../puzzle/store.js";
 import { findIncorrectValuesFromSolution } from "@/lib/mistakes/incorrect-values.js";
 import type { BalancedLinesRuleViolation, FoundIncorrectValue, MaxConsecutiveRuleViolation, RuleViolation, UniqueLinesRuleViolation } from "@/lib/mistakes/types.js";
 import { useSettingsStore } from "../../features/settings/store.js";
-import { usePuzzleVisualCuesStore } from "../puzzle-visual-cues.js";
+import { usePuzzleVisualCuesStore } from "../../features/puzzle-visual-cues/store.js";
 import { filterUnnecessaryRuleViolations, findRuleViolations, type RuleViolationsByTypeRecord } from "@/lib/mistakes/rule-violations.js";
-import { createAreaHighlightFromCorners, createLineHighlightFromLineId, type AreaHighlight, type LineHighlight, type PuzzleBoardHighlight } from "@/helpers/puzzle-visual-cues.js";
+import { type PuzzleBoardHighlight, type LineHighlight, createLineHighlightFromLineId, type AreaHighlight, createAreaHighlightFromCorners } from "@/features/puzzle-visual-cues/helpers/highlights.js";
 
 type IncorrectValuesResult = {
 	type: 'incorrectValues';
