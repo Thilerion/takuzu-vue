@@ -101,8 +101,8 @@ const onCellClick = (val: VecValue) => {
 	gap: var(--grid-gap);
 }
 
-.puzzle-paused .puzzle-grid,
-.puzzle-finished .puzzle-grid {
+[data-play-state="paused"] .puzzle-grid,
+[data-play-state="finished"] .puzzle-grid {
 	@apply pointer-events-none;
 }
 

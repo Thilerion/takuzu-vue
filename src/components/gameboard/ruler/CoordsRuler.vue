@@ -101,10 +101,10 @@ const completedLines = computed((): Set<LineId> => {
 .ruler-cell.complete:not(.error) {
 	@apply text-black/70 dark:text-slate-400 duration-200 delay-0 underline decoration-black/30 underline-offset-2;
 }
-.puzzle-paused :is(.ruler-cell.error, .ruler-cell.complete) {
+[data-play-state="paused"] :is(.ruler-cell.error, .ruler-cell.complete) {
 	@apply transition-none no-underline;
 }
-.puzzle-paused .ruler-cell {
+[data-play-state="paused"] .ruler-cell {
 	@apply text-inherit opacity-40;
 }
 .ruler-rows > .ruler-cell {

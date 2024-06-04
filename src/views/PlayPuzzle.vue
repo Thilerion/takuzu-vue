@@ -1,7 +1,7 @@
 <template>
 <div
 	class="play-puzzle fixed box-border overflow-auto inset-0 max-h-vh flex flex-col z-20 text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-white"
-	:class="{ 'puzzle-paused': paused, 'puzzle-finished': finished }"
+	:data-play-state="paused ? 'paused' : finished ? 'finished' : 'playing'"
 >
 	<GameBoardHeader
 		@close="exitGame"

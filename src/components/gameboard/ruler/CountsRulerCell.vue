@@ -69,11 +69,11 @@ const valueOne = computed(() => props.one[props.type]);
 	@apply text-gray-300 dark:text-slate-300/30;
 }
 
-.puzzle-paused .count {
+[data-play-state="paused"] .count {
 	@apply relative invisible;
 	@apply after:absolute after:h-full after:inset-0 after:bg-gray-200 dark:after:bg-slate-600 after:visible;
 }
-.puzzle-paused .count-divider {
+[data-play-state="paused"] .count-divider {
 	@apply bg-gray-300 dark:bg-slate-600 transition-none;
 }
 

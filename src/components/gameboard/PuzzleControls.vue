@@ -88,7 +88,7 @@ const checkButtonEnabled = toRef(settingsStore, 'checkButtonEnabled');
 	@apply bg-transparent;
 	@apply text-gray-900/80 dark:text-slate-200/90;
 }
-.puzzle-paused .puzzle-controls, .puzzle-finished .puzzle-controls {
+[data-play-state="paused"] .puzzle-controls, [data-play-state="finished"] .puzzle-controls {
 	@apply pointer-events-none text-gray-700/60 dark:text-slate-200/50;
 }
 
