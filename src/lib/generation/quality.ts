@@ -1,21 +1,8 @@
-import { arrayCountValuesAsMap } from "@/utils/array.ts.utils";
-import type { SimpleBoard } from "../board/Board";
-import { ONE, ZERO } from "../constants";
-import type { DifficultyKey, DimensionStr } from "../types";
-
-// empirically found mask ratios, puzzles can be generated in a reasonable amount of time with this ratio of masked/unmasked cells
-const defaultMaskRatio = 0.6875;
-const optimalMaskRatios = new Map<number | 'default', number>([
-	[18, 0.72],
-	[16, 0.73],
-	[14, 0.75],
-	[12, 0.77],
-	[10, 0.81],
-	[8, 0.8125],
-	[6, 0.80556],
-	[4, 0.6875],
-	['default', defaultMaskRatio],
-]);
+import { arrayCountValuesAsMap } from "@/utils/array.ts.utils.js";
+import type { SimpleBoard } from "../board/Board.js";
+import { ZERO, ONE } from "../constants.js";
+import type { BoardShape, DimensionStr } from "../types.js";
+import { normalize } from "@/utils/number.utils.js";
 
 const maskRatioTargets = new Map<DimensionStr | 'default', { min: number, optimal: number }>([
 	['default', { min: 0.70, optimal: 0.78 }],
@@ -38,58 +25,65 @@ const maskRatioTargets = new Map<DimensionStr | 'default', { min: number, optima
 	['8x12', { min: 0.72, optimal: 0.81 }],
 	['10x14', { min: 0.72, optimal: 0.79 }],
 	['12x16', { min: 0.72, optimal: 0.78 }],
-
 ])
 
-// for puzzles with a lower difficulty (eg only doubles and line balance),
-//  it is harder to mask a lot of cells
-const maskRatioDifficultyModifiers: Record<DifficultyKey, number> = {
-	1: 0.97,
-	2: 0.98,
-	3: 0.97,
-	4: 1,
-	5: 1
-};
+export type GetMaskQualityCheckerOpts = {
+	maskRatioTarget?: { min: number, optimal: number },
+	minSymbolDistribution?: number,
+}
+export type MaskQualityResult = {
+	maskRatio: number,
+	symbolDistribution: number,
+	success: boolean,
+}
+export type CheckMaskQualityOpts = {
+	/** A number between 0 and 1 that determines how strict to adhere to the "optimal" values */
+	strictness?: number,
+}
+export function getMaskQualityChecker(
+	shape: BoardShape,
+	opts: GetMaskQualityCheckerOpts = {}
+) {
+	// TODO: do something with optimal mask ratio target
+	const { min, optimal } = getMaskRatioTarget(shape, opts);
+	const { minSymbolDistribution = 0.35 } = opts;
 
-export function getOptimalMaskRatio(width: number, height: number, difficulty: DifficultyKey | undefined): number {
-	const avgBoardSize = (width + height) / 2;
-	const roundedAvgBoardSize = 2 * Math.ceil(avgBoardSize / 2);
+	return (board: SimpleBoard, opts: CheckMaskQualityOpts = {}) => {
+		const {
+			strictness = 1,
+		} = opts;
+		
+		const maskRatio = getMaskRatio(board);
+		const symbolDistribution = getSymbolDistributionQuality(board);
 
-	const sizeRatio: number = optimalMaskRatios.get(roundedAvgBoardSize) ?? optimalMaskRatios.get('default')!;
+		let success = true;
 
-	if (difficulty === undefined) {
-		// Custom difficulty config is used, do not apply modifier for difficulty.
-		return sizeRatio;
+		// Determine the absolute minimum mask ratio, based on the strictness (where 1 means it must be at least "optimal", and 0 means it must be at least "min")
+		const minMaskRatio = min + (optimal - min) * strictness;
+
+		if (maskRatio < minMaskRatio) {
+			success = false;
+		}
+		if (symbolDistribution < minSymbolDistribution) {
+			success = false;
+		}
+
+		return {
+			maskRatio,
+			symbolDistribution,
+			success,
+		}
 	}
-
-	const difficultyMod = maskRatioDifficultyModifiers[difficulty] ?? 1;
-	const optimalRatio = sizeRatio * difficultyMod;
-	return optimalRatio;
-}
-export function getMinMaskRatio(width: number, height: number/* , difficulty: DifficultyKey */): number {
-	const key = `${width}x${height}` as DimensionStr;
-	const { min } = maskRatioTargets.get(key) ?? maskRatioTargets.get('default')!;
-	return min;
 }
 
-function normalizeValue(value: number, min = 0, max = 1) {
-	return (value - min) / (max - min);
-}
-
-function getMaskedRatioQuality(board: SimpleBoard, optimalRatio: number): number {
+function getMaskRatio(board: SimpleBoard): number {
 	const { width, height } = board;
 	const numEmpty = board.getNumEmpty();
 	const numCells = width * height;
-	const maskRatio = numEmpty / numCells;
-
-	// optimalRatio = quality 1 => normalize the quality value to represent this
-	const normalized = normalizeValue(maskRatio, 0, optimalRatio);
-	// return 1 if maskRatio is better than the "optimal" ratio
-	return Math.min(1, normalized);
+	return numEmpty / numCells;
 }
 
-// a puzzle wherein one symbol is largely masked and the other largely unmasked
-//  is less fun, and possibly too easy
+/** Gives the (normalized) symbol distribution, with 0 meaning all given values are the same, and 1 meaning they are equally distributed. */
 function getSymbolDistributionQuality(board: SimpleBoard): number {
 	const symbolCounts = arrayCountValuesAsMap([...board.grid].flat());
 	const countZero = symbolCounts.get(ZERO)!;
@@ -99,19 +93,18 @@ function getSymbolDistributionQuality(board: SimpleBoard): number {
 	const symbolRatioZero = countZero / numFilled;
 	const symbolRatioOne = countOne / numFilled;
 	
+	// Ratio of the least common symbol. Best if higher than 0.35, with a max of 0.5 possible when both symbols are equally given.
 	const symbolRatio = Math.min(symbolRatioOne, symbolRatioZero);
-
-	// best if ratio higher than 0.35 (and lower than 0.65 for the other)
-	const normalizedSymbolRatio = normalizeValue(symbolRatio, 0, 0.5);
-	return normalizedSymbolRatio;
+	return normalize(symbolRatio, 0, 0.5);
 }
 
-export function getMaskQuality(board: SimpleBoard, optimalMaskedRatio: number): { maskedRatio: number; symbolDistribution: number; } {
-	const maskedRatioQuality = getMaskedRatioQuality(board, optimalMaskedRatio);
-	const symbolDistributionQuality = getSymbolDistributionQuality(board);
-
-	return {
-		maskedRatio: maskedRatioQuality,
-		symbolDistribution: symbolDistributionQuality
-	};
+function getMaskRatioTarget(shape: BoardShape, opts?: GetMaskQualityCheckerOpts): { min: number, optimal: number } {
+	if (opts?.maskRatioTarget) {
+		return opts.maskRatioTarget;
+	}
+	let key: DimensionStr | 'default' = `${shape.width}x${shape.height}` as DimensionStr;
+	if (!maskRatioTargets.has(key)) {
+		key = 'default';
+	}
+	return maskRatioTargets.get(key)!;
 }

@@ -1,7 +1,8 @@
+import { clamp } from "@/utils/number.utils.js";
 import type { BasicPuzzleConfig, BoardAndSolutionBoards, BoardShape } from "../types.js";
 import { MaskDifficultyValidation, type CreateMaskValidatorsOpts } from "./mask-validation.js";
 import { createMaskWithDifficulty } from "./mask.js";
-import { getMaskQuality, getOptimalMaskRatio } from "./quality.js";
+import { getMaskQualityChecker, type MaskQualityResult } from "./quality.js";
 import { generateSolutionBoard } from "./solution.js";
 
 export interface CreatePuzzleOpts {
@@ -9,7 +10,7 @@ export interface CreatePuzzleOpts {
 	timeout?: number
 }
 export type CreatePuzzleReturn = BoardAndSolutionBoards & {
-	quality: { maskedRatio: number, symbolDistribution: number }
+	quality: MaskQualityResult
 };
 
 function createPuzzle(
@@ -19,15 +20,16 @@ function createPuzzle(
 ): CreatePuzzleReturn | null {
 	const {
 		maxAttempts = 40,
+		// Should prefer using maxAttempts for limiting, and use the timeout value primarily to avoid the extremely long edge cases.
 		timeout = 5000,
 	} = opts;
 
 	// Setup timeout and attempts
-	const { hasTimedOut } = createTimeoutHandler(timeout);
+	const { hasTimedOut, getTimeLeft } = createTimeoutHandler(timeout);
 	let attemptsLeft = maxAttempts;
 
 	// Setup required data
-	const optimalMaskedRatio: number = getOptimalMaskRatio(width, height, undefined);
+	const checkMaskQuality = getMaskQualityChecker({ width, height });
 
 	// Attempt to create a valid puzzle within the specified time and attempts.
 	while (!hasTimedOut() && attemptsLeft > 0) {
@@ -50,13 +52,15 @@ function createPuzzle(
 			continue;
 		}
 
-		const qualityResult = getMaskQuality(mask, optimalMaskedRatio);
-		const { maskedRatio, symbolDistribution } = qualityResult;
+		// Set strictness of quality check based on the amount of attempts left, where all attempts left means 1, and no attempts left means 0.
+		const easedStrictness = getAttemptQualityStrictness(maxAttempts, attemptsLeft, getTimeLeft());
 
-		if (maskedRatio < 0.95 || symbolDistribution < 0.35) {
+		const qualityResult = checkMaskQuality(mask, { strictness: easedStrictness });
+		if (!qualityResult.success) {
 			// console.warn('Quality check failed in "createPuzzle".');
 			continue;
-		}
+		}		
+		// console.log(`Quality check passed after ${currentAttempt + 1} attempts for a ${width}x${height} puzzle, with a maskRatio of ${qualityResult.maskRatio}.`)
 
 		return {
 			solution,
@@ -103,9 +107,35 @@ function createTimeoutHandler(timeout: number) {
 	const end = start + timeout;
 
 	const hasTimedOut = () => performance.now() >= end;
-	const timeLeft = () => end - performance.now();
+	const getTimeLeft = () => end - performance.now();
 	return {
 		hasTimedOut,
-		timeLeft
+		getTimeLeft
 	};
+}
+
+export function getAttemptQualityStrictness(
+	maxAttempts: number,
+	attemptsLeft: number,
+	timeLeft: number,
+): number {
+	// If only little time left after the mask generation, don't bother with strictness
+	if (timeLeft < 200) {
+		return 0;
+	}
+
+	const currentAttempt = maxAttempts - attemptsLeft - 1;
+
+	// Always start at strictness = 1, even when maxAttempts = 1,
+	if (currentAttempt <= 0) return 1;
+
+	// Cap maxAttempts to 10, and any attempt beyond that will have the same strictness as the 10th attempt (0)
+	if (maxAttempts > 10 && currentAttempt >= 10) {
+		return 0;
+	}
+
+	const cappedAttempt = Math.min(currentAttempt, 10);
+	const cappedMaxAttempts = Math.min(maxAttempts, 10);
+	// Otherwise, set strictness to a value between 0 and 1 based on the number of attempts left
+	return clamp(0, 1 - (cappedAttempt / cappedMaxAttempts), 1);			
 }
