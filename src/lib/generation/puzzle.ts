@@ -125,6 +125,9 @@ export function getAttemptQualityStrictness(
 	}
 
 	const currentAttempt = maxAttempts - attemptsLeft - 1;
+	if (currentAttempt < 0) {
+		throw new Error('getAttemptQualityStrictness: attemptsLeft must be less than maxAttempts');
+	}
 
 	// Always start at strictness = 1, even when maxAttempts = 1,
 	if (currentAttempt <= 0) return 1;
@@ -137,5 +140,5 @@ export function getAttemptQualityStrictness(
 	const cappedAttempt = Math.min(currentAttempt, 10);
 	const cappedMaxAttempts = Math.min(maxAttempts, 10);
 	// Otherwise, set strictness to a value between 0 and 1 based on the number of attempts left
-	return clamp(0, 1 - (cappedAttempt / cappedMaxAttempts), 1);			
+	return clamp(0, 1 - (cappedAttempt / (cappedMaxAttempts - 1)), 1);			
 }

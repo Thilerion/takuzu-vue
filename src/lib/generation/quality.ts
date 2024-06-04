@@ -44,7 +44,6 @@ export function getMaskQualityChecker(
 	shape: BoardShape,
 	opts: GetMaskQualityCheckerOpts = {}
 ) {
-	// TODO: do something with optimal mask ratio target
 	const { min, optimal } = getMaskRatioTarget(shape, opts);
 	const { minSymbolDistribution = 0.35 } = opts;
 
