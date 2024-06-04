@@ -15,8 +15,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useDynamicPuzzleSymbolString } from '../dynamic-symbols/useDynamicPuzzleSymbolString.js';
-import { injectCellThemeData } from '../gameboard/composables/useCellThemeProvider.js';
+import { useDynamicPuzzleSymbolString } from '@/components/dynamic-symbols/useDynamicPuzzleSymbolString.js';
+import { injectCellThemeData } from '@/components/gameboard/composables/useCellThemeProvider.js';
 import { useI18n } from 'vue-i18n';
 
 defineProps<{

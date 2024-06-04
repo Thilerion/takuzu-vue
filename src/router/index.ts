@@ -122,22 +122,22 @@ const routes = [
 			{
 				path: '',
 				name: 'HowToPlayOverview',
-				component: () => import('@/components/how-to-play/HowToPlayOverview.vue'),
+				component: () => import('@/features/how-to-play/components/tabs/HowToPlayOverview.vue'),
 			},
 			{
 				path: 'rules',
 				name: 'PuzzleRulesInfo',
-				component: () => import('@/components/how-to-play/PuzzleRulesInfo.vue'),
+				component: () => import('@/features/how-to-play/components/tabs/PuzzleRulesInfo.vue'),
 			},
 			{
 				path: 'techniques',
 				name: 'BasicTechniques',
-				component: () => import('@/components/how-to-play/BasicTechniques.vue'),
+				component: () => import('@/features/how-to-play/components/tabs/BasicTechniques.vue'),
 			},
 			{
 				path: 'advanced',
 				name: 'AdvancedTechniques',
-				component: () => import('@/components/how-to-play/AdvancedTechniques.vue')
+				component: () => import('@/features/how-to-play/components/tabs/AdvancedTechniques.vue')
 			}
 		]
 	},

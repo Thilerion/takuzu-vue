@@ -126,8 +126,6 @@
 
 <script setup lang="ts">
 import { splitLine } from '@/lib/utils/puzzle-line.utils.js';
-import HowToPlayThemedTranslation from './HowToPlayThemedTranslation.vue';
-
 </script>
 
 <style scoped>

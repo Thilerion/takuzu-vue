@@ -22,8 +22,8 @@
 </template>
 
 <script setup lang="ts">
+import { injectCellThemeData } from '@/components/gameboard/composables/useCellThemeProvider.js';
 import type { PuzzleValueLine } from '@/lib/types.js';
-import { injectCellThemeData } from '../gameboard/composables/useCellThemeProvider.js';
 
 const props = withDefaults(defineProps<{
 	values: PuzzleValueLine,
