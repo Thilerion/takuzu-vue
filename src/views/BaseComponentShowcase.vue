@@ -37,6 +37,30 @@
 				<BaseButton @click="close">Close</BaseButton>
 			</BaseModal>
 		</div>
+
+		<div class="showcase-block">
+			<h2 class="text-xl mb-6 pb-1 font-medium border-b self-stretch">Native Dialog</h2>
+			<BaseButton @click="showDialog1 = true">Open Dialog 1</BaseButton>
+			<BaseDialog
+				v-model="showDialog1"
+				prevent-cancel
+			>
+				<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias hic excepturi aspernatur labore non quas. A laudantium ea quas ipsa enim odio molestiae. Voluptate recusandae nam nemo, placeat accusantium impedit! Nihil illum consectetur officia vel voluptas sunt dolorum rerum sint. Labore obcaecati numquam deserunt accusamus.</p>
+				<p>Fugit dolorem, debitis reiciendis molestias, qui corrupti aperiam repudiandae rerum maxime ratione, a mollitia earum.</p>
+				<p>Optio quam impedit consequatur eum neque magnam. Doloremque fugiat magni aperiam expedita non sint vero.</p>
+				<p>Quasi, labore sequi iste nemo dignissimos similique aspernatur vero, temporibus, quae nesciunt delectus numquam optio?</p>
+				<p>Nulla, quod, officiis reprehenderit voluptates, ut velit impedit a obcaecati pariatur corrupti vel aperiam itaque.</p>
+				<p>Earum consequatur est velit optio hic. Necessitatibus exercitationem libero quae saepe soluta explicabo adipisci a.</p>
+				<p>Quod, atque quaerat, reprehenderit non sit exercitationem est tempora rerum blanditiis, soluta animi hic. Quas!</p>
+				<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt aspernatur fugit animi. Necessitatibus recusandae deserunt ea rerum ipsam alias, aliquam nihil, a, autem dolores omnis saepe! Impedit minima temporibus eos pariatur? Accusamus tempora numquam corrupti vel asperiores, nulla aspernatur officia sed. Tenetur quisquam nobis tempore repellat aut tempora eos voluptates!</p>
+				<p>Reprehenderit officiis reiciendis iusto ratione quia repellat? Doloribus exercitationem neque accusantium. Asperiores voluptatem saepe, necessitatibus expedita quod commodi eum excepturi aliquam delectus quo alias, molestias eos in, fuga vel placeat hic culpa laboriosam? Unde, excepturi nihil! Beatae culpa alias quia ipsum repudiandae aut voluptatum adipisci aliquam unde explicabo! Voluptatibus, aut.</p>
+				<p>Eaque, facere. Quos corrupti deleniti deserunt. Eveniet inventore corporis aperiam sint itaque ad vel illum quibusdam saepe enim. Culpa dolorem aliquid ipsam magnam quo eaque nesciunt consequatur? Aut ex eaque inventore aperiam quos labore maiores fuga vitae eum numquam in voluptatibus quia error impedit voluptates quas nesciunt nemo, quisquam ducimus.</p>
+				<p>Fugit aliquam omnis explicabo. Consequatur nisi beatae minus maxime nostrum voluptatibus, hic itaque pariatur ducimus provident accusamus odio qui porro ratione in cupiditate nemo atque deserunt, eius aspernatur inventore reiciendis? Ullam sapiente possimus sequi necessitatibus labore quod alias quia dolore quaerat, distinctio maiores quasi consequatur officiis at soluta quo rerum?</p>
+				<p>Reiciendis, magni neque delectus voluptas natus iure. Deserunt voluptates esse odio, placeat porro ullam est fuga adipisci molestias, recusandae, repudiandae distinctio corporis sit! Inventore at natus mollitia cupiditate suscipit dolorum cum voluptatem dolores assumenda temporibus. Vero odit sed, magnam quia fuga pariatur. Ipsam facilis autem officia quis molestiae possimus fuga!</p>
+				<BaseButton @click="showDialog1 = false">Close</BaseButton>
+			</BaseDialog>
+		</div>
+
 		<div class="showcase-block">
 			<h2 class="text-xl mb-6 pb-1 font-medium border-b self-stretch">Dropdown</h2>
 			<BaseDropdown>
@@ -129,6 +153,8 @@ const openModal = (refName: keyof typeof modalRefs) => {
 		modalRef.open();
 	}
 }
+
+const showDialog1 = ref(false);
 </script>
 
 <style scoped>
