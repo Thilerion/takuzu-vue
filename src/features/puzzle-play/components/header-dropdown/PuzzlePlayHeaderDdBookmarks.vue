@@ -58,7 +58,7 @@
 	<div class="mt-px">{{ $t('PlayPuzzle.dd.view-bookmarks') }}</div>
 </BaseDropdownItem>
 
-<GameBoardBookmarkManager
+<PuzzlePlayBookmarkManager
 	v-model="bookmarkManagerOpened"
 />
 </template>

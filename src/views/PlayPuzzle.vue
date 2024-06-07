@@ -1,30 +1,30 @@
 <template>
-<div
-	class="play-puzzle fixed box-border overflow-auto inset-0 max-h-vh flex flex-col z-20 text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-white"
-	:data-play-state="paused ? 'paused' : finished ? 'finished' : 'playing'"
+<PuzzlePlayLayout
+	:data-play-state="dataPlayStateAttribute"
+	game-area-classes="px-1 py-2"
+	:game-area-size-config="{
+		rulerSize,
+		paddingX: 0, paddingY: 0,
+		infobarHeight: 21
+	}"
+	:show-recap="finished && puzzleRecapStore.modalShown"
 >
-	<GameBoardHeader
-		@close="exitGame"
-		@dropdown-toggled="onDropdownToggled"
-		@pause="manualPauseGame"
-		@resume="manualResumeGame"
-	/>
-	<GameBoardWrapper
-		v-slot="{ width, height, cellSize }"
-		:ruler-height="rulerSize"
-		:ruler-width="rulerSize"
-		:info-height="21"
-		:padding-x="4"
-		:padding-y="6"
-	>
+	<template #header>
+		<PuzzlePlayHeader
+			@save="saveGame"
+			@exit="goBackToNewPuzzleRoute"
+		/>
+	</template>
+	
+	<template #gameboard="{ gridHeight, gridWidth, cellSize }">
 		<GameBoard
 			v-if="started && board"
 			:paused="paused"
 			:rows="rows!"
 			:columns="columns!"
 			:board="board"
-			:grid-height="height"
-			:grid-width="width"
+			:grid-height="gridHeight"
+			:grid-width="gridWidth"
 			:cell-size="cellSize"
 		>
 			<template #puzzle-info>
@@ -55,68 +55,37 @@
 				/>
 			</template>
 		</GameBoard>
-	</GameBoardWrapper>
+	</template>
 
-	<div class="footer2 h-32 w-full relative">
-		<PuzzleControls
-			:can-undo="puzzleHistoryStore.canUndo"
-			:can-restart="puzzleStore.canRestart"
-			:paused="paused"
-			@undo="puzzleStore.undoLastMove"
-			@restart="puzzleStore.restartPuzzle"
-			@check="puzzleValidationStore.userCheck"
-			@get-hint="puzzleHintsStore.getHint"
-		/>
-		<PuzzleHintWrapper />
-	</div>
-
-	<router-view v-slot="{ Component }">
-		<OverlayPageTransition :show="Component != null">
-			<div class="fixed inset-0 text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-white overflow-y-auto pb-8 z-40">
-				<component :is="Component" />
-			</div>
-		</OverlayPageTransition>
-	</router-view>
-
-	<PuzzleRecap :show="finished && puzzleRecapStore.modalShown" />
-</div>
+	<template #footer>
+		<PuzzlePlayFooter />
+	</template>
+</PuzzlePlayLayout>
 </template>
 
 <script setup lang="ts">
 import { usePuzzleWakeLock } from '@/composables/use-wake-lock.js';
 import { storeToRefs } from 'pinia';
-import { computed, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
-import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from 'vue-router';
+import { computed, onUnmounted, onBeforeUnmount, onMounted } from 'vue';
+import { onBeforeRouteUpdate, useRouter } from 'vue-router';
 import type { DifficultyKey } from '@/lib/types.js';
 import { useGoBackOrReplaceTo } from '@/router/useGoBackOrReplaceTo.js';
-import { usePuzzlePauseResume } from '@/stores/puzzle/usePuzzlePauseResume.js';
-import { usePuzzleHistoryStore } from '@/stores/puzzle-history/history-store.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
-import { usePuzzleHintsStore } from '@/features/hints/store.js';
 import { usePlayPuzzleUiStateStore } from '@/stores/puzzle/play-ui-state-store.js';
 import { usePlayPuzzleSaveHandler } from './usePlayPuzzleSaveHandler.js';
 import { usePlayPuzzleAutoPause } from './usePlayPuzzleAutoPause.js';
 import { useGameCompletion } from './usePlayPuzzleCompletion.js';
-import { usePuzzlePlayHotkeys } from '@/components/gameboard/composables/usePuzzlePlayHotkeys.js';
-import { useSettingsStore } from '@/features/settings/store.js';
 import { usePuzzleRecapStore } from '@/features/recap/store.js';
-import { usePuzzleValidationStore } from '@/stores/assistance/validation.js';
+import { usePuzzlePlayHotkeys, usePuzzlePlayHotkeyCallbacks } from '@/features/puzzle-play/composables/puzzle-play-hotkeys.js';
 
 const puzzleUiStateStore = usePlayPuzzleUiStateStore();
 const { 
-	windowHidden,
-	
-	puzzleUiHasOverlay,
-	puzzleUiActive,
-
-	showRulers,
-	rulerComponentType,
-	rulerCountType,
-	rulerSize,
+	windowHidden,	
+	puzzleUiHasOverlay, puzzleUiActive,
+	showRulers, rulerComponentType, rulerCountType, rulerSize,
 	showTimer,
 } = storeToRefs(puzzleUiStateStore);
 const {
-	setDropdownOpen: onDropdownToggled,
 	setSettingsOpen,
 } = puzzleUiStateStore;
 
@@ -136,16 +105,12 @@ usePlayPuzzleAutoPause(
 	{ windowHidden, puzzleUiHasOverlay, userIdle },
 	{ autoResumeDelay: 250 }
 );
-const { manualPauseGame, manualResumeGame, toggleManualPause } = usePuzzlePauseResume();
 
 // Setup watchers for puzzle completion
-const { clearCompletionCheckTimeouts } = useGameCompletion();
+const { cleanup: cleanupCompletionChecker } = useGameCompletion();
 
-// initialize required stores and router
+// Initialize required stores and router
 const puzzleRecapStore = usePuzzleRecapStore();
-const puzzleHistoryStore = usePuzzleHistoryStore();
-const puzzleHintsStore = usePuzzleHintsStore();
-const puzzleValidationStore = usePuzzleValidationStore();
 const puzzleStore = usePuzzleStore();
 const router = useRouter();
 
@@ -155,86 +120,56 @@ const {
 	difficulty
 } = storeToRefs(puzzleStore);
 
-// Whether the puzzle is active and being played: the puzzle ui is shown, and the puzzle is loaded and not paused/finished/etc
-const puzzlePlayActive = computed((): boolean => {
-	return puzzleUiActive.value && puzzlePlayStatus.value === 'playing';
+// Data attribute on HTML element for play-state
+const dataPlayStateAttribute = computed(() => {
+	if (paused.value) return 'paused';
+	if (finished.value) return 'finished';
+	return 'playing';
 })
-usePuzzlePlayHotkeys({
-	undo: () => {
-		if (!puzzlePlayActive.value) return;
-		if (puzzleHistoryStore.canUndo) puzzleStore.undoLastMove();
-	},
-	check: () => {
-		if (!puzzlePlayActive.value) return;
-		const settingsStore = useSettingsStore();
-		if (settingsStore.checkButtonEnabled) {
-			usePuzzleValidationStore().userCheck();
-		}
-	},
-	togglePause: () => {
-		// Check if puzzle ui is active, because otherwise the puzzle can be manually paused while the dropdown menu or settings are open
-		// However, "puzzlePlayActive" also checks if not paused, so that can't be used here
-		if (!puzzleUiActive.value) return;
-		toggleManualPause();
-	},
-	resumePlay: () => {
-		if (!puzzleUiActive.value) return;
-		manualResumeGame();
-	},
-	getHint: () => {
-		if (!puzzlePlayActive.value) return;
-		if (!puzzleHintsStore.isHintShown) puzzleHintsStore.getHint();
-	},
-	hideHint: () => {
-		if (!puzzlePlayActive.value) return;
-		if (puzzleHintsStore.isHintShown) puzzleHintsStore.hide();
-	}
-});
+
+// Initialize hotkeys for actions such as undo, check, pause, resume, get/hide hint
+usePuzzlePlayHotkeys(usePuzzlePlayHotkeyCallbacks(
+	puzzlePlayStatus,
+	puzzleUiActive
+));
 
 const startGame = () => {
-	if (!initialized.value) {
-		// console.warn('Cannot start puzzle that is not initialized');
-		return;
-	}
-	if (started.value) {
-		// console.warn('Cannot start puzzle that is already started!');
+	// Can only start the game when it has not yet started. A puzzle should be initialized before it can be started.
+	if (!initialized.value || started.value) {
 		return;
 	}
 	puzzleStore.startPuzzle();
 }
 
 const goBackToNewPuzzleRoute = useGoBackOrReplaceTo({ name: 'NewPuzzleFreePlay' });
-const exitGame = () => {
-	saveGame();
-	goBackToNewPuzzleRoute();
-}
 
 // MOUNT/UNMOUNT HANDLERS
+// When the page is loaded, check if there is a puzzle loaded in store. If not, try to load the saved puzzle, else redirect to a new puzzle route.
+if (!initialized.value) {
+	if (hasCurrentSavedGame.value) {
+		puzzleStore.loadSavedPuzzle();
+	} else {
+		console.warn('No puzzle in store. Redirecting from PlayPuzzle to Create game route');
+		router.replace({ name: 'NewPuzzleFreePlay' });
+	}
+}
 onMounted(() => {
 	startGame();
 	initAutoSave();
 })
-onBeforeMount(() => {
-	if (!initialized.value) {
-		if (hasCurrentSavedGame.value) {
-			puzzleStore.loadSavedPuzzle();
-			return;
-		}
-		console.warn('No puzzle in store. Redirecting from PlayPuzzle to Create game route');
-		router.replace({ name: 'NewPuzzleFreePlay' });
-	}
-})
 onBeforeUnmount(() => {
+	if (puzzlePlayStatus.value === 'none') {
+		console.error('PlayPuzzle unmounts, but puzzleStore is already reset. So cannot save game. Should reset puzzleStore only after this.');
+	}
 	saveGame();
 	stopAutoSave();
-	clearCompletionCheckTimeouts();
+	cleanupCompletionChecker();
 })
-
-// NAVIGATION GUARDS
-onBeforeRouteLeave(() => {
+onUnmounted(() => {
 	puzzleStore.reset();
 })
 
+// Watch if the route changes to include "settings", and if so, set settings open so another component can load it.
 onBeforeRouteUpdate((to) => {
 	const toName = to?.name;
 	const settingsShouldBeOpen = typeof toName === 'string' && toName.toLowerCase().includes('settings');

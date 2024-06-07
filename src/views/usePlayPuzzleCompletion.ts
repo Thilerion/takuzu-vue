@@ -5,6 +5,7 @@ import { ref, watch } from "vue";
 export function useGameCompletion() {
 	const puzzleStore = usePuzzleStore();
 
+	// TODO: these probably do not need to be refs
 	const finishedTimeout = ref<ReturnType<typeof setTimeout> | null>(null);
 	const mistakeCheckTimeout = ref<ReturnType<typeof setTimeout> | null>(null);
 
@@ -30,7 +31,7 @@ export function useGameCompletion() {
 	};
 
 	// Watches for changes in the puzzle's completion state to trigger the respective handlers
-	watch(() => puzzleStore.finishedAndSolved, (newValue, prevValue) => {
+	const unwatchFinishedAndSolved = watch(() => puzzleStore.finishedAndSolved, (newValue, prevValue) => {
 		if (newValue) {
 			handleGameFinishedAndSolved();
 		} else if (prevValue && !newValue) {
@@ -41,7 +42,7 @@ export function useGameCompletion() {
 		}
 	})
 	
-	watch(() => puzzleStore.finishedWithMistakes, (newValue) => {
+	const unwatchFinishedWithMistakes = watch(() => puzzleStore.finishedWithMistakes, (newValue) => {
 		if (newValue) {
 			handleGameFinishedWithMistakes();
 		} else {
@@ -58,5 +59,11 @@ export function useGameCompletion() {
 		clearTimeout(mistakeCheckTimeout.value!);
 	};
 
-	return { clearCompletionCheckTimeouts };
+	const cleanup = () => {
+		clearCompletionCheckTimeouts();
+		unwatchFinishedAndSolved();
+		unwatchFinishedWithMistakes();
+	}
+
+	return { clearCompletionCheckTimeouts, cleanup };
 }

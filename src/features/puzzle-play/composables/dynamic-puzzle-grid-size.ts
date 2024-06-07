@@ -1,5 +1,5 @@
 import { computed, type Ref } from "vue";
-import type { ElementDimensions } from "./useThrottledElementSizeObserver.js";
+import type { ElementDimensions } from "./throttled-element-size-observer.js";
 import type { Vec } from "@/lib/types.js";
 import { clamp } from "@/utils/number.utils.js";
 

@@ -16,8 +16,8 @@
 
 <script setup lang="ts">
 import { computed, ref, toRefs } from 'vue';
-import { useThrottledElementSizeObserver } from './composables/useThrottledElementSizeObserver.js';
-import { useDynamicPuzzleGridSize, type GridPuzzleShapeRefs } from './composables/useDynamicPuzzleGridSize.js';
+import { useThrottledElementSizeObserver } from '../composables/throttled-element-size-observer.js';
+import { useDynamicPuzzleGridSize, type GridPuzzleShapeRefs } from '../composables/dynamic-puzzle-grid-size.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { storeToRefs } from 'pinia';
 

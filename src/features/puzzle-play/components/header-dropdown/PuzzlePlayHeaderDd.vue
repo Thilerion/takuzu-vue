@@ -11,7 +11,7 @@
 		</IconBtn>
 	</template>
 	<template #content>
-		<GameBoardDdBookmarkItems
+		<PuzzlePlayHeaderDdBookmarks
 			@close-dropdown="closeDD"
 			@toggle-bookmark-manager="setBookmarkManagerOpened"
 		/>
@@ -25,7 +25,7 @@
 		<BaseDropdownDivider />
 
 		<template v-if="debugModeEnabled">
-			<DebugModeItems
+			<PuzzlePlayHeaderDdDevMode
 				@close="closeDD"
 			/>
 			<BaseDropdownDivider />
@@ -42,12 +42,11 @@
 </template>
 
 <script setup lang="ts">
-import { useMainStore } from '@/stores/main.js';
-import { ref } from 'vue';
-import { toRef } from 'vue';
+import { ref, toRef } from 'vue';
 import type BaseDropdown from '@/components/base/dropdown/BaseDropdown.vue';
 import { usePlayPuzzleUiStateStore } from '@/stores/puzzle/play-ui-state-store.js';
 import { useSettingsStore } from '@/features/settings/store.js';
+import { useMainStore } from '@/stores/main.js';
 
 const settingsStore = useSettingsStore();
 const showTimer = toRef(settingsStore, 'showTimer');

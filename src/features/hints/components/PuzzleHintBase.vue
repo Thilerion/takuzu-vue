@@ -1,9 +1,9 @@
 <template>
-<div class="hint w-full inset-x-0 bottom-0 h-full flex items-end max-w-screen-sm mx-auto">
+<div class="hint w-full inset-x-0 bottom-0 max-h-full h-full flex items-end max-w-screen-sm mx-auto">
 	<section
 		class="hint-inner
-		max-h-32
-		h-32
+		max-h-full
+		h-full
 		bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100
 		w-full text-sm flex flex-col
 		pointer-events-auto flex-1 min-h-[6.5rem]

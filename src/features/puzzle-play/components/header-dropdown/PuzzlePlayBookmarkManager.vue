@@ -60,10 +60,9 @@
 
 <script setup lang="ts">
 import type BaseModal from '@/components/base/BaseModal.vue';
-import { watchEffect, ref } from 'vue';
+import { watchEffect, ref, watch } from 'vue';
 import { usePuzzleBookmarksStore } from '@/stores/bookmarks.js';
 import { storeToRefs } from 'pinia';
-import { watch } from 'vue';
 import { formatDurationHHMMSS } from '@/utils/duration.utils.js';
 
 const open = defineModel<boolean>({ required: true });

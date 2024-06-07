@@ -1,6 +1,6 @@
 <template>
 <div
-	class="fixed bottom-0 inset-0 w-full min-h-full pointer-events-none z-20 h-full"
+	class="absolute bottom-0 inset-0 w-full pointer-events-none z-20"
 >
 	<transition name="t-slide-up">
 		<PuzzleHintStepped
