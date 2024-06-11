@@ -59,30 +59,13 @@ const handleCellToggle = () => {
 	--base-cell-size: 100cqmin;
 }
 
+/* ----- CELL-WRAPPER ::AFTER => FADING RING ON CELL TOGGLE ----- */
 button.cell-wrapper::after {
 	content: '';
 	@apply w-full h-full absolute z-20 pointer-events-none inset-0 ring ring-gray-800 ring-inset opacity-0 dark:ring-slate-300 dark:ring-2;
 	border-radius: calc(var(--cell-rounding) + 0.5px);
 	will-change: opacity;
 	transition: opacity 0.5s cubic-bezier(.97,.25,.16,.71) .6s;
-}
-/* Todo: hover and pointer fine? What is the purpose of this again? */
-@media (hover:hover) and (pointer: fine) {
-	button.cell-wrapper::before {
-		content: '';
-		@apply w-full h-full absolute z-10 pointer-events-none inset-0 border-2 opacity-0 box-border border-black;
-		border-radius: calc(var(--cell-rounding) + 0.5px);
-		will-change: opacity;
-		transition: opacity 0.2s ease;
-	}
-	button.cell-wrapper:hover::before {
-		@apply opacity-30;
-		transition: opacity 0.2s ease;
-	}
-	button.cell-wrapper:active::before {
-		@apply opacity-70;
-		transition: opacity 1s ease;
-	}
 }
 button.cell-wrapper:active::after {
 	opacity: 0.7;
@@ -100,7 +83,26 @@ button.cell-wrapper:active::after {
 	@apply ring-4 dark:ring;
 }
 
-.cell-wrapper::slotted(*) {
+/* ----- CELL-WRAPPER ::BEFORE => SMALL RING HOVER STYLING (only when device supports hover) */
+@media (hover:hover) and (pointer: fine) {
+	button.cell-wrapper::before {
+		content: '';
+		@apply w-full h-full absolute z-10 pointer-events-none inset-0 border-2 opacity-0 box-border border-black dark:border-white;
+		border-radius: calc(var(--cell-rounding) + 0.5px);
+		will-change: opacity;
+		transition: opacity 0.2s ease;
+	}
+	button.cell-wrapper:hover::before {
+		@apply opacity-30;
+		transition: opacity 0.2s ease;
+	}
+	button.cell-wrapper:active::before {
+		@apply opacity-70;
+		transition: opacity 1s ease;
+	}
+}
+
+.cell-wrapper > * {
 	@apply pointer-events-none touch-none select-none;
 }
 </style>

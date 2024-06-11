@@ -105,39 +105,4 @@ const onCellClick = (val: VecValue) => {
 [data-play-state="finished"] .puzzle-grid {
 	@apply pointer-events-none;
 }
-
-.puzzle-cell-wrapper {
-	position: relative;
-}
-
-.touch-anim-el {
-	@apply absolute inset-0 pointer-events-none w-full h-full z-30 ring-2 ring-gray-700 opacity-100;
-}
-
-.incorrect-mark {
-	@apply absolute inset-0 text-black flex items-center justify-center pointer-events-none leading-none w-full h-full overflow-hidden opacity-60;
-}
-
-.incorrect-mark>div {
-	width: 2px;
-	height: 200%;
-	@apply bg-black transform -rotate-45 -translate-x-px;
-}
-
-.incorrect-mark>div:first-child {
-	@apply rotate-45 translate-x-px;
-}
-
-.mark-fade-leave-active {
-	transition: none
-}
-
-.mark-fade-leave-active {
-	transition: opacity .2s ease;
-}
-
-.mark-fade-leave-to,
-.mark-fade-enter-from {
-	opacity: 0;
-}
 </style>
