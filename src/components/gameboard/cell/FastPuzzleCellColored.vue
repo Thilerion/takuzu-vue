@@ -56,8 +56,9 @@ watch(value, (to, from) => {
 .cell {
 	@apply overflow-hidden relative isolate pointer-events-none text-center;
 	@apply w-full h-full;
-	@apply bg-gray-125 dark:bg-gray-700/60;
+	@apply bg-gray-125 dark:bg-slate-700/30 dark:shadow-white/30 dark:shadow-glow-inner-sm;
 }
+
 .cell > *, .cell {
 	border-radius: var(--cell-rounding);
 }
@@ -81,13 +82,13 @@ watch(value, (to, from) => {
 .color-0 {
 	--base-color: theme('colors.cell.blue.primary');
 }
-[data-base-theme="dark"] .color-0 {
+.color-0:is([data-base-theme="dark"] *) {
 	--base-color: theme('colors.cell.blue.primaryDark');
 }
 .color-1 {
 	--base-color: theme('colors.cell.red.primary');
 }
-[data-base-theme="dark"] .color-1 {
+.color-1:is([data-base-theme="dark"] *) {
 	--base-color: theme('colors.cell.red.primaryDark');
 }
 [data-shade-type="darken"] {

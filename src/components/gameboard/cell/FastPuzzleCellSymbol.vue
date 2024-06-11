@@ -2,23 +2,23 @@
 <div
 	class="cell"
 	:class="[
-		{ locked, incorrect: !!incorrect, highlighted: !!highlighted },
+		{ locked, incorrect: !!incorrect, highlighted: !!highlighted, empty: value === EMPTY },
 		themeClasses
 	]"
 >
 	<template v-if="symbolType === CellThemes.CLASSIC">
 		<transition name="cell-symbol">
 			<div v-if="symbolValue !== ''" class="number-icon-wrapper">
-				<icon-tabler-number-0 v-if="symbolValue === '0'" class="number-icon text-cyan-700 dark:text-cyan-500" />
-				<icon-tabler-number-1 v-else-if="symbolValue === '1'" class="number-icon text-gray-600 dark:text-gray-300" />
+				<icon-tabler-number-0 v-if="symbolValue === '0'" class="zero number-icon" />
+				<icon-tabler-number-1 v-else-if="symbolValue === '1'" class="one number-icon" />
 			</div>
 		</transition>
 	</template>
 	<template v-else-if="symbolType === CellThemes.TICTACTOE">
 		<transition name="cell-symbol">
 			<div v-if="symbolValue !== ''">
-				<span v-if="symbolValue === 'O'" class="cell-symbol-value text-cyan-700 dark:text-cyan-500">O</span>
-				<span v-else-if="symbolValue === 'X'" class="cell-symbol-value text-gray-600 dark:text-gray-300">X</span>
+				<span v-if="symbolValue === 'O'" class="zero cell-symbol-value">O</span>
+				<span v-else-if="symbolValue === 'X'" class="one cell-symbol-value">X</span>
 			</div>
 		</transition>
 	</template>
@@ -68,14 +68,21 @@ const symbolValue = computed(() => symbolMap.value[value.value]);
 .cell {
 	@apply overflow-hidden relative pointer-events-none flex;
 	@apply w-full h-full;
-	@apply bg-gray-125 text-gray-700 dark:bg-slate-800 dark:text-gray-150;
+	@apply bg-gray-125 dark:bg-slate-700/30 dark:shadow-glow-inner-sm;
+}
+
+.cell.empty {
+	@apply dark:shadow-white/60;
+}
+.cell:not(.empty) {
+	@apply dark:shadow-white/60;
 }
 
 .cell.locked {
-	@apply bg-gray-150 dark:bg-slate-775;
+	@apply bg-gray-150 dark:bg-slate-775 dark:shadow-white/30;
 }
 .cell.incorrect {
-	@apply bg-red-400 bg-opacity-20 ring-1 ring-inset ring-red-900 ring-opacity-40;
+	@apply bg-red-400/20 ring-1 ring-inset ring-red-900/40 dark:ring-red-400/70 dark:bg-red-400/40;
 }
 .cell.highlighted {
 	@apply bg-blue-400/20 ring-1 ring-inset ring-blue-400/60;
@@ -113,6 +120,19 @@ const symbolValue = computed(() => symbolMap.value[value.value]);
 .number-icon-wrapper {
 	@apply relative box-border w-full h-full flex;
 	padding: 2px;
+}
+
+.zero {
+	@apply text-cyan-700 dark:text-cyan-500;
+}
+.cell.incorrect .zero {
+	@apply text-cyan-800 dark:text-cyan-300;
+}
+.one {
+	@apply text-gray-600 dark:text-gray-200;
+}
+.cell.incorrect .one {
+	@apply text-gray-700 dark:text-white/90;
 }
 
 .cell-theme-binary.cell .cell-symbol-value {

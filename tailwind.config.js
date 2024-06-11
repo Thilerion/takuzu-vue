@@ -47,6 +47,9 @@ const config = {
 			minHeight: {
 				'vh': 'var(--vh-total)'
 			},
+			boxShadow: {
+				'glow-inner-sm': 'inset 0 0 2px 0px var(--tw-shadow-color)'
+			},
 			colors: {
 				gray: {
 					125: 'rgb(242, 242, 243)',
