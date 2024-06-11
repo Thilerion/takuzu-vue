@@ -1,12 +1,12 @@
 <template>
-<BasicLinkListItem wrapper-classes="py-1">
+<BasicLinkListItem wrapper-classes="py-0">
 	<button
 		:disabled="debugMode"
-		class="app-v-btn w-full h-full grid text-start gap-x-8 justify-start content-evenly"
+		class="app-v-btn w-full h-full grid text-start gap-x-8 justify-start content-center"
 		@click="$emit('increment-debug-mode')"
 	>
 		<div
-			class="col-start-1 col-end-2 row-start-1 row-end-2"
+			class="col-start-1 col-end-2 row-start-1 row-end-2 whitespace-nowrap"
 		>{{ $t('Settings.version.app') }}</div>
 
 		<div
@@ -14,8 +14,8 @@
 		>{{ shownCurAppVersion[0] }}<span class="text-[0.875em] opacity-80 ml-px">+{{ shownCurAppVersion[1] }}</span></div>
 
 		<template v-if="shownPrevAppVersion">
-			<div class="text-xs text-gray-800/50 col-start-1 col-end-2 row-start-2">{{ $t('Settings.version.previous') }}</div>			
-			<div class="text-xs text-gray-800/50 text-ellipsis col-start-2 row-start-2">{{ shownPrevAppVersion }}</div>
+			<div class="whitespace-nowrap text-xs text-gray-800/50 col-start-1 col-end-2 row-start-2">{{ $t('Settings.version.previous') }}</div>			
+			<div class="text-ellipsis overflow-x-hidden max-w-full min-w-0 whitespace-nowrap text-xs text-gray-800/50 col-start-2 row-start-2">{{ shownPrevAppVersion }}</div>
 		</template>
 	</button>
 </BasicLinkListItem>

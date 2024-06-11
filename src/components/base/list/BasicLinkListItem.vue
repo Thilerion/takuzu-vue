@@ -1,5 +1,5 @@
 <template>
-<li class="link-list-item flex w-full items-center justify-start px-2 py-4 h-14" :class="wrapperClasses">
+<li class="link-list-item" :class="wrapperClasses">
 	<slot>List item</slot>
 </li>
 </template>
@@ -17,5 +17,9 @@ const props = defineProps<{
 <style scoped>
 :slotted(a) {
 	@apply w-full inline-block;
+}
+
+:where(.link-list-item) {
+	@apply flex w-full items-center justify-start px-2 py-4 h-14;
 }
 </style>
