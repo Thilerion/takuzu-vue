@@ -1,10 +1,11 @@
+// @ts-check
 import plugin from 'tailwindcss/plugin.js';
 import tailwindcssForms from '@tailwindcss/forms';
 import tailwindcssTypography from '@tailwindcss/typography';
 import colors from 'tailwindcss/colors.js';
 
 /** @type {import('tailwindcss').Config} */
-export default {
+const config = {
 	content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
 	darkMode: 'class',
 	theme: {
@@ -27,7 +28,7 @@ export default {
 			'hover-none': { 'raw': '(pointer: coarse)' },
 		},
 		extend: {
-			typography: ({ theme }) => ({
+			typography: (/* { theme } */) => ({
 				slate: {
 					'--tw-prose-invert-body': colors.slate[200],
 					'--tw-prose-invert-bullets': colors.slate[400],
@@ -88,3 +89,5 @@ export default {
 		})
 	],
 }
+
+export default config;

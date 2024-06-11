@@ -198,3 +198,14 @@ async function validateStatsDbFileList(list: FileList): Promise<{ files: File[],
 	return { files: filesArray, version: versionA, isCurrentVersion };
 }
 </script>
+
+<style scoped>
+.text-btn {
+	@apply px-3 py-2 font-bold text-xs tracking-wide focus:outline-none active:ring active:ring-teal-600 active:ring-opacity-70 rounded disabled:opacity-30 text-gray-900/90 dark:text-gray-150/90 hover-hover:hover:text-gray-900/100 hover-hover:hover:dark:text-gray-150/100 disabled:text-gray-800 dark:disabled:text-gray-100;
+	@apply hover-hover:hover:dark:enabled:bg-white/10 hover-hover:hover:enabled:bg-gray-500/10;
+}
+
+.text-btn.danger {
+	@apply text-red-700 active:ring-red-600 dark:text-red-400/80 dark:active:ring-red-400;
+}
+</style>

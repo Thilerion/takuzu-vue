@@ -10,7 +10,7 @@
 		>{{ $t('Settings.version.app') }}</div>
 
 		<div
-			class="text-ellipsis col-start-2 row-start-1 row-end-2"
+			class="text-ellipsis overflow-x-hidden max-w-full min-w-0 whitespace-nowrap col-start-2 row-start-1 row-end-2"
 		>{{ shownCurAppVersion[0] }}<span class="text-[0.875em] opacity-80 ml-px">+{{ shownCurAppVersion[1] }}</span></div>
 
 		<template v-if="shownPrevAppVersion">
