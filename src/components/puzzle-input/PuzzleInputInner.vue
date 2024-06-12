@@ -15,8 +15,13 @@
 				Use toggle input mode
 			</label>
 		</div>
-		<PuzzleInputTable
+		<CustomPuzzleInputTable
 			v-if="isValidPuzzleGrid"
+			:grid="puzzleGridBase!"
+			@update-value="({ x, y, value }) => puzzleGridBase![y][x] = value"
+		/>
+		<PuzzleInputTable
+			v-if="isValidPuzzleGrid && false"
 			:grid="puzzleGridBase!"
 			@set-value="({ x, y, value }) => puzzleGridBase![y][x] = value"
 		>
