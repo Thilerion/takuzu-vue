@@ -1,8 +1,11 @@
 import { type PuzzleValue, ONE, ZERO, EMPTY, type PuzzleSymbol, COLUMN, ROW, type LineType } from "../constants";
-import type { PuzzleValueLineStr, PuzzleSymbolLineStr, ColumnId, LineId, PuzzleSymbolLine, PuzzleValueLine, RowId, PuzzleValueCount, PuzzleSymbolCount } from "../types";
+import type { PuzzleValueLineStr, PuzzleSymbolLineStr, ColumnId, LineId, PuzzleSymbolLine, PuzzleValueLine, RowId, PuzzleValueCount, PuzzleSymbolCount, BoardString } from "../types";
 
 export const isPuzzleValueLineStr = (str: string): str is PuzzleValueLineStr => {
 	return /^[01.]+$/.test(str);
+}
+export const isValidBoardString = (str: string): str is BoardString => {
+	return isPuzzleValueLineStr(str);
 }
 export const isPuzzleSymbolLineStr = (str: string): str is PuzzleSymbolLineStr => {
 	return /^[01]+$/.test(str);
