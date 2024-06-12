@@ -120,14 +120,15 @@ import { EMPTY, ONE, ZERO, type PuzzleValue } from '@/lib/constants';
 import { useSharedPuzzleToggle } from '@/composables/use-puzzle-toggle';
 
 import { refAutoReset, toReactive, useLocalStorage } from '@vueuse/core';
-import { puzzleGridToString, shortenPuzzleString } from '@/components/puzzle-input/convert';
-import { chunk } from '@/utils/array.ts.utils';
+import { boardStringToCustomPuzzleStringLong } from '@/features/custom-puzzle-create/services/string-conversions/custom-long.js';
+import { toCustomPuzzleStringRLE } from '@/features/custom-puzzle-create/services/string-conversions/custom-rle.js';
 
 import { usePuzzleInputSolvable } from '@/components/puzzle-input/usePuzzleInputSolvable';
 import { parseExportString } from '@/lib/board/board-conversion.helpers.js';
-import type { BoardExportString, BoardShape } from '@/lib/types.js';
+import type { BoardExportString, BoardShape, BoardString } from '@/lib/types.js';
 import type { PuzzleInputGrid, PuzzleInputValue } from './types.js';
 import PuzzleInputField from './PuzzleInputField.vue';
+import { isPuzzleSymbol } from '@/lib/utils/puzzle-value.utils.js';
 
 const config = useLocalStorage<{
 	width: number, height: number, forceSquareGrid: boolean
@@ -203,28 +204,27 @@ const scrollToPuzzleStrings = () => {
 		behavior: 'smooth'
 	})
 }
-const puzzleGridStrLong = computed(() => {
-	if (!isValidPuzzleGrid.value) return '';
-	const grid = puzzleGridBase.value;
-	const dimensions = { width: config.value.width, height: config.value.height };
-	return puzzleGridToString(grid!, dimensions, { shorten: false });
+const boardString = computed((): BoardString => {
+	if (!isValidPuzzleGrid.value) return '' as BoardString;
+	const gridArr = puzzleGridBase.value!.flat();
+	return gridArr.map(v => {
+		if (isPuzzleSymbol(v)) return v;
+		return EMPTY;
+	}).join('') as BoardString;
 })
 const puzzleGridStrShort = computed(() => {
 	if (!isValidPuzzleGrid.value) return '';
-	const dimensions = { width: config.value.width, height: config.value.height };
-	return shortenPuzzleString(puzzleGridStrLong.value, dimensions, { padEnd: false });
+	return toCustomPuzzleStringRLE(boardString.value, false);
 })
 const puzzleGridStrLongFormatted = computed(() => {
 	if (!isValidPuzzleGrid.value) return '';
-	const value = puzzleGridStrLong.value;
-	const chunked = chunk(value.split(''), gridDimensions.value.width);
-	return chunked.map(row => row.join('')).join(' ');
+	const dimensions = { width: config.value.width, height: config.value.height };
+	return boardStringToCustomPuzzleStringLong(boardString.value, dimensions);
 })
 const puzzleGridExportStr = computed(() => {
 	if (!isValidPuzzleGrid.value) return '';
-	const boardString = puzzleGridStrLong.value;
 	const { width, height } = gridDimensions.value;
-	return `${width}x${height};${boardString}`;
+	return `${width}x${height};${boardString.value}`;
 })
 const copyValueToClipboard = async (value = '') => {
 	try {
@@ -245,7 +245,7 @@ const copyShortStr = () => {
 	}).catch(() => copyShortSuccess.value = false);
 }
 const copyLongStr = () => {
-	copyValueToClipboard(puzzleGridStrLong.value).then(() => {
+	copyValueToClipboard(puzzleGridStrLongFormatted.value).then(() => {
 		copyLongSuccess.value = true;
 	}).catch(() => copyLongSuccess.value = false);
 }
