@@ -57,34 +57,36 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, toRef } from 'vue';
+import { nextTick } from 'vue';
+import { computed, onBeforeMount, ref } from 'vue';
 
-const emit = defineEmits([
-	'reset',
-	'set-dimensions',
-	'update:modelValue'
-])
+const emit = defineEmits<{
+	(e: 'reset'): void,
+	(e: 'set-dimensions', w: number, h: number): void,
+}>();
+const config = defineModel<{
+	width: number, height: number,
+	forceSquareGrid: boolean
+}>({ required: true });
 
 const props = defineProps<{
-	modelValue: { width: number, height: number, forceSquareGrid: boolean },
 	gridExists: boolean
 }>();
 
 const expanded = ref(true);
-onMounted(() => {
+onBeforeMount(() => {
 	if (props.gridExists) {
 		expanded.value = false;
 	}
 })
 
-const config = toRef(props, 'modelValue');
 const updateConfig = (changes: Partial<{width: number, height: number, forceSquareGrid: boolean}> = {}) => {
 	const newConfig: { width: number, height: number, forceSquareGrid: boolean } = {
 		...config.value,
 		...changes
 	}
 	console.log({ newConfig });
-	emit('update:modelValue', newConfig);
+	config.value = newConfig;
 }
 
 const width = computed({
@@ -148,16 +150,14 @@ const setSquareGridToggle = (value: boolean) => {
 	updateConfig(changes);
 }
 
-const emitSetDimensions = () => {
+const emitSetDimensions = async () => {
 	const exists = props.gridExists;
-	requestAnimationFrame(() => {
-		emit('set-dimensions', width.value, height.value);
-		if (!exists) {
-			requestAnimationFrame(() => {
-				expanded.value = false;
-			})
-		}
-	});
+	await nextTick();
+	emit('set-dimensions', width.value, height.value);
+	if (!exists) {
+		await nextTick();
+		expanded.value = false;
+	}
 }
 const emitReset = () => {
 	emit('reset');

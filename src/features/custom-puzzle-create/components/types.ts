@@ -1,4 +1,5 @@
-import type { PuzzleSymbol } from "@/lib/constants.js";
+import type { PuzzleValue } from "@/lib/constants.js";
+import type { PuzzleGrid } from "@/lib/types.js";
 
-export type CustomPuzzleInputValue = PuzzleSymbol | ' ' | '' | undefined | null;
-export type CustomPuzzleInputGrid = CustomPuzzleInputValue[][];
+export type CustomPuzzleInputValue = PuzzleValue;
+export type CustomPuzzleInputGrid = PuzzleGrid;

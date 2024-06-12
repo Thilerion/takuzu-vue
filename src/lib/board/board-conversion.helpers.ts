@@ -57,7 +57,12 @@ export const puzzleGridToBoardString = (grid: PuzzleGrid): BoardString => {
 	return grid.flat().join('') as BoardString;
 }
 
-export const puzzleGridToExportString = (grid: PuzzleGrid, dims: BoardShape): BoardExportString => {
+export const puzzleGridToExportString = (grid: PuzzleGrid, dims?: BoardShape): BoardExportString => {
 	const boardStr = puzzleGridToBoardString(grid);
+	if (dims == null) {
+		const width = grid[0].length;
+		const height = grid.length;
+		dims = { width, height };
+	}
 	return `${dims.width}x${dims.height};${boardStr}` as BoardExportString;
 }

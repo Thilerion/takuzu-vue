@@ -8,7 +8,7 @@
 		:back-options="{ type: 'simple', fallbackRouteName: 'PuzzleTools' }"
 	>Puzzle Input</PageHeader>
 	<div class="flex-1 flex flex-col">
-		<PuzzleInputInner />
+		<CustomPuzzleInput />
 	</div>
 </div>
 </template>
