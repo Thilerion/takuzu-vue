@@ -1,11 +1,7 @@
 <template>
 <main class="pt-4 gap-y-4 grid bleed-grid-4 v-grid-bleed text-sm">
 	<CustomPuzzleInputConfigControls
-		v-model="config"
-		class="bg-white rounded px-4 pt-4 pb-2 shadow"
-		:grid-exists="puzzleGridBase != null && puzzleGridBase?.[0] != null"
-		@reset="resetGridValues"
-		@set-dimensions="(w: number, h: number) => updatePuzzleGridBase()"
+		v-model:expanded="controlsOpen"
 	/>
 	<div
 		v-if="isValidPuzzleGrid"
@@ -37,16 +33,43 @@
 import { computed, ref } from 'vue';
 import CustomPuzzleInputTableCell from './CustomPuzzleInputTableCell.vue';
 import { useCustomPuzzleInputGrid } from '../composables/custom-input-grid.js';
-import type { PuzzleValue } from '@/lib/constants.js';
+import { EMPTY, type PuzzleValue } from '@/lib/constants.js';
+import { onBeforeMount } from 'vue';
 
 const {
-	puzzleGridBase, config,
-	reset: resetGridValues,
-	update: updatePuzzleGridBase
+	customPuzzleGrid: puzzleGridBase,
+	width, height, forceSquareGrid,
 } = useCustomPuzzleInputGrid();
 const setGridValue = (x: number, y: number, v: PuzzleValue) => {
 	puzzleGridBase.value![y][x] = v;
 }
+
+const controlsOpen = ref(false);
+
+onBeforeMount(() => {
+	if (puzzleGridBase.value != null) {
+	// If grid is empty on initial load, set it to null
+	const grid = puzzleGridBase.value;
+	const flat = grid.flat(3);
+	if (flat.every(v => v === EMPTY)) {
+		puzzleGridBase.value = null;
+	}
+}
+
+	// Then, if grid is null, set controls to open
+	console.log(puzzleGridBase.value);
+	if (puzzleGridBase.value == null) {
+		controlsOpen.value = true;
+	}
+})
+
+const config = computed(() => {
+	return {
+		width: width.value,
+		height: height.value,
+		forceSquareGrid: forceSquareGrid.value,
+	}
+})
 
 const isValidPuzzleGrid = computed(() => {
 	const grid = puzzleGridBase.value;
@@ -126,4 +149,4 @@ const focusCell = (index: number) => {
 .bleed-grid-6 {
 	--basePadding: theme(padding.6);
 }
-</style>
+</style>../composables/custom-input-grid.js

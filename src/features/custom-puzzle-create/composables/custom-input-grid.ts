@@ -1,107 +1,122 @@
-import { createSharedComposable, useLocalStorage } from "@vueuse/core";
+import { createSharedComposable, toReactive, toRef, useLocalStorage } from "@vueuse/core";
 import { computed } from "vue";
 import type { BoardShape, PuzzleGrid } from "@/lib/types.js";
+import { array2d } from "@/utils/array2d.utils.js";
+import { EMPTY, type PuzzleValue } from "@/lib/constants.js";
+import { clamp } from "@/utils/number.utils.js";
+
+type CustomPuzzleInputGridData = BoardShape & {
+	forceSquareGrid: boolean;
+	grid: PuzzleGrid | null;
+}
+
+const getDefaultData = (): CustomPuzzleInputGridData => ({
+	width: 10,
+	height: 10,
+	forceSquareGrid: false,
+	grid: null,
+});
+
+export const CUSTOM_PUZZLE_MIN_SIZE = 4;
+export const CUSTOM_PUZZLE_MAX_SIZE = 16;
 
 export const useCustomPuzzleInputGrid = createSharedComposable(() => {
-	const config = useLocalStorage<{
-		width: number, height: number, forceSquareGrid: boolean
-	}>('takuzu_puzzle-input-config', {
-		width: 10,
-		height: 10,
-		forceSquareGrid: false
-	}, {
-		deep: true,
-		writeDefaults: true,
-	});
+	const stateRef = useLocalStorage<CustomPuzzleInputGridData>(
+		"takuzu_customPuzzleInputData",
+		getDefaultData(),
+		{
+			deep: true,
+			writeDefaults: true,
+		}
+	);
+	const state = toReactive(stateRef);
 
-	const puzzleGridBase = useLocalStorage<null | PuzzleGrid>('takuzu_custom-puzzle-input-grid', [], {
-		deep: true,
-		writeDefaults: false,
-		serializer: {
-			read(v) {
-				if (!v) return null;
-				try {
-					const parsed = JSON.parse(v);
-	
-					if (!Array.isArray(parsed) || !Array.isArray(parsed?.[0])) {
-						return null;
-					}
-					const flat = parsed.flat().join('');
-					if (!flat.includes('1') && !flat.includes('0')) {
-						return null;
-					}
-					return parsed;
-				} catch (e) {
-					console.warn(e);
-					console.warn('Could not read input grid from storage');
-					return null;
-				}
-			},
-			write(v) {
-				if (!Array.isArray(v)) return "";
-				const height = v?.length
-				const width = v?.[0]?.length;
-				if (!height || !width) return "";
-				return JSON.stringify(v);
+	const customPuzzleGrid = toRef<CustomPuzzleInputGridData, 'grid'>(state, "grid");
+
+	const forceSquareGrid = computed({
+		get: () => stateRef.value.forceSquareGrid,
+		set: (value) => {
+			stateRef.value.forceSquareGrid = value;
+			if (value && stateRef.value.height !== stateRef.value.width) {
+				stateRef.value.height = stateRef.value.width;
 			}
 		}
-	})
-
-	if (puzzleGridBase.value != null) {
-		const pWidth = puzzleGridBase.value[0].length;
-		const pHeight = puzzleGridBase.value.length;
-		if (pWidth !== config.value.width || pHeight !== config.value.height) {
-			puzzleGridBase.value = null;
+	});
+	const width = computed({
+		get: () => stateRef.value.width,
+		set: (value) => {
+			stateRef.value.width = clamp(CUSTOM_PUZZLE_MIN_SIZE, value, CUSTOM_PUZZLE_MAX_SIZE);
+			if (stateRef.value.forceSquareGrid) {
+				stateRef.value.height = value;
+			}
 		}
-	}
-
-	const dimensions = computed((): BoardShape => {
-		return {
-			width: config.value.width,
-			height: config.value.height
+	});
+	const height = computed({
+		get: () => stateRef.value.height,
+		set: (value) => {
+			stateRef.value.height = clamp(CUSTOM_PUZZLE_MIN_SIZE, value, CUSTOM_PUZZLE_MAX_SIZE);
+			if (stateRef.value.forceSquareGrid) {
+				stateRef.value.width = value;
+			}
 		}
-	})
+	});
+	const dimensions = computed(() => ({ width: width.value, height: height.value }));
 
-	
-
-	// Create new grid (empty) with dimensions from config
-	const reset = () => {
-		const { width, height } = dimensions.value;
-		puzzleGridBase.value = createEmptyGrid(width, height);	
+	// Create new (empty) grid with dimensions
+	const resetGrid = (): void => {
+		customPuzzleGrid.value = createEmptyGrid(dimensions.value);
 	}
 
 	// Expand or shrink grid with dimensions, while keeping existing values
-	const update = () => {
-		if (puzzleGridBase.value == null) return reset();
-		const { width, height } = dimensions.value;
-		const base = puzzleGridBase.value;
-		let baseCopy = base.map(r => [...r]);
-
-		const diffHeight = height - base.length;
-		if (diffHeight < 0) {
-			baseCopy.splice(diffHeight, -diffHeight);
-		} else if (diffHeight > 0) {
-			baseCopy.push(...Array(diffHeight).fill('.').map(() => Array(width).fill('.')));
+	const updateDimensions = (): void => {
+		if (customPuzzleGrid.value == null) {
+			return resetGrid();
 		}
-
-		baseCopy = baseCopy.map(row => {
-			if (!Array.isArray(row)) {
-				return Array(width).fill('.');
-			}
-			const rowWidth = row.length;
-			if (rowWidth > width) {
-				return row.slice(0, width);
-			} else if (rowWidth < width) {
-				return [...row, ...Array(width - rowWidth).fill('.')]
-			} else return [...row];
-		})
-
-		puzzleGridBase.value = baseCopy;
+		const { width, height } = dimensions.value;
+		customPuzzleGrid.value = resizeGrid(customPuzzleGrid.value, width, height, EMPTY);
 	}
 
-	return { reset, config, update, puzzleGridBase }
+	return {
+		dimensions,
+		forceSquareGrid,
+		width,
+		height,
+		customPuzzleGrid,
+
+		updateDimensions,
+		resetGrid,
+	};
 })
 
-function createEmptyGrid(width: number, height: number) {
-	return Array(height).fill(null).map(() => Array(width).fill('.'));
+const createEmptyGrid = ({ width, height }: BoardShape): PuzzleGrid => {
+	return array2d<PuzzleValue>(width, height, EMPTY)
+}
+
+const resizeGrid = <T>(grid: T[][], width: number, height: number, defaultValue: T): T[][] => {
+	const currentWidth = grid[0].length;
+	const currentHeight = grid.length;
+
+	if (currentWidth === width && currentHeight === height) {
+		return grid;
+	}
+
+	// Create a new array with the specified dimensions
+	const newArray: T[][] = [];
+
+	for (let i = 0; i < height; i++) {
+		const newRow: T[] = [];
+
+		for (let j = 0; j < width; j++) {
+			// If the cell exists in the old array, copy its value; otherwise, use the default value
+			if (i < currentHeight && j < currentWidth) {
+				newRow.push(grid[i][j]);
+			} else {
+				newRow.push(defaultValue);
+			}
+		}
+
+		newArray.push(newRow);
+	}
+
+	return newArray;
 }

@@ -9,13 +9,12 @@
 					<label for="widthInput">Width</label>
 					<input
 						id="widthInput"
+						v-model.number="inputWidth"
 						type="number"
-						:value="width"
 						name="width"
 						min="4"
 						max="16"
 						class="p-2 text-sm min-w-[3.5rem] min-h-8 rounded border-gray-400"
-						@change="setWidth(($event.target as HTMLInputElement).valueAsNumber)"
 					>
 				</div>
 				<div class="self-end py-2">x</div>
@@ -23,33 +22,31 @@
 					<label for="heightInput">Height</label>
 					<input
 						id="heightInput"
+						v-model.number="inputHeight"
 						type="number"
-						:value="height"
 						name="height"
 						min="4"
 						max="16"
 						class="p-2 text-sm min-w-[3.5rem] min-h-[2rem] rounded border-gray-400 disabled:text-gray-600 disabled:bg-gray-100 disabled:border-gray-400/70"
-						:disabled="forceSquareGrid"
-						@change="setHeight(($event.target as HTMLInputElement).valueAsNumber)"
+						:disabled="inputForceSquareGrid"
 					>
 				</div>
 			</div>
 			<label class="py-2 inline-flex items-center gap-x-2 text-sm">
 				<input
 					id="squareGridToggle"
+					v-model="inputForceSquareGrid"
 					type="checkbox"
 					name="squareGrid"
-					:checked="forceSquareGrid"
-					@input="setSquareGridToggle(($event.target as HTMLInputElement).checked)"
 				>
 				Force square grid
 			</label>
 			<div class="flex flex-row gap-2">
-				<BaseButton @click="emitSetDimensions">
+				<BaseButton @click="onCreateUpdate">
 					<span v-if="gridExists">Update</span>
 					<span v-else>Create</span>
 				</BaseButton>
-				<BaseButton @click="emitReset">Reset</BaseButton>
+				<BaseButton @click="onReset">Reset</BaseButton>
 			</div>
 		</div>
 	</ExpandTransition>
@@ -57,110 +54,56 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick } from 'vue';
-import { computed, onBeforeMount, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
+import { useCustomPuzzleInputGrid } from '../composables/custom-input-grid.js';
 
-const emit = defineEmits<{
-	(e: 'reset'): void,
-	(e: 'set-dimensions', w: number, h: number): void,
-}>();
-const config = defineModel<{
-	width: number, height: number,
-	forceSquareGrid: boolean
-}>({ required: true });
+const expanded = defineModel<boolean>('expanded', { required: true });
 
-const props = defineProps<{
-	gridExists: boolean
-}>();
+const { width, height, forceSquareGrid, customPuzzleGrid, resetGrid, updateDimensions } = useCustomPuzzleInputGrid();
 
-const expanded = ref(true);
-onBeforeMount(() => {
-	if (props.gridExists) {
-		expanded.value = false;
+// Set width, height, forceSquareGrid locally, which can be set when "update" or "reset" is clicked
+const inputWidth = ref(width.value);
+const inputHeight = ref(height.value);
+const inputForceSquareGrid = ref(false);
+
+watch(inputWidth, (width) => {
+	if (inputForceSquareGrid.value) {
+		inputHeight.value = width;
 	}
 })
-
-const updateConfig = (changes: Partial<{width: number, height: number, forceSquareGrid: boolean}> = {}) => {
-	const newConfig: { width: number, height: number, forceSquareGrid: boolean } = {
-		...config.value,
-		...changes
-	}
-	console.log({ newConfig });
-	config.value = newConfig;
-}
-
-const width = computed({
-	get() {
-		return config.value.width;
-	},
-	set(value) {
-		updateConfig({ width: value });
+watch(inputHeight, (height) => {
+	if (inputForceSquareGrid.value) {
+		inputWidth.value = height;
 	}
 })
-const height = computed({
-	get() {
-		return config.value.height;
-	},
-	set(value) {
-		updateConfig({ height: value });
+watch(inputForceSquareGrid, (forceSquareGrid) => {
+	if (forceSquareGrid) {
+		inputHeight.value = inputWidth.value;
 	}
 })
-const forceSquareGrid = computed({
-	get() {
-		return config.value.forceSquareGrid;
-	},
-	set(value) {
-		updateConfig({ forceSquareGrid: value });
-	}
+watch([width, height, forceSquareGrid], () => {
+	inputWidth.value = width.value;
+	inputHeight.value = height.value;
+	inputForceSquareGrid.value = forceSquareGrid.value;
 })
 
-
-const setWidth = (value: number) => {
-	value = Math.min(Math.max(value, 4), 16);
-	const changes: Partial<{width: number, height: number, forceSquareGrid: boolean}> = {
-		width: value
-	}
-	if (forceSquareGrid.value) {
-		changes.height = value;
-	} else if (value % 2 === 1) {
-		// odd must always be square
-		changes.height = value;
-	}
-	updateConfig(changes);
-}
-const setHeight = (value: number) => {
-	value = Math.min(Math.max(value, 4), 16);
-	const changes: Partial<{width: number, height: number, forceSquareGrid: boolean}> = {
-		height: value
-	}
-	if (value % 2 === 1) {
-		// odd must always be square
-		changes.width = value;
-	}
-	updateConfig(changes);
+const setUpdatedConfig = () => {
+	forceSquareGrid.value = inputForceSquareGrid.value;
+	width.value = inputWidth.value;
+	height.value = inputHeight.value;
 }
 
-const setSquareGridToggle = (value: boolean) => {
-	const changes: Partial<{width: number, height: number, forceSquareGrid: boolean}> = {
-		forceSquareGrid: value
-	}
-	if (value) {
-		changes.height = width.value;
-	}
-	updateConfig(changes);
-}
-
-const emitSetDimensions = async () => {
-	const exists = props.gridExists;
-	await nextTick();
-	emit('set-dimensions', width.value, height.value);
-	if (!exists) {
-		await nextTick();
+const gridExists = computed(() => customPuzzleGrid.value !== null);
+const onCreateUpdate = () => {
+	const gridExistsBefore = gridExists.value;
+	setUpdatedConfig();
+	updateDimensions();
+	if (!gridExistsBefore) {
 		expanded.value = false;
 	}
 }
-const emitReset = () => {
-	emit('reset');
+const onReset = () => {
+	setUpdatedConfig();
+	resetGrid();
 }
-
 </script>
