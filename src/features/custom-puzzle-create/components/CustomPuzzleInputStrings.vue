@@ -1,28 +1,24 @@
 <template>
-<div class="my-2 px-0.5">
-	<BaseButton
-		class="w-full -mb-0.5 transition-colors duration-500"
-		:class="{
-			'!rounded-b-none': showPuzzleStrings,
-			'!bg-gray-100': !showPuzzleStrings
-		}"
+<div>
+	<button
+		class="w-full pr-3 py-2"
 		@click="showPuzzleStrings = !showPuzzleStrings"
 	>
 		<div class="w-full flex justify-between">
-			<span>Puzzle strings</span>
+			<span class="font-bold text-gray-600 tracking-wide">Puzzle strings</span>
 			<icon-ic-outline-keyboard-arrow-down
-				class="ml-auto transition-transform duration-500"
+				class="ml-auto transition-transform duration-500 text-base"
 				:class="{ 'rotate-180': showPuzzleStrings }"
 			/>
 		</div>
-	</BaseButton>
+	</button>
 	<ExpandTransition
 		:duration="200"
 		:show="showPuzzleStrings"
 		@after-enter="scrollToElement"
 	>
 		<div ref="el">
-			<div class="pt-4 pb-2 px-3 flex gap-y-2 w-full flex-col border border-gray-200 border-t-transparent">
+			<div class="pt-4 pb-2 pr-4 flex gap-y-2 w-full flex-col">
 				<CustomPuzzleInputStringBlock
 					:value="asCustomRle || placeholderValue"
 					label="Short"

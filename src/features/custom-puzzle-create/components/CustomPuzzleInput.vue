@@ -20,33 +20,47 @@
 	</div>
 	
 	<div
-		v-if="isValidPuzzleGrid"
 		class="bg-white rounded-xl shadow-md shadow-black/5 px-1 py-4 full-bleed w-full"
 	>
-		<div class="">
-			<div class="mb-4 flex justify-end px-4">
-				<BaseButton class="text-sm" @click="resetGrid">Clear board</BaseButton>
-			</div>
-			<CustomPuzzleInputTable
-				v-if="isValidPuzzleGrid"
-				:grid="puzzleGridBase!"
-			>
-				<template #default="{ x, y, index }">
-					<CustomPuzzleInputTableCell
-						:ref="(v) => setRef(v as InstanceType<typeof CustomPuzzleInputTableCell>)"
-						:model-value="puzzleGridBase![y][x]"
-						:data-index="index"
-						inputmode="numeric"
+		<transition name="fade" mode="out-in">
+			<div v-if="isValidPuzzleGrid">
+				<div class="mb-4 flex justify-end px-4">
+					<BaseButton class="text-sm" @click="resetGrid">Clear board</BaseButton>
+				</div>
+				<CustomPuzzleInputTable
+					v-if="isValidPuzzleGrid"
+					:grid="puzzleGridBase!"
+				>
+					<template #default="{ x, y, index }">
+						<CustomPuzzleInputTableCell
+							:ref="(v) => setRef(v as InstanceType<typeof CustomPuzzleInputTableCell>)"
+							:model-value="puzzleGridBase![y][x]"
+							:data-index="index"
+							inputmode="numeric"
 
-						@update:model-value="setGridValue(x, y, $event)"
-						@to-next="() => focusCell(index + 1)"
-						@to-prev="() => focusCell(index - 1)"
-					/>
-				</template>
-			</CustomPuzzleInputTable>
+							@update:model-value="setGridValue(x, y, $event)"
+							@to-next="() => focusCell(index + 1)"
+							@to-prev="() => focusCell(index - 1)"
+						/>
+					</template>
+				</CustomPuzzleInputTable>
+			</div>
+			<div
+				v-else
+				class="text-center text-lg py-4"
+			>
+				Select grid dimensions to start
+			</div>
+		</transition>
+	</div>
+	
+	<div
+		class="bg-white rounded-xl shadow-md shadow-black/5 w-full full-bleed pl-6 pr-2 pt-2 pb-2"
+	>
+		<div class="">
+			<CustomPuzzleInputStrings :grid="isValidPuzzleGrid ? puzzleGridBase : null" />
 		</div>
 	</div>
-	<CustomPuzzleInputStrings :grid="isValidPuzzleGrid ? puzzleGridBase : null" />
 </main>
 </template>
 
@@ -170,5 +184,17 @@ const focusCell = (index: number) => {
 }
 .bleed-grid-6 {
 	--basePadding: theme(padding.6);
+}
+
+.fade-enter-active {
+  transition: opacity .2s ease;
+}
+.fade-leave-active {
+  transition: opacity .2s ease .2s;
+}
+
+.fade-enter-from,
+.fade-leave-to, .fade-enter {
+  opacity: 0;
 }
 </style>
