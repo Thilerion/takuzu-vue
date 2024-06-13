@@ -69,6 +69,11 @@ export function toCustomPuzzleStringRLE(
 	return encoded.join('');
 }
 
+export function isPotentialCustomPuzzleStringRLE(encodedString: string): boolean {
+	// Test that encoded string only contains valid characters: 1-8, a-z
+	return /^[1-8a-z]+$/.test(encodedString);
+}
+
 const codeA = 'a'.charCodeAt(0);
 const codeZ = 'z'.charCodeAt(0);
 const codeAZRange = codeZ - codeA + 1;

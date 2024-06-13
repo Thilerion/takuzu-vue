@@ -66,6 +66,12 @@
 					:disabled="isWidthInvalid || isHeightInvalid"
 					@click="onCreateUpdate"
 				>New puzzle</BaseButton>
+				<BaseButton @click="showImportStringDialog = !showImportStringDialog">Import from string</BaseButton>
+				<CustomPuzzleInputImportString
+					v-if="showImportStringDialog"
+					v-model:show="showImportStringDialog"
+					@parsed="onImportStringParsed"
+				/>
 			</div>
 			<p class="leading-relaxed min-h-[0.5lh] text-red-700 text-xs tracking-wide">
 				<span v-if="displayedErrorMessage != null">{{ displayedErrorMessage }}</span>
@@ -79,8 +85,16 @@
 import { computed, ref, watch } from 'vue';
 import { useCustomPuzzleInputGrid } from '../composables/custom-input-grid.js';
 import { validateCustomPuzzleDimensions, type CustomPuzzleDimensionsInvalidResultType } from '../services/validate-dimensions.js';
+import type { ParsedCustomPuzzleString } from '../services/string-conversions/import.js';
+import { awaitRaf } from '@/utils/delay.utils.js';
 
 const expanded = defineModel<boolean>('expanded', { required: true });
+const showImportStringDialog = ref(false);
+watch(expanded, (isExpanded) => {
+	if (!isExpanded) {
+		showImportStringDialog.value = false;
+	}
+})
 
 type IncompatibleValidationType = Extract<CustomPuzzleDimensionsInvalidResultType, `incompatible:${string}`>;
 type NonIncompatibleValidationType = Exclude<CustomPuzzleDimensionsInvalidResultType, IncompatibleValidationType>;
@@ -325,5 +339,21 @@ const onReset = () => {
 
 	setUpdatedConfig();
 	resetGrid();
+}
+
+const onImportStringParsed = async (parsed: ParsedCustomPuzzleString) => {
+	showImportStringDialog.value = false;
+	await awaitRaf();
+
+	if (parsed.width !== parsed.height) {
+		// inputForceSquareGrid.value = false;
+		forceSquareGrid.value = false;
+	}
+	width.value = parsed.width;
+	height.value = parsed.height;
+	resetGrid();
+	customPuzzleGrid.value = parsed.grid;
+
+	expanded.value = false;
 }
 </script>

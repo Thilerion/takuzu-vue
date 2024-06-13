@@ -6,16 +6,16 @@ const exportStrRegex = /^\d{1,2}x\d{1,2};([.01]){4,}$/;
 export const isExportString = (str: string): str is BoardExportString => {
 	return exportStrRegex.test(str);
 }
-export const parseExportString = (str: BoardExportString) => {
+export const parseExportString = (str: BoardExportString): BoardShape & { boardStr: BoardString } => {
 	const [dimensions, boardStr] = str.split(';');
 	const [width, height] = dimensions.split('x').map(Number);
-	return { width, height, boardStr };
+	return { width, height, boardStr: boardStr as BoardString };
 }
 
 export const getImportBoardStringData = (
 	str: BoardString | BoardExportString,
 	dims?: BoardShape
-): BoardShape & { boardStr: string } => {
+): BoardShape & { boardStr: BoardString } => {
 	if (isExportString(str)) {
 		return parseExportString(str);
 	} else if (dims != null) {
