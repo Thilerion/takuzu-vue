@@ -4,7 +4,7 @@
 	<button @click="expanded = !expanded">Expand</button>
 	<ExpandTransition :duration="300" :show="expanded">
 		<div>
-			<div class="flex flex-row gap-x-4">
+			<div class="flex flex-row gap-x-3">
 				<div class="flex flex-col">
 					<label for="widthInput">Width</label>
 					<input
@@ -17,7 +17,16 @@
 						class="p-2 text-sm min-w-[3.5rem] min-h-8 rounded border-gray-400"
 					>
 				</div>
-				<div class="self-end py-2">x</div>
+				<div class="h-8 self-end">
+					<button
+						class="my-auto text-lg text-gray-600 w-6 h-6 aspect-square flex items-center justify-center"
+						@click="inputForceSquareGrid = !inputForceSquareGrid"
+					>
+						<icon-material-symbols-link v-if="inputForceSquareGrid" />
+						<icon-material-symbols-link-off v-else class="opacity-50 text-base" />
+					</button>
+				</div>
+				
 				<div class="flex flex-col">
 					<label for="heightInput">Height</label>
 					<input
