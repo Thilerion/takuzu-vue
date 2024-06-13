@@ -4,7 +4,7 @@
 		<div
 			class="flex flex-row px-4 rounded h-6 items-center leading-none text-xs transition-colors delay-150 duration-300 gap-x-4 w-fit whitespace-nowrap"
 			:class="{
-				'bg-red-200 text-red-900 delay-300': !solvable && validInput,
+				'bg-red-200 text-red-900 delay-300': !solvable && validInput && solutions != null,
 				'bg-green-100 text-green-900': validPuzzle,
 			}"
 		>
