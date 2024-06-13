@@ -21,25 +21,30 @@
 	
 	<div
 		v-if="isValidPuzzleGrid"
-		class="bg-white rounded-xl shadow-md shadow-black/5 px-1 py-4 full-bleed"
+		class="bg-white rounded-xl shadow-md shadow-black/5 px-1 py-4 full-bleed w-full"
 	>
-		<CustomPuzzleInputTable
-			v-if="isValidPuzzleGrid"
-			:grid="puzzleGridBase!"
-		>
-			<template #default="{ x, y, index }">
-				<CustomPuzzleInputTableCell
-					:ref="(v) => setRef(v as InstanceType<typeof CustomPuzzleInputTableCell>)"
-					:model-value="puzzleGridBase![y][x]"
-					:data-index="index"
-					inputmode="numeric"
+		<div class="">
+			<div class="mb-4 flex justify-end px-4">
+				<BaseButton class="text-sm" @click="resetGrid">Clear board</BaseButton>
+			</div>
+			<CustomPuzzleInputTable
+				v-if="isValidPuzzleGrid"
+				:grid="puzzleGridBase!"
+			>
+				<template #default="{ x, y, index }">
+					<CustomPuzzleInputTableCell
+						:ref="(v) => setRef(v as InstanceType<typeof CustomPuzzleInputTableCell>)"
+						:model-value="puzzleGridBase![y][x]"
+						:data-index="index"
+						inputmode="numeric"
 
-					@update:model-value="setGridValue(x, y, $event)"
-					@to-next="() => focusCell(index + 1)"
-					@to-prev="() => focusCell(index - 1)"
-				/>
-			</template>
-		</CustomPuzzleInputTable>
+						@update:model-value="setGridValue(x, y, $event)"
+						@to-next="() => focusCell(index + 1)"
+						@to-prev="() => focusCell(index - 1)"
+					/>
+				</template>
+			</CustomPuzzleInputTable>
+		</div>
 	</div>
 	<CustomPuzzleInputStrings :grid="isValidPuzzleGrid ? puzzleGridBase : null" />
 </main>
@@ -55,6 +60,7 @@ import { onBeforeMount } from 'vue';
 const {
 	customPuzzleGrid: puzzleGridBase,
 	width, height, forceSquareGrid,
+	resetGrid,
 } = useCustomPuzzleInputGrid();
 const setGridValue = (x: number, y: number, v: PuzzleValue) => {
 	puzzleGridBase.value![y][x] = v;
@@ -165,4 +171,4 @@ const focusCell = (index: number) => {
 .bleed-grid-6 {
 	--basePadding: theme(padding.6);
 }
-</style>../composables/custom-input-grid.js
+</style>
