@@ -1,11 +1,27 @@
 <template>
 <main class="pt-4 gap-y-4 grid bleed-grid-4 v-grid-bleed text-sm">
-	<CustomPuzzleInputConfigControls
-		v-model:expanded="controlsOpen"
-	/>
+	<div class="bg-white rounded-xl shadow-md shadow-black/5 w-full full-bleed pl-6 pr-2 pt-2 pb-2">
+		<header class="flex justify-between items-center">
+			<h3 class="font-bold text-gray-600 tracking-wide">Configure board</h3>
+			<button
+				class="flex-1 px-2 py-2 gap-x-1 text-end flex flex-row items-center justify-end transition-all"
+				@click="controlsOpen = !controlsOpen"
+			>
+				<span v-if="!controlsOpen">Show</span><span v-else>Hide</span>
+				<icon-ic-outline-keyboard-arrow-down
+					class="transition-transform duration-500 text-base"
+					:class="{ 'rotate-180': controlsOpen }"
+				/>				
+			</button>
+		</header>
+		<CustomPuzzleInputConfigControls
+			v-model:expanded="controlsOpen"
+		/>
+	</div>
+	
 	<div
 		v-if="isValidPuzzleGrid"
-		class="bg-white rounded px-1 py-4 shadow full-bleed"
+		class="bg-white rounded-xl shadow-md shadow-black/5 px-1 py-4 full-bleed"
 	>
 		<CustomPuzzleInputTable
 			v-if="isValidPuzzleGrid"

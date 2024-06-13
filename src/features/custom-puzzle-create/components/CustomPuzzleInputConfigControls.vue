@@ -1,7 +1,5 @@
 <template>
 <div>
-	<header>Puzzle dimensions</header>
-	<button @click="expanded = !expanded">Expand</button>
 	<ExpandTransition :duration="300" :show="expanded">
 		<div>
 			<div class="flex flex-row gap-x-3">
@@ -50,12 +48,20 @@
 				>
 				Force square grid
 			</label>
-			<div class="flex flex-row gap-2">
-				<BaseButton @click="onCreateUpdate">
-					<span v-if="gridExists">Update</span>
-					<span v-else>Create</span>
-				</BaseButton>
-				<BaseButton @click="onReset">Reset</BaseButton>
+			<div class="flex flex-row gap-2 pb-2">
+				<BaseButton
+					v-if="gridExists"
+					:disabled="areDimensionsUnchanged"
+					@click="onCreateUpdate"
+				>Resize</BaseButton>
+				<BaseButton
+					v-if="gridExists"
+					@click="onReset"
+				>New puzzle</BaseButton>
+				<BaseButton
+					v-if="!gridExists"
+					@click="onCreateUpdate"
+				>New puzzle</BaseButton>
 			</div>
 		</div>
 	</ExpandTransition>
@@ -74,6 +80,10 @@ const { width, height, forceSquareGrid, customPuzzleGrid, resetGrid, updateDimen
 const inputWidth = ref(width.value);
 const inputHeight = ref(height.value);
 const inputForceSquareGrid = ref(false);
+
+const areDimensionsUnchanged = computed(() => {
+	return inputWidth.value === width.value && inputHeight.value === height.value;
+});
 
 watch(inputWidth, (width) => {
 	if (inputForceSquareGrid.value) {

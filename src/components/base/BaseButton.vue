@@ -29,6 +29,7 @@ const props = withDefaults(
 	@apply font-medium rounded bg-white text-gray-600 border border-gray-200 cursor-pointer justify-center px-4 py-2 text-center whitespace-nowrap select-none ring-teal-500;
 
 	@apply dark:bg-slate-800 dark:text-gray-100 dark:border-gray-200/70;
+	
 
 	@apply focus:outline-none;
 	@apply hover-none:active:ring hover-none:active:ring-opacity-50 hover-hover:focus:ring hover-hover:focus:ring-opacity-50;
@@ -36,6 +37,7 @@ const props = withDefaults(
 	@apply hover-hover:hover:bg-gray-50 hover-hover:hover:border-gray-400 hover-none:active:bg-gray-50 hover-none:active:border-gray-400;
 	@apply dark:hover-hover:hover:bg-slate-700 dark:hover-none:active:bg-slate-700;
 
+	@apply disabled:bg-gray-300 disabled:text-gray-600 disabled:cursor-auto disabled:hover-hover:hover:border-transparent disabled:border-transparent;
 }
 
 .btn-primary {
