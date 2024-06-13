@@ -4,7 +4,8 @@
 	class="btn"
 	:class="{
 		'btn-primary': primary,
-		'btn-elevated': elevated
+		'btn-elevated': elevated,
+		'btn-icon-only': iconOnly,
 	}"
 ><slot /></component>
 </template>
@@ -14,6 +15,7 @@ export type Props = {
 	element?: 'button' | 'a',
 	primary?: boolean,
 	elevated?: boolean,
+	iconOnly?: boolean,
 }
 const props = withDefaults(
 	defineProps<Props>(), {
@@ -38,6 +40,9 @@ const props = withDefaults(
 	@apply dark:hover-hover:hover:bg-slate-700 dark:hover-none:active:bg-slate-700;
 
 	@apply disabled:bg-gray-300 disabled:text-gray-600 disabled:cursor-auto disabled:hover-hover:hover:border-transparent disabled:border-transparent;
+}
+.btn-icon-only {
+	@apply p-0;
 }
 
 .btn-primary {

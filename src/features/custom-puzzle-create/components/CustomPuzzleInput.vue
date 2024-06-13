@@ -25,7 +25,10 @@
 		<transition name="fade" mode="out-in">
 			<div v-if="isValidPuzzleGrid">
 				<div class="mb-4 flex justify-end px-4">
-					<BaseButton class="text-sm" @click="resetGrid">Clear board</BaseButton>
+					<CustomPuzzleInputTools
+						@clear="resetGrid"
+						@rotate="rotateGrid"
+					/>
 				</div>
 				<CustomPuzzleInputTable
 					v-if="isValidPuzzleGrid"
@@ -75,6 +78,7 @@ import CustomPuzzleInputTableCell from './CustomPuzzleInputTableCell.vue';
 import { useCustomPuzzleInputGrid } from '../composables/custom-input-grid.js';
 import { EMPTY, type PuzzleValue } from '@/lib/constants.js';
 import { onBeforeMount } from 'vue';
+import { rotate90, rotate270 } from '@/lib/transformations/base-transformations.js';
 
 const {
 	customPuzzleGrid: puzzleGridBase,
@@ -156,6 +160,17 @@ const focusCell = (index: number) => {
 			(activeEl as HTMLElement).blur();
 		}
 	}
+}
+
+const rotateGrid = (dir: 'cw' | 'ccw') => {
+	if (puzzleGridBase.value == null) return;
+
+	const fn = dir === 'cw' ? rotate90 : rotate270;
+	const result = fn(puzzleGridBase.value);
+
+	width.value = result[0].length;
+	height.value = result.length;
+	puzzleGridBase.value = result;
 }
 </script>
 

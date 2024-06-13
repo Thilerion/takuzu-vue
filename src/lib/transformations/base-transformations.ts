@@ -18,9 +18,9 @@ const identifyTransform = (grid: ReadonlyGrid): PuzzleGrid => grid.map(row => [.
 const vFlip = (grid: ReadonlyGrid): PuzzleGrid => reversed(grid.map(r => r.slice(0)));
 const hFlip = (grid: ReadonlyGrid): PuzzleGrid => grid.map(row => reversed(row));
 
-const rotate90 = (grid: ReadonlyGrid): PuzzleGrid => transpose(vFlip(grid));
-const rotate180 = (grid: ReadonlyGrid): PuzzleGrid => reversed(grid).map(row => reversed(row));
-const rotate270 = (grid: ReadonlyGrid): PuzzleGrid => transpose(hFlip(grid));
+export const rotate90 = (grid: ReadonlyGrid): PuzzleGrid => transpose(vFlip(grid));
+export const rotate180 = (grid: ReadonlyGrid): PuzzleGrid => reversed(grid).map(row => reversed(row));
+export const rotate270 = (grid: ReadonlyGrid): PuzzleGrid => transpose(hFlip(grid));
 
 export const createCombinedTransformationFn = (transforms: BaseTransformationConfig): TransformationFn => {
 	const fns: TransformationFn[] = [];
