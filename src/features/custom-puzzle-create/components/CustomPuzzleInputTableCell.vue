@@ -3,6 +3,7 @@
 	ref="el"
 	type="text"
 	class="w-full border-0 p-1 m-0 aspect-square h-full text-center"
+	:data-symbol="dataSymbolAttr"
 	:value="inputValue"
 	inputmode="numeric"
 	enterkeyhint="next"
@@ -14,7 +15,7 @@
 
 <script setup lang="ts">
 import { isPuzzleSymbol } from '@/lib/utils/puzzle-value.utils.js';
-import { watchEffect, ref } from 'vue';
+import { watchEffect, ref, computed } from 'vue';
 import type { PuzzleSymbol, PuzzleValue } from '@/lib/constants.js';
 
 const el = ref<HTMLInputElement>();
@@ -22,6 +23,10 @@ const el = ref<HTMLInputElement>();
 const props = defineProps<{
 	modelValue: PuzzleValue
 }>();
+
+const dataSymbolAttr = computed(() => {
+	return props.modelValue === '.' ? undefined : props.modelValue;
+})
 
 const emit = defineEmits<{
 	(e: 'update:modelValue', v: PuzzleValue): void,
@@ -80,3 +85,12 @@ const handleFocus = (ev: FocusEvent) => {
 defineExpose({ el });
 
 </script>
+
+<style scoped>
+[data-symbol="0"] {
+	@apply bg-cell-blue-lighter/30;
+}
+[data-symbol="1"] {
+	@apply bg-cell-red-lighter/20;
+}
+</style>
