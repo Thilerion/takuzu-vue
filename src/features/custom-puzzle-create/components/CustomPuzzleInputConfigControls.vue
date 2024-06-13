@@ -79,7 +79,7 @@ const { width, height, forceSquareGrid, customPuzzleGrid, resetGrid, updateDimen
 // Set width, height, forceSquareGrid locally, which can be set when "update" or "reset" is clicked
 const inputWidth = ref(width.value);
 const inputHeight = ref(height.value);
-const inputForceSquareGrid = ref(false);
+const inputForceSquareGrid = ref(forceSquareGrid.value);
 
 const areDimensionsUnchanged = computed(() => {
 	return inputWidth.value === width.value && inputHeight.value === height.value;
