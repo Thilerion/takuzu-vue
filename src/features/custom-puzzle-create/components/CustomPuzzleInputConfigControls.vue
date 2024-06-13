@@ -8,6 +8,7 @@
 					<input
 						id="widthInput"
 						v-model.number="inputWidth"
+						:class="{ 'border-red-500 bg-red-100': displayedCompatibilityError || displayedWidthError }"
 						type="number"
 						name="width"
 						min="4"
@@ -30,6 +31,7 @@
 					<input
 						id="heightInput"
 						v-model.number="inputHeight"
+						:class="{ 'border-red-500 bg-red-100': displayedCompatibilityError || displayedHeightError }"	
 						type="number"
 						name="height"
 						min="4"
@@ -51,18 +53,23 @@
 			<div class="flex flex-row gap-2 pb-2">
 				<BaseButton
 					v-if="gridExists"
-					:disabled="areDimensionsUnchanged"
+					:disabled="areDimensionsUnchanged || isWidthInvalid || isHeightInvalid"
 					@click="onCreateUpdate"
 				>Resize</BaseButton>
 				<BaseButton
 					v-if="gridExists"
+					:disabled="isWidthInvalid || isHeightInvalid"
 					@click="onReset"
 				>New puzzle</BaseButton>
 				<BaseButton
 					v-if="!gridExists"
+					:disabled="isWidthInvalid || isHeightInvalid"
 					@click="onCreateUpdate"
 				>New puzzle</BaseButton>
 			</div>
+			<p class="leading-relaxed min-h-[0.5lh] text-red-700 text-xs tracking-wide">
+				<span v-if="displayedErrorMessage != null">{{ displayedErrorMessage }}</span>
+			</p>
 		</div>
 	</ExpandTransition>
 </div>
@@ -71,8 +78,85 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { useCustomPuzzleInputGrid } from '../composables/custom-input-grid.js';
+import { validateCustomPuzzleDimensions, type CustomPuzzleDimensionsInvalidResultType } from '../services/validate-dimensions.js';
 
 const expanded = defineModel<boolean>('expanded', { required: true });
+
+type IncompatibleValidationType = Extract<CustomPuzzleDimensionsInvalidResultType, `incompatible:${string}`>;
+type NonIncompatibleValidationType = Exclude<CustomPuzzleDimensionsInvalidResultType, IncompatibleValidationType>;
+
+const displayedCompatibilityError = ref<null | IncompatibleValidationType>(null);
+const displayedWidthError = ref<null | NonIncompatibleValidationType>(null);
+const displayedHeightError = ref<null | NonIncompatibleValidationType>(null);
+
+const displayedErrorMessage = computed(() => {
+	// Prioritize compatibility error
+	if (displayedCompatibilityError.value != null) {
+		const type = displayedCompatibilityError.value;
+		switch(type) {
+			case 'incompatible:odd': {
+				return 'CustomPuzzleInput.dimensions.error.incompatible-odd' as const;
+			}
+			case 'incompatible:ratio': {
+				return 'CustomPuzzleInput.dimensions.error.incompatible-ratio' as const;
+			}
+			default: {
+				const x: never = type;
+				throw new Error(`Unhandled type: ${x}`);
+			}
+		}
+	}
+
+	const hasWidthError = displayedWidthError.value != null;
+	const hasHeightError = displayedHeightError.value != null;
+	const hasBothErrors = hasWidthError && hasHeightError;
+
+	if (hasBothErrors) {
+		const type = displayedWidthError.value!; // pick any of both, always the same
+		switch(type) {
+			case 'range': {
+				return 'CustomPuzzleInput.dimensions.error.range.both' as const;
+			}
+			case 'non-integer': {
+				return 'CustomPuzzleInput.dimensions.error.non-integer.both' as const;
+			}
+			default: {
+				const x: never = type;
+				throw new Error(`Unhandled type: ${x}`);
+			}
+		}
+	} else if (hasWidthError) {
+		const type = displayedWidthError.value!;
+		switch(type) {
+			case 'range': {
+				return 'CustomPuzzleInput.dimensions.error.range.width' as const;
+			}
+			case 'non-integer': {
+				return 'CustomPuzzleInput.dimensions.error.non-integer.width' as const;
+			}
+			default: {
+				const x: never = type;
+				throw new Error(`Unhandled type: ${x}`);
+			}
+		}
+	} else if (hasHeightError) {
+		const type = displayedHeightError.value!;
+		switch(type) {
+			case 'range': {
+				return 'CustomPuzzleInput.dimensions.error.range.height' as const;
+			}
+			case 'non-integer': {
+				return 'CustomPuzzleInput.dimensions.error.non-integer.height' as const;
+			}
+			default: {
+				const x: never = type;
+				throw new Error(`Unhandled type: ${x}`);
+			}
+		}
+	}
+
+	return null;
+})
 
 const { width, height, forceSquareGrid, customPuzzleGrid, resetGrid, updateDimensions } = useCustomPuzzleInputGrid();
 
@@ -85,17 +169,101 @@ const areDimensionsUnchanged = computed(() => {
 	return inputWidth.value === width.value && inputHeight.value === height.value;
 });
 
-watch(inputWidth, (width) => {
+const dimensionsValidationResult = computed(() => {
+	return validateCustomPuzzleDimensions({
+		width: inputWidth.value,
+		height: inputHeight.value,
+	});
+})
+const hasValidityError = computed(() => {
+	return !dimensionsValidationResult.value.valid;
+});
+const validityErrorType = computed((): CustomPuzzleDimensionsInvalidResultType | null => {
+	if (dimensionsValidationResult.value.valid) return null;
+	return dimensionsValidationResult.value.type;
+})
+
+const isCompatibilityInvalid = computed(() => {
+	if (dimensionsValidationResult.value.valid) return false;
+	const type = dimensionsValidationResult.value.type;
+	switch(type) {
+		case 'range':
+		case 'non-integer':
+			return false;
+		case 'incompatible:odd':
+		case 'incompatible:ratio':
+			return true;
+		default: {
+			const x: never = type;
+			console.warn(`Unhandled type: ${x}`);
+			return false;
+		}
+	}
+})
+const isWidthInvalid = computed(() => {
+	if (dimensionsValidationResult.value.valid) return false;
+	const type = dimensionsValidationResult.value.type;
+	switch(type) {
+		case 'range':
+			return dimensionsValidationResult.value.width !== null;
+		case 'non-integer':
+			return dimensionsValidationResult.value.width !== null;
+		case 'incompatible:odd':
+		case 'incompatible:ratio':
+			return false;
+		default: {
+			const x: never = type;
+			console.warn(`Unhandled type: ${x}`);
+			return false;
+		}
+	}
+})
+const isHeightInvalid = computed(() => {
+	if (dimensionsValidationResult.value.valid) return false;
+	const type = dimensionsValidationResult.value.type;
+	switch(type) {
+		case 'range':
+			return dimensionsValidationResult.value.height !== null;
+		case 'non-integer':
+			return dimensionsValidationResult.value.height !== null;
+		case 'incompatible:odd':
+		case 'incompatible:ratio':
+			return false;
+		default: {
+			const x: never = type;
+			console.warn(`Unhandled type: ${x}`);
+			return false;
+		}
+	}
+})
+
+watch(inputWidth, async (width) => {
 	if (inputForceSquareGrid.value) {
 		inputHeight.value = width;
 	}
+	// Hide the width+height compatibility error if width input is changed
+	displayedCompatibilityError.value = null;
+	// The width-only input error gets shown/hidden whenever the input changes
+	if (isWidthInvalid.value) {
+		displayedWidthError.value = validityErrorType.value as NonIncompatibleValidationType;
+	} else {
+		displayedWidthError.value = null;
+	}
 })
-watch(inputHeight, (height) => {
+watch(inputHeight, async (height) => {
 	if (inputForceSquareGrid.value) {
 		inputWidth.value = height;
 	}
+	// Hide the width+height compatibility error if height input is changed
+	displayedCompatibilityError.value = null;
+	// The height-only input error gets shown/hidden whenever the input changes
+	if (isHeightInvalid.value) {
+		displayedHeightError.value = validityErrorType.value as NonIncompatibleValidationType;
+	} else {
+		displayedHeightError.value = null;
+	}
 })
-watch(inputForceSquareGrid, (forceSquareGrid) => {
+watch(inputForceSquareGrid, async (forceSquareGrid) => {
 	if (forceSquareGrid) {
 		inputHeight.value = inputWidth.value;
 	}
@@ -112,8 +280,36 @@ const setUpdatedConfig = () => {
 	height.value = inputHeight.value;
 }
 
+const updateDisplayedErrors = () => {
+	if (isCompatibilityInvalid.value) {
+		const t = validityErrorType.value;
+		if (t != null && t.startsWith('incompatible:')) {
+			displayedCompatibilityError.value = t as IncompatibleValidationType;
+		}
+	} else {
+		displayedCompatibilityError.value = null;
+	}
+
+	if (isWidthInvalid.value) {
+		displayedWidthError.value = validityErrorType.value as NonIncompatibleValidationType;
+	} else {
+		displayedWidthError.value = null;
+	}
+
+	if (isHeightInvalid.value) {
+		displayedHeightError.value = validityErrorType.value as NonIncompatibleValidationType;
+	} else {
+		displayedHeightError.value = null;
+	}
+}
+
 const gridExists = computed(() => customPuzzleGrid.value !== null);
 const onCreateUpdate = () => {
+	updateDisplayedErrors();
+	if (hasValidityError.value) {
+		return;
+	}
+
 	const gridExistsBefore = gridExists.value;
 	setUpdatedConfig();
 	updateDimensions();
@@ -122,6 +318,11 @@ const onCreateUpdate = () => {
 	}
 }
 const onReset = () => {
+	updateDisplayedErrors();
+	if (hasValidityError.value) {
+		return;
+	}
+
 	setUpdatedConfig();
 	resetGrid();
 }

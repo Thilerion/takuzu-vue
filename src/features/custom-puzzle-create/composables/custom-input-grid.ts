@@ -4,6 +4,7 @@ import type { BoardShape, PuzzleGrid } from "@/lib/types.js";
 import { array2d } from "@/utils/array2d.utils.js";
 import { EMPTY, type PuzzleValue } from "@/lib/constants.js";
 import { clamp } from "@/utils/number.utils.js";
+import { CUSTOM_PUZZLE_MIN_SIZE, CUSTOM_PUZZLE_MAX_SIZE } from "../services/validate-dimensions.js";
 
 type CustomPuzzleInputGridData = BoardShape & {
 	forceSquareGrid: boolean;
@@ -16,9 +17,6 @@ const getDefaultData = (): CustomPuzzleInputGridData => ({
 	forceSquareGrid: false,
 	grid: null,
 });
-
-export const CUSTOM_PUZZLE_MIN_SIZE = 4;
-export const CUSTOM_PUZZLE_MAX_SIZE = 16;
 
 export const useCustomPuzzleInputGrid = createSharedComposable(() => {
 	const stateRef = useLocalStorage<CustomPuzzleInputGridData>(
