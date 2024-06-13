@@ -20,7 +20,7 @@
 	</div>
 	
 	<div
-		class="bg-white rounded-xl shadow-md shadow-black/5 px-1 py-4 full-bleed w-full"
+		class="bg-white rounded-xl shadow-md shadow-black/5 px-1 pt-4 full-bleed w-full"
 	>
 		<transition name="fade" mode="out-in">
 			<div v-if="isValidPuzzleGrid">
@@ -44,6 +44,11 @@
 						/>
 					</template>
 				</CustomPuzzleInputTable>
+				<CustomPuzzleInputValidation
+					class="my-4"
+					:grid="puzzleGridBase"
+					:dimensions="{ width, height }"
+				/>
 			</div>
 			<div
 				v-else

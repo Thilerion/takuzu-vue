@@ -82,7 +82,3 @@ const asExportString = computed(() => {
 	return puzzleGridToExportString(props.grid);
 })
 </script>
-
-<style scoped>
-
-</style>
