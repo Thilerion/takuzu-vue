@@ -2,7 +2,7 @@
 <main class="pt-4 gap-y-4 grid bleed-grid-4 v-grid-bleed text-sm">
 	<div class="bg-white rounded-xl shadow-md shadow-black/5 w-full full-bleed pl-6 pr-2 pt-2 pb-2">
 		<header class="flex justify-between items-center">
-			<h3 class="font-bold text-gray-600 tracking-wide">{{ $t('CustomPuzzleInput.configure-board.title') }}</h3>
+			<h3 class="font-bold text-gray-600 tracking-wide">{{ $t('PuzzleEditor.configure-board.title') }}</h3>
 			<button
 				class="flex-1 px-2 py-2 gap-x-1 text-end flex flex-row items-center justify-end transition-all"
 				@click="controlsOpen = !controlsOpen"

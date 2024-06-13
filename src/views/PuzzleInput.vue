@@ -6,7 +6,7 @@
 		elevated
 		class="flex-shrink-0"
 		:back-options="{ type: 'simple', fallbackRouteName: 'PuzzleTools' }"
-	>{{ $t('CustomPuzzleInput.page-title') }}</PageHeader>
+	>{{ $t('PuzzleEditor.page-title') }}</PageHeader>
 	<div class="flex-1 flex flex-col">
 		<CustomPuzzleInput />
 	</div>

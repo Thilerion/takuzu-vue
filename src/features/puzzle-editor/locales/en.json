@@ -1,5 +1,5 @@
 {
-	"CustomPuzzleInput": {
+	"PuzzleEditor": {
 		"dimensions": {
 			"error": {
 				"incompatible-odd": "The width and height must be both odd or both even.",

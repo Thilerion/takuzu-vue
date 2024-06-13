@@ -16,7 +16,7 @@
 		<icon-material-symbols-rotate-90-degrees-ccw />
 	</BaseButton>
 	
-	<BaseButton class="h-10 text-sm" @click="$emit('clear')">{{ $t('CustomPuzzleInput.tools.clear-board') }}</BaseButton>
+	<BaseButton class="h-10 text-sm" @click="$emit('clear')">{{ $t('PuzzleEditor.tools.clear-board') }}</BaseButton>
 </div>
 </template>
 

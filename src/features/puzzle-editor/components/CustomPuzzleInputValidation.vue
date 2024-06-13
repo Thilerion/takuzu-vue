@@ -8,13 +8,13 @@
 				'bg-green-100 text-green-900': validPuzzle,
 			}"
 		>
-			<div>{{ $t('CustomPuzzleInput.validation.solutions') }}</div>
+			<div>{{ $t('PuzzleEditor.validation.solutions') }}</div>
 			<div>{{ displayedNumSolutions }}</div>
 		</div>
 		<div
 			class="flex flex-row px-4 rounded h-6 items-center leading-none text-xs gap-x-4 w-fit whitespace-nowrap"
 		>
-			<div>{{ $t('CustomPuzzleInput.validation.mask-ratio') }}</div>
+			<div>{{ $t('PuzzleEditor.validation.mask-ratio') }}</div>
 			<div>{{ asPercentage(maskRatio ?? 1) }}</div>
 		</div>
 	</div>
@@ -24,7 +24,7 @@
 <script setup lang="ts">
 import type { BoardShape, PuzzleGrid } from '@/lib/types.js';
 import { toRefs, computed } from 'vue';
-import { useSolutionsAnalysis } from '@/features/custom-puzzle-create/composables/solutions-analysis.js';
+import { useSolutionsAnalysis } from '@/features/puzzle-editor/composables/solutions-analysis.js';
 import { asPercentage } from '@/utils/number.utils.js';
 
 const props = defineProps<{

@@ -1,5 +1,5 @@
 {
-	"CustomPuzzleInput": {
+	"PuzzleEditor": {
 		"dimensions": {
 			"error": {
 				"incompatible-odd": "De breedte en hoogte moeten beiden even, of beiden oneven zijn.",

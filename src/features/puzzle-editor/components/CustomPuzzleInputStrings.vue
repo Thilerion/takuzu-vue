@@ -5,7 +5,7 @@
 		@click="showPuzzleStrings = !showPuzzleStrings"
 	>
 		<div class="w-full flex justify-between">
-			<span class="font-bold text-gray-600 tracking-wide">{{ $t('CustomPuzzleInput.puzzle-strings.title') }}</span>
+			<span class="font-bold text-gray-600 tracking-wide">{{ $t('PuzzleEditor.puzzle-strings.title') }}</span>
 			<icon-ic-outline-keyboard-arrow-down
 				class="ml-auto transition-transform duration-500 text-base"
 				:class="{ 'rotate-180': showPuzzleStrings }"
@@ -21,15 +21,15 @@
 			<div class="pt-4 pb-2 pr-4 flex gap-y-2 w-full flex-col">
 				<CustomPuzzleInputStringBlock
 					:value="asCustomRle || placeholderValue"
-					:label="$t('CustomPuzzleInput.puzzle-strings.short')"
+					:label="$t('PuzzleEditor.puzzle-strings.short')"
 				/>
 				<CustomPuzzleInputStringBlock
 					:value="asCustomLong || placeholderValue"
-					:label="$t('CustomPuzzleInput.puzzle-strings.long')"
+					:label="$t('PuzzleEditor.puzzle-strings.long')"
 				/>
 				<CustomPuzzleInputStringBlock
 					:value="asExportString"
-					:label="$t('CustomPuzzleInput.puzzle-strings.export-string')"
+					:label="$t('PuzzleEditor.puzzle-strings.export-string')"
 				/>
 			</div>
 		</div>

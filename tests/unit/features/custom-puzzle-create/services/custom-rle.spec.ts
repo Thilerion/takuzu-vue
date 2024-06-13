@@ -1,4 +1,4 @@
-import { decodeCustomPuzzleStringRLE, toCustomPuzzleStringRLE } from "@/features/custom-puzzle-create/services/string-conversions/custom-rle.js"
+import { decodeCustomPuzzleStringRLE, toCustomPuzzleStringRLE } from "@/features/puzzle-editor/services/string-conversions/custom-rle.js"
 
 describe('customPuzzlestringRLE representation', () => {
 	describe('encode and decode combined', () => {
