@@ -4,7 +4,7 @@
 		<div>
 			<div class="flex flex-row gap-x-3">
 				<div class="flex flex-col">
-					<label for="widthInput">Width</label>
+					<label for="widthInput">{{ $t('CustomPuzzleInput.configure-board.width') }}</label>
 					<input
 						id="widthInput"
 						v-model.number="inputWidth"
@@ -27,7 +27,7 @@
 				</div>
 				
 				<div class="flex flex-col">
-					<label for="heightInput">Height</label>
+					<label for="heightInput">{{ $t('CustomPuzzleInput.configure-board.height') }}</label>
 					<input
 						id="heightInput"
 						v-model.number="inputHeight"
@@ -48,25 +48,25 @@
 					type="checkbox"
 					name="squareGrid"
 				>
-				Force square grid
+				{{ $t('CustomPuzzleInput.configure-board.force-square-grid') }}
 			</label>
 			<div class="flex flex-row gap-2 pb-2">
 				<BaseButton
 					v-if="gridExists"
 					:disabled="areDimensionsUnchanged || isWidthInvalid || isHeightInvalid"
 					@click="onCreateUpdate"
-				>Resize</BaseButton>
+				>{{ $t('CustomPuzzleInput.configure-board.resize') }}</BaseButton>
 				<BaseButton
 					v-if="gridExists"
 					:disabled="isWidthInvalid || isHeightInvalid"
 					@click="onReset"
-				>New puzzle</BaseButton>
+				>{{ $t('CustomPuzzleInput.configure-board.new-puzzle') }}</BaseButton>
 				<BaseButton
 					v-if="!gridExists"
 					:disabled="isWidthInvalid || isHeightInvalid"
 					@click="onCreateUpdate"
-				>New puzzle</BaseButton>
-				<BaseButton @click="showImportStringDialog = !showImportStringDialog">Import from string</BaseButton>
+				>{{ $t('CustomPuzzleInput.configure-board.new-puzzle') }}</BaseButton>
+				<BaseButton @click="showImportStringDialog = !showImportStringDialog">{{ $t('CustomPuzzleInput.import.import-from-string') }}</BaseButton>
 				<CustomPuzzleInputImportString
 					v-if="showImportStringDialog"
 					v-model:show="showImportStringDialog"
@@ -84,9 +84,10 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { useCustomPuzzleInputGrid } from '../composables/custom-input-grid.js';
-import { validateCustomPuzzleDimensions, type CustomPuzzleDimensionsInvalidResultType } from '../services/validate-dimensions.js';
+import { CUSTOM_PUZZLE_MAX_SIZE, CUSTOM_PUZZLE_MIN_SIZE, validateCustomPuzzleDimensions, type CustomPuzzleDimensionsInvalidResultType } from '../services/validate-dimensions.js';
 import type { ParsedCustomPuzzleString } from '../services/string-conversions/import.js';
 import { awaitRaf } from '@/utils/delay.utils.js';
+import { useI18n } from 'vue-i18n';
 
 const expanded = defineModel<boolean>('expanded', { required: true });
 const showImportStringDialog = ref(false);
@@ -103,16 +104,17 @@ const displayedCompatibilityError = ref<null | IncompatibleValidationType>(null)
 const displayedWidthError = ref<null | NonIncompatibleValidationType>(null);
 const displayedHeightError = ref<null | NonIncompatibleValidationType>(null);
 
+const { t } = useI18n();
 const displayedErrorMessage = computed(() => {
 	// Prioritize compatibility error
 	if (displayedCompatibilityError.value != null) {
 		const type = displayedCompatibilityError.value;
 		switch(type) {
 			case 'incompatible:odd': {
-				return 'CustomPuzzleInput.dimensions.error.incompatible-odd' as const;
+				return t('CustomPuzzleInput.dimensions.error.incompatible-odd');
 			}
 			case 'incompatible:ratio': {
-				return 'CustomPuzzleInput.dimensions.error.incompatible-ratio' as const;
+				return t('CustomPuzzleInput.dimensions.error.incompatible-ratio');
 			}
 			default: {
 				const x: never = type;
@@ -129,10 +131,10 @@ const displayedErrorMessage = computed(() => {
 		const type = displayedWidthError.value!; // pick any of both, always the same
 		switch(type) {
 			case 'range': {
-				return 'CustomPuzzleInput.dimensions.error.range.both' as const;
+				return t('CustomPuzzleInput.dimensions.error.range.both', { min: CUSTOM_PUZZLE_MIN_SIZE, max: CUSTOM_PUZZLE_MAX_SIZE });
 			}
 			case 'non-integer': {
-				return 'CustomPuzzleInput.dimensions.error.non-integer.both' as const;
+				return t('CustomPuzzleInput.dimensions.error.non-integer.both');
 			}
 			default: {
 				const x: never = type;
@@ -143,10 +145,10 @@ const displayedErrorMessage = computed(() => {
 		const type = displayedWidthError.value!;
 		switch(type) {
 			case 'range': {
-				return 'CustomPuzzleInput.dimensions.error.range.width' as const;
+				return t('CustomPuzzleInput.dimensions.error.range.width', { min: CUSTOM_PUZZLE_MIN_SIZE, max: CUSTOM_PUZZLE_MAX_SIZE });
 			}
 			case 'non-integer': {
-				return 'CustomPuzzleInput.dimensions.error.non-integer.width' as const;
+				return t('CustomPuzzleInput.dimensions.error.non-integer.width');
 			}
 			default: {
 				const x: never = type;
@@ -157,10 +159,10 @@ const displayedErrorMessage = computed(() => {
 		const type = displayedHeightError.value!;
 		switch(type) {
 			case 'range': {
-				return 'CustomPuzzleInput.dimensions.error.range.height' as const;
+				return t('CustomPuzzleInput.dimensions.error.range.height', { min: CUSTOM_PUZZLE_MIN_SIZE, max: CUSTOM_PUZZLE_MAX_SIZE });
 			}
 			case 'non-integer': {
-				return 'CustomPuzzleInput.dimensions.error.non-integer.height' as const;
+				return t('CustomPuzzleInput.dimensions.error.non-integer.height');
 			}
 			default: {
 				const x: never = type;

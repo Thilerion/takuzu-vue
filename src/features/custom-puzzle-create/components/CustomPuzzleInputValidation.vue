@@ -8,13 +8,13 @@
 				'bg-green-100 text-green-900': validPuzzle,
 			}"
 		>
-			<div>Solutions</div>
+			<div>{{ $t('CustomPuzzleInput.validation.solutions') }}</div>
 			<div>{{ displayedNumSolutions }}</div>
 		</div>
 		<div
 			class="flex flex-row px-4 rounded h-6 items-center leading-none text-xs gap-x-4 w-fit whitespace-nowrap"
 		>
-			<div>Mask ratio</div>
+			<div>{{ $t('CustomPuzzleInput.validation.mask-ratio') }}</div>
 			<div>{{ asPercentage(maskRatio ?? 1) }}</div>
 		</div>
 	</div>

@@ -6,7 +6,7 @@
 >
 	<template #default="{ close }">
 		<header class="flex items-center pr-0.5 pl-4 py-1 border-b bg-slate-50">
-			<h2 class="font-medium">Import custom puzzle from string</h2>
+			<h2 class="font-medium">{{ $t('CustomPuzzleInput.import.title') }}</h2>
 			<IconBtn class="ml-auto" @click="close">
 				<icon-mdi-close />
 			</IconBtn>
@@ -17,12 +17,13 @@
 				v-model="importString"
 				type="text"
 				class="w-full"
+				:placeholder="$t('CustomPuzzleInput.import.placeholder')"
 			>
 			<div class="w-full flex justify-end mt-4 items-center">
 				<div class="flex-1 leading-relaxed min-h-[1lh] text-red-700 tracking-wide">
 					<span v-if="parseError">{{ parseError }}</span>
 				</div>
-				<BaseButton class="self-end" :disabled="!importString" @click="onLoad">Load</BaseButton>
+				<BaseButton class="self-end" :disabled="!importString" @click="onLoad">{{ $t('CustomPuzzleInput.import.load') }}</BaseButton>
 			</div>
 		</div>
 	</template>

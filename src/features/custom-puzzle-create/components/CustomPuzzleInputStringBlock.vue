@@ -6,7 +6,7 @@
 		<BaseButton
 			class="flex-initial ml-auto mr-2 mb-0.5 px-2 py-2 my-auto rounded border min-w-max w-24"
 			@click="copyValue"
-		>{{ copySuccess ? 'Copied!' : 'Copy' }}</BaseButton>
+		>{{ copySuccess ? $t('CustomPuzzleInput.puzzle-strings.copy-success') : $t('CustomPuzzleInput.puzzle-strings.copy-btn-text') }}</BaseButton>
 	</div>
 </div>
 </template>
@@ -31,7 +31,3 @@ const copyValue = async () => {
 	}
 }
 </script>
-
-<style scoped>
-
-</style>

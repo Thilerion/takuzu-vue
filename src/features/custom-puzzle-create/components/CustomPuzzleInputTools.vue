@@ -16,7 +16,7 @@
 		<icon-material-symbols-rotate-90-degrees-ccw />
 	</BaseButton>
 	
-	<BaseButton class="h-10 text-sm" @click="$emit('clear')">Clear board</BaseButton>
+	<BaseButton class="h-10 text-sm" @click="$emit('clear')">{{ $t('CustomPuzzleInput.tools.clear-board') }}</BaseButton>
 </div>
 </template>
 
@@ -27,7 +27,3 @@ const emit = defineEmits<{
 	(e: 'rotate', v: 'cw' | 'ccw'): void;
 }>();
 </script>
-
-<style scoped>
-
-</style>

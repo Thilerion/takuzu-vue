@@ -1,0 +1,51 @@
+{
+	"CustomPuzzleInput": {
+		"dimensions": {
+			"error": {
+				"incompatible-odd": "The width and height must be both odd or both even.",
+				"incompatible-ratio": "The aspect ratio is invalid, it is currently too tall or wide.",
+				"range": {
+					"both": "The width and height must be between {min} and {max}.",
+					"width": "The width must be between {min} and {max}.",
+					"height": "The height must be between {min} and {max}."
+				},
+				"non-integer": {
+					"both": "The width and height must be integers.",
+					"width": "The width must be an integer.",
+					"height": "The height must be an integer."
+				}
+			}
+		},
+		"configure-board": {
+			"title": "Configure board",
+			"width": "Width",
+			"height": "Height",
+			"force-square-grid": "Keep grid square",
+			"resize": "Resize",
+			"new-puzzle": "New puzzle"
+		},
+		"import": {
+			"import-from-string": "Import",
+			"title": "Import puzzle code",
+			"load": "Load",
+			"placeholder": "Enter a puzzle code (e.g. 5d5a1p or 4x4;1....0.1...1.01.)"
+		},
+		"puzzle-strings": {
+			"title": "Puzzle Sharing Codes",
+			"short": "Short",
+			"long": "Long",
+			"copy-success": "Copied",
+			"copy-btn-text": "Copy",
+			"export-string": "Export-code"
+		},
+		"tools": {
+			"clear-board": "Clear board"
+		},
+		"validation": {
+			"solutions": "# Solutions",
+			"mask-ratio": "Mask ratio"
+		},
+		"page-title": "Puzzle Editor",
+		"tools-link-text": "Puzzle editor"
+	}
+}

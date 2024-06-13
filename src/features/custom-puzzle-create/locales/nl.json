@@ -1,0 +1,51 @@
+{
+	"CustomPuzzleInput": {
+		"dimensions": {
+			"error": {
+				"incompatible-odd": "De breedte en hoogte moeten beiden even, of beiden oneven zijn.",
+				"incompatible-ratio": "De aspect ratio is ongeldig, het is momenteel te hoog of te breed.",
+				"range": {
+					"both": "De breedte en hoogte moeten tussen {min} en {max} zijn.",
+					"width": "De breedte moet tussen {min} en {max} zijn.",
+					"height": "De hoogte moet tussen {min} en {max} zijn."
+				},
+				"non-integer": {
+					"both": "De breedte en hoogte moeten correcte getallen zijn.",
+					"width": "De breedte moet een correct getal zijn.",
+					"height": "De hoogte moet een correct getal zijn."
+				}
+			}
+		},
+		"configure-board": {
+			"title": "Configureer bord",
+			"width": "Breedte",
+			"height": "Hoogte",
+			"force-square-grid": "Houd puzzel vierkant",
+			"resize": "Wijzig formaat",
+			"new-puzzle": "Nieuwe puzzel"
+		},
+		"validation": {
+			"mask-ratio": "Maskeringsratio",
+			"solutions": "# Oplossingen"
+		},
+		"import": {
+			"import-from-string": "Importeer",
+			"title": "Puzzelcode importeren",
+			"load": "Laad",
+			"placeholder": "Voor een puzzelcode in (zoals 5d5a1p of 4x4;1....0.1...1.01.)"
+		},
+		"puzzle-strings": {
+			"title": "Deelbare puzzelcodes",
+			"short": "Kort",
+			"long": "Lang",
+			"copy-success": "Gekopieerd",
+			"copy-btn-text": "Kopieer",
+			"export-string": "Export-code"
+		},
+		"tools": {
+			"clear-board": "Bord leegmaken"
+		},
+		"page-title": "Puzzel Ontwerper",
+		"tools-link-text": "Puzzel ontwerper"
+	}
+}
