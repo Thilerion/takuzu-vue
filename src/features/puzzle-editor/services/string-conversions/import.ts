@@ -14,7 +14,7 @@ export type ParsedCustomPuzzleString = {
 }
 export type CustomPuzzleStringParserError = {
 	success: false,
-	error: string, // TODO: better error type
+	error: 'Generic: Invalid string' | 'RLE error', // TODO: better error type
 }
 
 export function importCustomPuzzleString(str: string): ParsedCustomPuzzleString | CustomPuzzleStringParserError {
@@ -48,8 +48,9 @@ export function importCustomPuzzleString(str: string): ParsedCustomPuzzleString 
 			const type = 'CustomRLE';
 			return { success: true, width, height, grid, type };
 		} catch(e) {
-			console.warn('Invalid RLE string', e);
+			console.warn(e);
+			return { success: false, error: 'RLE error'};
 		}
 	}
-	return { success: false, error: 'Invalid string' };
+	return { success: false, error: 'Generic: Invalid string' };
 }

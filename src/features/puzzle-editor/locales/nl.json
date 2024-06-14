@@ -32,7 +32,14 @@
 			"import-from-string": "Importeer",
 			"title": "Puzzelcode importeren",
 			"load": "Laad",
-			"placeholder": "Puzzelcode zoals {0} of {1}"
+			"placeholder": "Puzzelcode zoals {0} of {1}",
+			"inline-help-text": "Voer hier een puzzelcode in, zoals die onder '@:{'PuzzleEditor.puzzle-strings.title'}' op de @:PuzzleEditor.page-title pagina.",
+			"error": {
+				"invalid-dimensions": "De code is correct gelezen, maar het resulterende raster heeft ongeldige afmetingen.",
+				"invalid-string-generic": "De code kon niet worden gelezen, aangezien het niet is herkend als een geldige puzzelcode.",
+				"unknown-generic": "Er is een onbekende fout opgetreden tijdens het lezen van deze puzzelcode, sorry! Probeer in plaats daarvan een andere.",
+				"rle-error": "De puzzelcode is herkend als een \"@:{'PuzzleEditor.puzzle-strings.short'}\" code, maar het kon niet goed geïnterpreteerd worden."
+			}
 		},
 		"puzzle-strings": {
 			"title": "Deelbare puzzelcodes",

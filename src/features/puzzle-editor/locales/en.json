@@ -28,7 +28,14 @@
 			"import-from-string": "Import",
 			"title": "Import puzzle code",
 			"load": "Load",
-			"placeholder": "Puzzle code such as {0} or {1}"
+			"placeholder": "Puzzle code such as {0} or {1}",
+			"inline-help-text": "Enter a puzzle code here, such as those listed under '@:{'PuzzleEditor.puzzle-strings.title'}' on the main @:PuzzleEditor.page-title page.",
+			"error": {
+				"invalid-dimensions": "The code was correctly parsed, but the resulting grid has invalid dimensions.",
+				"invalid-string-generic": "The code could not be parsed, as it was not recognized as a valid shareable puzzle code.",
+				"unknown-generic": "An unknown error occurred while parsing this puzzle code, sorry! Please try another one instead.",
+				"rle-error": "The puzzle code was recognized as a \"@:{'PuzzleEditor.puzzle-strings.short'}\" code, but it could not be correctly parsed."
+			}
 		},
 		"puzzle-strings": {
 			"title": "Puzzle Sharing Codes",
