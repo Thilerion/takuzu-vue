@@ -5,7 +5,7 @@
 	class="w-full border-0 p-1 m-0 aspect-square h-full text-center editor-cell-input placeholder:text-gray-300"
 	:data-symbol="dataSymbolAttr"
 	:value="inputValue"
-	:placeholder="solutionValue ?? ''"
+	:placeholder="placeholder"
 	inputmode="numeric"
 	enterkeyhint="next"
 	@input="handleInput"
@@ -112,6 +112,13 @@ const handleDelete = (ev: Event) => {
 		ev.preventDefault();	
 	}
 }
+
+const placeholder = computed((): PuzzleSymbol | '' => {
+	if (props.solutionValue === EMPTY || props.solutionValue == null) {
+		return '';
+	}
+	return props.solutionValue;
+})
 
 defineExpose({ el });
 

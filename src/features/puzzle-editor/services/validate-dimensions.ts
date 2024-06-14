@@ -90,8 +90,10 @@ export const validateCustomPuzzleDimensions = (
 
 	// Check that the ratio between width and height is not "too stretched", because then it absolutely cannot be solved
 	// The longest side cannot be more than 2.5 times the shortest side (by default)
-	const ratio = Math.max(width, height) / Math.min(width, height);
-	if (ratio > CUSTOM_PUZZLE_MAX_ASPECT_RATIO) {
+	const smallSide = Math.min(width, height);
+	const longSide = Math.max(width, height);
+	const ratio = longSide / smallSide;
+	if (ratio > CUSTOM_PUZZLE_MAX_ASPECT_RATIO || smallSide <= 4 && longSide >= 8) {
 		return {
 			valid: false,
 			type: "incompatible:ratio"
