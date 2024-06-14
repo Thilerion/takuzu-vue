@@ -12,13 +12,15 @@
 			</IconBtn>
 		</header>
 
-		<div class="pt-3 px-4 pb-4">
-			<input
+		<div class="pt-3 px-2 sm:px-4 pb-4">
+			<InputTextArea
+				id="import-puzzle-textarea"
 				v-model="importString"
-				type="text"
-				class="w-full"
-				:placeholder="$t('PuzzleEditor.import.placeholder')"
-			>
+				class="w-full text-sm"
+				autocomplete="off"
+				rows="3"
+				:placeholder="$t('PuzzleEditor.import.placeholder', ['5d5a1p', '4x4;1....0.1...1.01'])"
+			/>
 			<div class="w-full flex justify-end mt-4 items-center">
 				<div class="flex-1 leading-relaxed min-h-[1lh] text-red-700 tracking-wide">
 					<span v-if="parseError">{{ parseError }}</span>

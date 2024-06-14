@@ -28,7 +28,7 @@
 			"import-from-string": "Import",
 			"title": "Import puzzle code",
 			"load": "Load",
-			"placeholder": "Enter a puzzle code (e.g. 5d5a1p or 4x4;1....0.1...1.01.)"
+			"placeholder": "Puzzle code such as {0} or {1}"
 		},
 		"puzzle-strings": {
 			"title": "Puzzle Sharing Codes",

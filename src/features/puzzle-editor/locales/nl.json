@@ -32,7 +32,7 @@
 			"import-from-string": "Importeer",
 			"title": "Puzzelcode importeren",
 			"load": "Laad",
-			"placeholder": "Voor een puzzelcode in (zoals 5d5a1p of 4x4;1....0.1...1.01.)"
+			"placeholder": "Puzzelcode zoals {0} of {1}"
 		},
 		"puzzle-strings": {
 			"title": "Deelbare puzzelcodes",
