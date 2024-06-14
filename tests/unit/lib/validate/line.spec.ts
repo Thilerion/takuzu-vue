@@ -6,6 +6,14 @@ describe('line validation functions', () => {
 		it('correctly matches three in a row', () => {
 			expect(validateMaxConsecutiveRule('111')).toBe(false);
 			expect(validateMaxConsecutiveRule('000')).toBe(false);
+			expect(validateMaxConsecutiveRule('...')).toBe(true);
+		})
+
+		it('correctly matches three in a row in a longer line', () => {
+			expect(validateMaxConsecutiveRule('111111')).toBe(false);
+			expect(validateMaxConsecutiveRule('.1110..10.')).toBe(false);
+			expect(validateMaxConsecutiveRule('.0110..10.')).toBe(true);
+			expect(validateMaxConsecutiveRule('01110100')).toBe(false);
 		})
 
 		it('does not match three in a row if not 1 or 0', () => {
