@@ -168,12 +168,6 @@ const focusCell = (index: number) => {
 	const map = elsByIndex.value;
 	if (map.has(index)) {
 		map.get(index)!.focus();
-	} else {
-		// blur current cell instead
-		const activeEl = document.activeElement;
-		if (activeEl && 'dataset' in activeEl && (activeEl as HTMLElement).dataset.index != null) {
-			(activeEl as HTMLElement).blur();
-		}
 	}
 }
 
