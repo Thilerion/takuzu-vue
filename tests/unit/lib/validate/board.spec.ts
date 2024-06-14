@@ -1,7 +1,6 @@
-import { describe, expect, test } from "vitest";
-import { SimpleBoard } from "@/lib";
-import { validateBoard } from '@/lib/validate/board';
+import { SimpleBoard } from "@/lib/board/Board.js";
 import type { BoardExportString } from "@/lib/types.js";
+import { validateBoard } from "@/lib/validate/board.js";
 
 describe('validate board functions', () => {
 	test('incomplete square valid board', () => {

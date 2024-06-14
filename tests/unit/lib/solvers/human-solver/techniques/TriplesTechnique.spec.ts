@@ -1,7 +1,7 @@
-import { SimpleBoard } from "@/lib"
-import { ThreesUnit } from "@/lib/board/ThreesUnit"
-import { ONE, EMPTY, ZERO } from "@/lib/constants"
-import { humanTriplesTechnique } from "@/lib/solvers/human-solver/techniques/TriplesTechnique"
+import { SimpleBoard } from "@/lib/board/Board.js";
+import { ThreesUnit } from "@/lib/board/ThreesUnit.js";
+import { ONE, EMPTY, ZERO } from "@/lib/constants.js";
+import { humanTriplesTechnique } from "@/lib/solvers/human-solver/techniques/TriplesTechnique.js";
 
 describe('Human Solver HumanTriplesTechnique', () => {
 	it('finds a all sandwiches in the supplied ThreesUnits', () => {
