@@ -2,7 +2,7 @@
 <input
 	ref="el"
 	type="text"
-	class="w-full border-0 p-1 m-0 aspect-square h-full text-center"
+	class="w-full border-0 p-1 m-0 aspect-square h-full text-center editor-cell-input"
 	:data-symbol="dataSymbolAttr"
 	:value="inputValue"
 	inputmode="numeric"

@@ -50,7 +50,7 @@ const dims = computed((): BoardShape => {
 const vecToIndex = ({ x, y }: Vec) => y * dims.value.width + x;
 
 const MAX_CELL_SIZE = 80;
-const MIN_CELL_SIZE = 24;
+const MIN_CELL_SIZE = 16;
 
 const maxTableWidth = computed(() => {
 	return `${MAX_CELL_SIZE * dims.value.width}px`;
@@ -64,5 +64,17 @@ const minTableWidth = computed(() => {
 .table-cell-wrapper {
 	min-width: calc(v-bind(MIN_CELL_SIZE) * 1px);
 	min-height: calc(v-bind(MIN_CELL_SIZE) * 1px);
+	container-type: inline-size;
+}
+
+@container (width < 25px) {
+	:slotted(.table-cell-wrapper > *) {
+		@apply text-sm;
+	}
+}
+@container (width > 50px) {
+	:slotted(.table-cell-wrapper > *) {
+		@apply text-xl;
+	}
 }
 </style>

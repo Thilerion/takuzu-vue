@@ -50,7 +50,7 @@
 				>
 				{{ $t('PuzzleEditor.configure-board.force-square-grid') }}
 			</label>
-			<div class="flex flex-row gap-2 pb-2">
+			<div class="flex flex-row gap-2 pb-2 flex-wrap">
 				<BaseButton
 					v-if="gridExists"
 					:disabled="areDimensionsUnchanged || isWidthInvalid || isHeightInvalid"
