@@ -101,7 +101,6 @@ onBeforeMount(() => {
 }
 
 	// Then, if grid is null, set controls to open
-	console.log(puzzleGridBase.value);
 	if (puzzleGridBase.value == null) {
 		controlsOpen.value = true;
 	}

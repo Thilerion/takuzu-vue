@@ -55,7 +55,6 @@ const puzzleStore = usePuzzleStore();
 const toggleCell = ({ x, y, value }: VecValue) => puzzleStore.toggle({ x, y, prevValue: value });
 const { manualResumeGame } = usePuzzlePauseResume();
 const resumeByUser = () => {
-	console.log('resume by user');
 	manualResumeGame();
 }
 

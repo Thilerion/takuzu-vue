@@ -69,7 +69,6 @@ function useInitThemePreferenceProvider(): BaseThemeProvidedData {
 	const baseThemeIsAuto = computed(() => baseThemeUserPref.value === 'auto');
 
 	watchEffect(() => {
-		// console.log(`Color theme changed to: "${baseTheme.value}"`);
 		setBaseThemeAttrs(baseTheme.value);
 	});
 

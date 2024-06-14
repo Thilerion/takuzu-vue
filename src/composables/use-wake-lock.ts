@@ -8,7 +8,7 @@ const MINUTE = 60 * 1000;
 export const usePuzzleWakeLock = ({ pauseAfter = 1.5 * MINUTE } = {}) => {
 	const { isSupported, isActive, request, release } = useWakeLock();
 	const { idle } = useIdle(Math.round(pauseAfter));
-	// console.log(`Idle watcher initialized; user is idle after ${(pauseAfter / MINUTE).toFixed(1)} minutes.`);
+
 	const settingsStore = useSettingsStore();
 	const puzzleStore = usePuzzleStore();
 	const playStatus = toRef(puzzleStore, 'status');

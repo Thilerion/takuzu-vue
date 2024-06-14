@@ -40,19 +40,13 @@
 <script setup lang="ts">
 import { puzzleGridToBoardString, puzzleGridToExportString } from '@/lib/board/board-conversion.helpers.js';
 import type { PuzzleGrid } from '@/lib/types.js';
-import { computed } from 'vue';
-import { ref } from 'vue';
 import { toCustomPuzzleStringRLE } from '../services/string-conversions/custom-rle.js';
 import { gridToCustomPuzzleStringLong } from '../services/string-conversions/custom-long.js';
-import { watchEffect } from 'vue';
+import { ref, computed } from 'vue';
 
 const props = defineProps<{
 	grid: PuzzleGrid | null;
 }>();
-
-watchEffect(() => {
-	console.log(props.grid);
-})
 
 const showPuzzleStrings = ref(false);
 const el = ref<HTMLElement>();

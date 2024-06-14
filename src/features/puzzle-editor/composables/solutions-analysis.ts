@@ -46,7 +46,6 @@ export const useSolutionsAnalysis = (
 			}
 		);
 		const { numSolutions: solutions, solvable } = solveResult;
-		console.log({ solutions });
 		const validPuzzle = solutions === 1;
 		Object.assign(results,{
 			solvable, validPuzzle, solutions

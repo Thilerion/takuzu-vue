@@ -45,7 +45,6 @@ onBeforeUnmount(() => {
 })
 
 const scrollToTop = () => {
-	console.log('scroll to top')
 	props.el!.scrollTo({
 		top: 0,
 		behavior: 'smooth'
