@@ -29,25 +29,17 @@
 </template>
 
 <script setup lang="ts">
-import { useMainStore } from "@/stores/main";
 import { computed } from "vue";
 import { useRoute, type RouteLocationNormalizedLoaded } from "vue-router";
 import type { BottomNavIconNames } from "./BottomNavIcon.vue";
 import { useI18n } from "vue-i18n";
-
-const mainStore = useMainStore();
-const customPuzzleToolEnabled = computed(() => mainStore.featureToggles.customPuzzleTool.isEnabled);
-const analysisToolEnabled = computed(() => mainStore.featureToggles.analysisTool.isEnabled);
-const showToolsMenu = computed(() => {
-	return customPuzzleToolEnabled.value || analysisToolEnabled.value;
-})
 
 type ActiveWhenCheckFn = (args: RouteLocationNormalizedLoaded) => boolean;
 type Item = { label: string, icon: BottomNavIconNames, to: string | { name: string }, activeWhen: ActiveWhenCheckFn };
 
 const { t } = useI18n();
 
-const baseMenuItems = computed((): Item[] => [
+const menuItems = computed((): Item[] => [
 	{
 		label: t('routeButton.home'), to: { name: 'Home' }, icon: 'home',
 		activeWhen: ({ name }) => name === 'Home'
@@ -60,18 +52,11 @@ const baseMenuItems = computed((): Item[] => [
 		label: t('routeButton.settings'), to: { name: 'Settings' }, icon: 'settings',
 		activeWhen: ({ name }) => name === 'Settings'
 	},
+	{
+		label: t('routeButton.tools'), to: '/tools', icon: 'tools',
+		activeWhen: ({ path }) => path.startsWith('/tools')
+	},
 ]);
-
-const menuItems = computed((): Item[] => {
-	const items = [...baseMenuItems.value];
-	if (showToolsMenu.value) {
-		items.push({
-			label: t('routeButton.tools'), to: '/tools', icon: 'tools',
-			activeWhen: ({ path }) => path.startsWith('/tools')
-		});
-	}
-	return items;
-})
 
 const route = useRoute();
 

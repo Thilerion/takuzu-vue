@@ -2,7 +2,7 @@ import { useIsDebugModeEnabled } from "@/features/debug-mode/composables/debug-m
 import { useStorage } from "@vueuse/core";
 import { computed, reactive, ref, watch } from "vue"
 
-export type FeatureToggleKey = 'addPuzzleToHistoryWithCheats' | 'analysisTool' | 'customPuzzleTool';
+export type FeatureToggleKey = 'addPuzzleToHistoryWithCheats' | 'analysisTool';
 export type FeatureData = ReturnType<typeof useFeatureToggle>;
 
 export const useFeatureToggles = () => {
@@ -24,11 +24,6 @@ export const useFeatureToggles = () => {
 			defaultValue: storageState.value?.analysisTool ?? debugModeEnabled.value,
 			requiresDebugMode: true,
 			label: 'Analysis tool'
-		}),
-		customPuzzleTool: useFeatureToggle({
-			defaultValue: storageState.value?.customPuzzleTool ?? debugModeEnabled.value,
-			requiresDebugMode: true,
-			label: 'Custom puzzle tool'
 		}),
 	});
 	const featureNames = computed(() => {
