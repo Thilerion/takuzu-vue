@@ -12,12 +12,13 @@
 			</IconBtn>
 		</header>
 
-		<div class="pt-3 px-2 sm:px-4 pb-4">
+		<form class="pt-3 px-2 sm:px-4 pb-4" @submit.prevent="onLoad">
 			<InputTextArea
 				id="import-puzzle-textarea"
 				v-model="importString"
 				class="w-full text-sm"
 				autocomplete="off"
+				autofocus
 				rows="3"
 				:placeholder="$t('PuzzleEditor.import.placeholder', ['5d5a1p', '4x4;1....0.1...1.01'])"
 			/>
@@ -25,9 +26,13 @@
 				<div class="flex-1 leading-relaxed min-h-[1lh] text-red-700 tracking-wide">
 					<span v-if="parseError">{{ parseError }}</span>
 				</div>
-				<BaseButton class="self-end" :disabled="!importString" @click="onLoad">{{ $t('PuzzleEditor.import.load') }}</BaseButton>
+				<BaseButton
+					type="submit"
+					class="self-end"
+					:disabled="!importString"
+				>{{ $t('PuzzleEditor.import.load') }}</BaseButton>
 			</div>
-		</div>
+		</form>
 	</template>
 </BaseDialog>
 </template>
