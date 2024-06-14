@@ -55,9 +55,12 @@
 				</CustomPuzzleInputTable>
 				<CustomPuzzleInputValidation
 					class="my-4"
-					:grid="puzzleGridBase"
-					:dimensions="{ width, height }"
-					@found-single-solution="(grid) => singleSolution = grid"
+					:max-solutions="MAX_SOLUTIONS"
+					:solutions="solutions"
+					:valid-input="validInput"
+					:mask-ratio="maskRatio"
+					:valid-puzzle="validPuzzle"
+					:solvable="solvable"
 				/>
 			</div>
 			<div
@@ -85,11 +88,14 @@ import CustomPuzzleInputTableCell from './CustomPuzzleInputTableCell.vue';
 import { useCustomPuzzleInputGrid } from '../composables/custom-input-grid.js';
 import type { PuzzleValue } from '@/lib/constants.js';
 import { useSharedPuzzleToggle } from '@/composables/use-puzzle-toggle.js';
-import type { PuzzleGrid } from '@/lib/types.js';
+import { useSolutionsAnalysis } from '@/features/puzzle-editor/composables/solutions-analysis.js';
 
+//////
+// Puzzle Editor grid data + actions
+//////
 const {
 	customPuzzleGrid: puzzleGridBase,
-	width, height,
+	dimensions,
 	resetGrid,
 	emptyExistingGrid, isValidGrid,
 	rotateGrid,
@@ -97,8 +103,6 @@ const {
 const setGridValue = (x: number, y: number, v: PuzzleValue) => {
 	puzzleGridBase.value![y][x] = v;
 }
-
-const singleSolution = ref<PuzzleGrid | null>(null);
 
 const toggleInputModeEnabled = ref(false);
 const { toggle } = useSharedPuzzleToggle();
@@ -111,6 +115,9 @@ const toggleCell = (x: number, y: number) => {
 	setGridValue(x, y, value);
 }
 
+//////
+// Puzzle Editor config/controls state
+//////
 const controlsOpen = ref(false);
 onBeforeMount(() => {
 	// If grid is empty on initial load, set it to null
@@ -123,6 +130,9 @@ onBeforeMount(() => {
 	}
 })
 
+//////
+// Logic related to automatic focus shifting
+//////
 const cellsByIndex = ref(new Map<number, HTMLElement>());
 const setRef = (val: InstanceType<typeof CustomPuzzleInputTableCell>) => {
 	if (val == null) {
@@ -142,6 +152,20 @@ const focusCell = (index: number) => {
 		map.get(index)!.focus();
 	}
 }
+
+//////
+// Automatic puzzle analysis and solution checking
+//////
+const MAX_SOLUTIONS = 200;
+const {
+	solutions,
+	validInput,
+	maskRatio,
+	validPuzzle,
+	solvable,
+	singleSolution,
+	/* isRunning */
+} = useSolutionsAnalysis(puzzleGridBase, dimensions, MAX_SOLUTIONS);
 </script>
 
 <style scoped>

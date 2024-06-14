@@ -22,47 +22,26 @@
 </template>
 
 <script setup lang="ts">
-import type { BoardShape, PuzzleGrid } from '@/lib/types.js';
 import { toRefs, computed } from 'vue';
-import { useSolutionsAnalysis } from '@/features/puzzle-editor/composables/solutions-analysis.js';
 import { asPercentage } from '@/utils/number.utils.js';
-import { watchEffect } from 'vue';
 
 const props = defineProps<{
-	grid: PuzzleGrid | null;
-	dimensions: BoardShape;
+	maxSolutions: number;
+	solutions: number | null;
+	validInput: boolean;
+	maskRatio: number;
+	validPuzzle: boolean;
+	solvable: boolean;
 }>();
-const emit = defineEmits<{
-	(e: 'found-single-solution', grid: PuzzleGrid | null): void;
-}>();
+const { solutions, validInput, maxSolutions, maskRatio} = toRefs(props);
 
-const { grid, dimensions } = toRefs(props);
-
-const MAX_SOLUTIONS = 200;
-const { 
-	solutions,
-	validInput,
-	maskRatio,
-	validPuzzle,
-	solvable,
-	singleSolution,
-	/* isRunning */
-} = useSolutionsAnalysis(grid, dimensions, MAX_SOLUTIONS);
 const displayedNumSolutions =  computed(() => {
 	if (solutions.value == null || !validInput.value) {
 		// Not running solver (yet), so can potentially have many solutions
-		return `${MAX_SOLUTIONS}+`;
-	} else if (solutions.value >= MAX_SOLUTIONS) {
-		// High probability that the solver stopped early (at MAX_SOLUTIONS)
+		return `${maxSolutions.value}+`;
+	} else if (solutions.value >= maxSolutions.value) {
+		// High probability that the solver stopped early (at maxSolutions)
 		return `${solutions.value}+`;
 	} else return `${solutions.value}`;
-})
-
-watchEffect(() => {
-	if (singleSolution.value == null) {
-		emit('found-single-solution', null);
-	} else {
-		emit('found-single-solution', singleSolution.value);
-	}
 })
 </script>
