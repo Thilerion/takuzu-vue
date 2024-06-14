@@ -27,8 +27,8 @@
 		"EliminationGeneric": {
 			"name": "Eliminatie",
 			"generic": "algemeen",
-			"message-1-single-target": "Er is een @:{rowOrColumn} op het bord waar de juiste @:{symbolOrColor} van een cel kan worden afgeleid door onmogelijke combinaties uit te sluiten.",
-			"message-1-multiple-targets": "Er is een @:{rowOrColumn} op het bord waar enkele juiste zetten kunnen worden afgeleid door onmogelijke combinaties uit te sluiten.",
+			"message-1-single-target": "Er is een @:{rowOrColumn} in de puzzel waar de juiste @:{symbolOrColor} van een cel kan worden afgeleid door onmogelijke combinaties uit te sluiten.",
+			"message-1-multiple-targets": "Er is een @:{rowOrColumn} in de puzzel waar enkele juiste zetten kunnen worden afgeleid door onmogelijke combinaties uit te sluiten.",
 			"message-2-single-target": "In deze @:{rowOrColumn} kan één cel slechts één @:{symbolOrColor} bevatten, omdat het anders zou resulteren in een ongeldige @:{rowOrColumn}.",
 			"message-2-multiple-targets": "In deze @:{rowOrColumn} kunnen sommige cellen slechts één @:{symbolOrColor} bevatten, omdat het anders zou resulteren in een ongeldige @:{rowOrColumn}.",
 			"message-3-single-target": "Deze cel kan worden afgeleid door onmogelijke combinaties van de resterende @:{symbolOrColorPlural} uit te sluiten.",
@@ -71,7 +71,7 @@
 			"pair": "paar",
 			"sandwich": "sandwich",
 			"messages": [
-				"Er is ergens op het bord een '@:{subType}' te vinden.",
+				"Er is ergens in de puzzel een '@:{subType}' te vinden.",
 				"Drie @:{sourceSymbol} kunnen niet naast elkaar staan. Daarom is er maar één mogelijkheid voor @:{surroundingCells}.",
 				{
 					"pair": "Twee gelijke @:{symbolOrColorPlural} (@:{source}) staan naast elkaar. Dat betekent dat @:{surroundingCells} @:{target} moeten zijn.",
@@ -81,7 +81,7 @@
 		},
 		"Balance": {
 			"name": "Gebalanceerde Lijnen",
-			"message-1": "Er is een @:{rowOrColumn} op het bord die gebalanceerd kan worden.",
+			"message-1": "Er is een @:{rowOrColumn} in de puzzel die gebalanceerd kan worden.",
 			"message-2": "Deze @:{rowOrColumn} vereist een gelijk aantal van elk @:{symbolOrColor}, en alle @:{sourceSymbols} zijn geplaatst.",
 			"message-2-odd": "Deze @:{rowOrColumn} vereist {reqZero} @:{zeros}, en {reqOne} @:{ones}, en alle @:{sourceSymbols} zijn geplaatst.",
 			"message-3-single-target": "Om deze @:{rowOrColumn} te balanceren, zodat er {reqZero} @:{zeros} en {reqOne} @:{ones} zijn, moet @:{target} in deze cell geplaatst worden.",

@@ -17,7 +17,7 @@
 			}
 		},
 		"configure-board": {
-			"title": "Configureer bord",
+			"title": "Configureer raster",
 			"width": "Breedte",
 			"height": "Hoogte",
 			"force-square-grid": "Houd puzzel vierkant",
