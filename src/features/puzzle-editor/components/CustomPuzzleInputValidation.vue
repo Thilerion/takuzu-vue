@@ -26,10 +26,14 @@ import type { BoardShape, PuzzleGrid } from '@/lib/types.js';
 import { toRefs, computed } from 'vue';
 import { useSolutionsAnalysis } from '@/features/puzzle-editor/composables/solutions-analysis.js';
 import { asPercentage } from '@/utils/number.utils.js';
+import { watchEffect } from 'vue';
 
 const props = defineProps<{
 	grid: PuzzleGrid | null;
 	dimensions: BoardShape;
+}>();
+const emit = defineEmits<{
+	(e: 'found-single-solution', grid: PuzzleGrid | null): void;
 }>();
 
 const { grid, dimensions } = toRefs(props);
@@ -41,6 +45,7 @@ const {
 	maskRatio,
 	validPuzzle,
 	solvable,
+	singleSolution,
 	/* isRunning */
 } = useSolutionsAnalysis(grid, dimensions, MAX_SOLUTIONS);
 const displayedNumSolutions =  computed(() => {
@@ -51,5 +56,13 @@ const displayedNumSolutions =  computed(() => {
 		// High probability that the solver stopped early (at MAX_SOLUTIONS)
 		return `${solutions.value}+`;
 	} else return `${solutions.value}`;
+})
+
+watchEffect(() => {
+	if (singleSolution.value == null) {
+		emit('found-single-solution', null);
+	} else {
+		emit('found-single-solution', singleSolution.value);
+	}
 })
 </script>

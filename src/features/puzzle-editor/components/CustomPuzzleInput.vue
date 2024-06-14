@@ -39,6 +39,7 @@
 							:ref="(v) => setRef(v as InstanceType<typeof CustomPuzzleInputTableCell>)"
 							:model-value="puzzleGridBase![y][x]"
 							:data-index="index"
+							:solution-value="singleSolution == null ? null : singleSolution![y][x]"
 							inputmode="numeric"
 
 							@update:model-value="setGridValue(x, y, $event)"
@@ -56,6 +57,7 @@
 					class="my-4"
 					:grid="puzzleGridBase"
 					:dimensions="{ width, height }"
+					@found-single-solution="(grid) => singleSolution = grid"
 				/>
 			</div>
 			<div
@@ -85,6 +87,7 @@ import { EMPTY, type PuzzleValue } from '@/lib/constants.js';
 import { onBeforeMount } from 'vue';
 import { rotate90, rotate270 } from '@/lib/transformations/base-transformations.js';
 import { useSharedPuzzleToggle } from '@/composables/use-puzzle-toggle.js';
+import type { PuzzleGrid } from '@/lib/types.js';
 
 const {
 	customPuzzleGrid: puzzleGridBase,
@@ -94,6 +97,8 @@ const {
 const setGridValue = (x: number, y: number, v: PuzzleValue) => {
 	puzzleGridBase.value![y][x] = v;
 }
+
+const singleSolution = ref<PuzzleGrid | null>(null);
 
 const controlsOpen = ref(false);
 const toggleInputModeEnabled = ref(false);

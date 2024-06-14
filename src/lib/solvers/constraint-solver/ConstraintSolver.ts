@@ -42,6 +42,10 @@ export type ConstraintSolverOpts = {
 		enabled: boolean,
 	} & Partial<ConstraintSolverDfsTimeoutOpts> & Partial<ConstraintSolverDfsSelectionOpts>
 }
+export type ConstraintSolverRunOpts = {
+	/** Whether or not to return the instance of the solver. */
+	returnInstance?: boolean,
+}
 type ConstraintSolverInternalDfsOpts = {
 	enabled: false,
 	selectCell?: null,
@@ -108,13 +112,23 @@ export class ConstraintSolver {
 		this.initialBoard = board.copy();
 	}
 
+	static run(board: SimpleBoard, conf: ConstraintSolverOpts): ConstraintSolverResult;
+	static run(board: SimpleBoard, conf: ConstraintSolverOpts, runOpts: { returnInstance: true }): ConstraintSolverResult & { instance: ConstraintSolver };
+	static run(board: SimpleBoard, conf: ConstraintSolverOpts, runOpts?: ConstraintSolverRunOpts): ConstraintSolverResult | (ConstraintSolverResult & { instance: ConstraintSolver });
 	/** Simple run the solver, and returns the results. Requires a value for maxSolutions. */
-	static run(board: SimpleBoard, conf: ConstraintSolverOpts): ConstraintSolverResult {
+	static run(board: SimpleBoard, conf: ConstraintSolverOpts, runOpts?: ConstraintSolverRunOpts): ConstraintSolverResult | (ConstraintSolverResult & { instance: ConstraintSolver}) {
 		const solver = new ConstraintSolver(board, conf);
 		solver.start();
 
 		if (solver.isFinished) {
-			return solver.getResults();
+			if (runOpts?.returnInstance) {
+				return {
+					instance: solver,
+					...solver.getResults(),
+				}
+			} else {
+				return solver.getResults();
+			}
 		} else {
 			// should not happen, status here is "idle" or "running" which is strange
 			throw new Error(`Unexpected status after ConstraintSolver.run(); status is "${solver.status}" while it could only be error or finished.`);
@@ -191,7 +205,7 @@ export class ConstraintSolver {
 			// optionally set maxSolutions to search for, defaults to 200
 			maxSolutions?: number,
 		}
-	): { numSolutions: number, solvable: boolean } {
+	): { numSolutions: number, solvable: boolean, instance: ConstraintSolver } {
 		/*
 			See ConstraintSolver.benchmark.ts for benchmarks for a combination of options.
 			Using EliminationConstraint with DFS is, by far, the fastest way to find a large amount of solutions.
@@ -211,11 +225,11 @@ export class ConstraintSolver {
 				...opts.dfs,
 			}
 		}
-		const results = ConstraintSolver.run(board, mergedOpts);
+		const results = ConstraintSolver.run(board, mergedOpts, { returnInstance: true });
 		const {
 			numSolutions, solvable
 		} = results;
-		return { numSolutions, solvable };
+		return { numSolutions, solvable, instance: results.instance };
 	}
 
 	get isFinished() {

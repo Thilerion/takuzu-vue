@@ -33,6 +33,7 @@ export const useSolutionsAnalysis = (
 		solutions: null as null | number,
 		solvable: false,
 		validPuzzle: false,
+		singleSolution: null as null | PuzzleGrid,
 	})
 	const isRunning = ref(false);
 
@@ -45,13 +46,25 @@ export const useSolutionsAnalysis = (
 				maxSolutions: get(maxSolutions)
 			}
 		);
-		const { numSolutions: solutions, solvable } = solveResult;
+		const { numSolutions: solutions, solvable, instance } = solveResult;
 		const validPuzzle = solutions === 1;
+		let singleSolution: null | PuzzleGrid = null;
+		if (solutions === 1) {
+			const board = instance.getResults().solutions[0];
+			const grid = board.grid;
+			singleSolution = grid;
+		}
 		Object.assign(results,{
-			solvable, validPuzzle, solutions
+			solvable, validPuzzle, solutions, singleSolution
 		});
 		isRunning.value = false;
 	}, 300, { maxWait: 2000 });
+
+	watch(() => results.validPuzzle, (hasSingleSolution) => {
+		if (!hasSingleSolution) {
+			results.singleSolution = null;
+		}
+	})
 
 	watch([shouldRunSolver, grid], ([shouldRun, grid]) => {
 		if (!shouldRun) {

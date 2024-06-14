@@ -2,9 +2,10 @@
 <input
 	ref="el"
 	type="text"
-	class="w-full border-0 p-1 m-0 aspect-square h-full text-center editor-cell-input"
+	class="w-full border-0 p-1 m-0 aspect-square h-full text-center editor-cell-input placeholder:text-gray-300"
 	:data-symbol="dataSymbolAttr"
 	:value="inputValue"
+	:placeholder="solutionValue ?? ''"
 	inputmode="numeric"
 	enterkeyhint="next"
 	@input="handleInput"
@@ -25,7 +26,8 @@ type InputEmptyVal = typeof INPUT_EMPTY_VAL;
 const el = ref<HTMLInputElement>();
 
 const props = defineProps<{
-	modelValue: PuzzleValue
+	modelValue: PuzzleValue,
+	solutionValue: PuzzleValue | null,
 }>();
 
 const dataSymbolAttr = computed(() => {
