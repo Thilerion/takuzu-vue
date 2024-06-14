@@ -1,10 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { i18n } from '@/i18n/index.js';
 
 declare module 'vue-router' {
 	interface RouteMeta {
 		metaThemeColor?: string;
 		metaThemeColors?: Record<BaseTheme, string>;
-		title?: string;
+		title?: string | { messageKey: string, namedProperties?: Record<string, unknown> };
 		usePuzzleKey?: boolean;
 		prev?: RouteLocationNormalized | null;
 	}
@@ -67,7 +68,7 @@ const routes = [
 						name: 'Statistics',
 						component: () => import('../views/StatisticsPageNext.vue'),
 						meta: {
-							title: 'Statistics'
+							title: { messageKey: 'PageTitle.Statistics' }
 						}
 					},
 					{
@@ -75,7 +76,7 @@ const routes = [
 						name: 'StatisticsHistory',
 						component: () => import('../views/StatisticsPuzzleHistoryPage.vue'),
 						meta: {
-							title: 'Statistics - Puzzle History'
+							title: { messageKey: 'PageTitle.StatisticsPuzzleHistory' }
 						}
 					}
 				]
@@ -85,7 +86,7 @@ const routes = [
 				name: 'Settings',
 				component: SettingsPage,
 				meta: {
-					title: 'Settings'
+					title: { messageKey: 'PageTitle.Settings' }
 				},
 				props: {
 					hideBack: true
@@ -96,7 +97,7 @@ const routes = [
 				component: () => import('../views/PuzzleTools.vue'),
 				name: 'PuzzleTools',
 				meta: {
-					title: 'Tools'
+					title: { messageKey: 'PageTitle.Tools' }
 				}
 			},
 			{
@@ -116,7 +117,7 @@ const routes = [
 		name: 'HowToPlay',
 		component: HowToPlay,
 		meta: {
-			title: 'How to Play'
+			title: { messageKey: 'PageTitle.HowToPlay' }
 		},
 		children: [
 			{
@@ -146,7 +147,7 @@ const routes = [
 		name: 'Tutorial',
 		component: TutorialPage,
 		meta: {
-			title: 'Tutorial'
+			title: { messageKey: 'PageTitle.Tutorial' }
 		}
 	},
 	{
@@ -154,7 +155,7 @@ const routes = [
 		component: FreePlay,
 		name: 'NewPuzzleFreePlay',
 		meta: {
-			title: 'New Game'
+			title: { messageKey: 'PageTitle.NewPuzzle' }
 		}
 	},
 	{
@@ -162,7 +163,7 @@ const routes = [
 		component: PlayPuzzle,
 		name: 'PlayPuzzle',
 		meta: {
-			title: 'Play Puzzle',
+			title: { messageKey: 'PageTitle.PlayPuzzle' },
 			usePuzzleKey: true,
 		},
 		beforeEnter: (to, from, next) => {
@@ -184,17 +185,17 @@ const routes = [
 				name: 'PlayPuzzle.settings',
 				component: SettingsPage,
 				meta: {
-					title: 'Play Puzzle - Settings'
+					title: { messageKey: 'PageTitle.PlayPuzzleSettings' }
 				}
 			}
 		]
 	},
 	{
-		path: '/custom-create',
+		path: '/editor',
 		component: () => import('../views/PuzzleInput.vue'),
 		name: 'PuzzleInput',
 		meta: {
-			title: 'Custom Puzzle',
+			title: { messageKey: 'PageTitle.PuzzleEditor' }
 		}
 	},
 	{
@@ -232,6 +233,10 @@ const { updateTitleWithRouteMeta } = useRouteDocumentTitle({
 	defaultTitle: 'Takuzu',
 	titlePrefix: 'Takuzu - '
 });
+
+router.isReady().then(() => {
+	document.querySelector('html')!.setAttribute('lang', i18n.global.locale.value);
+})
 
 router.afterEach((to, from) => {
 	// set document title based on route

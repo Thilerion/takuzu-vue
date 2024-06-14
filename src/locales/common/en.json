@@ -1,4 +1,16 @@
 {
+	"PageTitle": {
+		"Statistics": "Statistics",
+		"StatisticsPuzzleHistory": "Puzzle History",
+		"Settings": "Settings",
+		"Tools": "Tools",
+		"HowToPlay": "How to Play",
+		"Tutorial": "Tutorial",
+		"NewPuzzle": "New Puzzle",
+		"PlayPuzzle": "Puzzle",
+		"PlayPuzzleSettings": "Puzzle - Settings",
+		"PuzzleEditor": "Puzzle Editor"
+	},
 	"Game": {
 		"board-size": {
 			"label": "Board size",

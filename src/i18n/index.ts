@@ -1,5 +1,4 @@
 import { createI18n } from 'vue-i18n';
-import router from '@/router/index.js';
 import messages from '@intlify/unplugin-vue-i18n/messages';
 // See vite.config.ts; js/ts locale files are not includes in the combined message import from above, so import those separately and merge them
 import enjs from '@/locales/en.js';
@@ -39,10 +38,6 @@ function setI18nLanguage(locale: SupportedLocale) {
 	i18n.global.locale.value = locale;
 	document.querySelector('html')!.setAttribute('lang', locale)
 }
-
-router.isReady().then(() => {
-	document.querySelector('html')!.setAttribute('lang', i18n.global.locale.value);
-})
 
 export const i18nPiniaPropertyPlugin: PiniaPlugin = ({ store }) => {
 	store.i18n = markRaw(i18n.global);

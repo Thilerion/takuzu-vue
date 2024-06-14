@@ -1,4 +1,6 @@
+import { i18n } from "@/i18n/index.js";
 import { ref, watch } from "vue";
+import type { Composer, ComposerTranslation } from "vue-i18n";
 import type { RouteLocationNormalized } from "vue-router";
 
 export type UseRouteDocumentTitleOpts = {
@@ -19,6 +21,9 @@ export const useRouteDocumentTitle = ({
 	const updateTitleWithRouteMeta = (to: RouteLocationNormalized) => {
 		const metaTitle = to.meta?.title;
 
+		// Cast due to: Type instantiation is excessively deep and possibly infinite
+		const t = (i18n.global as Composer).t as any as ComposerTranslation;
+
 		if (metaTitle === '') {
 			// use base title, probably Home route
 			title.value = defaultTitle;
@@ -30,7 +35,9 @@ export const useRouteDocumentTitle = ({
 			return;
 		}
 
-		const newTitle = `${titlePrefix}${metaTitle}`;
+		const localized = typeof metaTitle === 'string' ? metaTitle : t(metaTitle.messageKey, metaTitle.namedProperties ?? {});
+
+		const newTitle = `${titlePrefix}${localized}`;
 		title.value = newTitle;
 	}
 

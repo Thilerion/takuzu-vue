@@ -1,4 +1,16 @@
 {
+	"PageTitle": {
+		"Statistics": "Statistieken",
+		"StatisticsPuzzleHistory": "Spelgeschiedenis",
+		"Settings": "Instellingen",
+		"Tools": "Gereedschappen",
+		"HowToPlay": "Spelhulp",
+		"Tutorial": "Tutorial",
+		"NewPuzzle": "Nieuwe puzzel",
+		"PlayPuzzle": "Puzzel",
+		"PlayPuzzleSettings": "Puzzel - Instellingen",
+		"PuzzleEditor": "Puzzel Ontwerper"
+	},
 	"Game": {
 		"board-size": {
 			"label": "Puzzelgrootte",
