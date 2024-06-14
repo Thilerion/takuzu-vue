@@ -420,6 +420,23 @@ describe('applyEliminationConstraint', () => {
 			); // second call has row B in its filledLines, as it has now become a filled line
 		})
 
+		it('also solves triples with the correct options', () => {
+			const board = SimpleBoard.empty(8, 8);
+			board.assignRow(2, splitLine('..11..0.'));
+
+			const result = applyEliminationConstraint(board, {
+				singleAction: false,
+				useDuplicateLines: false,
+				leastRemainingRange: [0, 10],
+				maxEmptyCells: Infinity
+			});
+
+			expect(result.changed).toBe(true);
+
+			const resultingLine = board.getRow(2);
+			expect(resultingLine.join('')).toBe('.011010.');
+		})
+
 		it.todo('Not yet implemented; correctly updates the filledLines with other lines that became filled, when an applied strategy result affects other boardLines');
 	})
 

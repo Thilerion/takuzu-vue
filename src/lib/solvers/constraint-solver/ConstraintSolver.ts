@@ -184,8 +184,6 @@ export class ConstraintSolver {
 					singleAction: false,
 					maxEmptyCells: Infinity
 				}),
-				applyTriplesConstraintWithOpts({ singleAction: false }),
-				applyLineBalanceConstraintWithOpts({ singleAction: false }),
 			],
 			maxSolutions: 1,
 			dfs: {
@@ -223,8 +221,6 @@ export class ConstraintSolver {
 					singleAction: false,
 					maxEmptyCells: Infinity
 				}),
-				applyTriplesConstraintWithOpts({ singleAction: false }),
-				applyLineBalanceConstraintWithOpts({ singleAction: false }),
 			],
 			maxSolutions: opts.maxSolutions ?? 200,
 			dfs: {

@@ -2,6 +2,7 @@ import { EMPTY, ONE, ZERO } from "@/lib/constants.js";
 import { generateAllLineCompletions, generateValidLineCompletions } from "@/lib/line-generation/completions.js";
 import { generateValidLinesOfSize } from "@/lib/line-generation/lines-of-size.js";
 import { generateUniqueArrayPermutations } from "@/lib/line-generation/permutations.js";
+import type { LineArrSymbolPermutations } from "@/lib/line-generation/types.js";
 import type { PuzzleValueLine } from "@/lib/types.js";
 import { splitLine } from "@/lib/utils/puzzle-line.utils.js";
 
@@ -215,5 +216,24 @@ describe('generateValidLineCompletions', () => {
 
 		expect(result.length).toBe(allPossibleLinesOfLength10EndingInOne.length);
 		expect(linePermArrToSortedStrings(result)).toEqual(allPossibleLinesOfLength10EndingInOne.sort());
+	})
+
+	it('is correct for another line (previously bugged) where an empty cell is followed by two equal symbols', () => {
+		const inputLine = splitLine('..11..0.');
+		const inputCounts = {
+			[ONE]: 2,
+			[ZERO]: 1,
+			[EMPTY]: 5
+		}
+		const res = generateValidLineCompletions(inputLine, inputCounts);
+
+		// Cell 1 and 4 should be ZERO in every completion, as there is no other way
+		expect(Array.isArray(res)).toBe(true);
+		(res as LineArrSymbolPermutations).forEach(completion => {
+			// expect the cells at indexes in knownCells to have the corresponding value
+			expect(completion.at(1)).toBe(ZERO);
+			expect(completion.at(4)).toBe(ZERO);
+			expect(completion.at(5)).toBe(ONE);
+		})
 	})
 })

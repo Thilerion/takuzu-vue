@@ -27,9 +27,10 @@ function _recurseGenerateValidLineCompletions(
 	const prev = position > 0 ? line[position - 1] : null;
 	const prevPrev = position > 1 ? line[position - 2] : null;
 	const next = position + 1 < line.length ? line[position + 1] : null;
+	const nextNext = position + 2 < line.length ? line[position + 2] : null;
 
 	// Try adding a ZERO if it doesn't violate the rules and zeros are remaining.
-	if (remainingZero > 0 && (prev !== ZERO || prevPrev !== ZERO) && (prev !== ZERO || next !== ZERO)) {
+	if (remainingZero > 0 && (prev !== ZERO || prevPrev !== ZERO) && (prev !== ZERO || next !== ZERO) && (next !== ZERO || nextNext !== ZERO)) {
 		validCompletions.push(..._recurseGenerateValidLineCompletions(
 			line.substring(0, position) + ZERO + line.substring(position + 1),
 			position + 1,
@@ -39,7 +40,7 @@ function _recurseGenerateValidLineCompletions(
 	}
 
 	// Try adding a ONE if it doesn't violate the rules and ones are remaining.
-	if (remainingOne > 0 && (prev !== ONE || prevPrev !== ONE) && (prev !== ONE || next !== ONE)) {
+	if (remainingOne > 0 && (prev !== ONE || prevPrev !== ONE) && (prev !== ONE || next !== ONE) && (next !== ONE || nextNext !== ONE)) {
 		validCompletions.push(..._recurseGenerateValidLineCompletions(
 			line.substring(0, position) + ONE + line.substring(position + 1),
 			position + 1,
