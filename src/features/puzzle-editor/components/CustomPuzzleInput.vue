@@ -60,9 +60,9 @@
 			</div>
 			<div
 				v-else
-				class="text-center text-lg py-4"
+				class="text-center text-lg pt-4 pb-6 px-6"
 			>
-				Select grid dimensions to start
+				{{ $t('PuzzleEditor.select-grid-dimensions-to-start') }}
 			</div>
 		</transition>
 	</div>

@@ -53,6 +53,7 @@
 			"clear-board": "Bord leegmaken"
 		},
 		"page-title": "Puzzel Ontwerper",
-		"tools-link-text": "Puzzel ontwerper"
+		"tools-link-text": "Puzzel ontwerper",
+		"select-grid-dimensions-to-start": "Kies eerst de afmetingen en maak een nieuwe puzzel, of importeer een puzzel"
 	}
 }

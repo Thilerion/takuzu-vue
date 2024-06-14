@@ -53,6 +53,7 @@
 			"mask-ratio": "Mask ratio"
 		},
 		"page-title": "Puzzle Editor",
-		"tools-link-text": "Puzzle editor"
+		"tools-link-text": "Puzzle editor",
+		"select-grid-dimensions-to-start": "Select the puzzle dimensions and create a new puzzle, or import a puzzle"
 	}
 }
