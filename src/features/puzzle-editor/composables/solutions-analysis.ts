@@ -47,8 +47,22 @@ export const useSolutionsAnalysis = (
 			}
 		);
 		const { numSolutions: solutions, solvable, instance } = solveResult;
-		const validPuzzle = solutions === 1;
+
 		let singleSolution: null | PuzzleGrid = null;
+		if (solutions >= 1) {
+			const results = instance.getResults();
+			if (solutions === 1) {
+				singleSolution = results.solutions[0].grid;
+			} else if (solutions < get(maxSolutions) && "partialPreDfsSolution" in results) {
+				// Maybe there is a "partial" solution
+				const partialSolution = results.partialPreDfsSolution;
+				if (partialSolution != null) {
+					singleSolution = partialSolution.grid;
+				}
+			}
+		}
+
+		const validPuzzle = solutions === 1;
 		if (solutions === 1) {
 			const board = instance.getResults().solutions[0];
 			const grid = board.grid;

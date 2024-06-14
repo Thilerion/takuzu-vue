@@ -16,7 +16,8 @@ type ConstraintSolverStatus = 'running' | 'finished' | 'idle';
 export type ConstraintSolverResultSolvable = {
 	solvable: true,
 	numSolutions: number, // >= 1
-	solutions: SimpleBoard[]
+	solutions: SimpleBoard[],
+	partialPreDfsSolution: SimpleBoard | null,
 }
 export type ConstraintSolverResultUnsolvable = {
 	solvable: false,
@@ -84,7 +85,9 @@ export class ConstraintSolver {
 
 	// results and solutions found, publicly accessible through getResults()
 	private _results: ConstraintSolverResult | null = null;
-	private readonly solutionsFound: SimpleBoard[] = [];
+	private solutionsFound: SimpleBoard[] = [];
+	/** The board after constraints were applied, but before DFS was run. All its values are definite values in those cells. If constraints resulted in a complete solution, or an invalid puzzle board, this will be null. */
+	private partialPreDfsSolution: SimpleBoard | null = null;
 
 	// timeout state
 	private startTime: number | null = null;
@@ -180,7 +183,9 @@ export class ConstraintSolver {
 					leastRemainingRange: [0, 10],
 					singleAction: false,
 					maxEmptyCells: Infinity
-				})
+				}),
+				applyTriplesConstraintWithOpts({ singleAction: false }),
+				applyLineBalanceConstraintWithOpts({ singleAction: false }),
 			],
 			maxSolutions: 1,
 			dfs: {
@@ -217,7 +222,9 @@ export class ConstraintSolver {
 					leastRemainingRange: [0, 10],
 					singleAction: false,
 					maxEmptyCells: Infinity
-				})
+				}),
+				applyTriplesConstraintWithOpts({ singleAction: false }),
+				applyLineBalanceConstraintWithOpts({ singleAction: false }),
 			],
 			maxSolutions: opts.maxSolutions ?? 200,
 			dfs: {
@@ -250,6 +257,7 @@ export class ConstraintSolver {
 	private handleTimeoutCheck() {
 		if (!this.timeoutEnabled) return false;
 		if (performance.now() >= this.endTime!) {
+			// TODO: set reason in finishedStatus. If stopped due to timeout, things like the amount of found solutions is no longer valid
 			this.setFinishedStatus();
 			if (this.dfsOpts.throwAfterTimeout) {
 				throw new Error('Stopped ConstraintSolver due to timeout.');
@@ -269,6 +277,7 @@ export class ConstraintSolver {
 					solvable: true,
 					numSolutions: this.solutionsFound.length,
 					solutions: this.solutionsFound,
+					partialPreDfsSolution: this.partialPreDfsSolution,
 				}
 			} else {
 				this._results = {
@@ -310,6 +319,10 @@ export class ConstraintSolver {
 		} else if (boardStatus === 'invalid') {
 			this.setFinishedStatus();
 			return this;
+		} else {
+			// board is not yet completely solved, but perhaps partially solved
+			// this might be useful if dfs is disabled or won't complete due to timeout
+			this.partialPreDfsSolution = board.copy();
 		}
 
 		// start dfs if enabled, beacuse no solution found yet
