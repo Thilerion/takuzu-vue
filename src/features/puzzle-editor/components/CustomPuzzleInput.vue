@@ -25,6 +25,7 @@
 			<div v-if="isValidPuzzleGrid">
 				<div class="mb-4 flex justify-end px-4">
 					<CustomPuzzleInputTools
+						v-model:toggle-input-mode="toggleInputModeEnabled"
 						@clear="resetGrid"
 						@rotate="rotateGrid"
 					/>
@@ -44,6 +45,11 @@
 							@to-next="() => focusCell(index + 1)"
 							@to-prev="() => focusCell(index - 1)"
 						/>
+						<button
+							v-if="toggleInputModeEnabled"
+							class="absolute inset-0 w-full h-full touch-manipulation"
+							@click="toggleCell(x, y)"
+						></button>
 					</template>
 				</CustomPuzzleInputTable>
 				<CustomPuzzleInputValidation
@@ -78,6 +84,7 @@ import { useCustomPuzzleInputGrid } from '../composables/custom-input-grid.js';
 import { EMPTY, type PuzzleValue } from '@/lib/constants.js';
 import { onBeforeMount } from 'vue';
 import { rotate90, rotate270 } from '@/lib/transformations/base-transformations.js';
+import { useSharedPuzzleToggle } from '@/composables/use-puzzle-toggle.js';
 
 const {
 	customPuzzleGrid: puzzleGridBase,
@@ -89,6 +96,16 @@ const setGridValue = (x: number, y: number, v: PuzzleValue) => {
 }
 
 const controlsOpen = ref(false);
+const toggleInputModeEnabled = ref(false);
+const { toggle } = useSharedPuzzleToggle();
+const toggleCell = (x: number, y: number) => {
+	if (puzzleGridBase.value == null) {
+		throw new Error('Cannot toggle value on "null" PuzzleGridBase');
+	}
+	const current: PuzzleValue = puzzleGridBase.value[y][x];
+	const value = toggle(current);
+	setGridValue(x, y, value);
+}
 
 onBeforeMount(() => {
 	if (puzzleGridBase.value != null) {
