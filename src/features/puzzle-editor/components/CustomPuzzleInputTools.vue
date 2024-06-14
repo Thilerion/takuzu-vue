@@ -1,29 +1,31 @@
 <template>
-<div class="flex items-center gap-2 w-full">
-	<div class="w-fit pr-2 mr-auto flex-none">
+<div class="editor-tools">
+	<div class="min-w-fit pr-2 flex-none toggle-input text-xs">
 		<InputToggle
 			id="toggle-input-mode-input"
 			v-model="toggleInputMode"
 			small
 		>Use toggle input mode</InputToggle>
-	</div>	
-	<BaseButton
-		icon-only
-		class="h-10 w-10 items-center flex flex-none"
-		@click="$emit('rotate', 'cw')"
-	>
-		<icon-material-symbols-rotate-90-degrees-cw />
-	</BaseButton>
+	</div>
+	<div class="btns flex gap-2 w-fit ml-auto">
+		<BaseButton
+			icon-only
+			class="h-8 w-8 items-center flex flex-none rotate-cw-btn text-xs"
+			@click="$emit('rotate', 'cw')"
+		>
+			<icon-material-symbols-rotate-90-degrees-cw />
+		</BaseButton>
 
-	<BaseButton
-		icon-only
-		class="h-10 w-10 items-center flex flex-none"
-		@click="$emit('rotate', 'ccw')"
-	>
-		<icon-material-symbols-rotate-90-degrees-ccw />
-	</BaseButton>
-	
-	<BaseButton class="h-10 text-sm flex-none" @click="$emit('clear')">{{ $t('PuzzleEditor.tools.clear-board') }}</BaseButton>
+		<BaseButton
+			icon-only
+			class="h-8 w-8 items-center flex flex-none rotate-ccw-btn text-xs"
+			@click="$emit('rotate', 'ccw')"
+		>
+			<icon-material-symbols-rotate-90-degrees-ccw />
+		</BaseButton>
+		
+		<BaseButton class="h-8 text-xs flex-none clear-btn" @click="$emit('clear')">{{ $t('PuzzleEditor.tools.clear-board') }}</BaseButton>
+	</div>
 </div>
 </template>
 
@@ -36,3 +38,9 @@ const emit = defineEmits<{
 
 const toggleInputMode = defineModel<boolean>('toggleInputMode', { required: true });
 </script>
+
+<style scoped>
+.editor-tools {
+	@apply flex items-center gap-2 w-full flex-wrap max-w-full;
+}
+</style>
