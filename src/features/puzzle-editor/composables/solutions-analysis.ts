@@ -33,8 +33,8 @@ export const useSolutionsAnalysis = (
 		solutions: null as null | number,
 		solvable: false,
 		validPuzzle: false,
-		singleSolution: null as null | PuzzleGrid,
 	})
+	const foundSingleSolution = ref(null as null | PuzzleGrid);
 	const isRunning = ref(false);
 
 	const runSolver = useDebounceFn(async (grid) => {
@@ -55,16 +55,17 @@ export const useSolutionsAnalysis = (
 			singleSolution = grid;
 		}
 		Object.assign(results,{
-			solvable, validPuzzle, solutions, singleSolution
+			solvable, validPuzzle, solutions
 		});
+		foundSingleSolution.value = singleSolution;
 		isRunning.value = false;
 	}, 300, { maxWait: 2000 });
 
-	watch(() => results.validPuzzle, (hasSingleSolution) => {
-		if (!hasSingleSolution) {
-			results.singleSolution = null;
+	watch([() => results.validPuzzle, grid], ([hasSingleSolution, grid], [,prevGrid]) => {
+		if (!hasSingleSolution || grid == null || grid !== prevGrid) {
+			foundSingleSolution.value = null;
 		}
-	})
+	}, { immediate: true });
 
 	watch([shouldRunSolver, grid], ([shouldRun, grid]) => {
 		if (!shouldRun) {
@@ -84,5 +85,6 @@ export const useSolutionsAnalysis = (
 		validInput: shouldRunSolver,
 		maskRatio,
 		isRunning,
+		singleSolution: foundSingleSolution,
 	}
 }

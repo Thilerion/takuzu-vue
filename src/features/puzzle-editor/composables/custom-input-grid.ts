@@ -5,6 +5,8 @@ import { array2d } from "@/utils/array2d.utils.js";
 import { EMPTY, type PuzzleValue } from "@/lib/constants.js";
 import { clamp } from "@/utils/number.utils.js";
 import { CUSTOM_PUZZLE_MIN_SIZE, CUSTOM_PUZZLE_MAX_SIZE } from "../services/validate-dimensions.js";
+import { rotate270, rotate90 } from "@/lib/transformations/base-transformations.js";
+import { isPuzzleValueLineStr } from "@/lib/utils/puzzle-line.utils.js";
 
 type CustomPuzzleInputGridData = BoardShape & {
 	forceSquareGrid: boolean;
@@ -74,15 +76,51 @@ export const useCustomPuzzleInputGrid = createSharedComposable(() => {
 		customPuzzleGrid.value = resizeGrid(customPuzzleGrid.value, width, height, EMPTY);
 	}
 
+	const emptyExistingGrid = computed(() => {
+		return customPuzzleGrid.value != null && customPuzzleGrid.value.flat(3).every(v => v === EMPTY);
+	})
+
+	const config = computed(() => {
+		return {
+			width: width.value,
+			height: height.value,
+			forceSquareGrid: forceSquareGrid.value,
+		}
+	})
+
+	const rotateGrid = (dir: 'cw' | 'ccw') => {
+		if (customPuzzleGrid.value == null) return;
+		const rotateResult = getRotatedGrid(dir, customPuzzleGrid.value);
+		customPuzzleGrid.value = rotateResult.grid;
+		width.value = rotateResult.width;
+		height.value = rotateResult.height;
+	}
+
+	const isValidGrid = computed(() => {
+		const grid = customPuzzleGrid.value;
+		if (grid == null || !Array.isArray(grid) || !Array.isArray(grid[0])) return false;
+
+		const { width, height } = dimensions.value;
+		if (grid.length !== height || grid[0].length !== width) return false;
+		
+		if (!isPuzzleValueLineStr(grid.flat(3).join(''))) return false;
+		return true;
+	})
+
 	return {
 		dimensions,
+		config,
 		forceSquareGrid,
 		width,
 		height,
 		customPuzzleGrid,
 
+		emptyExistingGrid,
+		isValidGrid,
+
 		updateDimensions,
 		resetGrid,
+		rotateGrid,
 	};
 })
 
@@ -117,4 +155,19 @@ const resizeGrid = <T>(grid: T[][], width: number, height: number, defaultValue:
 	}
 
 	return newArray;
+}
+
+const getRotatedGrid = (dir: 'cw' | 'ccw', grid: PuzzleGrid): {
+	grid: PuzzleGrid,
+	width: number,
+	height: number,
+} => {
+	const fn = dir === 'cw' ? rotate90 : rotate270;
+	const result = fn(grid);
+
+	return {
+		grid: fn(grid),
+		width: result[0].length,
+		height: result.length,
+	}
 }

@@ -22,7 +22,7 @@
 		class="bg-white rounded-xl shadow-md shadow-black/5 px-1 pt-4 full-bleed w-full"
 	>
 		<transition name="fade" mode="out-in">
-			<div v-if="isValidPuzzleGrid">
+			<div v-if="isValidGrid">
 				<div class="mb-4 flex justify-end px-4">
 					<CustomPuzzleInputTools
 						v-model:toggle-input-mode="toggleInputModeEnabled"
@@ -31,7 +31,7 @@
 					/>
 				</div>
 				<CustomPuzzleInputTable
-					v-if="isValidPuzzleGrid"
+					v-if="isValidGrid"
 					:grid="puzzleGridBase!"
 				>
 					<template #default="{ x, y, index }">
@@ -39,7 +39,7 @@
 							:ref="(v) => setRef(v as InstanceType<typeof CustomPuzzleInputTableCell>)"
 							:model-value="puzzleGridBase![y][x]"
 							:data-index="index"
-							:solution-value="singleSolution == null ? null : singleSolution![y][x]"
+							:solution-value="singleSolution == null ? null : singleSolution![y]?.[x] ?? null"
 							inputmode="numeric"
 
 							@update:model-value="setGridValue(x, y, $event)"
@@ -73,26 +73,26 @@
 		class="bg-white rounded-xl shadow-md shadow-black/5 w-full full-bleed pl-6 pr-2 pt-2 pb-2"
 	>
 		<div class="">
-			<CustomPuzzleInputStrings :grid="isValidPuzzleGrid ? puzzleGridBase : null" />
+			<CustomPuzzleInputStrings :grid="isValidGrid ? puzzleGridBase : null" />
 		</div>
 	</div>
 </main>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
 import CustomPuzzleInputTableCell from './CustomPuzzleInputTableCell.vue';
 import { useCustomPuzzleInputGrid } from '../composables/custom-input-grid.js';
-import { EMPTY, type PuzzleValue } from '@/lib/constants.js';
-import { onBeforeMount } from 'vue';
-import { rotate90, rotate270 } from '@/lib/transformations/base-transformations.js';
+import type { PuzzleValue } from '@/lib/constants.js';
 import { useSharedPuzzleToggle } from '@/composables/use-puzzle-toggle.js';
 import type { PuzzleGrid } from '@/lib/types.js';
 
 const {
 	customPuzzleGrid: puzzleGridBase,
-	width, height, forceSquareGrid,
+	width, height,
 	resetGrid,
+	emptyExistingGrid, isValidGrid,
+	rotateGrid,
 } = useCustomPuzzleInputGrid();
 const setGridValue = (x: number, y: number, v: PuzzleValue) => {
 	puzzleGridBase.value![y][x] = v;
@@ -100,7 +100,6 @@ const setGridValue = (x: number, y: number, v: PuzzleValue) => {
 
 const singleSolution = ref<PuzzleGrid | null>(null);
 
-const controlsOpen = ref(false);
 const toggleInputModeEnabled = ref(false);
 const { toggle } = useSharedPuzzleToggle();
 const toggleCell = (x: number, y: number) => {
@@ -112,79 +111,36 @@ const toggleCell = (x: number, y: number) => {
 	setGridValue(x, y, value);
 }
 
+const controlsOpen = ref(false);
 onBeforeMount(() => {
-	if (puzzleGridBase.value != null) {
 	// If grid is empty on initial load, set it to null
-	const grid = puzzleGridBase.value;
-	const flat = grid.flat(3);
-	if (flat.every(v => v === EMPTY)) {
+	if (emptyExistingGrid.value) {
 		puzzleGridBase.value = null;
 	}
-}
-
 	// Then, if grid is null, set controls to open
 	if (puzzleGridBase.value == null) {
 		controlsOpen.value = true;
 	}
 })
 
-const config = computed(() => {
-	return {
-		width: width.value,
-		height: height.value,
-		forceSquareGrid: forceSquareGrid.value,
-	}
-})
-
-const isValidPuzzleGrid = computed(() => {
-	const grid = puzzleGridBase.value;
-	if (!Array.isArray(grid)) return false;
-	if (!Array.isArray(grid[0])) return false;
-	if (config.value) {
-		const { width, height } = config.value;
-		if (width && height) {
-			if (grid.length !== height || grid[0].length !== width) return false;
-		}
-	}
-	return true;
-})
-
-const els = ref<HTMLInputElement[]>([]);
+const cellsByIndex = ref(new Map<number, HTMLElement>());
 const setRef = (val: InstanceType<typeof CustomPuzzleInputTableCell>) => {
 	if (val == null) {
-		els.value = [];
+		cellsByIndex.value.clear();
 		return;
 	}
-	if (val.el) els.value.push(val.el);
-}
-const elsByIndex = computed(() => {
-	const res = new Map<number, HTMLElement>();
-	for (const el of els.value) {
-		if (el) {
-			const index = parseInt(el.dataset.index ?? '-1', 10);
-			if (index >= 0) {
-				res.set(index, el);
-			}
+	if (val.el) {
+		const index = parseInt(val.el.dataset.index ?? '-1', 10);
+		if (index >= 0) {
+			cellsByIndex.value.set(index, val.el);
 		}
 	}
-	return res;
-})
+}
 const focusCell = (index: number) => {
-	const map = elsByIndex.value;
+	const map = cellsByIndex.value;
 	if (map.has(index)) {
 		map.get(index)!.focus();
 	}
-}
-
-const rotateGrid = (dir: 'cw' | 'ccw') => {
-	if (puzzleGridBase.value == null) return;
-
-	const fn = dir === 'cw' ? rotate90 : rotate270;
-	const result = fn(puzzleGridBase.value);
-
-	width.value = result[0].length;
-	height.value = result.length;
-	puzzleGridBase.value = result;
 }
 </script>
 
