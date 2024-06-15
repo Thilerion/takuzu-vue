@@ -7,7 +7,7 @@ export const CUSTOM_PUZZLE_MAX_ASPECT_RATIO = 2.49;
 export type ValidateCustomPuzzleDimensionsOpts = {
 	min?: number;
 	max?: number;
-	minAspectRatio?: number;
+	maxAspectRatio?: number;
 }
 export type CustomPuzzleInvalidRange = "high" | "low";
 
@@ -90,10 +90,8 @@ export const validateCustomPuzzleDimensions = (
 
 	// Check that the ratio between width and height is not "too stretched", because then it absolutely cannot be solved
 	// The longest side cannot be more than 2.5 times the shortest side (by default)
-	const smallSide = Math.min(width, height);
-	const longSide = Math.max(width, height);
-	const ratio = longSide / smallSide;
-	if (ratio > CUSTOM_PUZZLE_MAX_ASPECT_RATIO || smallSide <= 4 && longSide >= 8) {
+	const validRatio = isCompatibleRatio(width, height, opts.maxAspectRatio);
+	if (!validRatio) {
 		return {
 			valid: false,
 			type: "incompatible:ratio"
@@ -103,4 +101,18 @@ export const validateCustomPuzzleDimensions = (
 	return {
 		valid: true
 	}
+}
+
+function isCompatibleRatio(width: number, height: number, maxRatio = CUSTOM_PUZZLE_MAX_ASPECT_RATIO): boolean {
+	const smallSide = Math.min(width, height);
+	const longSide = Math.max(width, height);
+
+	const ratio = longSide / smallSide;
+	// The longest side cannot be more than 2.5 times the shortest side (by default)
+	if (ratio > maxRatio) return false;
+
+	// If smallSide <= 4, the longest side must be smaller than 8, or else there are no solutions (as there are not enough valid lines of length 4)
+	if (smallSide <= 4 && longSide >= 8) return false;
+
+	return true;
 }
