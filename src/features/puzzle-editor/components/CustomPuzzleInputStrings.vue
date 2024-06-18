@@ -20,14 +20,17 @@
 		<div ref="el">
 			<div class="pt-4 pb-2 pr-4 flex gap-y-2 w-full flex-col">
 				<CustomPuzzleInputStringBlock
-					:value="asCustomRle || placeholderValue"
+					:placeholder="placeholderValue"
+					:value="asCustomRle"
 					:label="$t('PuzzleEditor.puzzle-strings.short')"
 				/>
 				<CustomPuzzleInputStringBlock
-					:value="asCustomLong || placeholderValue"
+					:placeholder="placeholderValue"
+					:value="asCustomLong"
 					:label="$t('PuzzleEditor.puzzle-strings.long')"
 				/>
 				<CustomPuzzleInputStringBlock
+					:placeholder="placeholderValue"
 					:value="asExportString"
 					:label="$t('PuzzleEditor.puzzle-strings.export-string')"
 				/>
@@ -43,6 +46,7 @@ import type { PuzzleGrid } from '@/lib/types.js';
 import { toCustomPuzzleStringRleWithDims } from '../services/string-conversions/custom-rle.js';
 import { gridToCustomPuzzleStringLong } from '../services/string-conversions/custom-long.js';
 import { ref, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const props = defineProps<{
 	grid: PuzzleGrid | null;
@@ -56,7 +60,10 @@ const scrollToElement = () => {
 	}
 }
 
-const placeholderValue = ref('<no grid available>');
+const { t } = useI18n();
+const placeholderValue = computed(() => {
+	return `<${t('PuzzleEditor.puzzle-strings.no-grid-available')}>`;
+})
 
 const boardString = computed(() => {
 	if (props.grid == null) return '';
@@ -64,18 +71,18 @@ const boardString = computed(() => {
 })
 
 const asCustomRle = computed(() => {
-	if (!boardString.value) return '';
+	if (!boardString.value) return null;
 	return toCustomPuzzleStringRleWithDims(boardString.value, {
 		width: props.grid![0].length,
 		height: props.grid!.length
 	});
 })
 const asCustomLong = computed(() => {
-	if (!props.grid) return '';
+	if (!props.grid) return null;
 	return gridToCustomPuzzleStringLong(props.grid);
 })
 const asExportString = computed(() => {
-	if (!props.grid) return '';
+	if (!props.grid) return null;
 	return puzzleGridToExportString(props.grid);
 })
 </script>

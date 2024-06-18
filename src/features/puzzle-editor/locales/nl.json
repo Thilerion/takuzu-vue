@@ -47,7 +47,8 @@
 			"long": "Lang",
 			"copy-success": "Gekopieerd",
 			"copy-btn-text": "Kopieer",
-			"export-string": "Export-code"
+			"export-string": "Export-code",
+			"no-grid-available": "geen raster beschikbaar"
 		},
 		"tools": {
 			"clear-board": "Bord leegmaken"

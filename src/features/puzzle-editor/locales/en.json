@@ -43,7 +43,8 @@
 			"long": "Long",
 			"copy-success": "Copied",
 			"copy-btn-text": "Copy",
-			"export-string": "Export-code"
+			"export-string": "Export-code",
+			"no-grid-available": "no grid available"
 		},
 		"tools": {
 			"clear-board": "Clear board"

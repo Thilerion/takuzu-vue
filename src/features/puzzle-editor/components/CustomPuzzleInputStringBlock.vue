@@ -2,9 +2,13 @@
 <div>
 	<h3 class="font-bold text-xs uppercase text-gray-600 ml-1 mb-1">{{ label }}</h3>
 	<div class="max-w-full w-full min-w-0 min-h-14 flex items-center text-sm gap-x-2 pr-1 pl-4 py-2 bg-gray-100 rounded mb-2 relative">
-		<p class="break-words font-mono min-w-0">{{ value }}</p>
+		<p class="break-words font-mono min-w-0">
+			<span v-if="value != null">{{ value }}</span>
+			<span v-else class="opacity-50">{{ placeholder }}</span>
+		</p>
 		<BaseButton
 			class="flex-initial ml-auto mr-2 mb-0.5 px-2 py-2 my-auto rounded border min-w-max w-24"
+			:disabled="value == null"
 			@click="copyValue"
 		>{{ copySuccess ? $t('PuzzleEditor.puzzle-strings.copy-success') : $t('PuzzleEditor.puzzle-strings.copy-btn-text') }}</BaseButton>
 	</div>
@@ -15,7 +19,8 @@
 import { refAutoReset } from '@vueuse/core';
 
 const props = defineProps<{
-	value: string;
+	value: string | null;
+	placeholder: string;
 	label: string;
 }>();
 
@@ -23,7 +28,7 @@ const copySuccess = refAutoReset(false, 4500);
 
 const copyValue = async () => {
 	try {
-		await navigator.clipboard.writeText(props.value);
+		await navigator.clipboard.writeText(props.value!);
 		copySuccess.value = true;
 	} catch (e) {
 		console.warn(e);
