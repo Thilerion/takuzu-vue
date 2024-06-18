@@ -26,6 +26,7 @@
 				<div class="mb-4 flex justify-end px-4">
 					<CustomPuzzleInputTools
 						v-model:toggle-input-mode="toggleInputModeEnabled"
+						v-model:show-solution="showSolution"
 						@clear="resetGrid"
 						@rotate="rotateGrid"
 					/>
@@ -39,7 +40,7 @@
 							:ref="(v) => setRef(v as InstanceType<typeof CustomPuzzleInputTableCell>)"
 							:model-value="puzzleGridBase![y][x]"
 							:data-index="index"
-							:solution-value="singleSolution == null ? null : singleSolution![y]?.[x] ?? null"
+							:solution-value="(!showSolution || singleSolution == null) ? null : singleSolution![y]?.[x] ?? null"
 							inputmode="numeric"
 
 							@update:model-value="setGridValue(x, y, $event)"
@@ -83,9 +84,10 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue';
+import { computed, onBeforeMount, ref } from 'vue';
 import CustomPuzzleInputTableCell from './CustomPuzzleInputTableCell.vue';
 import { useCustomPuzzleInputGrid } from '../composables/custom-input-grid.js';
+import { usePuzzleEditorSettings } from '../composables/puzzle-editor-settings.js';
 import type { PuzzleValue } from '@/lib/constants.js';
 import { useSharedPuzzleToggle } from '@/composables/use-puzzle-toggle.js';
 import { useSolutionsAnalysis } from '@/features/puzzle-editor/composables/solutions-analysis.js';
@@ -104,7 +106,11 @@ const setGridValue = (x: number, y: number, v: PuzzleValue) => {
 	puzzleGridBase.value![y][x] = v;
 }
 
-const toggleInputModeEnabled = ref(false);
+const { inputMode, showSolution } = usePuzzleEditorSettings();
+const toggleInputModeEnabled = computed({
+	get: () => inputMode.value === 'toggle',
+	set: (v: boolean) => inputMode.value = v ? 'toggle' : 'keyboard',
+})
 const { toggle } = useSharedPuzzleToggle();
 const toggleCell = (x: number, y: number) => {
 	if (puzzleGridBase.value == null) {

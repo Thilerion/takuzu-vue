@@ -6,6 +6,11 @@
 			v-model="toggleInputMode"
 			small
 		>Use toggle input mode</InputToggle>
+		<InputToggle
+			id="show-solution-input"
+			v-model="showSolution"
+			small
+		>Show solution</InputToggle>
 	</div>
 	<div class="btns flex gap-2 w-fit ml-auto">
 		<BaseButton
@@ -37,6 +42,7 @@ const emit = defineEmits<{
 }>();
 
 const toggleInputMode = defineModel<boolean>('toggleInputMode', { required: true });
+const showSolution = defineModel<boolean>('showSolution', { required: true });
 </script>
 
 <style scoped>
