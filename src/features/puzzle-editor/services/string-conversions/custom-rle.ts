@@ -1,12 +1,13 @@
 import { EMPTY } from "@/lib/constants.js";
-import type { BoardString, PuzzleValueLineStr } from "@/lib/types.js";
+import type { BoardShape, BoardString, Brand, PuzzleValueLineStr } from "@/lib/types.js";
 import { isValidBoardString } from "@/lib/utils/puzzle-line.utils.js";
 
-/** Converts a BoardString to a "CustomPuzzleStringRLE", which is a condensed version of a BoardString. */
-export function toCustomPuzzleStringRLE(
-	boardStr: BoardString | PuzzleValueLineStr,
-	excludeEmptyEnd = false
-) {
+export type CustomPuzzleStringRleWithDims = Brand<string, "ff/1a8j">;
+
+export function toCustomPuzzleStringRleWithDims(
+	boardStr: PuzzleValueLineStr | BoardString,
+	dimensions: BoardShape
+): CustomPuzzleStringRleWithDims {
 	if (!isValidBoardString(boardStr)) {
 		throw new Error('Invalid board string');
 	}
@@ -47,12 +48,8 @@ export function toCustomPuzzleStringRLE(
 			// If so, the run length can be easily calculated. If "excludeEmptyEnd" is true, we can stop here and return the encoded string
 			const rest = boardStr.slice(i);
 			if (!rest.includes('1') && !rest.includes('0')) {
-				if (excludeEmptyEnd) {
-					return encoded.join('');
-				} else {
-					encoded.push(encodeEmptyRunLength(rest.length));
-					break;
-				}
+				encoded.push(encodeEmptyRunLength(rest.length));
+				break;
 			}
             let runLength = 1;
 			for (let j = 1; i + j < length; j++) {
@@ -66,51 +63,102 @@ export function toCustomPuzzleStringRLE(
             i += runLength - 1;
         }
     }
-	return encoded.join('');
+	const encodedBoard = encoded.join('');
+	return `${encodeBoardDimensions(dimensions)}/${encodedBoard}` as CustomPuzzleStringRleWithDims;
 }
 
-export function isPotentialCustomPuzzleStringRLE(encodedString: string): boolean {
+export function isPotentialCustomPuzzleStringRleWithDims(encodedString: string): encodedString is CustomPuzzleStringRleWithDims {
 	// Test that encoded string only contains valid characters: 1-8, a-z
-	return /^[1-8a-z]+$/.test(encodedString);
+	return /^[a-z]{1,2}\/([1-8a-z])+$/.test(encodedString);
 }
 
-const codeA = 'a'.charCodeAt(0);
-const codeZ = 'z'.charCodeAt(0);
-const codeAZRange = codeZ - codeA + 1;
-const encodeEmptyRunLength = (runLength: number): string => {
+
+const CODE_A = "a".charCodeAt(0);
+const CODE_Z = "z".charCodeAt(0);
+const A_Z_RANGE = CODE_Z - CODE_A + 1;
+
+// Converts a number to a (single) character: 1 => "a", 2 => "b", ..., 26 => "z"
+export function numToChar(num: number): string {
+	if (num <= 0 || num > A_Z_RANGE) {
+		throw new Error(`Invalid number: ${num}`);
+	}
+	return String.fromCharCode(num + CODE_A - 1);
+}
+// Converts a character in range [a-z] to a number: a => 1, b => 2, ..., z => 26
+export function charToNum(char: string): number {
+	if (char.length !== 1) {
+		throw new Error(`Invalid character: ${char}`);
+	}
+	const code = char.charCodeAt(0);
+	if (code < CODE_A || code > CODE_Z) {
+		throw new Error(`Invalid character: ${char}`);
+	}
+	return code - CODE_A + 1;
+}
+
+export const encodeEmptyRunLength = (runLength: number): string => {
 	if (runLength < 1) {
 		return '';
 	}
-	if (codeA + runLength - 1 > codeZ) {
+	if (CODE_A + runLength - 1 > CODE_Z) {
 		// Would exceed "z" character
 		let res = '';
-		while (runLength >= codeAZRange) {
+		while (runLength >= A_Z_RANGE) {
 			res += 'z';
-			runLength -= codeAZRange;
+			runLength -= A_Z_RANGE;
 		}
 		if (runLength > 0) {
-			res += String.fromCharCode(codeA + runLength - 1);
+			res += numToChar(runLength);
 		}
 		return res;
 	} else {
-		return String.fromCharCode(codeA + runLength - 1);
+		return numToChar(runLength);
+	}
+}
+
+const encodeBoardDimensions = ({ width, height }: BoardShape) => {
+	if (width === height) {
+		return numToChar(width);
+	} else {
+		return `${numToChar(width)}${numToChar(height)}`;
+	}
+}
+const decodeBoardDimensions = (dimensionsStr: string): BoardShape => {
+	if (dimensionsStr.length === 1) {
+		const n = charToNum(dimensionsStr);
+		return { width: n, height: n };
+	} else {
+		const [widthStr, heightStr] = dimensionsStr.split('');
+		const width = charToNum(widthStr);
+		const height = charToNum(heightStr);
+		return { width, height };
 	}
 }
 
 /**
  * Decodes a "CustomPuzzleStringRLE" back to a BoardString.
  * @param encodedString The encoded string to decode
- * @param boardStringLength The length of the board string. Used to pad the end with empty cells if required
  */
-export function decodeCustomPuzzleStringRLE(
+export function decodeCustomPuzzleStringRleWithDims(
 	encodedString: string,
-	boardStringLength?: number,
+): { board: BoardString, dimensions: BoardShape } {
+	const [dimensionsStr, encodedBoard] = encodedString.split('/');
+	const dimensions = decodeBoardDimensions(dimensionsStr);
+	return {
+		board: decodeCustomPuzzleStringRleBoard(encodedBoard, dimensions.width * dimensions.height),
+		dimensions
+	};
+}
+
+function decodeCustomPuzzleStringRleBoard(
+	encodedString: string,
+	boardStringLength: number,
 ): BoardString {
     // Decode in reverse order of the encoding process
     const encodedArr = encodedString.split('');
 	const decodedArr = encodedArr.map((char): PuzzleValueLineStr => {
 		if (char >= 'a' && char <= 'z') {
-            return EMPTY.repeat(char.charCodeAt(0) - codeA + 1);
+            return EMPTY.repeat(charToNum(char));
         }
 		switch (char) {
             case '8': return '1111';

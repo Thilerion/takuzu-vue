@@ -2,7 +2,7 @@ import { boardStringToPuzzleGrid, getImportBoardStringData, isExportString } fro
 import type { PuzzleGrid } from "@/lib/types.js"
 import { isValidBoardString } from "@/lib/utils/puzzle-line.utils.js";
 import { customPuzzleStringLongToGrid, isCustomPuzzleStringLong } from "./custom-long.js";
-import { decodeCustomPuzzleStringRLE, isPotentialCustomPuzzleStringRLE } from "./custom-rle.js";
+import { isPotentialCustomPuzzleStringRleWithDims, decodeCustomPuzzleStringRleWithDims } from "./custom-rle.js";
 
 export type InferredCustomPuzzleStringType = 'BoardString' | 'BoardExportString' | 'CustomLong' | 'CustomRLE';
 export type ParsedCustomPuzzleString = {
@@ -36,15 +36,14 @@ export function importCustomPuzzleString(str: string): ParsedCustomPuzzleString 
 		return { success: true, width, height, grid, type };
 	}
 
-	if (isPotentialCustomPuzzleStringRLE(str)) {
+	if (isPotentialCustomPuzzleStringRleWithDims(str)) {
 		try {
-			const boardStr = decodeCustomPuzzleStringRLE(str);
-			if (!isValidBoardString(boardStr)) {
+			const { board: boardString, dimensions } = decodeCustomPuzzleStringRleWithDims(str);
+			if (!isValidBoardString(boardString)) {
 				throw new Error('Decoded string is not a valid board string');
 			}
-			const grid = boardStringToPuzzleGrid(boardStr);
-			const width = grid[0].length;
-			const height = grid.length;
+			const grid = boardStringToPuzzleGrid(boardString, dimensions);
+			const { width, height } = dimensions;
 			const type = 'CustomRLE';
 			return { success: true, width, height, grid, type };
 		} catch(e) {

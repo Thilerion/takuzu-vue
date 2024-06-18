@@ -40,7 +40,7 @@ describe('import custom puzzle string', () => {
 	})
 
 	it('can import a CustomRLE string', () => {
-		const result = importCustomPuzzleString('1b5d5c1a51h');
+		const result = importCustomPuzzleString('fd/1b5d5c1a51h');
 		expect(result).toMatchObject({
 			success: true,
 			width: 6,

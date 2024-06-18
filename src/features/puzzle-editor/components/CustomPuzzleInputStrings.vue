@@ -40,7 +40,7 @@
 <script setup lang="ts">
 import { puzzleGridToBoardString, puzzleGridToExportString } from '@/lib/board/board-conversion.helpers.js';
 import type { PuzzleGrid } from '@/lib/types.js';
-import { toCustomPuzzleStringRLE } from '../services/string-conversions/custom-rle.js';
+import { toCustomPuzzleStringRleWithDims } from '../services/string-conversions/custom-rle.js';
 import { gridToCustomPuzzleStringLong } from '../services/string-conversions/custom-long.js';
 import { ref, computed } from 'vue';
 
@@ -65,7 +65,10 @@ const boardString = computed(() => {
 
 const asCustomRle = computed(() => {
 	if (!boardString.value) return '';
-	return toCustomPuzzleStringRLE(boardString.value);
+	return toCustomPuzzleStringRleWithDims(boardString.value, {
+		width: props.grid![0].length,
+		height: props.grid!.length
+	});
 })
 const asCustomLong = computed(() => {
 	if (!props.grid) return '';
