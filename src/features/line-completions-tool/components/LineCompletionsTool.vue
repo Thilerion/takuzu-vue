@@ -59,19 +59,21 @@
 		<h3 class="pr-3 pb-2 pt-2 py font-bold text-gray-600 tracking-wide w-full">
 			Valid line completions
 		</h3>
-		<template v-if="completions != null && completions.length > 0">
-			<pre>{{ formattedCompletions }}</pre>
-			<pre v-if="completions.length > 20">... and {{ completions.length - 20 }} more</pre>
-		</template>
-		<pre v-else-if="completions != null">Invalid: no completions found</pre>
-		<pre v-else>&lt;no result&gt;</pre>
+		<LineCompletionsValidCompletions
+			:input="validatedLine"
+			:completions="completions"
+			:result="resultingLine"
+		>
+			<template #invalid><pre>Invalid: no completions found</pre></template>
+			<template #fallback><pre>&lt;no result&gt;</pre></template>
+		</LineCompletionsValidCompletions>
 	</div>
 </main>
 </template>
 
 <script setup lang="ts">
 import { isPuzzleValueLineStr } from '@/lib/utils/puzzle-line.utils.js';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { useValidLineCompletions } from '../composables/valid-line-completions.js';
 import type { PuzzleValueLineStr } from '@/lib/types.js';
 
@@ -79,11 +81,6 @@ const lineInput = ref('');
 const validatedLine = ref<null | PuzzleValueLineStr>(null);
 
 const { completions, resultingLine } = useValidLineCompletions(validatedLine);
-
-const formattedCompletions = computed(() => {
-	if (completions.value == null) return null;
-	return completions.value.slice(0, 20).map(c => c.join(' ')).join('\n');
-})
 
 const inputEl = ref<HTMLInputElement | null>(null);
 const onSubmit = (e: SubmitEvent) => {

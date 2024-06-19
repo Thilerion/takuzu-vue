@@ -3,12 +3,9 @@
 	<div
 		v-for="(value, index) in line"
 		:key="`${index}-${value.value}`"
-		:class="{
-			'font-bold': value.emphasis === 'high',
-			'opacity-50': value.emphasis === 'veryLow',
-			'opacity-80': value.emphasis === 'low',
-		}"
-		class="font-mono w-[1ch]"
+		:data-emphasis="value.emphasis"
+		class="font-mono w-[1ch] line-completion-value"
+		:class="valueClasses"
 	>{{ value.value }}</div>
 </div>
 </template>
@@ -20,10 +17,23 @@ export type PuzzleLineMarkupDetails = {
 	value: PuzzleValue,
 	index: number,
 	/** Two "low" levels, then base, then "high" */
-	emphasis: "veryLow" | "low" | "base" | "high"
+	emphasis: "veryLow" | "low" | "base" | "high",
 };
 
 defineProps<{
-	line: PuzzleLineMarkupDetails[]
+	line: PuzzleLineMarkupDetails[],
+	valueClasses?: string
 }>();
 </script>
+
+<style scoped>
+.line-completion-value:where([data-emphasis="high"]) {
+	@apply font-bold;
+}
+.line-completion-value:where([data-emphasis="low"]) {
+	@apply opacity-80;
+}
+.line-completion-value:where([data-emphasis="veryLow"]) {
+	@apply opacity-50;
+}
+</style>
