@@ -11,6 +11,7 @@
 			<BasicLinkList class="divide-y divide-gray-150 bg-white px-4 rounded-xl shadow-lg transition-all duration-700">
 				<BasicLinkListItem><router-link to="/editor">{{ $t('PuzzleEditor.tools-link-text') }}</router-link></BasicLinkListItem>
 				<BasicLinkListItem v-if="analysisToolEnabled"><router-link to="/analysis">Puzzle analysis and solver</router-link></BasicLinkListItem>
+				<BasicLinkListItem v-if="lineCompletionsToolEnabled"><router-link to="/line-completions">Line completions</router-link></BasicLinkListItem>
 			</BasicLinkList>
 		</div>
 			
@@ -24,4 +25,5 @@ import { computed } from 'vue';
 
 const mainStore = useMainStore();
 const analysisToolEnabled = computed(() => mainStore.featureToggles.analysisTool.isEnabled);
+const lineCompletionsToolEnabled = computed(() => !!mainStore.debugMode);
 </script>

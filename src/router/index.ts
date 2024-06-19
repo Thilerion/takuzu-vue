@@ -199,6 +199,14 @@ const routes = [
 		}
 	},
 	{
+		path: '/line-completions',
+		component: () => import('../views/LineCompletionsToolPage.vue'),
+		name: 'LineCompletionsTool',
+		meta: {
+			title: 'Line Completions'
+		}
+	},
+	{
 		path: '/analysis',
 		component: () => import('../views/analysis/PuzzleAnalysis.vue'),
 		name: 'PuzzleAnalysis',
