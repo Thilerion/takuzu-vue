@@ -43,7 +43,7 @@
 							:ref="(v) => setRef(v as InstanceType<typeof CustomPuzzleInputTableCell>)"
 							:model-value="puzzleGridBase![y][x]"
 							:data-index="index"
-							:solution-value="(!showSolution || singleSolution == null) ? null : singleSolution![y]?.[x] ?? null"
+							:solution-value="(!showSolution || knownSolution == null) ? null : knownSolution![y]?.[x] ?? null"
 							inputmode="numeric"
 
 							@update:model-value="setGridValue(x, y, $event)"
@@ -174,7 +174,7 @@ const {
 	maskRatio,
 	validPuzzle,
 	solvable,
-	singleSolution,
+	knownSolution,
 	/* isRunning */
 } = useSolutionsAnalysis(puzzleGridBase, dimensions, MAX_SOLUTIONS);
 </script>
