@@ -37,6 +37,7 @@
 				>
 					<template #default="{ x, y, index }">
 						<CustomPuzzleInputTableCell
+							:id="`puzzleTableCell_r${y}_c${x}`"
 							:ref="(v) => setRef(v as InstanceType<typeof CustomPuzzleInputTableCell>)"
 							:model-value="puzzleGridBase![y][x]"
 							:data-index="index"
