@@ -31,7 +31,7 @@
 		</tbody>
 	</table>
 </div>
-<div v-else><slot name="fallback"/></div>
+<div v-else><slot name="fallback" /></div>
 </template>
 
 <script setup lang="ts">

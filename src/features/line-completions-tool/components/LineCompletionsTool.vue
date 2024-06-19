@@ -46,9 +46,13 @@
 		<h3 class="pr-3 pb-2 pt-2 py font-bold text-gray-600 tracking-wide w-full">
 			Result
 		</h3>
-		<pre v-if="completions != null && resultingLine != null">{{ resultingLine?.join(' ') }}</pre>
-		<pre v-else-if="completions != null">Invalid: no completions found</pre>
-		<pre v-else>&lt;no result&gt;</pre>
+		<LineCompletionsCombinedResult
+			:input="validatedLine"
+			:result="resultingLine"
+		>
+			<template #invalid><pre>Invalid: no completions found</pre></template>
+			<template #fallback><pre>&lt;no result&gt;</pre></template>
+		</LineCompletionsCombinedResult>
 	</div>
 
 	<div class="bg-white rounded-xl shadow-md shadow-black/5 w-full px-6 pt-2 pb-4">
@@ -103,7 +107,3 @@ const onSubmit = (e: SubmitEvent) => {
 	}
 }
 </script>
-
-<style scoped>
-
-</style>
