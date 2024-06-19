@@ -1,7 +1,11 @@
 <template>
 <main class="pt-4 gap-y-4 grid bleed-grid-4 v-grid-bleed text-sm">
 	<div class="bg-white rounded-xl shadow-md shadow-black/5 w-full px-6 pt-2 pb-4">
-		<form class="flex items-start flex-col justify-center" novalidate @submit.prevent="onSubmit($event as SubmitEvent)">
+		<form
+			class="flex items-start flex-col justify-center"
+			novalidate
+			@submit.prevent="onSubmit($event as SubmitEvent)"
+		>
 			<label class="pr-3 pb-2 pt-2 py font-bold text-gray-600 tracking-wide w-full" for="lineInput">
 				Input
 			</label>
@@ -25,6 +29,17 @@
 
 		</form>
 		
+	</div>
+
+	<div class="bg-white rounded-xl shadow-md shadow-black/5 w-full px-6 pt-2 pb-4">
+		<h3 class="pr-3 pb-2 pt-2 py font-bold text-gray-600 tracking-wide w-full">
+			Details
+		</h3>
+		<LineCompletionsLineDetails
+			:line="validatedLine"
+		>
+			<template #fallback><pre>&lt;no result&gt;</pre></template>
+		</LineCompletionsLineDetails>
 	</div>
 
 	<div class="bg-white rounded-xl shadow-md shadow-black/5 w-full px-6 pt-2 pb-4">

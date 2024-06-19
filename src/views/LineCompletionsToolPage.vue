@@ -1,5 +1,5 @@
 <template>
-<div class="flex flex-col pb-12 overflow-x-hidden fixed inset-0 overscroll-y-auto">
+<div class="flex flex-col pb-6 overflow-x-hidden fixed inset-0 overscroll-y-auto">
 	<PageHeader
 		:transparent="false"
 		small
