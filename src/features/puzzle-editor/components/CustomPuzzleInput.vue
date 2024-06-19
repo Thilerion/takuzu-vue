@@ -91,6 +91,7 @@ import { usePuzzleEditorSettings } from '../composables/puzzle-editor-settings.j
 import type { PuzzleValue } from '@/lib/constants.js';
 import { useSharedPuzzleToggle } from '@/composables/use-puzzle-toggle.js';
 import { useSolutionsAnalysis } from '@/features/puzzle-editor/composables/solutions-analysis.js';
+import { storeToRefs } from 'pinia';
 
 //////
 // Puzzle Editor grid data + actions
@@ -106,7 +107,8 @@ const setGridValue = (x: number, y: number, v: PuzzleValue) => {
 	puzzleGridBase.value![y][x] = v;
 }
 
-const { inputMode, showSolution } = usePuzzleEditorSettings();
+const puzzleEditorSettings = usePuzzleEditorSettings();
+const { inputMode, showSolution } = storeToRefs(puzzleEditorSettings);
 const toggleInputModeEnabled = computed({
 	get: () => inputMode.value === 'toggle',
 	set: (v: boolean) => inputMode.value = v ? 'toggle' : 'keyboard',
