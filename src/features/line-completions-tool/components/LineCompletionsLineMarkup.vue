@@ -1,5 +1,5 @@
 <template>
-<span class="inline-flex gap-x-0 -ml-[0.333ch] cursor-text">
+<span class="inline-flex gap-x-0 -ml-[0.5ch] cursor-text">
 	<span
 		v-for="(value, index) in line"
 		:key="`${index}-${value.value}`"

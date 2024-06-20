@@ -1,5 +1,5 @@
 <template>
-<div class="flex flex-col gap-6 settings-wrapper">
+<div class="flex flex-col gap-6">
 	<div class="py-2">
 		<BasicLinkList class="px-4 pb-2 pt-4 flex flex-col">
 			<div class="px-2 pb-4">

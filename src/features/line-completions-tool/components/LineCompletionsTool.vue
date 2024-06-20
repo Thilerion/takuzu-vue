@@ -1,5 +1,5 @@
 <template>
-<main class="pt-4 gap-y-4 grid bleed-grid-4 v-grid-bleed text-sm">
+<main class="pt-4 gap-y-6 grid bleed-grid-4 v-grid-bleed text-sm">
 	<div class="bg-white rounded-xl shadow-md shadow-black/5 w-full px-6 pt-2 pb-4">
 		<form
 			class="flex items-start flex-col justify-center"
@@ -31,42 +31,50 @@
 		
 	</div>
 
-	<div class="bg-white rounded-xl shadow-md shadow-black/5 w-full px-6 pt-2 pb-4">
-		<h3 class="pr-3 pb-2 pt-2 py font-bold text-gray-600 tracking-wide w-full">
+	<div>
+		<BasicListHeader>
 			Details
-		</h3>
-		<LineCompletionsLineDetails
-			:line="validatedLine"
-		>
-			<template #fallback><pre>&lt;no result&gt;</pre></template>
-		</LineCompletionsLineDetails>
+		</BasicListHeader>
+		<BasicLinkList class="px-6 py-4 flex flex-col">
+			<LineCompletionsLineDetails
+				:line="validatedLine"
+			>
+				<template #fallback><pre>&lt;no result&gt;</pre></template>
+			</LineCompletionsLineDetails>
+		</BasicLinkList>
 	</div>
 
-	<div class="bg-white rounded-xl shadow-md shadow-black/5 w-full px-6 pt-2 pb-4">
-		<h3 class="pr-3 pb-2 pt-2 py font-bold text-gray-600 tracking-wide w-full">
+	<div>
+		<BasicListHeader>
 			Result
-		</h3>
-		<LineCompletionsCombinedResult
-			:input="validatedLine"
-			:result="resultingLine"
-		>
-			<template #invalid><pre>Invalid: no completions found</pre></template>
-			<template #fallback><pre>&lt;no result&gt;</pre></template>
-		</LineCompletionsCombinedResult>
+		</BasicListHeader>
+		<BasicLinkList class="px-6 py-4 flex flex-col">
+			
+			<LineCompletionsCombinedResult
+				:input="validatedLine"
+				:result="resultingLine"
+			>
+				<template #invalid><pre>Invalid: no completions found</pre></template>
+				<template #fallback><pre>&lt;no result&gt;</pre></template>
+			</LineCompletionsCombinedResult>
+		</BasicLinkList>
 	</div>
 
-	<div class="bg-white rounded-xl shadow-md shadow-black/5 w-full px-6 pt-2 pb-4">
-		<h3 class="pr-3 pb-2 pt-2 py font-bold text-gray-600 tracking-wide w-full">
+	<div>
+		<BasicListHeader>
 			Valid line completions
-		</h3>
-		<LineCompletionsValidCompletions
-			:input="validatedLine"
-			:completions="completions"
-			:result="resultingLine"
-		>
-			<template #invalid><pre>Invalid: no completions found</pre></template>
-			<template #fallback><pre>&lt;no result&gt;</pre></template>
-		</LineCompletionsValidCompletions>
+		</BasicListHeader>
+		<BasicLinkList class="px-6 py-4 flex flex-col">
+			
+			<LineCompletionsValidCompletions
+				:input="validatedLine"
+				:completions="completions"
+				:result="resultingLine"
+			>
+				<template #invalid><pre>Invalid: no completions found</pre></template>
+				<template #fallback><pre>&lt;no result&gt;</pre></template>
+			</LineCompletionsValidCompletions>
+		</BasicLinkList>
 	</div>
 </main>
 </template>
