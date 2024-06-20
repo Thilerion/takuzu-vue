@@ -1,14 +1,23 @@
 <template>
-<div class="bg-white rounded-xl py-4 min-h-8 fw-card-content-shadow" :class="paddingXClasses">
+<div class="bg-white rounded-xl fw-card-content-shadow" :class="[paddingXClasses, paddingY]">
 	<slot></slot>
 </div>
 </template>
 
 <script setup lang="ts">
-import { inject } from 'vue';
+import { computed, inject, unref } from 'vue';
 import { PADDING_X_CLASS_DEFAULT, PaddingXInjectKey } from './constants.js';
 
-const paddingXClasses = inject(PaddingXInjectKey, PADDING_X_CLASS_DEFAULT);
+const props = withDefaults(defineProps<{
+	paddingY?: string;
+	paddingX?: string | undefined;
+}>(), {
+	paddingY: 'py-4',
+	paddingX: undefined,
+});
+
+const paddingXInjectedClasses = inject(PaddingXInjectKey, PADDING_X_CLASS_DEFAULT);
+const paddingXClasses = computed(() => props.paddingX ?? unref(paddingXInjectedClasses));
 </script>
 
 <style scoped>

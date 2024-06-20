@@ -3,6 +3,7 @@
 	<div
 		v-if="$slots.heading"
 		:class="paddingXClasses"
+		class="mb-1"
 	>
 		<slot name="heading"></slot>
 	</div>

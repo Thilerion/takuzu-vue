@@ -1,88 +1,84 @@
 <template>
 <div>
-	<ExpandTransition :duration="300" :show="expanded">
-		<div>
-			<div class="flex flex-row gap-x-3">
-				<div class="flex flex-col">
-					<label for="widthInput">{{ $t('PuzzleEditor.configure-board.width') }}</label>
-					<input
-						id="widthInput"
-						v-model.number="inputWidth"
-						:class="{ 'border-red-500 bg-red-100': displayedCompatibilityError || displayedWidthError }"
-						type="number"
-						name="width"
-						min="4"
-						max="16"
-						class="p-2 text-sm min-w-[3.5rem] min-h-8 rounded border-gray-400"
-					>
-				</div>
-				<div class="h-8 self-end">
-					<button
-						class="my-auto text-lg text-gray-600 w-6 h-6 aspect-square flex items-center justify-center"
-						@click="inputForceSquareGrid = !inputForceSquareGrid"
-					>
-						<icon-material-symbols-link v-if="inputForceSquareGrid" />
-						<icon-material-symbols-link-off v-else class="opacity-50 text-base" />
-					</button>
-				</div>
-				
-				<div class="flex flex-col">
-					<label for="heightInput">{{ $t('PuzzleEditor.configure-board.height') }}</label>
-					<input
-						id="heightInput"
-						v-model.number="inputHeight"
-						:class="{ 'border-red-500 bg-red-100': displayedCompatibilityError || displayedHeightError }"	
-						type="number"
-						name="height"
-						min="4"
-						max="16"
-						class="p-2 text-sm min-w-[3.5rem] min-h-[2rem] rounded border-gray-400 disabled:text-gray-600 disabled:bg-gray-100 disabled:border-gray-400/70"
-						:disabled="inputForceSquareGrid"
-					>
-				</div>
-			</div>
-			<label class="py-2 inline-flex items-center gap-x-2 text-sm">
-				<input
-					id="squareGridToggle"
-					v-model="inputForceSquareGrid"
-					type="checkbox"
-					name="squareGrid"
-				>
-				{{ $t('PuzzleEditor.configure-board.force-square-grid') }}
-			</label>
-			<div class="flex flex-row gap-2 pb-2 flex-wrap">
-				<BaseButton
-					v-if="gridExists"
-					:disabled="areDimensionsUnchanged || isWidthInvalid || isHeightInvalid"
-					@click="onCreateUpdate"
-				>{{ $t('PuzzleEditor.configure-board.resize') }}</BaseButton>
-				<BaseButton
-					v-if="gridExists"
-					:disabled="isWidthInvalid || isHeightInvalid"
-					@click="onReset"
-				>{{ $t('PuzzleEditor.configure-board.new-puzzle') }}</BaseButton>
-				<BaseButton
-					v-if="!gridExists"
-					:disabled="isWidthInvalid || isHeightInvalid"
-					@click="onCreateUpdate"
-				>{{ $t('PuzzleEditor.configure-board.new-puzzle') }}</BaseButton>
-				<BaseButton @click="showImportStringDialog = !showImportStringDialog">{{ $t('PuzzleEditor.import.import-from-string') }}</BaseButton>
-				<CustomPuzzleInputImportString
-					v-if="showImportStringDialog"
-					v-model:show="showImportStringDialog"
-					@parsed="onImportStringParsed"
-				/>
-			</div>
-			<p class="leading-relaxed min-h-[0.5lh] text-red-700 text-xs tracking-wide">
-				<span v-if="displayedErrorMessage != null">{{ displayedErrorMessage }}</span>
-			</p>
+	<div class="flex flex-row gap-x-3">
+		<div class="flex flex-col">
+			<label for="widthInput">{{ $t('PuzzleEditor.configure-board.width') }}</label>
+			<input
+				id="widthInput"
+				v-model.number="inputWidth"
+				:class="{ 'border-red-500 bg-red-100': displayedCompatibilityError || displayedWidthError }"
+				type="number"
+				name="width"
+				min="4"
+				max="16"
+				class="p-2 text-sm min-w-[3.5rem] min-h-8 rounded border-gray-400"
+			>
 		</div>
-	</ExpandTransition>
+		<div class="h-8 self-end">
+			<button
+				class="my-auto text-lg text-gray-600 w-6 h-6 aspect-square flex items-center justify-center"
+				@click="inputForceSquareGrid = !inputForceSquareGrid"
+			>
+				<icon-material-symbols-link v-if="inputForceSquareGrid" />
+				<icon-material-symbols-link-off v-else class="opacity-50 text-base" />
+			</button>
+		</div>
+		
+		<div class="flex flex-col">
+			<label for="heightInput">{{ $t('PuzzleEditor.configure-board.height') }}</label>
+			<input
+				id="heightInput"
+				v-model.number="inputHeight"
+				:class="{ 'border-red-500 bg-red-100': displayedCompatibilityError || displayedHeightError }"	
+				type="number"
+				name="height"
+				min="4"
+				max="16"
+				class="p-2 text-sm min-w-[3.5rem] min-h-[2rem] rounded border-gray-400 disabled:text-gray-600 disabled:bg-gray-100 disabled:border-gray-400/70"
+				:disabled="inputForceSquareGrid"
+			>
+		</div>
+	</div>
+	<label class="py-2 inline-flex items-center gap-x-2 text-sm">
+		<input
+			id="squareGridToggle"
+			v-model="inputForceSquareGrid"
+			type="checkbox"
+			name="squareGrid"
+		>
+		{{ $t('PuzzleEditor.configure-board.force-square-grid') }}
+	</label>
+	<div class="flex flex-row gap-2 pb-2 flex-wrap">
+		<BaseButton
+			v-if="gridExists"
+			:disabled="areDimensionsUnchanged || isWidthInvalid || isHeightInvalid"
+			@click="onCreateUpdate"
+		>{{ $t('PuzzleEditor.configure-board.resize') }}</BaseButton>
+		<BaseButton
+			v-if="gridExists"
+			:disabled="isWidthInvalid || isHeightInvalid"
+			@click="onReset"
+		>{{ $t('PuzzleEditor.configure-board.new-puzzle') }}</BaseButton>
+		<BaseButton
+			v-if="!gridExists"
+			:disabled="isWidthInvalid || isHeightInvalid"
+			@click="onCreateUpdate"
+		>{{ $t('PuzzleEditor.configure-board.new-puzzle') }}</BaseButton>
+		<BaseButton @click="showImportStringDialog = !showImportStringDialog">{{ $t('PuzzleEditor.import.import-from-string') }}</BaseButton>
+		<CustomPuzzleInputImportString
+			v-if="showImportStringDialog"
+			v-model:show="showImportStringDialog"
+			@parsed="onImportStringParsed"
+		/>
+	</div>
+	<p class="leading-relaxed min-h-[0.5lh] text-red-700 text-xs tracking-wide">
+		<span v-if="displayedErrorMessage != null">{{ displayedErrorMessage }}</span>
+	</p>
 </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch, onUnmounted } from 'vue';
 import { useCustomPuzzleInputGrid } from '../composables/custom-input-grid.js';
 import { CUSTOM_PUZZLE_MAX_SIZE, CUSTOM_PUZZLE_MIN_SIZE, validateCustomPuzzleDimensions, type CustomPuzzleDimensionsInvalidResultType } from '../services/validate-dimensions.js';
 import type { ParsedCustomPuzzleString } from '../services/string-conversions/import.js';
@@ -91,10 +87,8 @@ import { useI18n } from 'vue-i18n';
 
 const expanded = defineModel<boolean>('expanded', { required: true });
 const showImportStringDialog = ref(false);
-watch(expanded, (isExpanded) => {
-	if (!isExpanded) {
-		showImportStringDialog.value = false;
-	}
+onUnmounted(() => {
+	showImportStringDialog.value = false;
 })
 
 type IncompatibleValidationType = Extract<CustomPuzzleDimensionsInvalidResultType, `incompatible:${string}`>;
