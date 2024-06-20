@@ -86,7 +86,8 @@ const detailedCompletions = computed(() => {
 		}
 		if (solvedIndexes.value.includes(idx)) {
 			res.emphasis = 'high';
-		} else if (unsolvedIndexes.value.includes(idx)) {
+		} else if (!unsolvedIndexes.value.includes(idx)) {
+			// Cells that have a value in input can be slightly de-emphasized.
 			res.emphasis = 'low';
 		}
 		return res;
