@@ -1,49 +1,57 @@
 <template>
-<main class="pt-4 gap-y-6 grid bleed-grid-4 v-grid-bleed text-sm max-w-xl w-full mx-auto">
-	<div class="bg-white rounded-xl shadow-md shadow-black/5 w-full px-6 pt-2 pb-4">
-		<form
-			class="flex items-start flex-col justify-center"
-			novalidate
-			@submit.prevent="onSubmit($event as SubmitEvent)"
-		>
-			<label class="pr-3 pb-2 pt-2 py font-bold text-gray-600 tracking-wide w-full" for="lineInput">{{ $t('LineAnalysisTool.input') }}</label>
-			<div class="flex w-full gap-x-2">
-				<input
-					id="lineInput"
-					ref="inputEl"
-					v-model="lineInput"
-					type="text"
-					name="lineInput"
-					class="flex-1 max-w-sm font-mono"
-					required
-					minlength="4"
-					maxlength="20"
-					pattern="[10.x_ \-]+"
-					autocomplete="off"
-					:title="$t('LineAnalysisTool.line-input-title-hint')"
-				>
-				<BaseButton type="submit">{{ $t('LineAnalysisTool.input-btn-label') }}</BaseButton>
-			</div>
+<FullWidthCardLayout class="text-sm max-w-xl mx-auto">
+	<FullWidthCardBlock>
+		<FullWidthCardContent>
+			<form
+				class="flex items-start flex-col justify-center"
+				novalidate
+				@submit.prevent="onSubmit($event as SubmitEvent)"
+			>
+				<FullWidthCardHeading
+					tag="label"
+					class="pr-3 pb-1 font-bold text-gray-600 tracking-wide w-full"
+					for="lineInput"
+				>{{ $t('LineAnalysisTool.input') }}</FullWidthCardHeading>
+				<div class="flex w-full gap-x-2">
+					<input
+						id="lineInput"
+						ref="inputEl"
+						v-model="lineInput"
+						type="text"
+						name="lineInput"
+						class="flex-1 max-w-sm font-mono"
+						required
+						minlength="4"
+						maxlength="20"
+						pattern="[10.x_ \-]+"
+						autocomplete="off"
+						:title="$t('LineAnalysisTool.line-input-title-hint')"
+					>
+					<BaseButton type="submit">{{ $t('LineAnalysisTool.input-btn-label') }}</BaseButton>
+				</div>
 
-		</form>
-		
-	</div>
+			</form>
+		</FullWidthCardContent>
+	</FullWidthCardBlock>
 
-	<div>
-		<BasicListHeader>{{ $t('LineAnalysisTool.details.title') }}</BasicListHeader>
-		<BasicLinkList class="px-6 py-4 flex flex-col">
+	<FullWidthCardBlock>
+		<template #heading>
+			<FullWidthCardHeading>{{ $t('LineAnalysisTool.details.title') }}</FullWidthCardHeading>
+		</template>
+		<FullWidthCardContent>
 			<LineCompletionsLineDetails
 				:line="validatedLine"
 			>
 				<template #fallback><LineCompletionsBlockFallbackSlot /></template>
 			</LineCompletionsLineDetails>
-		</BasicLinkList>
-	</div>
+		</FullWidthCardContent>
+	</FullWidthCardBlock>
 
-	<div>
-		<BasicListHeader>{{ $t('LineAnalysisTool.results.title') }}</BasicListHeader>
-		<BasicLinkList class="px-6 py-4 flex flex-col">
-			
+	<FullWidthCardBlock>
+		<template #heading>
+			<FullWidthCardHeading>{{ $t('LineAnalysisTool.results.title') }}</FullWidthCardHeading>
+		</template>
+		<FullWidthCardContent>
 			<LineCompletionsCombinedResult
 				:input="validatedLine"
 				:result="resultingLine"
@@ -51,13 +59,14 @@
 				<template #invalid><LineCompletionsBlockInvalidSlot /></template>
 				<template #fallback><LineCompletionsBlockFallbackSlot /></template>
 			</LineCompletionsCombinedResult>
-		</BasicLinkList>
-	</div>
+		</FullWidthCardContent>
+	</FullWidthCardBlock>
 
-	<div>
-		<BasicListHeader>{{ $t('LineAnalysisTool.valid-line-completions') }}</BasicListHeader>
-		<BasicLinkList class="px-6 py-4 flex flex-col">
-			
+	<FullWidthCardBlock>
+		<template #heading>
+			<FullWidthCardHeading>{{ $t('LineAnalysisTool.valid-line-completions') }}</FullWidthCardHeading>
+		</template>
+		<FullWidthCardContent>
 			<LineCompletionsValidCompletions
 				:input="validatedLine"
 				:completions="completions"
@@ -66,9 +75,9 @@
 				<template #invalid><LineCompletionsBlockInvalidSlot /></template>
 				<template #fallback><LineCompletionsBlockFallbackSlot /></template>
 			</LineCompletionsValidCompletions>
-		</BasicLinkList>
-	</div>
-</main>
+		</FullWidthCardContent>
+	</FullWidthCardBlock>
+</FullWidthCardLayout>
 </template>
 
 <script setup lang="ts">
