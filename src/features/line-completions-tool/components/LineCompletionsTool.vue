@@ -1,5 +1,5 @@
 <template>
-<main class="pt-4 gap-y-6 grid bleed-grid-4 v-grid-bleed text-sm">
+<main class="pt-4 gap-y-6 grid bleed-grid-4 v-grid-bleed text-sm max-w-xl w-full mx-auto">
 	<div class="bg-white rounded-xl shadow-md shadow-black/5 w-full px-6 pt-2 pb-4">
 		<form
 			class="flex items-start flex-col justify-center"
@@ -39,7 +39,7 @@
 			<LineCompletionsLineDetails
 				:line="validatedLine"
 			>
-				<template #fallback><pre>&lt;no result&gt;</pre></template>
+				<template #fallback><LineCompletionsBlockFallbackSlot /></template>
 			</LineCompletionsLineDetails>
 		</BasicLinkList>
 	</div>
@@ -54,8 +54,8 @@
 				:input="validatedLine"
 				:result="resultingLine"
 			>
-				<template #invalid><pre>Invalid: no completions found</pre></template>
-				<template #fallback><pre>&lt;no result&gt;</pre></template>
+				<template #invalid><LineCompletionsBlockInvalidSlot /></template>
+				<template #fallback><LineCompletionsBlockFallbackSlot /></template>
 			</LineCompletionsCombinedResult>
 		</BasicLinkList>
 	</div>
@@ -71,8 +71,8 @@
 				:completions="completions"
 				:result="resultingLine"
 			>
-				<template #invalid><pre>Invalid: no completions found</pre></template>
-				<template #fallback><pre>&lt;no result&gt;</pre></template>
+				<template #invalid><LineCompletionsBlockInvalidSlot /></template>
+				<template #fallback><LineCompletionsBlockFallbackSlot /></template>
 			</LineCompletionsValidCompletions>
 		</BasicLinkList>
 	</div>

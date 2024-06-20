@@ -25,8 +25,8 @@
 			</tr>
 			<tr>
 				<td>Remaining</td>
-				<td>{{ remaining[ZERO] }}</td>
-				<td>{{ remaining[ONE] }}</td>
+				<td :class="{'remaining-err': errorRemaining[ZERO]}">{{ remaining[ZERO] }}</td>
+				<td :class="{'remaining-err': errorRemaining[ONE]}">{{ remaining[ONE] }}</td>
 			</tr>
 		</tbody>
 	</table>
@@ -39,6 +39,7 @@ import type { PuzzleValueLineStr } from '@/lib/types.js';
 import { toRefs } from 'vue';
 import { usePuzzleLineDetails } from '../composables/line-details.js';
 import { ONE, ZERO, EMPTY } from '@/lib/constants.js';
+import { computed } from 'vue';
 
 const props = defineProps<{
 	line: PuzzleValueLineStr | null,
@@ -48,6 +49,16 @@ const { line } = toRefs(props);
 const {
 	counts, length, remaining, required
 } = usePuzzleLineDetails(line);
+
+const errorRemaining = computed(() => {
+	if (remaining.value == null) {
+		return { [ZERO]: false, [ONE]: false };
+	}
+	return {
+		[ZERO]: remaining.value[ZERO] < 0,
+		[ONE]: remaining.value[ONE] < 0,
+	}
+})
 </script>
 
 <style scoped>
@@ -78,5 +89,9 @@ const {
 
 .cell-na {
 	@apply bg-gray-200;
+}
+
+.remaining-err {
+	@apply text-red-700 bg-red-100 font-semibold;
 }
 </style>
