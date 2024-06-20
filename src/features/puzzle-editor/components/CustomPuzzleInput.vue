@@ -6,65 +6,65 @@
 		</template>
 
 		<template #default="{ expanded, setExpanded }">
-			<CustomPuzzleInputConfigControls :expanded="expanded" @update:expanded="setExpanded"  />
+			<CustomPuzzleInputConfigControls :expanded="expanded" @update:expanded="setExpanded" />
 		</template>
 	</FullWidthCardCollapsibleBlock>
 	
-	<div
-		class="bg-white rounded-xl shadow-md shadow-black/5 px-1 pt-4 full-bleed w-full"
-	>
-		<transition name="fade" mode="out-in">
-			<div v-if="isValidGrid">
-				<div class="mb-4 flex justify-end px-4">
-					<CustomPuzzleInputTools
-						v-model:toggle-input-mode="toggleInputModeEnabled"
-						v-model:show-solution="showSolution"
-						@clear="resetGrid"
-						@rotate="rotateGrid"
+	<FullWidthCardBlock>
+		<FullWidthCardContent padding-x="">
+			<transition name="fade" mode="out-in">
+				<div v-if="isValidGrid">
+					<div class="mb-4 flex justify-end px-6">
+						<CustomPuzzleInputTools
+							v-model:toggle-input-mode="toggleInputModeEnabled"
+							v-model:show-solution="showSolution"
+							@clear="resetGrid"
+							@rotate="rotateGrid"
+						/>
+					</div>
+					<CustomPuzzleInputTable
+						class="px-2"
+						:grid="puzzleGridBase!"
+					>
+						<template #default="{ x, y, index }">
+							<CustomPuzzleInputTableCell
+								:id="`puzzleTableCell_r${y}_c${x}`"
+								:ref="(v) => setRef(v as InstanceType<typeof CustomPuzzleInputTableCell>)"
+								:model-value="puzzleGridBase![y][x]"
+								:data-index="index"
+								:solution-value="(!showSolution || knownSolution == null) ? null : knownSolution![y]?.[x] ?? null"
+								inputmode="numeric"
+
+								@update:model-value="setGridValue(x, y, $event)"
+								@to-next="() => focusCell(index + 1)"
+								@to-prev="() => focusCell(index - 1)"
+							/>
+							<button
+								v-if="toggleInputModeEnabled"
+								class="absolute inset-0 w-full h-full touch-manipulation"
+								@click="toggleCell(x, y)"
+							></button>
+						</template>
+					</CustomPuzzleInputTable>
+					<CustomPuzzleInputValidation
+						class="my-4"
+						:max-solutions="MAX_SOLUTIONS"
+						:solutions="solutions"
+						:valid-input="validInput"
+						:mask-ratio="maskRatio"
+						:valid-puzzle="validPuzzle"
+						:solvable="solvable"
 					/>
 				</div>
-				<CustomPuzzleInputTable
-					v-if="isValidGrid"
-					:grid="puzzleGridBase!"
+				<div
+					v-else
+					class="text-center text-lg pt-4 pb-6 px-6"
 				>
-					<template #default="{ x, y, index }">
-						<CustomPuzzleInputTableCell
-							:id="`puzzleTableCell_r${y}_c${x}`"
-							:ref="(v) => setRef(v as InstanceType<typeof CustomPuzzleInputTableCell>)"
-							:model-value="puzzleGridBase![y][x]"
-							:data-index="index"
-							:solution-value="(!showSolution || knownSolution == null) ? null : knownSolution![y]?.[x] ?? null"
-							inputmode="numeric"
-
-							@update:model-value="setGridValue(x, y, $event)"
-							@to-next="() => focusCell(index + 1)"
-							@to-prev="() => focusCell(index - 1)"
-						/>
-						<button
-							v-if="toggleInputModeEnabled"
-							class="absolute inset-0 w-full h-full touch-manipulation"
-							@click="toggleCell(x, y)"
-						></button>
-					</template>
-				</CustomPuzzleInputTable>
-				<CustomPuzzleInputValidation
-					class="my-4"
-					:max-solutions="MAX_SOLUTIONS"
-					:solutions="solutions"
-					:valid-input="validInput"
-					:mask-ratio="maskRatio"
-					:valid-puzzle="validPuzzle"
-					:solvable="solvable"
-				/>
-			</div>
-			<div
-				v-else
-				class="text-center text-lg pt-4 pb-6 px-6"
-			>
-				{{ $t('PuzzleEditor.select-grid-dimensions-to-start') }}
-			</div>
-		</transition>
-	</div>
+					{{ $t('PuzzleEditor.select-grid-dimensions-to-start') }}
+				</div>
+			</transition>
+		</FullWidthCardContent>
+	</FullWidthCardBlock>
 	
 	<div
 		class="bg-white rounded-xl shadow-md shadow-black/5 w-full full-bleed pl-6 pr-2 pt-2 pb-2"
