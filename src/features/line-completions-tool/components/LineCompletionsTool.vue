@@ -6,9 +6,7 @@
 			novalidate
 			@submit.prevent="onSubmit($event as SubmitEvent)"
 		>
-			<label class="pr-3 pb-2 pt-2 py font-bold text-gray-600 tracking-wide w-full" for="lineInput">
-				Input
-			</label>
+			<label class="pr-3 pb-2 pt-2 py font-bold text-gray-600 tracking-wide w-full" for="lineInput">{{ $t('LineAnalysisTool.input') }}</label>
 			<div class="flex w-full gap-x-2">
 				<input
 					id="lineInput"
@@ -22,9 +20,9 @@
 					maxlength="20"
 					pattern="[10.x_ \-]+"
 					autocomplete="off"
-					title="A line with '1's, '0's, and '.'s only."
+					:title="$t('LineAnalysisTool.line-input-title-hint')"
 				>
-				<BaseButton type="submit">Check</BaseButton>
+				<BaseButton type="submit">{{ $t('LineAnalysisTool.input-btn-label') }}</BaseButton>
 			</div>
 
 		</form>
@@ -32,9 +30,7 @@
 	</div>
 
 	<div>
-		<BasicListHeader>
-			Details
-		</BasicListHeader>
+		<BasicListHeader>{{ $t('LineAnalysisTool.details.title') }}</BasicListHeader>
 		<BasicLinkList class="px-6 py-4 flex flex-col">
 			<LineCompletionsLineDetails
 				:line="validatedLine"
@@ -45,9 +41,7 @@
 	</div>
 
 	<div>
-		<BasicListHeader>
-			Result
-		</BasicListHeader>
+		<BasicListHeader>{{ $t('LineAnalysisTool.results.title') }}</BasicListHeader>
 		<BasicLinkList class="px-6 py-4 flex flex-col">
 			
 			<LineCompletionsCombinedResult
@@ -61,9 +55,7 @@
 	</div>
 
 	<div>
-		<BasicListHeader>
-			Valid line completions
-		</BasicListHeader>
+		<BasicListHeader>{{ $t('LineAnalysisTool.valid-line-completions') }}</BasicListHeader>
 		<BasicLinkList class="px-6 py-4 flex flex-col">
 			
 			<LineCompletionsValidCompletions

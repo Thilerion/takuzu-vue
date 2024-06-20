@@ -1,0 +1,19 @@
+{
+	"LineAnalysisTool": {
+		"details": {
+			"line-size": "Line size:",
+			"counts": "Counts",
+			"required": "Required",
+			"remaining": "Remaining",
+			"title": "Details"
+		},
+		"invalid-no-completions-found": "Invalid: no completions found",
+		"input": "Input",
+		"line-input-title-hint": "A line with '1's, '0's, and '.'s only.",
+		"input-btn-label": "Check",
+		"results": {
+			"title": "Result"
+		},
+		"valid-line-completions": "Valid line completions"
+	}
+}

@@ -174,5 +174,6 @@
 	},
 	"Paginate": {
 		"amount-per-page": "Amount per page"
-	}
+	},
+	"n-a": "n/a"
 }

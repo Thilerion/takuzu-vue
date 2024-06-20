@@ -1,3 +1,3 @@
 <template>
-<pre>n/a</pre>
+<pre>{{ $t('n-a') }}</pre>
 </template>

@@ -1,3 +1,3 @@
 <template>
-<pre>Invalid: no completions found</pre>
+<pre>{{ $t('LineAnalysisTool.invalid-no-completions-found') }}</pre>
 </template>

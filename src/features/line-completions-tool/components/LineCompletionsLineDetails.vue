@@ -1,6 +1,6 @@
 <template>
 <div v-if="line != null">
-	<p class="mb-4 mt-2 text-gray-700">Line size: <strong class="font-medium">{{ length }}</strong></p>
+	<p class="mb-4 mt-2 text-gray-700">{{ $t('LineAnalysisTool.details.line-size') }} <strong class="font-medium">{{ length }}</strong></p>
 	<table v-if="counts && remaining && required" class="details-table table-auto border border-gray-300">
 		<thead>
 			<tr>
@@ -12,19 +12,19 @@
 		</thead>
 		<tbody>
 			<tr>
-				<td>Counts</td>
+				<td>{{ $t('LineAnalysisTool.details.counts') }}</td>
 				<td>{{ counts[ZERO] }}</td>
 				<td>{{ counts[ONE] }}</td>
 				<td>{{ counts[EMPTY] }}</td>
 			</tr>
 			<tr>
-				<td>Required</td>
+				<td>{{ $t('LineAnalysisTool.details.required') }}</td>
 				<td>{{ required[ZERO] }}</td>
 				<td>{{ required[ONE] }}</td>
 				<td rowspan="2" class="cell-na"></td>
 			</tr>
 			<tr>
-				<td>Remaining</td>
+				<td>{{ $t('LineAnalysisTool.details.remaining') }}</td>
 				<td :class="{'remaining-err': errorRemaining[ZERO]}">{{ remaining[ZERO] }}</td>
 				<td :class="{'remaining-err': errorRemaining[ONE]}">{{ remaining[ONE] }}</td>
 			</tr>

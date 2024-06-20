@@ -1,0 +1,19 @@
+{
+	"LineAnalysisTool": {
+		"details": {
+			"line-size": "Lijn lengte:",
+			"counts": "Aantal",
+			"required": "Benodigd",
+			"remaining": "Resterend",
+			"title": "Details"
+		},
+		"invalid-no-completions-found": "Ongeldig: geen lijninvullingen gevonden",
+		"input": "Invoer",
+		"line-input-title-hint": "Een lijn met alleen 1-en, 0-en, en punten.",
+		"input-btn-label": "Controleer",
+		"results": {
+			"title": "Resultaat"
+		},
+		"valid-line-completions": "Geldige lijninvullingen"
+	}
+}
