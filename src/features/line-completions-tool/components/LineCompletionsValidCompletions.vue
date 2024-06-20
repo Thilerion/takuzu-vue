@@ -1,7 +1,11 @@
 <template>
 <div>
+	<slot
+		v-if="isInvalidLine"
+		name="invalid"
+	/>
 	<div
-		v-if="input != null && completions != null && cappedCompletions != null"
+		v-else-if="!isEmptyInput && completions != null && cappedCompletions != null && cappedCompletions.length > 0"
 		class="flex flex-col gap-y-1"
 	>
 		<LineCompletionsLineMarkup
@@ -11,10 +15,7 @@
 		/>
 		<div v-if="remaining > 0" class="mt-2">... and {{ remaining }} more</div>
 	</div>
-	<slot
-		v-else-if="input != null && completions == null"
-		name="invalid"
-	/>
+	
 	<slot
 		v-else
 		name="fallback"
@@ -34,6 +35,13 @@ const props = defineProps<{
 	completions: LineArrSymbolPermutations | null,
 	result: null | PuzzleValueLine
 }>();
+
+const isInvalidLine = computed(() => {
+	return props.input != null && props.result == null;
+})
+const isEmptyInput = computed(() => {
+	return props.input == null;
+})
 
 const SHOW_MAX = 20;
 const amount = computed(() => {
