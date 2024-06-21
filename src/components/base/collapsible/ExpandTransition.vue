@@ -1,15 +1,16 @@
 <template>
 <transition
 	name="t-expand"
-	@enter="(el) => enter(el as HTMLElement)"
-	@after-enter="(el) => afterEnter(el as HTMLElement)"
-	@leave="(el) => leave(el as HTMLElement)"
-	@after-leave="afterLeave"
+	@enter="(el) => onEnter(el as HTMLElement)"
+	@after-enter="(el) => onAfterEnter(el as HTMLElement)"
+	@leave="(el) => onLeave(el as HTMLElement)"
+	@after-leave="onAfterLeave"
 ><template v-if="show"><slot /></template></transition>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
+import { useCollapseTransition } from './use-collapse-transition.js';
 
 const props = withDefaults(defineProps<{
 	duration?: number,
@@ -25,50 +26,16 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits(['after-enter', 'after-leave']);
 
-const baseHeight = ref(0);
+const {
+	expectedHeight: baseHeight,
+	onEnter, onAfterEnter,
+	onLeave, onAfterLeave
+} = useCollapseTransition(0, emit);
 
 const duration = computed(() => {
 	const baseDuration = (props.durationPer100Px != null && baseHeight.value > 0) ? baseHeight.value / 100 * props.durationPer100Px : props.duration;
 	return Math.round(Math.min(baseDuration, props.maxDuration));
 })
-
-function enter(el: HTMLElement) {
-	const rect = el.getBoundingClientRect();	
-	el.style.width = rect.width + 'px';
-	el.style.position = 'absolute';
-	el.style.visibility = 'hidden';
-	el.style.height = 'auto';
-
-	const height = getComputedStyle(el).height;
-	baseHeight.value = parseFloat(height.slice(0, -2));
-	el.style.width = '';
-	el.style.position = '';
-	el.style.visibility = '';
-	el.style.height = '0';
-
-	// force repaint
-	getComputedStyle(el).height;
-
-	el.style.height = height;
-}
-function afterEnter(el: HTMLElement) {
-	el.style.height = 'auto';
-	emit('after-enter');
-}
-function leave(el: HTMLElement) {
-	const rect = el.getBoundingClientRect();
-	baseHeight.value = rect.height;
-
-	el.style.height = rect.height + 'px';
-
-	// force repaint
-	getComputedStyle(el).height;
-
-	el.style.height = '0px';
-}
-function afterLeave() {
-	emit('after-leave');
-}
 </script>
 
 <style>
