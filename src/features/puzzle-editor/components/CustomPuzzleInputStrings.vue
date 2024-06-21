@@ -17,7 +17,11 @@
 		</div>
 	</BaseCollapsibleTrigger>
 	<BaseCollapsibleContent
-		:duration="200"
+		:duration-config="{
+			max: 1400,
+			min: 150,
+			maxAtHeight: 1200
+		}"
 	>
 		<div ref="el">
 			<div class="pt-4 pb-2 pr-4 flex gap-y-2 w-full flex-col">

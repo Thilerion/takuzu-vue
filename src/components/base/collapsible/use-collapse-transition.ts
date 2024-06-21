@@ -9,7 +9,7 @@ export const useCollapseTransition = (
 	_expectedHeight: MaybeRef<number>,
 	emit: CollapseTransitionEmits
 ) => {
-	// A "best guess" as to the height of the (expanded) element
+	// A "best guess" as to the height of the (expanded) element, used for calculating the transition duration
 	const expectedHeight = isRef(_expectedHeight) ? _expectedHeight : ref(_expectedHeight);
 
 	const onEnter = (el: HTMLElement) => {

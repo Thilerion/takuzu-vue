@@ -11,20 +11,35 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useCollapseTransition } from './use-collapse-transition.js';
+import { watchEffect } from 'vue';
 
-export interface ExpandTransitionDurationProps {
-	duration?: number,
-	durationPer100Px?: number,
-	maxDuration?: number,
+export type ExpandTransitionDurationConfig = {
+	/** Maximum duration of the transition in milliseconds */
+	max: number;
+	/** Height at which maxDuration is reached */
+	maxAtHeight: number;
+	/** Minimum duration of the transition in milliseconds */
+	min: number;
 }
+export type ExpandTransitionProps = {
+	/** Whether the transition is currently open */
+	show: boolean;
+	/** Duration of the transition in milliseconds */
+	duration?: number;
+	/** Advanced duration configuration, which overrides duration */
+	durationConfig?: ExpandTransitionDurationConfig;
+}
+export type ExpandTransitionDurationProps = Pick<ExpandTransitionProps, 'durationConfig' | 'duration'>;
 
-const props = withDefaults(defineProps<ExpandTransitionDurationProps & {
-	show?: boolean
-}>(), {
+const props = withDefaults(defineProps<ExpandTransitionProps>(), {
 	duration: 500,
-	durationPer100Px: undefined,
-	maxDuration: 1000,
-	show: true
+	show: true,
+	durationConfig: undefined
+})
+
+const useDurationConfig = computed((): null | ExpandTransitionDurationConfig => {
+	if (props.durationConfig != null) return props.durationConfig;
+	return null;
 })
 
 const emit = defineEmits(['after-enter', 'after-leave']);
@@ -35,32 +50,63 @@ const {
 	onLeave, onAfterLeave
 } = useCollapseTransition(0, emit);
 
-const duration = computed(() => {
-	const baseDuration = (props.durationPer100Px != null && baseHeight.value > 0) ? baseHeight.value / 100 * props.durationPer100Px : props.duration;
-	return Math.round(Math.min(baseDuration, props.maxDuration));
+const durationMs = computed((): number => {
+	if (useDurationConfig.value == null) return props.duration;
+	return calculateDuration(baseHeight.value, useDurationConfig.value!);
 })
+
+watchEffect(() => {
+	console.log({ durationMs: durationMs.value });
+})
+
+function calculateDuration(
+	height: number,
+	conf: ExpandTransitionDurationConfig
+): number {
+	const { max, maxAtHeight, min } = conf;
+    const normalizedHeight = Math.min(height, maxAtHeight) / maxAtHeight;
+    return min + (max - min) * Math.log1p(normalizedHeight) / Math.log1p(1);
+}
 </script>
 
 <style>
 .t-expand-enter-active,
 .t-expand-leave-active {
-  transition: height calc(v-bind(duration) * 1ms) ease-in-out;
+  transition: height calc(v-bind(durationMs) * 1ms) ease-in-out;
   overflow: hidden;
 }
 
 .t-expand-enter-active > * {
-	transition: opacity calc(v-bind(duration) * 0.4ms) ease-in-out calc(v-bind(duration) * 0.1ms);
+	animation: innerFadeIn calc(v-bind(durationMs) * 1ms);
 }
 .t-expand-leave-active > * {
-	transition: opacity calc(v-bind(duration) * 0.4ms) ease-out calc(v-bind(duration) * 0.1ms);
+	animation: innerFadeOut calc(v-bind(durationMs) * 1ms);
 }
-.t-expand-enter-from > *,
-.t-expand-leave-to > * {
-	opacity: 0!important;
+
+@keyframes innerFadeIn {
+	0% {
+		opacity: 0;
+	}
+	20% {
+		opacity: 0;
+	}
+	80% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 1;
+	}
 }
-.t-expand-enter > *,
-.t-expand-leave > * {
-	opacity: 1!important;
+@keyframes innerFadeOut {
+	0% {
+		opacity: 1;
+	}
+	60% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 0;
+	}
 }
 
 .t-expand-enter-from,
@@ -70,7 +116,8 @@ const duration = computed(() => {
 </style>
 
 <style scoped>
-:slotted(div) {
+/* Targets the slotted element only */
+* {
 	@apply transform-gpu will-change-[height];
 }
 </style>

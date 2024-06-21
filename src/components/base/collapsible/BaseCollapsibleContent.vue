@@ -18,11 +18,10 @@ import { useCollapsible } from './use-collapsible.js';
 
 const props = defineProps<ExpandTransitionDurationProps>();
 const transitionProps = computed((): ExpandTransitionDurationProps => {
-	return {
-		duration: props.duration,
-		durationPer100Px: props.durationPer100Px,
-		maxDuration: props.maxDuration,
-	}
+	const result: ExpandTransitionDurationProps = {};
+	if ('duration' in props) result.duration = props.duration;
+	if ('durationConfig' in props) result.durationConfig = props.durationConfig;
+	return result;
 })
 
 const {
