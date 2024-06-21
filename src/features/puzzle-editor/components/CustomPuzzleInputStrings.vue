@@ -1,8 +1,12 @@
 <template>
-<div>
-	<button
+<BaseCollapsible
+	#="{ isOpen: showPuzzleStrings}"
+	@after-open="scrollToElement"
+>
+	<BaseCollapsibleTrigger
 		class="w-full pr-3 py-2"
-		@click="showPuzzleStrings = !showPuzzleStrings"
+		event-name="click"
+		tag="button"
 	>
 		<div class="w-full flex justify-between">
 			<span class="font-bold text-gray-600 tracking-wide">{{ $t('PuzzleEditor.puzzle-strings.title') }}</span>
@@ -11,11 +15,9 @@
 				:class="{ 'rotate-180': showPuzzleStrings }"
 			/>
 		</div>
-	</button>
-	<ExpandTransition
+	</BaseCollapsibleTrigger>
+	<BaseCollapsibleContent
 		:duration="200"
-		:show="showPuzzleStrings"
-		@after-enter="scrollToElement"
 	>
 		<div ref="el">
 			<div class="pt-4 pb-2 pr-4 flex gap-y-2 w-full flex-col">
@@ -36,8 +38,8 @@
 				/>
 			</div>
 		</div>
-	</ExpandTransition>
-</div>
+	</BaseCollapsibleContent>
+</BaseCollapsible>
 </template>
 
 <script setup lang="ts">
@@ -52,7 +54,6 @@ const props = defineProps<{
 	grid: PuzzleGrid | null;
 }>();
 
-const showPuzzleStrings = ref(false);
 const el = ref<HTMLElement>();
 const scrollToElement = () => {
 	if (el.value) {
