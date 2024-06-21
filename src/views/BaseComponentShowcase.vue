@@ -126,6 +126,20 @@
 				</div>
 			</div>
 		</div>
+
+		<div class="showcase-block">
+			<h2 class="text-xl mb-6 pb-1 font-medium border-b self-stretch">Collapsible</h2>
+			<div class="flex flex-col gap-y-4">
+				<BaseCollapsible>
+					<BaseCollapsibleTrigger>
+						<BaseButton>Toggle!!</BaseButton>
+					</BaseCollapsibleTrigger>
+					<BaseCollapsibleContent>
+						HI THERE!!
+					</BaseCollapsibleContent>
+				</BaseCollapsible>
+			</div>
+		</div>
 	</section>
 	
 </div>
