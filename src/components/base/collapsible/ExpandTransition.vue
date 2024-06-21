@@ -12,10 +12,13 @@
 import { computed } from 'vue';
 import { useCollapseTransition } from './use-collapse-transition.js';
 
-const props = withDefaults(defineProps<{
+export interface ExpandTransitionDurationProps {
 	duration?: number,
 	durationPer100Px?: number,
 	maxDuration?: number,
+}
+
+const props = withDefaults(defineProps<ExpandTransitionDurationProps & {
 	show?: boolean
 }>(), {
 	duration: 500,

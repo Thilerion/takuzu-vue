@@ -130,7 +130,13 @@
 		<div class="showcase-block">
 			<h2 class="text-xl mb-6 pb-1 font-medium border-b self-stretch">Collapsible</h2>
 			<div class="flex flex-col gap-y-4">
-				<BaseCollapsible>
+				<div>Current state: {{ collapsibleCurrentState }}</div>
+				<BaseCollapsible
+					@after-close="collapsibleCurrentState = 'closed'"
+					@after-open="collapsibleCurrentState = 'open'"
+					@toggled="collapsibleCurrentState = `going to ${$event}`"
+					default-open
+				>
 					<BaseCollapsibleTrigger>
 						<BaseButton>Toggle!!</BaseButton>
 					</BaseCollapsibleTrigger>
@@ -169,6 +175,8 @@ const openModal = (refName: keyof typeof modalRefs) => {
 }
 
 const showDialog1 = ref(false);
+
+const collapsibleCurrentState = ref('nothing');
 </script>
 
 <style scoped>

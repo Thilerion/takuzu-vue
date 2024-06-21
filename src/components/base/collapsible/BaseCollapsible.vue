@@ -8,9 +8,8 @@
 </template>
 
 <script setup lang="ts">
-import type { Component } from "vue";
-import { ProvideCollapsibleContext } from "./use-collapsible.js";
-import { ref } from "vue";
+import { ProvideCollapsibleContext, type BaseCollapsibleEmits } from "./use-collapsible.js";
+import { ref, type Component } from "vue";
 
 const props = withDefaults(defineProps<{
 	defaultOpen?: boolean,
@@ -20,8 +19,9 @@ const props = withDefaults(defineProps<{
 	tag: 'div'
 });
 
-const isOpen = ref(props.defaultOpen);
-const setIsOpen = (val: boolean) => isOpen.value = val;
+const emit = defineEmits<BaseCollapsibleEmits>();
 
-const { toggle } = ProvideCollapsibleContext(isOpen, setIsOpen);
+const isOpen = ref(props.defaultOpen);
+
+const { toggle } = ProvideCollapsibleContext(isOpen, emit);
 </script>

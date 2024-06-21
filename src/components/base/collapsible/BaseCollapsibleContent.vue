@@ -1,8 +1,9 @@
 <template>
 <ExpandTransition
+	v-bind="transitionProps"
 	:show="isOpen"
-	@after-enter="$emit('after-enter')"
-	@after-leave="$emit('after-leave')"
+	@after-enter="transitionHooks.afterEnter"
+	@after-leave="transitionHooks.afterLeave"
 >
 	<div v-bind="$attrs">
 		<slot></slot>
@@ -11,11 +12,23 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
+import type { ExpandTransitionDurationProps } from './ExpandTransition.vue';
 import { useCollapsible } from './use-collapsible.js';
 
-const { isOpen } = useCollapsible();
+const props = defineProps<ExpandTransitionDurationProps>();
+const transitionProps = computed((): ExpandTransitionDurationProps => {
+	return {
+		duration: props.duration,
+		durationPer100Px: props.durationPer100Px,
+		maxDuration: props.maxDuration,
+	}
+})
 
-const emit = defineEmits(['after-enter', 'after-leave']);
+const {
+	isOpen,
+	transitionHooks
+} = useCollapsible();
 
 // Disable Vue's inheritAttrs
 defineOptions({
