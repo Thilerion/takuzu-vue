@@ -147,7 +147,36 @@
 			</div>
 		</div>
 	</section>
+
+	<FullWidthPanelLayout class="fwp-layout-showcase">
+		<FullWidthPanelBasicCard>
+			<template #sectionTitle>Section title</template>
+			<template #content>
+				<p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Est rerum, mollitia nihil voluptas fugit vero quae recusandae iusto nobis ex!</p>
+				<p>Mollitia alias, quae laboriosam, soluta sint ducimus voluptatum assumenda eaque optio vitae quas nemo velit, dicta incidunt libero non dolor!</p>
+				<p>Animi saepe error doloribus dignissimos illum praesentium odio accusamus officia molestiae in possimus natus, dicta assumenda ipsam ipsa dolorem maxime?</p>
+			</template>
+		</FullWidthPanelBasicCard>
+		<FullWidthPanelBasicCard>
+			<template #cardTitle>Card title</template>
+			<template #content>
+				<p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Est rerum, mollitia nihil voluptas fugit vero quae recusandae iusto nobis ex!</p>
+				<p>Mollitia alias, quae laboriosam, soluta sint ducimus voluptatum assumenda eaque optio vitae quas nemo velit, dicta incidunt libero non dolor!</p>
+				<p>Animi saepe error doloribus dignissimos illum praesentium odio accusamus officia molestiae in possimus natus, dicta assumenda ipsam ipsa dolorem maxime?</p>
+			</template>
+		</FullWidthPanelBasicCard>
+
+		<FullWidthPanelCollapsible>
+			<template #cardTitle>Collapsible section</template>
+			<template #content>
+				<p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Amet nostrum nulla aspernatur labore explicabo rerum veniam dolores voluptatum voluptatibus porro!</p>
+				<p>Et voluptas corrupti animi iste autem, provident distinctio voluptatibus molestiae aliquid iusto recusandae impedit ullam. Facilis, laudantium. Veniam, quaerat labore?</p>
+				<p>Molestias culpa quo, possimus voluptates consectetur dolores eius numquam assumenda sunt expedita. Cum, consequuntur quia autem quo illum numquam id.</p>
+			</template>
+		</FullWidthPanelCollapsible>
+	</FullWidthPanelLayout>
 	
+	<div class="w-full my-12"></div>
 </div>
 </template>
 
@@ -185,6 +214,10 @@ const collapsibleCurrentState = ref('nothing');
 }
 
 .button-col > .btn {
+	@apply mb-4;
+}
+
+.fwp-layout-showcase p:not(:last-child) {
 	@apply mb-4;
 }
 </style>
