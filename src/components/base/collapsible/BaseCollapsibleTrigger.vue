@@ -1,9 +1,14 @@
 <template>
 <template v-if="!withoutWrapper">
-	<component :is="tag" @[eventName]="toggle"><slot /></component>
+	<component
+		:is="tag"
+		@[eventName]="toggle"
+	><slot /></component>
 </template>
 <template v-else>
-	<slot @[eventName]="toggle" />
+	<slot
+		@[eventName]="toggle"
+	/>
 </template>
 </template>
 

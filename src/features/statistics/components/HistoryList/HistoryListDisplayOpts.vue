@@ -28,15 +28,14 @@
 			</select>
 		</label>
 	</div>
-	<div class="bg-white dark:bg-slate-800 border-b dark:border-slate-600 pb-1">
-		<div class="px-0 w-full border-t mt-2 dark:border-slate-600">
-			<button
+	<div class="bg-white dark:bg-slate-800 border-b dark:border-slate-600 pb-1 border-t mt-2">
+		<BaseCollapsible v-slot="{ isOpen }">
+			<BaseCollapsibleTrigger
 				class="flex whitespace-nowrap items-center text-xs text-start px-4 pb-2 pt-3 w-full"
-				@click="() => showFilters = !showFilters"
 			>
 				<icon-ic-outline-filter-list class="flex-none mb-0.5 mr-1 w-5 h-5 inline-block text-sm text-gray-600 dark:text-slate-300" />
 				<div class="flex-1 min-w-32">
-					<span v-if="showFilters">{{ $t('Statistics.History.filter.hide-filters') }}</span>
+					<span v-if="isOpen">{{ $t('Statistics.History.filter.hide-filters') }}</span>
 					<span v-else>{{ $t('Statistics.History.filter.show-filters') }}</span>
 					<span
 						class="ml-1 transition-opacity opacity-100 font-medium"
@@ -45,29 +44,26 @@
 				</div>
 				<icon-ic-outline-keyboard-arrow-down
 					class="transition-transform duration-500 text-base text-gray-700 dark:text-slate-200"
-					:class="showFilters ? 'rotate-180' : 'rotate-0'"
+					:class="isOpen ? 'rotate-180' : 'rotate-0'"
 				/>
-			</button>
-		</div>
-
-		<ExpandTransition :show="showFilters">
-			<HistoryListFilters
-				v-model:favorite="favoriteModel"
-				v-model:hasNote="hasNoteModel"
-				v-model:difficulty="difficultyModel"
-				v-model:dimensions="dimensionsModel"
-				v-model:records="recordsModel"
-				:active-filters="numActiveFilters"
-				@clear-filters="clearAllFilters"
-			/>
-		</ExpandTransition>
-
+			</BaseCollapsibleTrigger>
+			<BaseCollapsibleContent>
+				<HistoryListFilters
+					v-model:favorite="favoriteModel"
+					v-model:hasNote="hasNoteModel"
+					v-model:difficulty="difficultyModel"
+					v-model:dimensions="dimensionsModel"
+					v-model:records="recordsModel"
+					:active-filters="numActiveFilters"
+					@clear-filters="clearAllFilters"
+				/>
+			</BaseCollapsibleContent>
+		</BaseCollapsible>
 	</div>
 </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
 import { useHistoryFilterSortPaginate } from '../../composables/history-filter-sort-paginate.js';
 import { computed } from 'vue';
 import type { DifficultyKey, DimensionStr } from '@/lib/types.js';
@@ -129,8 +125,6 @@ const recordsModel = computed({
 		else records.value = val as HistoryRecordFilter;
 	}
 })
-
-const showFilters = ref(false);
 </script>
 
 <style scoped>
