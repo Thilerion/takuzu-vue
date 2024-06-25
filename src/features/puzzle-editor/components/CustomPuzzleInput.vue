@@ -65,14 +65,8 @@
 			</transition>
 		</FullWidthCardContent>
 	</FullWidthCardBlock>
-	
-	<div
-		class="bg-white rounded-xl shadow-md shadow-black/5 w-full full-bleed pl-6 pr-2 pt-2 pb-2"
-	>
-		<div class="">
-			<CustomPuzzleInputStrings :grid="isValidGrid ? puzzleGridBase : null" />
-		</div>
-	</div>
+
+	<CustomPuzzleInputStrings :grid="isValidGrid ? puzzleGridBase : null" />
 </FullWidthCardLayout>
 </template>
 

@@ -1,28 +1,11 @@
 <template>
-<BaseCollapsible
-	#="{ isOpen: showPuzzleStrings}"
-	@after-open="scrollToElement"
+<FullWidthCardCollapsibleBlock
+	@after-enter="scrollToElement"
 >
-	<BaseCollapsibleTrigger
-		class="w-full pr-3 py-2"
-		event-name="click"
-		tag="button"
-	>
-		<div class="w-full flex justify-between">
-			<span class="font-bold text-gray-600 tracking-wide">{{ $t('PuzzleEditor.puzzle-strings.title') }}</span>
-			<icon-ic-outline-keyboard-arrow-down
-				class="ml-auto transition-transform duration-500 text-base"
-				:class="{ 'rotate-180': showPuzzleStrings }"
-			/>
-		</div>
-	</BaseCollapsibleTrigger>
-	<BaseCollapsibleContent
-		:duration-config="{
-			max: 1400,
-			min: 150,
-			maxAtHeight: 1200
-		}"
-	>
+	<template #header>
+		<FullWidthCardHeading>{{ $t('PuzzleEditor.puzzle-strings.title') }}</FullWidthCardHeading>
+	</template>
+	<template #default>
 		<div ref="el">
 			<div class="pt-4 pb-2 pr-4 flex gap-y-2 w-full flex-col">
 				<CustomPuzzleInputStringBlock
@@ -42,8 +25,8 @@
 				/>
 			</div>
 		</div>
-	</BaseCollapsibleContent>
-</BaseCollapsible>
+	</template>
+</FullWidthCardCollapsibleBlock>
 </template>
 
 <script setup lang="ts">

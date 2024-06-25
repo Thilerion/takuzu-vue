@@ -29,7 +29,6 @@ const {
 	transitionHooks
 } = useCollapsible();
 
-// Disable Vue's inheritAttrs
 defineOptions({
 	inheritAttrs: false
 })

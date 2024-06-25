@@ -11,8 +11,11 @@
 					/>
 				</div>
 			</button>
-			<ExpandTransition :show="expanded">
-				<slot :expanded="expanded" :set-expanded="(val: boolean) => expanded = val" />
+			<ExpandTransition :show="expanded" @after-enter="$emit('after-enter')">
+				<slot
+					:expanded="expanded"
+					:set-expanded="(val: boolean) => expanded = val"
+				/>
 			</ExpandTransition>
 		</FullWidthCardContent>
 	</template>
@@ -21,4 +24,8 @@
 
 <script setup lang="ts">
 const expanded = defineModel<boolean>('expanded', { default: false });
+
+const emit = defineEmits<{
+	(e: 'after-enter'): void;
+}>();
 </script>
