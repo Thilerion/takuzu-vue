@@ -1,5 +1,5 @@
 <template>
-<BasicLinkListItem wrapper-classes="py-0">
+<div>
 	<button
 		:disabled="debugMode"
 		class="app-v-btn w-full h-full grid text-start gap-x-8 justify-start content-center"
@@ -18,7 +18,7 @@
 			<div class="text-ellipsis overflow-x-hidden max-w-full min-w-0 whitespace-nowrap text-xs text-gray-800/50 col-start-2 row-start-2">{{ shownPrevAppVersion }}</div>
 		</template>
 	</button>
-</BasicLinkListItem>
+</div>
 </template>
 
 <script setup lang="ts">

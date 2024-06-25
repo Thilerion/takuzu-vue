@@ -1,5 +1,5 @@
 <template>
-<div class="flex items-center h-14">
+<div class="flex items-center">
 	<InputToggle
 		id="wakeLockToggle"
 		v-model="isEnabled"
