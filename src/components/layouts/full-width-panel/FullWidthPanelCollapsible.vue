@@ -4,29 +4,27 @@
 >
 	<BaseCollapsible
 		v-slot="{ isOpen }"
-		class="bg-white rounded-xl fwp-card-shadow"
 		:default-open="defaultOpen"
 	>
-		<BaseCollapsibleTrigger
-			:class="[contentPaddingClass]"
-			class="fwp-card-header fwp-trigger font-medium inline-block text-gray-700/90 dark:text-slate-300 tracking-wide"
-			tag="button"
-		>
-			<slot name="cardTitle">Collapsible block title</slot>
-			<icon-ic-outline-keyboard-arrow-down
-				class="ml-auto transition-transform duration-500 text-base"
-				:class="{ 'rotate-180': isOpen }"
-			/>
-		</BaseCollapsibleTrigger>
-		<BaseCollapsibleContent
-			:class="[contentPaddingClass]"
-		>
-			<div
-				class="fwp-content"
+		<FwpBaseCard>
+			<BaseCollapsibleTrigger
+				:class="[contentPaddingClass]"
+				class="fwp-card-header fwp-trigger"
+				tag="button"
 			>
-				<slot name="content" />			
-			</div>
-		</BaseCollapsibleContent>
+				<FwpBaseTitle tag="div"><slot name="cardTitle">Collapsible block title</slot></FwpBaseTitle>
+				<BaseOpenClosedIcon :open="isOpen" />
+			</BaseCollapsibleTrigger>
+			<BaseCollapsibleContent
+				:class="[contentPaddingClass]"
+			>
+				<div
+					class="fwp-content"
+				>
+					<slot name="content" />			
+				</div>
+			</BaseCollapsibleContent>
+		</FwpBaseCard>
 	</BaseCollapsible>
 </div>
 </template>
@@ -48,10 +46,6 @@ const contentPaddingClass = ref('px-6');
 </script>
 
 <style scoped>
-.fwp-card-shadow {
-	box-shadow: rgba(0, 0, 0, 0.05) 0px 5px 20px, 0 8px 15px -2px rgb(0 0 0 / 0.04);
-}
-
 .fwp-section-title {
 	@apply mb-1;
 }
@@ -69,7 +63,7 @@ const contentPaddingClass = ref('px-6');
 
 /* Collapsible block: specific styles */
 .fwp-trigger {
-	@apply w-full text-start hocus-notouch:bg-gray-100 flex items-center justify-between;
+	@apply w-full rounded-xl text-start hover-notouch:bg-gray-100 hover-hover:active:bg-gray-200  flex items-center justify-between;
 }
 .fwp-collapsible .fwp-content {
 	@apply first:pt-1;

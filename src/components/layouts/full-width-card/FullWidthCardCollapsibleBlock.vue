@@ -5,10 +5,7 @@
 			<button class="w-full py-4" @click="expanded = !expanded">
 				<div class="w-full flex justify-between items-center">
 					<slot name="header" />
-					<icon-ic-outline-keyboard-arrow-down
-						class="ml-auto transition-transform duration-500 text-base"
-						:class="{ 'rotate-180': expanded }"
-					/>
+					<BaseOpenClosedIcon :open="expanded" />
 				</div>
 			</button>
 			<ExpandTransition :show="expanded" @after-enter="$emit('after-enter')">

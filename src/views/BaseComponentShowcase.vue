@@ -132,10 +132,10 @@
 			<div class="flex flex-col gap-y-4">
 				<div>Current state: {{ collapsibleCurrentState }}</div>
 				<BaseCollapsible
+					default-open
 					@after-close="collapsibleCurrentState = 'closed'"
 					@after-open="collapsibleCurrentState = 'open'"
 					@toggled="collapsibleCurrentState = `going to ${$event}`"
-					default-open
 				>
 					<BaseCollapsibleTrigger>
 						<BaseButton>Toggle!!</BaseButton>
@@ -165,6 +165,14 @@
 				<p>Animi saepe error doloribus dignissimos illum praesentium odio accusamus officia molestiae in possimus natus, dicta assumenda ipsam ipsa dolorem maxime?</p>
 			</template>
 		</FullWidthPanelBasicCard>
+		<FullWidthPanelBasicCard>
+			<template #content>
+				<p>This is a card without a title.</p>
+				<p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Est rerum, mollitia nihil voluptas fugit vero quae recusandae iusto nobis ex!</p>
+				<p>Mollitia alias, quae laboriosam, soluta sint ducimus voluptatum assumenda eaque optio vitae quas nemo velit, dicta incidunt libero non dolor!</p>
+				<p>Animi saepe error doloribus dignissimos illum praesentium odio accusamus officia molestiae in possimus natus, dicta assumenda ipsam ipsa dolorem maxime?</p>
+			</template>
+		</FullWidthPanelBasicCard>
 
 		<FullWidthPanelCollapsible>
 			<template #cardTitle>Collapsible section</template>
@@ -176,7 +184,7 @@
 		</FullWidthPanelCollapsible>
 	</FullWidthPanelLayout>
 	
-	<div class="w-full my-12"></div>
+	<div class="w-full h-24"></div>
 </div>
 </template>
 

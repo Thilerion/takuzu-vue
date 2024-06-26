@@ -42,10 +42,7 @@
 						:class="{ 'opacity-70 font-base': numActiveFilters === 0 }"
 					>{{ $t('Statistics.History.filter.n-active-filters', [numActiveFilters]) }}</span>
 				</div>
-				<icon-ic-outline-keyboard-arrow-down
-					class="transition-transform duration-500 text-base text-gray-700 dark:text-slate-200"
-					:class="isOpen ? 'rotate-180' : 'rotate-0'"
-				/>
+				<BaseOpenClosedIcon :open="isOpen" class="text-gray-700 dark:text-slate-200" />
 			</BaseCollapsibleTrigger>
 			<BaseCollapsibleContent>
 				<HistoryListFilters
