@@ -1,6 +1,6 @@
-import type { CellThemeType } from "@/features/settings/types.js";
 import { computed, defineAsyncComponent, markRaw, type Ref } from "vue";
 import { useCellTheme } from "./cell-theme-provider.js";
+import type { CellThemeType } from "../cell-themes.js";
 
 const loadCellComponent = async (themeType: CellThemeType | 'default') => {
 	const module = await import("../components/CellComponents.js");

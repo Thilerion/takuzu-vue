@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
 import { toRaw } from "vue";
 import { getDefaultSettings, loadSettings, saveSettings } from "./settings-ls.js";
-import { cellThemeTypeMap, type SettingsState } from "./types.js";
+import type { SettingsState } from "./types.js";
+import { getCellThemeType } from "../board-cell/cell-themes.js";
 
 export type RulerComponentType = 'coords' | 'count' | null;
 
@@ -10,7 +11,7 @@ export const useSettingsStore = defineStore('settings', {
 
 	getters: {
 		vibrationEnabled: state => state.enableVibration,
-		cellThemeType: state => cellThemeTypeMap[state.cellTheme],
+		cellThemeType: state => getCellThemeType(state.cellTheme),
 		checkButtonEnabled: state => state.checkButton !== 'disabled',
 
 		rulerComponentType: (state): RulerComponentType => {

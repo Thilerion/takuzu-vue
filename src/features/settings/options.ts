@@ -1,4 +1,4 @@
-import type { CellTheme, CellThemeType, RulerType } from './types';
+import type { RulerType } from './types';
 
 export const rulerType = {
 	NONE: '',
@@ -6,16 +6,6 @@ export const rulerType = {
 	COUNT_REMAINING: 'remainingCount',
 	COUNT_CURRENT: 'currentCount'
 } as const satisfies Record<string, RulerType>;
-
-export const CellThemeTypes = {
-	COLORED_TILES: 'coloredTiles',
-	SYMBOLS: 'symbols'
-} as const satisfies Record<string, CellThemeType>;
-export const CellThemes = {
-	CLASSIC: 'classic',
-	TICTACTOE: 'tictactoe',
-	BLUE_RED: 'blue-red'
-} as const satisfies Record<string, CellTheme>;
 
 export const CheckButtonOption = {
 	DISABLED: 'disabled',

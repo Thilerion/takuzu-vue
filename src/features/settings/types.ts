@@ -1,20 +1,11 @@
 import type { SupportedLocale } from "@/i18n/constants.js";
 import type { PuzzleSymbol } from "@/lib/constants";
+import type { CellTheme } from "../board-cell/cell-themes.js";
 
 export const validVibrationStrengths = [0, 18, 32, 45, 60, 76] as const;
 export type ValidVibrationStrength = typeof validVibrationStrengths[number];
 
 export type RulerType = 'coords' | 'remainingCount' | 'currentCount' | '';
-
-export const cellThemeTypeMap = {
-	'classic': 'symbols',
-	'tictactoe': 'symbols',
-	'blue-red': 'coloredTiles'
-} as const satisfies Record<CellTheme, CellThemeType>;
-
-export type CellTheme = 'classic' | 'tictactoe' | 'blue-red';
-export type CellThemeType = 'symbols' | 'coloredTiles';
-export type CellThemeTypeMap = typeof cellThemeTypeMap;
 
 export type CheckButtonOption = 'disabled' | 'ruleViolations' | 'incorrectValues';
 

@@ -1,7 +1,7 @@
 import { useSettingsStore } from "@/features/settings/store.js";
-import { cellThemeTypeMap, type CellTheme, type CellThemeType } from "@/features/settings/types.js"
 import { storeToRefs } from "pinia";
 import { computed, inject, provide, readonly, type App, type ComputedRef, type InjectionKey, type Ref, type Plugin, type MaybeRef, isRef, ref } from "vue"
+import { getCellThemeType, type CellTheme, type CellThemeType } from "../cell-themes.js";
 
 export type CellThemeContext = {
 	cellTheme: Readonly<Ref<CellTheme>>,
@@ -43,7 +43,7 @@ export const useLocalCellTheme = (theme: MaybeRef<CellTheme>) => {
 
 	const cellThemeRef = isRef(theme) ? theme : ref(theme);
 	
-	const themeType = computed(() => cellThemeTypeMap[cellThemeRef.value]);
+	const themeType = computed(() => getCellThemeType(cellThemeRef.value));
 	const { classes } = createCellThemeComputedData(cellThemeRef, themeType);
 	const context: CellThemeContext = {
 		cellTheme: cellThemeRef,

@@ -20,8 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import type { CellTheme } from '../types.js';
-
+import type { CellTheme } from '@/features/board-cell/cell-themes.js';
 
 defineProps<{
 	theme: CellTheme
