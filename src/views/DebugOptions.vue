@@ -6,9 +6,11 @@
 		:transparent="false"
 		back-options="Settings"
 	>Debug Options</PageHeader>
-	<div class="flex-1 text-center flex flex-col">
-		<DebugMenu class="mt-6" />
-		<DebugFeatureToggles class="mt-6" />
+	<div class="flex-1 flex flex-col">
+		<FullWidthPanelLayout>
+			<DebugMenu class="mt-6" />
+			<DebugFeatureToggles class="mt-6" />
+		</FullWidthPanelLayout>
 	</div>
 </div>
 </template>

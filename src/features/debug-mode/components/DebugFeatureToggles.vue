@@ -1,21 +1,20 @@
 <template>
-<div class="text-left">
-	<BasicListHeader>Feature Toggles</BasicListHeader>
-	<BasicLinkList>
-		<BasicLinkListItem
+<FullWidthPanelList class="text-start">
+	<template #sectionTitle>Feature Toggles</template>
+	<template #content>
+		<FullWidthPanelListItem
 			v-for="(feature) in features"
 			:key="feature.value.label"
-			:wrapper-classes="'relative'"
 		>
-			<label class="absolute inset-0 flex items-center justify-start gap-x-4 pl-2">
+			<label class="flex items-center justify-start gap-x-4 pl-2 w-full">
 				<input
 					type="checkbox"
 					:checked="feature.value.toggleValue"
 					@change="updateValueWithDelay(feature, $event)"
 				>{{ feature.value.label }}</label>
-		</BasicLinkListItem>
-	</BasicLinkList>
-</div>
+		</FullWidthPanelListItem>
+	</template>
+</FullWidthPanelList>
 </template>
 
 <script setup lang="ts">

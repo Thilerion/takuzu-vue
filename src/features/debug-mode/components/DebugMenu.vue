@@ -1,26 +1,31 @@
 <template>
-<div class="text-left">
-	<BasicListHeader>Debug mode options</BasicListHeader>
-	<BasicLinkList>
-		<BasicLinkListItem>
-			<router-link class="list-btn" to="/showcase">Open component showcase</router-link>
-		</BasicLinkListItem>
-		<BasicLinkListItem><button class="list-btn" @click="clearPuzzleDbAction">Clear pregen puzzle db</button></BasicLinkListItem>
-		<BasicLinkListItem><button class="list-btn" @click="initPregenPuzzles">Pregen puzzles</button></BasicLinkListItem>
-	</BasicLinkList>
-	<div class="db-results relative pt-4">
-		<transition-group name="t-note">
-			<div
-				v-for="value in clearPuzzlesResult"
-				:key="value.id"
-				class="h-8 flex items-center justify-start overflow-hidden will-change-[height]"
-			>
-				<p class="text-sm text-left px-6 font-bold tracking-wider text-gray-600">{{ value.str }}</p>
-			</div>
-			
-		</transition-group>
-	</div>
-</div>
+<FullWidthPanelList class="text-start">
+	<template #sectionTitle>Debug mode options</template>
+	<template #content>
+		<FullWidthPanelListItem tag="router-link" to="/showcase">Open component showcase</FullWidthPanelListItem>
+		<FullWidthPanelListItem tag="button" @click="clearPuzzleDbAction">Clear pregen puzzle db
+		</FullWidthPanelListItem>
+		<FullWidthPanelListItem tag="button" @click="initPregenPuzzles">Pregen puzzles</FullWidthPanelListItem>
+		<FullWidthPanelListItem
+			v-if="clearPuzzlesResult.length > 0"
+			class="flex-col"
+		>
+			<transition-group name="t-note">
+				<div
+					v-for="value in clearPuzzlesResult"
+					:key="value.id"
+					class="h-8 w-full overflow-hidden will-change-[height]"
+				>
+					<p
+						class="text-sm inline-block w-full text-left font-bold tracking-wider text-gray-600"
+					>{{ value.str }}</p>
+				</div>
+
+			</transition-group>
+		</FullWidthPanelListItem>
+
+	</template>
+</FullWidthPanelList>
 </template>
 
 <script setup lang="ts">
@@ -31,13 +36,13 @@ const clearPuzzlesResult = ref<{ str: string, id: number }[]>([]);
 let notificationId = -1;
 const addDbResultNotification = (str: string, timeout = 2000) => {
 	const id = ++notificationId;
-	clearPuzzlesResult.value.push({str, id});
+	clearPuzzlesResult.value.push({ str, id });
 	window.setTimeout(() => {
 		clearPuzzlesResult.value = clearPuzzlesResult.value.filter(val => val.id !== id);
 	}, timeout);
 }
 
-const clearPuzzleDbAction = async () => {	
+const clearPuzzleDbAction = async () => {
 	try {
 		addDbResultNotification('Resetting pregenerated puzzle database now...');
 		const result = await Promise.all([
@@ -48,7 +53,7 @@ const clearPuzzleDbAction = async () => {
 		console.log(clearDbResult);
 		addDbResultNotification('Successfully cleared puzzle database.');
 		return true;
-	} catch(e) {
+	} catch (e) {
 		console.warn(e);
 		addDbResultNotification('Error while clearing puzzles...\n' + e);
 		return false;
@@ -85,13 +90,17 @@ const initPregenPuzzles = async () => {
 .t-note-enter-active {
 	transition: opacity 0.1s 0.05s, height 0.2s;
 }
+
 .t-note-leave-active {
 	transition: opacity 1s ease;
 	@apply transition-all duration-1000 ease-in-out h-5 delay-500;
 }
-.t-note-enter-from, .t-note-leave-to {
+
+.t-note-enter-from,
+.t-note-leave-to {
 	@apply opacity-0 h-0;
 }
+
 .t-note-move {
 	transition: all 0.2s ease 0.6s;
 }
