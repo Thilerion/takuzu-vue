@@ -54,9 +54,9 @@
 			</FullWidthPanelListItem>
 		
 			<FullWidthPanelListItem
+				v-if="isDebugModeEnabled"
 				class="h-14"
 				no-padding-y
-				v-if="isDebugModeEnabled"
 				tag="router-link"
 				to="/debug-options"
 			>{{ $t('Settings.dev.developer-options') }}</FullWidthPanelListItem>

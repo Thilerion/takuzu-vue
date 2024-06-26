@@ -6,14 +6,27 @@
 		:transparent="false"
 		hide-back
 	>Tools</PageHeader>
-	<div class="flex-1 text-center flex flex-col">
-		<div class="text-left first:mt-4">
-			<BasicLinkList class="divide-y divide-gray-150 bg-white px-4 rounded-xl shadow-lg transition-all duration-700">
-				<BasicLinkListItem><router-link to="/editor">{{ $t('PuzzleEditor.tools-link-text') }}</router-link></BasicLinkListItem>
-				<BasicLinkListItem v-if="analysisToolEnabled"><router-link to="/analysis">Puzzle analysis and solver</router-link></BasicLinkListItem>
-				<BasicLinkListItem v-if="lineCompletionsToolEnabled"><router-link to="/line-completions">Line completions</router-link></BasicLinkListItem>
-			</BasicLinkList>
-		</div>
+	<div class="flex-1 flex flex-col">
+		<FullWidthPanelLayout class="text-left first:mt-4">
+			<FullWidthPanelList class="transition-all duration-700">
+				<template #content>
+					<FullWidthPanelListItem
+						tag="router-link"
+						to="/editor"
+					>{{ $t('PuzzleEditor.tools-link-text') }}</FullWidthPanelListItem>
+					<FullWidthPanelListItem
+						v-if="analysisToolEnabled"
+						tag="router-link"
+						to="/analysis"
+					>Puzzle analysis and solver</FullWidthPanelListItem>
+					<FullWidthPanelListItem
+						v-if="lineCompletionsToolEnabled"
+						tag="router-link"
+						to="/line-completions"
+					>Line completions</FullWidthPanelListItem>
+				</template>
+			</FullWidthPanelList>
+		</FullWidthPanelLayout>
 			
 	</div>
 </div>
