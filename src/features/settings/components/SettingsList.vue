@@ -1,71 +1,76 @@
 <template>
-<FullWidthCardLayout>
-	<FullWidthCardBlock>
-		<FullWidthCardList>
-			<FullWidthCardListItem>
+<FullWidthPanelLayout>
+	<FullWidthPanelList>
+		<template #content>
+			<FullWidthPanelListItem class="py-4">
 				<LanguageSetting v-model="language" />
-			</FullWidthCardListItem>
-			<FullWidthCardListItem>
+			</FullWidthPanelListItem>
+			<FullWidthPanelListItem class="py-4">
 				<DarkModeSetting />
-			</FullWidthCardListItem>
-			<FullWidthCardListItem>
+			</FullWidthPanelListItem>
+			<FullWidthPanelListItem class="py-4">
 				<CellThemeSetting v-model="cellTheme" />
-			</FullWidthCardListItem>
-		</FullWidthCardList>
-	</FullWidthCardBlock>
-
-	<FullWidthCardBlock>
-		<template #heading>
-			<FullWidthCardHeading>{{ $t('Settings.gameplay') }}</FullWidthCardHeading>
+			</FullWidthPanelListItem>
 		</template>
-		<FullWidthCardList>
-			<FullWidthCardListItem>
+	</FullWidthPanelList>
+
+	<FullWidthPanelList>
+		<template #sectionTitle>{{ $t('Settings.gameplay') }}</template>
+		<template #content>
+			<FullWidthPanelListItem class="py-4">
 				<GameplayInputModeSetting v-model="toggleMode" />	
-			</FullWidthCardListItem>
-			<FullWidthCardListItem>
+			</FullWidthPanelListItem>
+			<FullWidthPanelListItem class="py-4">
 				<WakeLockSetting v-model="enableWakeLock" />
-			</FullWidthCardListItem>
-			<FullWidthCardListItem>
+			</FullWidthPanelListItem>
+			<FullWidthPanelListItem class="py-4">
 				<ShowTimerSetting v-model="showTimer" />
-			</FullWidthCardListItem>
-			<FullWidthCardListItem>
+			</FullWidthPanelListItem>
+			<FullWidthPanelListItem class="py-4">
 				<VibrationSetting />
-			</FullWidthCardListItem>
-		</FullWidthCardList>
-	</FullWidthCardBlock>
-
-	<FullWidthCardBlock>
-		<template #heading>
-			<FullWidthCardHeading>{{ $t('Settings.assistance.heading-puzzle-assistance') }}</FullWidthCardHeading>
+			</FullWidthPanelListItem>
 		</template>
-		<FullWidthCardList>
-			<FullWidthCardListItem>
-				<CheckButtonActionSetting v-model="checkButton" />
-			</FullWidthCardListItem>
-			<FullWidthCardListItem>
-				<GameplayRulerTypeSetting v-model="showLineInfo" />
-			</FullWidthCardListItem>
-		</FullWidthCardList>
-	</FullWidthCardBlock>
+	</FullWidthPanelList>
 
-	<FullWidthCardBlock>
-		<FullWidthCardList>
-			<FullWidthCardListItem>
+	<FullWidthPanelList>
+		<template #sectionTitle>{{ $t('Settings.assistance.heading-puzzle-assistance') }}</template>
+		<template #content>
+			<FullWidthPanelListItem class="py-4">
+				<CheckButtonActionSetting v-model="checkButton" />
+			</FullWidthPanelListItem>
+			<FullWidthPanelListItem class="py-4">
+				<GameplayRulerTypeSetting v-model="showLineInfo" />
+			</FullWidthPanelListItem>
+		</template>
+	</FullWidthPanelList>
+
+	<FullWidthPanelList>
+		<template #content>
+			<FullWidthPanelListItem class="py-4">
 				<AppVersionDisplay
 					:debug-mode="isDebugModeEnabled"
 					@increment-debug-mode="toggleWithCounter(true)"
 				/>
-			</FullWidthCardListItem>
+			</FullWidthPanelListItem>
 		
-			<FullWidthCardListItem v-if="isDebugModeEnabled"><router-link to="/debug-options">{{
-				$t('Settings.dev.developer-options') }}</router-link></FullWidthCardListItem>
-			<FullWidthCardListItem v-if="isDebugModeEnabled">
-				<button @click="toggleWithCounter(false)">
-					{{ $t('Settings.dev.disable-developer-mode') }}</button>
-			</FullWidthCardListItem>
-		</FullWidthCardList>
-	</FullWidthCardBlock>
-</FullWidthCardLayout>
+			<FullWidthPanelListItem
+				class="h-14"
+				no-padding-y
+				v-if="isDebugModeEnabled"
+				tag="router-link"
+				to="/debug-options"
+			>{{ $t('Settings.dev.developer-options') }}</FullWidthPanelListItem>
+
+			<FullWidthPanelListItem
+				v-if="isDebugModeEnabled"
+				class="h-14"
+				no-padding-y
+				tag="button"
+				@click="toggleWithCounter(false)"
+			>{{ $t('Settings.dev.disable-developer-mode') }}</FullWidthPanelListItem>
+		</template>
+	</FullWidthPanelList>
+</FullWidthPanelLayout>
 </template>
 
 <script setup lang="ts">
