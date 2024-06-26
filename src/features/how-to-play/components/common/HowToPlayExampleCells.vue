@@ -22,7 +22,8 @@
 </template>
 
 <script setup lang="ts">
-import { injectCellThemeData } from '@/components/gameboard/composables/useCellThemeProvider.js';
+import { useCellTheme } from '@/features/board-cell/composables/cell-theme-provider.js';
+import { useCurrentCellComponent } from '@/features/board-cell/composables/current-cell-component.js';
 import type { PuzzleValueLine } from '@/lib/types.js';
 
 const props = withDefaults(defineProps<{
@@ -34,7 +35,8 @@ const props = withDefaults(defineProps<{
 	highlight: () => ([]),
 });
 
-const { cellComponent } = injectCellThemeData();
+const { cellThemeType: themeType } = useCellTheme();
+const cellComponent = useCurrentCellComponent(themeType);
 </script>
 
 <style scoped>

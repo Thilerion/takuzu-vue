@@ -9,6 +9,7 @@ import { i18n, i18nPiniaPropertyPlugin } from './i18n/index.js';
 
 import { registerSW } from 'virtual:pwa-register';
 import { themePreferencesPlugin } from './features/settings/composables/use-theme-preferences.js';
+import { appCellThemeProviderPlugin } from './features/board-cell/composables/cell-theme-provider.js';
 
 const SW_UPDATE_INTERVAL_MS = 30 * 60 * 1000; // 30 minutes
 registerSW({
@@ -45,6 +46,7 @@ app.use(i18n);
 app.use(router);
 app.use(pinia);
 app.use(themePreferencesPlugin);
+app.use(appCellThemeProviderPlugin);
 
 if (import.meta.env.DEV) {
 	app.config.performance = true;

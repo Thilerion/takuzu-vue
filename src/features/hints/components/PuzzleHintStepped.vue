@@ -27,10 +27,10 @@
 import { computed, toRef, watch } from 'vue';
 import { useStepThroughSteppedHint } from '@/features/hints/composables/step-through.js';
 import { useDynamicPuzzleSymbolString } from '@/components/dynamic-symbols/useDynamicPuzzleSymbolString.js';
-import { injectCellThemeData } from '@/components/gameboard/composables/useCellThemeProvider.js';
 import { useSteppedHintMessage } from '@/features/hints/composables/stepped-hint-message.js';
 import { useI18n } from 'vue-i18n';
 import type { SteppedHint } from '@/features/hints/services/SteppedHint/types.js';
+import { useCellTheme } from '@/features/board-cell/composables/cell-theme-provider.js';
 
 const emit = defineEmits<{
 	(e: 'hide'): void;
@@ -46,8 +46,8 @@ const { stepIdx, curStep, isFirstStep, isFinalStep, nextStep, prevStep, resetSte
 	hint
 );
 
-const themeData = injectCellThemeData();
-const { $p } = useDynamicPuzzleSymbolString(themeData.theme, themeData.type);
+const themeData = useCellTheme();
+const { $p } = useDynamicPuzzleSymbolString(themeData.cellTheme, themeData.cellThemeType);
 
 const { t } = useI18n();
 const { message } = useSteppedHintMessage(hint, stepIdx, $p);

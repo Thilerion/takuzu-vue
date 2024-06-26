@@ -1,7 +1,7 @@
 <template>
 <div
 	class="cell"
-	:class="[valueClass, { locked }]"
+	:class="[valueClass, { locked }, themeClasses]"
 	:data-shade="shade"
 	:data-shade-type="shadeType"
 >
@@ -22,8 +22,9 @@
 </template>
 
 <script setup lang="ts">
-import { EMPTY, ZERO, type PuzzleValue } from "@/lib/constants";
+import { EMPTY, ZERO, type PuzzleValue } from "@/lib/constants.js";
 import { computed, toRefs, watch, ref } from "vue";
+import { useCellTheme } from "../composables/cell-theme-provider.js";
 
 const props = defineProps<{
 	value: PuzzleValue,
@@ -33,6 +34,8 @@ const props = defineProps<{
 }>()
 
 const { value } = toRefs(props);
+
+const { cellClasses: themeClasses } = useCellTheme();
 
 const rndShadeIdx = Math.floor(Math.random() * 9) - 4;
 const shade = Math.abs(rndShadeIdx);

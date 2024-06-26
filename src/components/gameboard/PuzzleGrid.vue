@@ -30,10 +30,11 @@ import type { PuzzleGrid, VecValue, XYKey } from '@/lib/types.js';
 import { computed, toRefs } from 'vue';
 import { useStaticGridCellData } from './composables/useGridCellData.js';
 import { usePuzzleTapVibrate } from './composables/usePuzzleTapVibrate.js';
-import { injectCellThemeData } from './composables/useCellThemeProvider.js';
+import { useCurrentCellComponent } from '@/features/board-cell/composables/current-cell-component.js';
 import type { PuzzleValue } from '@/lib/constants.js';
 import type { SimpleBoard } from '@/lib/board/Board.js';
 import type { ErrorMark } from '@/features/puzzle-visual-cues/helpers/error-marks.js';
+import { useCellTheme } from '@/features/board-cell/composables/cell-theme-provider.js';
 
 const props = defineProps<{
 	board: SimpleBoard,
@@ -76,9 +77,8 @@ const keyedGrid = computed((): Record<XYKey, PuzzleValue> => {
 })
 
 // CELL THEME
-const {
-	cellComponent
-} = injectCellThemeData();
+const { cellThemeType: themeType } = useCellTheme();
+const cellComponent = useCurrentCellComponent(themeType);
 
 // CELL METHODS
 const onCellClick = (val: VecValue) => {

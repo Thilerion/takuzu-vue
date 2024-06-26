@@ -13,7 +13,6 @@ import { onMounted, toRef } from 'vue';
 import { useMainStore } from './stores/main';
 import { initListeners as initPWAInstallListeners } from './composables/use-deferred-install-prompt';
 import { initPregeneratedPuzzles } from './workers/pregen-puzzles/init';
-import { initGlobalCellThemeProvider } from './components/gameboard/composables/useCellThemeProvider.js';
 import { useUpdateThemeColorWithRouteAndTheme } from './composables/use-meta-theme-color.js';
 import { initSettingsPersistence } from './features/settings/store.js';
 
@@ -22,7 +21,6 @@ const puzzleKey = toRef(store, 'puzzleKey');
 
 // init settings persistence, pwaInstallListeners, and populate or pregen the puzzles db
 initSettingsPersistence();
-initGlobalCellThemeProvider();
 initPWAInstallListeners();
 useUpdateThemeColorWithRouteAndTheme();
 onMounted(() => {

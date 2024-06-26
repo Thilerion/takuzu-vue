@@ -46,9 +46,9 @@ const BinarySymbols = {
 </script>
 
 <script setup lang="ts">
-import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
+import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants.js";
 import { computed, toRefs } from "vue";
-import { injectCellThemeData } from "../composables/useCellThemeProvider.js";
+import { useCellTheme } from "../composables/cell-theme-provider.js";
 
 const props = defineProps<{
 	value: PuzzleValue,
@@ -59,7 +59,7 @@ const props = defineProps<{
 
 const { value, locked, incorrect } = toRefs(props);
 
-const { theme: symbolType, classes: themeClasses } = injectCellThemeData();
+const { cellTheme: symbolType, cellClasses: themeClasses } = useCellTheme();
 
 const symbolMap = computed(() => {
 	if (symbolType.value === 'classic') return BinarySymbols;
