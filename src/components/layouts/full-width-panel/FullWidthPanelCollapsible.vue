@@ -4,6 +4,7 @@
 >
 	<BaseCollapsible
 		v-slot="{ isOpen }"
+		v-model="internalModelValue"
 		:default-open="defaultOpen"
 	>
 		<FwpBaseCard>
@@ -40,7 +41,11 @@ defineSlots<{
 export type FWPCollapsibleProps = {
 	defaultOpen?: boolean,
 }
-const props = defineProps<FWPCollapsibleProps>();
+
+const internalModelValue = defineModel<boolean | undefined>({ default: undefined });
+const props = withDefaults(defineProps<FWPCollapsibleProps>(), {
+	defaultOpen: false
+});
 
 const contentPaddingClass = ref('px-6');
 </script>

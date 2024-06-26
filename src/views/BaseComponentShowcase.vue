@@ -128,7 +128,7 @@
 		</div>
 
 		<div class="showcase-block">
-			<h2 class="text-xl mb-6 pb-1 font-medium border-b self-stretch">Collapsible</h2>
+			<h2 class="text-xl mb-6 pb-1 font-medium border-b self-stretch">Collapsible (default open)</h2>
 			<div class="flex flex-col gap-y-4">
 				<div>Current state: {{ collapsibleCurrentState }}</div>
 				<BaseCollapsible
@@ -147,10 +147,42 @@
 			</div>
 		</div>
 		<div class="showcase-block">
-			<h2 class="text-xl mb-6 pb-1 font-medium border-b self-stretch">Collapsible</h2>
+			<h2 class="text-xl mb-6 pb-1 font-medium border-b self-stretch">Collapsible (default closed)</h2>
 			<div class="flex flex-col gap-y-4">
 				<BaseCollapsible
+					:default-open="false"
+				>
+					<BaseCollapsibleTrigger>
+						<BaseButton>Toggle!!</BaseButton>
+					</BaseCollapsibleTrigger>
+					<BaseCollapsibleContent>
+						HI THERE!!
+					</BaseCollapsibleContent>
+				</BaseCollapsible>
+			</div>
+		</div>
+		<div class="showcase-block">
+			<h2 class="text-xl mb-6 pb-1 font-medium border-b self-stretch">Collapsible with v-model (open first)</h2>
+			<div class="flex flex-col gap-y-4">
+				<div>Current state: {{ baseCollapsibleModel }}</div>
+				<BaseCollapsible
 					v-model="baseCollapsibleModel"
+				>
+					<BaseCollapsibleTrigger>
+						<BaseButton>Toggle!!</BaseButton>
+					</BaseCollapsibleTrigger>
+					<BaseCollapsibleContent>
+						HI THERE!!
+					</BaseCollapsibleContent>
+				</BaseCollapsible>
+			</div>
+		</div>
+		<div class="showcase-block">
+			<h2 class="text-xl mb-6 pb-1 font-medium border-b self-stretch">Collapsible with v-model (closed first)</h2>
+			<div class="flex flex-col gap-y-4">
+				<div>Current state: {{ baseCollapsibleModel2 }}</div>
+				<BaseCollapsible
+					v-model="baseCollapsibleModel2"
 				>
 					<BaseCollapsibleTrigger>
 						<BaseButton>Toggle!!</BaseButton>
@@ -190,7 +222,34 @@
 		</FullWidthPanelBasicCard>
 
 		<FullWidthPanelCollapsible>
-			<template #cardTitle>Collapsible section</template>
+			<template #cardTitle>Collapsible section (default closed)</template>
+			<template #content>
+				<p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Amet nostrum nulla aspernatur labore explicabo rerum veniam dolores voluptatum voluptatibus porro!</p>
+				<p>Et voluptas corrupti animi iste autem, provident distinctio voluptatibus molestiae aliquid iusto recusandae impedit ullam. Facilis, laudantium. Veniam, quaerat labore?</p>
+				<p>Molestias culpa quo, possimus voluptates consectetur dolores eius numquam assumenda sunt expedita. Cum, consequuntur quia autem quo illum numquam id.</p>
+			</template>
+		</FullWidthPanelCollapsible>
+
+		<FullWidthPanelCollapsible default-open>
+			<template #cardTitle>Collapsible section (default open)</template>
+			<template #content>
+				<p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Amet nostrum nulla aspernatur labore explicabo rerum veniam dolores voluptatum voluptatibus porro!</p>
+				<p>Et voluptas corrupti animi iste autem, provident distinctio voluptatibus molestiae aliquid iusto recusandae impedit ullam. Facilis, laudantium. Veniam, quaerat labore?</p>
+				<p>Molestias culpa quo, possimus voluptates consectetur dolores eius numquam assumenda sunt expedita. Cum, consequuntur quia autem quo illum numquam id.</p>
+			</template>
+		</FullWidthPanelCollapsible>
+
+		<FullWidthPanelCollapsible v-model="collapsiblePanelModel1">
+			<template #cardTitle>Collapsible section (v-model, initially open, current: {{ collapsiblePanelModel1 }})</template>
+			<template #content>
+				<p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Amet nostrum nulla aspernatur labore explicabo rerum veniam dolores voluptatum voluptatibus porro!</p>
+				<p>Et voluptas corrupti animi iste autem, provident distinctio voluptatibus molestiae aliquid iusto recusandae impedit ullam. Facilis, laudantium. Veniam, quaerat labore?</p>
+				<p>Molestias culpa quo, possimus voluptates consectetur dolores eius numquam assumenda sunt expedita. Cum, consequuntur quia autem quo illum numquam id.</p>
+			</template>
+		</FullWidthPanelCollapsible>
+
+		<FullWidthPanelCollapsible v-model="collapsiblePanelModel2">
+			<template #cardTitle>Collapsible section (v-model, initially closed, current: {{ collapsiblePanelModel2 }})</template>
 			<template #content>
 				<p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Amet nostrum nulla aspernatur labore explicabo rerum veniam dolores voluptatum voluptatibus porro!</p>
 				<p>Et voluptas corrupti animi iste autem, provident distinctio voluptatibus molestiae aliquid iusto recusandae impedit ullam. Facilis, laudantium. Veniam, quaerat labore?</p>
@@ -205,7 +264,6 @@
 
 <script setup lang="ts">
 import type BaseModal from '@/components/base/BaseModal.vue';
-import { watchEffect } from 'vue';
 import { ref } from 'vue';
 
 const baseRangeValue = ref(40);
@@ -231,10 +289,10 @@ const showDialog1 = ref(false);
 
 const collapsibleCurrentState = ref('nothing');
 const baseCollapsibleModel = ref(true);
-watchEffect(() => {
-	const collapsibleModelValue = baseCollapsibleModel.value;
-	console.log({ collapsibleModelValue });
-})
+const baseCollapsibleModel2 = ref(false);
+
+const collapsiblePanelModel1 = ref(true);
+const collapsiblePanelModel2 = ref(false);
 </script>
 
 <style scoped>
