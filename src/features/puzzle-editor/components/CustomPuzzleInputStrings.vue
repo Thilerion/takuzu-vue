@@ -1,11 +1,9 @@
 <template>
-<FullWidthCardCollapsibleBlock
-	@after-enter="scrollToElement"
+<FullWidthPanelCollapsible
+	@after-open="scrollToElement"
 >
-	<template #header>
-		<FullWidthCardHeading>{{ $t('PuzzleEditor.puzzle-strings.title') }}</FullWidthCardHeading>
-	</template>
-	<template #default>
+	<template #cardTitle>{{ $t('PuzzleEditor.puzzle-strings.title') }}</template>
+	<template #content>
 		<div ref="el">
 			<div class="pt-4 pb-2 pr-4 flex gap-y-2 w-full flex-col">
 				<CustomPuzzleInputStringBlock
@@ -26,7 +24,7 @@
 			</div>
 		</div>
 	</template>
-</FullWidthCardCollapsibleBlock>
+</FullWidthPanelCollapsible>
 </template>
 
 <script setup lang="ts">

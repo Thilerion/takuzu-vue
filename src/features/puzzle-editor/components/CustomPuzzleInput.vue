@@ -1,20 +1,18 @@
 <template>
-<FullWidthCardLayout class="text-sm">
-	<FullWidthCardCollapsibleBlock v-model:expanded="controlsOpen">
-		<template #header>
-			<FullWidthCardHeading>{{ $t('PuzzleEditor.configure-board.title') }}</FullWidthCardHeading>
-		</template>
+<FullWidthPanelLayout class="text-sm">
+	<FullWidthPanelCollapsible v-model="controlsOpen">
+		<template #cardTitle>{{ $t('PuzzleEditor.configure-board.title') }}</template>
 
-		<template #default="{ expanded, setExpanded }">
-			<CustomPuzzleInputConfigControls :expanded="expanded" @update:expanded="setExpanded" />
+		<template #content>
+			<CustomPuzzleInputConfigControls :expanded="controlsOpen" @update:expanded="controlsOpen = $event" />
 		</template>
-	</FullWidthCardCollapsibleBlock>
+	</FullWidthPanelCollapsible>
 	
-	<FullWidthCardBlock>
-		<FullWidthCardContent padding-x="">
+	<FullWidthPanelBasicCard>
+		<template #container>
 			<transition name="fade" mode="out-in">
 				<div v-if="isValidGrid">
-					<div class="mb-4 flex justify-end px-6">
+					<div class="mb-4 flex justify-end px-6 py-4">
 						<CustomPuzzleInputTools
 							v-model:toggle-input-mode="toggleInputModeEnabled"
 							v-model:show-solution="showSolution"
@@ -63,11 +61,11 @@
 					{{ $t('PuzzleEditor.select-grid-dimensions-to-start') }}
 				</div>
 			</transition>
-		</FullWidthCardContent>
-	</FullWidthCardBlock>
+		</template>
+	</FullWidthPanelBasicCard>
 
 	<CustomPuzzleInputStrings :grid="isValidGrid ? puzzleGridBase : null" />
-</FullWidthCardLayout>
+</FullWidthPanelLayout>
 </template>
 
 <script setup lang="ts">

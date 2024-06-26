@@ -19,11 +19,14 @@
 			<slot name="cardTitle" />
 		</FwpBaseTitle>
 		<div
+			v-if="$slots.content"
 			:class="[contentPaddingClass]"
 			class="fwp-content"
 		>
 			<slot name="content" />
 		</div>
+		<!-- To be used for content without padding x-padding -->
+		<slot name="container" />
 	</FwpBaseCard>
 </div>
 </template>
@@ -34,7 +37,8 @@ import { ref } from 'vue';
 defineSlots<{
 	sectionTitle?: any;
 	cardTitle?: any;
-	content: any;
+	content?: any;
+	container?: any;
 }>();
 
 const contentPaddingClass = ref('px-6');

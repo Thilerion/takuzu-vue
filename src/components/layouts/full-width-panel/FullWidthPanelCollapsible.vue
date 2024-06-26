@@ -6,6 +6,7 @@
 		v-slot="{ isOpen }"
 		v-model="internalModelValue"
 		:default-open="defaultOpen"
+		@after-open="$emit('after-open')"
 	>
 		<FwpBaseCard>
 			<BaseCollapsibleTrigger
@@ -36,6 +37,9 @@ import { ref } from 'vue';
 defineSlots<{
 	cardTitle: any;
 	content: any;
+}>();
+defineEmits<{
+	(e: 'after-open'): void;
 }>();
 
 export type FWPCollapsibleProps = {
