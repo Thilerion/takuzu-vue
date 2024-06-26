@@ -146,6 +146,21 @@
 				</BaseCollapsible>
 			</div>
 		</div>
+		<div class="showcase-block">
+			<h2 class="text-xl mb-6 pb-1 font-medium border-b self-stretch">Collapsible</h2>
+			<div class="flex flex-col gap-y-4">
+				<BaseCollapsible
+					v-model="baseCollapsibleModel"
+				>
+					<BaseCollapsibleTrigger>
+						<BaseButton>Toggle!!</BaseButton>
+					</BaseCollapsibleTrigger>
+					<BaseCollapsibleContent>
+						HI THERE!!
+					</BaseCollapsibleContent>
+				</BaseCollapsible>
+			</div>
+		</div>
 	</section>
 
 	<FullWidthPanelLayout class="fwp-layout-showcase">
@@ -190,6 +205,7 @@
 
 <script setup lang="ts">
 import type BaseModal from '@/components/base/BaseModal.vue';
+import { watchEffect } from 'vue';
 import { ref } from 'vue';
 
 const baseRangeValue = ref(40);
@@ -214,6 +230,11 @@ const openModal = (refName: keyof typeof modalRefs) => {
 const showDialog1 = ref(false);
 
 const collapsibleCurrentState = ref('nothing');
+const baseCollapsibleModel = ref(true);
+watchEffect(() => {
+	const collapsibleModelValue = baseCollapsibleModel.value;
+	console.log({ collapsibleModelValue });
+})
 </script>
 
 <style scoped>

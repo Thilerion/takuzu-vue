@@ -1,4 +1,4 @@
-import { type Ref, type InjectionKey, provide, inject, readonly } from "vue";
+import { type Ref, type InjectionKey, provide, inject, computed } from "vue";
 
 export type BaseCollapsibleProvided = {
 	isOpen: Readonly<Ref<boolean>>,
@@ -46,7 +46,7 @@ export const ProvideCollapsibleContext = (
 	}
 
 	provide(key, {
-		isOpen: readonly(isOpen),
+		isOpen: computed(() => isOpen.value), // Change this line
 		toggle,
 		setOpen,
 		setClosed,
