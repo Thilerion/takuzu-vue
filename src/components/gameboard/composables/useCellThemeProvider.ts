@@ -3,11 +3,21 @@ import { useSettingsStore } from "@/features/settings/store.js";
 import { cellThemeTypeMap, type CellTheme, type CellThemeType } from "@/features/settings/types.js";
 import { storeToRefs } from "pinia";
 import type { ComputedRef, InjectionKey, MaybeRef, Ref } from "vue";
-import { computed, defineAsyncComponent, inject, markRaw, provide, readonly, shallowRef, unref, watchEffect } from "vue";
+import { computed, defineAsyncComponent, inject, markRaw, provide, readonly, unref } from "vue";
 
-const ColoredPuzzleCellComp = defineAsyncComponent(() => import('../cell/FastPuzzleCellColored.vue'));
-const SymbolPuzzleCellComp = defineAsyncComponent(() => import('../cell/FastPuzzleCellSymbol.vue'));
-const FallbackPuzzleCellComp = defineAsyncComponent(() => import('../cell/FastPuzzleCellFallback.vue'));
+const loadCellComponent = async (themeType: CellThemeType | 'default') => {
+	const module = await import("../cell/CellComponents.js");
+	return module.CellComponents[themeType];
+}
+const ColoredPuzzleCellComp = defineAsyncComponent(async () => {
+	return loadCellComponent('coloredTiles');
+});
+const SymbolPuzzleCellComp = defineAsyncComponent(async () => {
+	return loadCellComponent('symbols');
+});
+const FallbackPuzzleCellComp = defineAsyncComponent(async () => {
+	return loadCellComponent('default');
+});
 
 type InternalCellThemeProviderData = {
 	theme: Ref<CellTheme>;
@@ -25,19 +35,6 @@ export type LocalCellThemeConfig = {
 
 const key = Symbol() as InjectionKey<InternalCellThemeProviderData>;
 const isInjectedKey = Symbol() as InjectionKey<boolean>;
-
-function getCellComponent(themeType: Ref<CellThemeType>) {
-	switch (themeType.value) {
-		case CellThemeTypes.COLORED_TILES:
-			return markRaw(ColoredPuzzleCellComp);
-		case CellThemeTypes.SYMBOLS:
-			return markRaw(SymbolPuzzleCellComp);
-		default: {
-			console.error(`Cell theme type "${themeType.value}" does not have a matching cell component.`);
-			return markRaw(FallbackPuzzleCellComp);
-		}
-	}
-}
 
 function createCellThemeComputedData(theme: Ref<CellTheme>, type: Ref<CellThemeType>) {
 	const classes = computed(() => {
@@ -64,9 +61,16 @@ export const initGlobalCellThemeProvider = (): CellThemeProviderData => {
 	} = storeToRefs(settingsStore);
 
 	const { classes } = createCellThemeComputedData(globalCellTheme, globalCellThemeType);
-	const cellComponent = shallowRef(getCellComponent(globalCellThemeType));
-	watchEffect(() => {
-		cellComponent.value = getCellComponent(globalCellThemeType);
+	const cellComponent = computed(() => {
+		switch (globalCellThemeType.value) {
+			case CellThemeTypes.COLORED_TILES:
+				return markRaw(ColoredPuzzleCellComp);
+			case CellThemeTypes.SYMBOLS:
+				return markRaw(SymbolPuzzleCellComp);
+			default: {
+				return markRaw(FallbackPuzzleCellComp);
+			}
+		}
 	})
 
 	const data = {
@@ -97,9 +101,16 @@ export const useLocalCellThemeProvider = (conf: LocalCellThemeConfig): CellTheme
 	const localTheme = computed(() => unref(conf.theme));
 	const localType = computed(() => cellThemeTypeMap[localTheme.value]);
 	const { classes } = createCellThemeComputedData(localTheme, localType);
-	const cellComponent = shallowRef(getCellComponent(localType));
-	watchEffect(() => {
-		cellComponent.value = getCellComponent(localType);
+	const cellComponent = computed(() => {
+		switch (localType.value) {
+			case CellThemeTypes.COLORED_TILES:
+				return markRaw(ColoredPuzzleCellComp);
+			case CellThemeTypes.SYMBOLS:
+				return markRaw(SymbolPuzzleCellComp);
+			default: {
+				return markRaw(FallbackPuzzleCellComp);
+			}
+		}
 	})
 	
 	const localData = {
