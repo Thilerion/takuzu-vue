@@ -1,17 +1,18 @@
 <template>
-<FullWidthCardLayout class="text-sm max-w-xl mx-auto">
-	<FullWidthCardBlock>
-		<FullWidthCardContent>
+<FullWidthPanelLayout class="text-sm max-w-xl mx-auto">
+	<FullWidthPanelBasicCard>
+		<template #cardTitle>
+			<label
+				class="pr-3 pb-1 font-bold text-gray-600 tracking-wide w-full"
+				for="lineInput"
+			>{{ $t('LineAnalysisTool.input') }}</label>
+		</template>
+		<template #content>
 			<form
 				class="flex items-start flex-col justify-center"
 				novalidate
 				@submit.prevent="onSubmit($event as SubmitEvent)"
 			>
-				<FullWidthCardHeading
-					tag="label"
-					class="pr-3 pb-1 font-bold text-gray-600 tracking-wide w-full"
-					for="lineInput"
-				>{{ $t('LineAnalysisTool.input') }}</FullWidthCardHeading>
 				<div class="flex w-full gap-x-2">
 					<input
 						id="lineInput"
@@ -29,29 +30,24 @@
 					>
 					<BaseButton type="submit">{{ $t('LineAnalysisTool.input-btn-label') }}</BaseButton>
 				</div>
-
 			</form>
-		</FullWidthCardContent>
-	</FullWidthCardBlock>
+		</template>		
+	</FullWidthPanelBasicCard>
 
-	<FullWidthCardBlock>
-		<template #heading>
-			<FullWidthCardHeading>{{ $t('LineAnalysisTool.details.title') }}</FullWidthCardHeading>
-		</template>
-		<FullWidthCardContent>
+	<FullWidthPanelBasicCard>
+		<template #sectionTitle>{{ $t('LineAnalysisTool.details.title') }}</template>
+		<template #content>
 			<LineCompletionsLineDetails
 				:line="validatedLine"
 			>
 				<template #fallback><LineCompletionsBlockFallbackSlot /></template>
 			</LineCompletionsLineDetails>
-		</FullWidthCardContent>
-	</FullWidthCardBlock>
-
-	<FullWidthCardBlock>
-		<template #heading>
-			<FullWidthCardHeading>{{ $t('LineAnalysisTool.results.title') }}</FullWidthCardHeading>
 		</template>
-		<FullWidthCardContent>
+	</FullWidthPanelBasicCard>
+
+	<FullWidthPanelBasicCard>
+		<template #sectionTitle>{{ $t('LineAnalysisTool.results.title') }}</template>
+		<template #content>
 			<LineCompletionsCombinedResult
 				:input="validatedLine"
 				:result="resultingLine"
@@ -59,14 +55,12 @@
 				<template #invalid><LineCompletionsBlockInvalidSlot /></template>
 				<template #fallback><LineCompletionsBlockFallbackSlot /></template>
 			</LineCompletionsCombinedResult>
-		</FullWidthCardContent>
-	</FullWidthCardBlock>
-
-	<FullWidthCardBlock>
-		<template #heading>
-			<FullWidthCardHeading>{{ $t('LineAnalysisTool.valid-line-completions') }}</FullWidthCardHeading>
 		</template>
-		<FullWidthCardContent>
+	</FullWidthPanelBasicCard>
+
+	<FullWidthPanelBasicCard>
+		<template #sectionTitle>{{ $t('LineAnalysisTool.valid-line-completions') }}</template>
+		<template #content>
 			<LineCompletionsValidCompletions
 				:input="validatedLine"
 				:completions="completions"
@@ -75,9 +69,9 @@
 				<template #invalid><LineCompletionsBlockInvalidSlot /></template>
 				<template #fallback><LineCompletionsBlockFallbackSlot /></template>
 			</LineCompletionsValidCompletions>
-		</FullWidthCardContent>
-	</FullWidthCardBlock>
-</FullWidthCardLayout>
+		</template>
+	</FullWidthPanelBasicCard>
+</FullWidthPanelLayout>
 </template>
 
 <script setup lang="ts">
