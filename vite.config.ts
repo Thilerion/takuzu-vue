@@ -16,6 +16,10 @@ import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 export default defineConfig(({ command, mode }) => {
 	// load env variables from relevant env file to set manifest app name
+	console.log(process.env.VERCEL_PREVIEW);
+	if (process.env.VERCEL_PREVIEW === "true") {
+		mode = "beta";
+	}
 	const env = loadEnv(mode, process.cwd());
 
 	// if building for production, create a 200.html fallback for nested routes
