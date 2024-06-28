@@ -14,8 +14,8 @@
 		>{{ shownCurAppVersion[0] }}<span class="text-[0.875em] opacity-80 ml-px">+{{ shownCurAppVersion[1] }}</span></div>
 
 		<template v-if="shownPrevAppVersion">
-			<div class="whitespace-nowrap text-xs text-gray-800/50 col-start-1 col-end-2 row-start-2">{{ $t('Settings.version.previous') }}</div>			
-			<div class="text-ellipsis overflow-x-hidden max-w-full min-w-0 whitespace-nowrap text-xs text-gray-800/50 col-start-2 row-start-2">{{ shownPrevAppVersion }}</div>
+			<div class="whitespace-nowrap text-xs text-gray-800/50 dark:text-slate-300/80 col-start-1 col-end-2 row-start-2">{{ $t('Settings.version.previous') }}</div>			
+			<div class="text-ellipsis overflow-x-hidden max-w-full min-w-0 whitespace-nowrap text-xs text-gray-800/50 dark:text-slate-300/80 col-start-2 row-start-2">{{ shownPrevAppVersion }}</div>
 		</template>
 	</button>
 </div>

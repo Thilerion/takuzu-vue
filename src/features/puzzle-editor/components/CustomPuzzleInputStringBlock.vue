@@ -1,10 +1,10 @@
 <template>
 <div>
-	<h3 class="font-bold text-xs uppercase text-gray-600 ml-1 mb-1">{{ label }}</h3>
-	<div class="max-w-full w-full min-w-0 min-h-14 flex items-center text-sm gap-x-2 pr-1 pl-4 py-2 bg-gray-100 rounded mb-2 relative">
+	<h3 class="font-bold text-xs uppercase text-gray-600 dark:text-slate-300 ml-1 mb-1">{{ label }}</h3>
+	<div class="max-w-full w-full min-w-0 min-h-14 flex items-center text-sm gap-x-2 pr-1 pl-4 py-2 bg-gray-100 dark:bg-slate-600 rounded mb-2 relative">
 		<p class="break-words font-mono min-w-0">
 			<span v-if="value != null">{{ value }}</span>
-			<span v-else class="opacity-50">{{ placeholder }}</span>
+			<span v-else class="text-black/50 dark:text-slate-300/90">{{ placeholder }}</span>
 		</p>
 		<BaseButton
 			class="flex-initial ml-auto mr-2 mb-0.5 px-2 py-2 my-auto rounded border min-w-max w-24"

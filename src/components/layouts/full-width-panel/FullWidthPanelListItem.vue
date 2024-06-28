@@ -4,7 +4,7 @@
 		:is="tag"
 		:class="[contentPaddingClass, {
 			'py-2': !noPaddingY,
-			'hover-notouch:bg-gray-100': localInteractive,
+			'hover-notouch:bg-gray-100 dark:hover-notouch:bg-slate-700': localInteractive,
 		}]"
 		class="fwp-list-item-wrapper min-h-12 flex items-center w-full"
 		v-bind="$attrs"

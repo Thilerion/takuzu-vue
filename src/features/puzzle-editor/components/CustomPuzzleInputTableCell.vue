@@ -3,7 +3,7 @@
 	:id="id"
 	ref="el"
 	type="text"
-	class="w-full border-0 p-1 m-0 aspect-square h-full text-center editor-cell-input placeholder:text-gray-300"
+	class="w-full border-0 p-1 m-0 aspect-square h-full text-center editor-cell-input placeholder:text-gray-300 dark:placeholder:text-slate-400"
 	:data-symbol="dataSymbolAttr"
 	:value="inputValue"
 	:placeholder="placeholder"
@@ -128,7 +128,7 @@ defineExpose({ el });
 
 <style scoped>
 [data-symbol="0"] {
-	@apply bg-cell-blue-lighter/30;
+	@apply bg-cell-blue-lighter/30 dark:bg-cell-blue-lighter/30;
 }
 [data-symbol="1"] {
 	@apply bg-cell-red-lighter/20;

@@ -1,5 +1,5 @@
 <template>
-<div class="bg-white rounded-xl fwp-card-shadow">
+<div class="bg-white dark:bg-slate-800 rounded-xl fwp-card-shadow">
 	<slot />
 </div>
 </template>

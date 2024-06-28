@@ -40,6 +40,7 @@ const props = withDefaults(
 	@apply dark:hover-hover:hover:bg-slate-700 dark:hover-none:active:bg-slate-700;
 
 	@apply disabled:bg-gray-300 disabled:text-gray-600 disabled:cursor-auto disabled:hover-hover:hover:border-transparent disabled:border-transparent;
+	@apply dark:disabled:bg-slate-700 dark:disabled:text-slate-400 dark:disabled:border-transparent;
 }
 .btn-icon-only {
 	@apply p-0;

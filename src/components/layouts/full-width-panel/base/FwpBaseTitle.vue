@@ -1,7 +1,7 @@
 <template>
 <component
 	:is="tag"
-	class="fwp-title font-medium text-gray-700/90 dark:text-slate-300 tracking-wide"
+	class="fwp-title font-medium text-gray-700/90 dark:text-slate-200 tracking-wide"
 ><slot /></component>
 </template>
 

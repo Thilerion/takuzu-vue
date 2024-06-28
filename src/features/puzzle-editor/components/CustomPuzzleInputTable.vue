@@ -1,6 +1,6 @@
 <template>
 <div class="flex justify-center max-w-full max-h-full overflow-hidden">
-	<div class="relative border-2 border-slate-800 inline-block">
+	<div class="relative border-2 border-slate-800 dark:border-slate-300 inline-block">
 		<table
 			class="table-fixed mx-auto border-0 w-full"
 			:style="{ maxWidth: maxTableWidth, minWidth: minTableWidth }"
@@ -13,7 +13,7 @@
 					<td
 						v-for="(cellValue, x) in row"
 						:key="`col-${x}`"
-						class="overflow-clip border border-slate-700 relative bg-gray-50 p-px text-center align-middle"
+						class="overflow-clip border border-slate-700 dark:border-slate-400 relative p-px text-center align-middle"
 					>
 						<div class="table-cell-wrapper aspect-square flex items-center justify-center relative -m-0.5">
 							<slot

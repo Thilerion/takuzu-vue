@@ -12,7 +12,7 @@
 
 	<FwpBaseCard>
 		<ul
-			class="fwc-list divide-y divide-gray-150 bg-white dark:divide-slate-700 dark:bg-slate-800 rounded-xl link-list-shadow"
+			class="fwc-list divide-y divide-gray-150 dark:divide-slate-600/70 rounded-xl link-list-shadow"
 		><slot name="content">List goes here</slot></ul>
 		<!-- To be used for content without padding x-padding -->
 	</FwpBaseCard>
