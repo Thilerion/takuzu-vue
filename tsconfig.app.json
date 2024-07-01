@@ -13,7 +13,8 @@
 		"src/**/*.test.ts",
 		"tests/**/*.spec.ts",
 		"tests/**/*.test.ts",
-		"tests/**/*.benchmark.ts"
+		"tests/**/*.benchmark.ts",
+		"src/features/build-info/*.ts"
 	],
 	"compilerOptions": {
 		"composite": true,

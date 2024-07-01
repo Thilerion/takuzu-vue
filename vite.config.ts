@@ -1,5 +1,7 @@
 import { fileURLToPath, URL } from 'node:url';
 import { BuildVersionDetails, getBuildVersionDetails } from './scripts/build-metadata.js';
+import { generateBuildInfoDetails } from './scripts/generate-build-info.js';
+import type { BuildInfoDetails } from './src/features/build-info/types.js';
 
 import vue from '@vitejs/plugin-vue';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -30,6 +32,12 @@ export default defineConfig(({ command, mode }) => {
 	}) : undefined;
 
 	let buildVersionDetails: BuildVersionDetails | { error: unknown };
+	let globalBuildInfoDetails: BuildInfoDetails | null = null;
+	try {
+		globalBuildInfoDetails = generateBuildInfoDetails(mode);
+	} catch(e) {
+		console.error(e);
+	}
 	try {
 		buildVersionDetails = getBuildVersionDetails(mode);
 	} catch (e) {
@@ -83,6 +91,7 @@ export default defineConfig(({ command, mode }) => {
 		},
 		define: {
 			__BUILD_VERSION_DETAILS__: JSON.stringify(buildVersionDetails),
+			__GLOBAL_BUILD_INFO_DETAILS__: JSON.stringify(globalBuildInfoDetails),
 			'import.meta.vitest': false
 		},
 		worker: {
