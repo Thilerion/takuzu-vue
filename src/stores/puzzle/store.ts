@@ -335,7 +335,8 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		try {
 			const fetchedRandomPuzzle = await fetchRandomReplayablePuzzle(puzzleConfig);
 			if (fetchedRandomPuzzle == null) {
-				return false;
+				throw new Error('No replayable puzzle found.');
+				// return false;
 			}
 			replayPuzzle({
 				puzzleConfig,

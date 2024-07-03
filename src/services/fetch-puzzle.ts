@@ -82,16 +82,17 @@ export async function fetchRandomReplayablePuzzle(
 
 
 async function requestPuzzle(puzzleConfig: BasicPuzzleConfig): Promise<PuzzleRequestResult<'reason'>> {
-	console.log('PUZZLE REQUESTED');
+	console.log('requestPuzzle(): puzzle was requested.');
 	try {
 		const dbResult = await retrievePuzzleFromDatabase(puzzleConfig);
 		if (dbResult.success) {
 			// type of data: { boardStr, solutionStr };
 			return { success: true as const, data: dbResult.data };
 		}
-		console.log('TRYING TO GENERATE');
+		console.log('requestPuzzle(): trying to generate new puzzle.');
 		const genResult = await generateNewPuzzle(puzzleConfig);
 		if (genResult.success) {
+			console.log('requestPuzzle(): finished generating new puzzle.');
 			return genResult;
 		} else {
 			console.warn({ databaseResultError: dbResult, generateResultError: (genResult as RequestError<'error'>).error });
@@ -115,11 +116,10 @@ async function retrievePuzzleFromDatabase(puzzleConfig: BasicPuzzleConfig): Prom
 			const { boardStr, solutionStr } = result;
 			return { success: true, data: { boardStr, solutionStr } };
 		} else {
-			console.error({ result });
 			throw new Error('No puzzle found in database for this puzzle config.');
 		}
 	} catch (e) {
-		console.error(e);
+		console.warn(String(e));
 		return { success: false, error: e };
 	}
 }

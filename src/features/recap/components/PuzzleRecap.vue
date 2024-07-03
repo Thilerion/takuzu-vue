@@ -26,9 +26,7 @@
 			<div class="absolute w-full h-full inset-0 z-20 p-6 flex justify-center items-center">
 				<PuzzleRecapModalTransition>
 					<template v-if="showContent">
-						<PuzzleRecapContent
-							@exit-to="exitTo"
-						/>
+						<PuzzleRecapContent />
 					</template>
 				</PuzzleRecapModalTransition>
 			</div>
@@ -40,7 +38,6 @@
 
 <script setup lang="ts">
 import { toRef } from 'vue';
-import { usePuzzleRecapModalActions } from '@/features/recap/composables/usePuzzleRecapModalAction.js';
 import { usePuzzleRecapTransitionTimings } from '@/features/recap/composables/usePuzzleRecapTransitionTimings.js';
 
 const props = defineProps<{
@@ -54,8 +51,6 @@ const {
 } = usePuzzleRecapTransitionTimings({
 	enabled: shouldShow
 });
-
-const { exitTo } = usePuzzleRecapModalActions();
 </script>
 
 <style scoped>

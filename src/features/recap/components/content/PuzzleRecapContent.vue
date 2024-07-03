@@ -86,7 +86,7 @@
 		</router-link>
 
 			
-		<BaseButton class="text-base font-normal h-12 btn-primary row-start-2 col-start-1 col-span-2" @click="$emit('exit-to', 'play-again')">
+		<BaseButton class="text-base font-normal h-12 btn-primary row-start-2 col-start-1 col-span-2" @click="playAgainAction">
 			<div class="w-full px-8 flex items-center justify-center relative">
 				<div>{{ $t('Recap.play-again') }}</div>
 				<div class="w-7 h-7 ml-auto absolute right-0 opacity-95"><icon-mdi-arrow-right-thin class="w-full h-full" /></div>
@@ -112,16 +112,15 @@ import { usePuzzleRecapStore } from '@/features/recap/store.js';
 import type { SupportedLocale } from '@/i18n/constants.js';
 import { getRecordMessage } from '@/features/recap/services/recordMessage.js';
 import type { RecapScoresDataProp } from './PuzzleRecapRecapScores.vue';
+import { useRecapModalPlayAgainAction } from '@/features/recap/composables/recap-play-again-action.js';
 
 const formatTimeMMSS = formatTimeMMSSWithRounding(200);
-
-defineEmits<{
-	'exit-to': [exitToRouteName: 'play-again' | 'statistics' | 'home' | 'replay' | 'new-puzzle']
-}>();
 
 const puzzleRecapStore = usePuzzleRecapStore();
 const { historyEntry, gameEndStats, errorLoading } = storeToRefs(puzzleRecapStore);
 const { locale } = useI18n();
+
+const { playAgainAction } = useRecapModalPlayAgainAction();
 
 // Message data and related code for recap and record message
 const messageData = computed(() => {
