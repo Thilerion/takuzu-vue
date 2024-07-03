@@ -3,7 +3,6 @@ import { useDeviceOrientation } from "./composables/useDeviceOrientation";
 import { useViewportSize } from "./composables/useViewportSize";
 import { usePageVisibility } from "./composables/usePageVisibility";
 import { useBuildModeFlags } from "./composables/useBuildModeFlags";
-import { useTouchDetection } from "./composables/useDetectTouch";
 import { useIsPwaInstalled } from "./composables/useIsPwaInstalled";
 import { useIsFirstVisit } from "./composables/useIsFirstVisit";
 import { useUserAgentData } from "./composables/useUserAgentData";
@@ -20,7 +19,6 @@ const useAppContext = () => {
 
 	const { visibilityState: visibility, hidden: windowHidden, visible: windowVisible } = usePageVisibility();
 
-	const { hasTouched, lastInteractionType, lastInteractionWasTouch } = useTouchDetection();
 
 	const { isInstalled } = useIsPwaInstalled();
 
@@ -37,9 +35,6 @@ const useAppContext = () => {
 		windowVisible,
 		
 		hasTouchscreen,
-		hasTouched,
-		lastInteractionType,
-		lastInteractionWasTouch
 	}
 }
 

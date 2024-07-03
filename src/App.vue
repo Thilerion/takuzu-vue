@@ -14,6 +14,7 @@ import { useMainStore } from './stores/main';
 import { initListeners as initPWAInstallListeners } from './composables/use-deferred-install-prompt';
 import { initPregeneratedPuzzles } from './workers/pregen-puzzles/init';
 import { useUpdateThemeColorWithRouteAndTheme } from './composables/use-meta-theme-color.js';
+import { initTouchDetectionDataAttrs } from './composables/use-detect-touch.js';
 import { initSettingsPersistence } from './features/settings/store.js';
 
 const store = useMainStore();
@@ -23,6 +24,7 @@ const puzzleKey = toRef(store, 'puzzleKey');
 initSettingsPersistence();
 initPWAInstallListeners();
 useUpdateThemeColorWithRouteAndTheme();
+initTouchDetectionDataAttrs();
 onMounted(() => {
 	initPregeneratedPuzzles();
 })
