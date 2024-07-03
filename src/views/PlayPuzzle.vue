@@ -136,13 +136,13 @@ usePuzzlePlayHotkeys(usePuzzlePlayHotkeyCallbacks(
 const startGame = () => {
 	// Can only start the game when it has not yet started. A puzzle should be initialized before it can be started.
 	if (!initialized.value || started.value) {
+		console.error('[PlayPuzzle.startGame()]: Cannot start game: puzzle is started or not initalized.');
 		return;
 	}
 	puzzleStore.startPuzzle();
 }
 
 const goBackToNewPuzzleRoute = useGoBackOrReplaceTo({ name: 'NewPuzzleFreePlay' });
-
 // MOUNT/UNMOUNT HANDLERS
 // When the page is loaded, check if there is a puzzle loaded in store. If not, try to load the saved puzzle, else redirect to a new puzzle route.
 if (!initialized.value) {
@@ -158,9 +158,6 @@ onMounted(() => {
 	initAutoSave();
 })
 onBeforeUnmount(() => {
-	if (puzzlePlayStatus.value === 'none') {
-		console.error('PlayPuzzle unmounts, but puzzleStore is already reset. So cannot save game. Should reset puzzleStore only after this.');
-	}
 	saveGame();
 	stopAutoSave();
 	cleanupCompletionChecker();

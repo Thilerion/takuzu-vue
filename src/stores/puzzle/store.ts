@@ -140,11 +140,12 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		state.gridCounts = gridCounts;
 	}
 
-	function reset(): void {
-		if (board.value != null && !initialized.value && !!board.value && !statusStore.initializationError.hasError) {
-			console.log('puzzle not initialized. cannot reset');
+	function reset({ force }: { force?: boolean } = {}): void {
+		if (!shouldReset(board.value != null, force)) {
 			return;
 		}
+		// console.log(`[PuzzleStore.reset()]: Resetting puzzle store with status: ${statusStore.status}`);
+
 		resetChildStores();
 
 		const freshState: PuzzleStoreState = {
@@ -518,4 +519,32 @@ function calculateGridCounts(board: SimpleBoard): GridCounts {
 		counts[cell.value] += 1;
 	}
 	return counts;
+}
+
+function shouldReset(hasBoard: boolean, force?: boolean): boolean {
+	const statusStore = usePuzzleStatusStore();
+	const storeStatus = statusStore.status;
+
+	const isNotInitialized = (!statusStore.initialized && !statusStore.initializationError.hasError) || storeStatus === 'none';
+	if (hasBoard && isNotInitialized) {
+		if (force) {
+			// console.log(`[PuzzleStore.reset()]: Forcing reset of puzzle store while not initialized. Resetting with status: ${storeStatus}`);
+			return true;
+		} else {
+			console.warn(`[PuzzleStore.reset()]: Puzzle not initialized, cannot reset. Current status is: ${storeStatus}`);
+			return false;
+		}
+	}
+
+	if (storeStatus === 'pending' || storeStatus === 'loading') {
+		if (force) {
+			// console.log(`[PuzzleStore.reset()]: Forcing reset of puzzle store while pending or loading. Resetting with status: ${storeStatus}`);
+			return true;
+		} else {
+			console.warn(`[PuzzleStore.reset()]: Cannot reset puzzle store while pending or loading. Current status is: ${storeStatus}`);
+			return false;
+		}
+	}
+
+	return true;
 }
