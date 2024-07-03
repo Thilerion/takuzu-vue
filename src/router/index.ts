@@ -27,9 +27,9 @@ import NotFound from '../views/NotFound.vue';
 
 import { useRouteDocumentTitle } from './useDocumentTitle';
 import { useSavedPuzzle } from '@/services/savegame/useSavedGame.js';
-import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import type { RouteRecordRaw } from 'vue-router';
 import type { BaseTheme } from '@/features/settings/composables/use-theme-preferences.js';
+import { usePuzzleStatusStore } from '@/stores/puzzle/status-store.js';
 
 const routes = [
 	{
@@ -166,18 +166,19 @@ const routes = [
 			title: { messageKey: 'PageTitle.PlayPuzzle' },
 			usePuzzleKey: true,
 		},
-		beforeEnter: (to, from, next) => {
-			const puzzleStore = usePuzzleStore();
-			if (!puzzleStore.initialized) {
-				const { hasCurrentSavedGame } = useSavedPuzzle();
-				if (hasCurrentSavedGame.value) {
-					puzzleStore.loadSavedPuzzle();
-					return next();
-				}
-				console.warn('No puzzle in store. Redirecting from PlayPuzzle to Create game route');
-				return next({ name: 'NewPuzzleFreePlay', replace: true });
+		beforeEnter: () => {
+			const puzzleStatusStore = usePuzzleStatusStore();
+
+			if (puzzleStatusStore.initialized) {
+				return true;
 			}
-			next();
+			// Not initialized here, so check if there is a saved puzzle. If so, we can continue as well and let the route component itself handle loading it
+			const { hasCurrentSavedGame } = useSavedPuzzle();
+			if (hasCurrentSavedGame.value) {
+				return true;
+			}
+			console.warn('No puzzle in store. Redirecting from PlayPuzzle to Create game route');
+			return { name: 'NewPuzzleFreePlay', replace: true };
 		},
 		children: [
 			{
