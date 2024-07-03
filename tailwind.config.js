@@ -24,8 +24,8 @@ const config = {
 			'sm': '576px',
 			'md': '768px',
 			'lg': '1024px',
-			'hover-hover': { 'raw': '(hover: hover) and (pointer: fine)' },
-			'hover-none': { 'raw': '(pointer: coarse)' },
+			// 'fine': { 'raw': '(pointer: fine)' },
+			// 'coarse': { 'raw': '(pointer: coarse)' },
 		},
 		extend: {
 			typography: (/* { theme } */) => ({
@@ -82,13 +82,8 @@ const config = {
 		tailwindcssTypography(),
 		plugin(function ({ addVariant }) {
 			// notouch data attributes are set by useDetectTouch composable, based on pointerType from last interaction
-			addVariant('hover-notouch', '[data-last-touch="false"] &:hover');
-			addVariant('focus-notouch', '[data-last-touch="false"] &:focus');
-			addVariant('hocus-notouch', [
-				'[data-last-touch="false"] &:focus',
-				'[data-last-touch="false"] &:hover',
-			]);
-			addVariant('hocus', ['&:hover', '&:focus']);
+			addVariant('fine', ':is(:where([data-last-touch="false"]) &)');
+			addVariant('coarse', ':is(:where([data-last-touch="true"]) &)');
 		})
 	],
 }

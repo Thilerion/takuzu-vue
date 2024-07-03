@@ -34,12 +34,12 @@ const props = withDefaults(
 	
 
 	@apply focus:outline-none;
-	@apply hover-none:active:ring hover-none:active:ring-opacity-50 hover-hover:focus:ring hover-hover:focus:ring-opacity-50;
+	@apply coarse:active:ring coarse:active:ring-opacity-50 fine:focus:ring fine:focus:ring-opacity-50;
 	@apply focus-visible:ring focus-visible:ring-opacity-90;
-	@apply hover-hover:hover:bg-gray-50 hover-hover:hover:border-gray-400 hover-none:active:bg-gray-50 hover-none:active:border-gray-400;
-	@apply dark:hover-hover:hover:bg-slate-700 dark:hover-none:active:bg-slate-700;
+	@apply fine:hover:bg-gray-50 fine:hover:border-gray-400 coarse:active:bg-gray-50 coarse:active:border-gray-400;
+	@apply dark:fine:hover:bg-slate-700 dark:coarse:active:bg-slate-700;
 
-	@apply disabled:bg-gray-300 disabled:text-gray-600 disabled:cursor-auto disabled:hover-hover:hover:border-transparent disabled:border-transparent;
+	@apply disabled:bg-gray-300 disabled:text-gray-600 disabled:cursor-auto disabled:fine:hover:border-transparent disabled:border-transparent;
 	@apply dark:disabled:bg-slate-700 dark:disabled:text-slate-400 dark:disabled:border-transparent;
 }
 .btn-icon-only {
@@ -48,13 +48,13 @@ const props = withDefaults(
 
 .btn-primary {
 	@apply bg-teal-600 dark:bg-teal-600 text-white dark:text-white border-transparent dark:border-transparent;
-	@apply hover-hover:hover:bg-teal-800 hover-none:active:bg-teal-800;
-	@apply dark:hover-hover:hover:bg-teal-500 dark:hover-none:active:bg-teal-500;
+	@apply fine:hover:bg-teal-800 coarse:active:bg-teal-800;
+	@apply dark:fine:hover:bg-teal-500 dark:coarse:active:bg-teal-500;
 	@apply tracking-wide;
 }
 
 .btn-elevated {
-	@apply hover-hover:hover:bg-gray-100 hover-hover:hover:shadow-md text-gray-800 font-medium border border-gray-300 rounded shadow;
+	@apply fine:hover:bg-gray-100 fine:hover:shadow-md text-gray-800 font-medium border border-gray-300 rounded shadow;
 }
 
 .btn-primary:disabled {

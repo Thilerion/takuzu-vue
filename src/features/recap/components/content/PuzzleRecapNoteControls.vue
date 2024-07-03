@@ -4,13 +4,13 @@
 >
 	<IconBtn
 		v-if="isEditing"
-		class="text-xxs active:hover-none:bg-gray-300/20 text-gray-150/70"
+		class="text-xxs active:coarse:bg-gray-300/20 text-gray-150/70"
 		scale="0.875"
 		@click="$emit('clear')"
 	><icon-ic-baseline-close /></IconBtn>
 
 	<IconBtn
-		class="text-xxs active:hover-none:bg-gray-300/20 text-gray-150/70"
+		class="text-xxs active:coarse:bg-gray-300/20 text-gray-150/70"
 		scale="0.875"
 		@click="saveOrEdit"
 	>

@@ -72,8 +72,8 @@ const contentPaddingClass = ref('px-6');
 
 /* Collapsible block: specific styles */
 .fwp-trigger {
-	@apply w-full rounded-xl text-start hover-notouch:bg-gray-100 hover-hover:hover:active:bg-gray-200  flex items-center justify-between;
-	@apply dark:hover-notouch:bg-slate-775 dark:hover-hover:hover:active:bg-slate-700;
+	@apply w-full rounded-xl text-start fine:hover:bg-gray-100 fine:hover:active:bg-gray-200  flex items-center justify-between;
+	@apply dark:fine:hover:bg-slate-775 dark:fine:hover:active:bg-slate-700;
 }
 .fwp-collapsible .fwp-content {
 	@apply first:pt-1;

@@ -83,7 +83,7 @@ nav {
 	@apply dark:text-gray-100 transition-all duration-100;
 	@apply opacity-90;
 
-	@apply hover-hover:focus:text-teal-500 hover-hover:hover:text-teal-500;
+	@apply fine:focus:text-teal-500 fine:hover:text-teal-500;
 }
 
 .router-link-active, .router-link-nested-active {

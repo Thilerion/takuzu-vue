@@ -162,7 +162,7 @@ onMounted(() => {
 }
 
 [data-has-data="true"] {
-	@apply transition-shadow duration-75 hover-hover:hover:duration-200 cursor-pointer ring-1 ring-transparent hover-hover:hover:ring-purple-950 dark:hover-hover:hover:ring-slate-100;
+	@apply transition-shadow duration-75 fine:hover:duration-200 cursor-pointer ring-1 ring-transparent fine:hover:ring-purple-950 dark:fine:hover:ring-slate-100;
 }
 .is-selected {
 	@apply ring-purple-950 dark:ring-slate-100 ring-[2px] z-20 rounded-sm;

@@ -200,8 +200,8 @@ const goBackToRoute: (to: { name: string }, navigate: () => Promise<void | Navig
 .recap-btn {
 	@apply border border-gray-300/80 dark:border-slate-400 rounded py-0 h-8 flex items-center justify-center pt-1;
 	@apply dark:bg-slate-700 dark:text-slate-100;
-	@apply hover-hover:hover:bg-gray-50 hover-hover:hover:border-gray-400 hover-none:active:bg-gray-50 hover-none:active:border-gray-400;
-	@apply dark:hover-hover:hover:bg-slate-600 dark:hover-none:active:bg-slate-600;
+	@apply fine:hover:bg-gray-50 fine:hover:border-gray-400 coarse:active:bg-gray-50 coarse:active:border-gray-400;
+	@apply dark:fine:hover:bg-slate-600 dark:coarse:active:bg-slate-600;
 }
 
 .fav-btn {

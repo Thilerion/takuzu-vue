@@ -29,7 +29,7 @@
 						@keydown.enter="saveNote"
 					>
 					<IconBtn
-						class="text-xxs active:hover-none:bg-gray-300/20 text-gray-800/70 dark:text-slate-200 h-8 w-8 flex-shrink-0 ml-1"
+						class="text-xxs active:coarse:bg-gray-300/20 text-gray-800/70 dark:text-slate-200 h-8 w-8 flex-shrink-0 ml-1"
 						scale="0.875"
 						@click="clearNote"
 					><icon-ic-baseline-close /></IconBtn>

@@ -1,6 +1,6 @@
 <template>
 <IconBtn
-	class="text-xxs active:hover-none:bg-gray-300/20"
+	class="text-xxs active:coarse:bg-gray-300/20"
 	scale="0.875"
 	@click="$emit('toggle')"
 ><StarIcon

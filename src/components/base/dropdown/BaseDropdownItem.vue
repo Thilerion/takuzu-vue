@@ -24,7 +24,7 @@
 	@apply  text-gray-400 cursor-default dark:text-gray-300/80;
 }
 .dropdown-item:not(:disabled) {
-	@apply hover-hover:hover:bg-gray-100 hover-hover:hover:text-black;
-	@apply dark:hover-hover:hover:bg-slate-700 dark:hover-hover:hover:text-slate-100;
+	@apply fine:hover:bg-gray-100 fine:hover:text-black;
+	@apply dark:fine:hover:bg-slate-700 dark:fine:hover:text-slate-100;
 }
 </style>
