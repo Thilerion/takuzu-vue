@@ -1,7 +1,7 @@
 import { useRoute, useRouter } from "vue-router";
 import { usePuzzleStore } from "@/stores/puzzle/store.js";
 import { usePuzzleRecapStore } from "../store.js";
-import { useMainStore } from "@/stores/main.js";
+import { useGameStore } from "@/stores/game.js";
 
 export const useRecapModalPlayAgainAction = () => {
 
@@ -32,10 +32,14 @@ export const useRecapModalPlayAgainAction = () => {
 		}	
 	}
 
+	const incrementPuzzleRefreshKey = () => {
+		const gameStore = useGameStore();
+		gameStore.puzzleRefreshKey += 1;
+	}
+
 	async function playAgainNewPuzzleAction(): Promise<void> {
 		const puzzleRecapStore = usePuzzleRecapStore();
 		const puzzleStore = usePuzzleStore();
-		const mainStore = useMainStore();
 
 		const { width, height, difficulty } = puzzleRecapStore.historyEntry!;
 
@@ -43,13 +47,12 @@ export const useRecapModalPlayAgainAction = () => {
 		await puzzleStore.initPuzzle({ width, height, difficulty });
 	
 		// this part reloads the PlayPuzzle view with the new puzzle data
-		mainStore.puzzleKey += 1;
+		incrementPuzzleRefreshKey();
 	}
 
 	async function playAgainReplayAction(): Promise<void> {
 		const puzzleRecapStore = usePuzzleRecapStore();
 		const puzzleStore = usePuzzleStore();
-		const mainStore = useMainStore();
 
 		try {
 			const { width, height, difficulty } = puzzleRecapStore.historyEntry!;
@@ -58,7 +61,7 @@ export const useRecapModalPlayAgainAction = () => {
 			if (!found) {
 				throw new Error('No puzzle found for replay.');
 			}
-			mainStore.puzzleKey += 1;
+			incrementPuzzleRefreshKey();
 		} catch(e) {
 			console.warn(e);
 			window.alert('Could not find another puzzle for replay. Will generate a new puzzle instead.');

@@ -1,3 +1,20 @@
+// MAIN ROUTES
+import MainPage from '@/components/base/layout/MainPage.vue';
+import HomePage from '../views/HomePage.vue';
+const HowToPlay = () => import('../views/HowToPlay.vue');
+const TutorialPage = () => import('../views/TutorialPage.vue');
+const SettingsPage = () => import('../views/SettingsPage.vue');
+// NESTED PAGES / OVERLAY PAGES
+import FreePlay from '../views/NewPuzzle.vue';
+import PlayPuzzle from '../views/PlayPuzzle.vue';
+// 404 Page
+import NotFound from '../views/NotFound.vue';
+
+import { useRouteDocumentTitle } from './useDocumentTitle';
+import { useSavedPuzzle } from '@/services/savegame/useSavedGame.js';
+import type { RouteRecordRaw } from 'vue-router';
+import type { BaseTheme } from '@/features/settings/composables/use-theme-preferences.js';
+import { usePuzzleStatusStore } from '@/stores/puzzle/status-store.js';
 import { createRouter, createWebHistory } from 'vue-router';
 import { i18n } from '@/i18n/index.js';
 
@@ -10,26 +27,6 @@ declare module 'vue-router' {
 		prev?: RouteLocationNormalized | null;
 	}
 }
-
-// MAIN ROUTES
-import MainPage from '@/components/base/layout/MainPage.vue';
-import HomePage from '../views/HomePage.vue';
-const HowToPlay = () => import('../views/HowToPlay.vue');
-const TutorialPage = () => import('../views/TutorialPage.vue');
-const SettingsPage = () => import('../views/SettingsPage.vue');
-
-// NESTED PAGES / OVERLAY PAGES
-import FreePlay from '../views/NewPuzzle.vue';
-import PlayPuzzle from '../views/PlayPuzzle.vue';
-
-// 404 Page
-import NotFound from '../views/NotFound.vue';
-
-import { useRouteDocumentTitle } from './useDocumentTitle';
-import { useSavedPuzzle } from '@/services/savegame/useSavedGame.js';
-import type { RouteRecordRaw } from 'vue-router';
-import type { BaseTheme } from '@/features/settings/composables/use-theme-preferences.js';
-import { usePuzzleStatusStore } from '@/stores/puzzle/status-store.js';
 
 const routes = [
 	{

@@ -2,7 +2,7 @@
 <div class="root">
 	<router-view v-slot="{ Component, route }">
 		<OverlayPageTransition show>
-			<component :is="Component" :key="route.meta.usePuzzleKey ? puzzleKey : undefined" />
+			<component :is="Component" :key="route.meta.usePuzzleKey ? puzzleRefreshKey : undefined" />
 		</OverlayPageTransition>
 	</router-view>
 </div>
@@ -16,9 +16,12 @@ import { initPregeneratedPuzzles } from './workers/pregen-puzzles/init';
 import { useUpdateThemeColorWithRouteAndTheme } from './composables/use-meta-theme-color.js';
 import { initTouchDetectionDataAttrs } from './composables/use-detect-touch.js';
 import { initSettingsPersistence } from './features/settings/store.js';
+import { useGameStore } from './stores/game.js';
 
-const store = useMainStore();
-const puzzleKey = toRef(store, 'puzzleKey');
+const _store = useMainStore();
+
+const gameStore = useGameStore();
+const puzzleRefreshKey = toRef(gameStore, 'puzzleRefreshKey');
 
 // init settings persistence, pwaInstallListeners, and populate or pregen the puzzles db
 initSettingsPersistence();

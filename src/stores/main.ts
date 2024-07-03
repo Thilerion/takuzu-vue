@@ -19,7 +19,6 @@ const useAppContext = () => {
 
 	const { visibilityState: visibility, hidden: windowHidden, visible: windowVisible } = usePageVisibility();
 
-
 	const { isInstalled } = useIsPwaInstalled();
 
 	return {
@@ -40,7 +39,6 @@ const useAppContext = () => {
 
 export const useMainStore = defineStore('main', {
 	state: () => ({
-		puzzleKey: 0,
 		context: useAppContext(),
 		buildModeFlags: useBuildModeFlags(),
 		debugMode: useIsDebugModeEnabled(),
