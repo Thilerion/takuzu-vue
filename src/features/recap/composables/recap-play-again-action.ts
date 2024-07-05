@@ -11,8 +11,8 @@ export const useRecapModalPlayAgainAction = () => {
 		if (gameStore.currentGameConfig == null) {
 			throw new Error('Cannot play again; no game config is set.');
 		}
-		// TODO: what happens in case of failure?
-		await gameStore.playWithSameGameConfig();
+
+		await gameStore.playAgainSameGameConfig();
 		// this part reloads the PlayPuzzle view with the new puzzle data
 		incrementPuzzleRefreshKey();
 	}

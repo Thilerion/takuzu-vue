@@ -23,26 +23,31 @@ export const useGameStore = defineStore('game', () => {
 
 	async function playWithGameConfig(
 		conf: CurrentGameConfig
-	) {
+	): Promise<boolean> {
 		const puzzleStore = usePuzzleStore();
 		if (conf !== currentGameConfig.value) {
 			currentGameConfig.value = JSON.parse(JSON.stringify(conf));
 		}
 
+		puzzleStore.reset();
+
 		const { mode } = conf;
 		switch (mode) {
 			case 'historyReplay': {
-				return puzzleStore.replayPuzzle({
+				await puzzleStore.replayPuzzle({
 					puzzleConfig: conf.puzzleConfig,
 					boardStrings: conf.boardStrings
 				})
+				return true;
 			}
 			case 'freePlay': {
 				const { isAutoReplay, puzzleConfig } = conf;
 				if (isAutoReplay) {
-					return puzzleStore.replayRandomPuzzle(puzzleConfig);
+					const res = await puzzleStore.replayRandomPuzzle(puzzleConfig);
+					return res;
 				} else {
-					return puzzleStore.initPuzzle(puzzleConfig);
+					await puzzleStore.initPuzzle(puzzleConfig);
+					return true;
 				}
 			}
 			default: {
@@ -52,14 +57,34 @@ export const useGameStore = defineStore('game', () => {
 		}
 	}
 
-	async function playWithSameGameConfig() {
+	async function playAgainSameGameConfig(): Promise<boolean> {
 		if (currentGameConfig.value == null) {
 			throw new Error('Cannot play with same game config; no game config is set.');
 		}
-		if (currentGameConfig.value.mode === 'historyReplay') {
+		const { mode } = currentGameConfig.value;
+		if (mode === 'historyReplay') {
 			console.warn('Should not be able to play again with historyReplay game mode.');
 		}
-		return playWithGameConfig(currentGameConfig.value);
+
+		if (mode === 'historyReplay' || (mode === 'freePlay' && !currentGameConfig.value.isAutoReplay)) {
+			return playWithGameConfig(currentGameConfig.value);
+		}
+
+		// Here: freePlay mode, and isAutoReplay is true. Try "replayRandomPuzzle", but if it fails, try initPuzzle instead
+		try {
+			const res = await playWithGameConfig(currentGameConfig.value);
+			if (!res) {
+				throw new Error('Error while tryig to play again with same config.');
+			}
+			return res;
+		} catch(e) {
+			console.warn(e);
+			console.log('trying again without isAutoReplay');
+			return playWithGameConfig({
+				...currentGameConfig.value,
+				isAutoReplay: false
+			})
+		}		
 	}
 
 	async function playFromSaveGame() {
@@ -81,7 +106,7 @@ export const useGameStore = defineStore('game', () => {
 		currentGameConfig,
 
 		playWithGameConfig,
-		playWithSameGameConfig,
+		playAgainSameGameConfig,
 		playFromSaveGame,
 	};
 })
