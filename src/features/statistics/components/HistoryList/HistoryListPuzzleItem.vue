@@ -72,8 +72,8 @@ import type { StatsDbExtendedStatisticDataEntry } from '@/services/db/stats-db/m
 import { useStatisticsNextStore } from '../../store.js';
 import { useMainStore } from '@/stores/main.js';
 import { useRouter } from 'vue-router';
-import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { awaitTimeout } from '@/utils/delay.utils.js';
+import { useGameStore } from '@/stores/game.js';
 
 type HistoryListItemProps = {
 	item: StatsDbExtendedStatisticDataEntry;
@@ -142,8 +142,14 @@ async function replayPuzzle() {
 		board: props.item.initialBoard,
 		solution: props.item.solution
 	};
-	const puzzleStore = usePuzzleStore();
-	puzzleStore.replayPuzzle({ puzzleConfig: puzzleConfig.value, boardStrings });
+	const gameStore = useGameStore();
+	await gameStore.playWithGameConfig({
+		mode: 'historyReplay',
+		puzzleConfig: {
+			...puzzleConfig.value,
+		},
+		boardStrings
+	})
 	await awaitTimeout(1000 / 60 * 2);
 	goToPlayPuzzleRoute();
 }

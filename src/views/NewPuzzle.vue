@@ -117,6 +117,7 @@ import { useMainStore } from '@/stores/main.js';
 import { useSavedPuzzle } from '@/services/savegame/useSavedGame.js';
 import { usePuzzleSetupSelection } from '@/components/new-puzzle/puzzle-setup-selection.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
+import { useGameStore } from '@/stores/game.js';
 
 const { 
 	persistedSelection, updatePersistedSelection,
@@ -214,8 +215,16 @@ async function startGame() {
 
 async function createGame() {
 	puzzleStore.reset();
+	const gameStore = useGameStore();
 	try {
-		await puzzleStore.initPuzzle({...selectedPuzzleConfig.value});
+		// await puzzleStore.initPuzzle({...selectedPuzzleConfig.value});
+		await gameStore.playWithGameConfig({
+			mode: 'freePlay',
+			isAutoReplay: false,
+			puzzleConfig: {
+				...selectedPuzzleConfig.value,
+			}
+		})
 		router.push({ name: 'PlayPuzzle' });
 	} catch(e) {
 		// TODO: puzzleStore.initializationError is now true, display a warning of some kind
@@ -230,10 +239,17 @@ async function createGame() {
 
 async function replayRandom() {
 	puzzleStore.reset();
+	const gameStore = useGameStore();
 	try {
-		const found = await puzzleStore.replayRandomPuzzle({...selectedPuzzleConfig.value});
+		const found = await gameStore.playWithGameConfig({
+			mode: 'freePlay',
+			isAutoReplay: true,
+			puzzleConfig: {
+				...selectedPuzzleConfig.value,
+			}
+		})
 		if (!found) throw new Error('Could not retrieve replay puzzle.');
-		router.push({ name: 'PlayPuzzle', query: { mode: 'replay' } });
+		router.push({ name: 'PlayPuzzle' });
 	} catch {
 		// TODO: puzzleStore.initializationError is now true, display a warning of some kind (better than windows.alert at least)
 		window.alert('No replayable puzzle found.');

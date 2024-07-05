@@ -81,7 +81,9 @@
 			"view-bookmarks": "View bookmarks"
 		},
 		"paused": "Paused",
-		"progress-percentage": "Progress:{p}%"
+		"progress-percentage": "Progress:{p}%",
+		"replay": "Replay",
+		"replay-from-history": "Replay from history"
 	},
 	"default": "default",
 	"disabled": "Disabled",

@@ -10,7 +10,10 @@
 			<div class="font-medium tracking-wide text-xl">
 				{{ boardShape.width }}<span class="px-1">x</span>{{ boardShape.height }}
 			</div>
-			<div v-if="isReplayMode" class="absolute inset-x-0 bottom-1 text-xs text-gray-500 tracking-wide">Replay</div>
+			<div v-if="isReplayMode" class="absolute inset-x-0 bottom-1 text-xs text-gray-500 tracking-wide">
+				<span v-if="isHistoryReplay">{{ $t('PlayPuzzle.replay-from-history') }}</span>
+				<span v-else>{{ $t('PlayPuzzle.replay') }}</span>
+			</div>
 		</div>
 		<div class="flex flex-row w-1/3 justify-end">
 			<IconBtn class="opacity-80" @click="togglePause">
@@ -33,11 +36,12 @@
 
 <script setup lang="ts">
 import type { BoardShape } from '@/lib/types.js';
+import { useGameStore } from '@/stores/game.js';
 import { usePlayPuzzleUiStateStore } from '@/stores/puzzle/play-ui-state-store.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { usePuzzlePauseResume } from '@/stores/puzzle/usePuzzlePauseResume.js';
 import { computed, watchEffect, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 
 const emit = defineEmits<{
 	(e: 'save'): void,
@@ -64,13 +68,16 @@ watchEffect(() => {
 })
 
 // Determine if the puzzle is in replay mode
-// TODO: Set the game mode inside a store
-const route = useRoute();
-const puzzleMode = computed(() => {
-	return route.query.mode;
+const gameStore = useGameStore();
+const isHistoryReplay = computed(() => {
+	return gameStore.currentGameConfig?.mode === 'historyReplay';
+})
+const isFreePlayReplay = computed(() => {
+	if (gameStore.currentGameConfig?.mode !== 'freePlay') return false;
+	return gameStore.currentGameConfig.isAutoReplay;
 })
 const isReplayMode = computed(() => {
-	return puzzleMode.value != null && typeof puzzleMode.value === 'string' && puzzleMode.value.toLowerCase() === 'replay';
+	return isHistoryReplay.value || isFreePlayReplay.value;
 })
 
 const togglePause = () => puzzleStore.paused ? manualResumeGame() : manualPauseGame();
