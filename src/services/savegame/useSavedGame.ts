@@ -1,7 +1,7 @@
 import { computed } from "vue";
 import { createSharedComposable, StorageSerializers, useStorage } from "@vueuse/core";
 import { readonly } from "vue";
-import type { SaveData, SaveGame } from "./types";
+import type { ParsedSavedPuzzle, SaveData, SaveGame } from "./types";
 import { getSaveData } from "./getSaveData";
 import { SimpleBoard } from "@/lib/board/Board.js";
 const SAVE_DATA_STORAGE_KEY = 'takuzu_saved-game';
@@ -12,7 +12,7 @@ const savedPuzzle = useStorage<SaveGame | null>(SAVE_DATA_STORAGE_KEY, null, loc
 
 const _useSavedPuzzle = () => {
 	const savePuzzle = (saveData: SaveData): boolean => {
-		const { moveList, timeElapsed } = saveData;
+		const { moveList, timeElapsed, gameConfig } = saveData;
 
 		const boardExport = saveData.board.export();
 		const initialBoardExport = saveData.initialBoard.export();
@@ -34,6 +34,7 @@ const _useSavedPuzzle = () => {
 			width, height, difficulty,
 			bookmarks,
 			hints,
+			gameConfig,
 		}
 		savedPuzzle.value = savegame;
 		return true;
@@ -53,7 +54,7 @@ const _useSavedPuzzle = () => {
 		return true;
 	})
 
-	const getParsedSavedPuzzle = () => {
+	const getParsedSavedPuzzle = (): ParsedSavedPuzzle | null => {
 		if (savedPuzzle.value == null) return null;
 		const data: SaveGame = { ...savedPuzzle.value };
 		const {
@@ -65,7 +66,8 @@ const _useSavedPuzzle = () => {
 			moveList,
 			timeElapsed,
 			bookmarks,
-			hints
+			hints,
+			gameConfig,
 		} = data;
 		return {
 			config: { width, height, difficulty },
@@ -77,7 +79,8 @@ const _useSavedPuzzle = () => {
 			moveList,
 			timeElapsed,
 			bookmarks,
-			hints
+			hints,
+			gameConfig,
 		};
 	}
 

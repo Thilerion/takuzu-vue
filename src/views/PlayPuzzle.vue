@@ -77,6 +77,7 @@ import { usePlayPuzzleAutoPause } from './usePlayPuzzleAutoPause.js';
 import { useGameCompletion } from './usePlayPuzzleCompletion.js';
 import { usePuzzleRecapStore } from '@/features/recap/store.js';
 import { usePuzzlePlayHotkeys, usePuzzlePlayHotkeyCallbacks } from '@/features/puzzle-play/composables/puzzle-play-hotkeys.js';
+import { useGameStore } from '@/stores/game.js';
 
 const puzzleUiStateStore = usePlayPuzzleUiStateStore();
 const { 
@@ -147,7 +148,8 @@ const goBackToNewPuzzleRoute = useGoBackOrReplaceTo({ name: 'NewPuzzleFreePlay' 
 // When the page is loaded, check if there is a puzzle loaded in store. If not, try to load the saved puzzle, else redirect to a new puzzle route.
 if (!initialized.value) {
 	if (hasCurrentSavedGame.value) {
-		puzzleStore.loadSavedPuzzle();
+		const gameStore = useGameStore();
+		gameStore.playFromSaveGame();
 	} else {
 		console.warn('No puzzle in store. Redirecting from PlayPuzzle to Create game route');
 		router.replace({ name: 'NewPuzzleFreePlay' });

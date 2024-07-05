@@ -5,6 +5,7 @@ import { exportMoveList } from "@/stores/puzzle-history/history-store.js";
 import { usePuzzleStore } from "@/stores/puzzle/store.js";
 import { getTotalTimeElapsed } from "@/stores/puzzle/timer-store.js";
 import { exportHintSaveData } from "@/features/hints/store.js";
+import { useGameStore } from "@/stores/game.js";
 
 export const getSaveData = (): SaveData => {
 	return {
@@ -12,7 +13,8 @@ export const getSaveData = (): SaveData => {
 		...getSaveDataFromTimer(),
 		...getSaveDataFromHistory(),
 		...getSaveDataFromBookmarkStore(),
-		...getSaveDataFromHintsStore()
+		...getSaveDataFromHintsStore(),
+		...getSaveDataFromGameStore(),
 	}
 }
 
@@ -38,5 +40,12 @@ function getSaveDataFromBookmarkStore(): Pick<SaveData, 'bookmarks'> {
 function getSaveDataFromHintsStore(): Pick<SaveData, 'hints'> {
 	return {
 		hints: exportHintSaveData()
+	}
+}
+function getSaveDataFromGameStore(): Pick<SaveData, 'gameConfig'> {
+	const gameStore = useGameStore();
+	if (gameStore.currentGameConfig == null) throw new Error('GameStore has no currentGameConfig, cannot save gameData.');
+	return {
+		gameConfig: gameStore.currentGameConfig
 	}
 }

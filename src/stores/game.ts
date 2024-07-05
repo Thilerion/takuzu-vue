@@ -2,6 +2,7 @@ import type { BasicPuzzleConfig, BoardAndSolutionBoardStrings } from "@/lib/type
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { usePuzzleStore } from "./puzzle/store.js";
+import { useSavedPuzzle } from "@/services/savegame/useSavedGame.js";
 
 export type GameMode = 'freePlay' | 'historyReplay';
 export type CurrentGameConfig = {
@@ -61,11 +62,26 @@ export const useGameStore = defineStore('game', () => {
 		return playWithGameConfig(currentGameConfig.value);
 	}
 
+	async function playFromSaveGame() {
+		const puzzleStore = usePuzzleStore();
+		puzzleStore.reset();
+		const { getParsedSavedPuzzle } = useSavedPuzzle();
+		const saveData = getParsedSavedPuzzle();
+		if (saveData == null) {
+			throw new Error('No saved puzzle found!');
+		}
+		currentGameConfig.value = saveData.gameConfig;
+
+		puzzleStore.loadSavedPuzzle(saveData);
+	}
+
 	return {
 		puzzleRefreshKey,
 		
 		currentGameConfig,
+
 		playWithGameConfig,
 		playWithSameGameConfig,
+		playFromSaveGame,
 	};
 })

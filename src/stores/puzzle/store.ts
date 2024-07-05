@@ -27,6 +27,7 @@ import type { PickOptional } from "@/types.js";
 import { usePuzzleValidationStore } from "../assistance/validation.js";
 import { usePuzzleStatusStore } from "./status-store.js";
 import { usePuzzleEventEmitter } from "@/composables/puzzle-events.js";
+import type { ParsedSavedPuzzle } from "@/services/savegame/types.js";
 
 export type PuzzleStoreState = {
 	difficulty: DifficultyKey | null,
@@ -355,8 +356,12 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 	function loadPuzzle({
 		difficulty,
 		board, solution, initialBoard = board.copy()
-	}: Pick<BasicPuzzleConfig, 'difficulty'> & PickOptional<AllPuzzleBoards, 'initialBoard'>): void {
-		reset();
+	}: Pick<BasicPuzzleConfig, 'difficulty'> & PickOptional<AllPuzzleBoards, 'initialBoard'>, opts: { skipReset?: boolean } = {}): void {
+		const { skipReset = false } = opts;
+		if (!skipReset) {
+			// For instance, when loading a saved puzzle, we don't want to reset the puzzle store, because substores might already contain data
+			reset();
+		}
 		setDifficulty(difficulty);
 		setAllBoards({ board, solution, initialBoard });
 		initialized.value = true;
@@ -437,26 +442,23 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		timer.start();
 	}
 
-	function loadSavedPuzzle(): void {
-		// TODO: a savedPuzzle should have the "replay mode" persisted
-		reset();
-		const { getParsedSavedPuzzle } = useSavedPuzzle();
-		const saveData = getParsedSavedPuzzle();
-		if (saveData == null) {
-			throw new Error('No saved puzzle found!');
-		}
-		setDifficulty(saveData.config.difficulty);
+	function loadSavedPuzzle(saveData: Omit<ParsedSavedPuzzle, 'gameConfig'>): void {
 		// set time elapsed
 		const { timeElapsed } = saveData;
 		const timer = usePuzzleTimer();
 		timer.setInitialTimeElapsed(timeElapsed);
-		setAllBoards(saveData.boards)
 		const puzzleHistory = usePuzzleHistoryStore();
 		puzzleHistory.importMoveHistory([...saveData.moveList]);
 		const bookmarksStore = usePuzzleBookmarksStore();
 		bookmarksStore.importBookmarks(saveData.bookmarks);
 		const hintsStore = usePuzzleHintsStore();
 		hintsStore.importHintSaveData(saveData.hints);
+
+		loadPuzzle({
+			difficulty: saveData.config.difficulty,
+			...saveData.boards
+		}, { skipReset: true });
+
 		initialized.value = true;
 	}
 
@@ -507,7 +509,7 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		startPuzzle,
 		loadSavedPuzzle,
 		loadBookmarkedPuzzleState,
-		
+
 		// ACTIONS: MISC
 		finishPuzzle,
 		reset,
