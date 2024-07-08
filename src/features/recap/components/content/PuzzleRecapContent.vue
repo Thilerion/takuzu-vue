@@ -85,13 +85,34 @@
 			>{{ $t('Recap.change-level') }}</BaseButton>
 		</router-link>
 
-			
-		<BaseButton class="text-base font-normal h-12 btn-primary row-start-2 col-start-1 col-span-2" @click="onPlayAgainAction">
+		<BaseButton
+			v-if="!isHistoryItemReplay"
+			class="text-base font-normal h-12 btn-primary row-start-2 col-start-1 col-span-2"
+			@click="onPlayAgainAction"
+		>
 			<div class="w-full px-8 flex items-center justify-center relative">
 				<div>{{ $t('Recap.play-again') }}</div>
 				<div class="w-7 h-7 ml-auto absolute right-0 opacity-95"><icon-mdi-arrow-right-thin class="w-full h-full" /></div>
 			</div>
 		</BaseButton>
+		<router-link
+			v-else
+			v-slot="{ navigate, href }"
+			custom
+			:to="{ name: 'StatisticsHistory', replace: true }"
+		>
+			<BaseButton
+				element="a"
+				:href="href"
+				class="inline-block text-base font-normal h-12 btn-primary row-start-2 col-start-1 col-span-2"
+				@click.prevent="goBackToRoute({ name: 'StatisticsHistory' }, navigate)"
+			>
+				<div class="w-full h-full px-8 flex items-center justify-center relative">
+					<div class="w-7 h-7 mr-auto absolute left-0 opacity-95"><icon-mdi-arrow-left-thin class="w-full h-full" /></div>
+					<div>{{ $t('Recap.go-back-to-history') }}</div>
+				</div>
+			</BaseButton>
+		</router-link>
 	</div>
 </div>
 </template>
@@ -112,15 +133,13 @@ import { usePuzzleRecapStore } from '@/features/recap/store.js';
 import type { SupportedLocale } from '@/i18n/constants.js';
 import { getRecordMessage } from '@/features/recap/services/recordMessage.js';
 import type { RecapScoresDataProp } from './PuzzleRecapRecapScores.vue';
-import { useRecapModalPlayAgainAction } from '@/features/recap/composables/recap-play-again-action.js';
+import { useGameStore } from '@/stores/game.js';
 
 const formatTimeMMSS = formatTimeMMSSWithRounding(200);
 
 const puzzleRecapStore = usePuzzleRecapStore();
 const { historyEntry, gameEndStats, errorLoading } = storeToRefs(puzzleRecapStore);
 const { locale } = useI18n();
-
-const { playAgainAction } = useRecapModalPlayAgainAction();
 
 // Message data and related code for recap and record message
 const messageData = computed(() => {
@@ -183,9 +202,13 @@ const goBackToRoute: (to: { name: string }, navigate: () => Promise<void | Navig
 	}
 }
 
+const gameStore = useGameStore();
+const isHistoryItemReplay = computed(() => gameStore.currentGameConfig?.mode === 'historyReplay');
 const onPlayAgainAction = async () => {
 	try {
-		await playAgainAction();
+		await gameStore.playAgain();
+		// this part reloads the PlayPuzzle view with the new puzzle data
+		gameStore.puzzleRefreshKey += 1;
 	} catch(e) {
 		console.warn('Could not play again.');
 		console.warn(String(e));

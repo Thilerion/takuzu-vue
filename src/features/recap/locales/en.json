@@ -60,6 +60,7 @@
 		"solved-label": "Solved",
 		"time-average": "Average",
 		"time-best": "Best time",
-		"view-all-statistics": "View all statistics"
+		"view-all-statistics": "View all statistics",
+		"go-back-to-history": "Back to history"
 	}
 }
