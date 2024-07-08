@@ -12,7 +12,7 @@ export const useRecapModalPlayAgainAction = () => {
 			throw new Error('Cannot play again; no game config is set.');
 		}
 
-		await gameStore.playAgainSameGameConfig();
+		await gameStore.playAgain();
 		// this part reloads the PlayPuzzle view with the new puzzle data
 		incrementPuzzleRefreshKey();
 	}

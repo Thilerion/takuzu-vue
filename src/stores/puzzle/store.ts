@@ -1,12 +1,13 @@
 import { defineStore, storeToRefs } from "pinia";
 import { reactive, computed, toRefs, shallowRef, ref, watch } from "vue";
 // Services and composables
-import { useSavedPuzzle } from "@/services/savegame/useSavedGame";
-import { fetchAndPreparePuzzle, fetchRandomReplayablePuzzle } from "@/services/fetch-puzzle.js";
-import { useSharedPuzzleToggle } from "@/composables/use-puzzle-toggle";
+import { useSavedPuzzle } from "@/services/savegame/useSavedGame.js";
+import type { ParsedSavedPuzzle } from "@/services/savegame/types.js";
+import { useSharedPuzzleToggle } from "@/composables/use-puzzle-toggle.js";
 import { getRandomPuzzleTransformationOnRestart } from "./useRandomPuzzleTransformation.js";
 import { StatsDbHistoryEntry, type FinishedPuzzleState, type StatsDbHistoryEntryWithId } from "@/services/db/stats-db/models.js";
 import { statsDb } from "@/services/db/stats-db/init.js";
+import { usePuzzleEventEmitter } from "@/composables/puzzle-events.js";
 // Puzzle substores
 import { usePuzzleHintsStore } from "@/features/hints/store.js";
 import { usePuzzleTimer } from "./timer-store.js";
@@ -17,17 +18,15 @@ import { usePuzzleHistoryStore, type PostMoveHistoryAction } from "../puzzle-his
 // Other stores
 import { usePuzzleRecapStore } from "../../features/recap/store.js";
 import { useMainStore } from "../main.js";
+import { usePuzzleValidationStore } from "../assistance/validation.js";
+import { usePuzzleStatusStore } from "./status-store.js";
 // Lib imports and misc.
 import { SimpleBoard } from "@/lib/board/Board.js";
 import { EMPTY, ONE, ZERO, type PuzzleValue } from "@/lib/constants";
-import { PuzzleTransformations } from "@/lib/transformations/PuzzleTransformations.js";
-import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, BoardAndSolutionBoardStrings, GridCounts, Vec, BoardExportString } from "@/lib/types";
+import type { PuzzleTransformations } from "@/lib/transformations/PuzzleTransformations.js";
+import type { BasicPuzzleConfig, BoardString, DifficultyKey, AllPuzzleBoards, VecValueChange, GridCounts, Vec, BoardExportString } from "@/lib/types";
 import type { TransformationKey } from "@/lib/transformations/types.js";
 import type { PickOptional } from "@/types.js";
-import { usePuzzleValidationStore } from "../assistance/validation.js";
-import { usePuzzleStatusStore } from "./status-store.js";
-import { usePuzzleEventEmitter } from "@/composables/puzzle-events.js";
-import type { ParsedSavedPuzzle } from "@/services/savegame/types.js";
 
 export type PuzzleStoreState = {
 	difficulty: DifficultyKey | null,
@@ -71,7 +70,6 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		cheatsUsed: false,
 	}) as PuzzleStoreState;
 	const statusStore = usePuzzleStatusStore();
-	const { setInitializationError } = statusStore;
 	const {
 		paused,
 		pausedManually, pausedAutomatically,
@@ -294,65 +292,6 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		}, { historyCommitType: "skip" });
 	}
 
-	async function createPuzzle({ width, height, difficulty }: BasicPuzzleConfig): Promise<void> {
-		statusStore.loading = true;
-		try {
-			const {
-				board, solution, initialBoard
-			} = await fetchAndPreparePuzzle({ width, height, difficulty });			
-			setAllBoards({ board, solution, initialBoard });
-		} finally {
-			statusStore.loading = false;
-		}
-		// catch error in caller, which also sets initializationError property
-	}
-
-	async function initPuzzle(puzzleConfig: BasicPuzzleConfig): Promise<void> {
-		try {
-			setDifficulty(puzzleConfig.difficulty);
-			await createPuzzle(puzzleConfig);
-			initialized.value = true;
-		} catch (e) {
-			reset();
-			const msg = e instanceof Error ? e.message : 'An error occurred in "initPuzzle()"';
-			setInitializationError(true, msg);
-			throw e;
-		}
-	}
-	function replayPuzzle({
-		puzzleConfig,
-		boardStrings
-	}: { puzzleConfig: BasicPuzzleConfig, boardStrings: BoardAndSolutionBoardStrings }): void {
-		const board = SimpleBoard.import(boardStrings.board);
-		const initialBoard = board.copy();
-		const solution = SimpleBoard.import(boardStrings.solution);
-		return loadPuzzle({
-			...puzzleConfig,
-			board, solution, initialBoard
-		})
-	}
-
-	async function replayRandomPuzzle(puzzleConfig: BasicPuzzleConfig): Promise<boolean> {
-		try {
-			const fetchedRandomPuzzle = await fetchRandomReplayablePuzzle(puzzleConfig);
-			if (fetchedRandomPuzzle == null) {
-				throw new Error('No replayable puzzle found.');
-				// return false;
-			}
-			replayPuzzle({
-				puzzleConfig,
-				boardStrings: fetchedRandomPuzzle
-			})
-			return true;
-		} catch (e) {
-			console.warn('Could not replay random puzzle.');
-			reset();
-			const msg = e instanceof Error ? e.message : 'An unknown error occurred while trying to retrieve and set a random replayable puzzle.';
-			setInitializationError(true, msg);
-			throw e;
-		}
-	}
-
 	function loadPuzzle({
 		difficulty,
 		board, solution, initialBoard = board.copy()
@@ -502,13 +441,12 @@ export const usePuzzleStore = defineStore('puzzle', () => {
 		undoLastMove,
 
 		// ACTIONS: PUZZLE CREATION/INITIALIZATION
-		initPuzzle,
-		replayPuzzle,
-		replayRandomPuzzle,
 		restartPuzzle,
 		startPuzzle,
 		loadSavedPuzzle,
 		loadBookmarkedPuzzleState,
+
+		loadPuzzle,
 
 		// ACTIONS: MISC
 		finishPuzzle,

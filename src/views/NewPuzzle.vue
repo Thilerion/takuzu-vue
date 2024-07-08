@@ -218,13 +218,7 @@ async function createGame() {
 	const gameStore = useGameStore();
 	try {
 		// await puzzleStore.initPuzzle({...selectedPuzzleConfig.value});
-		await gameStore.playWithGameConfig({
-			mode: 'freePlay',
-			isAutoReplay: false,
-			puzzleConfig: {
-				...selectedPuzzleConfig.value,
-			}
-		})
+		await gameStore.playNewPuzzle({...selectedPuzzleConfig.value});
 		router.push({ name: 'PlayPuzzle' });
 	} catch(e) {
 		// TODO: puzzleStore.initializationError is now true, display a warning of some kind
@@ -241,14 +235,7 @@ async function replayRandom() {
 	puzzleStore.reset();
 	const gameStore = useGameStore();
 	try {
-		const found = await gameStore.playWithGameConfig({
-			mode: 'freePlay',
-			isAutoReplay: true,
-			puzzleConfig: {
-				...selectedPuzzleConfig.value,
-			}
-		})
-		if (!found) throw new Error('Could not retrieve replay puzzle.');
+		await gameStore.playPuzzleWithAutoReplay({ ...selectedPuzzleConfig.value });
 		router.push({ name: 'PlayPuzzle' });
 	} catch {
 		// TODO: puzzleStore.initializationError is now true, display a warning of some kind (better than windows.alert at least)

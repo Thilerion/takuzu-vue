@@ -1,19 +1,23 @@
-import type { BasicPuzzleConfig, BoardAndSolutionBoardStrings } from "@/lib/types.js";
+import type { AllPuzzleBoards, BasicPuzzleConfig } from "@/lib/types.js";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { usePuzzleStore } from "./puzzle/store.js";
 import { useSavedPuzzle } from "@/services/savegame/useSavedGame.js";
+import { SimpleBoard } from "@/lib/board/Board.js";
+import type { StatsDbHistoryEntry } from "@/services/db/stats-db/models.js";
+import { fetchAndPreparePuzzle, fetchRandomReplayablePuzzle } from "@/services/fetch-puzzle.js";
+import { usePuzzleStatusStore } from "./puzzle/status-store.js";
 
 export type GameMode = 'freePlay' | 'historyReplay';
 export type CurrentGameConfig = {
 	mode: 'historyReplay',
-	boardStrings: BoardAndSolutionBoardStrings,
 	puzzleConfig: BasicPuzzleConfig
 } | {
 	mode: 'freePlay',
 	isAutoReplay: boolean,
 	puzzleConfig: BasicPuzzleConfig
 }
+type PlayablePuzzle = AllPuzzleBoards & Pick<BasicPuzzleConfig, 'difficulty'>;
 
 export const useGameStore = defineStore('game', () => {
 	// Used to force rerendering of the play puzzle page when the board is changed (such as when the user "plays again" after finishing a puzzle)
@@ -21,73 +25,109 @@ export const useGameStore = defineStore('game', () => {
 
 	const currentGameConfig = ref<CurrentGameConfig | null>(null);
 
-	async function playWithGameConfig(
-		conf: CurrentGameConfig
-	): Promise<boolean> {
+	const statusStore = usePuzzleStatusStore();
+
+	/** Actually sets the puzzle, created or loaded by the other functions in this store. */
+	function playPuzzle(puzzle: PlayablePuzzle) {
+		// TODO: also handle a saved puzzle's state, which includes history, timeElapsed, used hints, etc
+		// TODO: set correct status properties
+		const { difficulty, board, solution, initialBoard } = puzzle;
 		const puzzleStore = usePuzzleStore();
-		if (conf !== currentGameConfig.value) {
-			currentGameConfig.value = JSON.parse(JSON.stringify(conf));
-		}
-
-		puzzleStore.reset();
-
-		const { mode } = conf;
-		switch (mode) {
-			case 'historyReplay': {
-				await puzzleStore.replayPuzzle({
-					puzzleConfig: conf.puzzleConfig,
-					boardStrings: conf.boardStrings
-				})
-				return true;
-			}
-			case 'freePlay': {
-				const { isAutoReplay, puzzleConfig } = conf;
-				if (isAutoReplay) {
-					const res = await puzzleStore.replayRandomPuzzle(puzzleConfig);
-					return res;
-				} else {
-					await puzzleStore.initPuzzle(puzzleConfig);
-					return true;
-				}
-			}
-			default: {
-				const x: never = mode;
-				throw new Error(`Unexpected game mode: ${x}`);
-			}
-		}
+		puzzleStore.loadPuzzle({ difficulty, board, solution, initialBoard });
 	}
-
-	async function playAgainSameGameConfig(): Promise<boolean> {
-		if (currentGameConfig.value == null) {
-			throw new Error('Cannot play with same game config; no game config is set.');
+	function setCurrentGameConfig(conf: CurrentGameConfig | null) {
+		if (conf == null) {
+			currentGameConfig.value = null;
+			return;
 		}
-		const { mode } = currentGameConfig.value;
-		if (mode === 'historyReplay') {
-			console.warn('Should not be able to play again with historyReplay game mode.');
-		}
-
-		if (mode === 'historyReplay' || (mode === 'freePlay' && !currentGameConfig.value.isAutoReplay)) {
-			return playWithGameConfig(currentGameConfig.value);
-		}
-
-		// Here: freePlay mode, and isAutoReplay is true. Try "replayRandomPuzzle", but if it fails, try initPuzzle instead
+		currentGameConfig.value = JSON.parse(JSON.stringify(conf));
+	}
+	
+	/** Generates and sets a new puzzle based on the provided configuration */
+	async function playNewPuzzle(puzzleConfig: BasicPuzzleConfig) {
+		const puzzleStore = usePuzzleStore();
 		try {
-			const res = await playWithGameConfig(currentGameConfig.value);
-			if (!res) {
-				throw new Error('Error while tryig to play again with same config.');
-			}
-			return res;
-		} catch(e) {
-			console.warn(e);
-			console.log('trying again without isAutoReplay');
-			return playWithGameConfig({
-				...currentGameConfig.value,
+			setCurrentGameConfig({
+				mode: 'freePlay',
+				puzzleConfig,
 				isAutoReplay: false
 			})
-		}		
+			puzzleStore.reset();
+			statusStore.loading = true;
+			const puzzleBoards = await fetchAndPreparePuzzle(puzzleConfig);
+			playPuzzle({ ...puzzleBoards, difficulty: puzzleConfig.difficulty });
+		} catch(e) {
+			console.warn('Error while generating/initializing a newly generated puzzle.');
+			console.warn(String(e));
+			puzzleStore.reset();
+			const msg = e instanceof Error ? e.message : 'An error occurred in "initPuzzle()"';
+			statusStore.setInitializationError(true, msg);
+			throw e;
+		} finally {
+			statusStore.loading = false;
+		}
 	}
 
-	async function playFromSaveGame() {
+	/** Replays a previously played puzzle, randomly chosen, based on the provided configuration */
+	async function playPuzzleWithAutoReplay(puzzleConfig?: BasicPuzzleConfig) {
+		const puzzleStore = usePuzzleStore();
+		try {
+			if (puzzleConfig == null) {
+				if (currentGameConfig.value == null || currentGameConfig.value.mode !== 'freePlay') {
+					throw new Error('Cannot play with auto-replay without an already set gameConfig.');
+				}
+				puzzleConfig = currentGameConfig.value.puzzleConfig;
+			}
+			setCurrentGameConfig({
+				mode: 'freePlay',
+				puzzleConfig,
+				isAutoReplay: true,
+			})
+			puzzleStore.reset();
+			statusStore.loading = true;
+			const fetchedRandomPuzzle = await fetchRandomReplayablePuzzle(puzzleConfig);
+			if (fetchedRandomPuzzle == null) {
+				throw new Error('No replayable puzzle found.');
+			}
+			const board = SimpleBoard.import(fetchedRandomPuzzle.board);
+			const solution = SimpleBoard.import(fetchedRandomPuzzle.solution);
+			const initialBoard = board.copy();
+			return playPuzzle({
+				difficulty: puzzleConfig.difficulty,
+				board, solution, initialBoard
+			});
+		} catch(e) {
+			console.warn('Could not replay random puzzle.');
+			puzzleStore.reset();
+			const msg = e instanceof Error ? e.message : 'An unknown error occurred while trying to retrieve and set a random replayable puzzle.';
+			statusStore.setInitializationError(true, msg);
+			throw e;
+		} finally {
+			statusStore.loading = false;
+		}
+	}
+
+	/** Replay the selected previously played puzzle from history. */
+	async function playReplayPuzzleFromHistory(historyEntry: StatsDbHistoryEntry) {
+		setCurrentGameConfig({
+			mode: 'historyReplay',
+			puzzleConfig: {
+				difficulty: historyEntry.difficulty,
+				width: historyEntry.width,
+				height: historyEntry.height,
+			}
+		});
+		const board = SimpleBoard.import(historyEntry.initialBoard);
+		const solution = SimpleBoard.import(historyEntry.solution);
+		const initialBoard = board.copy();
+		return playPuzzle({
+			difficulty: historyEntry.difficulty,
+			board, solution, initialBoard
+		});
+	}
+
+	/** Play/resume the current saved puzzle from localStorage. */
+	async function playSavedPuzzle() {
 		const puzzleStore = usePuzzleStore();
 		puzzleStore.reset();
 		const { getParsedSavedPuzzle } = useSavedPuzzle();
@@ -95,9 +135,25 @@ export const useGameStore = defineStore('game', () => {
 		if (saveData == null) {
 			throw new Error('No saved puzzle found!');
 		}
-		currentGameConfig.value = saveData.gameConfig;
+		setCurrentGameConfig(saveData.gameConfig);
+		return puzzleStore.loadSavedPuzzle(saveData);
+	}
 
-		puzzleStore.loadSavedPuzzle(saveData);
+	async function playAgain() {
+		if (currentGameConfig.value == null) {
+			throw new Error('Cannot play with same game config; no game config is set.');
+		}
+		const { mode } = currentGameConfig.value;
+		if (mode === 'freePlay') {
+			const { isAutoReplay } = currentGameConfig.value;
+			if (isAutoReplay) {
+				return playPuzzleWithAutoReplay();
+			} else {
+				return playNewPuzzle(currentGameConfig.value.puzzleConfig);
+			}
+		} else {
+			throw new Error(`Cannot play again with mode "${mode}".`);
+		}
 	}
 
 	return {
@@ -105,8 +161,11 @@ export const useGameStore = defineStore('game', () => {
 		
 		currentGameConfig,
 
-		playWithGameConfig,
-		playAgainSameGameConfig,
-		playFromSaveGame,
+		playNewPuzzle,
+		playPuzzleWithAutoReplay,
+		playReplayPuzzleFromHistory,
+		playSavedPuzzle,
+
+		playAgain,
 	};
 })

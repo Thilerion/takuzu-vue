@@ -149,7 +149,7 @@ const goBackToNewPuzzleRoute = useGoBackOrReplaceTo({ name: 'NewPuzzleFreePlay' 
 if (!initialized.value) {
 	if (hasCurrentSavedGame.value) {
 		const gameStore = useGameStore();
-		gameStore.playFromSaveGame();
+		gameStore.playSavedPuzzle();
 	} else {
 		console.warn('No puzzle in store. Redirecting from PlayPuzzle to Create game route');
 		router.replace({ name: 'NewPuzzleFreePlay' });

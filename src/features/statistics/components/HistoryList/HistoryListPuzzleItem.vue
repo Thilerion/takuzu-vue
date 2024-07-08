@@ -87,7 +87,7 @@ const emit = defineEmits<{
 	delete: [],
 	'save-note': [note: string | undefined]
 }>();
-const { difficulty, dimensions, date, timeElapsed, width, height } = toRefs(props.item);
+const { difficulty, dimensions, date, timeElapsed } = toRefs(props.item);
 const mainStore = useMainStore();
 
 const currentTimeRecord = computed(() => props.recordCurrent && !props.recordFirst);
@@ -131,25 +131,11 @@ function deleteItem() {
 	statsNextStore.deleteItem(props.item.id!);
 }
 
-const puzzleConfig = computed(() => {
-	return { width: width.value, height: height.value, difficulty: difficulty.value };
-})
 const router = useRouter();
 const goToPlayPuzzleRoute = () => router.push({ name: 'PlayPuzzle' });
 async function replayPuzzle() {
-	// TODO: SET REPLAY_MODE IN ROUTE, so game board header knows this, etc
-	const boardStrings = {
-		board: props.item.initialBoard,
-		solution: props.item.solution
-	};
 	const gameStore = useGameStore();
-	await gameStore.playWithGameConfig({
-		mode: 'historyReplay',
-		puzzleConfig: {
-			...puzzleConfig.value,
-		},
-		boardStrings
-	})
+	await gameStore.playReplayPuzzleFromHistory(props.item);
 	await awaitTimeout(1000 / 60 * 2);
 	goToPlayPuzzleRoute();
 }

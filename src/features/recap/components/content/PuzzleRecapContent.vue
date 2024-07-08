@@ -86,7 +86,7 @@
 		</router-link>
 
 			
-		<BaseButton class="text-base font-normal h-12 btn-primary row-start-2 col-start-1 col-span-2" @click="playAgainAction">
+		<BaseButton class="text-base font-normal h-12 btn-primary row-start-2 col-start-1 col-span-2" @click="onPlayAgainAction">
 			<div class="w-full px-8 flex items-center justify-center relative">
 				<div>{{ $t('Recap.play-again') }}</div>
 				<div class="w-7 h-7 ml-auto absolute right-0 opacity-95"><icon-mdi-arrow-right-thin class="w-full h-full" /></div>
@@ -180,6 +180,16 @@ const goBackToRoute: (to: { name: string }, navigate: () => Promise<void | Navig
 		router.go(-1);
 	} else {
 		navigateFn();
+	}
+}
+
+const onPlayAgainAction = async () => {
+	try {
+		await playAgainAction();
+	} catch(e) {
+		console.warn('Could not play again.');
+		console.warn(String(e));
+		goBackToRoute({ name: 'NewPuzzleFreePlay' }, () => router.replace({ name: 'NewPuzzleFreePlay' }));
 	}
 }
 </script>
