@@ -19,6 +19,12 @@ export type CurrentGameConfig = {
 }
 type PlayablePuzzle = AllPuzzleBoards & Pick<BasicPuzzleConfig, 'difficulty'>;
 
+const getDefaultGameConfigFromPuzzleConfig = (conf: BasicPuzzleConfig): CurrentGameConfig => ({
+	mode: 'freePlay',
+	puzzleConfig: {...conf},
+	isAutoReplay: false
+})
+
 export const useGameStore = defineStore('game', () => {
 	// Used to force rerendering of the play puzzle page when the board is changed (such as when the user "plays again" after finishing a puzzle)
 	const puzzleRefreshKey = ref(0);
@@ -41,6 +47,9 @@ export const useGameStore = defineStore('game', () => {
 			return;
 		}
 		currentGameConfig.value = JSON.parse(JSON.stringify(conf));
+	}
+	function setCurrentGameConfigToDefault(conf: BasicPuzzleConfig) {
+		setCurrentGameConfig(getDefaultGameConfigFromPuzzleConfig(conf));
 	}
 	
 	/** Generates and sets a new puzzle based on the provided configuration */
@@ -135,7 +144,12 @@ export const useGameStore = defineStore('game', () => {
 		if (saveData == null) {
 			throw new Error('No saved puzzle found!');
 		}
-		setCurrentGameConfig(saveData.gameConfig);
+		if (saveData.gameConfig == null) {
+			// Should not happen, maybe only in savegames from older versions
+			setCurrentGameConfigToDefault(saveData.config);
+		} else {
+			setCurrentGameConfig(saveData.gameConfig);
+		}
 		return puzzleStore.loadSavedPuzzle(saveData);
 	}
 
