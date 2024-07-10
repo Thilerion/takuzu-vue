@@ -48,7 +48,8 @@
 			"loading-loading-replay": "Puzzel laden...",
 			"select-puzzle-size": "Selecteer een puzzelgrootte",
 			"some-puzzle-sizes-are-disabled-for-harder-puzzles": "Opmerking: sommige puzzelgroottes zijn uitgeschakeld voor moeilijkere puzzels.",
-			"start-game": "Start spel"
+			"start-game": "Start spel",
+			"many-sizes-selected": "{0} formaten"
 		},
 		"load-save": "Hervatten",
 		"options": {

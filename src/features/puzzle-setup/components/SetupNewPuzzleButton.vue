@@ -5,15 +5,15 @@
 	@click="$emit('start')"
 >
 	<transition name="fade-start" mode="out-in">
-		<div v-if="!loading" class="max-w-full overflow-hidden text-wrap">
+		<div v-if="!loading" class="">
 			<template v-if="!disabled">
 				<div>{{ $t('NewPuzzle.StartGame.start-game') }} <small v-if="autoReplayMode" class="text-xs opacity-70 font-normal">({{ $t('Game.replay') }})</small></div>
 				<span v-if="!disabled && singleDifficultyStr != null" class="text-xs">{{ sizeStr }} / {{ singleDifficultyStr }}</span>
 				<span v-if="!disabled && difficultyRangeStr != null" class="text-xs">{{ sizeStr }} / {{ difficultyRangeStr }}</span>
 			</template>
 			<template v-else-if="disabled">
-				<div>{{ $t('NewPuzzle.StartGame.select-puzzle-size') }}</div>
-				<div class="text-xs font-normal text-wrap leading-tight">{{ $t('NewPuzzle.StartGame.some-puzzle-sizes-are-disabled-for-harder-puzzles') }}</div>
+				<div class="text-white">{{ $t('NewPuzzle.StartGame.select-puzzle-size') }}</div>
+				<div class="text-white/80 italic text-xs font-normal text-wrap leading-tight">{{ $t('NewPuzzle.StartGame.some-puzzle-sizes-are-disabled-for-harder-puzzles') }}</div>
 			</template>
 		</div>
 		<div v-else-if="loading">
@@ -52,17 +52,19 @@ const disabled = computed(() => {
 const toSizeStr = ({ width, height }: BoardShape) => {
 	return `${width}x${height}`;
 }
-
+const { t } = useI18n();
 const sizeStr = computed(() => {
 	// TODO: if too long, just say [n sizes selected]
 	if (props.size == null) return '';
 	else if (Array.isArray(props.size)) {
+		const n = props.size.length;
+		if (n >= 5) return t('NewPuzzle.StartGame.many-sizes-selected', [n]);
 		return props.size.map(toSizeStr).join(', ');
 	} else {
 		return toSizeStr(props.size);
 	}
 })
-const { t } = useI18n();
+
 const diffs = computed((): DifficultyKey | DifficultyRange | null => {
 	if (props.difficulty == null) return null;
 	if (Array.isArray(props.difficulty)) {

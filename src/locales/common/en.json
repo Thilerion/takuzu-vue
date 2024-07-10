@@ -48,7 +48,8 @@
 			"loading-loading-replay": "Loading replay...",
 			"select-puzzle-size": "Select a puzzle size",
 			"some-puzzle-sizes-are-disabled-for-harder-puzzles": "Note: some puzzle sizes are disabled for harder puzzles.",
-			"start-game": "Start game"
+			"start-game": "Start game",
+			"many-sizes-selected": "{0} sizes"
 		},
 		"load-save": "Load save",
 		"options": {

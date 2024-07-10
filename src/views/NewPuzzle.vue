@@ -33,11 +33,6 @@
 	<NewPuzzleSetup
 		@set-start-state="setStartState"
 	/>
-	
-	<div>
-		<div>Size: {{ sizeStrs.join(', ') }}</div>
-		<div>Difficulty: {{ Array.isArray(difficulty) ? difficulty.join('-') : difficulty }}</div>
-	</div>
 
 	<div
 		class="w-full bg-gray-50 border-t dark:bg-slate-800 dark:border-slate-700 border-gray-200 px-4 pt-2 space-y-2 footer-wrapper sticky bottom-0"
@@ -61,16 +56,6 @@
 					@click="navigate"
 				><span class="text-wrap">{{ $t('NewPuzzle.load-save') }}</span></BaseButton>
 			</router-link>
-			<!-- <StartGameButton
-				:class="{ 'col-span-2': !hasCurrentSavedGame }"
-				:size="size"
-				:difficulty-label="selectedDifficultyLabel"
-				:difficulty-stars="selectedDifficulty"
-				:disabled="startButtonDisabled"
-				:loading="puzzleIsLoading"
-				:replay="debugAutoReplayModeEnabled"
-				@start="startGame"
-			/> -->
 			<SetupNewPuzzleButton
 				:class="{ 'col-span-2': !hasCurrentSavedGame }"
 				:size="startState?.size ?? null"
@@ -98,13 +83,7 @@ import type { StartableGameState } from '@/features/puzzle-setup/components/NewP
 
 const {
 	autoReplayMode,
-	size,
-	difficulty,
 } = usePuzzleSetupState();
-const sizeStrs = computed(() => {
-	const sizes = Array.isArray(size.value) ? size.value : [size.value];
-	return sizes.map(s => `${s.width}x${s.height}`);
-})
 const startState = ref<null | StartableGameState>(null);
 function setStartState(val: StartableGameState) {
 	startState.value = val;
