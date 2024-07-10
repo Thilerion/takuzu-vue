@@ -125,7 +125,7 @@ async function createGame() {
 		size: startState.value.size,
 		options: {
 			// TODO: add option to pickSizeWeightByNumCells
-			pickSizeWeightByNumCells: false,
+			pickSizeWithEqualWeights: false,
 		}
 	}
 	puzzleStore.reset();
@@ -154,7 +154,7 @@ async function replayRandom() {
 		size: startState.value.size,
 		options: {
 			// TODO: add option to pickSizeWeightByNumCells
-			pickSizeWeightByNumCells: false,
+			pickSizeWithEqualWeights: false,
 		}
 	}
 	puzzleStore.reset();

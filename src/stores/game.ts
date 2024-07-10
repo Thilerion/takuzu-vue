@@ -10,7 +10,7 @@ import { usePuzzleStatusStore } from "./puzzle/status-store.js";
 import { isDifficultyRange, type DifficultyRange } from "@/features/puzzle-setup/composables/puzzle-setup-state.js";
 import { getDifficultiesFromDifficultyRange, getPresetFromBoardShape } from "@/features/puzzle-setup/helpers/board-presets.js";
 import { BoardPreset, isDifficultyKey } from "@/config.js";
-import { pickRandom } from "@/utils/random.utils.js";
+import { pickRandom, pickRandomWeighted, type WeightedArrayItem } from "@/utils/random.utils.js";
 
 export type GameMode = 'freePlay' | 'historyReplay';
 
@@ -22,7 +22,7 @@ export type PuzzleSetupConfig = {
 	size: BoardShape | BoardShape[],
 	difficulty: DifficultyKey | DifficultyRange,
 	options: {
-		pickSizeWeightByNumCells: boolean,
+		pickSizeWithEqualWeights: boolean,
 	}
 }
 export type CurrentGameConfig = {
@@ -70,7 +70,7 @@ export const useGameStore = defineStore('game', () => {
 				size: { width: conf.width, height: conf.height },
 				difficulty: conf.difficulty,
 				options: {
-					pickSizeWeightByNumCells: false,
+					pickSizeWithEqualWeights: false,
 				}
 			}));
 		} else {
@@ -226,8 +226,15 @@ function selectPuzzleConfigFromSetupConfig(conf: PuzzleSetupConfig): BasicPuzzle
 function pickRandomPresetFromBoardShapes(sizes: BoardShape[], opts: { weightByNumCells: boolean }): BoardPreset | null {
 	const { weightByNumCells } = opts;
 	if (weightByNumCells) {
-		// TODO: implement random preset picking from list of boardSizes, weighted by number of cells
-		throw new Error('Not implemented yet.');
+		// TODO: improve this mess of calculating weights
+		const withWeights = sizes.map(size => {
+			const base = Math.max(Math.sqrt(size.width * size.height) - 4, 1);
+			const weight = Math.round(1 / base * 100);
+			return [size, weight] as WeightedArrayItem<BoardShape>;
+		});
+		console.log(withWeights);
+		const randomSize = pickRandomWeighted(withWeights);
+		return getPresetFromBoardShape(randomSize);
 	}
 
 	const randomSize = pickRandom(sizes);
@@ -248,9 +255,10 @@ function pickRandomDifficultyFromRange(range: DifficultyRange, selectedPreset: B
 	return pickRandom(difficultyList);
 }
 
-function getPresetFromConfSize(size: BoardShape | BoardShape[], opts?: { pickSizeWeightByNumCells: boolean }): BoardPreset {
+function getPresetFromConfSize(size: BoardShape | BoardShape[], opts?: { pickSizeWithEqualWeights: boolean }): BoardPreset {
 	if (Array.isArray(size)) {
-		const weightByNumCells = opts?.pickSizeWeightByNumCells ?? false;
+		const useSizeEqualWeights = opts?.pickSizeWithEqualWeights ?? false;
+		const weightByNumCells = !useSizeEqualWeights;
 		console.log(`Selecting random preset from config size, with option weightByNumCells: ${weightByNumCells}`);
 		const preset = pickRandomPresetFromBoardShapes(size, { weightByNumCells });
 		if (preset == null) {

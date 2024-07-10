@@ -74,3 +74,24 @@ export const shuffle = <T>(arr: ReadonlyArray<T>, rng: RngSource = Math.random):
 
 export const randomIndex = (arr: ReadonlyArray<unknown>): number => Math.floor(Math.random() * arr.length);
 export const pickRandom = <T>(arr: ReadonlyArray<T>): T => arr[randomIndex(arr)];
+
+export type WeightedArrayItem<T> = [item: T, weight: number];
+export const pickRandomWeighted = <T>(items: ReadonlyArray<WeightedArrayItem<T>>): T => {
+	// Calculate the total weight
+    const totalWeight = items.reduce((sum, item) => sum + item[1], 0);
+
+    // Generate a random number between 0 and the total weight
+    const randomWeight = randomBetween(0, totalWeight);
+
+    // Iterate through the items and select one based on the random weight
+    let accumulatedWeight = 0;
+    for (const item of items) {
+        accumulatedWeight += item[1];
+        if (randomWeight < accumulatedWeight) {
+            return item[0];
+        }
+    }
+
+    // Fallback (this should never be reached if the weights are correct)
+    return items[0][0];
+}
