@@ -91,7 +91,7 @@ import { useRouter } from 'vue-router';
 import { useMainStore } from '@/stores/main.js';
 import { useSavedPuzzle } from '@/services/savegame/useSavedGame.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
-import { useGameStore } from '@/stores/game.js';
+import { useGameStore, type PuzzleSetupConfig } from '@/stores/game.js';
 import { usePuzzleSetupState } from '@/features/puzzle-setup/composables/puzzle-setup-state.js';
 import { ref } from 'vue';
 import type { StartableGameState } from '@/features/puzzle-setup/components/NewPuzzleSetup.vue';
@@ -141,9 +141,13 @@ async function createGame() {
 	if (startState.value == null || startState.value.difficulty == null || startState.value.size == null) {
 		throw new Error('Cannot start game; start state is invalid.');
 	}
-	const state = {
+	const state: PuzzleSetupConfig = {
 		difficulty: startState.value.difficulty,
 		size: startState.value.size,
+		options: {
+			// TODO: add option to pickSizeWeightByNumCells
+			pickSizeWeightByNumCells: false,
+		}
 	}
 	puzzleStore.reset();
 	const gameStore = useGameStore();
@@ -166,9 +170,13 @@ async function replayRandom() {
 	if (startState.value == null || startState.value.difficulty == null || startState.value.size == null) {
 		throw new Error('Cannot start game; start state is invalid.');
 	}
-	const state = {
+	const state: PuzzleSetupConfig = {
 		difficulty: startState.value.difficulty,
 		size: startState.value.size,
+		options: {
+			// TODO: add option to pickSizeWeightByNumCells
+			pickSizeWeightByNumCells: false,
+		}
 	}
 	puzzleStore.reset();
 	const gameStore = useGameStore();

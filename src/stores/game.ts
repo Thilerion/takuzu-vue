@@ -1,4 +1,4 @@
-import type { AllPuzzleBoards, BasicPuzzleConfig } from "@/lib/types.js";
+import type { AllPuzzleBoards, BasicPuzzleConfig, BoardShape, DifficultyKey } from "@/lib/types.js";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { usePuzzleStore } from "./puzzle/store.js";
@@ -7,22 +7,38 @@ import { SimpleBoard } from "@/lib/board/Board.js";
 import type { StatsDbHistoryEntry } from "@/services/db/stats-db/models.js";
 import { fetchAndPreparePuzzle, fetchRandomReplayablePuzzle } from "@/services/fetch-puzzle.js";
 import { usePuzzleStatusStore } from "./puzzle/status-store.js";
+import { isDifficultyRange, type DifficultyRange } from "@/features/puzzle-setup/composables/puzzle-setup-state.js";
+import { getDifficultiesFromDifficultyRange, getPresetFromBoardShape } from "@/features/puzzle-setup/helpers/board-presets.js";
+import { BoardPreset, isDifficultyKey } from "@/config.js";
+import { pickRandom } from "@/utils/random.utils.js";
 
 export type GameMode = 'freePlay' | 'historyReplay';
+
+export type HistoryReplaySetupConfig = {
+	size: BoardShape,
+	difficulty: DifficultyKey,
+}
+export type PuzzleSetupConfig = {
+	size: BoardShape | BoardShape[],
+	difficulty: DifficultyKey | DifficultyRange,
+	options: {
+		pickSizeWeightByNumCells: boolean,
+	}
+}
 export type CurrentGameConfig = {
 	mode: 'historyReplay',
-	puzzleConfig: BasicPuzzleConfig
+	puzzleConfig: HistoryReplaySetupConfig
 } | {
 	mode: 'freePlay',
 	isAutoReplay: boolean,
-	puzzleConfig: BasicPuzzleConfig
+	puzzleConfig: PuzzleSetupConfig,
 }
 type PlayablePuzzle = AllPuzzleBoards & Pick<BasicPuzzleConfig, 'difficulty'>;
 
-const getDefaultGameConfigFromPuzzleConfig = (conf: BasicPuzzleConfig): CurrentGameConfig => ({
+const getDefaultGameConfigFromPuzzleConfig = (conf: PuzzleSetupConfig): CurrentGameConfig => ({
 	mode: 'freePlay',
 	puzzleConfig: {...conf},
-	isAutoReplay: false
+	isAutoReplay: false,
 })
 
 export const useGameStore = defineStore('game', () => {
@@ -48,12 +64,22 @@ export const useGameStore = defineStore('game', () => {
 		}
 		currentGameConfig.value = JSON.parse(JSON.stringify(conf));
 	}
-	function setCurrentGameConfigToDefault(conf: BasicPuzzleConfig) {
-		setCurrentGameConfig(getDefaultGameConfigFromPuzzleConfig(conf));
+	function setCurrentGameConfigToDefault(conf: BasicPuzzleConfig | PuzzleSetupConfig) {
+		if (!('size' in conf)) {
+			setCurrentGameConfig(getDefaultGameConfigFromPuzzleConfig({
+				size: { width: conf.width, height: conf.height },
+				difficulty: conf.difficulty,
+				options: {
+					pickSizeWeightByNumCells: false,
+				}
+			}));
+		} else {
+			setCurrentGameConfig(getDefaultGameConfigFromPuzzleConfig(conf));
+		}
 	}
 	
 	/** Generates and sets a new puzzle based on the provided configuration */
-	async function playNewPuzzle(puzzleConfig: BasicPuzzleConfig) {
+	async function playNewPuzzle(puzzleConfig: PuzzleSetupConfig) {
 		const puzzleStore = usePuzzleStore();
 		try {
 			setCurrentGameConfig({
@@ -63,8 +89,9 @@ export const useGameStore = defineStore('game', () => {
 			})
 			puzzleStore.reset();
 			statusStore.loading = true;
-			const puzzleBoards = await fetchAndPreparePuzzle(puzzleConfig);
-			playPuzzle({ ...puzzleBoards, difficulty: puzzleConfig.difficulty });
+			const basicConfig = selectPuzzleConfigFromSetupConfig(puzzleConfig);
+			const puzzleBoards = await fetchAndPreparePuzzle(basicConfig);
+			playPuzzle({ ...puzzleBoards, difficulty: basicConfig.difficulty });
 		} catch(e) {
 			console.warn('Error while generating/initializing a newly generated puzzle.');
 			console.warn(String(e));
@@ -78,7 +105,7 @@ export const useGameStore = defineStore('game', () => {
 	}
 
 	/** Replays a previously played puzzle, randomly chosen, based on the provided configuration */
-	async function playPuzzleWithAutoReplay(puzzleConfig?: BasicPuzzleConfig) {
+	async function playPuzzleWithAutoReplay(puzzleConfig?: PuzzleSetupConfig) {
 		const puzzleStore = usePuzzleStore();
 		try {
 			if (puzzleConfig == null) {
@@ -92,9 +119,10 @@ export const useGameStore = defineStore('game', () => {
 				puzzleConfig,
 				isAutoReplay: true,
 			})
+			const basicConfig = selectPuzzleConfigFromSetupConfig(puzzleConfig);
 			puzzleStore.reset();
 			statusStore.loading = true;
-			const fetchedRandomPuzzle = await fetchRandomReplayablePuzzle(puzzleConfig);
+			const fetchedRandomPuzzle = await fetchRandomReplayablePuzzle(basicConfig);
 			if (fetchedRandomPuzzle == null) {
 				throw new Error('No replayable puzzle found.');
 			}
@@ -102,7 +130,7 @@ export const useGameStore = defineStore('game', () => {
 			const solution = SimpleBoard.import(fetchedRandomPuzzle.solution);
 			const initialBoard = board.copy();
 			return playPuzzle({
-				difficulty: puzzleConfig.difficulty,
+				difficulty: basicConfig.difficulty,
 				board, solution, initialBoard
 			});
 		} catch(e) {
@@ -122,8 +150,7 @@ export const useGameStore = defineStore('game', () => {
 			mode: 'historyReplay',
 			puzzleConfig: {
 				difficulty: historyEntry.difficulty,
-				width: historyEntry.width,
-				height: historyEntry.height,
+				size: { width: historyEntry.width, height: historyEntry.height },
 			}
 		});
 		const board = SimpleBoard.import(historyEntry.initialBoard);
@@ -183,3 +210,69 @@ export const useGameStore = defineStore('game', () => {
 		playAgain,
 	};
 })
+
+function selectPuzzleConfigFromSetupConfig(conf: PuzzleSetupConfig): BasicPuzzleConfig {
+	const preset = getPresetFromConfSize(conf.size, conf.options);
+	if (Array.isArray(conf.size)) {
+		console.log(`Selected preset (${preset.width}x${preset.height}) from config size.`, JSON.parse(JSON.stringify(conf.size)));
+	}
+	const difficulty = getDifficultyFromConfAndPreset(conf, preset);
+	if (Array.isArray(conf.difficulty)) {
+		console.log(`Selected difficulty (${difficulty}) from config difficulty.`, JSON.parse(JSON.stringify(conf.difficulty)));
+	}
+	return { width: preset.width, height: preset.height, difficulty };
+}
+
+function pickRandomPresetFromBoardShapes(sizes: BoardShape[], opts: { weightByNumCells: boolean }): BoardPreset | null {
+	const { weightByNumCells } = opts;
+	if (weightByNumCells) {
+		// TODO: implement random preset picking from list of boardSizes, weighted by number of cells
+		throw new Error('Not implemented yet.');
+	}
+
+	const randomSize = pickRandom(sizes);
+	return getPresetFromBoardShape(randomSize);
+}
+
+function pickRandomDifficultyFromRange(range: DifficultyRange, selectedPreset: BoardPreset): DifficultyKey {
+	const maxDifficulty = Math.min(selectedPreset.maxDifficulty, range[1]);
+	if (!isDifficultyKey(maxDifficulty)) {
+		throw new Error('Math.min with two difficulty keys returned a non-difficulty key.');
+	}
+	const minDifficulty = range[0];
+	if (minDifficulty > maxDifficulty) {
+		throw new Error(`Invalid difficulty range for size ${selectedPreset.width}x${selectedPreset.height}: min is higher than max.`);
+	}
+	const newRange: DifficultyRange = [minDifficulty, maxDifficulty];
+	const difficultyList = getDifficultiesFromDifficultyRange(newRange);
+	return pickRandom(difficultyList);
+}
+
+function getPresetFromConfSize(size: BoardShape | BoardShape[], opts?: { pickSizeWeightByNumCells: boolean }): BoardPreset {
+	if (Array.isArray(size)) {
+		const weightByNumCells = opts?.pickSizeWeightByNumCells ?? false;
+		console.log(`Selecting random preset from config size, with option weightByNumCells: ${weightByNumCells}`);
+		const preset = pickRandomPresetFromBoardShapes(size, { weightByNumCells });
+		if (preset == null) {
+			throw new Error(`No preset found for list of sizes.`);
+		}
+		return preset;
+	} else {
+		const preset = getPresetFromBoardShape(size);
+		if (preset == null) {
+			throw new Error(`No preset found for size ${size.width}x${size.height}`);
+		}
+		return preset;
+	}
+}
+function getDifficultyFromConfAndPreset(conf: Pick<PuzzleSetupConfig, 'difficulty'>, preset: BoardPreset): DifficultyKey {
+	if (!isDifficultyRange(conf.difficulty)) {
+		const difficulty: DifficultyKey = conf.difficulty;
+		if (preset.maxDifficulty < difficulty) {
+			throw new Error(`Preset ${preset.width}x${preset.height} does not allow difficulty ${difficulty}.`);
+		}
+		return difficulty;
+	} else {
+		return pickRandomDifficultyFromRange(conf.difficulty, preset);
+	}
+}

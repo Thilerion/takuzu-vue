@@ -69,6 +69,10 @@ const validateDifficultySetup = (difficulty: DifficultyKey | DifficultyRange): b
 	return diffs.every(d => isDifficultyKey(d));
 }
 
+export function getPresetFromBoardShape(shape: BoardShape): BoardPreset | null {
+	return PRESET_BOARD_SIZES.find(p => p.width === shape.width && p.height === shape.height) ?? null;
+}
+
 export function getValidPresetsForDifficulty(difficulty: DifficultyKey | DifficultyKey[]) {
 	const diffs = Array.isArray(difficulty) ? difficulty : [difficulty];
 	return PRESET_BOARD_SIZES.filter(preset => presetMatchesAtLeastOneDifficulty(preset, diffs))
