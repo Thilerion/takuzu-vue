@@ -227,5 +227,36 @@ describe('Random utils', () => {
 				expect(arr).toEqual(origArr);
 			})
 		})
+
+		describe('pickRandomWeighted', () => {
+			it('picks items proportionally to their weight on average', () => {
+				const items: Rnd.WeightedArrayItem<1 | 2 | 3>[] = [
+					[1, 0.5], // approx 0.5/44 chance => 1.14%
+					[2, 3.5], // approx 3.5/44 chance => 7.72%
+					[3, 40], // approx 40/41 chance => 90.9% => 
+				];
+
+				const results = {
+					1: 0,
+					2: 0,
+					3: 0
+				}
+				const N = 1e6;
+
+				for (let i = 0; i < N; i++) {
+					const result = Rnd.pickRandomWeighted(items, origMathRandom);
+					results[result] += 1;
+				}
+
+				expect(results[3]).toBeGreaterThan(N * 89 / 100);
+				expect(results[3]).toBeLessThan(N * 92 / 100);
+
+				expect(results[2]).toBeGreaterThan(N * 6.75 / 100);
+				expect(results[2]).toBeLessThan(N * 8.5 / 100);
+
+				expect(results[1]).toBeGreaterThan(N * 1 / 100);
+				expect(results[1]).toBeLessThan(N * 1.8 / 100);
+			})
+		})
 	})
 })

@@ -76,12 +76,15 @@ export const randomIndex = (arr: ReadonlyArray<unknown>): number => Math.floor(M
 export const pickRandom = <T>(arr: ReadonlyArray<T>): T => arr[randomIndex(arr)];
 
 export type WeightedArrayItem<T> = [item: T, weight: number];
-export const pickRandomWeighted = <T>(items: ReadonlyArray<WeightedArrayItem<T>>): T => {
+export const pickRandomWeighted = <T>(
+	items: ReadonlyArray<WeightedArrayItem<T>>,
+	rng: RngSource = Math.random
+): T => {
 	// Calculate the total weight
     const totalWeight = items.reduce((sum, item) => sum + item[1], 0);
 
     // Generate a random number between 0 and the total weight
-    const randomWeight = randomBetween(0, totalWeight);
+    const randomWeight = randomBetween(0, totalWeight, rng);
 
     // Iterate through the items and select one based on the random weight
     let accumulatedWeight = 0;
