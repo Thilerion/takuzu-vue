@@ -3,13 +3,13 @@
 	<div>
 		<div class="flex justify-between">
 			<h2 class="text-base font-medium mb-1 dark:text-slate-100 text-gray-700/90 ml-4 tracking-wide">{{ $t('Game.difficulty.label') }}</h2>
-			<label class="pr-4 flex items-center gap-2">
+			<label class="pr-4 flex items-center gap-2 text-xs">
 				<input
 					type="checkbox"
 					:checked="isDifficultyRangeEnabled"
 					@change="toggleDifficultyRangeSelection(!isDifficultyRangeEnabled)"
 				>
-				Choose difficulty range
+				{{ $t('NewPuzzle.toggle-difficulty-range') }}
 			</label>
 		</div>
 		<div class="content-block p-0">
@@ -33,13 +33,13 @@
 	<div>
 		<div class="flex justify-between">
 			<h2 class="text-base font-medium mb-1 text-gray-700/90 dark:text-slate-100 ml-4 tracking-wide">{{ $t('Game.board-size.label') }}</h2>
-			<label class="pr-4 flex items-center gap-2">
+			<label class="pr-4 flex items-center gap-2 text-xs">
 				<input
 					type="checkbox"
 					:checked="isSizeMultipleSelectionEnabled"
 					@change="toggleSizeMultipleSelection(!isSizeMultipleSelectionEnabled)"
 				>
-				Select multiple sizes
+				{{ $t('NewPuzzle.toggle-multiple-sizes') }}
 			</label>
 		</div>
 		<div

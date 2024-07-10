@@ -56,7 +56,9 @@
 			"automatic-replay-mode": "Automatische Replay-modus"
 		},
 		"starting-a-new-puzzle-will-overwrite": "Een nieuwe puzzel overschrijft je huidige voortgang.",
-		"title": "Nieuwe Puzzel"
+		"title": "Nieuwe Puzzel",
+		"toggle-difficulty-range": "Kies niveau bereik",
+		"toggle-multiple-sizes": "Kies meerdere groottes"
 	},
 	"PlayPuzzle": {
 		"controls": {

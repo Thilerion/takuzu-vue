@@ -13,7 +13,7 @@
 				:width="preset.width"
 				:height="preset.height"
 				:selected="isPresetSelected(preset)"
-				@click="toggleSize(preset)"
+				@click="onSizeButtonClick(preset, $event)"
 			/>
 		</div>
 	</div>
@@ -36,6 +36,8 @@ const props = defineProps<{
 const {
 	size,
 	toggleSize,
+	toggleSizeMultipleSelection,
+	isSizeMultipleSelectionEnabled,
 } = usePuzzleSetupState();
 
 const validPresetsByType = computed((): Record<BoardType, BoardPreset[]> => {
@@ -45,5 +47,55 @@ const validPresetsByType = computed((): Record<BoardType, BoardPreset[]> => {
 const isPresetSelected = (shape: BoardShape): boolean => {
 	const sizes = Array.isArray(size.value) ? size.value : [size.value];
 	return sizes.some(s => s.width === shape.width && s.height === shape.height);
+}
+
+const onSizeButtonClick = (clickedSize: BoardShape, ev: MouseEvent) => {
+	const shift = ev.shiftKey;
+	const ctrl = ev.ctrlKey || ev.metaKey;
+
+	// Handle shift+click if: shift is pressed AND multiple selection is not enabled
+	// Or: multiple selection is enabled, but only 1 size is selected
+	const shouldHandleShift = shift && (!isSizeMultipleSelectionEnabled.value || (isSizeMultipleSelectionEnabled.value && Array.isArray(size.value) && size.value.length === 1));
+	if (shouldHandleShift) {
+		const from = Array.isArray(size.value) ? size.value[0] : size.value;
+		handleShiftClick(from, clickedSize);
+		return;
+	}
+	if (ctrl) {
+		handleCtrlClick(clickedSize);
+		return;
+	}
+
+	// fallback, simply toggleSize
+	toggleSize(clickedSize);
+}
+
+const handleShiftClick = (from: BoardShape, to: BoardShape) => {
+	const fromIndex = props.validPresets.findIndex(p => p.width === from.width && p.height === from.height);
+	const toIndex = props.validPresets.findIndex(p => p.width === to.width && p.height === to.height);
+	if (fromIndex === -1 || toIndex === -1) throw new Error('Invalid sizes in handleShiftClick');
+
+	toggleSizeMultipleSelection(true);
+
+	const min = Math.min(fromIndex, toIndex);
+	const max = Math.max(fromIndex, toIndex);
+	for (let i = min + 1; i <= max; i++) {
+		const preset = props.validPresets[i];
+		toggleSize(preset);
+	}
+}
+
+const handleCtrlClick = (clickedSize: BoardShape) => {
+	const curSizes = Array.isArray(size.value) ? size.value : [size.value];
+	const isEnabled = curSizes.some(s => s.width === clickedSize.width && s.height === clickedSize.height);
+	// If not already enabled, and in single selection mode, enable multiple selection mode and add it
+	if (!isSizeMultipleSelectionEnabled.value && !isEnabled) {
+		toggleSizeMultipleSelection(true);
+		toggleSize(clickedSize);
+		return;
+	} else {
+		toggleSize(clickedSize);
+		return;
+	}
 }
 </script>

@@ -56,7 +56,9 @@
 			"automatic-replay-mode": "Automatic Replay Mode"
 		},
 		"starting-a-new-puzzle-will-overwrite": "A new puzzle will overwrite your saved progress.",
-		"title": "New Puzzle"
+		"title": "New Puzzle",
+		"toggle-difficulty-range": "Choose difficulty range",
+		"toggle-multiple-sizes": "Select multiple sizes"
 	},
 	"PlayPuzzle": {
 		"controls": {
