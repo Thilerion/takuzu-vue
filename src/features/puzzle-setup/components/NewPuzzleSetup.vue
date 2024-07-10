@@ -3,13 +3,13 @@
 	<div>
 		<div class="flex justify-between">
 			<h2 class="text-base font-medium mb-1 dark:text-slate-100 text-gray-700/90 ml-4 tracking-wide">{{ $t('Game.difficulty.label') }}</h2>
-			<label class="pr-4">
+			<label class="pr-4 flex items-center gap-2">
 				<input
 					type="checkbox"
 					:checked="isDifficultyRangeEnabled"
 					@change="toggleDifficultyRangeSelection(!isDifficultyRangeEnabled)"
 				>
-				Enable Difficulty Range
+				Choose difficulty range
 			</label>
 		</div>
 		<div class="content-block p-0">
@@ -31,11 +31,25 @@
 		</div>
 	</div>
 	<div>
-		<h2 class="text-base font-medium mb-1 text-gray-700/90 dark:text-slate-100 ml-4 tracking-wide">{{ $t('Game.board-size.label') }}</h2>
+		<div class="flex justify-between">
+			<h2 class="text-base font-medium mb-1 text-gray-700/90 dark:text-slate-100 ml-4 tracking-wide">{{ $t('Game.board-size.label') }}</h2>
+			<label class="pr-4 flex items-center gap-2">
+				<input
+					type="checkbox"
+					:checked="isSizeMultipleSelectionEnabled"
+					@change="toggleSizeMultipleSelection(!isSizeMultipleSelectionEnabled)"
+				>
+				Select multiple sizes
+			</label>
+		</div>
 		<div
 			class="content-block py-4 flex-shrink-0 rounded shadow-sm px-4"
 		>
-			
+			<PuzzleSizeSelect
+				:difficulty="difficulty"
+				:all-presets="ALL_PRESETS"
+				:valid-presets="validPresetsForSelectedDifficulty"
+			/>
 		</div>
 	</div>
 </div>
@@ -45,6 +59,8 @@
 import { usePuzzleSetupState, type DifficultyRange } from '../composables/puzzle-setup-state.js';
 import { DIFFICULTY_LABELS, isDifficultyKey } from '@/config.js';
 import type { DifficultyKey } from '@/lib/types.js';
+import { useValidPuzzlePresets } from '../composables/valid-presets.js';
+import { computed } from 'vue';
 
 const {
 	difficulty,
@@ -53,6 +69,9 @@ const {
 	toggleDifficultyRangeSelection,
 	setDifficultySingle,
 	setDifficultyRange,
+
+	toggleSizeMultipleSelection,
+	isSizeMultipleSelectionEnabled
 } = usePuzzleSetupState();
 
 const updateDifficultyBy = (val: number) => {
@@ -70,6 +89,28 @@ const updateDifficultyBy = (val: number) => {
 		throw new Error('Unexpected difficulty value after updating difficulty by a value.');
 	}
 }
+
+const selectedDifficulties = computed((): DifficultyKey | DifficultyKey[] => {
+	const diff = difficulty.value;
+	if (Array.isArray(diff)) {
+		const [min, max] = diff;
+		const res: DifficultyKey[] = [];
+		for (let i = min; i <= max; i++) {
+			if (!isDifficultyKey(i)) throw new Error(`Unexpected difficulty key: ${i}`);
+			res.push(i);
+		}
+		return res;
+	} else if (isDifficultyKey(diff as DifficultyKey)) {
+		return diff as DifficultyKey;
+	} else {
+		throw new Error(`Unexpected difficulty value: ${diff}`);
+	}
+})
+
+const {
+	ALL_PRESETS,
+	validPresetsForSelectedDifficulty,
+} = useValidPuzzlePresets(selectedDifficulties);
 </script>
 
 <style scoped>
