@@ -88,8 +88,10 @@ export const usePuzzleSetupState = createSharedComposable(() => {
 	}
 
 	const toggleSize = (updatedSize: BoardShape) => {
+		const { width, height } = updatedSize;
+		const shape = { width, height };
 		if (!isSizeMultipleSelectionEnabled.value) {
-			size.value = {...updatedSize};
+			size.value = shape;
 			return;
 		}
 		if (!Array.isArray(size.value)) {
@@ -97,7 +99,7 @@ export const usePuzzleSetupState = createSharedComposable(() => {
 		}
 		const idx = size.value.findIndex(s => s.width === updatedSize.width && s.height === updatedSize.height);
 		if (idx === -1) {
-			size.value.push({...updatedSize});
+			size.value.push(shape);
 		} else {
 			size.value.splice(idx, 1);
 		}

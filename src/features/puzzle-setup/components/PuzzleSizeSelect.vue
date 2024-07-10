@@ -46,9 +46,4 @@ const isPresetSelected = (shape: BoardShape): boolean => {
 	const sizes = Array.isArray(size.value) ? size.value : [size.value];
 	return sizes.some(s => s.width === shape.width && s.height === shape.height);
 }
-
 </script>
-
-<style scoped>
-
-</style>

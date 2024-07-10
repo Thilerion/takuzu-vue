@@ -60,7 +60,8 @@ import { usePuzzleSetupState, type DifficultyRange } from '../composables/puzzle
 import { DIFFICULTY_LABELS, isDifficultyKey } from '@/config.js';
 import type { DifficultyKey } from '@/lib/types.js';
 import { useValidPuzzlePresets } from '../composables/valid-presets.js';
-import { computed } from 'vue';
+import { isValidNewPuzzleSetup } from '../helpers/board-presets.js';
+import { computed, watch } from 'vue';
 
 const {
 	difficulty,
@@ -71,7 +72,10 @@ const {
 	setDifficultyRange,
 
 	toggleSizeMultipleSelection,
-	isSizeMultipleSelectionEnabled
+	isSizeMultipleSelectionEnabled,
+
+	persistableState,
+	persistState,
 } = usePuzzleSetupState();
 
 const updateDifficultyBy = (val: number) => {
@@ -111,6 +115,13 @@ const {
 	ALL_PRESETS,
 	validPresetsForSelectedDifficulty,
 } = useValidPuzzlePresets(selectedDifficulties);
+
+watch(persistableState, (state) => {
+	if (isValidNewPuzzleSetup(state.size, state.difficulty)) {
+		console.log(JSON.parse(JSON.stringify(state)));
+		persistState();
+	}
+}, { deep: true })
 </script>
 
 <style scoped>
