@@ -30,45 +30,13 @@
 		</template>
 	</PageHeader>
 
-	<div
-		class="w-full px-4 pb-2 pt-3 space-y-4 puzzle-options"
-	>
-		<div>
-			<h2 class="text-base font-medium mb-1 dark:text-slate-100 text-gray-700/90 ml-4 tracking-wide">{{ $t('Game.difficulty.label') }}</h2>
-			<div class="content-block p-0">
-				<DifficultySelect
-					:labels="DIFFICULTY_LABELS"
-					:difficulty="selectedDifficulty"
-					@decrease="decreaseDifficulty"
-					@increase="increaseDifficulty"
-				/>
-			</div>
-		</div>
-		<div>
-			<h2 class="text-base font-medium mb-1 text-gray-700/90 dark:text-slate-100 ml-4 tracking-wide">{{ $t('Game.board-size.label') }}</h2>
-			<div
-				class="content-block py-4 flex-shrink-0 rounded shadow-sm px-4"
-			>
-				<div class="mb-1 font-medium text-sm text-gray-500 dark:text-slate-100 dark:font-normal">{{ $t('Game.board-size.normal') }}</div>
-				<PuzzleDimensionsBlock
-					:presets="squarePresets"
-					:selected-dimensions="selectedDimensions"
-					@select="selectDimensions"
-				/>
-				<div class="mb-1 font-medium text-sm text-gray-500 dark:text-slate-100 dark:font-normal">{{ $t('Game.board-size.tall') }}</div>
-				<PuzzleDimensionsBlock
-					:presets="rectPresets"
-					:selected-dimensions="selectedDimensions"
-					@select="selectDimensions"
-				/>
-				<div class="mb-1 font-medium text-sm text-gray-500 dark:text-slate-100 dark:font-normal">{{ $t('Game.board-size.odd') }}</div>
-				<PuzzleDimensionsBlock
-					:presets="oddPresets"
-					:selected-dimensions="selectedDimensions"
-					@select="selectDimensions"
-				/>
-			</div>
-		</div>
+	<NewPuzzleSetup
+		@set-start-state="setStartState"
+	/>
+	
+	<div>
+		<div>Size: {{ sizeStrs.join(', ') }}</div>
+		<div>Difficulty: {{ Array.isArray(difficulty) ? difficulty.join('-') : difficulty }}</div>
 	</div>
 
 	<div
@@ -93,14 +61,22 @@
 					@click="navigate"
 				><span class="text-wrap">{{ $t('NewPuzzle.load-save') }}</span></BaseButton>
 			</router-link>
-			<StartGameButton
+			<!-- <StartGameButton
 				:class="{ 'col-span-2': !hasCurrentSavedGame }"
-				:size="selectedDimensions"
+				:size="size"
 				:difficulty-label="selectedDifficultyLabel"
 				:difficulty-stars="selectedDifficulty"
 				:disabled="startButtonDisabled"
 				:loading="puzzleIsLoading"
 				:replay="debugAutoReplayModeEnabled"
+				@start="startGame"
+			/> -->
+			<SetupNewPuzzleButton
+				:class="{ 'col-span-2': !hasCurrentSavedGame }"
+				:size="startState?.size ?? null"
+				:difficulty="startState?.difficulty ?? null"
+				:auto-replay-mode="autoReplayMode"
+				:loading="puzzleIsLoading"
 				@start="startGame"
 			/>
 		</div>
@@ -110,21 +86,29 @@
 </template>
 
 <script setup lang="ts">
-import { DIFFICULTY_LABELS, PRESET_BOARD_SIZES } from '@/config.js';
-import { computed, toRef, watch } from 'vue';
+import { computed, toRef } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMainStore } from '@/stores/main.js';
 import { useSavedPuzzle } from '@/services/savegame/useSavedGame.js';
-import { usePuzzleSetupSelection } from '@/components/new-puzzle/puzzle-setup-selection.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
 import { useGameStore } from '@/stores/game.js';
+import { usePuzzleSetupState } from '@/features/puzzle-setup/composables/puzzle-setup-state.js';
+import { ref } from 'vue';
+import type { StartableGameState } from '@/features/puzzle-setup/components/NewPuzzleSetup.vue';
 
-const { 
-	persistedSelection, updatePersistedSelection,
-	selectedDifficulty, selectDifficulty,
-	selectedDimensions, selectDimensions,
-	selectedPuzzleConfig,
-} = usePuzzleSetupSelection();
+const {
+	autoReplayMode,
+	size,
+	difficulty,
+} = usePuzzleSetupState();
+const sizeStrs = computed(() => {
+	const sizes = Array.isArray(size.value) ? size.value : [size.value];
+	return sizes.map(s => `${s.width}x${s.height}`);
+})
+const startState = ref<null | StartableGameState>(null);
+function setStartState(val: StartableGameState) {
+	startState.value = val;
+}
 
 // Display warning message if creating a new game will overwrite the currently saved puzzle
 const { hasCurrentSavedGame } = useSavedPuzzle();
@@ -133,74 +117,14 @@ const { hasCurrentSavedGame } = useSavedPuzzle();
 const mainStore = useMainStore();
 const debugModeEnabled = toRef(mainStore, 'debugMode');
 // Persisted value for autoReplayMode stays even if dev/debugMode is disabled, but it won't be used in creating a game if not in dev/debugMode
-const debugAutoReplayModeEnabled = computed(() => debugModeEnabled.value && persistedSelection.value.debug_autoReplayMode);
+const debugAutoReplayModeEnabled = computed(() => debugModeEnabled.value && autoReplayMode.value);
 const autoReplayModeModel = computed({
 	get() {
-		return persistedSelection.value.debug_autoReplayMode ?? false;
+		return autoReplayMode.value ?? false;
 	},
 	set(value: boolean) {
-		updatePersistedSelection({ debug_autoReplayMode: !!value });
+		autoReplayMode.value = value;
 	}
-})
-
-// Label of selected difficulty, and increase/decrease/selection functions
-const selectedDifficultyLabel = computed(() => {
-	return DIFFICULTY_LABELS[selectedDifficulty.value];
-})
-const increaseDifficulty = () => {
-	const next = selectedDifficulty.value + 1;
-	if (next > 5) {
-		selectDifficulty(1);
-	} else selectDifficulty(next);
-}
-const decreaseDifficulty = () => {
-	const next = selectedDifficulty.value - 1;
-	if (next < 1) {
-		selectDifficulty(5);
-	} else {
-		selectDifficulty(next);
-	}
-}
-
-// Presets for different board shape types, with maxDifficulty filters
-const validPresetsForSelectedDifficulty = computed(() => {
-	return PRESET_BOARD_SIZES.filter(preset => {
-		return preset.maxDifficulty >= selectedDifficulty.value;
-	})
-})
-const squarePresets = computed(() => {
-	return validPresetsForSelectedDifficulty.value.filter(preset => {
-		return !preset.isOdd && !preset.isRect;
-	})
-})
-const rectPresets = computed(() => {
-	return validPresetsForSelectedDifficulty.value.filter(preset => {
-		return preset.isRect;
-	})
-})
-const oddPresets = computed(() => {
-	return validPresetsForSelectedDifficulty.value.filter(preset => {
-		return preset.isOdd;
-	})
-})
-
-// Check if the combination of selected difficulty and board size is valid, and disable start button if not
-const isValidDifficultySizeCombination = computed(() => {
-	const { width, height } = selectedDimensions.value;
-	const presetWithDims = validPresetsForSelectedDifficulty.value.find(preset => {
-		return preset.width === width && preset.height === height;
-	})
-	return presetWithDims != null;
-})
-const startButtonDisabled = computed(() => !isValidDifficultySizeCombination.value);
-
-// Update persistedSelection when selected dimensions or difficulty change, and the combination is valid
-watch([isValidDifficultySizeCombination, selectedPuzzleConfig], ([isValid, conf]) => {
-	if (!isValid) {
-		return;
-	}
-	const { width, height, difficulty } = conf;
-	updatePersistedSelection({ size: { width, height }, difficulty });
 })
 
 // Start/create game functions
@@ -214,11 +138,18 @@ async function startGame() {
 }
 
 async function createGame() {
+	if (startState.value == null || startState.value.difficulty == null || startState.value.size == null) {
+		throw new Error('Cannot start game; start state is invalid.');
+	}
+	const state = {
+		difficulty: startState.value.difficulty,
+		size: startState.value.size,
+	}
 	puzzleStore.reset();
 	const gameStore = useGameStore();
 	try {
 		// await puzzleStore.initPuzzle({...selectedPuzzleConfig.value});
-		await gameStore.playNewPuzzle({...selectedPuzzleConfig.value});
+		await gameStore.playNewPuzzle(state);
 		router.push({ name: 'PlayPuzzle' });
 	} catch(e) {
 		// TODO: puzzleStore.initializationError is now true, display a warning of some kind
@@ -232,10 +163,17 @@ async function createGame() {
 }
 
 async function replayRandom() {
+	if (startState.value == null || startState.value.difficulty == null || startState.value.size == null) {
+		throw new Error('Cannot start game; start state is invalid.');
+	}
+	const state = {
+		difficulty: startState.value.difficulty,
+		size: startState.value.size,
+	}
 	puzzleStore.reset();
 	const gameStore = useGameStore();
 	try {
-		await gameStore.playPuzzleWithAutoReplay({ ...selectedPuzzleConfig.value });
+		await gameStore.playPuzzleWithAutoReplay(state);
 		router.push({ name: 'PlayPuzzle' });
 	} catch {
 		// TODO: puzzleStore.initializationError is now true, display a warning of some kind (better than windows.alert at least)

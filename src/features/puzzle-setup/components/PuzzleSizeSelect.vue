@@ -28,7 +28,7 @@ import { computed } from 'vue';
 import { groupBy } from '@/utils/array.ts.utils.js';
 
 const props = defineProps<{
-	difficulty: DifficultyKey | Readonly<DifficultyRange>,
+	difficulty: DifficultyKey | DifficultyRange,
 	allPresets: ReadonlyArray<BoardPreset>,
 	validPresets: BoardPreset[],
 }>();

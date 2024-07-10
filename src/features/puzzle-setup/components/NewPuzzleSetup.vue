@@ -58,13 +58,15 @@
 <script setup lang="ts">
 import { usePuzzleSetupState, type DifficultyRange } from '../composables/puzzle-setup-state.js';
 import { DIFFICULTY_LABELS, isDifficultyKey } from '@/config.js';
-import type { DifficultyKey } from '@/lib/types.js';
+import type { BoardShape, DifficultyKey } from '@/lib/types.js';
 import { useValidPuzzlePresets } from '../composables/valid-presets.js';
 import { isValidNewPuzzleSetup } from '../helpers/board-presets.js';
 import { computed, watch } from 'vue';
 
 const {
+	size,
 	difficulty,
+	autoReplayMode,
 
 	isDifficultyRangeEnabled,
 	toggleDifficultyRangeSelection,
@@ -121,7 +123,39 @@ watch(persistableState, (state) => {
 		console.log(JSON.parse(JSON.stringify(state)));
 		persistState();
 	}
-}, { deep: true })
+}, { deep: true });
+
+export type StartableGameState = {
+	difficulty: DifficultyKey | DifficultyRange,
+	autoReplayMode: boolean,
+	size: BoardShape | BoardShape[] | null
+}
+const startableGameState = computed((): StartableGameState => {
+	// Return the difficulty, the autoReplayMode, and the size(s)
+	// However, the size(s) are filtered to only include the ones that are valid according to the difficulty
+	// This means that the returned size(s) is an array, a single value, or null
+	const sizes: BoardShape[] = Array.isArray(size.value) ? size.value : [size.value];
+	const validSizes = sizes.filter(s => validPresetsForSelectedDifficulty.value.some(p => p.width === s.width && p.height === s.height));
+	let sizeResult: BoardShape | BoardShape[] | null = null;
+	if (validSizes.length === 1) {
+		sizeResult = validSizes[0];
+	} else if (validSizes.length > 1) {
+		sizeResult = validSizes;
+	}
+
+	return {
+		difficulty: difficulty.value,
+		autoReplayMode: autoReplayMode.value,
+		size: sizeResult
+	}
+})
+
+const emit = defineEmits<{
+	(e: 'set-start-state', v: StartableGameState): void
+}>();
+watch(startableGameState, (val) => {
+	emit('set-start-state', val);
+}, { deep: true, immediate: true });
 </script>
 
 <style scoped>

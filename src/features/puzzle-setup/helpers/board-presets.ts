@@ -1,5 +1,6 @@
-import { BoardPreset, PRESET_BOARD_SIZES, type BoardType } from "@/config.js";
+import { BoardPreset, PRESET_BOARD_SIZES, type BoardType, isDifficultyKey } from "@/config.js";
 import type { BoardShape, DifficultyKey } from "@/lib/types.js";
+import { isDifficultyRange, type DifficultyRange } from "../composables/puzzle-setup-state.js";
 
 /**
  * Ensures that the combination of selected size(s) and difficulty/ies is valid.
@@ -38,6 +39,36 @@ export function isValidSizeDifficultyCombination(
 	return true;
 }
 
+export function isValidNewPuzzleSetup(
+	size: BoardShape | ReadonlyArray<BoardShape>,
+	difficulty: DifficultyKey | DifficultyRange
+): boolean {
+	if (Array.isArray(size) && size.length === 0) return false;
+	if (Array.isArray(difficulty) && !isDifficultyRange(difficulty)) return false;
+	if (!validateDifficultySetup(difficulty)) return false;
+	
+	// Check if each size is a valid option according to list of BoardPresets
+	const sizes = Array.isArray(size) ? size : [size];
+	const sizePresets: BoardPreset[] = [];
+	for (const s of sizes) {
+		const preset = PRESET_BOARD_SIZES.find(p => p.width === s.width && p.height === s.height);
+		if (!preset) return false;
+		sizePresets.push(preset);
+	}
+
+	const diffs = Array.isArray(difficulty) ? getDifficultiesFromDifficultyRange(difficulty) : ([difficulty] as DifficultyKey[]);
+	// Check if each size has at least one valid difficulty
+	const allSizesValid = sizePresets.every(p => presetMatchesAtLeastOneDifficulty(p, diffs));
+	if (!allSizesValid) return false;
+
+	return true;
+}
+
+const validateDifficultySetup = (difficulty: DifficultyKey | DifficultyRange): boolean => {
+	const diffs = Array.isArray(difficulty) ? difficulty : [difficulty];
+	return diffs.every(d => isDifficultyKey(d));
+}
+
 export function getValidPresetsForDifficulty(difficulty: DifficultyKey | DifficultyKey[]) {
 	const diffs = Array.isArray(difficulty) ? difficulty : [difficulty];
 	return PRESET_BOARD_SIZES.filter(preset => presetMatchesAtLeastOneDifficulty(preset, diffs))
@@ -62,4 +93,15 @@ export function sortPresetsByTypeAndSize(presets: BoardPreset[]): BoardPreset[] 
 		}
 		return orderOfTypes.indexOf(a.type) - orderOfTypes.indexOf(b.type);
 	})
+}
+
+export function getDifficultiesFromDifficultyRange(range: DifficultyRange): DifficultyKey[] {
+	const [min, max] = range;
+	if (min === max) return [min];
+	const result: DifficultyKey[] = [];
+	for (let i = min; i <= max; i++) {
+		if (!isDifficultyKey(i)) throw new Error(`Invalid difficulty key: ${i}`);
+		result.push(i);
+	}
+	return result;
 }

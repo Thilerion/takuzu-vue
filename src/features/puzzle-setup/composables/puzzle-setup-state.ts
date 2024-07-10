@@ -5,7 +5,7 @@ import { getValidPresetsForDifficulty } from "../helpers/board-presets.js";
 import { createSharedComposable } from "@vueuse/core";
 
 export type DifficultyRange = [min: DifficultyKey, max: DifficultyKey];
-type PuzzleSetupPersistedState = {
+export type PuzzleSetupPersistedState = {
 	difficulty: DifficultyKey | DifficultyRange,
 	size: BoardShape | BoardShape[],
 	autoReplayMode: boolean,
@@ -24,7 +24,7 @@ const getInitialState = (): PuzzleSetupPersistedState => {
 const saveStateToStorage = (state: PuzzleSetupPersistedState) => {
 	localStorage.setItem(LS_KEY, JSON.stringify(state));
 }
-const isDifficultyRange = (val: DifficultyKey | DifficultyKey[] | DifficultyRange): val is DifficultyRange => {
+export const isDifficultyRange = (val: DifficultyKey | DifficultyKey[] | DifficultyRange): val is DifficultyRange => {
 	return (Array.isArray(val) && val.length === 2);
 }
 
@@ -153,18 +153,20 @@ export const usePuzzleSetupState = createSharedComposable(() => {
 		const state = { ...persistableState.value };
 		// If difficulty is a range, but min===max, set it to a single value
 		if (isDifficultyRange(state.difficulty) && state.difficulty[0] === state.difficulty[1]) {
+			console.log('Difficulty range is single value, converting to single value.');
 			state.difficulty = state.difficulty[0];
 		}
 		// If size is an array, but there is only one item, set it to a single value
 		if (Array.isArray(state.size) && state.size.length === 1) {
+			console.log('Size is an array with a single item, converting to single value.');
 			state.size = state.size[0];
 		}
-		saveStateToStorage(persistableState.value);
+		saveStateToStorage(state);
 	}
 
 	return {
 		// State
-		difficulty: readonly(difficulty),
+		difficulty: readonly(difficulty) as typeof difficulty,
 		size: readonly(size),
 		autoReplayMode,
 		// Getters
