@@ -150,7 +150,15 @@ export const usePuzzleSetupState = createSharedComposable(() => {
 		return state;
 	})
 	const persistState = () => {
-		// TODO: call this function when the "persistableState" changes, but only when it is valid
+		const state = { ...persistableState.value };
+		// If difficulty is a range, but min===max, set it to a single value
+		if (isDifficultyRange(state.difficulty) && state.difficulty[0] === state.difficulty[1]) {
+			state.difficulty = state.difficulty[0];
+		}
+		// If size is an array, but there is only one item, set it to a single value
+		if (Array.isArray(state.size) && state.size.length === 1) {
+			state.size = state.size[0];
+		}
 		saveStateToStorage(persistableState.value);
 	}
 
