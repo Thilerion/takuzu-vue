@@ -74,7 +74,7 @@ export const usePuzzleSetupState = createSharedComposable(() => {
 			const smallestValidSquarePreset = validPresetsForDifficulty.reduce((acc, val) => {
 				if (val.type !== 'Normal') return acc;
 				const numCells = val.width * val.height;
-				if (numCells < acc.numCells) return acc;
+				if (numCells >= acc.numCells) return acc;
 				return {
 					preset: val,
 					numCells
