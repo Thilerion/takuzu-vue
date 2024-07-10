@@ -4,8 +4,8 @@ import { type WeightedArrayItem, pickRandomWeighted, pickRandom } from "@/utils/
 import { getPresetFromBoardShape } from "./board-presets.js";
 
 export type DifficultyRange = [min: DifficultyKey, max: DifficultyKey];
-export const isDifficultyRange = (val: DifficultyKey | DifficultyKey[] | DifficultyRange | Readonly<DifficultyRange> | null | undefined): val is DifficultyRange => {
-	return (val != null) && (Array.isArray(val) && val.length === 2);
+export const isDifficultyRange = (val: unknown): val is DifficultyRange => {
+	return Array.isArray(val) && val.length === 2 && val.every(isDifficultyKey);
 }
 
 export type PuzzleSetupConfig = {
@@ -63,6 +63,10 @@ export function pickRandomPresetFromBoardShapes(sizes: BoardShape[], opts: { wei
  * Pick a difficulty (randomly) from a DifficultyRange (as [min, max]) that is valid for a selected BoardPreset.
  */
 export function pickRandomDifficultyFromRange(range: DifficultyRange, selectedPreset: BoardPreset): DifficultyKey {
+	const presetMaxDifficulty = selectedPreset.maxDifficulty;
+	if (range[1] > presetMaxDifficulty && range[0] > presetMaxDifficulty) {
+		throw new Error('Selected preset.maxDifficulty is not compatible with the provided DifficultyRange.');
+	}
 	const maxDifficulty = Math.min(selectedPreset.maxDifficulty, range[1]);
 	if (!isDifficultyKey(maxDifficulty)) {
 		throw new Error('Math.min with two difficulty keys returned a non-difficulty key.');
