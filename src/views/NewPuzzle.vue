@@ -76,10 +76,11 @@ import { useRouter } from 'vue-router';
 import { useMainStore } from '@/stores/main.js';
 import { useSavedPuzzle } from '@/services/savegame/useSavedGame.js';
 import { usePuzzleStore } from '@/stores/puzzle/store.js';
-import { useGameStore, type PuzzleSetupConfig } from '@/stores/game.js';
+import { useGameStore } from '@/stores/game.js';
 import { usePuzzleSetupState } from '@/features/puzzle-setup/composables/puzzle-setup-state.js';
 import { ref } from 'vue';
 import type { StartableGameState } from '@/features/puzzle-setup/components/NewPuzzleSetup.vue';
+import type { PuzzleSetupConfig } from '@/features/puzzle-setup/helpers/puzzle-setup-config.js';
 
 const {
 	autoReplayMode,

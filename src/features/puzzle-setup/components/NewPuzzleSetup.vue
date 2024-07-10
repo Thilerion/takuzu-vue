@@ -56,12 +56,13 @@
 </template>
 
 <script setup lang="ts">
-import { usePuzzleSetupState, type DifficultyRange } from '../composables/puzzle-setup-state.js';
+import { usePuzzleSetupState } from '../composables/puzzle-setup-state.js';
 import { DIFFICULTY_LABELS, isDifficultyKey } from '@/config.js';
 import type { BoardShape, DifficultyKey } from '@/lib/types.js';
 import { useValidPuzzlePresets } from '../composables/valid-presets.js';
 import { isValidNewPuzzleSetup } from '../helpers/board-presets.js';
 import { computed, watch } from 'vue';
+import type { DifficultyRange } from '../helpers/puzzle-setup-config.js';
 
 const {
 	size,

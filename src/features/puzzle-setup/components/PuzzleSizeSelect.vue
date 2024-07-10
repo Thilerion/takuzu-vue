@@ -22,10 +22,11 @@
 
 <script setup lang="ts">
 import type { BoardShape, DifficultyKey } from '@/lib/types.js';
-import { usePuzzleSetupState, type DifficultyRange } from '../composables/puzzle-setup-state.js';
+import { usePuzzleSetupState } from '../composables/puzzle-setup-state.js';
 import type { BoardPreset, BoardType } from '@/config.js';
 import { computed } from 'vue';
 import { groupBy } from '@/utils/array.ts.utils.js';
+import type { DifficultyRange } from '../helpers/puzzle-setup-config.js';
 
 const props = defineProps<{
 	difficulty: DifficultyKey | DifficultyRange,

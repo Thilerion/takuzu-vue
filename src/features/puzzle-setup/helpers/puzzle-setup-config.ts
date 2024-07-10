@@ -1,0 +1,130 @@
+import { BoardPreset, isDifficultyKey } from "@/config.js";
+import type { BasicPuzzleConfig, BoardShape, DifficultyKey } from "@/lib/types.js";
+import { type WeightedArrayItem, pickRandomWeighted, pickRandom } from "@/utils/random.utils.js";
+import { getPresetFromBoardShape } from "./board-presets.js";
+
+export type DifficultyRange = [min: DifficultyKey, max: DifficultyKey];
+export const isDifficultyRange = (val: DifficultyKey | DifficultyKey[] | DifficultyRange | Readonly<DifficultyRange> | null | undefined): val is DifficultyRange => {
+	return (val != null) && (Array.isArray(val) && val.length === 2);
+}
+
+export type PuzzleSetupConfig = {
+	size: BoardShape | BoardShape[],
+	difficulty: DifficultyKey | DifficultyRange,
+	options: {
+		pickSizeWithEqualWeights: boolean,
+	}
+}
+
+/**
+ * Convert a PuzzleSetupConfig to a single BasicPuzzleConfig.
+ * The difficulty and size can be randomly selected if they are not set as single value.
+ * The way these are randomly selected depends on the options.
+ */
+export function selectPuzzleConfigFromSetupConfig(conf: PuzzleSetupConfig): BasicPuzzleConfig {
+	const preset = getPresetFromConfSize(conf.size, conf.options);
+	if (Array.isArray(conf.size)) {
+		console.log(`Selected preset (${preset.width}x${preset.height}) from config size.`, JSON.parse(JSON.stringify(conf.size)));
+	}
+	const difficulty = getDifficultyFromConfAndPreset(conf, preset);
+	if (Array.isArray(conf.difficulty)) {
+		console.log(`Selected difficulty (${difficulty}) from config difficulty.`, JSON.parse(JSON.stringify(conf.difficulty)));
+	}
+	return { width: preset.width, height: preset.height, difficulty };
+}
+
+/** Converts an array of BoardShapes to an array of WeightedArrayItems. */
+export function getWeightedBoardShapes(sizes: BoardShape[]): WeightedArrayItem<BoardShape>[] {
+	// TODO: improve this mess of calculating weights
+	return sizes.map(size => {
+		const base = Math.max(Math.sqrt(size.width * size.height) - 4, 1);
+		const weight = Math.round(1 / base * 100);
+		return [size, weight];
+	});
+}
+
+/**
+ * Pick a BoardShape/BoardPreset randomly from a list of BoardShapes.
+ * This is weighted by the amount of cells in the BoardShape, if enabled.
+ */
+export function pickRandomPresetFromBoardShapes(sizes: BoardShape[], opts: { weightByNumCells: boolean }): BoardPreset | null {
+	const { weightByNumCells } = opts;
+	if (weightByNumCells) {
+		const withWeights = getWeightedBoardShapes(sizes);
+		const randomSize = pickRandomWeighted(withWeights);
+		return getPresetFromBoardShape(randomSize);
+	}
+
+	const randomSize = pickRandom(sizes);
+	return getPresetFromBoardShape(randomSize);
+}
+
+/** 
+ * Pick a difficulty (randomly) from a DifficultyRange (as [min, max]) that is valid for a selected BoardPreset.
+ */
+export function pickRandomDifficultyFromRange(range: DifficultyRange, selectedPreset: BoardPreset): DifficultyKey {
+	const maxDifficulty = Math.min(selectedPreset.maxDifficulty, range[1]);
+	if (!isDifficultyKey(maxDifficulty)) {
+		throw new Error('Math.min with two difficulty keys returned a non-difficulty key.');
+	}
+	const minDifficulty = range[0];
+	if (minDifficulty > maxDifficulty) {
+		throw new Error(`Invalid difficulty range for size ${selectedPreset.width}x${selectedPreset.height}: min is higher than max.`);
+	}
+	const newRange: DifficultyRange = [minDifficulty, maxDifficulty];
+	const difficultyList = expandDifficultyRange(newRange);
+	return pickRandom(difficultyList);
+}
+
+/**
+ * From a single BoardShape or a list of BoardShapes, pick a BoardPreset that matches it.
+ * If the config has a single BoardShape, it returns the corresponding BoardPreset (or throws an error if it cannot be found).
+ * If the config has a list of BoardShapes, it picks a random BoardPreset that matches it. This can be weighted by the amount of cells in the preset, depending on the option.
+ */
+export function getPresetFromConfSize(size: BoardShape | BoardShape[], opts?: { pickSizeWithEqualWeights: boolean }): BoardPreset {
+	if (Array.isArray(size)) {
+		const useSizeEqualWeights = opts?.pickSizeWithEqualWeights ?? false;
+		const weightByNumCells = !useSizeEqualWeights;
+		console.log(`Selecting random preset from config size, with option weightByNumCells: ${weightByNumCells}`);
+		const preset = pickRandomPresetFromBoardShapes(size, { weightByNumCells });
+		if (preset == null) {
+			throw new Error(`No preset found for list of sizes.`);
+		}
+		return preset;
+	} else {
+		const preset = getPresetFromBoardShape(size);
+		if (preset == null) {
+			throw new Error(`No preset found for size ${size.width}x${size.height}`);
+		}
+		return preset;
+	}
+}
+
+/**
+ * Get the difficulty from the PuzzleSetupConfig and a selected BoardPreset.
+ * If the config has a DifficultyRange, picks a random difficulty that is valid for the selected preset.
+ * If the config has a single difficulty, checks that it is valid for the selected preset.
+ */
+export function getDifficultyFromConfAndPreset(conf: Pick<PuzzleSetupConfig, 'difficulty'>, preset: BoardPreset): DifficultyKey {
+	if (!isDifficultyRange(conf.difficulty)) {
+		const difficulty: DifficultyKey = conf.difficulty;
+		if (preset.maxDifficulty < difficulty) {
+			throw new Error(`Preset ${preset.width}x${preset.height} does not allow difficulty ${difficulty}.`);
+		}
+		return difficulty;
+	} else {
+		return pickRandomDifficultyFromRange(conf.difficulty, preset);
+	}
+}
+
+/** Convert a DifficultyRange (as [min, max]) to an array of DifficultyKeys, with all keys between min and max included. */
+export function expandDifficultyRange(range: DifficultyRange): DifficultyKey[] {
+	const [min, max] = range;
+	if (min === max) return [min];
+	const result: DifficultyKey[] = [];
+	for (let i = min; i <= max; i++) {
+		if (!isDifficultyKey(i)) throw new Error(`Invalid difficulty key: ${i}`);
+		result.push(i);
+	}
+	return result;
+}

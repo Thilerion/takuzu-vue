@@ -7,10 +7,7 @@ import { SimpleBoard } from "@/lib/board/Board.js";
 import type { StatsDbHistoryEntry } from "@/services/db/stats-db/models.js";
 import { fetchAndPreparePuzzle, fetchRandomReplayablePuzzle } from "@/services/fetch-puzzle.js";
 import { usePuzzleStatusStore } from "./puzzle/status-store.js";
-import { isDifficultyRange, type DifficultyRange } from "@/features/puzzle-setup/composables/puzzle-setup-state.js";
-import { getDifficultiesFromDifficultyRange, getPresetFromBoardShape } from "@/features/puzzle-setup/helpers/board-presets.js";
-import { BoardPreset, isDifficultyKey } from "@/config.js";
-import { pickRandom, pickRandomWeighted, type WeightedArrayItem } from "@/utils/random.utils.js";
+import { type PuzzleSetupConfig, selectPuzzleConfigFromSetupConfig } from "@/features/puzzle-setup/helpers/puzzle-setup-config.js";
 
 export type GameMode = 'freePlay' | 'historyReplay';
 
@@ -18,13 +15,7 @@ export type HistoryReplaySetupConfig = {
 	size: BoardShape,
 	difficulty: DifficultyKey,
 }
-export type PuzzleSetupConfig = {
-	size: BoardShape | BoardShape[],
-	difficulty: DifficultyKey | DifficultyRange,
-	options: {
-		pickSizeWithEqualWeights: boolean,
-	}
-}
+
 export type CurrentGameConfig = {
 	mode: 'historyReplay',
 	puzzleConfig: HistoryReplaySetupConfig
@@ -210,77 +201,3 @@ export const useGameStore = defineStore('game', () => {
 		playAgain,
 	};
 })
-
-function selectPuzzleConfigFromSetupConfig(conf: PuzzleSetupConfig): BasicPuzzleConfig {
-	const preset = getPresetFromConfSize(conf.size, conf.options);
-	if (Array.isArray(conf.size)) {
-		console.log(`Selected preset (${preset.width}x${preset.height}) from config size.`, JSON.parse(JSON.stringify(conf.size)));
-	}
-	const difficulty = getDifficultyFromConfAndPreset(conf, preset);
-	if (Array.isArray(conf.difficulty)) {
-		console.log(`Selected difficulty (${difficulty}) from config difficulty.`, JSON.parse(JSON.stringify(conf.difficulty)));
-	}
-	return { width: preset.width, height: preset.height, difficulty };
-}
-
-function pickRandomPresetFromBoardShapes(sizes: BoardShape[], opts: { weightByNumCells: boolean }): BoardPreset | null {
-	const { weightByNumCells } = opts;
-	if (weightByNumCells) {
-		// TODO: improve this mess of calculating weights
-		const withWeights = sizes.map(size => {
-			const base = Math.max(Math.sqrt(size.width * size.height) - 4, 1);
-			const weight = Math.round(1 / base * 100);
-			return [size, weight] as WeightedArrayItem<BoardShape>;
-		});
-		console.log(withWeights);
-		const randomSize = pickRandomWeighted(withWeights);
-		return getPresetFromBoardShape(randomSize);
-	}
-
-	const randomSize = pickRandom(sizes);
-	return getPresetFromBoardShape(randomSize);
-}
-
-function pickRandomDifficultyFromRange(range: DifficultyRange, selectedPreset: BoardPreset): DifficultyKey {
-	const maxDifficulty = Math.min(selectedPreset.maxDifficulty, range[1]);
-	if (!isDifficultyKey(maxDifficulty)) {
-		throw new Error('Math.min with two difficulty keys returned a non-difficulty key.');
-	}
-	const minDifficulty = range[0];
-	if (minDifficulty > maxDifficulty) {
-		throw new Error(`Invalid difficulty range for size ${selectedPreset.width}x${selectedPreset.height}: min is higher than max.`);
-	}
-	const newRange: DifficultyRange = [minDifficulty, maxDifficulty];
-	const difficultyList = getDifficultiesFromDifficultyRange(newRange);
-	return pickRandom(difficultyList);
-}
-
-function getPresetFromConfSize(size: BoardShape | BoardShape[], opts?: { pickSizeWithEqualWeights: boolean }): BoardPreset {
-	if (Array.isArray(size)) {
-		const useSizeEqualWeights = opts?.pickSizeWithEqualWeights ?? false;
-		const weightByNumCells = !useSizeEqualWeights;
-		console.log(`Selecting random preset from config size, with option weightByNumCells: ${weightByNumCells}`);
-		const preset = pickRandomPresetFromBoardShapes(size, { weightByNumCells });
-		if (preset == null) {
-			throw new Error(`No preset found for list of sizes.`);
-		}
-		return preset;
-	} else {
-		const preset = getPresetFromBoardShape(size);
-		if (preset == null) {
-			throw new Error(`No preset found for size ${size.width}x${size.height}`);
-		}
-		return preset;
-	}
-}
-function getDifficultyFromConfAndPreset(conf: Pick<PuzzleSetupConfig, 'difficulty'>, preset: BoardPreset): DifficultyKey {
-	if (!isDifficultyRange(conf.difficulty)) {
-		const difficulty: DifficultyKey = conf.difficulty;
-		if (preset.maxDifficulty < difficulty) {
-			throw new Error(`Preset ${preset.width}x${preset.height} does not allow difficulty ${difficulty}.`);
-		}
-		return difficulty;
-	} else {
-		return pickRandomDifficultyFromRange(conf.difficulty, preset);
-	}
-}

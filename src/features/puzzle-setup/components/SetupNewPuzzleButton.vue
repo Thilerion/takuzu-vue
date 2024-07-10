@@ -29,10 +29,10 @@
 
 <script setup lang="ts">
 import type { BoardShape, DifficultyKey } from '@/lib/types.js';
-import { isDifficultyRange, type DifficultyRange } from '../composables/puzzle-setup-state.js';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { DIFFICULTY_LABELS } from '@/config.js';
+import { type DifficultyRange, isDifficultyRange } from '../helpers/puzzle-setup-config.js';
 
 const props = defineProps<{
 	size: BoardShape | BoardShape[] | null,

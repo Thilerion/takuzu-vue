@@ -3,8 +3,8 @@ import type { BoardShape, DifficultyKey } from "@/lib/types.js"
 import { computed, readonly, ref } from "vue";
 import { getValidPresetsForDifficulty } from "../helpers/board-presets.js";
 import { createSharedComposable } from "@vueuse/core";
+import { type DifficultyRange, isDifficultyRange } from "../helpers/puzzle-setup-config.js";
 
-export type DifficultyRange = [min: DifficultyKey, max: DifficultyKey];
 export type PuzzleSetupPersistedState = {
 	difficulty: DifficultyKey | DifficultyRange,
 	size: BoardShape | BoardShape[],
@@ -23,9 +23,6 @@ const getInitialState = (): PuzzleSetupPersistedState => {
 }
 const saveStateToStorage = (state: PuzzleSetupPersistedState) => {
 	localStorage.setItem(LS_KEY, JSON.stringify(state));
-}
-export const isDifficultyRange = (val: DifficultyKey | DifficultyKey[] | DifficultyRange): val is DifficultyRange => {
-	return (Array.isArray(val) && val.length === 2);
 }
 
 export const usePuzzleSetupState = createSharedComposable(() => {

@@ -1,6 +1,6 @@
 import { BoardPreset, PRESET_BOARD_SIZES, type BoardType, isDifficultyKey } from "@/config.js";
 import type { BoardShape, DifficultyKey } from "@/lib/types.js";
-import { isDifficultyRange, type DifficultyRange } from "../composables/puzzle-setup-state.js";
+import { type DifficultyRange, isDifficultyRange, expandDifficultyRange } from "./puzzle-setup-config.js";
 
 export function isValidNewPuzzleSetup(
 	size: BoardShape | ReadonlyArray<BoardShape>,
@@ -19,7 +19,7 @@ export function isValidNewPuzzleSetup(
 		sizePresets.push(preset);
 	}
 
-	const diffs = Array.isArray(difficulty) ? getDifficultiesFromDifficultyRange(difficulty) : ([difficulty] as DifficultyKey[]);
+	const diffs = Array.isArray(difficulty) ? expandDifficultyRange(difficulty) : ([difficulty] as DifficultyKey[]);
 	// Check if each size has at least one valid difficulty
 	const allSizesValid = sizePresets.every(p => presetMatchesAtLeastOneDifficulty(p, diffs));
 	if (!allSizesValid) return false;
@@ -60,15 +60,4 @@ export function sortPresetsByTypeAndSize(presets: BoardPreset[]): BoardPreset[] 
 		}
 		return orderOfTypes.indexOf(a.type) - orderOfTypes.indexOf(b.type);
 	})
-}
-
-export function getDifficultiesFromDifficultyRange(range: DifficultyRange): DifficultyKey[] {
-	const [min, max] = range;
-	if (min === max) return [min];
-	const result: DifficultyKey[] = [];
-	for (let i = min; i <= max; i++) {
-		if (!isDifficultyKey(i)) throw new Error(`Invalid difficulty key: ${i}`);
-		result.push(i);
-	}
-	return result;
 }
