@@ -112,7 +112,7 @@ export function getPresetFromConfSize(size: BoardShape | BoardShape[], opts?: { 
 export function getDifficultyFromConfAndPreset(conf: Pick<PuzzleSetupConfig, 'difficulty'>, preset: BoardPreset): DifficultyKey {
 	if (!isDifficultyRange(conf.difficulty)) {
 		const difficulty: DifficultyKey = conf.difficulty;
-		if (preset.maxDifficulty < difficulty) {
+		if (!preset.isCompatibleWithDifficulty(difficulty)) {
 			throw new Error(`Preset ${preset.width}x${preset.height} does not allow difficulty ${difficulty}.`);
 		}
 		return difficulty;

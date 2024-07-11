@@ -1,14 +1,14 @@
-import { BoardPreset, PRESET_BOARD_SIZES, type BoardType, isDifficultyKey } from "@/config.js";
+import { BoardPreset, PRESET_BOARD_SIZES, type BoardType } from "@/config.js";
 import type { BoardShape, DifficultyKey } from "@/lib/types.js";
 import { type DifficultyRange, isDifficultyRange, expandDifficultyRange } from "./puzzle-setup-config.js";
 
+// TODO: move to correct file/module
 export function isValidNewPuzzleSetup(
 	size: BoardShape | ReadonlyArray<BoardShape>,
 	difficulty: DifficultyKey | DifficultyRange
 ): boolean {
 	if (Array.isArray(size) && size.length === 0) return false;
 	if (Array.isArray(difficulty) && !isDifficultyRange(difficulty)) return false;
-	if (!validateDifficultySetup(difficulty)) return false;
 	
 	// Check if each size is a valid option according to list of BoardPresets
 	const sizes = Array.isArray(size) ? size : [size];
@@ -27,37 +27,45 @@ export function isValidNewPuzzleSetup(
 	return true;
 }
 
-const validateDifficultySetup = (difficulty: DifficultyKey | DifficultyRange): boolean => {
-	const diffs = Array.isArray(difficulty) ? difficulty : [difficulty];
-	return diffs.every(d => isDifficultyKey(d));
-}
-
 export function getPresetFromBoardShape(shape: BoardShape): BoardPreset | null {
 	return PRESET_BOARD_SIZES.find(p => p.width === shape.width && p.height === shape.height) ?? null;
 }
 
-export function getValidPresetsForDifficulty(difficulty: DifficultyKey | DifficultyKey[]) {
+export function getValidPresetsForDifficulty(
+	difficulty: DifficultyKey | DifficultyKey[],
+	allPresets = PRESET_BOARD_SIZES
+) {
 	const diffs = Array.isArray(difficulty) ? difficulty : [difficulty];
-	return PRESET_BOARD_SIZES.filter(preset => presetMatchesAtLeastOneDifficulty(preset, diffs))
+	return allPresets.filter(preset => presetMatchesAtLeastOneDifficulty(preset, diffs))
 }
 
 export function presetMatchesAtLeastOneDifficulty(preset: BoardPreset, difficulties: DifficultyKey[]): boolean {
-	return difficulties.some(d => d <= preset.maxDifficulty);
+	return difficulties.some(d => preset.isCompatibleWithDifficulty(d));
 }
 export function atLeastOnePresetAccomodatesDifficulty(presets: BoardPreset[], difficulty: DifficultyKey): boolean {
-	return presets.some(p => difficulty <= p.maxDifficulty);
+	return presets.some(p => p.isCompatibleWithDifficulty(difficulty));
+}
+
+const orderOfPresetTypes: Record<BoardType, number> = {
+	'Normal': 0,
+	'Rectangular': 1,
+	'Odd': 2,
+};
+const byPresetType = (a: BoardPreset, b: BoardPreset): number => {
+	if (a.type === b.type) return 0;
+	const res = orderOfPresetTypes[a.type] - orderOfPresetTypes[b.type];
+	return Math.sign(res);
+}
+const byPresetNumCells = (a: BoardPreset, b: BoardPreset): number => {
+	return Math.sign(a.numCells - b.numCells);
 }
 
 export function sortPresetsByTypeAndSize(presets: BoardPreset[]): BoardPreset[] {
-	const orderOfTypes: BoardType[] = ['Normal', 'Rectangular', 'Odd'];
 	// First by type: Normal, Rect, Odd
 	// Then by size: smallest to largest (width x height)
 	return [...presets].sort((a, b) => {
-		if (a.type === b.type) {
-			const cellsA = a.width * a.height;
-			const cellsB = b.width * b.height;
-			return cellsA - cellsB;
-		}
-		return orderOfTypes.indexOf(a.type) - orderOfTypes.indexOf(b.type);
+		const byTypeRes = byPresetType(a, b);
+		if (byTypeRes !== 0) return byTypeRes;
+		return byPresetNumCells(a, b);
 	})
 }

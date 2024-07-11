@@ -27,6 +27,14 @@ export class BoardPreset {
 	get isNormal() {
 		return this.type === boardTypes.NORMAL;
 	}
+
+	get numCells(): number {
+		return this.width * this.height;
+	}
+
+	isCompatibleWithDifficulty(difficulty: DifficultyKey): boolean {
+		return difficulty <= this.maxDifficulty;
+	}
 }
 
 export const dimensionsToBoardType = (w: number, h = w): BoardType => {

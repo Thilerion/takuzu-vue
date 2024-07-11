@@ -70,7 +70,7 @@ export const usePuzzleSetupState = createSharedComposable(() => {
 			// 6x6 is not valid for the selected difficulty, so select the smallest square size that is valid
 			const smallestValidSquarePreset = validPresetsForDifficulty.reduce((acc, val) => {
 				if (val.type !== 'Normal') return acc;
-				const numCells = val.width * val.height;
+				const numCells = val.numCells;
 				if (numCells >= acc.numCells) return acc;
 				return {
 					preset: val,
