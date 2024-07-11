@@ -7,7 +7,7 @@
 	>
 		<h3 class="mb-1 font-medium text-sm text-gray-500 dark:text-slate-100 dark:font-normal">{{ type }}</h3>
 		<div class="flex flex-wrap gap-2">
-			<GameModeDimensionsButton
+			<NewPuzzleDimensionsButton
 				v-for="preset in presets"
 				:key="`${preset.width}x${preset.height}`"
 				:width="preset.width"

@@ -9,7 +9,7 @@
 	><IconBtn class="arrow-btn-inner" el="div"><icon-ic-baseline-keyboard-arrow-left :style="{'font-size': '24px'}" /></IconBtn></button>
 	<div class="label h-16 relative z-0 mt-1">
 		<transition :name="transitionName">
-			<DifficultyLabel
+			<DifficultySliderLabel
 				:key="difficulty"
 				:stars="difficulty"
 				:label="currentLabel"
