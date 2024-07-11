@@ -4,6 +4,7 @@
 >
 	<button
 		class="arrow-left z-10 arrow-btn"
+		:disabled="!canDecrease"
 		@click="$emit('decrease')"
 	><IconBtn class="arrow-btn-inner" el="div"><icon-ic-baseline-keyboard-arrow-left :style="{'font-size': '24px'}" /></IconBtn></button>
 	<div class="label h-16 relative z-0 mt-1">
@@ -17,6 +18,7 @@
 	</div>
 	<button
 		class="arrow-right z-10 arrow-btn"
+		:disabled="!canIncrease"
 		@click="$emit('increase')"
 	>
 		<IconBtn class="arrow-btn-inner" el="div"><icon-ic-baseline-keyboard-arrow-right :style="{'font-size': '24px'}" /></IconBtn>
@@ -35,8 +37,8 @@ type DifficultySelectProps = {
 
 const props = defineProps<DifficultySelectProps>();
 const emit = defineEmits<{
-	increase: [],
-	decrease: []
+	(e: 'increase'): void,
+	(e: 'decrease'): void
 }>();
 
 const difficulty = toRef(props, 'difficulty');
@@ -44,6 +46,11 @@ const difficulty = toRef(props, 'difficulty');
 const currentLabel = computed(() => {
 	return props.labels[props.difficulty];
 })
+const MIN_DIFFICULTY = Math.min(...Object.keys(props.labels).map(Number));
+const MAX_DIFFICULTY = Math.max(...Object.keys(props.labels).map(Number));
+
+const canIncrease = computed(() => props.difficulty < MAX_DIFFICULTY);
+const canDecrease = computed(() => props.difficulty > MIN_DIFFICULTY);
 
 const transitionName = ref('slide-right');
 
@@ -88,6 +95,10 @@ watch(difficulty, (cur, prev) => {
 
 .arrow-btn {
 	@apply p-2;
+	@apply disabled:text-black/40 disabled:cursor-default;
+}
+.arrow-btn:disabled > .arrow-btn-inner {
+	@apply bg-transparent;
 }
 
 .arrow-left > * {
