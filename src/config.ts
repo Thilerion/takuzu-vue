@@ -1,4 +1,4 @@
-import type { DifficultyKey, DimensionStr } from "./lib/types.js";
+import type { BasicPuzzleConfig, BoardShape, DifficultyKey, DimensionStr } from "./lib/types.js";
 
 export const boardTypes = {
 	NORMAL: 'Normal',
@@ -8,7 +8,7 @@ export const boardTypes = {
 export type BoardType = typeof boardTypes[keyof typeof boardTypes];
 
 export class BoardPreset {
-	type: BoardType;
+	readonly type: BoardType;
 
 	constructor(
 		public width: number,
@@ -16,6 +16,10 @@ export class BoardPreset {
 		public maxDifficulty: DifficultyKey
 	) {
 		this.type = dimensionsToBoardType(width, height);
+	}
+
+	static fromShape({ width, height }: BoardShape, maxDifficulty: DifficultyKey) {
+		return new BoardPreset(width, height, maxDifficulty);
 	}
 
 	get isRect() {
@@ -74,30 +78,48 @@ export const DIFFICULTY_LABELS = {
 } as const satisfies Record<DifficultyKey, string>;
 export const DIFFICULTY_KEYS = Object.keys(DIFFICULTY_LABELS).map(str => parseInt(str)) as DifficultyKey[];
 
+export const MIN_DIFFICULTY_KEY: DifficultyKey = Math.min(...DIFFICULTY_KEYS) as DifficultyKey;
+export const MAX_DIFFICULTY_KEY: DifficultyKey = Math.max(...DIFFICULTY_KEYS) as DifficultyKey;
+
 export const getAllDifficultyValues = () => {
 	return Object.keys(DIFFICULTY_LABELS);
 }
-export const isDifficultyKey = (val: number | string): val is DifficultyKey => {
-	return DIFFICULTY_KEYS.includes(val as any);
+export const isDifficultyKey = (val: unknown): val is DifficultyKey => {
+	return typeof val === 'number' && (DIFFICULTY_KEYS as number[]).includes(val);
 }
-export const getAllBoardPresetSizes = () => {
+export const getAllBoardPresetSizes = (): BoardShape[] => {
 	return PRESET_BOARD_SIZES.map(val => {
 		return { width: val.width, height: val.height };
 	})
 }
-// TODO: test isDimensionStr
 export const isDimensionStr = (val: string): val is DimensionStr => {
 	return /^\d+x\d+$/.test(val);
 }
 
-export const getAllPresetSizeDifficultyCombinations = () => {
-	const result = [];
-	for (const preset of PRESET_BOARD_SIZES) {
+export const getAllPresetSizeDifficultyCombinations = (
+	presets: BoardPreset[] = PRESET_BOARD_SIZES
+) => {
+	const result: BasicPuzzleConfig[] = [];
+	for (const preset of presets) {
 		const { width, height } = preset;
-		for (let i = 1; i <= preset.maxDifficulty; i++) {
-			if (!isDifficultyKey(i)) throw new Error(`Invalid difficulty key: ${i}`);
-			result.push({ width, height, difficulty: i });
+		for (const difficulty of iterateOverDifficultyKeys(
+			MIN_DIFFICULTY_KEY,
+			preset.maxDifficulty
+		)) {
+			result.push({ width, height, difficulty });
 		}
+	}
+	return result;
+}
+
+export function iterateOverDifficultyKeys(
+	from: DifficultyKey,
+	to: DifficultyKey
+): DifficultyKey[] {
+	const result: DifficultyKey[] = [];
+	for (let i = from; i <= to; i++) {
+		if (!isDifficultyKey(i)) throw new Error(`Invalid difficulty key: ${i}`);
+		result.push(i);
 	}
 	return result;
 }
