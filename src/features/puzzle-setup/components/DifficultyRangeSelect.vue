@@ -11,7 +11,7 @@
 			v-for="opt in options"
 			:key="opt.value"
 			:value="opt.value"
-		><template v-for="n in opt.value" :key="n">★</template><template v-for="n in 5-opt.value" :key="n">☆</template> - {{ $t(`Game.difficulty.${opt.label}`, opt.label) }}</option>
+		><TextStarRepeated :amount="opt.value" /><TextStarRepeated :amount="5 - opt.value" outline /> - {{ $t(`Game.difficulty.${opt.label}`, opt.label) }}</option>
 	</select>
 	<label class="block">
 		Max:
@@ -23,7 +23,7 @@
 			v-for="opt in options"
 			:key="opt.value"
 			:value="opt.value"
-		><template v-for="n in opt.value" :key="n">★</template><template v-for="n in 5-opt.value" :key="n">☆</template> - {{ $t(`Game.difficulty.${opt.label}`, opt.label) }}</option>
+		><TextStarRepeated :amount="opt.value" /><TextStarRepeated :amount="5 - opt.value" outline /> - {{ $t(`Game.difficulty.${opt.label}`, opt.label) }}</option>
 	</select>
 </div>
 </template>

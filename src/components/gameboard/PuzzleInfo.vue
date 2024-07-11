@@ -5,7 +5,17 @@
 >
 	<div
 		class="difficulty text-left"
-	>{{ difficulty }}* {{ difficultyLabelMsg }}</div>
+	>
+		<template v-if="!shouldHideSingleDifficulty"><TextStarRepeated :amount="difficulty" /> {{ difficultyLabelMsg }}</template>
+		<div
+			v-else-if="shouldShowDifficultyRange"
+			class="tracking-tighter opacity-70"
+		>
+			<TextStarRepeated wrapper-tag="span" :amount="shouldShowDifficultyRange[0]" />
+			<span> - </span>
+			<TextStarRepeated wrapper-tag="span" :amount="shouldShowDifficultyRange[1]" />
+		</div>
+	</div>
 
 	<PuzzleInfoTimer
 		v-if="showTimer"
@@ -27,7 +37,10 @@
 </template>
 
 <script setup lang="ts">
-import { DIFFICULTY_LABELS } from '@/config';
+import { DIFFICULTY_LABELS, isDifficultyKey } from '@/config';
+import { isDifficultyRange, type DifficultyRange } from '@/features/puzzle-setup/helpers/puzzle-setup-config.js';
+import type { DifficultyKey } from '@/lib/types.js';
+import { useGameStore } from '@/stores/game.js';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -65,6 +78,19 @@ const difficultyLabelMsg = computed(() => {
 		}
 	}
 });
+
+const gameStore = useGameStore();
+const gameConfigDifficulty = computed((): DifficultyKey | DifficultyRange | null => gameStore.currentGameConfig?.puzzleConfig.difficulty ?? null);
+const shouldHideSingleDifficulty = computed(() => {
+	// If the user has selected a random difficulty (i.e. a DifficultyRange instead of a single difficulty), hide the difficulty here of the current puzzle.
+	// This prevents spoiling what strategies the user needs to use for the puzzle.
+	const gameConf = gameStore.currentGameConfig;
+	const mode = gameConf?.mode;
+	return mode === 'freePlay' && !isDifficultyKey(gameConfigDifficulty.value);
+})
+const shouldShowDifficultyRange = computed((): DifficultyRange | null => {
+	return isDifficultyRange(gameConfigDifficulty.value) ? gameConfigDifficulty.value : null;
+})
 
 </script>
 
