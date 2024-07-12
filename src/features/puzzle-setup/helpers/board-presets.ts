@@ -2,8 +2,7 @@ import { BoardPreset, PRESET_BOARD_SIZES, type BoardType } from "@/config.js";
 import type { BoardShape, DifficultyKey } from "@/lib/types.js";
 import { type DifficultyRange, isDifficultyRange, expandDifficultyRange } from "./puzzle-setup-config.js";
 
-// TODO: move to correct file/module
-export function isValidNewPuzzleSetup(
+export function isValidSizeDifficultyCombinationSetup(
 	size: BoardShape | ReadonlyArray<BoardShape>,
 	difficulty: DifficultyKey | DifficultyRange
 ): boolean {

@@ -64,7 +64,7 @@ import { usePuzzleSetupState } from '../composables/puzzle-setup-state.js';
 import { DIFFICULTY_LABELS, isDifficultyKey } from '@/config.js';
 import type { BoardShape, DifficultyKey } from '@/lib/types.js';
 import { useValidPuzzlePresets } from '../composables/valid-presets.js';
-import { isValidNewPuzzleSetup } from '../helpers/board-presets.js';
+import { isValidSizeDifficultyCombinationSetup } from '../helpers/board-presets.js';
 import { computed, watch } from 'vue';
 import type { DifficultyRange } from '../helpers/puzzle-setup-config.js';
 
@@ -124,7 +124,7 @@ const {
 } = useValidPuzzlePresets(selectedDifficulties);
 
 watch(persistableState, (state) => {
-	if (isValidNewPuzzleSetup(state.size, state.difficulty)) {
+	if (isValidSizeDifficultyCombinationSetup(state.size, state.difficulty)) {
 		console.log(JSON.parse(JSON.stringify(state)));
 		persistState();
 	}
