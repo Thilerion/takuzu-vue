@@ -17,9 +17,9 @@ function* rngGen(): Generator<number> {
 }
 const createCustomRng = () => {
 	const gen = rngGen();
-	return () => {
+	return vi.fn(() => {
 		return gen.next().value as number;
-	}
+	})
 }
 const getNValuesFromFn = <T extends () => any, Ret extends ReturnType<T>>(fn: T, n: number): (Ret)[] => {
 	const arr: Ret[] = [];
@@ -229,6 +229,10 @@ describe('Random utils', () => {
 		})
 
 		describe('pickRandomWeighted', () => {
+			let pickRandomWeightedOrigRnd: <T>(items: Rnd.WeightedArrayItem<T>[]) => T;
+			beforeEach(() => {
+				pickRandomWeightedOrigRnd = (items) => Rnd.pickRandomWeighted(items, origMathRandom);
+			})
 			it('picks items proportionally to their weight on average', () => {
 				const items: Rnd.WeightedArrayItem<1 | 2 | 3>[] = [
 					[1, 0.5], // approx 0.5/44 chance => 1.14%
@@ -257,6 +261,104 @@ describe('Random utils', () => {
 				expect(results[1]).toBeGreaterThan(N * 1 / 100);
 				expect(results[1]).toBeLessThan(N * 1.8 / 100);
 			})
+
+			it('uses the provided rng function', () => {
+				const localRng = vi.fn(() => 0.5);
+				expect(localRng).toHaveBeenCalledTimes(0);
+
+				const res = Rnd.pickRandomWeighted([
+					['a', 10],
+					['b', 20],
+				], localRng);
+				expect(['a', 'b'].includes(res)).toBe(true);
+				expect(localRng).toHaveBeenCalledTimes(1);
+			})
+
+			it('throws an error if any weight is 0 or negative', () => {
+				expect(() => pickRandomWeightedOrigRnd([
+					[0, 0.5],
+					[123, 123456789],
+					[1, 0],
+				])).toThrowError('All weights must be greater than 0 (got "0" for item at index 2)');
+
+				expect(() => pickRandomWeightedOrigRnd([
+					[0, -0.0001],
+					[123, 123456789],
+					[1, 0],
+				])).toThrowError('All weights must be greater than 0 (got "-0.0001" for item at index 0)');
+			})
+
+			it('throws an error if any weight is NaN or not a number', () => {
+				expect(() => pickRandomWeightedOrigRnd([
+					[0, 0.5],
+					[1, NaN],
+				])).toThrowError('All weights must be numbers (got "NaN" for item at index 1)');
+				expect(() => pickRandomWeightedOrigRnd([
+					[0, 0.5],
+					// @ts-expect-error null is not a valid weight
+					[1, null],
+				])).toThrowError('All weights must be numbers (got "null" for item at index 1)');
+			})
+
+			it('throws an error if any weight is infinite', () => {
+				expect(() => pickRandomWeightedOrigRnd([
+					[0, 0.5],
+					[1, Infinity],
+				])).toThrowError('All weights must be finite (got "Infinity" for item at index 1)');
+			})
+
+			it('throws an error if there are no items', () => {
+				expect(() => pickRandomWeightedOrigRnd([])).toThrowError('Cannot pick random item from empty array');
+			})
+
+			it('simply returns the first item if there is only one item', () => {
+				expect(rng).toHaveBeenCalledTimes(0);
+				expect(pickRandomWeightedOrigRnd([['abc', 123456]])).toBe('abc');
+				expect(rng).toHaveBeenCalledTimes(0);
+			})
+
+			it('uses the provided rng function if all weights are the same', () => {
+				// Previously had a bug where, when all weights were the same pickRandom() was called instead of pickRandomWeighted(), but the rng was not passed to pickRandom()
+				const localRng = vi.fn(() => 0.5);
+				expect(localRng).toHaveBeenCalledTimes(0);
+
+				Rnd.pickRandomWeighted([
+					['a', 10],
+					['b', 10],
+				], localRng);
+				expect(localRng).toHaveBeenCalledTimes(1);
+			})
+
+			it('works with a large discrepancy between weights', () => {
+				const items: Rnd.WeightedArrayItem<string>[] = [
+					['a', 0.001],
+					['b', 10000],
+					['c', 0.001]
+				];
+				const MAX_ATTEMPTS = 1e7;
+				let foundAt: null | number = null;
+				for (let i = 0; i < MAX_ATTEMPTS; i++) {
+					const result = Rnd.pickRandomWeighted(items, Math.random);
+					if (result !== 'b') {
+						foundAt = i;
+						break;
+					}
+				}
+				expect(foundAt).not.toBe(null);
+			})
+		})
+
+		it('works with very large arrays', () => {
+			const values = Array(10_000).fill(null).map((_, idx) => idx);
+			const items: Rnd.WeightedArrayItem<number>[] = values.map(val => [val, 0.123]);
+			items[10][1] = 0.234;
+			items[1800][1] = 0.1;
+			items[9980][1] = 0.123456789;
+
+			const rngMax = () => 1 - Number.EPSILON;
+			expect(Rnd.pickRandomWeighted(items, rngMax)).toBe(9999);
+
+			expect(Rnd.pickRandomWeighted(items, () => 0)).toBe(0);
 		})
 	})
 })
