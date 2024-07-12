@@ -84,7 +84,8 @@
 			"view-bookmarks": "Bekijk bladwijzers"
 		},
 		"paused": "Gepauzeerd",
-		"progress-percentage": "Voortgang:{p}%"
+		"progress-percentage": "Voortgang:{p}%",
+		"replay-from-history": "Replay uit geschiedenis"
 	},
 	"default": "standaard",
 	"disabled": "Uitgeschakeld",

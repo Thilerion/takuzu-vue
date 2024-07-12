@@ -1,12 +1,12 @@
 <template>
 <header>
 	<div class="flex justify-between items-center h-14 shadow-sm px-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-white">
-		<div class="w-1/3">
+		<div class="min-w-fit w-24 flex-shrink">
 			<IconBtn name="md-close" @click="exitGame">
 				<icon-ic-baseline-close />
 			</IconBtn>
 		</div>
-		<div class="h-full w-full flex flex-col items-center justify-center text-center relative flex-1" :class="{ 'pb-2': isReplayMode }">
+		<div class="h-full w-full flex-1 flex flex-col items-center justify-center text-center relative" :class="{ 'pb-2': isReplayMode }">
 			<div class="font-medium tracking-wide text-xl">
 				{{ boardShape.width }}<span class="px-1">x</span>{{ boardShape.height }}
 			</div>
@@ -15,7 +15,7 @@
 				<span v-else>{{ $t('PlayPuzzle.replay') }}</span>
 			</div>
 		</div>
-		<div class="flex flex-row w-1/3 justify-end">
+		<div class="flex flex-row w-24 min-w-fit flex-shrink justify-end">
 			<IconBtn class="opacity-80" @click="togglePause">
 				<icon-ic-baseline-pause v-if="!puzzleStore.paused" />
 				<icon-ic-baseline-play-arrow v-else />
