@@ -37,6 +37,7 @@ describe('puzzleSetupConfig helpers', () => {
 			const sizes: BoardShape[] = [
 				{ width: 4, height: 4 },
 				{ width: 6, height: 6 },
+				{ width: 10, height: 10 },
 				{ width: 12, height: 16 },
 				{ width: 14, height: 14 }
 			];
@@ -48,28 +49,35 @@ describe('puzzleSetupConfig helpers', () => {
 				      "height": 4,
 				      "width": 4,
 				    },
-				    100,
+				    308,
 				  ],
 				  [
 				    {
 				      "height": 6,
 				      "width": 6,
 				    },
-				    50,
+				    308,
+				  ],
+				  [
+				    {
+				      "height": 10,
+				      "width": 10,
+				    },
+				    100,
 				  ],
 				  [
 				    {
 				      "height": 16,
 				      "width": 12,
 				    },
-				    10,
+				    49,
 				  ],
 				  [
 				    {
 				      "height": 14,
 				      "width": 14,
 				    },
-				    10,
+				    48,
 				  ],
 				]
 			`);

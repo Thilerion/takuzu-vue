@@ -2,6 +2,7 @@ import { BoardPreset, isDifficultyKey } from "@/config.js";
 import type { BasicPuzzleConfig, BoardShape, DifficultyKey } from "@/lib/types.js";
 import { type WeightedArrayItem, pickRandomWeighted, pickRandom } from "@/utils/random.utils.js";
 import { getPresetFromBoardShape } from "./board-presets.js";
+import { clamp } from "@/utils/number.utils.js";
 
 export type DifficultyRange = [min: DifficultyKey, max: DifficultyKey];
 export const isDifficultyRange = (val: unknown): val is DifficultyRange => {
@@ -35,12 +36,23 @@ export function selectPuzzleConfigFromSetupConfig(conf: PuzzleSetupConfig): Basi
 
 /** Converts an array of BoardShapes to an array of WeightedArrayItems. */
 export function getWeightedBoardShapes(sizes: BoardShape[]): WeightedArrayItem<BoardShape>[] {
-	// TODO: improve this mess of calculating weights
 	return sizes.map(size => {
-		const base = Math.max(Math.sqrt(size.width * size.height) - 4, 1);
-		const weight = Math.round(1 / base * 100);
+		const weight = boardShapeToSelectionWeight(size);
 		return [size, weight];
 	});
+}
+
+/** Converts a BoardShape first to an expected pick frequence, then to a number weight (as integer, between 1 and 100) */
+export function boardShapeToSelectionWeight({ width, height }: BoardShape): number {
+	const numCells = clamp(36, width * height, 224);
+
+	// All weights are in relation to the weight of a 10x10 board
+	const baseValue = Math.pow(100, 1.1);
+	const curValue = Math.pow(numCells, 1.1);
+	const weight = Math.round((baseValue / curValue) * 100);
+
+	// This results in weights: 6x6=324, 10x10=100, 14x14=48; 6x6 picked 3.2x as 10x10, 6x6 picked 6.75x as 14x14, and 10x10 picked 2.1x as 14x14
+	return weight;
 }
 
 /**
