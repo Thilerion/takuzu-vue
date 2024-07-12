@@ -76,6 +76,7 @@ const {
 	isDifficultyRangeEnabled,
 	toggleDifficultyRangeSelection,
 	setDifficultySingle,
+	setDifficultyRange,
 
 	toggleSizeMultipleSelection,
 	isSizeMultipleSelectionEnabled,
