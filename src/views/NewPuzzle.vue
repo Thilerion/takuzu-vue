@@ -171,24 +171,9 @@ async function replayRandom() {
 </script>
 
 <style scoped>
-.content-block {
-	@apply bg-white shadow rounded dark:bg-slate-800;
-}
 .footer-wrapper {
 	padding-bottom: max(env(safe-area-inset-bottom) + 0.5rem, 1rem);
 	box-shadow: 0 -12px 14px -16px rgba(0,0,0,.2);
-}
-
-.puzzle-options {
-	/* @apply flex flex-col justify-center; */
-	@apply grid grid-cols-1;
-	grid-template-rows: 12fr [difficulty] auto 4fr [boardsize] auto 8fr;
-}
-.puzzle-options > *:first-child {
-	grid-row: difficulty / span 1;
-}
-.puzzle-options > *:nth-child(2) {
-	grid-row: boardsize / span 1;
 }
 
 #new-puzzle-page {
