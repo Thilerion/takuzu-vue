@@ -66,7 +66,14 @@ export const useSolutionsAnalysis = (
 
 	watch([shouldRunSolver, grid], ([,grid]) => {
 		runSolver(grid!);
-	}, { deep: true, immediate: true });
+	}, { deep: true });
+	// Do not immediately run solver on mount (expensive)
+	// If the initial values for shouldRunSolver and grid are correct, the solver will start after a timeout
+	setTimeout(() => {
+		if (shouldRunSolver.value && grid.value != null) {
+			runSolver(grid.value!);
+		}
+	}, 1000)
 
 	const solutions = computed(() => {
 		return solveResult.value?.numSolutions ?? null;

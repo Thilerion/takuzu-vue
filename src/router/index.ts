@@ -190,7 +190,7 @@ const routes = [
 	},
 	{
 		path: '/editor',
-		component: () => import('../views/PuzzleInput.vue'),
+		component: () => import('../views/PuzzleEditor.vue'),
 		name: 'PuzzleInput',
 		meta: {
 			title: { messageKey: 'PageTitle.PuzzleEditor' }
