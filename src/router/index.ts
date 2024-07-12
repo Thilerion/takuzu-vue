@@ -13,15 +13,15 @@ import NotFound from '../views/NotFound.vue';
 import { useRouteDocumentTitle } from './useDocumentTitle';
 import { useSavedPuzzle } from '@/services/savegame/useSavedGame.js';
 import type { RouteRecordRaw } from 'vue-router';
-import type { BaseTheme } from '@/features/settings/composables/use-theme-preferences.js';
 import { usePuzzleStatusStore } from '@/stores/puzzle/status-store.js';
 import { createRouter, createWebHistory } from 'vue-router';
 import { i18n } from '@/i18n/index.js';
+import type { AppThemeMode } from '@/features/settings/composables/use-app-theme.js';
 
 declare module 'vue-router' {
 	interface RouteMeta {
 		metaThemeColor?: string;
-		metaThemeColors?: Record<BaseTheme, string>;
+		metaThemeColors?: Record<AppThemeMode, string>;
 		title?: string | { messageKey: string, namedProperties?: Record<string, unknown> };
 		usePuzzleKey?: boolean;
 		prev?: RouteLocationNormalized | null;

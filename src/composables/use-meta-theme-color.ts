@@ -1,4 +1,4 @@
-import { useThemePreferences, type BaseTheme } from "@/features/settings/composables/use-theme-preferences.js";
+import { type AppThemeMode, useAppThemeMode } from "@/features/settings/composables/use-app-theme.js";
 import { createSharedComposable } from "@vueuse/core";
 import { computed, readonly, ref, watch, type Ref } from "vue";
 import { useRoute } from 'vue-router';
@@ -7,7 +7,7 @@ export type UseMetaThemeColorOpts = {
 	defaultColor?: string;
 };
 
-const DEFAULT_META_THEME_COLORS: Record<BaseTheme, string> = {
+const DEFAULT_META_THEME_COLORS: Record<AppThemeMode, string> = {
 	light: 'white',
 	dark: '#1e293b'
 }
@@ -43,8 +43,8 @@ export const useUpdateThemeColorWithRouteAndTheme = createSharedComposable(() =>
 	const route = useRoute();
 	const routeMetaTheme = computed(() => route.meta?.metaThemeColors);
 
-	const themePrefs = useThemePreferences();
-	const currentTheme = computed(() => themePrefs.baseTheme.value);
+	const themePrefs = useAppThemeMode();
+	const currentTheme = computed(() => themePrefs.appThemeMode.value);
 
 	watch([routeMetaTheme, currentTheme], ([routeMetaTheme, currentTheme]) => {
 		const { setThemeColor } = useMetaThemeColor();

@@ -45,13 +45,13 @@
 import { computed, ref, watch } from 'vue';
 import { debouncedWatch } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
-import { useThemePreferences } from '../composables/use-theme-preferences.js';
+import { useAppThemeMode } from '../composables/use-app-theme.js';
 
 const {
-	baseThemeUserPref: themeValue,
-	setBaseThemePreference: setTheme,
-	baseThemeBrowserPref: currentBrowserPreference
-} = useThemePreferences();
+	userPref: themeValue,
+	setAppThemeModeUserPref: setTheme,
+	system: currentBrowserPreference
+} = useAppThemeMode();
 
 const { t } = useI18n();
 const currentBrowserPrefMessage = computed(() => {
@@ -69,7 +69,7 @@ const selectedValue = ref(themeValue.value);
 
 debouncedWatch(selectedValue, (value) => {
 	setTheme(value);
-}, { debounce: 600 });
+}, { debounce: 200 });
 
 watch(themeValue, (value) => {
 	if (value !== selectedValue.value) {

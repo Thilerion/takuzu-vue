@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { useThemePreferences } from '@/features/settings/composables/use-theme-preferences.js';
+import { useAppThemeMode } from '@/features/settings/composables/use-app-theme.js';
 import { useSettingsStore } from '@/features/settings/store.js';
 import { onBeforeUnmount } from 'vue';
 
@@ -35,7 +35,7 @@ defineProps<{
 	hideBack?: boolean
 }>();
 
-const { setBaseThemeDefault: resetBaseThemeToDefault } = useThemePreferences();
+const { resetAppThemeMode: resetBaseThemeToDefault } = useAppThemeMode();
 
 let resetToDefaultsTimeout: null | number = null;
 const settingsStore = useSettingsStore();
