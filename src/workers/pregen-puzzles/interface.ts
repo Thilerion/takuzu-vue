@@ -38,6 +38,9 @@ export async function initPregenPuzzles(): Promise<{ generated: number, done: bo
 }
 
 export async function initializeOrPopulatePregenPuzzles(): Promise<{ done: boolean, generated: number, populated?: boolean }> {
+	/* if (pregenWorker.hasPendingRequests()) {
+		console.warn('Cannot initialize pregen puzzles; worker is busy.');
+	} */
 	return await pregenWorker.request('initialize');
 }
 
