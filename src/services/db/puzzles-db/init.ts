@@ -1,7 +1,8 @@
 import Dexie from "dexie";
 import { GeneratedPuzzle, type IPregenPuzzle } from "./models.js";
-import type { BasicPuzzleConfig, BoardExportString } from "@/lib/types.js";
+import type { BasicPuzzleConfig, BoardExportString, DifficultyKey, PuzzleConfigKey } from "@/lib/types.js";
 import { pickRandom } from "@/utils/random.utils.js";
+import { isDifficultyKey } from "@/config.js";
 
 class PregenPuzzlesDb extends Dexie {
 	puzzles!: Dexie.Table<GeneratedPuzzle, BoardExportString>;
@@ -64,6 +65,23 @@ class PregenPuzzlesDb extends Dexie {
 	countAllPuzzles() {
 		return this.puzzles.count();
 	}
+
+	async countByPuzzleConfigs(): Promise<Map<PuzzleConfigKey, number>> {
+		const result = new Map<PuzzleConfigKey, number>();
+		const puzzleKeys = await this.puzzles.orderBy('[width+height+difficulty]').keys();
+
+		for (const puzzle of puzzleKeys) {
+			if (!isValidDbPuzzleConfigKey(puzzle)) {
+				throw new Error(`Invalid puzzle config key found in database: ${puzzle}`);
+			}
+			const [width, height, difficulty] = puzzle;
+			const key: PuzzleConfigKey = `${width}x${height}-${difficulty as DifficultyKey}`;
+			const count = result.get(key) ?? 0;
+			result.set(key, count + 1);
+		}
+		return result;
+	}
+
 	async populateWith(data: IPregenPuzzle[]) {
 		const count = await this.countAllPuzzles();
 		if (count > 0) {
@@ -81,4 +99,11 @@ const puzzleDb = new PregenPuzzlesDb();
 export {
 	type PregenPuzzlesDb,
 	puzzleDb
+}
+
+function isValidDbPuzzleConfigKey(value: unknown): value is [w: number, h: number, d: DifficultyKey] {
+	if (!Array.isArray(value) || value.length !== 3) return false;
+	if (typeof value[0] !== 'number' || typeof value[1] !== 'number') return false;
+	if (!isDifficultyKey(value[2])) return false;
+	return true;
 }
