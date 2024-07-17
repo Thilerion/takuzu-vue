@@ -1,4 +1,5 @@
 import { getAllPresetSizeDifficultyCombinations } from "@/config.js";
+import { PUZZLE_GENERATOR_VERSION } from "@/constants.js";
 import type { IPregenPuzzle } from "@/features/pregen-puzzles/services/db/models.js";
 import { createPuzzleWithPuzzleConfig } from "@/lib/generation/puzzle.js";
 import type { BasicPuzzleConfig } from "@/lib/types.js";
@@ -69,7 +70,12 @@ function savePuzzlesToFile(puzzles: IPregenPuzzle[], outputPath: string) {
 	if (!existsSync(outputDir)) {
 		mkdirSync(outputDir, { recursive: true });
 	}
-	writeFileSync(fullPath, JSON.stringify(puzzles, null, 2), "utf-8");
+	const json = JSON.stringify({
+		generatedAt: new Date().toISOString(),
+		generatorVersion: PUZZLE_GENERATOR_VERSION,
+		puzzles,
+	}, null, 2);
+	writeFileSync(fullPath, json, "utf-8");
 	console.log(`Puzzle data saved to ${fullPath}\n`);
 }
 

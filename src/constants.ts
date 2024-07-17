@@ -1,0 +1,1 @@
+export const PUZZLE_GENERATOR_VERSION = 11;

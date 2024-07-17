@@ -6,6 +6,7 @@ import { getPregenPresetsToGenerate } from "@/features/pregen-puzzles/services/p
 import { generateMissingPuzzles } from "@/features/pregen-puzzles/services/pregenerator/pregenerate.js";
 import { getPuzzleDb } from "@/features/pregen-puzzles/services/db/db.js";
 import type { IPregenPuzzle } from "@/features/pregen-puzzles/services/db/models.js";
+import { PUZZLE_GENERATOR_VERSION } from "@/constants.js";
 
 const fns = {
 	"pregen": pregeneratePuzzles,
@@ -84,15 +85,19 @@ async function pregeneratePuzzles(): Promise<{ generated: number, done: boolean 
 
 async function pregenOrPopulate() {
 	const count = await getPuzzleDb().puzzles.count();
-	if (count > 0) {
-		// console.log('Starting pregen worker.');
-		return pregeneratePuzzles();
-	} else {
+	if (!count) {
 		console.log('Populating database with initial puzzles.');
 		const initialPopulation = await import('@/features/pregen-puzzles/services/db/populate.js');
-		getPuzzleDb().populateWith(initialPopulation.default);
-		return { done: true as const, generated: initialPopulation.default.length, populated: true as const };
+		const { generatorVersion, pregeneratedPuzzles } = initialPopulation.default;
+		// TODO: validate that the current generatorVersion is the same as what was used to generate the pregenerated puzzles
+		if (generatorVersion >= PUZZLE_GENERATOR_VERSION) {
+			getPuzzleDb().populateWith(pregeneratedPuzzles);
+			return { done: true as const, generated: pregeneratedPuzzles.length, populated: true as const };
+		}
+
+		console.warn(`[PREGEN] Warning: generatorVersion (${generatorVersion}) does not match current version (${PUZZLE_GENERATOR_VERSION}). Cannot use these puzzles to pre-populate the database.`);
 	}
+	return pregeneratePuzzles();
 }
 
 export type PregenPuzzlesWorkerFns = typeof fns;
