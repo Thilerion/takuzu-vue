@@ -1,8 +1,10 @@
+import type { Brand } from "@/lib/types.js";
 import type { WorkerRequest, BaseWorkerFunctionMap, WorkerResponse } from "./types";
 
 type WorkerReqResult<M extends BaseWorkerFunctionMap, K extends keyof M> = Awaited<ReturnType<M[K]>>;
 type WorkerReqPromise<M extends BaseWorkerFunctionMap, K extends keyof M> = Promise<WorkerReqResult<M, K>>;
-type WorkerReqPromiseWithId<M extends BaseWorkerFunctionMap, K extends keyof M> = Promise<WorkerReqResult<M, K>> & { id: string };
+type WorkerReqPromiseWithId<M extends BaseWorkerFunctionMap, K extends keyof M> = Promise<WorkerReqResult<M, K>> & { id: WorkerRequestId };
+type WorkerRequestId = Brand<string, 'WorkerInterfaceRequestId'>;
 
 /* 
 Example usage in a myWorker.ts file: 
@@ -24,6 +26,7 @@ export type WorkerInterfaceOpts = {
 	autoStart?: boolean,
 	startOnInitialization?: boolean,
 }
+export type WorkerRequestStatus = 'pending' | 'success' | 'error' | 'aborted';
 
 /* TODO:
 - event emitter pattern that allows multiple parts of the application to listen to responses from the worker, not just the part that made the request
@@ -38,7 +41,8 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 
 	private worker: Worker | null = null;
 	private createWorker: () => Worker;
-	private callbacks: Map<string, (response: WorkerResponse<any>) => void> = new Map();
+	private callbacks: Map<WorkerRequestId, (response: WorkerResponse<any>) => void> = new Map();
+	private requestStatusMap: Map<WorkerRequestId, WorkerRequestStatus> = new Map();
 
 	constructor(
 		createWorker: () => Worker,
@@ -91,28 +95,40 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 		K extends keyof T, Params extends Parameters<T[K]>
 	>(
 		funcName: K,
-		requestId: string,
+		requestId: WorkerRequestId,
 		...args: Params
 	): WorkerReqPromise<T, K> {		
 		return new Promise((resolve: (value: WorkerReqResult<T, K>) => void, reject) => {
 			this.callbacks.set(requestId, (data: WorkerResponse<WorkerReqResult<T, K>>) => {
 				if (data.success) {
+					this.updateRequestStatus(requestId, 'success');
 					return resolve(data.result);
 				} else {
+					this.updateRequestStatus(requestId, 'error');
 					return reject(data.error);
 				}
             });
+			this.updateRequestStatus(requestId, 'pending');
             const message: WorkerRequest<T, K> = { id: requestId, fn: funcName, args };
             this.worker!.postMessage(message);
 		});
+	}
+
+	private updateRequestStatus(requestId: WorkerRequestId, status: WorkerRequestStatus) {
+		this.requestStatusMap.set(requestId, status);
+		this.cleanupOldRequestStatusesIfNeeded();
+	}
+
+	checkRequestStatus(requestId: WorkerRequestId): WorkerRequestStatus | null {
+		return this.requestStatusMap.get(requestId) ?? null;
 	}
 
 	getRequestFn<K extends keyof T, Params extends Parameters<T[K]>>(funcName: K): (...args: Params) => WorkerReqPromise<T, K> {
 		return (...args: Params) => this.request(funcName, ...args);
 	}
 
-	private generateId(): string {
-		return self.crypto.randomUUID();
+	private generateId(): Brand<string, 'WorkerInterfaceRequestId'> {
+		return self.crypto.randomUUID() as WorkerRequestId;
 	}
 
 	/**
@@ -124,7 +140,7 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 	forceTerminate(customRejectErrorMessage: string = 'Worker terminated') {
 		if (this.isReady()) {
 			this.worker?.terminate();
-			this.rejectPendingRequests(new Error(customRejectErrorMessage));
+			this.abortPendingRequests(new Error(customRejectErrorMessage));
 		} else {
 			console.warn('WorkerInterface already terminated or not started yet; cannot terminate it.');
 		}
@@ -161,14 +177,19 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 	}
 
 	private setupListeners() {
+		if (this.isReady()) {
+			throw new Error('WorkerInterface already started; cannot setup listeners.');
+		}
 		this.worker!.onmessage = (event: MessageEvent) => {
 			const data = event.data as WorkerResponse<unknown>;
-			const cb = this.callbacks.get(data.id);
+			const id = typeof data.id === 'string' ? data.id as WorkerRequestId : null;
+
+			const cb = this.callbacks.get(id!);
 			if (!cb) {
-				throw new Error(`No callback found for id ${data.id}`);
+				throw new Error(`No callback found for id ${id}`);
 			}
 			cb(data);
-			this.callbacks.delete(data.id);
+			this.callbacks.delete(id!);
 		}
 		this.worker!.onerror = (event: ErrorEvent) => {
 			console.log('Worker onerror event fired. Worker will be terminated now.');
@@ -180,10 +201,28 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 		this.initialized = true;
 	}
 
-	private rejectPendingRequests(error: Error) {
+	private abortPendingRequests(error: Error) {
 		for (const [id, cb] of this.callbacks) {
 			cb({ id, success: false, error });
+			this.updateRequestStatus(id, 'aborted');
 		}
 		this.callbacks.clear();
+	}
+
+	private static readonly MAX_REQUEST_STATUS_HISTORY = 1000;
+	private static readonly REQUEST_STATUS_CLEANUP_AMOUNT = 100;
+	private cleanupOldRequestStatusesIfNeeded() {
+		if (this.requestStatusMap.size > WorkerInterface.MAX_REQUEST_STATUS_HISTORY) {
+			const toRemove = this.requestStatusMap.size - WorkerInterface.MAX_REQUEST_STATUS_HISTORY + WorkerInterface.REQUEST_STATUS_CLEANUP_AMOUNT;
+			console.log(`[WorkerInterface]: Max history of stored request statuses reached; removing ${toRemove} oldest statuses.`);
+			let count = 0;
+			for (const [id, status] of this.requestStatusMap) {
+				if (count >= toRemove) break;
+				if (status !== 'pending') {
+					this.requestStatusMap.delete(id);
+					count += 1;
+				}
+			}
+		}
 	}
 }
