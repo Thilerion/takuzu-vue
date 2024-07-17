@@ -2,7 +2,7 @@ import { dimensionsToBoardType, getAllPresetSizeDifficultyCombinations, type Boa
 import { toPuzzleConfigKey } from "@/lib/helpers/puzzle-config.js";
 import type { PuzzleConfigKey, DifficultyKey, BasicPuzzleConfig } from "@/lib/types.js";
 import { puzzleDb } from "@/services/db/puzzles-db/init.js";
-import { combineCompares, compareByOrder, compareNumeric } from "@/utils/orderBy.utils.js";
+import { ArrayComparator, compareByOrder, compareNumeric } from "@/utils/orderBy.utils.js";
 
 export type PuzzleConfigCountMap = Map<PuzzleConfigKey, number>;
 export type PregenPresetConfig = {
@@ -52,20 +52,22 @@ export async function getCurrentlyAvailablePresetConfigCounts(): Promise<PuzzleC
 	return await puzzleDb.countByPuzzleConfigs();
 }
 
+const MissingPresetSortComparator = ArrayComparator
+	// First, sort by difficulty: easiest first
+	.orderBy<MissingPregenPresetCount>(compareNumeric((item) => item.config.difficulty))
+	// Else, sort by puzzles with most missing: most first
+	.thenBy('-missing')
+	// Else, sort by puzzle type: Square>Rect>Odd
+	.thenBy(compareByOrder(
+		(item) => dimensionsToBoardType(item.config.width, item.config.height),
+		(['Normal', 'Rectangular', 'Odd'] satisfies BoardType[])
+	))
+	// Else, sort by numCells (width * height): smallest first
+	.thenBy(compareNumeric((item) => item.config.width * item.config.height));
 function sortMissingPresetConfigCounts(
 	data: MissingPregenPresetCount[]
 ): MissingPregenPresetCount[] {
-	const boardTypeOrder: BoardType[] = ['Normal', 'Rectangular', 'Odd'];
-	return [...data].sort(combineCompares<MissingPregenPresetCount>([
-		// First, sort by difficulty: easiest first
-		compareNumeric((item) => item.config.difficulty),
-		// Else, sort by puzzles with most missing: most first
-		'-missing',
-		// Else, sort by puzzle type: Square>Rect>Odd
-		compareByOrder((item) => dimensionsToBoardType(item.config.width, item.config.height), boardTypeOrder),
-		// Else, sort by numCells (width * height): smallest first
-		compareNumeric(item => item.config.width * item.config.height),
-	]));
+	return MissingPresetSortComparator.sort(data);
 }
 
 export function getMissingPresetConfigCounts(
