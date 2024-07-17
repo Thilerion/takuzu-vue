@@ -1,0 +1,83 @@
+/** Basic compare function type */
+export type CompareFunction<T> = (a: T, b: T) => number;
+/** Getter function type */
+export type OrderByGetter<T, K> = (item: T) => K;
+/** Sort order type */
+export type SortOrder = 'asc' | 'desc';
+/** Type for default comparison by key, allowing for descending order with '-' prefix */
+export type CompareDefaultByKey<T> = T extends Record<string, any> ? keyof T | `-${keyof T & string}` : never;
+/** Union type for compare items, either a CompareFunction or a key to compare by */
+export type CompareItem<T> = CompareFunction<T> | CompareDefaultByKey<T>;
+
+/** Creates a comparison function for numeric values */
+export function compareNumeric<T>(getter: OrderByGetter<T, number>, order: SortOrder = 'asc'): CompareFunction<T> {
+	return (a: T, b: T) => {
+		const aVal = getter(a);
+		const bVal = getter(b);
+		if (aVal === bVal) return 0;
+		return order === 'asc' ? aVal - bVal : bVal - aVal;
+	}
+}
+
+/** Creates a comparison function for string values using localeCompare */
+export function compareString<T>(getter: OrderByGetter<T, string>, localeOpts?: Intl.CollatorOptions, order: SortOrder = 'asc'): CompareFunction<T> {
+	return (a: T, b: T) => {
+		const aVal = getter(a);
+		const bVal = getter(b);
+		if (aVal === bVal) return 0;
+		return order === 'asc' ? aVal.localeCompare(bVal, 'en', localeOpts) : bVal.localeCompare(aVal, 'en', localeOpts);
+	}
+}
+
+/** Creates a comparison function for values in an array, using a specific order */
+export function compareByOrder<T, K>(getter: OrderByGetter<T, K>, specificOrder: K[], order: SortOrder = 'asc'): CompareFunction<T> {
+	return (a: T, b: T) => {
+		const valueA = getter(a);
+		const valueB = getter(b);
+		const indexA = specificOrder.indexOf(valueA);
+		const indexB = specificOrder.indexOf(valueB);
+		if (indexA === indexB) return 0;
+		if (indexA === -1) return order === 'asc' ? 1 : -1;
+		if (indexB === -1) return order === 'asc' ? -1 : 1;
+		return order === 'asc' ? indexA - indexB : indexB - indexA;
+	}
+}
+
+/** Default comparison function that handles both numeric and string values */
+function defaultCompare<T, K>(getter: OrderByGetter<T, K>, order: SortOrder = 'asc'): CompareFunction<T> {
+	return (a: T, b: T) => {
+		const valueA = getter(a);
+		const valueB = getter(b);
+
+		if (typeof valueA === 'number' && typeof valueB === 'number') {
+			return order === 'asc' ? valueA - valueB : valueB - valueA;
+		}
+
+		return order === 'asc' 
+			? String(valueA).localeCompare(String(valueB)) 
+			: String(valueB).localeCompare(String(valueA));
+	};
+}
+
+
+/**
+ * Creates a composite comparison function from an array of comparison items
+ * @param compares Array of comparison items (functions or property keys)
+ * @returns A composite comparison function
+ */
+export function combineCompares<ArrayItem>(compares: CompareItem<ArrayItem>[]): CompareFunction<ArrayItem> {
+	const compareFns: CompareFunction<ArrayItem>[] = compares.map(c => {
+		if (typeof c === 'string') {
+			const [key, order] = c.startsWith('-') ? [c.slice(1) as keyof ArrayItem, 'desc' as const] : [c as keyof ArrayItem, 'asc' as const];
+			return defaultCompare((item: ArrayItem) => item[key], order);
+		}
+		return c as CompareFunction<ArrayItem>;
+	})
+	return (a: ArrayItem, b: ArrayItem) => {
+		for (const compare of compareFns) {
+			const res = compare(a, b);
+			if (res !== 0) return res;
+		}
+		return 0;
+	}
+}
