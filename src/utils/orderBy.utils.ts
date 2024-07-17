@@ -124,10 +124,6 @@ export function combineCompares<ArrayItem>(compares: CompareItem<ArrayItem>[]): 
 	}
 }
 
-export function createOrderBy<Item>(compareFn: CompareFunction<Item>) {
-	return ArrayComparator.orderBy(compareFn);
-}
-
 export class ArrayComparator<T> {
 	private readonly compareFns: CompareFunction<T>[];
 
@@ -135,13 +131,22 @@ export class ArrayComparator<T> {
 		this.compareFns = compareFns;
 	}
 
-	static orderBy<Item>(compareFn: CompareFunction<Item>) {
-		const compareFns: CompareFunction<Item>[] = [compareFn];
+	static orderBy<Item>(compareFn: CompareItem<Item>) {
+		const compareFns: CompareFunction<Item>[] = [];
+		if (typeof compareFn === 'string') {
+			compareFns.push(defaultCompareByKey(compareFn) as CompareFunction<Item>);
+		} else {
+			compareFns.push(compareFn);
+		}
 		return new ArrayComparator(compareFns);
 	}
 
-	thenBy(compareFn: CompareFunction<T>) {
-		this.compareFns.push(compareFn);
+	thenBy(compareFn: CompareItem<T>) {
+		if (typeof compareFn === 'string') {
+			this.compareFns.push(defaultCompareByKey(compareFn) as CompareFunction<T>);
+		} else {
+			this.compareFns.push(compareFn);
+		}
 		return this;
 	}
 

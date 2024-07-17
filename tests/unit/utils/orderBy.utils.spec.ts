@@ -1,4 +1,4 @@
-import { compareByOrder, compareNumeric, compareString, combineCompares, defaultCompareByKey } from "@/utils/orderBy.utils.js";
+import { compareByOrder, compareNumeric, compareString, combineCompares, defaultCompareByKey, ArrayComparator } from "@/utils/orderBy.utils.js";
 
 describe('orderBy utils', () => {
 	describe('compareNumeric', () => {
@@ -187,7 +187,7 @@ describe('orderBy utils', () => {
 		})
 	})
 
-	describe('orderBy', () => {
+	describe('ArrayComparator', () => {
 		type User = {
 			id: number,
 			name: string,
@@ -212,14 +212,69 @@ describe('orderBy utils', () => {
 			];
 		})
 
-		it.todo('allows chaining multiple comparison functions', () => {
-			expect(arr).toBe(arr)
-			/* const sorted = createOrderBy(
-				compareNumeric((val: User) => val.age))
-				.thenBy(compareNumeric((val) => val.registeredAt.valueOf()))
-				.thenBy(compareString((val) => val.name))
-				.thenBy(compareNumeric((val) => val.score))
-				.sort(arr); */
+		it('should sort by a single numeric property', () => {
+			const sorted = ArrayComparator.orderBy<User>(compareNumeric(u => u.age)).sort(arr);
+			expect(sorted.map(u => u.age)).toEqual([25, 30, 30, 30, 35, 40, 45, 55]);
+		});
+
+		it('should sort by a single string property', () => {
+			const sorted = ArrayComparator.orderBy<User>(compareString(u => u.name)).sort(arr);
+			expect(sorted.map(u => u.name)).toEqual(['Alice', 'Bob', 'Dave', 'Eve', 'Frank', 'Jane', 'John', 'John']);
+		});
+
+		it('should sort by a nested property', () => {
+			const sorted = ArrayComparator.orderBy<User>(compareNumeric(u => u.misc.isActive ? 1 : 0, 'desc')).sort(arr);
+			expect(sorted.map(u => u.misc.isActive)).toEqual([true, true, true, true, false, false, false, false]);
+		});
+
+		it('should sort by a Date property', () => {
+			const sorted = ArrayComparator.orderBy<User>(compareNumeric(u => u.registeredAt.getTime())).sort(arr);
+			expect(sorted.map(u => u.registeredAt.getFullYear())).toEqual([2020, 2021, 2021, 2022, 2023, 2024, 2024, 2024]);
+		});
+
+		it('should handle null values', () => {
+			const sorted = ArrayComparator.orderBy<User>(compareNumeric(u => u.score)).sort(arr);
+			expect(sorted.map(u => u.score)).toEqual([50, 50, 100, null, null, null, null, null]);
+		});
+
+		it('should perform multi-level sorting', () => {
+			const sorted = ArrayComparator.orderBy<User>(compareNumeric(u => u.age))
+				.thenBy(compareString(u => u.name))
+				.sort(arr);
+			expect(sorted.map(u => `${u.age}-${u.name}`)).toEqual([
+				'25-Jane', '30-Eve', '30-John', '30-John', '35-Bob', '40-Alice', '45-Dave', '55-Frank'
+			]);
+		});
+
+		it('should sort in descending order', () => {
+			const sorted = ArrayComparator.orderBy<User>('-age').sort(arr);
+			expect(sorted.map(u => u.age)).toEqual([55, 45, 40, 35, 30, 30, 30, 25]);
+		});
+
+		it('should mix ascending and descending orders in multi-level sorting', () => {
+			const sorted = ArrayComparator.orderBy<User>(compareNumeric(u => u.age, 'desc'))
+				.thenBy(compareString(u => u.name))
+				.sort(arr);
+			expect(sorted.map(u => `${u.age}-${u.name}`)).toEqual([
+				'55-Frank', '45-Dave', '40-Alice', '35-Bob', '30-Eve', '30-John', '30-John', '25-Jane'
+			]);
+		});
+
+		it('should sort with a custom comparison function', () => {
+			const customCompare = (a: User, b: User) => {
+				return (a.name.length - b.name.length) || a.name.localeCompare(b.name);
+			};
+			const sorted = ArrayComparator.orderBy<User>(customCompare).sort(arr);
+			expect(sorted.map(u => u.name)).toEqual(['Bob', 'Eve', 'Dave', 'Jane', 'John', 'John', 'Alice', 'Frank']);
+		});
+
+		it('should not modify the original array', () => {
+			const arr = [{ prop: 1 }, { prop: 5 }, { prop: 4 }, { prop: 3 }, { prop: 2 }];
+			const sorted = ArrayComparator.orderBy<typeof arr[number]>(compareNumeric(u => u.prop, 'desc')).sort(arr);
+			const expected = [{ prop: 5 }, { prop: 4 }, { prop: 3 }, { prop: 2 }, { prop: 1 }];
+			expect(sorted).toEqual(expected);
+			expect(arr).not.toEqual(expected);
 		})
+
 	})
 })
