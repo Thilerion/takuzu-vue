@@ -26,6 +26,11 @@ export type WorkerInterfaceOpts = {
 	autoStart?: boolean,
 	startOnInitialization?: boolean,
 }
+export type WorkerOngoingRequest<M extends BaseWorkerFunctionMap> = {
+	funcName: keyof M,
+	args: string,
+	promise: WorkerReqPromiseWithId<M, keyof M>
+}
 export type WorkerRequestStatus = 'pending' | 'success' | 'error' | 'aborted';
 
 /* TODO:
@@ -42,6 +47,7 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 	private worker: Worker | null = null;
 	private createWorker: () => Worker;
 	private callbacks: Map<WorkerRequestId, (response: WorkerResponse<any>) => void> = new Map();
+	private ongoingRequests: WorkerOngoingRequest<T>[] = []; 
 	private requestStatusMap: Map<WorkerRequestId, WorkerRequestStatus> = new Map();
 
 	constructor(
@@ -87,6 +93,18 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 		const requestId = this.generateId();
 		const promise = this._makeRequest(funcName, requestId, ...args);
 		const promiseWithId: WorkerReqPromiseWithId<T, K> = Object.assign(promise, { id: requestId });
+
+		// Add to ongoingRequests
+		const ongoingRequest: WorkerOngoingRequest<T> = { funcName, args: JSON.stringify(args), promise: promiseWithId };
+		this.ongoingRequests.push(ongoingRequest);
+		// Remove from ongoingRequests when completed
+		promiseWithId.finally(() => {
+			const index = this.ongoingRequests.findIndex(req => req.promise.id === requestId);
+			if (index !== -1) {
+				this.ongoingRequests.splice(index, 1);
+			}
+		});
+
 		return promiseWithId;
 	}
 
@@ -126,6 +144,37 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 	getRequestFn<K extends keyof T, Params extends Parameters<T[K]>>(funcName: K): (...args: Params) => WorkerReqPromise<T, K> {
 		return (...args: Params) => this.request(funcName, ...args);
 	}
+
+	private findOngoingRequest<K extends keyof T>(funcName: K, opts: {
+		compareArgs?: boolean,
+		args: Parameters<T[K]>,
+	}): WorkerOngoingRequest<T> | null {
+		const { compareArgs = true, args } = opts;
+		const strArgs = JSON.stringify(args);
+
+		const found = this.ongoingRequests.find(request => {
+			const { args: argsB, funcName: funcNameB } = request;
+			if (compareArgs && argsB !== strArgs) return false;
+			return funcNameB === funcName;
+		})
+		return found ?? null;
+	}
+
+	/**
+     * Makes a request to the worker if an identical request is not already pending.
+     * If an identical request is pending, it returns the existing promise.
+     * 
+     * @param funcName The name of the function to call on the worker.
+     * @param args The arguments to pass to the function.
+     */
+    requestDeduplicated<K extends keyof T, Params extends Parameters<T[K]>>(funcName: K, ...args: Params): WorkerReqPromiseWithId<T, K> {
+        const existingRequest = this.findOngoingRequest(funcName, { compareArgs: true, args });
+        if (existingRequest) {
+			console.log('Found existing request for funcName:', funcName);
+            return existingRequest.promise;
+        }
+        return this.request(funcName, ...args);
+    }
 
 	private generateId(): Brand<string, 'WorkerInterfaceRequestId'> {
 		return self.crypto.randomUUID() as WorkerRequestId;

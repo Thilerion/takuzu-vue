@@ -19,13 +19,8 @@ const createPregenPuzzlesWorker = (opts: WorkerInterfaceOpts = {}): WorkerInterf
 }
 const pregenWorker = createPregenPuzzlesWorker();
 
-export async function initPregenPuzzles(): Promise<{ generated: number, done: boolean, pending: false } | { pending: true }> {
-	if (pregenWorker.hasPendingRequests()) {
-		console.log('Pregen worker is already busy, cannot start pregen again.');
-		return { pending: true as const };
-	}
-
-	const result = await pregenWorker.request('pregen');
+export async function initPregenPuzzles(): Promise<{ generated: number, done: boolean, pending: false }> {
+	const result = await pregenWorker.requestDeduplicated('pregen');
 	if (result.done) {
 		if (result.generated > 0) {
 			console.log('Pregen was successful. Amount generated:', result.generated);
@@ -38,14 +33,11 @@ export async function initPregenPuzzles(): Promise<{ generated: number, done: bo
 }
 
 export async function initializeOrPopulatePregenPuzzles(): Promise<{ done: boolean, generated: number, populated?: boolean }> {
-	/* if (pregenWorker.hasPendingRequests()) {
-		console.warn('Cannot initialize pregen puzzles; worker is busy.');
-	} */
-	return await pregenWorker.request('initialize');
+	return await pregenWorker.requestDeduplicated('initialize');
 }
 
 export async function clearPregenPuzzlesDb(): Promise<boolean> {
-	return await pregenWorker.request('clearDb');
+	return await pregenWorker.requestDeduplicated('clearDb');
 }
 export function retrievePregenPuzzleFromDb(conf: BasicPuzzleConfig): Promise<GeneratedPuzzle | null> {
 	return pregenWorker.request('retrieveFromDb', conf);
