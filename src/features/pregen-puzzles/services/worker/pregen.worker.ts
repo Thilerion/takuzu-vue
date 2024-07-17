@@ -16,7 +16,7 @@ const fns = {
 		return true;
 	},
 	retrieveFromDb: async (conf: BasicPuzzleConfig) => {
-		return getPuzzleDb().getPuzzle(conf);
+		return getPuzzleDb().takePuzzle(conf);
 	}
 } as const;
 

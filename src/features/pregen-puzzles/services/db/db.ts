@@ -43,11 +43,6 @@ class PregenPuzzlesDb extends Dexie {
 		return this.puzzles.bulkPut(puzzles);
 	}
 
-	getPuzzle(conf: BasicPuzzleConfig) {
-		console.error('getPuzzle() is deprecated. Use takePuzzle() instead.');
-		return this.takePuzzle(conf);
-	}
-
 	takePuzzle({
 		width, height, difficulty
 	}: BasicPuzzleConfig) {
