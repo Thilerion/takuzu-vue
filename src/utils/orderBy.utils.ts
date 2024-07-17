@@ -4,8 +4,10 @@ export type CompareFunction<T> = (a: T, b: T) => number;
 export type OrderByGetter<T, K> = (item: T) => K;
 /** Sort order type */
 export type SortOrder = 'asc' | 'desc';
+
+export type GetKeyWithDesc<T extends string> = T extends `-${infer K}` ? K : T;
 /** Type for default comparison by key, allowing for descending order with '-' prefix */
-export type CompareDefaultByKey<T> = T extends Record<string, any> ? keyof T | `-${keyof T & string}` : never;
+export type CompareDefaultByKey<T> = T extends Record<string, any> ? (keyof T & string) | `-${keyof T & string}` : never;
 /** Union type for compare items, either a CompareFunction or a key to compare by */
 export type CompareItem<T> = CompareFunction<T> | CompareDefaultByKey<T>;
 
@@ -59,6 +61,19 @@ function defaultCompare<T, K>(getter: OrderByGetter<T, K>, order: SortOrder = 'a
 	};
 }
 
+/** Compare function that compares by a specific key, with a default compare function for the key. */
+export function defaultCompareByKey<K extends string>(k: K): CompareFunction<Record<GetKeyWithDesc<K>, unknown>> {
+	let key: GetKeyWithDesc<K>;
+	let order: SortOrder = 'asc';
+	if (k.startsWith('-')) {
+		key = k.slice(1) as GetKeyWithDesc<K>;
+		order = 'desc';
+	} else {
+		key = k as GetKeyWithDesc<K>;
+	}
+	return defaultCompare((item) => item[key], order);
+}
+
 
 /**
  * Creates a composite comparison function from an array of comparison items
@@ -68,10 +83,9 @@ function defaultCompare<T, K>(getter: OrderByGetter<T, K>, order: SortOrder = 'a
 export function combineCompares<ArrayItem>(compares: CompareItem<ArrayItem>[]): CompareFunction<ArrayItem> {
 	const compareFns: CompareFunction<ArrayItem>[] = compares.map(c => {
 		if (typeof c === 'string') {
-			const [key, order] = c.startsWith('-') ? [c.slice(1) as keyof ArrayItem, 'desc' as const] : [c as keyof ArrayItem, 'asc' as const];
-			return defaultCompare((item: ArrayItem) => item[key], order);
+			return defaultCompareByKey(c) as CompareFunction<ArrayItem>;
 		}
-		return c as CompareFunction<ArrayItem>;
+		return c;
 	})
 	return (a: ArrayItem, b: ArrayItem) => {
 		for (const compare of compareFns) {

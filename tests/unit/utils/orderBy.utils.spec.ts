@@ -1,4 +1,4 @@
-import { compareByOrder, compareNumeric, compareString, combineCompares } from "@/utils/orderBy.utils.js";
+import { compareByOrder, compareNumeric, compareString, combineCompares, defaultCompareByKey } from "@/utils/orderBy.utils.js";
 
 describe('orderBy utils', () => {
 	describe('compareNumeric', () => {
@@ -22,9 +22,7 @@ describe('orderBy utils', () => {
 			const compare = compareString((val: Record<'a', string>) => val.a);
 			expect(compare({ a: 'a' }, { a: 'b' })).toBeLessThan(0);
 			expect(compare({ a: 'b' }, { a: 'a' })).toBeGreaterThan(0);
-			expect(compare({ a: 'a' }, { a: 'a' })).toBe(0);
-
-			
+			expect(compare({ a: 'a' }, { a: 'a' })).toBe(0);			
 		})
 		
 		it('should respect locale options', () => {
@@ -43,6 +41,32 @@ describe('orderBy utils', () => {
 			expect(compare({ a: 1 }, { a: 2 })).toBeLessThan(0);
 			expect(compare({ a: 2 }, { a: 1 })).toBeGreaterThan(0);
 			expect(compare({ a: 2 }, { a: 3 })).toBeGreaterThan(0);
+		})
+	})
+
+	describe('defaultCompareByKey', () => {
+		it('should compare by a specific key using a default compare function (with number)', () => {
+			const compareAsc = defaultCompareByKey('difficulty');
+			expect(compareAsc({ difficulty: 1 }, { difficulty: 2 })).toBeLessThan(0);
+			expect(compareAsc({ difficulty: 2 }, { difficulty: 1 })).toBeGreaterThan(0);
+			expect(compareAsc({ difficulty: 1 }, { difficulty: 1 })).toBe(0);
+
+			const compareDesc = defaultCompareByKey('-difficulty');
+			expect(compareDesc({ difficulty: 1 }, { difficulty: 2 })).toBeGreaterThan(0);
+			expect(compareDesc({ difficulty: 2 }, { difficulty: 1 })).toBeLessThan(0);
+			expect(compareDesc({ difficulty: 1 }, { difficulty: 1 })).toBe(0);
+		})
+
+		it('should compare by a specific key using a default compare function (with string)', () => {
+			const compareAsc = defaultCompareByKey('name');
+			expect(compareAsc({ name: 'aaa' }, { name: 'abc' })).toBeLessThan(0);
+			expect(compareAsc({ name: 'abc' }, { name: 'aaa' })).toBeGreaterThan(0);
+			expect(compareAsc({ name: 'aaa' }, { name: 'aaa' })).toBe(0);
+
+			const compareDesc = defaultCompareByKey('-name');
+			expect(compareDesc({ name: 'aaa' }, { name: 'abc' })).toBeGreaterThan(0);
+			expect(compareDesc({ name: 'abc' }, { name: 'aaa' })).toBeLessThan(0);
+			expect(compareDesc({ name: 'aaa' }, { name: 'aaa' })).toBe(0);
 		})
 	})
 
@@ -71,65 +95,21 @@ describe('orderBy utils', () => {
 				{ difficulty: 1, size: 4, type: 'Odd' },
 			];
 			const result = [...arr].sort(orderByFn);
-			expect(result).toMatchInlineSnapshot(`
-				[
-				  {
-				    "difficulty": 1,
-				    "size": 4,
-				    "type": "Normal",
-				  },
-				  {
-				    "difficulty": 1,
-				    "size": 4,
-				    "type": "Odd",
-				  },
-				  {
-				    "difficulty": 1,
-				    "size": 4,
-				    "type": "Rect",
-				  },
-				  {
-				    "difficulty": 1,
-				    "size": 6,
-				    "type": "Rect",
-				  },
-				  {
-				    "difficulty": 1,
-				    "size": 8,
-				    "type": "Rect",
-				  },
-				  {
-				    "difficulty": 1,
-				    "size": 10,
-				    "type": "Normal",
-				  },
-				  {
-				    "difficulty": 1,
-				    "size": 10,
-				    "type": "Odd",
-				  },
-				  {
-				    "difficulty": 2,
-				    "size": 10,
-				    "type": "Normal",
-				  },
-				  {
-				    "difficulty": 2,
-				    "size": 10,
-				    "type": "Odd",
-				  },
-				  {
-				    "difficulty": 3,
-				    "size": 10,
-				    "type": "Normal",
-				  },
-				  {
-				    "difficulty": 3,
-				    "size": 10,
-				    "type": "Odd",
-				  },
-				]
-			`);
+			const expectedArr: Item[] = [
+				// Difficulty 1=>2=>3, Size 4=>10, Normal=>Odd=>Rect
+				{ difficulty: 1, size: 4, type: 'Normal' },
+				{ difficulty: 1, size: 4, type: 'Odd' },
+				{ difficulty: 1, size: 4, type: 'Rect' },
+				{ difficulty: 1, size: 6, type: 'Rect' },
+				{ difficulty: 1, size: 8, type: 'Rect' },
+				{ difficulty: 1, size: 10, type: 'Normal' },
+				{ difficulty: 1, size: 10, type: 'Odd' },
+				{ difficulty: 2, size: 10, type: 'Normal' },
+				{ difficulty: 2, size: 10, type: 'Odd' },
+				{ difficulty: 3, size: 10, type: 'Normal' },
+				{ difficulty: 3, size: 10, type: 'Odd' },				
+			]
+			expect(result).toEqual(expectedArr);
 		})
 	})
 })
