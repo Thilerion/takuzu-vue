@@ -12,21 +12,27 @@ export type CompareDefaultByKey<T> = T extends Record<string, any> ? (keyof T & 
 export type CompareItem<T> = CompareFunction<T> | CompareDefaultByKey<T>;
 
 /** Creates a comparison function for numeric values */
-export function compareNumeric<T>(getter: OrderByGetter<T, number>, order: SortOrder = 'asc'): CompareFunction<T> {
+export function compareNumeric<T>(getter: OrderByGetter<T, number | null | undefined>, order: SortOrder = 'asc'): CompareFunction<T> {
 	return (a: T, b: T) => {
 		const aVal = getter(a);
 		const bVal = getter(b);
 		if (aVal === bVal) return 0;
+		if (aVal == null || bVal == null) {
+			return handleNullishLast(aVal, bVal, order);
+		}
 		return order === 'asc' ? aVal - bVal : bVal - aVal;
 	}
 }
 
 /** Creates a comparison function for string values using localeCompare */
-export function compareString<T>(getter: OrderByGetter<T, string>, localeOpts?: Intl.CollatorOptions, order: SortOrder = 'asc'): CompareFunction<T> {
+export function compareString<T>(getter: OrderByGetter<T, string | null | undefined>, localeOpts?: Intl.CollatorOptions, order: SortOrder = 'asc'): CompareFunction<T> {
 	return (a: T, b: T) => {
 		const aVal = getter(a);
 		const bVal = getter(b);
 		if (aVal === bVal) return 0;
+		if (aVal == null || bVal == null) {
+			return handleNullishLast(aVal, bVal, order);
+		}
 		return order === 'asc' ? aVal.localeCompare(bVal, 'en', localeOpts) : bVal.localeCompare(aVal, 'en', localeOpts);
 	}
 }
@@ -46,10 +52,14 @@ export function compareByOrder<T, K>(getter: OrderByGetter<T, K>, specificOrder:
 }
 
 /** Default comparison function that handles both numeric and string values */
-function defaultCompare<T, K>(getter: OrderByGetter<T, K>, order: SortOrder = 'asc'): CompareFunction<T> {
+function defaultCompare<T, K>(getter: OrderByGetter<T, K | null | undefined>, order: SortOrder = 'asc'): CompareFunction<T> {
 	return (a: T, b: T) => {
 		const valueA = getter(a);
 		const valueB = getter(b);
+
+		if (valueA == null || valueB == null) {
+			return handleNullishLast(valueA, valueB, order);
+		}
 
 		if (typeof valueA === 'number' && typeof valueB === 'number') {
 			return order === 'asc' ? valueA - valueB : valueB - valueA;
@@ -74,6 +84,14 @@ export function defaultCompareByKey<K extends string>(k: K): CompareFunction<Rec
 	return defaultCompare((item) => item[key], order);
 }
 
+// Null handling
+function handleNullishLast(a: unknown | null | undefined, b: unknown | null | undefined, order: SortOrder) {
+	if (a == null && b == null) return 0;
+	else if (a == null) return order === 'asc' ? 1 : -1;
+	else if (b == null) return order === 'asc' ? -1 : 1;
+	return 0;
+}
+
 
 /**
  * Creates a composite comparison function from an array of comparison items
@@ -94,4 +112,16 @@ export function combineCompares<ArrayItem>(compares: CompareItem<ArrayItem>[]): 
 		}
 		return 0;
 	}
+}
+
+export function createOrderBy<Item>(compareFn: CompareFunction<Item>) {
+	const compareFns: CompareFunction<Item>[] = [compareFn];
+	const result = {
+		sort: (arr: ReadonlyArray<Item>) => arr.toSorted(combineCompares(compareFns)),
+		thenBy: (compareFn: CompareFunction<Item>) => {
+			compareFns.push(compareFn);
+			return result;
+		},
+	}
+	return result;
 }
