@@ -2,6 +2,7 @@ import type { WorkerRequest, BaseWorkerFunctionMap, WorkerResponse } from "./typ
 
 type WorkerReqResult<M extends BaseWorkerFunctionMap, K extends keyof M> = Awaited<ReturnType<M[K]>>;
 type WorkerReqPromise<M extends BaseWorkerFunctionMap, K extends keyof M> = Promise<WorkerReqResult<M, K>>;
+type WorkerReqPromiseWithId<M extends BaseWorkerFunctionMap, K extends keyof M> = Promise<WorkerReqResult<M, K>> & { id: string };
 
 /* 
 Example usage in a myWorker.ts file: 
@@ -70,7 +71,7 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 	 * @param funcName The name of the function to call on the worker.
 	 * @param args The arguments to pass to the function.
 	 */
-	request<K extends keyof T, Params extends Parameters<T[K]>>(funcName: K, ...args: Params): WorkerReqPromise<T, K> {
+	request<K extends keyof T, Params extends Parameters<T[K]>>(funcName: K, ...args: Params): WorkerReqPromiseWithId<T, K> {
 		if (!this.isReady()) {
 			if (this.opts.autoStart) {
 				this.start();
@@ -78,16 +79,30 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 				throw new Error('Worker is not running, cannot make request because autoStart is disabled. Call .start() first to manually start the worker instance.');
 			}
 		}
+
+		const requestId = this.generateId();
+		const promise = this._makeRequest(funcName, requestId, ...args);
+		const promiseWithId: WorkerReqPromiseWithId<T, K> = Object.assign(promise, { id: requestId });
+		return promiseWithId;
+	}
+
+
+	private _makeRequest<
+		K extends keyof T, Params extends Parameters<T[K]>
+	>(
+		funcName: K,
+		requestId: string,
+		...args: Params
+	): WorkerReqPromise<T, K> {		
 		return new Promise((resolve: (value: WorkerReqResult<T, K>) => void, reject) => {
-            const id = this.generateId();
-			this.callbacks.set(id, (data: WorkerResponse<WorkerReqResult<T, K>>) => {
+			this.callbacks.set(requestId, (data: WorkerResponse<WorkerReqResult<T, K>>) => {
 				if (data.success) {
 					return resolve(data.result);
 				} else {
 					return reject(data.error);
 				}
             });
-            const message: WorkerRequest<T, K> = { id, fn: funcName, args };
+            const message: WorkerRequest<T, K> = { id: requestId, fn: funcName, args };
             this.worker!.postMessage(message);
 		});
 	}
