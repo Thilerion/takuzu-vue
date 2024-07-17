@@ -1,7 +1,7 @@
 import type { BasicPuzzleConfig } from "@/lib/types.js";
-import { WorkerInterface, type WorkerInterfaceOpts } from "../utils/workerInterface.js";
+import { WorkerInterface, type WorkerInterfaceOpts } from "@/workers/utils/workerInterface.js";
 import type { PregenPuzzlesWorkerFns } from "./pregen.worker.js";
-import type { GeneratedPuzzle } from "@/features/pregen-puzzles/services/db/models.js";
+import type { GeneratedPuzzle } from "../db/models.js";
 
 let _worker: null | Worker = null;
 const createWorker = () => {

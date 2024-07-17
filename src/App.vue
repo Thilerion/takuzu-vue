@@ -12,11 +12,11 @@
 import { onMounted, toRef } from 'vue';
 import { useMainStore } from './stores/main';
 import { initListeners as initPWAInstallListeners } from './composables/use-deferred-install-prompt';
-import { initPregeneratedPuzzles } from './workers/pregen-puzzles/init';
 import { useUpdateThemeColorWithRouteAndTheme } from './composables/use-meta-theme-color.js';
 import { initTouchDetectionDataAttrs } from './composables/use-detect-touch.js';
 import { initSettingsPersistence } from './features/settings/store.js';
 import { useGameStore } from './stores/game.js';
+import { initPregeneratedPuzzles } from './features/pregen-puzzles/services/worker/init.js';
 
 const _store = useMainStore();
 

@@ -1,4 +1,4 @@
-import { initializeOrPopulatePregenPuzzles } from "./interface";
+import { initializeOrPopulatePregenPuzzles } from "./interface.js";
 
 export async function initPregeneratedPuzzles(
 ) {

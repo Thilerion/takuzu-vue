@@ -1,7 +1,7 @@
-import { setupWorker } from "../utils/workerSetup.js";
+import { setupWorker } from "@/workers/utils/workerSetup.js";
 import type { BasicPuzzleConfig } from "@/lib/types.js";
-import type { GenPuzzleWorkerFns } from "../generate-puzzle/generate.worker";
-import { type WorkerInterfaceOpts, WorkerInterface } from "../utils/workerInterface";
+import type { GenPuzzleWorkerFns } from "@/workers/generate-puzzle/generate.worker";
+import { type WorkerInterfaceOpts, WorkerInterface } from "@/workers/utils/workerInterface.js";
 import { getPregenPresetsToGenerate } from "@/features/pregen-puzzles/services/pregenerator/presets.js";
 import { generateMissingPuzzles } from "@/features/pregen-puzzles/services/pregenerator/pregenerate.js";
 import { getPuzzleDb } from "@/features/pregen-puzzles/services/db/db.js";
@@ -25,7 +25,7 @@ setupWorker(fns);
 
 let _worker: null | Worker = null;
 const createWorker = () => {
-	_worker = new Worker(new URL('../generate-puzzle/generate.worker.ts', import.meta.url), { type: 'module' });
+	_worker = new Worker(new URL('../../../../workers/generate-puzzle/generate.worker.ts', import.meta.url), { type: 'module' });
 	return _worker;
 }
 

@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { initPregenPuzzles as initPregenPuzzlesWorker, clearPregenPuzzlesDb } from '@/workers/pregen-puzzles/interface.js';
+import { clearPregenPuzzlesDb, initPregenPuzzles as initPregenPuzzlesWorker } from '@/features/pregen-puzzles/services/worker/interface.js';
 import { ref } from 'vue';
 
 const clearPuzzlesResult = ref<{ str: string, id: number }[]>([]);
