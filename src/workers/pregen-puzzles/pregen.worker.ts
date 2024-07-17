@@ -1,10 +1,11 @@
 import { setupWorker } from "../utils/workerSetup.js";
 import { puzzleDb } from "@/services/db/puzzles-db/init.js";
-import type { BasicPuzzleConfig, DifficultyKey } from "@/lib/types.js";
+import type { BasicPuzzleConfig } from "@/lib/types.js";
 import type { GenPuzzleWorkerFns } from "../generate-puzzle/generate.worker";
 import { type WorkerInterfaceOpts, WorkerInterface } from "../utils/workerInterface";
 import type { IPregenPuzzle } from "@/services/db/puzzles-db/models.js";
-import { pregeneratePuzzlesV2 } from "./puzzle-pregeneration.js";
+import { getPregenPresetsToGenerate } from "@/features/pregen-puzzles/services/pregenerator/presets.js";
+import { generateMissingPuzzles } from "@/features/pregen-puzzles/services/pregenerator/pregenerate.js";
 
 const fns = {
 	"pregen": pregeneratePuzzles,
@@ -37,22 +38,13 @@ const createGenPuzzleWorker = (opts: WorkerInterfaceOpts = {}): WorkerInterface<
 }
 const puzzleWorker = createGenPuzzleWorker();
 
-type FindPresetsWithoutPuzzlesAndGenerateMissingOpts = {
-	lazy: boolean,
-	maxDifficulty: DifficultyKey
-}
-
-async function findPresetsWithoutPuzzlesAndGenerateMissing(
-	{ lazy = true, maxDifficulty = 3 }: Partial<FindPresetsWithoutPuzzlesAndGenerateMissingOpts> = {}
-): Promise<number> {
+async function findPresetsWithoutPuzzlesAndGenerateMissing(): Promise<number> {
+	const toGenerate = await getPregenPresetsToGenerate();
 	const {
-		results,
-		failures, successes
-	} = await pregeneratePuzzlesV2(generatePuzzleForPreset, {
-		lazy,
-		maxDifficulty,
-		puzzlesPerPreset: 1,
-		maxRetries: 5
+		results, successes, failures
+	} = await generateMissingPuzzles(toGenerate, generatePuzzleForPreset, {
+		lazy: true,
+		maxRetries: 3
 	});
 
 	if (results.length) {
@@ -82,7 +74,7 @@ async function generatePuzzleForPreset(preset: BasicPuzzleConfig): Promise<IPreg
 }
 
 async function pregeneratePuzzles(): Promise<{ generated: number, done: boolean }> {
-	const numGenerated = await findPresetsWithoutPuzzlesAndGenerateMissing({ lazy: true, maxDifficulty: 3 })
+	const numGenerated = await findPresetsWithoutPuzzlesAndGenerateMissing()
 	// TODO: fn should return if it is done, and if and how many puzzles failed to generate
 	// TODO: pregen could optionally try to generate more than 1 per preset?
 	const result = /* await xxx */ { generated: numGenerated, done: true };

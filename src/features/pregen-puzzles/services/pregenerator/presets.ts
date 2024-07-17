@@ -1,7 +1,8 @@
-import { getAllPresetSizeDifficultyCombinations } from "@/config.js";
+import { dimensionsToBoardType, getAllPresetSizeDifficultyCombinations, type BoardType } from "@/config.js";
 import { toPuzzleConfigKey } from "@/lib/helpers/puzzle-config.js";
 import type { PuzzleConfigKey, DifficultyKey, BasicPuzzleConfig } from "@/lib/types.js";
 import { puzzleDb } from "@/services/db/puzzles-db/init.js";
+import { combineCompares, compareByOrder, compareNumeric } from "@/utils/orderBy.utils.js";
 
 export type PuzzleConfigCountMap = Map<PuzzleConfigKey, number>;
 export type PregenPresetConfig = {
@@ -51,6 +52,22 @@ export async function getCurrentlyAvailablePresetConfigCounts(): Promise<PuzzleC
 	return await puzzleDb.countByPuzzleConfigs();
 }
 
+function sortMissingPresetConfigCounts(
+	data: MissingPregenPresetCount[]
+): MissingPregenPresetCount[] {
+	const boardTypeOrder: BoardType[] = ['Normal', 'Rectangular', 'Odd'];
+	return [...data].sort(combineCompares<MissingPregenPresetCount>([
+		// First, sort by difficulty: easiest first
+		compareNumeric((item) => item.config.difficulty),
+		// Else, sort by puzzles with most missing: most first
+		'-missing',
+		// Else, sort by puzzle type: Square>Rect>Odd
+		compareByOrder((item) => dimensionsToBoardType(item.config.width, item.config.height), boardTypeOrder),
+		// Else, sort by numCells (width * height): smallest first
+		compareNumeric(item => item.config.width * item.config.height),
+	]));
+}
+
 export function getMissingPresetConfigCounts(
 	wanted: WantedPregenPreset[],
 	available: PuzzleConfigCountMap
@@ -65,8 +82,7 @@ export function getMissingPresetConfigCounts(
 			result.push({ key, config, missing: missingCount });
 		}
 	}
-
-	return result;
+	return sortMissingPresetConfigCounts([...result]);
 }
 
 export function expandMissingPresetConfigCounts(
