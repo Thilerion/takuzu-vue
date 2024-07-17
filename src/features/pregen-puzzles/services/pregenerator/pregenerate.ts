@@ -1,8 +1,8 @@
 import type { PuzzleConfigKey } from "@/lib/types.js";
 import type { GeneratePuzzleFn } from "../types.js";
 import type { PregenPresetConfig } from "./presets.js";
-import type { IPregenPuzzle } from "@/services/db/puzzles-db/models.js";
 import { awaitTimeout } from "@/utils/delay.utils.js";
+import type { IPregenPuzzle } from "../db/models.js";
 
 export type GenerateMissingPuzzlesOpts = {
 	lazy: boolean,

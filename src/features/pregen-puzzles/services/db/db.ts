@@ -1,6 +1,6 @@
+import type { BasicPuzzleConfig, BoardExportString, DifficultyKey, PuzzleConfigKey } from "@/lib/types.js";
 import Dexie from "dexie";
 import { GeneratedPuzzle, type IPregenPuzzle } from "./models.js";
-import type { BasicPuzzleConfig, BoardExportString, DifficultyKey, PuzzleConfigKey } from "@/lib/types.js";
 import { pickRandom } from "@/utils/random.utils.js";
 import { isDifficultyKey } from "@/config.js";
 
@@ -21,9 +21,6 @@ class PregenPuzzlesDb extends Dexie {
 		})
 	}
 
-	addPuzzle(puzzle: IPregenPuzzle) {
-		return this.puzzles.add(new GeneratedPuzzle(puzzle));
-	}
 	addPuzzles(puzzles: IPregenPuzzle[]) {
 		if (!puzzles.length) return;
 
@@ -41,10 +38,19 @@ class PregenPuzzlesDb extends Dexie {
 				throw err;
 			});
 	}
+
 	putPuzzles(puzzles: IPregenPuzzle[]) {
 		return this.puzzles.bulkPut(puzzles);
 	}
-	getPuzzle({ width, height, difficulty }: BasicPuzzleConfig) {
+
+	getPuzzle(conf: BasicPuzzleConfig) {
+		console.error('getPuzzle() is deprecated. Use takePuzzle() instead.');
+		return this.takePuzzle(conf);
+	}
+
+	takePuzzle({
+		width, height, difficulty
+	}: BasicPuzzleConfig) {
 		return this.transaction('rw', this.puzzles, async () => {
 			const amount = await this.puzzles.where({ width, height, difficulty }).count();
 			if (amount === 0) {
@@ -59,11 +65,20 @@ class PregenPuzzlesDb extends Dexie {
 			return puzzle;
 		})
 	}
-	clearPuzzles() {
-		return this.puzzles.clear();
-	}
+
 	countAllPuzzles() {
 		return this.puzzles.count();
+	}
+
+	async populateWith(data: IPregenPuzzle[]) {
+		const count = await this.countAllPuzzles();
+		if (count > 0) {
+			throw new Error('Cannot populate puzzles database when there are puzzles already set.');
+		}
+		const puzzles = data.map(val => {
+			return { ...val, populated: true };
+		})
+		return this.putPuzzles(puzzles);
 	}
 
 	async countByPuzzleConfigs(): Promise<Map<PuzzleConfigKey, number>> {
@@ -81,24 +96,19 @@ class PregenPuzzlesDb extends Dexie {
 		}
 		return result;
 	}
-
-	async populateWith(data: IPregenPuzzle[]) {
-		const count = await this.countAllPuzzles();
-		if (count > 0) {
-			throw new Error('Cannot populate puzzles database when there are puzzles already set.');
-		}
-		const puzzles = data.map(val => {
-			return { ...val, populated: true };
-		})
-		return this.putPuzzles(puzzles);
-	}
 }
 
-const puzzleDb = new PregenPuzzlesDb();
+let _instance: PregenPuzzlesDb | null = null;
+const getPuzzleDb = (): PregenPuzzlesDb => {
+	if (_instance == null) {
+		_instance = new PregenPuzzlesDb();
+	}
+	return _instance;
+}
 
 export {
 	type PregenPuzzlesDb,
-	puzzleDb
+	getPuzzleDb
 }
 
 function isValidDbPuzzleConfigKey(value: unknown): value is [w: number, h: number, d: DifficultyKey] {

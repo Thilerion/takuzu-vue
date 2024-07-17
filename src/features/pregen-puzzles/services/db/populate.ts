@@ -1,5 +1,5 @@
-import type { IPregenPuzzle } from "./models.js";
 import { shuffleInPlace } from "@/utils/random.utils.js";
+import type { IPregenPuzzle } from "@/features/pregen-puzzles/services/db/models.js";
 import rawPregeneratedPuzzles from "./pregenerated.json";
 
 // Puzzles are shuffled so puzzles of the same size and difficulty are not loaded in the same order every time the db is populated

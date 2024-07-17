@@ -1,8 +1,8 @@
 import { dimensionsToBoardType, getAllPresetSizeDifficultyCombinations, type BoardType } from "@/config.js";
 import { toPuzzleConfigKey } from "@/lib/helpers/puzzle-config.js";
 import type { PuzzleConfigKey, DifficultyKey, BasicPuzzleConfig } from "@/lib/types.js";
-import { puzzleDb } from "@/services/db/puzzles-db/init.js";
 import { ArrayComparator, compareByOrder, compareNumeric } from "@/utils/orderBy.utils.js";
+import { getPuzzleDb } from "../db/db.js";
 
 export type PuzzleConfigCountMap = Map<PuzzleConfigKey, number>;
 export type PregenPresetConfig = {
@@ -49,7 +49,7 @@ export function getDefaultWantedPresetConfigs(
 }
 
 export async function getCurrentlyAvailablePresetConfigCounts(): Promise<PuzzleConfigCountMap> {
-	return await puzzleDb.countByPuzzleConfigs();
+	return await getPuzzleDb().countByPuzzleConfigs();
 }
 
 const MissingPresetSortComparator = ArrayComparator

@@ -1,14 +1,14 @@
 import { getAllPresetSizeDifficultyCombinations } from "@/config.js";
+import type { IPregenPuzzle } from "@/features/pregen-puzzles/services/db/models.js";
 import { createPuzzleWithPuzzleConfig } from "@/lib/generation/puzzle.js";
 import type { BasicPuzzleConfig } from "@/lib/types.js";
-import type { IPregenPuzzle } from "@/services/db/puzzles-db/models.js";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 
 // Configuration
-const OUTPUT_PATH = '../src/services/db/puzzles-db/pregenerated.json';
+const OUTPUT_PATH = '../src/features/pregen-puzzles/services/db/pregenerated.json';
 // Parse arguments
 const MAX_ATTEMPTS_ARG = process.argv.find(arg => arg.startsWith('--max-attempts=')) ?? '=50';
 const MAX_ATTEMPTS = parseInt(MAX_ATTEMPTS_ARG.split('=')[1]);

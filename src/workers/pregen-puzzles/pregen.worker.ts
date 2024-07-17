@@ -1,21 +1,21 @@
 import { setupWorker } from "../utils/workerSetup.js";
-import { puzzleDb } from "@/services/db/puzzles-db/init.js";
 import type { BasicPuzzleConfig } from "@/lib/types.js";
 import type { GenPuzzleWorkerFns } from "../generate-puzzle/generate.worker";
 import { type WorkerInterfaceOpts, WorkerInterface } from "../utils/workerInterface";
-import type { IPregenPuzzle } from "@/services/db/puzzles-db/models.js";
 import { getPregenPresetsToGenerate } from "@/features/pregen-puzzles/services/pregenerator/presets.js";
 import { generateMissingPuzzles } from "@/features/pregen-puzzles/services/pregenerator/pregenerate.js";
+import { getPuzzleDb } from "@/features/pregen-puzzles/services/db/db.js";
+import type { IPregenPuzzle } from "@/features/pregen-puzzles/services/db/models.js";
 
 const fns = {
 	"pregen": pregeneratePuzzles,
 	"initialize": pregenOrPopulate,
 	clearDb: async () => {
-		await puzzleDb.puzzles.clear();
+		await getPuzzleDb().puzzles.clear();
 		return true;
 	},
 	retrieveFromDb: async (conf: BasicPuzzleConfig) => {
-		return puzzleDb.getPuzzle(conf);
+		return getPuzzleDb().getPuzzle(conf);
 	}
 } as const;
 
@@ -48,7 +48,7 @@ async function findPresetsWithoutPuzzlesAndGenerateMissing(): Promise<number> {
 	});
 
 	if (results.length) {
-		await puzzleDb.addPuzzles(results);
+		await getPuzzleDb().addPuzzles(results);
 	}
 	console.log(`[PREGEN] Successfully generated ${successes.length} puzzles, and failed to generate ${failures.length} puzzles.`);
 	if (failures.length) {
@@ -83,14 +83,14 @@ async function pregeneratePuzzles(): Promise<{ generated: number, done: boolean 
 }
 
 async function pregenOrPopulate() {
-	const count = await puzzleDb.puzzles.count();
+	const count = await getPuzzleDb().puzzles.count();
 	if (count > 0) {
 		// console.log('Starting pregen worker.');
 		return pregeneratePuzzles();
 	} else {
 		console.log('Populating database with initial puzzles.');
-		const initialPopulation = await import('@/services/db/puzzles-db/populate.js');
-		puzzleDb.populateWith(initialPopulation.default);
+		const initialPopulation = await import('@/features/pregen-puzzles/services/db/populate.js');
+		getPuzzleDb().populateWith(initialPopulation.default);
 		return { done: true as const, generated: initialPopulation.default.length, populated: true as const };
 	}
 }
