@@ -37,12 +37,20 @@ describe('orderBy utils', () => {
 			expect(compare({ a: 'a' }, { a: 'a' })).toBe(0);			
 		})
 		
-		it('should respect locale options', () => {
+		it('should respect locale options (numeric: true)', () => {
 			const compareA = compareString((val: Record<'a', string>) => val.a);
 			expect(compareA({ a: '2' }, { a: '10' })).toBeGreaterThan(0); // default: "2" > "10"
 
 			const compareB = compareString((val: Record<'a', string>) => val.a, { numeric: true });
 			expect(compareB({ a: '2' }, { a: '10' })).toBeLessThan(0); // using numeric option: "2" < "10"
+		})
+
+		it('should respect locale options (locale: en vs sv)', () => {
+			const compareEn = compareString((val: { char: string }) => val.char, { locale: 'en' });
+			const compareSv = compareString((val: { char: string }) => val.char, { locale: 'sv' });
+
+			expect(compareEn({ char: 'z' }, { char: 'ä' })).toBeGreaterThan(0);
+			expect(compareSv({ char: 'z' }, { char: 'ä' })).toBeLessThan(0);
 		})
 
 		it('handles nullish values by putting them at the end', () => {

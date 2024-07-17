@@ -24,8 +24,16 @@ export function compareNumeric<T>(getter: OrderByGetter<T, number | null | undef
 	}
 }
 
+export type CompareStringOptions = {
+	locale?: string,
+} & Intl.CollatorOptions;
+
 /** Creates a comparison function for string values using localeCompare */
-export function compareString<T>(getter: OrderByGetter<T, string | null | undefined>, localeOpts?: Intl.CollatorOptions, order: SortOrder = 'asc'): CompareFunction<T> {
+export function compareString<T>(getter: OrderByGetter<T, string | null | undefined>, { locale = 'en', ...collatorOptions }: CompareStringOptions = {}, order: SortOrder = 'asc'): CompareFunction<T> {
+	const coll = new Intl.Collator(locale, {
+		...collatorOptions,
+		usage: 'sort',
+	});
 	return (a: T, b: T) => {
 		const aVal = getter(a);
 		const bVal = getter(b);
@@ -33,7 +41,9 @@ export function compareString<T>(getter: OrderByGetter<T, string | null | undefi
 		if (aVal == null || bVal == null) {
 			return handleNullishLast(aVal, bVal, order);
 		}
-		return order === 'asc' ? aVal.localeCompare(bVal, 'en', localeOpts) : bVal.localeCompare(aVal, 'en', localeOpts);
+		return order === 'asc'
+			? coll.compare(aVal, bVal)
+			: coll.compare(bVal, aVal);
 	}
 }
 
@@ -115,13 +125,27 @@ export function combineCompares<ArrayItem>(compares: CompareItem<ArrayItem>[]): 
 }
 
 export function createOrderBy<Item>(compareFn: CompareFunction<Item>) {
-	const compareFns: CompareFunction<Item>[] = [compareFn];
-	const result = {
-		sort: (arr: ReadonlyArray<Item>) => arr.toSorted(combineCompares(compareFns)),
-		thenBy: (compareFn: CompareFunction<Item>) => {
-			compareFns.push(compareFn);
-			return result;
-		},
+	return ArrayComparator.orderBy(compareFn);
+}
+
+export class ArrayComparator<T> {
+	private readonly compareFns: CompareFunction<T>[];
+
+	private constructor(compareFns: CompareFunction<T>[]) {
+		this.compareFns = compareFns;
 	}
-	return result;
+
+	static orderBy<Item>(compareFn: CompareFunction<Item>) {
+		const compareFns: CompareFunction<Item>[] = [compareFn];
+		return new ArrayComparator(compareFns);
+	}
+
+	thenBy(compareFn: CompareFunction<T>) {
+		this.compareFns.push(compareFn);
+		return this;
+	}
+
+	sort(arr: ReadonlyArray<T>): T[] {
+		return arr.toSorted(combineCompares(this.compareFns));
+	}
 }
