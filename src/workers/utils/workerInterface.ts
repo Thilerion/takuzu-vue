@@ -4,7 +4,7 @@ import type { WorkerRequest, BaseWorkerFunctionMap, WorkerResponse } from "./typ
 type WorkerReqResult<M extends BaseWorkerFunctionMap, K extends keyof M> = Awaited<ReturnType<M[K]>>;
 type WorkerReqPromise<M extends BaseWorkerFunctionMap, K extends keyof M> = Promise<WorkerReqResult<M, K>>;
 type WorkerReqPromiseWithId<M extends BaseWorkerFunctionMap, K extends keyof M> = Promise<WorkerReqResult<M, K>> & { id: WorkerRequestId };
-type WorkerRequestId = Brand<string, 'WorkerInterfaceRequestId'>;
+export type WorkerRequestId = Brand<string, 'WorkerInterfaceRequestId'>;
 
 /* 
 Example usage in a myWorker.ts file: 
@@ -99,7 +99,33 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 		const ongoingRequest: WorkerOngoingRequest<T> = { funcName, args: JSON.stringify(args), promise: promiseWithId };
 		this.ongoingRequests.push(ongoingRequest);
 
+		// Remove from ongoingRequests after it resolves or rejects
+		promiseWithId.then(
+			() => this.removeOngoingRequest(requestId),
+			() => this.removeOngoingRequest(requestId)
+		)
+
 		return promiseWithId;
+	}
+
+	/**
+	 * Make a request, same of request(), but returns an object with the promise and the request id separately.
+	 * @see request()
+	 */
+	requestWithId<K extends keyof T, Params extends Parameters<T[K]>>(funcName: K, ...args: Params): {
+		promise: WorkerReqPromiseWithId<T, K>,
+		id: WorkerRequestId
+	} {
+		const promiseWithId = this.request(funcName, ...args);
+		const id = promiseWithId.id;
+		return { promise: promiseWithId, id };
+	}
+
+	private removeOngoingRequest(requestId: WorkerRequestId) {
+		const index = this.ongoingRequests.findIndex(req => req.promise.id === requestId);
+		if (index !== -1) {
+			this.ongoingRequests.splice(index, 1);
+		}
 	}
 
 
@@ -112,10 +138,6 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 	): WorkerReqPromise<T, K> {		
 		return new Promise((resolve: (value: WorkerReqResult<T, K>) => void, reject) => {
 			this.callbacks.set(requestId, (data: WorkerResponse<WorkerReqResult<T, K>>) => {
-				const index = this.ongoingRequests.findIndex(req => req.promise.id === requestId);
-				if (index !== -1) {
-					this.ongoingRequests.splice(index, 1);
-				}
 				if (data.success) {
 					this.updateRequestStatus(requestId, 'success');
 					return resolve(data.result);
@@ -135,14 +157,17 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 		this.cleanupOldRequestStatusesIfNeeded();
 	}
 
-	checkRequestStatus(requestId: WorkerRequestId): WorkerRequestStatus | null {
-		return this.requestStatusMap.get(requestId) ?? null;
+	/** Returns the status of a request, or null if the request is not found. */
+	checkRequestStatus(requestId: string): WorkerRequestStatus | null {
+		return this.requestStatusMap.get(requestId as WorkerRequestId) ?? null;
 	}
 
+	/** Returns a function that can be used to make requests, without having to specify the function name. */
 	getRequestFn<K extends keyof T, Params extends Parameters<T[K]>>(funcName: K): (...args: Params) => WorkerReqPromise<T, K> {
 		return (...args: Params) => this.request(funcName, ...args);
 	}
 
+	/** Returns the OngoingRequest object with the specified function name and (optionally) the same arguments, or null if no such request is found. */
 	findOngoingRequest<K extends keyof T>(funcName: K, opts: {
 		compareArgs?: boolean,
 		args: Parameters<T[K]>,
@@ -191,6 +216,10 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 		} else {
 			console.warn('WorkerInterface already terminated or not started yet; cannot terminate it.');
 		}
+
+		this.ongoingRequests = [];
+		// Should not clear requestStatusMap, as it can be used to check that a request was "aborted"
+		// this.requestStatusMap.clear();
 
 		this.worker = null;
 		this.initialized = false;		
@@ -259,16 +288,17 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 	private static readonly MAX_REQUEST_STATUS_HISTORY = 1000;
 	private static readonly REQUEST_STATUS_CLEANUP_AMOUNT = 100;
 	private cleanupOldRequestStatusesIfNeeded() {
-		if (this.requestStatusMap.size > WorkerInterface.MAX_REQUEST_STATUS_HISTORY) {
-			const toRemove = this.requestStatusMap.size - WorkerInterface.MAX_REQUEST_STATUS_HISTORY + WorkerInterface.REQUEST_STATUS_CLEANUP_AMOUNT;
-			console.log(`[WorkerInterface]: Max history of stored request statuses reached; removing ${toRemove} oldest statuses.`);
+		const size = this.requestStatusMap.size;
+		const max = WorkerInterface.MAX_REQUEST_STATUS_HISTORY;
+		if (size > max) {			
+			const toRemove = (size - max) + WorkerInterface.REQUEST_STATUS_CLEANUP_AMOUNT;
 			let count = 0;
 			for (const [id, status] of this.requestStatusMap) {
-				if (count >= toRemove) break;
 				if (status !== 'pending') {
 					this.requestStatusMap.delete(id);
 					count += 1;
 				}
+				if (count >= toRemove) break;
 			}
 		}
 	}
