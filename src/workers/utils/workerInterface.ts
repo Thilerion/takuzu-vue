@@ -208,13 +208,17 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 	 * An optional custom error message can be provided, which will be used to reject any pending requests.
 	 * 
 	 * @param customRejectErrorMessage The error message to use when rejecting pending requests. Defaults to 'Worker terminated'.
+	 * @returns A boolean that indicates whether this method call has terminated the worker.
 	 */
-	forceTerminate(customRejectErrorMessage: string = 'Worker terminated') {
+	forceTerminate(customRejectErrorMessage: string = 'Worker terminated'): boolean {
+		let hasTerminated: boolean;
 		if (this.isReady()) {
 			this.worker?.terminate();
 			this.abortPendingRequests(new Error(customRejectErrorMessage));
+			hasTerminated = true;
 		} else {
 			console.warn('WorkerInterface already terminated or not started yet; cannot terminate it.');
+			hasTerminated = false;
 		}
 
 		this.ongoingRequests = [];
@@ -222,7 +226,8 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 		// this.requestStatusMap.clear();
 
 		this.worker = null;
-		this.initialized = false;		
+		this.initialized = false;
+		return hasTerminated;	
 	}
 
 	/**
@@ -274,10 +279,23 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 			// this also rejects any pending requests with a custom error message
 			this.forceTerminate(`Pending request rejected due to caught worker error: ${event.message}`);
 		}
+		this.worker!.onmessageerror = (event: MessageEvent<unknown>) => {
+			event.preventDefault();
+			console.log('Worker onmessageerror event fired. Worker will be terminated now.');
+			const eventData = event.data ?? null;
+			if (eventData != null) {
+				console.error(`The following data was received that resulted in the messageerror event:`, eventData);
+			}
+			console.error(event);
+			// aborts all pending requests, as it is unknown from which request the error originated from
+			// however, the worker does not have to be terminated, as it is still running
+			this.abortPendingRequests(new Error(`Pending request rejected due to caught worker messageerror.`));
+		}
 		this.initialized = true;
 	}
 
 	private abortPendingRequests(error: Error) {
+		console.log(this.callbacks.entries())
 		for (const [id, cb] of this.callbacks) {
 			cb({ id, success: false, error });
 			this.updateRequestStatus(id, 'aborted');

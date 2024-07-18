@@ -1,12 +1,14 @@
 import type { WorkerError, WorkerSuccess } from "@/workers/utils/types.js";
 import { WorkerInterface, type WorkerRequestId } from "@/workers/utils/workerInterface.js";
+import type { Mock } from "vitest";
 
 // Mock worker type
 type MockWorker = {
 	onmessage: ((event: MessageEvent) => void) | null;
+	onmessageerror: ((event: MessageEvent) => void) | null;
 	onerror: ((event: ErrorEvent) => void) | null;
 	postMessage: (message: any) => void;
-	terminate: () => void;
+	terminate: Mock;
 };
 
 describe('WorkerInterface', () => {
@@ -16,17 +18,22 @@ describe('WorkerInterface', () => {
 	let workerInterface: WorkerInterface<any>;
 	let lastRequestId: string | null = null;
 
-	beforeEach(() => {
-		// Create a mock worker
-		mockWorker = {
+	const getMockWorker = (): MockWorker => {
+		return {
 			onmessage: null,
 			onerror: null,
+			onmessageerror: null,
 			postMessage: vi.fn((message: any) => {
 				lastRequestId = message.id;
 				return message;
 			}),
 			terminate: vi.fn(),
 		};
+	}
+
+	beforeEach(() => {
+		// Create a mock worker
+		mockWorker = getMockWorker();
 
 		// Create a mock createWorker function
 		mockCreateWorker = vi.fn(() => mockWorker as unknown as Worker);
@@ -78,6 +85,98 @@ describe('WorkerInterface', () => {
             expect(mockWorker.terminate).toHaveBeenCalled();
             expect(workerInterface.isReady()).toBe(false);
         });
+
+		it('should correctly set onmessage, onerror, and onmessageerror listeners', () => {
+			const mockWorker = getMockWorker();
+			const mockCreateWorker = vi.fn(() => mockWorker as unknown as Worker);
+			expect(mockWorker.onmessage).toBe(null);
+			expect(mockWorker.onerror).toBe(null);
+			expect(mockWorker.onmessageerror).toBe(null);
+
+			const workerInterface = new WorkerInterface(mockCreateWorker, { startOnInitialization: false, autoStart: false });
+			
+			workerInterface.start();
+			expect(mockWorker.onmessage).not.toBe(null);
+			expect(mockWorker.onerror).not.toBe(null);
+			expect(mockWorker.onmessageerror).not.toBe(null);			
+		})
+	})
+
+	describe('worker error and messageerror handling', () => {
+		it('onmessageerror should abort all pending requests, but not terminate the worker', async () => {
+			const mockWorker = getMockWorker();
+			const createWorker = vi.fn(() => mockWorker as unknown as Worker);
+			const workerInterface = new WorkerInterface(createWorker, { startOnInitialization: true, autoStart: false });
+			
+			expect(workerInterface.isReady()).toBe(true);
+			// Make a request that stays pending, and one that resolves
+			const pendingAbortMock = vi.fn();
+			const pendingResolveMock = vi.fn();
+			const pendingResult = workerInterface.request('pendingFunc')
+				.then(pendingResolveMock)
+				.catch(pendingAbortMock);
+
+			const { promise: resolvedRequestPromise, id: resolvedRequestId } = workerInterface.requestWithId('resolvingFunc');
+
+			// Resolve the request
+			mockWorker.onmessage!({ data: { success: true, result: 'testResult', id: resolvedRequestId }} as MessageEvent);
+			await resolvedRequestPromise;
+
+			expect(workerInterface.hasPendingRequests()).toBe(true);
+			expect(pendingAbortMock).not.toHaveBeenCalled();
+			expect(pendingResolveMock).not.toHaveBeenCalled();
+
+			// Simulate worker messageerror
+			mockWorker.onmessageerror!(new MessageEvent('messageerror', {
+				data: {
+					'value': 'Supposedly this is the data that caused the messageerror event'
+				}
+			}));
+
+			// The pending request should be aborted
+			expect(workerInterface.hasPendingRequests()).toBe(false);
+			await pendingResult;
+			expect(pendingAbortMock).toHaveBeenCalledOnce();
+			expect(pendingAbortMock).toHaveBeenCalledWith(new Error('Pending request rejected due to caught worker messageerror.'));
+			expect(pendingResolveMock).not.toHaveBeenCalled();
+
+			// The worker should still be running
+			expect(mockWorker.terminate).not.toHaveBeenCalled();
+			expect(workerInterface.isReady()).toBe(true);
+			// And requests still work as well
+			const stillWorksRequest = workerInterface.request('stillWorksFunc');
+			mockWorker.onmessage!({ data: { success: true, result: 'testResult1234', id: stillWorksRequest.id }} as MessageEvent);
+			const res = await stillWorksRequest;
+			expect(res).toBe('testResult1234');
+		})
+
+		it('onerror should abort all pending requests, and terminate the worker', async () => {
+			expect(workerInterface.isReady()).toBe(true);
+			// Make a request that is pending when the error occurs
+			const pendingAbortMock = vi.fn();
+			const pendingResolveMock = vi.fn();
+			const pendingPromise = workerInterface.request('pendingFunc')
+				.then(pendingResolveMock)
+				.catch(pendingAbortMock);
+			
+			expect(workerInterface.hasPendingRequests()).toBe(true);
+			expect(pendingAbortMock).not.toHaveBeenCalled();
+			expect(pendingResolveMock).not.toHaveBeenCalled();
+
+			// Simulate worker error
+			mockWorker.onerror!(new ErrorEvent('Simulated worker error event', { message: 'Simulated worker error event' }));
+
+			await pendingPromise;
+			// The pending request should be aborted
+			expect(workerInterface.hasPendingRequests()).toBe(false);
+			expect(pendingAbortMock).toHaveBeenCalledOnce();
+			expect(pendingAbortMock).toHaveBeenCalledWith(new Error('Pending request rejected due to caught worker error: Simulated worker error event'));
+			expect(pendingResolveMock).not.toHaveBeenCalled();
+
+			// The worker should be terminated
+			expect(mockWorker.terminate).toHaveBeenCalledOnce();
+			expect(workerInterface.isReady()).toBe(false);
+		})
 	})
 
 	describe('restart', () => {
@@ -136,6 +235,31 @@ describe('WorkerInterface', () => {
 
             await expect(promise1).rejects.toThrow('Worker terminated');
             await expect(promise2).rejects.toThrow('Worker terminated');
+		})
+	})
+
+	describe('forceTerminate()', () => {
+		it('should terminate the worker and set it to null, and set initialized to false', () => {
+			expect(workerInterface.isReady()).toBe(true);
+			expect(mockWorker.terminate).not.toHaveBeenCalled();
+
+			const isTerminated = workerInterface.forceTerminate();
+			expect(isTerminated).toBe(true);
+			expect(workerInterface.isReady()).toBe(false);
+			expect(mockWorker.terminate).toHaveBeenCalled();
+		})
+
+		it('should not terminate the worker if it is not ready', () => {
+			const mockCreateWorker = vi.fn(() => mockWorker as unknown as Worker);
+			const workerInterface = new WorkerInterface(mockCreateWorker, { startOnInitialization: false, autoStart: false });
+
+			expect(workerInterface.isReady()).toBe(false);
+			expect(mockWorker.terminate).not.toHaveBeenCalled();
+
+			const isTerminated = workerInterface.forceTerminate();
+			expect(isTerminated).toBe(false);
+			expect(workerInterface.isReady()).toBe(false);
+			expect(mockWorker.terminate).not.toHaveBeenCalled();
 		})
 	})
 
