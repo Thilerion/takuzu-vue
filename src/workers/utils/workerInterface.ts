@@ -92,18 +92,12 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 
 		const requestId = this.generateId();
 		const promise = this._makeRequest(funcName, requestId, ...args);
-		const promiseWithId: WorkerReqPromiseWithId<T, K> = Object.assign(promise, { id: requestId });
+		const promiseWithId = promise as WorkerReqPromiseWithId<T, K>;
+		promiseWithId.id = requestId;
 
 		// Add to ongoingRequests
 		const ongoingRequest: WorkerOngoingRequest<T> = { funcName, args: JSON.stringify(args), promise: promiseWithId };
 		this.ongoingRequests.push(ongoingRequest);
-		// Remove from ongoingRequests when completed
-		promiseWithId.finally(() => {
-			const index = this.ongoingRequests.findIndex(req => req.promise.id === requestId);
-			if (index !== -1) {
-				this.ongoingRequests.splice(index, 1);
-			}
-		});
 
 		return promiseWithId;
 	}
@@ -118,6 +112,10 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 	): WorkerReqPromise<T, K> {		
 		return new Promise((resolve: (value: WorkerReqResult<T, K>) => void, reject) => {
 			this.callbacks.set(requestId, (data: WorkerResponse<WorkerReqResult<T, K>>) => {
+				const index = this.ongoingRequests.findIndex(req => req.promise.id === requestId);
+				if (index !== -1) {
+					this.ongoingRequests.splice(index, 1);
+				}
 				if (data.success) {
 					this.updateRequestStatus(requestId, 'success');
 					return resolve(data.result);
@@ -145,7 +143,7 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 		return (...args: Params) => this.request(funcName, ...args);
 	}
 
-	private findOngoingRequest<K extends keyof T>(funcName: K, opts: {
+	findOngoingRequest<K extends keyof T>(funcName: K, opts: {
 		compareArgs?: boolean,
 		args: Parameters<T[K]>,
 	}): WorkerOngoingRequest<T> | null {
