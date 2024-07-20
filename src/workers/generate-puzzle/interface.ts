@@ -4,6 +4,7 @@ import type { BasicPuzzleConfig } from "@/lib/types.js";
 
 let _worker: null | Worker = null;
 const createWorker = () => {
+	if (_worker != null) return _worker;
 	_worker = new Worker(new URL('./generate.worker.ts', import.meta.url), { type: 'module' });
 	return _worker;
 }

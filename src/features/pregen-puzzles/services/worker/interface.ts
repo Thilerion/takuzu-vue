@@ -5,6 +5,7 @@ import type { GeneratedPuzzle } from "../db/models.js";
 
 let _worker: null | Worker = null;
 const createWorker = () => {
+	if (_worker != null) return _worker;
 	_worker = new Worker(new URL('./pregen.worker.ts', import.meta.url), { type: 'module' });
 	return _worker;
 }

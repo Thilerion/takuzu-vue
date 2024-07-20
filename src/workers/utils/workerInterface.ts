@@ -1,27 +1,34 @@
 import type { Brand } from "@/lib/types.js";
 import type { WorkerRequest, BaseWorkerFunctionMap, WorkerResponse } from "./types";
 
+/*
+Example usage in a myWorkerHandler.ts file:
+
+import type { MyWorkerFns } from "./myWorker.worker.js"; // <-- extends BaseWorkerFunctionMap
+import { WorkerInterface, type WorkerInterfaceOpts } from "path/to/workerInterface.js";
+
+let _worker: null | Worker = null; // <-- a singleton of the worker to use, needed for Vite to correctly load/parse the worker
+const createWorker = () => {
+	if (_worker != null) return _worker;
+	_worker = new Worker(
+		new URL('./myWorker.worker.ts', import.meta.url),
+		{ type: 'module' }
+	);
+	return _worker;
+}
+const myWorker = new WorkerInterface<MyWorkerFns>(
+	createWorker,
+	{ startOnInitialization: true, autoStart: false } // <-- WorkerInterfaceOpts
+);
+// myWorker can be exported from this file, or individual functions can be exported
+// alternatively, a function can be exported that creates a workerInterface instance itself, but it needs to set its own "_worker" as well
+*/
+
 type WorkerReqResult<M extends BaseWorkerFunctionMap, K extends keyof M> = Awaited<ReturnType<M[K]>>;
 type WorkerReqPromise<M extends BaseWorkerFunctionMap, K extends keyof M> = Promise<WorkerReqResult<M, K>>;
 type WorkerReqPromiseWithId<M extends BaseWorkerFunctionMap, K extends keyof M> = Promise<WorkerReqResult<M, K>> & { id: WorkerRequestId };
 export type WorkerRequestId = Brand<string, 'WorkerInterfaceRequestId'>;
 
-/* 
-Example usage in a myWorker.ts file: 
-
-import type { TestFnMap } from "./test-worker.worker"; // <== extends BaseWorkerFunctionMap
-import { WorkerInterface } from "@/utils-lib/workers/workerInterface";
-
-export const myTestWorker = new WorkerInterface<TestFnMap>({
-	url: new URL('./test-worker.worker.ts', import.meta.url), // <== Vite way of getting a worker url
-	options: { type: 'module' }
-}, { startOnInitialization: true, autoStart: false });
- */
-
-export type WorkerInterfaceWorkerSetupProp = {
-	url: string | URL,
-	options?: WorkerOptions
-}
 export type WorkerInterfaceOpts = {
 	autoStart?: boolean,
 	startOnInitialization?: boolean,
@@ -35,6 +42,7 @@ export type WorkerRequestStatus = 'pending' | 'success' | 'error' | 'aborted';
 
 /* TODO:
 - event emitter pattern that allows multiple parts of the application to listen to responses from the worker, not just the part that made the request
+- listen on the WorkerInterface instance for messages received from the worker that have no corresponding request, if this is desired
 */
 
 export class WorkerInterface<T extends BaseWorkerFunctionMap> {
