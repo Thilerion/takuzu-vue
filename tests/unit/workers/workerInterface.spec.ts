@@ -1,5 +1,5 @@
 import type { WorkerResponseError, WorkerResponseSuccess } from "@/workers/utils/request.js";
-import { WorkerInterface, type WorkerRequestId } from "@/workers/utils/workerInterface.js";
+import { WorkerInterface, type WorkerInterfaceOpts, type WorkerRequestId } from "@/workers/utils/workerInterface.js";
 import type { Mock } from "vitest";
 
 // Mock worker type
@@ -31,7 +31,7 @@ describe('WorkerInterface', () => {
 		};
 	}
 
-	beforeEach(() => {
+	const setupWorkerInterface = (opts: Partial<WorkerInterfaceOpts> = {}) => {
 		// Create a mock worker
 		mockWorker = getMockWorker();
 
@@ -40,7 +40,11 @@ describe('WorkerInterface', () => {
 
 		// Initialize WorkerInterface with the mock createWorker function
 		// workerInterfaceBase = new WorkerInterface(mockCreateWorker);
-		workerInterface = new WorkerInterface(mockCreateWorker);
+		workerInterface = new WorkerInterface(mockCreateWorker, opts);
+	}
+
+	beforeEach(() => {
+		setupWorkerInterface();
 	})
 	afterEach(() => {
         vi.resetAllMocks();
@@ -384,6 +388,49 @@ describe('WorkerInterface', () => {
 				simulateWorkerMessage({ result: 'testResult', id: promise.id } as any); // missing success property
 				await promise;
 			}).rejects.toThrowError(/not a valid WorkerResponse/i);
+		})
+	})
+
+	describe('onUnknownMessage', () => {
+		it('should call the specified callback when a message is received that has no matching request and a completely unrelated message data', async () => {
+			setupWorkerInterface({ listenForUnknownMessages: true });
+			const mockCallback = vi.fn();
+			workerInterface.onUnknownMessage(mockCallback);
+
+			mockWorker.onmessage!({ data: 'hello' } as MessageEvent<string>);
+			expect(mockCallback).toHaveBeenCalledWith('hello');
+		})
+
+		it('should call the specified callback when a message is received that has no matching request and message data that is not a valid WorkerResponse', async () => {
+			setupWorkerInterface({ listenForUnknownMessages: true });
+			const mockCallback = vi.fn();
+			workerInterface.onUnknownMessage(mockCallback);
+
+			mockWorker.onmessage!({ data: { id: '1234', success: 'this is not a valid success value', error: null, result: null } } as MessageEvent<unknown>);
+			expect(mockCallback).toHaveBeenCalledWith({ id: '1234', success: 'this is not a valid success value', error: null, result: null });
+		})
+
+		it('should not throw when a message is received that has no matching request, but no callback is set', async () => {
+			setupWorkerInterface({ listenForUnknownMessages: true });
+			expect(() => {
+				mockWorker.onmessage!({ data: 'hello' } as MessageEvent<string>);
+			}).not.toThrow();
+		})
+
+		it('should call the specified callback when a message is received that has no matching request (matched by id)', async () => {
+			setupWorkerInterface({ listenForUnknownMessages: true });
+			const mockCallback = vi.fn();
+			workerInterface.onUnknownMessage(mockCallback);
+
+			simulateWorkerMessage({ id: 'hello', success: true, result: 'testResult' });
+			expect(mockCallback).toHaveBeenCalledWith({ id: 'hello', success: true, result: 'testResult' });
+		})
+
+		it('throws an error when setting an onUnknownMessage callback, but the WorkerInterface does not listen for unknown messages', () => {
+			setupWorkerInterface({ listenForUnknownMessages: false });
+			expect(() => {
+				workerInterface.onUnknownMessage(() => {});
+			}).toThrowErrorMatchingInlineSnapshot(`[Error: WorkerInterface does not listen for unknown messages, so cannot set an onUnknownMessage callback.]`);
 		})
 	})
 

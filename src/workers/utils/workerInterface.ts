@@ -33,6 +33,7 @@ export type WorkerRequestId = Brand<string, 'WorkerInterfaceRequestId'>;
 export type WorkerInterfaceOpts = {
 	autoStart?: boolean,
 	startOnInitialization?: boolean,
+	listenForUnknownMessages?: boolean,
 }
 export type WorkerOngoingRequest<M extends BaseWorkerFunctionMap> = {
 	funcName: keyof M,
@@ -50,6 +51,7 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 	readonly opts: Readonly<WorkerInterfaceOpts> = {
 		autoStart: true,
 		startOnInitialization: true,
+		listenForUnknownMessages: false,
 	}
 	private initialized = false;
 
@@ -58,6 +60,8 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 	private callbacks: Map<WorkerRequestId, (response: WorkerResponse<any>) => void> = new Map();
 	private ongoingRequests: WorkerOngoingRequest<T>[] = []; 
 	private requestStatusMap: Map<WorkerRequestId, WorkerRequestStatus> = new Map();
+
+	private onUnknownMessageCallback: ((messageData: unknown) => void) | null = null;
 
 	constructor(
 		createWorker: () => Worker,
@@ -271,19 +275,27 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 			throw new Error('WorkerInterface already started; cannot setup listeners.');
 		}
 		this.worker!.onmessage = (event: MessageEvent<unknown>) => {
-			if (!isWorkerResponse(event.data)) {
-				// TODO: optionally handle non-worker responses from the worker, such as one-way messages (if permitted in worker interface options)
+			const isValidWorkerResponse = isWorkerResponse(event.data);
+			const hasRequestId = isValidWorkerResponse && 'id' in event.data && this.callbacks.has(event.data.id as WorkerRequestId);
+			if (isValidWorkerResponse && hasRequestId) {
+				const id = event.data.id as WorkerRequestId;
+				const cb = this.callbacks.get(id)!;
+				cb(event.data);
+				this.callbacks.delete(id!);
+			} else if (isValidWorkerResponse && !hasRequestId && !this.opts.listenForUnknownMessages) {
+				throw new Error(`[WorkerInterface]: Received a message from the worker with id "${event.data.id}", but no callback was found for this id.`);
+			} else if (this.opts.listenForUnknownMessages) {
+				// pass to a callback if one is set
+				if (this.onUnknownMessageCallback != null) {
+					this.onUnknownMessageCallback(event.data);
+				} else {
+					console.warn('WorkerInterface received an unknown message, but no callback was set for it. Message data:', event.data);
+				}
+				return;
+			} else {
 				console.error('[WorkerInterface]: Received a message from the worker, but it is not a valid WorkerResponse. Data received:', event.data);
 				throw new Error(`[WorkerInterface]: Received a message from the worker, but it is not a valid WorkerResponse.`);
 			}
-			const id = event.data.id as WorkerRequestId;
-
-			const cb = this.callbacks.get(id!);
-			if (!cb) {
-				throw new Error(`[WorkerInterface]: Received a message from the worker with id "${id}", but no callback was found for this id.`);
-			}
-			cb(event.data);
-			this.callbacks.delete(id!);
 		}
 		this.worker!.onerror = (event: ErrorEvent) => {
 			console.log('Worker onerror event fired. Worker will be terminated now.');
@@ -305,6 +317,13 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 			this.abortPendingRequests(new Error(`Pending request rejected due to caught worker messageerror.`));
 		}
 		this.initialized = true;
+	}
+
+	onUnknownMessage(callback: ((messageData: unknown) => void) | null) {
+		if (!this.opts.listenForUnknownMessages) {
+			throw new Error('WorkerInterface does not listen for unknown messages, so cannot set an onUnknownMessage callback.');
+		}
+		this.onUnknownMessageCallback = callback;
 	}
 
 	private abortPendingRequests(error: Error) {
