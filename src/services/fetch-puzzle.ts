@@ -1,5 +1,5 @@
 import type { AllPuzzleBoards, BasicPuzzleConfig, BoardAndSolutionBoardStrings, BoardString } from "@/lib/types";
-import { generatePuzzle } from "@/workers/generate-puzzle/interface.js"; 
+import { createGenPuzzleWorker } from "@/workers/generate-puzzle/interface.js"; 
 import type { GeneratedPuzzleResult } from "@/workers/generate-puzzle/generate.worker.js";
 import { SimpleBoard } from "@/lib/board/Board.js";
 import { puzzleHistoryTable } from "./db/stats-db/init.js";
@@ -124,9 +124,15 @@ async function retrievePuzzleFromDatabase(puzzleConfig: BasicPuzzleConfig): Prom
 	}
 }
 
+const genPuzzleWorker = createGenPuzzleWorker({
+	autoStart: true,
+	// We only need to start the worker once a new puzzle needs to be generated
+	startOnInitialization: false
+});
+const requestGeneratedPuzzle = genPuzzleWorker.getRequestFn('single');
 async function generateNewPuzzle(puzzleConfig: BasicPuzzleConfig): Promise<PuzzleRequestResult<'error'>> {
 	try {
-		const result = await generatePuzzle(puzzleConfig);
+		const result = await requestGeneratedPuzzle(puzzleConfig);
 		const { boardStr, solutionStr } = result;
 		return { success: true, data: { boardStr, solutionStr } };
 	} catch (e) {

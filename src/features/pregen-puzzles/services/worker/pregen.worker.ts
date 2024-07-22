@@ -1,12 +1,11 @@
 import { setupWorker } from "@/workers/utils/workerSetup.js";
 import type { BasicPuzzleConfig } from "@/lib/types.js";
-import type { GenPuzzleWorkerFns } from "@/workers/generate-puzzle/generate.worker";
-import { type WorkerInterfaceOpts, WorkerInterface } from "@/workers/utils/workerInterface.js";
 import { getPregenPresetsToGenerate } from "@/features/pregen-puzzles/services/pregenerator/presets.js";
 import { generateMissingPuzzles } from "@/features/pregen-puzzles/services/pregenerator/pregenerate.js";
 import { getPuzzleDb } from "@/features/pregen-puzzles/services/db/db.js";
 import type { IPregenPuzzle } from "@/features/pregen-puzzles/services/db/models.js";
 import { PUZZLE_GENERATOR_VERSION } from "@/constants.js";
+import { createGenPuzzleWorker } from "@/workers/generate-puzzle/interface.js";
 
 const fns = {
 	"pregen": pregeneratePuzzles,
@@ -22,21 +21,6 @@ const fns = {
 
 setupWorker(fns);
 
-
-let _worker: null | Worker = null;
-const createWorker = () => {
-	_worker = new Worker(new URL('../../../../workers/generate-puzzle/generate.worker.ts', import.meta.url), { type: 'module' });
-	return _worker;
-}
-
-const createGenPuzzleWorker = (opts: WorkerInterfaceOpts = {}): WorkerInterface<GenPuzzleWorkerFns> => {
-	const mergedOpts: WorkerInterfaceOpts = {
-		autoStart: true,
-		startOnInitialization: false,
-		...opts,
-	}
-	return new WorkerInterface<GenPuzzleWorkerFns>(createWorker, mergedOpts);
-}
 const puzzleWorker = createGenPuzzleWorker();
 
 async function findPresetsWithoutPuzzlesAndGenerateMissing(): Promise<number> {
