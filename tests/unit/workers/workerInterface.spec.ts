@@ -1,4 +1,4 @@
-import type { WorkerResponseError, WorkerResponseSuccess } from "@/workers/utils/types.js";
+import type { WorkerResponseError, WorkerResponseSuccess } from "@/workers/utils/request.js";
 import { WorkerInterface, type WorkerRequestId } from "@/workers/utils/workerInterface.js";
 import type { Mock } from "vitest";
 
@@ -370,6 +370,21 @@ describe('WorkerInterface', () => {
 			expect(result3).toBe('testResult');
         });
 
+		it('should throw an error if the worker sends a message that has an invalid id', async () => {
+			await expect(async () => {
+				const promise = workerInterface.request('testFunc', 'arg1');
+				simulateWorkerMessage({ success: true, result: 'testResult', id: 'invalidId' });
+				await promise;
+			}).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: [WorkerInterface]: Received a message from the worker with id "invalidId", but no callback was found for this id.]`)			
+		})
+
+		it('should throw an error if the worker sends a message that is not a valid WorkerResponse', async () => {
+			await expect(async () => {
+				const promise = workerInterface.request('testFunc', 'arg1');
+				simulateWorkerMessage({ result: 'testResult', id: promise.id } as any); // missing success property
+				await promise;
+			}).rejects.toThrowError(/not a valid WorkerResponse/i);
+		})
 	})
 
 	describe('Ongoing Request Management', () => {

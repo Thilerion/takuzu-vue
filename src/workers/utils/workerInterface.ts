@@ -1,6 +1,6 @@
 import type { Brand } from "@/lib/types.js";
 import type { BaseWorkerFunctionMap } from "./types";
-import type { WorkerRequest, WorkerResponse } from "./request.js";
+import { isWorkerResponse, type WorkerRequest, type WorkerResponse } from "./request.js";
 
 /*
 Example usage in a myWorkerHandler.ts file:
@@ -270,15 +270,19 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 		if (this.isReady()) {
 			throw new Error('WorkerInterface already started; cannot setup listeners.');
 		}
-		this.worker!.onmessage = (event: MessageEvent) => {
-			const data = event.data as WorkerResponse<unknown>;
-			const id = typeof data.id === 'string' ? data.id as WorkerRequestId : null;
+		this.worker!.onmessage = (event: MessageEvent<unknown>) => {
+			if (!isWorkerResponse(event.data)) {
+				// TODO: optionally handle non-worker responses from the worker, such as one-way messages (if permitted in worker interface options)
+				console.error('[WorkerInterface]: Received a message from the worker, but it is not a valid WorkerResponse. Data received:', event.data);
+				throw new Error(`[WorkerInterface]: Received a message from the worker, but it is not a valid WorkerResponse.`);
+			}
+			const id = event.data.id as WorkerRequestId;
 
 			const cb = this.callbacks.get(id!);
 			if (!cb) {
-				throw new Error(`No callback found for id ${id}`);
+				throw new Error(`[WorkerInterface]: Received a message from the worker with id "${id}", but no callback was found for this id.`);
 			}
-			cb(data);
+			cb(event.data);
 			this.callbacks.delete(id!);
 		}
 		this.worker!.onerror = (event: ErrorEvent) => {
