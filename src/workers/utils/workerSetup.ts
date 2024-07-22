@@ -1,4 +1,5 @@
-import type { BaseWorkerFunctionMap, WorkerRequest, WorkerResponse } from './types.js';
+import { isWorkerRequest, type WorkerResponse } from './request.js';
+import type { BaseWorkerFunctionMap } from './types.js';
 
 /*
 Example usage in a test-worker.worker.ts file:
@@ -19,12 +20,6 @@ const worker: Worker = self as unknown as Worker;
 
 function postWorkerResponse<T>(data: WorkerResponse<T>) {
     worker.postMessage(data);
-}
-function isWorkerRequest(data: unknown): data is WorkerRequest<Record<string, (...args: unknown[]) => unknown>, string> {
-    if (typeof data !== 'object' || data === null) {
-        return false;
-    }
-    return 'id' in data && typeof data.id === 'string' && 'fn' in data && typeof data.fn === 'string';
 }
 
 export const setupWorker = <T extends BaseWorkerFunctionMap>(funcMap: T) => {

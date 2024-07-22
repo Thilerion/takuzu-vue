@@ -1,4 +1,4 @@
-import type { WorkerError, WorkerSuccess } from "@/workers/utils/types.js";
+import type { WorkerResponseError, WorkerResponseSuccess } from "@/workers/utils/types.js";
 import { WorkerInterface, type WorkerRequestId } from "@/workers/utils/workerInterface.js";
 import type { Mock } from "vitest";
 
@@ -48,7 +48,7 @@ describe('WorkerInterface', () => {
     });
 
 
-	const simulateWorkerMessage = (data: (Omit<WorkerError, 'id'> | Omit<WorkerSuccess<any>, 'id'>) & { id?: string | null }) => {
+	const simulateWorkerMessage = (data: (Omit<WorkerResponseError, 'id'> | Omit<WorkerResponseSuccess<any>, 'id'>) & { id?: string | null }) => {
 		const msg = {
 			...data,
 			id: data.id ?? lastRequestId,

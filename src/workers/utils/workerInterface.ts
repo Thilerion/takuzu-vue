@@ -1,5 +1,6 @@
 import type { Brand } from "@/lib/types.js";
-import type { WorkerRequest, BaseWorkerFunctionMap, WorkerResponse } from "./types";
+import type { BaseWorkerFunctionMap } from "./types";
+import type { WorkerRequest, WorkerResponse } from "./request.js";
 
 /*
 Example usage in a myWorkerHandler.ts file:
