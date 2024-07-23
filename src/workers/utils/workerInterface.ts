@@ -44,7 +44,6 @@ export type WorkerRequestStatus = 'pending' | 'success' | 'error' | 'aborted';
 
 /* TODO:
 - event emitter pattern that allows multiple parts of the application to listen to responses from the worker, not just the part that made the request
-- listen on the WorkerInterface instance for messages received from the worker that have no corresponding request, if this is desired
 */
 
 export class WorkerInterface<T extends BaseWorkerFunctionMap> {
@@ -78,14 +77,53 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 		}
 	}
 
+	/** Sets a callback function that will be called when the an unknown message is received from the worker. */
+	onUnknownMessage(callback: ((messageData: unknown) => void) | null) {
+		if (!this.opts.listenForUnknownMessages) {
+			throw new Error('WorkerInterface does not listen for unknown messages, so cannot set an onUnknownMessage callback.');
+		}
+		this.onUnknownMessageCallback = callback;
+	}
+
+	//===========================================================================
+	// Public status checks (worker/interface/requests)
+	//===========================================================================
+
 	isReady(): boolean {
 		return this.worker != null && !!this.initialized;
 	}
 
 	/** Returns true if there are any pending requests. */
 	hasPendingRequests() {
-		return this.callbacks.size > 0;
+		const numCbs = this.callbacks.size;
+		const numOngoing = this.ongoingRequests.length;
+		return numCbs > 0 || numOngoing > 0;
 	}
+
+	/** Returns the status of a request, or null if the request is not found. */
+	checkRequestStatus(requestId: string): WorkerRequestStatus | null {
+		return this.requestStatusMap.get(requestId as WorkerRequestId) ?? null;
+	}
+
+	/** Returns the OngoingRequest object with the specified function name and (optionally) the same arguments, or null if no such request is found. */
+	findOngoingRequest<K extends keyof T>(funcName: K, opts: {
+		compareArgs?: boolean,
+		args: Parameters<T[K]>,
+	}): WorkerOngoingRequest<T> | null {
+		const { compareArgs = true, args } = opts;
+		const strArgs = JSON.stringify(args);
+
+		const found = this.ongoingRequests.find(request => {
+			const { args: argsB, funcName: funcNameB } = request;
+			if (compareArgs && argsB !== strArgs) return false;
+			return funcNameB === funcName;
+		})
+		return found ?? null;
+	}
+
+	//===========================================================================
+	// Request methods
+	//===========================================================================
 
 	/**
 	 * Makes a request to the worker, and returns a promise that resolves when the worker responds.
@@ -134,66 +172,9 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 		return { promise: promiseWithId, id };
 	}
 
-	private removeOngoingRequest(requestId: WorkerRequestId) {
-		const index = this.ongoingRequests.findIndex(req => req.promise.id === requestId);
-		if (index !== -1) {
-			this.ongoingRequests.splice(index, 1);
-		}
-	}
-
-
-	private _makeRequest<
-		K extends keyof T, Params extends Parameters<T[K]>
-	>(
-		funcName: K,
-		requestId: WorkerRequestId,
-		...args: Params
-	): WorkerReqPromise<T, K> {		
-		return new Promise((resolve: (value: WorkerReqResult<T, K>) => void, reject) => {
-			this.callbacks.set(requestId, (data: WorkerResponse<WorkerReqResult<T, K>>) => {
-				if (data.success) {
-					this.updateRequestStatus(requestId, 'success');
-					return resolve(data.result);
-				} else {
-					this.updateRequestStatus(requestId, 'error');
-					return reject(data.error);
-				}
-            });
-			this.updateRequestStatus(requestId, 'pending');
-            const message: WorkerRequest<T, K> = { id: requestId, fn: funcName, args };
-            this.worker!.postMessage(message);
-		});
-	}
-
-	private updateRequestStatus(requestId: WorkerRequestId, status: WorkerRequestStatus) {
-		this.requestStatusMap.set(requestId, status);
-		this.cleanupOldRequestStatusesIfNeeded();
-	}
-
-	/** Returns the status of a request, or null if the request is not found. */
-	checkRequestStatus(requestId: string): WorkerRequestStatus | null {
-		return this.requestStatusMap.get(requestId as WorkerRequestId) ?? null;
-	}
-
 	/** Returns a function that can be used to make requests, without having to specify the function name. */
 	getRequestFn<K extends keyof T, Params extends Parameters<T[K]>>(funcName: K): (...args: Params) => WorkerReqPromise<T, K> {
 		return (...args: Params) => this.request(funcName, ...args);
-	}
-
-	/** Returns the OngoingRequest object with the specified function name and (optionally) the same arguments, or null if no such request is found. */
-	findOngoingRequest<K extends keyof T>(funcName: K, opts: {
-		compareArgs?: boolean,
-		args: Parameters<T[K]>,
-	}): WorkerOngoingRequest<T> | null {
-		const { compareArgs = true, args } = opts;
-		const strArgs = JSON.stringify(args);
-
-		const found = this.ongoingRequests.find(request => {
-			const { args: argsB, funcName: funcNameB } = request;
-			if (compareArgs && argsB !== strArgs) return false;
-			return funcNameB === funcName;
-		})
-		return found ?? null;
 	}
 
 	/**
@@ -203,19 +184,19 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
      * @param funcName The name of the function to call on the worker.
      * @param args The arguments to pass to the function.
      */
-    requestDeduplicated<K extends keyof T, Params extends Parameters<T[K]>>(funcName: K, ...args: Params): WorkerReqPromiseWithId<T, K> {
-        const existingRequest = this.findOngoingRequest(funcName, { compareArgs: true, args });
-        if (existingRequest) {
+	requestDeduplicated<K extends keyof T, Params extends Parameters<T[K]>>(funcName: K, ...args: Params): WorkerReqPromiseWithId<T, K> {
+		const existingRequest = this.findOngoingRequest(funcName, { compareArgs: true, args });
+		if (existingRequest) {
 			console.log('Found existing request for funcName:', funcName);
-            return existingRequest.promise;
-        }
-        return this.request(funcName, ...args);
-    }
-
-	private generateId(): Brand<string, 'WorkerInterfaceRequestId'> {
-		return self.crypto.randomUUID() as WorkerRequestId;
+			return existingRequest.promise;
+		}
+		return this.request(funcName, ...args);
 	}
 
+	//===========================================================================
+	// Lifecycle methods
+	//===========================================================================
+	
 	/**
 	 * Terminates the worker, and rejects any pending requests.
 	 * An optional custom error message can be provided, which will be used to reject any pending requests.
@@ -270,60 +251,97 @@ export class WorkerInterface<T extends BaseWorkerFunctionMap> {
 		this.setupListeners();
 	}
 
+	private removeOngoingRequest(requestId: WorkerRequestId) {
+		const index = this.ongoingRequests.findIndex(req => req.promise.id === requestId);
+		if (index !== -1) {
+			this.ongoingRequests.splice(index, 1);
+		}
+	}
+
+
+	private _makeRequest<
+		K extends keyof T, Params extends Parameters<T[K]>
+	>(
+		funcName: K,
+		requestId: WorkerRequestId,
+		...args: Params
+	): WorkerReqPromise<T, K> {		
+		return new Promise((resolve: (value: WorkerReqResult<T, K>) => void, reject) => {
+			this.callbacks.set(requestId, (data: WorkerResponse<WorkerReqResult<T, K>>) => {
+				if (data.success) {
+					this.updateRequestStatus(requestId, 'success');
+					return resolve(data.result);
+				} else {
+					this.updateRequestStatus(requestId, 'error');
+					return reject(data.error);
+				}
+            });
+			this.updateRequestStatus(requestId, 'pending');
+            const message: WorkerRequest<T, K> = { id: requestId, fn: funcName, args };
+            this.worker!.postMessage(message);
+		});
+	}
+
+	private updateRequestStatus(requestId: WorkerRequestId, status: WorkerRequestStatus) {
+		this.requestStatusMap.set(requestId, status);
+		this.cleanupOldRequestStatusesIfNeeded();
+	}
+
+	private generateId(): Brand<string, 'WorkerInterfaceRequestId'> {
+		return self.crypto.randomUUID() as WorkerRequestId;
+	}
+
+	private handleWorkerMessage(this: WorkerInterface<T>, event: MessageEvent<unknown>) {
+		const isValidWorkerResponse = isWorkerResponse(event.data);
+		const hasRequestId = isValidWorkerResponse && 'id' in event.data && this.callbacks.has(event.data.id as WorkerRequestId);
+		if (isValidWorkerResponse && hasRequestId) {
+			const id = event.data.id as WorkerRequestId;
+			const cb = this.callbacks.get(id)!;
+			cb(event.data);
+			this.callbacks.delete(id!);
+		} else if (isValidWorkerResponse && !hasRequestId && !this.opts.listenForUnknownMessages) {
+			throw new Error(`[WorkerInterface]: Received a message from the worker with id "${event.data.id}", but no callback was found for this id.`);
+		} else if (this.opts.listenForUnknownMessages) {
+			// pass to a callback if one is set
+			if (this.onUnknownMessageCallback != null) {
+				this.onUnknownMessageCallback(event.data);
+			} else {
+				console.warn('WorkerInterface received an unknown message, but no callback was set for it. Message data:', event.data);
+			}
+			return;
+		} else {
+			console.error('[WorkerInterface]: Received a message from the worker, but it is not a valid WorkerResponse. Data received:', event.data);
+			throw new Error(`[WorkerInterface]: Received a message from the worker, but it is not a valid WorkerResponse.`);
+		}
+	}
+	private handleWorkerError(this: WorkerInterface<T>, event: ErrorEvent) {
+		console.log('Worker onerror event fired. Worker will be terminated now.');
+		console.error(event);
+		// terminates the worker, as its state may become unpredictable after an error
+		// this also rejects any pending requests with a custom error message
+		this.forceTerminate(`Pending request rejected due to caught worker error: ${event.message}`);
+	}
+	private handleWorkerMessageError(this: WorkerInterface<T>, event: MessageEvent<unknown>) {
+		event.preventDefault();
+		console.log('Worker onmessageerror event fired. Worker will be terminated now.');
+		const eventData = event.data ?? null;
+		if (eventData != null) {
+			console.error(`The following data was received that resulted in the messageerror event:`, eventData);
+		}
+		console.error(event);
+		// aborts all pending requests, as it is unknown from which request the error originated from
+		// however, the worker does not have to be terminated, as it is still running
+		this.abortPendingRequests(new Error(`Pending request rejected due to caught worker messageerror.`));
+	}
+
 	private setupListeners() {
 		if (this.isReady()) {
 			throw new Error('WorkerInterface already started; cannot setup listeners.');
 		}
-		this.worker!.onmessage = (event: MessageEvent<unknown>) => {
-			const isValidWorkerResponse = isWorkerResponse(event.data);
-			const hasRequestId = isValidWorkerResponse && 'id' in event.data && this.callbacks.has(event.data.id as WorkerRequestId);
-			if (isValidWorkerResponse && hasRequestId) {
-				const id = event.data.id as WorkerRequestId;
-				const cb = this.callbacks.get(id)!;
-				cb(event.data);
-				this.callbacks.delete(id!);
-			} else if (isValidWorkerResponse && !hasRequestId && !this.opts.listenForUnknownMessages) {
-				throw new Error(`[WorkerInterface]: Received a message from the worker with id "${event.data.id}", but no callback was found for this id.`);
-			} else if (this.opts.listenForUnknownMessages) {
-				// pass to a callback if one is set
-				if (this.onUnknownMessageCallback != null) {
-					this.onUnknownMessageCallback(event.data);
-				} else {
-					console.warn('WorkerInterface received an unknown message, but no callback was set for it. Message data:', event.data);
-				}
-				return;
-			} else {
-				console.error('[WorkerInterface]: Received a message from the worker, but it is not a valid WorkerResponse. Data received:', event.data);
-				throw new Error(`[WorkerInterface]: Received a message from the worker, but it is not a valid WorkerResponse.`);
-			}
-		}
-		this.worker!.onerror = (event: ErrorEvent) => {
-			console.log('Worker onerror event fired. Worker will be terminated now.');
-			console.error(event);
-			// terminates the worker, as its state may become unpredictable after an error
-			// this also rejects any pending requests with a custom error message
-			this.forceTerminate(`Pending request rejected due to caught worker error: ${event.message}`);
-		}
-		this.worker!.onmessageerror = (event: MessageEvent<unknown>) => {
-			event.preventDefault();
-			console.log('Worker onmessageerror event fired. Worker will be terminated now.');
-			const eventData = event.data ?? null;
-			if (eventData != null) {
-				console.error(`The following data was received that resulted in the messageerror event:`, eventData);
-			}
-			console.error(event);
-			// aborts all pending requests, as it is unknown from which request the error originated from
-			// however, the worker does not have to be terminated, as it is still running
-			this.abortPendingRequests(new Error(`Pending request rejected due to caught worker messageerror.`));
-		}
+		this.worker!.onmessage = this.handleWorkerMessage.bind(this);
+		this.worker!.onerror = this.handleWorkerError.bind(this);
+		this.worker!.onmessageerror = this.handleWorkerMessageError.bind(this);
 		this.initialized = true;
-	}
-
-	onUnknownMessage(callback: ((messageData: unknown) => void) | null) {
-		if (!this.opts.listenForUnknownMessages) {
-			throw new Error('WorkerInterface does not listen for unknown messages, so cannot set an onUnknownMessage callback.');
-		}
-		this.onUnknownMessageCallback = callback;
 	}
 
 	private abortPendingRequests(error: Error) {

@@ -138,8 +138,8 @@ describe('WorkerInterface', () => {
 			}));
 
 			// The pending request should be aborted
-			expect(workerInterface.hasPendingRequests()).toBe(false);
 			await pendingResult;
+			expect(workerInterface.hasPendingRequests()).toBe(false);
 			expect(pendingAbortMock).toHaveBeenCalledOnce();
 			expect(pendingAbortMock).toHaveBeenCalledWith(new Error('Pending request rejected due to caught worker messageerror.'));
 			expect(pendingResolveMock).not.toHaveBeenCalled();
