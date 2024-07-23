@@ -20,9 +20,11 @@ const getDefaultData = (): CustomPuzzleInputGridData => ({
 	grid: null,
 });
 
+export const PUZZLE_EDITOR_STATE_STORAGE_KEY = 'takuzu_customPuzzleInputData';
+
 export const usePuzzleEditorStore = defineStore('puzzleEditorState', () => {
 	const storedState = useLocalStorage<CustomPuzzleInputGridData>(
-		"takuzu_customPuzzleInputData",
+		PUZZLE_EDITOR_STATE_STORAGE_KEY,
 		getDefaultData(),
 		{
 			deep: true,
