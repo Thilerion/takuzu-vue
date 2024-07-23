@@ -33,14 +33,10 @@ export const usePuzzleLineDetails = (line: Ref<PuzzleValueLineStr | null>) => {
 			return;
 		}
 		const bl = BoardLine.fromValues(lineArr.value, 'A');
-		const length = bl.length
-		const counts = bl.counts;
-		const required = bl.numRequired;
-		const remaining = bl.countRemaining;
-		details.required = required;
-		details.counts = counts;
-		details.remaining = remaining;
-		details.length = length;
+		details.required = bl.numRequired;
+		details.counts = bl.counts;
+		details.remaining = bl.countRemaining;
+		details.length = bl.length;
 	})
 
 	return {

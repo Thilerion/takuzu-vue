@@ -4,6 +4,14 @@ import type { PuzzleValueLine, PuzzleValueLineStr } from "@/lib/types.js";
 import { splitLine } from "@/lib/utils/puzzle-line.utils.js";
 import { computed, type Ref } from "vue";
 
+/**
+ * A composable that computes valid completions for a puzzle line.
+ * It computes all possible valid ways to fill the puzzle line.
+ * It also computes the resulting line, which is the input line where all cells that have the same value in all completions set to that value.
+ * 
+ * @param input - A reactive reference to a string representing a puzzle line or null.
+ * @returns An object containing computed properties for completions and the resulting line.
+ */
 export const useValidLineCompletions = (
 	input: Ref<PuzzleValueLineStr | null>
 ) => {
