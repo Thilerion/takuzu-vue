@@ -1,12 +1,12 @@
-import { createSharedComposable, toReactive, toRef, useLocalStorage } from "@vueuse/core";
-import { computed } from "vue";
 import type { BoardShape, PuzzleGrid } from "@/lib/types.js";
-import { array2d } from "@/utils/array2d.utils.js";
-import { EMPTY, type PuzzleValue } from "@/lib/constants.js";
-import { clamp } from "@/utils/number.utils.js";
+import { clamp, useLocalStorage } from "@vueuse/core";
+import { defineStore } from "pinia";
+import { computed, reactive, toRef, watch } from "vue";
 import { CUSTOM_PUZZLE_MIN_SIZE, CUSTOM_PUZZLE_MAX_SIZE } from "../services/validate-dimensions.js";
-import { rotate270, rotate90 } from "@/lib/transformations/base-transformations.js";
+import { EMPTY, type PuzzleValue } from "@/lib/constants.js";
+import { rotate90, rotate270 } from "@/lib/transformations/base-transformations.js";
 import { isPuzzleValueLineStr } from "@/lib/utils/puzzle-line.utils.js";
+import { array2d } from "@/utils/array2d.utils.js";
 
 type CustomPuzzleInputGridData = BoardShape & {
 	forceSquareGrid: boolean;
@@ -20,43 +20,51 @@ const getDefaultData = (): CustomPuzzleInputGridData => ({
 	grid: null,
 });
 
-export const useCustomPuzzleInputGrid = createSharedComposable(() => {
-	const stateRef = useLocalStorage<CustomPuzzleInputGridData>(
+export const usePuzzleEditorStore = defineStore('puzzleEditorState', () => {
+	const storedState = useLocalStorage<CustomPuzzleInputGridData>(
 		"takuzu_customPuzzleInputData",
 		getDefaultData(),
 		{
 			deep: true,
 			writeDefaults: true,
+			listenToStorageChanges: false
 		}
 	);
-	const state = toReactive(stateRef);
+
+	const state = reactive<CustomPuzzleInputGridData>({
+		...storedState.value,
+	});
+
+	watch(() => state, (value) => {
+		storedState.value = value;
+	}, { immediate: true, deep: true });
 
 	const customPuzzleGrid = toRef<CustomPuzzleInputGridData, 'grid'>(state, "grid");
 
 	const forceSquareGrid = computed({
-		get: () => stateRef.value.forceSquareGrid,
+		get: () => state.forceSquareGrid,
 		set: (value) => {
-			stateRef.value.forceSquareGrid = value;
-			if (value && stateRef.value.height !== stateRef.value.width) {
-				stateRef.value.height = stateRef.value.width;
+			state.forceSquareGrid = value;
+			if (value && state.height !== state.width) {
+				state.height = state.width;
 			}
 		}
 	});
 	const width = computed({
-		get: () => stateRef.value.width,
+		get: () => state.width,
 		set: (value) => {
-			stateRef.value.width = clamp(CUSTOM_PUZZLE_MIN_SIZE, value, CUSTOM_PUZZLE_MAX_SIZE);
-			if (stateRef.value.forceSquareGrid) {
-				stateRef.value.height = value;
+			state.width = clamp(CUSTOM_PUZZLE_MIN_SIZE, value, CUSTOM_PUZZLE_MAX_SIZE);
+			if (state.forceSquareGrid) {
+				state.height = value;
 			}
 		}
 	});
 	const height = computed({
-		get: () => stateRef.value.height,
+		get: () => state.height,
 		set: (value) => {
-			stateRef.value.height = clamp(CUSTOM_PUZZLE_MIN_SIZE, value, CUSTOM_PUZZLE_MAX_SIZE);
-			if (stateRef.value.forceSquareGrid) {
-				stateRef.value.width = value;
+			state.height = clamp(CUSTOM_PUZZLE_MIN_SIZE, value, CUSTOM_PUZZLE_MAX_SIZE);
+			if (state.forceSquareGrid) {
+				state.width = value;
 			}
 		}
 	});

@@ -79,11 +79,12 @@
 
 <script setup lang="ts">
 import { computed, ref, watch, onUnmounted } from 'vue';
-import { useCustomPuzzleInputGrid } from '../composables/custom-input-grid.js';
 import { CUSTOM_PUZZLE_MAX_SIZE, CUSTOM_PUZZLE_MIN_SIZE, validateCustomPuzzleDimensions, type CustomPuzzleDimensionsInvalidResultType } from '../services/validate-dimensions.js';
 import type { ParsedCustomPuzzleString } from '../services/string-conversions/import.js';
 import { awaitRaf } from '@/utils/delay.utils.js';
 import { useI18n } from 'vue-i18n';
+import { storeToRefs } from 'pinia';
+import { usePuzzleEditorStore } from '../stores/puzzle-editor-state.js';
 
 const expanded = defineModel<boolean>('expanded', { required: true });
 const showImportStringDialog = ref(false);
@@ -168,7 +169,9 @@ const displayedErrorMessage = computed(() => {
 	return null;
 })
 
-const { width, height, forceSquareGrid, customPuzzleGrid, resetGrid, updateDimensions } = useCustomPuzzleInputGrid();
+const puzzleEditorStore = usePuzzleEditorStore();
+const { width, height, forceSquareGrid, customPuzzleGrid } = storeToRefs(puzzleEditorStore);
+const { resetGrid, updateDimensions } = puzzleEditorStore;
 
 // Set width, height, forceSquareGrid locally, which can be set when "update" or "reset" is clicked
 const inputWidth = ref(width.value);

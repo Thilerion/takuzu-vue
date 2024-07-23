@@ -7,7 +7,7 @@ export type PuzzleEditorSettings = {
 	showSolution: boolean;
 }
 
-export const usePuzzleEditorSettings = defineStore('puzzleEditorSettings', () => {
+export const usePuzzleEditorSettingsStore = defineStore('puzzleEditorSettings', () => {
 	const getDefaultSettings = (): PuzzleEditorSettings => {
 		const hasTouchscreen = useMainStore().context.hasTouchscreen;
 		return {

@@ -71,28 +71,32 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref } from 'vue';
 import CustomPuzzleInputTableCell from './CustomPuzzleInputTableCell.vue';
-import { useCustomPuzzleInputGrid } from '../composables/custom-input-grid.js';
-import { usePuzzleEditorSettings } from '../composables/puzzle-editor-settings.js';
+import { usePuzzleEditorSettingsStore } from '../stores/puzzle-editor-settings.js';
 import type { PuzzleValue } from '@/lib/constants.js';
 import { useSharedPuzzleToggle } from '@/composables/use-puzzle-toggle.js';
 import { useSolutionsAnalysis } from '@/features/puzzle-editor/composables/solutions-analysis.js';
 import { storeToRefs } from 'pinia';
+import { usePuzzleEditorStore } from '../stores/puzzle-editor-state.js';
 
 //////
 // Puzzle Editor grid data + actions
 //////
-const {
+const puzzleEditorStore = usePuzzleEditorStore();
+const { 
 	customPuzzleGrid: puzzleGridBase,
 	dimensions,
+	emptyExistingGrid, isValidGrid
+} = storeToRefs(puzzleEditorStore);
+const {
 	resetGrid,
-	emptyExistingGrid, isValidGrid,
-	rotateGrid,
-} = useCustomPuzzleInputGrid();
+	rotateGrid
+} = puzzleEditorStore;
+
 const setGridValue = (x: number, y: number, v: PuzzleValue) => {
 	puzzleGridBase.value![y][x] = v;
 }
 
-const puzzleEditorSettings = usePuzzleEditorSettings();
+const puzzleEditorSettings = usePuzzleEditorSettingsStore();
 const { inputMode, showSolution } = storeToRefs(puzzleEditorSettings);
 const toggleInputModeEnabled = computed({
 	get: () => inputMode.value === 'toggle',
@@ -204,4 +208,4 @@ const {
 .fade-leave-to, .fade-enter {
   opacity: 0;
 }
-</style>
+</style>../stores/puzzle-editor-settings.js
