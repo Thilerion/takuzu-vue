@@ -1,11 +1,12 @@
 import { SimpleBoard } from "@/lib/board/Board.js";
 import { EMPTY, type PuzzleValue } from "@/lib/constants.js";
-import { ConstraintSolver, type ConstraintSolverResult } from "@/lib/solvers/constraint-solver/ConstraintSolver.js";
+import { type ConstraintSolverResult } from "@/lib/solvers/constraint-solver/ConstraintSolver.js";
 import type { BoardShape, PuzzleGrid, XYKey } from "@/lib/types.js";
 import { arrayCountValues } from "@/utils/array.ts.utils.js";
 import { array2d } from "@/utils/array2d.utils.js";
 import { get, useDebounceFn } from "@vueuse/core";
-import { computed, ref, shallowRef, watch, type MaybeRef, type Ref } from "vue";
+import { computed, ref, shallowRef, watch, type MaybeRef, type Ref, toRaw } from "vue";
+import { runWorkerQuickSolve } from "../services/quick-solve-worker/run.js";
 
 /** If the mask ratio is below this value, we should run the solver */
 const MAX_MASK_RATIO = 0.9;
@@ -33,30 +34,33 @@ export const useSolutionsAnalysis = (
 	const solveResult = shallowRef<ConstraintSolverResult | null>(null);
 	const isRunning = ref(false);
 
-	const runSolver = useDebounceFn(async (grid) => {
+	const runSolver = useDebounceFn(async (grid: PuzzleGrid) => {
 		solveResult.value = null;
 		if (!shouldRunSolver.value) {
 			isRunning.value = false;
 			return;
 		}
 
-		// TODO: quickSolve in worker
+		// TODO: abortSignal in worker request if grid changes
 		try {
 			isRunning.value = true;
-			const board = new SimpleBoard(grid);
-			const res = await ConstraintSolver.findAmountOfSolutions(
-				board,
-				{ 
-					maxSolutions: get(maxSolutions),
-					dfs: {
-						throwAfterTimeout: true
-					}
+			const results = await runWorkerQuickSolve(toRaw(grid), get(maxSolutions));
+			const { solvable, numSolutions } = results;
+			if (solvable) {
+				solveResult.value = {
+					solvable, numSolutions,
+					solutions: results.solutions.map(s => SimpleBoard.import(s)),
+					partialPreDfsSolution: results.partialPreDfsSolution == null ? null : SimpleBoard.import(results.partialPreDfsSolution),
 				}
-			);
-			const { instance } = res;
-			const instanceResults = instance.getResults();
-			solveResult.value = instanceResults;
+			} else {
+				solveResult.value = {
+					solvable: false, numSolutions,
+					solutions: [],
+					finalBoard: results.finalBoard == null ? undefined : SimpleBoard.import(results.finalBoard),
+				}
+			}
 		} catch(e) {
+			console.error(e);
 			console.error('QuickSolve timed out in solutions analysis.');
 			solveResult.value = null;
 		} finally {
@@ -67,6 +71,7 @@ export const useSolutionsAnalysis = (
 	watch([shouldRunSolver, grid], ([,grid]) => {
 		runSolver(grid!);
 	}, { deep: true });
+
 	// Do not immediately run solver on mount (expensive)
 	// If the initial values for shouldRunSolver and grid are correct, the solver will start after a timeout
 	setTimeout(() => {
