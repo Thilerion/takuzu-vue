@@ -15,13 +15,13 @@ export function readJsonFile(file: Blob): Promise<unknown> {
 			}
 			tempReader.readAsText(file);
 		} catch (e) {
-			console.error('Error while reading file as json: ' + (e as Error).message);
+			console.error('Error while reading file as json: ' + String(e));
 			reject(e);
 		}
 	})
 }
 
-export function writeObjToBlob(obj: Record<PropertyKey, unknown>) {
+export function writeObjToBlob(obj: Record<PropertyKey, unknown>): Blob | null {
 	try {
 		const str = JSON.stringify(obj, null, 2);
 		return new Blob(
@@ -29,7 +29,7 @@ export function writeObjToBlob(obj: Record<PropertyKey, unknown>) {
 			{ type: 'application/json' }
 		);
 	} catch (e) {
-		console.error('Error while create blob from obj: ' + (e as Error).message);
+		console.error('Error while create blob from obj: ' + String(e));
 		return null;
 	}	
 }
