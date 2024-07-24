@@ -7,7 +7,7 @@ type SolverResultBase<ResultType extends SolverResultType> = {
 	status: ResultType;
 	method: SolverMethod;
 	/** Time in ms that the solver took to run. */
-	duration?: number;
+	duration: number;
 };
 
 export type SolverResultSolved = SolverResultBase<'solved'> & {
@@ -49,7 +49,7 @@ export type SolverResult =
 
 export type CreateSolverResultBaseParams = {
 	method: SolverMethod,
-	duration?: number,
+	duration: number,
 }
 
 export function exhaustivelySolved(

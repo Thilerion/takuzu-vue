@@ -11,6 +11,11 @@ export class PuzzleSolver {
 	private dfsHandler: DFSHandler | null;
 
 	private solverStatus: SolverStatus = 'idle';
+	/** Object with start and end time, in ms, to compute duration spent solving. */
+	private timeMarks: {
+		start: number | null,
+		end: number | null,
+	} = { start: null, end: null };
 
 	private solutions: SimpleBoard[] = [];
 	private result: SolverResult | null = null;
@@ -43,7 +48,7 @@ export class PuzzleSolver {
 			const err = e instanceof Error ? e : new Error(String(e));
 			this.setFinishedStatusWithResult(
 				solverResult.fromError(
-					{ method: 'constraints' },
+					{ method: 'constraints', duration: this.getRunDuration() },
 					err,
 					{
 						description: 'From Solver.runConstraintsApplication() => unknown error caught',
@@ -60,7 +65,7 @@ export class PuzzleSolver {
 			// partially solved; unsolvable without DFS, single partial solution found
 			this.setFinishedStatusWithResult(
 				solverResult.unsolvablePartial(
-					{ method: 'constraints'},
+					{ method: 'constraints', duration: this.getRunDuration() },
 					board.export()
 				)
 			)
@@ -76,7 +81,7 @@ export class PuzzleSolver {
 			const err = e instanceof Error ? e : new Error(String(e));
 			this.setFinishedStatusWithResult(
 				solverResult.fromError(
-					{ method: 'dfs' },
+					{ method: 'dfs', duration: this.getRunDuration() },
 					err,
 					{
 						description: 'From Solver.runDFS() => unknown error caught',
@@ -102,7 +107,7 @@ export class PuzzleSolver {
 			// unsolvable, invalid input board
 			this.setFinishedStatusWithResult(
 				solverResult.unsolvableInvalid(
-					{ method: 'initial' },
+					{ method: 'initial', duration: this.getRunDuration() },
 					'Invalid input board'
 				)
 			)
@@ -113,7 +118,7 @@ export class PuzzleSolver {
 			// solved, single exhaustive solution
 			this.setFinishedStatusWithResult(
 				solverResult.exhaustivelySolved(
-					{ method: 'initial' },
+					{ method: 'initial', duration: this.getRunDuration() },
 					[board.export()]
 				)
 			)
@@ -127,7 +132,7 @@ export class PuzzleSolver {
 			// TODO: check if specific error (invalid line/board) or unknown error. For now, handle as unsolvable invalid board
 			this.setFinishedStatusWithResult(
 				solverResult.unsolvableInvalid(
-					{ method: 'constraints' },
+					{ method: 'constraints', duration: this.getRunDuration() },
 					'Invalid board after constraints application. Original error property: ' + constraintResult.error
 				)
 			)
@@ -138,7 +143,7 @@ export class PuzzleSolver {
 			// unsolvable, invalid input board
 			this.setFinishedStatusWithResult(
 				solverResult.unsolvableInvalid(
-					{ method: 'constraints' },
+					{ method: 'constraints', duration: this.getRunDuration() },
 					'Invalid input board'
 				)
 			)
@@ -147,7 +152,7 @@ export class PuzzleSolver {
 			// unsolvable, invalid board after constraints application
 			this.setFinishedStatusWithResult(
 				solverResult.unsolvableInvalid(
-					{ method: 'constraints' },
+					{ method: 'constraints', duration: this.getRunDuration() },
 					'Invalid board after constraints application'
 				)
 			)
@@ -159,7 +164,7 @@ export class PuzzleSolver {
 			// solved, single exhaustive solution
 			this.setFinishedStatusWithResult(
 				solverResult.exhaustivelySolved(
-					{ method: 'constraints' },
+					{ method: 'constraints', duration: this.getRunDuration() },
 					[board.export()]
 				)
 			)
@@ -186,7 +191,7 @@ export class PuzzleSolver {
 			// unsolvable, caught DFS error (unknown error) TODO: which errors can be received here?
 			this.setFinishedStatusWithResult(
 				solverResult.fromError(
-					{ method: 'dfs' },
+					{ method: 'dfs', duration: this.getRunDuration() },
 					dfsErrorMessage,
 					{
 						description: 'From DFSHandler.runDFS() => dfsResult error status',
@@ -207,7 +212,7 @@ export class PuzzleSolver {
 					// max solutions reached, single/multiple non-exhaustive solution(s) found
 					this.setFinishedStatusWithResult(
 						solverResult.incomplete(
-							{ method: 'dfs' },
+							{ method: 'dfs', duration: this.getRunDuration() },
 							this.solutions.map(s => s.export())
 						)
 					)
@@ -226,7 +231,7 @@ export class PuzzleSolver {
 				// unsolvable, timed out, no/one/multiple (non-exhaustive) solution(s) found
 				this.setFinishedStatusWithResult(
 					solverResult.incomplete(
-						{ method: 'dfs' },
+						{ method: 'dfs', duration: this.getRunDuration() },
 						this.solutions.map(s => s.export())
 					),
 				)
@@ -237,7 +242,8 @@ export class PuzzleSolver {
 					// unsolvable, no solutions found, exhaustive; DFS would have found a solution if there were any
 					this.setFinishedStatusWithResult(
 						solverResult.unsolvableExhaustive({
-							method: 'dfs'
+							method: 'dfs',
+							duration: this.getRunDuration()
 						})
 					)
 					return;
@@ -245,7 +251,7 @@ export class PuzzleSolver {
 					// solved, single exhaustive solution found
 					this.setFinishedStatusWithResult(
 						solverResult.exhaustivelySolved(
-							{ method: 'dfs' },
+							{ method: 'dfs', duration: this.getRunDuration() },
 							[...this.solutions].map(s => s.export()
 						))
 					)
@@ -254,7 +260,7 @@ export class PuzzleSolver {
 					// solved, multiple exhaustive solutions found
 					this.setFinishedStatusWithResult(
 						solverResult.exhaustivelySolved(
-							{ method: 'dfs' },
+							{ method: 'dfs', duration: this.getRunDuration() },
 							this.solutions.map(s => s.export()
 						))
 					)
@@ -281,6 +287,18 @@ export class PuzzleSolver {
 			throw new Error(`Cannot set running status in Solver, because it is not idle. Current status is "${this.solverStatus}".`);
 		}
 		this.solverStatus = 'running';
+		this.timeMarks.start = performance.now();
+	}
+
+	private getRunDuration(): number {
+		if (this.timeMarks.start == null || this.solverStatus === 'idle') {
+			throw new Error('Cannot get run duration in Solver, because it is not running/start time is not set.');
+		}
+		if (this.timeMarks.end == null) {
+			// End time might not be set yet, if the runDuration is retrieved before the solver has set its finished status (when creating a result object)
+			this.timeMarks.end = performance.now();
+		}
+		return this.timeMarks.end - this.timeMarks.start;
 	}
 
 	private setFinishedStatusWithResult(result: SolverResult): SolverResult {
@@ -291,6 +309,7 @@ export class PuzzleSolver {
 		}
 
 		this.solverStatus = 'finished';
+		this.timeMarks.end ??= performance.now();
 
 		this.result = result;
 		return result;
