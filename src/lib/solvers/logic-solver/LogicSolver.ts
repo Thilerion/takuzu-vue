@@ -6,7 +6,7 @@ import { createResult } from "./helpers/SolverResult.js";
 
 type SolverStatus = 'idle' | 'running' | 'finished';
 
-export class PuzzleSolver {
+export class LogicSolver {
 	private constraintsHandler: ConstraintsHandler;
 	private dfsHandler: DFSHandler | null;
 
