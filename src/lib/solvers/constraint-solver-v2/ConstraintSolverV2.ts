@@ -18,7 +18,7 @@ export class PuzzleSolver {
 	} = { start: null, end: null };
 
 	private solutions: SimpleBoard[] = [];
-	private result: SolverResult | null = null;
+	private result: Readonly<SolverResult> | null = null;
 
 
 	constructor(
@@ -29,7 +29,7 @@ export class PuzzleSolver {
 		this.dfsHandler = dfsHandler;
 	}
 
-	solve(initialBoard: SimpleBoard): this {
+	solve(initialBoard: SimpleBoard): SolverResult {
 		const board = initialBoard.copy();
 
 		if (this.isFinished() || this.isRunning()) {
@@ -38,7 +38,7 @@ export class PuzzleSolver {
 		this.setRunningStatus();
 
 		this.runInitialCheck(board);
-		if (this.isFinished()) return this;
+		if (this.isFinished()) return this.getResult();
 
 		try {
 			this.runConstraintsApplication(board);
@@ -56,10 +56,10 @@ export class PuzzleSolver {
 					}
 				)
 			)
-			return this;
+			return this.getResult();
 		}
 
-		if (this.isFinished()) return this;
+		if (this.isFinished()) return this.getResult();
 
 		if (this.dfsHandler == null) {
 			// partially solved; unsolvable without DFS, single partial solution found
@@ -69,7 +69,7 @@ export class PuzzleSolver {
 					board.export()
 				)
 			)
-			return this;
+			return this.getResult();
 		}
 
 		try {
@@ -89,17 +89,21 @@ export class PuzzleSolver {
 					}
 				)
 			)
-			return this;
+			return this.getResult();
 		}
 
 		if (!this.isFinished() || this.result == null) {
 			throw new Error('Solver.solve() reached end, but result is null or status is not finished. This should not be possible.');
 		}
 
-		return this;
+		return this.getResult();
 	}
-
-
+	getResult(): SolverResult {
+		if (!this.isFinished() || this.result == null) {
+			throw new Error('Cannot get result from Solver, because it is not finished yet.');
+		}
+		return this.result!;
+	}
 
 	private runInitialCheck(board: SimpleBoard): void {
 		const isValid = board.isValid();
@@ -275,6 +279,9 @@ export class PuzzleSolver {
 	}
 
 
+	////////////////////////////////////////////////
+	// Get/set solver status/results
+	////////////////////////////////////////////////
 	isFinished() {
 		return this.solverStatus === 'finished';
 	}
