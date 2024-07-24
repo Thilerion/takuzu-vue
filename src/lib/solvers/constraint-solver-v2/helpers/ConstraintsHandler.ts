@@ -1,6 +1,6 @@
 import type { SimpleBoard } from "@/lib/board/Board.js";
-import type { ConstraintSolverConstraintsCollection } from "./types.js";
-import type { ConstraintResult } from "./constraints/types.js";
+import type { ConstraintSolverConstraintsCollection } from "../types.js";
+import type { ConstraintResult } from "../constraints/types.js";
 
 export class ConstraintsHandler {
     private constraints: ConstraintSolverConstraintsCollection;

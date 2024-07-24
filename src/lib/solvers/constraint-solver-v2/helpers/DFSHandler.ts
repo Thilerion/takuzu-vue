@@ -1,7 +1,7 @@
 import type { SimpleBoard } from "@/lib/board/Board.js";
 import type { ConstraintsHandler } from "./ConstraintsHandler.js";
-import { createTimeoutChecker, type TimeoutChecker } from "./helpers/timeout-check.js";
-import type { SolverSelectCellFn, SolverSelectValueFn } from "./types.js";
+import { createTimeoutChecker, type TimeoutChecker } from "./timeout-check.js";
+import type { SolverSelectCellFn, SolverSelectValueFn } from "../types.js";
 import { getOppositeSymbol } from "@/lib/utils/puzzle-value.utils.js";
 import type { PuzzleSymbol } from "@/lib/constants.js";
 import type { BoardExportString } from "@/lib/types.js";

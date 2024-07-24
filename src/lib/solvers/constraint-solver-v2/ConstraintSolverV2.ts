@@ -1,8 +1,8 @@
 import type { SimpleBoard } from "@/lib/board/Board.js";
-import type { ConstraintsHandler } from "./ConstraintsHandler.js";
-import type { DFSHandler } from "./DFSHandler.js";
-import type { SolverMethod, SolverResult } from "./SolverResult.js";
-import { createResult } from "./SolverResult.js";
+import type { ConstraintsHandler } from "./helpers/ConstraintsHandler.js";
+import type { DFSHandler } from "./helpers/DFSHandler.js";
+import type { SolverMethod, SolverResult } from "./helpers/SolverResult.js";
+import { createResult } from "./helpers/SolverResult.js";
 
 type SolverStatus = 'idle' | 'running' | 'finished';
 
