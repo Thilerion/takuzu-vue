@@ -1,8 +1,8 @@
 import type { SimpleBoard } from "@/lib/board/Board.js";
 import type { ConstraintsHandler } from "./ConstraintsHandler.js";
 import type { DFSHandler } from "./DFSHandler.js";
-import type { SolverResult } from "./SolverResult.js";
-import * as solverResult from "./SolverResult.js";
+import type { SolverMethod, SolverResult } from "./SolverResult.js";
+import { createResult } from "./SolverResult.js";
 
 type SolverStatus = 'idle' | 'running' | 'finished';
 
@@ -45,11 +45,10 @@ export class PuzzleSolver {
 		} catch(e) {
 			console.warn('An unknown error occurred while running constraints application in Solver:', String(e));
 			// error/exception, unknown error thrown while applying constraints
-			const err = e instanceof Error ? e : new Error(String(e));
 			this.setFinishedStatusWithResult(
-				solverResult.fromError(
+				createResult.fromError(
 					{ method: 'constraints', duration: this.getRunDuration() },
-					err,
+					e instanceof Error ? e : new Error(String(e)),
 					{
 						description: 'From Solver.runConstraintsApplication() => unknown error caught',
 						isException: true
@@ -64,7 +63,7 @@ export class PuzzleSolver {
 		if (this.dfsHandler == null) {
 			// partially solved; unsolvable without DFS, single partial solution found
 			this.setFinishedStatusWithResult(
-				solverResult.unsolvablePartial(
+				createResult.unsolvablePartial(
 					{ method: 'constraints', duration: this.getRunDuration() },
 					board.export()
 				)
@@ -78,11 +77,10 @@ export class PuzzleSolver {
 		} catch(e) {
 			console.warn('An unknown error occurred while running DFS in Solver:', String(e));
 			// error/exception, unknown error thrown while running DFS
-			const err = e instanceof Error ? e : new Error(String(e));
 			this.setFinishedStatusWithResult(
-				solverResult.fromError(
+				createResult.fromError(
 					{ method: 'dfs', duration: this.getRunDuration() },
-					err,
+					e instanceof Error ? e : new Error(String(e)),
 					{
 						description: 'From Solver.runDFS() => unknown error caught',
 						isException: true
@@ -106,27 +104,23 @@ export class PuzzleSolver {
 	}
 
 	private runInitialCheck(board: SimpleBoard): void {
-		const isValid = board.isValid();
-		if (!isValid) {
-			// unsolvable, invalid input board
-			this.setFinishedStatusWithResult(
-				solverResult.unsolvableInvalid(
-					{ method: 'initial', duration: this.getRunDuration() },
-					'Invalid input board'
+		const status = this.getBoardStatus(board);
+		switch(status) {
+			case 'solved': {
+				// solved, single exhaustive solution
+				this.setFinishedStatusWithResult(
+					createResult.exhaustivelySolved(
+						{ method: 'initial', duration: this.getRunDuration() },
+						[board.export()]
+					)
 				)
-			)
-			return;
-		}
-		const isSolved = isValid && board.isFilled();
-		if (isSolved) {
-			// solved, single exhaustive solution
-			this.setFinishedStatusWithResult(
-				solverResult.exhaustivelySolved(
-					{ method: 'initial', duration: this.getRunDuration() },
-					[board.export()]
-				)
-			)
-			return;
+				return;
+			}
+			case 'invalid': {
+				// unsolvable, invalid input board
+				this.setUnsolvableInvalidResult('initial', 'Invalid input board');
+				return;
+			}
 		}
 	}
 
@@ -134,40 +128,26 @@ export class PuzzleSolver {
 		const constraintResult = this.constraintsHandler.applyConstraints(board);
 		if (constraintResult.error) {
 			// TODO: check if specific error (invalid line/board) or unknown error. For now, handle as unsolvable invalid board
-			this.setFinishedStatusWithResult(
-				solverResult.unsolvableInvalid(
-					{ method: 'constraints', duration: this.getRunDuration() },
-					'Invalid board after constraints application. Original error property: ' + constraintResult.error
-				)
-			)
-			return;
-		}
-		const isValid = board.isValid();
-		if (!isValid && !constraintResult.changed) {
-			// unsolvable, invalid input board
-			this.setFinishedStatusWithResult(
-				solverResult.unsolvableInvalid(
-					{ method: 'constraints', duration: this.getRunDuration() },
-					'Invalid input board'
-				)
-			)
-			return;
-		} else if (!isValid && constraintResult.changed) {
-			// unsolvable, invalid board after constraints application
-			this.setFinishedStatusWithResult(
-				solverResult.unsolvableInvalid(
-					{ method: 'constraints', duration: this.getRunDuration() },
-					'Invalid board after constraints application'
-				)
-			)
-			return;
+			return this.setUnsolvableInvalidResult(
+				'constraints',
+				'Invalid board after constraints application. Original error property: ' + constraintResult.error
+			);
 		}
 
-		const isSolved = isValid && board.isFilled();
-		if (isSolved) {
+		const status = this.getBoardStatus(board);
+
+		if (status === 'invalid' && !constraintResult.changed) {
+			// unsolvable, invalid input board
+			return this.setUnsolvableInvalidResult('constraints', 'Invalid input board');
+		} else if (status === 'invalid' && constraintResult.changed) {
+			// unsolvable, invalid board after constraints application
+			return this.setUnsolvableInvalidResult('constraints', 'Invalid board after constraints application');
+		}
+
+		if (status === 'solved') {
 			// solved, single exhaustive solution
 			this.setFinishedStatusWithResult(
-				solverResult.exhaustivelySolved(
+				createResult.exhaustivelySolved(
 					{ method: 'constraints', duration: this.getRunDuration() },
 					[board.export()]
 				)
@@ -194,7 +174,7 @@ export class PuzzleSolver {
 			const { message: dfsErrorMessage } = dfsResult;
 			// unsolvable, caught DFS error (unknown error) TODO: which errors can be received here?
 			this.setFinishedStatusWithResult(
-				solverResult.fromError(
+				createResult.fromError(
 					{ method: 'dfs', duration: this.getRunDuration() },
 					dfsErrorMessage,
 					{
@@ -207,37 +187,29 @@ export class PuzzleSolver {
 		}
 
 		const { reason, solutionsFound } = dfsResult;
+		const solutionsRegistered = this.solutions.length;
+		if (solutionsFound !== solutionsRegistered) {
+			throw new Error(`[Solver] DFS found ${solutionsFound} solutions, but only ${solutionsRegistered} solutions were registered.`);
+		}
+
 		switch (reason) {
 			case 'max_solutions_reached': {
-				if (solutionsFound === 0) {
-					// This should never happen, as maxSolution may not be set to 0
-					throw new Error('Max solutions was reached, but no solutions were found in DFS. This should never happen!');
-				} else if (solutionsFound >= 0) {
-					// max solutions reached, single/multiple non-exhaustive solution(s) found
-					this.setFinishedStatusWithResult(
-						solverResult.incomplete(
-							{ method: 'dfs', duration: this.getRunDuration() },
-							{ reason: 'max_solutions', maxSolutions: this.dfsHandler.maxSolutions },
-							this.solutions.map(s => s.export())
-						)
+				// max solutions reached, single/multiple non-exhaustive solution(s) found
+				this.setFinishedStatusWithResult(
+					createResult.incomplete(
+						{ method: 'dfs', duration: this.getRunDuration() },
+						{ reason: 'max_solutions', maxSolutions: this.getMaxSolutionsSetting()! },
+						this.solutions.map(s => s.export())
 					)
-					return;
-				} else {
-					const registeredSolutions = this.solutions.length;
-					// MaxSolutions was reached, but solutionsFound has an invalid value
-					console.warn(`[Solver] Max solutions was reached, but solutionsFound has an invalid value`, {
-						numSolutionsFromDFS: solutionsFound,
-						numSolutionsRegistered: registeredSolutions,
-					});
-					throw new Error('[Solver] Max solutions was reached, but solutionsFound has an invalid value');
-				}
+				)
+				return;
 			}
 			case 'timed_out': {
 				// unsolvable, timed out, no/one/multiple (non-exhaustive) solution(s) found
 				this.setFinishedStatusWithResult(
-					solverResult.incomplete(
+					createResult.incomplete(
 						{ method: 'dfs', duration: this.getRunDuration() },
-						{ reason: 'timed_out', timeout: this.dfsHandler.timeoutChecker!.timeoutMs },
+						{ reason: 'timed_out', timeout: this.getTimeoutSetting()! },
 						this.solutions.map(s => s.export())
 					),
 				)
@@ -247,31 +219,21 @@ export class PuzzleSolver {
 				if (solutionsFound === 0) {
 					// unsolvable, no solutions found, exhaustive; DFS would have found a solution if there were any
 					this.setFinishedStatusWithResult(
-						solverResult.unsolvableExhaustive({
+						createResult.unsolvableExhaustive({
 							method: 'dfs',
-							duration: this.getRunDuration()
+							duration: this.getRunDuration(),
 						})
 					)
 					return;
-				} else if (solutionsFound === 1) {
-					// solved, single exhaustive solution found
-					this.setFinishedStatusWithResult(
-						solverResult.exhaustivelySolved(
-							{ method: 'dfs', duration: this.getRunDuration() },
-							[...this.solutions].map(s => s.export()
-						))
-					)
-					return;
-				} else {
-					// solved, multiple exhaustive solutions found
-					this.setFinishedStatusWithResult(
-						solverResult.exhaustivelySolved(
-							{ method: 'dfs', duration: this.getRunDuration() },
-							this.solutions.map(s => s.export()
-						))
-					)
-					return;
 				}
+				// solved, single/multiple exhaustive solution(s) found
+				this.setFinishedStatusWithResult(
+					createResult.exhaustivelySolved(
+						{ method: 'dfs', duration: this.getRunDuration() },
+						this.solutions.map(s => s.export()
+					))
+				)
+				return;
 			}
 			default: {
 				const x: never = reason;
@@ -280,6 +242,13 @@ export class PuzzleSolver {
 		}
 	}
 
+	private getBoardStatus(board: SimpleBoard): 'solved' | 'invalid' | 'unsolved' {
+		// TODO: check if this lastStatusResult check is faster than simply running the checkStatus functions
+		const isValid = board.isValid();
+		if (!isValid) return 'invalid';
+		const isSolved = isValid && board.isFilled();
+		return isSolved ? 'solved' : 'unsolved';
+    }
 
 	////////////////////////////////////////////////
 	// Get/set solver status/results
@@ -322,5 +291,26 @@ export class PuzzleSolver {
 
 		this.result = result;
 		return result;
+	}
+
+	private setUnsolvableInvalidResult(
+		method: SolverMethod,
+		message?: string
+	): void {
+		this.setFinishedStatusWithResult(
+			createResult.unsolvableInvalid(
+				{ method, duration: this.getRunDuration() },
+				message ?? `Invalid board during "${method}"`
+			)
+		)
+    }
+
+	private getMaxSolutionsSetting(): number | null {
+		if (this.dfsHandler == null) return null;
+		return this.dfsHandler.maxSolutions;
+	}
+	private getTimeoutSetting(): number | null {
+		if (this.dfsHandler == null) return null;
+		return this.dfsHandler.timeoutChecker?.timeoutMs ?? null;
 	}
 }

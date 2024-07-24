@@ -1,4 +1,5 @@
 import type { BoardExportString } from "@/lib/types.js";
+import { unique } from "@/utils/array.ts.utils.js";
 
 export type SolverMethod = 'initial' | 'constraints' | 'dfs';
 export type SolverResultType = 'solved' | 'error' | 'unsolvable_invalid' | 'unsolvable' | 'incomplete';
@@ -63,7 +64,7 @@ export type CreateSolverResultBaseParams = {
 	duration: number,
 }
 
-export function exhaustivelySolved(
+function exhaustivelySolved(
 	{ method, duration }: CreateSolverResultBaseParams,
 	solutions: BoardExportString[],
 ): SolverResultSolved {
@@ -71,11 +72,11 @@ export function exhaustivelySolved(
 		status: 'solved',
 		method,
 		duration,
-		solutions,
+		solutions: unique(solutions),
 	}
 }
 
-export function unsolvableInvalid(
+function unsolvableInvalid(
 	{ method, duration }: CreateSolverResultBaseParams,
 	error?: string | Error,
 ): SolverResultUnsolvableInvalid {
@@ -95,7 +96,7 @@ export function unsolvableInvalid(
 	}
 }
 
-export function fromError(
+function fromError(
 	{ method, duration }: CreateSolverResultBaseParams,
 	error: string | Error,
 	context: {
@@ -112,7 +113,7 @@ export function fromError(
 	}
 }
 
-export function unsolvableExhaustive(
+function unsolvableExhaustive(
 	{ method, duration }: CreateSolverResultBaseParams, // probably only "dfs" method here
 ): SolverResultUnsolvableExhaustive {
 	if (method !== 'dfs') {
@@ -126,7 +127,7 @@ export function unsolvableExhaustive(
 	}
 }
 
-export function unsolvablePartial(
+function unsolvablePartial(
 	{ method, duration }: CreateSolverResultBaseParams,
 	partialSolution: BoardExportString,
 ): SolverResultUnsolvablePartial {
@@ -139,7 +140,7 @@ export function unsolvablePartial(
 	}
 }
 
-export function incomplete(
+function incomplete(
 	{ method, duration }: CreateSolverResultBaseParams,
 	incompleteReason: { reason: 'max_solutions', maxSolutions: number } | { reason: 'timed_out', timeout: number },
 	partialSolutions: BoardExportString[],
@@ -149,7 +150,16 @@ export function incomplete(
 		method,
 		duration,
 		exhaustive: false,
-		partialSolutions,
+		partialSolutions: unique(partialSolutions),
 		...incompleteReason,
 	}
+}
+
+export const createResult = {
+	exhaustivelySolved,
+	unsolvableInvalid,
+	fromError,
+	unsolvableExhaustive,
+	unsolvablePartial,
+	incomplete,
 }

@@ -43,3 +43,7 @@ export const groupBy = <K extends PropertyKey, TItem extends Record<K, PropertyK
 		return acc;
 	}, {} as Record<PropertyKey, TItem[]>);
 }
+
+export const unique = <T>(arr: T[]): T[] => {
+	return [...new Set(arr)];
+}
