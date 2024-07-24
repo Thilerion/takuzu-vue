@@ -34,10 +34,21 @@ export type SolverResultError = SolverResultBase<'error'> & {
 	}
 };
 
-export type SolverResultIncomplete = SolverResultBase<'incomplete'> & {
+export type SolverResultIncompleteMaxSolutions = SolverResultBase<'incomplete'> & {
 	exhaustive: false;
 	partialSolutions: BoardExportString[];
+	reason: 'max_solutions',
+	/** Config value for maxSolutions */
+	maxSolutions: number,
 };
+export type SolverResultIncompleteTimedOut = SolverResultBase<'incomplete'> & {
+	exhaustive: false;
+	partialSolutions: BoardExportString[];
+	reason: 'timed_out',
+	/** Config value for dfs timeout */
+	timeout: number,
+};
+export type SolverResultIncomplete = SolverResultIncompleteMaxSolutions | SolverResultIncompleteTimedOut;
 
 export type SolverResult =
 	| SolverResultSolved
@@ -130,6 +141,7 @@ export function unsolvablePartial(
 
 export function incomplete(
 	{ method, duration }: CreateSolverResultBaseParams,
+	incompleteReason: { reason: 'max_solutions', maxSolutions: number } | { reason: 'timed_out', timeout: number },
 	partialSolutions: BoardExportString[],
 ): SolverResultIncomplete {
 	return {
@@ -138,5 +150,6 @@ export function incomplete(
 		duration,
 		exhaustive: false,
 		partialSolutions,
+		...incompleteReason,
 	}
 }

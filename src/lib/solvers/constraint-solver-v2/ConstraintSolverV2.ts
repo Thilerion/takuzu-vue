@@ -217,6 +217,7 @@ export class PuzzleSolver {
 					this.setFinishedStatusWithResult(
 						solverResult.incomplete(
 							{ method: 'dfs', duration: this.getRunDuration() },
+							{ reason: 'max_solutions', maxSolutions: this.dfsHandler.maxSolutions },
 							this.solutions.map(s => s.export())
 						)
 					)
@@ -236,6 +237,7 @@ export class PuzzleSolver {
 				this.setFinishedStatusWithResult(
 					solverResult.incomplete(
 						{ method: 'dfs', duration: this.getRunDuration() },
+						{ reason: 'timed_out', timeout: this.dfsHandler.timeoutChecker!.timeoutMs },
 						this.solutions.map(s => s.export())
 					),
 				)

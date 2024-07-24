@@ -28,10 +28,10 @@ export interface DFSRunCallbacks {
 
 export class DFSHandler {
 	private constraintsHandler: ConstraintsHandler;
-	private timeoutChecker: TimeoutChecker | null;
+	readonly timeoutChecker: TimeoutChecker | null;
 	private selectCell: SolverSelectCellFn;
 	private selectValue: SolverSelectValueFn;
-	private maxSolutions: number;
+	readonly maxSolutions: number;
 
 	private solutionsFound: number = 0;
     private state: DFSStatus = {

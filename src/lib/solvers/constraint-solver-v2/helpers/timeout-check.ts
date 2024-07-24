@@ -1,6 +1,7 @@
 export interface TimeoutChecker {
 	startTime: number;
 	endTime: number;
+	readonly timeoutMs: number;
 	isTimedOut: () => boolean;
 	reset: () => void;
 }
@@ -28,6 +29,7 @@ export function createTimeoutChecker(timeoutMs: number): TimeoutChecker {
     return {
         startTime,
 		endTime,
+        timeoutMs,
         isTimedOut,
 		reset
     };
