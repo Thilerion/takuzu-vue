@@ -16,7 +16,7 @@ type DFSStatus = {
 	status: 'done',
 	reason: DFSDoneReason
 };
-type DFSResult = Extract<DFSStatus, { status: 'error' }> | (Extract<DFSStatus, { status: 'done' }> & { solutionsFound: number });
+export type DFSResult = Extract<DFSStatus, { status: 'error' }> | (Extract<DFSStatus, { status: 'done' }> & { solutionsFound: number });
 
 export interface DFSSelectionStrategies {
 	selectCell: SolverSelectCellFn,

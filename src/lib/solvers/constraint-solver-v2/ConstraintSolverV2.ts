@@ -1,0 +1,269 @@
+import type { SimpleBoard } from "@/lib/board/Board.js";
+import type { ConstraintsHandler } from "./ConstraintsHandler.js";
+import type { DFSHandler } from "./DFSHandler.js";
+import type { SolverResult } from "./SolverResult.js";
+import * as solverResult from "./SolverResult.js";
+
+type SolverStatus = 'idle' | 'running' | 'finished';
+
+export class PuzzleSolver {
+	private constraintsHandler: ConstraintsHandler;
+	private dfsHandler: DFSHandler | null;
+
+	private solverStatus: SolverStatus = 'idle';
+
+	private solutions: SimpleBoard[] = [];
+	private result: SolverResult | null = null;
+
+
+	constructor(
+		constraintsHandler: ConstraintsHandler,
+		dfsHandler: DFSHandler | null
+	) {
+		this.constraintsHandler = constraintsHandler;
+		this.dfsHandler = dfsHandler;
+	}
+
+	solve(initialBoard: SimpleBoard): this {
+		const board = initialBoard.copy();
+
+		if (this.isFinished() || this.isRunning()) {
+			throw new Error('Cannot start a new solver after it has already finished or is already running.');
+		}
+		this.setRunningStatus();
+
+		this.runInitialCheck(board);
+		if (this.isFinished()) return this;
+
+		try {
+			this.runConstraintsApplication(board);
+		} catch(e) {
+			console.warn('An unknown error occurred while running constraints application in Solver:', String(e));
+			// error/exception, unknown error thrown while applying constraints
+			const err = e instanceof Error ? e : new Error(String(e));
+			this.setFinishedStatusWithResult(
+				solverResult.fromError(
+					'constraints',
+					err,
+					{
+						description: 'From Solver.runConstraintsApplication() => unknown error caught',
+						isException: true
+					}
+				)
+			)
+			return this;
+		}
+
+		if (this.isFinished()) return this;
+
+		if (this.dfsHandler == null) {
+			// partially solved; unsolvable without DFS, single partial solution found
+			this.setFinishedStatusWithResult(
+				solverResult.unsolvablePartial('constraints', board.export())
+			)
+			return this;
+		}
+
+		try {
+			const boardPreDfs = board.copy();
+			this.runDFS(boardPreDfs);
+		} catch(e) {
+			console.warn('An unknown error occurred while running DFS in Solver:', String(e));
+			// error/exception, unknown error thrown while running DFS
+			const err = e instanceof Error ? e : new Error(String(e));
+			this.setFinishedStatusWithResult(
+				solverResult.fromError(
+					'dfs',
+					err,
+					{
+						description: 'From Solver.runDFS() => unknown error caught',
+						isException: true
+					}
+				)
+			)
+			return this;
+		}
+
+		if (!this.isFinished() || this.result == null) {
+			throw new Error('Solver.solve() reached end, but result is null or status is not finished. This should not be possible.');
+		}
+
+		return this;
+	}
+
+
+
+	private runInitialCheck(board: SimpleBoard): void {
+		const isValid = board.isValid();
+		if (!isValid) {
+			// unsolvable, invalid input board
+			this.setFinishedStatusWithResult(
+				solverResult.unsolvableInvalid('initial', 'Invalid input board')
+			)
+			return;
+		}
+		const isSolved = isValid && board.isFilled();
+		if (isSolved) {
+			// solved, single exhaustive solution
+			this.setFinishedStatusWithResult(
+				solverResult.exhaustivelySolved('initial', [board.export()])
+			)
+			return;
+		}
+	}
+
+	private runConstraintsApplication(board: SimpleBoard): void {
+		const constraintResult = this.constraintsHandler.applyConstraints(board);
+		if (constraintResult.error) {
+			// TODO: check if specific error (invalid line/board) or unknown error. For now, handle as unsolvable invalid board
+			this.setFinishedStatusWithResult(
+				solverResult.unsolvableInvalid('constraints', 'Invalid board after constraints application. Original error property: ' + constraintResult.error)
+			)
+			return;
+		}
+		const isValid = board.isValid();
+		if (!isValid && !constraintResult.changed) {
+			// unsolvable, invalid input board
+			this.setFinishedStatusWithResult(
+				solverResult.unsolvableInvalid('constraints', 'Invalid input board')
+			)
+			return;
+		} else if (!isValid && constraintResult.changed) {
+			// unsolvable, invalid board after constraints application
+			this.setFinishedStatusWithResult(
+				solverResult.unsolvableInvalid('constraints', 'Invalid board after constraints application')
+			)
+			return;
+		}
+
+		const isSolved = isValid && board.isFilled();
+		if (isSolved) {
+			// solved, single exhaustive solution
+			this.setFinishedStatusWithResult(
+				solverResult.exhaustivelySolved('constraints', [board.export()])
+			)
+			return;
+		}
+
+		// Not solved, still valid, after constraints application. Run DFS if enabled.
+		return;
+	}
+
+	private runDFS(board: SimpleBoard): void {
+		if (this.dfsHandler == null) {
+			throw new Error('Cannot run DFS without a DFSHandler.');
+		}
+
+		const dfsResult = this.dfsHandler!.performDFS(board, {
+            onSolutionFound: (solution) => {
+                this.solutions.push(solution);
+            }
+        });
+
+		if (dfsResult.status === 'error') {
+			const { message: dfsErrorMessage } = dfsResult;
+			// unsolvable, caught DFS error (unknown error) TODO: which errors can be received here?
+			this.setFinishedStatusWithResult(
+				solverResult.fromError(
+					'dfs',
+					dfsErrorMessage,
+					{
+						description: 'From DFSHandler.runDFS() => dfsResult error status',
+						isException: false
+					}
+				)
+			)
+			return;
+		}
+
+		const { reason, solutionsFound } = dfsResult;
+		switch (reason) {
+			case 'max_solutions_reached': {
+				if (solutionsFound === 0) {
+					// This should never happen, as maxSolution may not be set to 0
+					throw new Error('Max solutions was reached, but no solutions were found in DFS. This should never happen!');
+				} else if (solutionsFound >= 0) {
+					// max solutions reached, single/multiple non-exhaustive solution(s) found
+					this.setFinishedStatusWithResult(
+						solverResult.incomplete(
+							'dfs',
+							this.solutions.map(s => s.export())
+						)
+					)
+					return;
+				} else {
+					const registeredSolutions = this.solutions.length;
+					// MaxSolutions was reached, but solutionsFound has an invalid value
+					console.warn(`[Solver] Max solutions was reached, but solutionsFound has an invalid value`, {
+						numSolutionsFromDFS: solutionsFound,
+						numSolutionsRegistered: registeredSolutions,
+					});
+					throw new Error('[Solver] Max solutions was reached, but solutionsFound has an invalid value');
+				}
+			}
+			case 'timed_out': {
+				// unsolvable, timed out, no/one/multiple (non-exhaustive) solution(s) found
+				this.setFinishedStatusWithResult(
+					solverResult.incomplete(
+						'dfs',
+						this.solutions.map(s => s.export())
+					),
+				)
+				return;
+			}
+			case 'finished': {
+				if (solutionsFound === 0) {
+					// unsolvable, no solutions found, exhaustive; DFS would have found a solution if there were any
+					this.setFinishedStatusWithResult(
+						solverResult.unsolvableExhaustive('dfs')
+					)
+					return;
+				} else if (solutionsFound === 1) {
+					// solved, single exhaustive solution found
+					this.setFinishedStatusWithResult(
+						solverResult.exhaustivelySolved('dfs', [...this.solutions].map(s => s.export()))
+					)
+					return;
+				} else {
+					// solved, multiple exhaustive solutions found
+					this.setFinishedStatusWithResult(
+						solverResult.exhaustivelySolved('dfs', this.solutions.map(s => s.export()))
+					)
+					return;
+				}
+			}
+			default: {
+				const x: never = reason;
+				throw new Error(`Unexpected reason in runDFS(): ${x}`);
+			}
+		}
+	}
+
+
+	isFinished() {
+		return this.solverStatus === 'finished';
+	}
+	isRunning() {
+		return this.solverStatus === 'running';
+	}
+
+	private setRunningStatus() {
+		if (this.solverStatus !== 'idle') {
+			throw new Error(`Cannot set running status in Solver, because it is not idle. Current status is "${this.solverStatus}".`);
+		}
+		this.solverStatus = 'running';
+	}
+
+	private setFinishedStatusWithResult(result: SolverResult): SolverResult {
+		if (!this.isRunning()) {
+			throw new Error(`Cannot set finished status in Solver, because it is not running. Current status is "${this.solverStatus}".`);
+		} else if (this.result != null) {
+			throw new Error(`Cannot set finished status in Solver, because it already has a result. Current result is "${this.result}".`);
+		}
+
+		this.solverStatus = 'finished';
+
+		this.result = result;
+		return result;
+	}
+}
