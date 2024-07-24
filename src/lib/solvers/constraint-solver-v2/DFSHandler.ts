@@ -4,6 +4,9 @@ import { createTimeoutChecker, type TimeoutChecker } from "./helpers/timeout-che
 import type { SolverSelectCellFn, SolverSelectValueFn } from "./types.js";
 import { getOppositeSymbol } from "@/lib/utils/puzzle-value.utils.js";
 import type { PuzzleSymbol } from "@/lib/constants.js";
+import type { BoardExportString } from "@/lib/types.js";
+
+type BoardStatus = 'solved' | 'invalid' | 'unsolved';
 
 type DFSTerminationReason = 'timed_out' | 'max_solutions_reached';
 type DFSDoneReason = DFSTerminationReason | 'finished';
@@ -37,6 +40,10 @@ export class DFSHandler {
     private state: DFSStatus = {
 		status: 'idle'
 	}
+	private lastStatusResult: { 
+		board: BoardExportString,
+		result: BoardStatus
+	} | null = null;
 
 	constructor(
 		constraintsHandler: ConstraintsHandler,
@@ -86,7 +93,7 @@ export class DFSHandler {
 			return;
 		}
 
-		const boardStatus = this.constraintsHandler.getBoardStatus(board);
+		const boardStatus = this.getBoardStatus(board);
 		if (boardStatus === 'invalid') {
 			// This branch is invalid, backtrack and try another board
 			return;
@@ -182,6 +189,26 @@ export class DFSHandler {
 		this.state = {
 			status: 'running'
 		}
+	}
+
+	/**
+     * Gets the current status of the board (memoized).
+     * @param board The board to check.
+     * @returns 'solved' if the board is solved, 'invalid' if it's in an invalid state, or 'unsolved' otherwise.
+     */
+	private getBoardStatus(board: SimpleBoard): BoardStatus {
+		// TODO: check if this lastStatusResult check is faster than simply running the checkStatus functions
+		const boardExport = board.export();
+		if (this.lastStatusResult?.board === boardExport) {
+			return this.lastStatusResult.result;
+		}
+		const isValid = board.isValid();
+		const isSolved = isValid && board.isFilled();
+		
+		const status = !isValid ? 'invalid' : isSolved ? 'solved' : 'unsolved';
+		this.lastStatusResult = { board: boardExport, result: status };
+
+		return status;
 	}
 
 	getResult(): DFSResult {

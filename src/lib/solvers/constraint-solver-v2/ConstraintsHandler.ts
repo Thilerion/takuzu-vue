@@ -1,16 +1,9 @@
 import type { SimpleBoard } from "@/lib/board/Board.js";
 import type { ConstraintSolverConstraintsCollection } from "./types.js";
 import type { ConstraintResult } from "./constraints/types.js";
-import type { BoardExportString } from "@/lib/types.js";
-
-export type BoardStatus = 'solved' | 'invalid' | 'unsolved';
 
 export class ConstraintsHandler {
     private constraints: ConstraintSolverConstraintsCollection;
-	private lastStatusResult: { 
-		board: BoardExportString,
-		result: BoardStatus
-	} | null = null;
 
     constructor(constraints: ConstraintSolverConstraintsCollection) {
         this.constraints = constraints;
@@ -47,25 +40,5 @@ export class ConstraintsHandler {
 			return { changed: true };
 		}
 		return result;
-    }
-
-    /**
-     * Gets the current status of the board.
-     * @param board The board to check.
-     * @returns 'solved' if the board is solved, 'invalid' if it's in an invalid state, or 'unsolved' otherwise.
-     */
-    getBoardStatus(board: SimpleBoard): BoardStatus {
-		// TODO: check if this lastStatusResult check is faster than simply running the checkStatus functions
-		const boardExport = board.export();
-		if (this.lastStatusResult?.board === boardExport) {
-			return this.lastStatusResult.result;
-		}
-		const isValid = board.isValid();
-		const isSolved = isValid && board.isFilled();
-		
-		const status = !isValid ? 'invalid' : isSolved ? 'solved' : 'unsolved';
-		this.lastStatusResult = { board: boardExport, result: status };
-
-        return status;
     }
 }
