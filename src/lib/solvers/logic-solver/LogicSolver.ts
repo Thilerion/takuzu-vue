@@ -1,10 +1,15 @@
 import type { SimpleBoard } from "@/lib/board/Board.js";
-import type { ConstraintsHandler } from "./helpers/ConstraintsHandler.js";
-import type { DFSHandler } from "./helpers/DFSHandler.js";
+import { ConstraintsHandler, type ConstraintsHandlerConfig } from "./helpers/ConstraintsHandler.js";
+import { DFSHandler, type DFSHandlerConfig } from "./helpers/DFSHandler.js";
 import type { SolverMethod, SolverResult } from "./helpers/SolverResult.js";
 import { createResult } from "./helpers/SolverResult.js";
 
 type SolverStatus = 'idle' | 'running' | 'finished';
+
+export interface LogicSolverConfig {
+	// TODO: add throwOnErrorResult option, to let the solver throw if there is an (unexpected/unknown) error
+	throwOnErrorResult?: boolean
+}
 
 export class LogicSolver {
 	private constraintsHandler: ConstraintsHandler;
@@ -23,11 +28,45 @@ export class LogicSolver {
 
 	constructor(
 		constraintsHandler: ConstraintsHandler,
-		dfsHandler: DFSHandler | null
+		dfsHandler: DFSHandler | null,
+		config: LogicSolverConfig
 	) {
 		this.constraintsHandler = constraintsHandler;
 		this.dfsHandler = dfsHandler;
+		if (config.throwOnErrorResult != null) {
+			throw new Error('throwOnErrorResult option is not yet implemented.');
+		}
 	}
+
+	////////////////////////////////////////////////
+	// Static class instantiation methods
+	////////////////////////////////////////////////
+
+	static create(
+		constraintsHandlerOrConfig: ConstraintsHandler | ConstraintsHandlerConfig,
+		dfsHandlerOrConfig: DFSHandler | DFSHandlerConfig | null | undefined,
+		logicSolverConfig: LogicSolverConfig,
+	): LogicSolver {
+		const constraintsHandler = (constraintsHandlerOrConfig instanceof ConstraintsHandler)
+			? constraintsHandlerOrConfig
+			: ConstraintsHandler.fromConfig(constraintsHandlerOrConfig);
+
+		let dfsHandler: DFSHandler | null;
+		if (dfsHandlerOrConfig == null) {
+			// DFS is disabled
+			dfsHandler = null;
+		} else if (dfsHandlerOrConfig instanceof DFSHandler) {
+			dfsHandler = dfsHandlerOrConfig;
+		} else {
+			dfsHandler = DFSHandler.fromConfig(dfsHandlerOrConfig, constraintsHandler);
+		}
+
+		return new LogicSolver(constraintsHandler, dfsHandler, logicSolverConfig);
+	}
+
+	////////////////////////////////////////////////
+	// Core functionality
+	////////////////////////////////////////////////
 
 	solve(initialBoard: SimpleBoard): SolverResult {
 		const board = initialBoard.copy();

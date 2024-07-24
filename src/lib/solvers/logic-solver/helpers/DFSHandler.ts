@@ -5,6 +5,7 @@ import type { SolverSelectCellFn, SolverSelectValueFn } from "../types.js";
 import { getOppositeSymbol } from "@/lib/utils/puzzle-value.utils.js";
 import type { PuzzleSymbol } from "@/lib/constants.js";
 import type { BoardExportString } from "@/lib/types.js";
+import { selectCellStrategies, selectValueStrategies, type SelectCellStrategyName, type SelectValueStrategyName } from "../selection/index.js";
 
 type BoardStatus = 'solved' | 'invalid' | 'unsolved';
 
@@ -21,12 +22,18 @@ type DFSStatus = {
 };
 export type DFSResult = Extract<DFSStatus, { status: 'error' }> | (Extract<DFSStatus, { status: 'done' }> & { solutionsFound: number });
 
-export interface DFSSelectionStrategies {
-	selectCell: SolverSelectCellFn,
-	selectValue: SolverSelectValueFn,
+export interface DFSSelectionStrategiesConfig {
+	selectCell: SolverSelectCellFn | SelectCellStrategyName,
+	selectValue: SolverSelectValueFn | SelectValueStrategyName,
 }
 export interface DFSRunCallbacks {
 	onSolutionFound: (solution: SimpleBoard) => void,
+}
+export interface DFSHandlerConfig {
+	timeout?: TimeoutChecker | number | null,
+	selectCell: SolverSelectCellFn | SelectCellStrategyName,
+	selectValue: SolverSelectValueFn | SelectValueStrategyName,
+	maxSolutions?: number,
 }
 
 export class DFSHandler {
@@ -48,14 +55,33 @@ export class DFSHandler {
 	constructor(
 		constraintsHandler: ConstraintsHandler,
 		timeout: TimeoutChecker | number | null,
-		{ selectCell, selectValue }: DFSSelectionStrategies,
+		{ selectCell, selectValue }: DFSSelectionStrategiesConfig,
 		maxSolutions: number = Infinity
 	) {
 		this.constraintsHandler = constraintsHandler;
 		this.timeoutChecker = timeout == null ? null : typeof timeout === 'number' ? createTimeoutChecker(timeout) : timeout;
-		this.selectCell = selectCell;
-		this.selectValue = selectValue;
+		this.selectCell = (typeof selectCell === 'string' ? selectCellStrategies[selectCell] : selectCell);
+		this.selectValue = (typeof selectValue === 'string' ? selectValueStrategies[selectValue] : selectValue);
 		this.maxSolutions = maxSolutions;
+	}
+
+	static fromConfig(config: DFSHandlerConfig, constraintsHandler: ConstraintsHandler): DFSHandler {
+		const {
+			timeout = null,
+			selectCell,
+			selectValue,
+			maxSolutions = Infinity
+		} = config;
+		const selectStrategies = {
+			selectCell: typeof selectCell === 'string' ? selectCellStrategies[selectCell] : selectCell,
+			selectValue: typeof selectValue === 'string' ? selectValueStrategies[selectValue] : selectValue,
+		}
+		return new DFSHandler(
+			constraintsHandler,
+			timeout,
+			selectStrategies,
+			maxSolutions
+		)
 	}
 
 	performDFS(
