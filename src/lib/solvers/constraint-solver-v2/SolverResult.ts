@@ -3,11 +3,11 @@ import type { BoardExportString } from "@/lib/types.js";
 export type SolverMethod = 'initial' | 'constraints' | 'dfs';
 export type SolverResultType = 'solved' | 'error' | 'unsolvable_invalid' | 'unsolvable' | 'incomplete';
 
-export type SolverResultBase<ResultType extends SolverResultType> = {
+type SolverResultBase<ResultType extends SolverResultType> = {
 	status: ResultType;
 	method: SolverMethod;
-	// Can be used for additional contextual information, mostly for debugging I guess
-	additionalMessage?: string;
+	/** Time in ms that the solver took to run. */
+	duration?: number;
 };
 
 export type SolverResultSolved = SolverResultBase<'solved'> & {
@@ -47,19 +47,25 @@ export type SolverResult =
 	| SolverResultUnsolvablePartial
 	| SolverResultIncomplete;
 
-export function exhaustivelySolved(
+export type CreateSolverResultBaseParams = {
 	method: SolverMethod,
+	duration?: number,
+}
+
+export function exhaustivelySolved(
+	{ method, duration }: CreateSolverResultBaseParams,
 	solutions: BoardExportString[],
 ): SolverResultSolved {
 	return {
 		status: 'solved',
 		method,
+		duration,
 		solutions,
 	}
 }
 
 export function unsolvableInvalid(
-	method: SolverMethod,
+	{ method, duration }: CreateSolverResultBaseParams,
 	error?: string | Error,
 ): SolverResultUnsolvableInvalid {
 	let errMessage: string | undefined;
@@ -73,12 +79,13 @@ export function unsolvableInvalid(
 	return {
 		status: 'unsolvable_invalid',
 		method,
+		duration,
 		errMessage
 	}
 }
 
 export function fromError(
-	method: SolverMethod,
+	{ method, duration }: CreateSolverResultBaseParams,
 	error: string | Error,
 	context: {
 		description?: string, // for additional context
@@ -88,42 +95,47 @@ export function fromError(
 	return {
 		status: 'error',
 		method,
+		duration,
 		error: typeof error === 'string' ? new Error(error) : error,
 		context,
 	}
 }
 
 export function unsolvableExhaustive(
-	method: Extract<SolverMethod, 'dfs'>, // probably only "dfs"
-	message?: string,
+	{ method, duration }: CreateSolverResultBaseParams, // probably only "dfs" method here
 ): SolverResultUnsolvableExhaustive {
+	if (method !== 'dfs') {
+		console.warn(`[SolverResult.unsolvableExhaustive] received method "${method}", but expected "dfs". Is this correct?`);
+	}
 	return {
 		status: 'unsolvable',
 		method,
+		duration,
 		exhaustive: true,
-		additionalMessage: message,
 	}
 }
 
 export function unsolvablePartial(
-	method: SolverMethod,
+	{ method, duration }: CreateSolverResultBaseParams,
 	partialSolution: BoardExportString,
 ): SolverResultUnsolvablePartial {
 	return {
 		status: 'unsolvable',
 		method,
+		duration,
 		exhaustive: false,
 		partialSolution,
 	}
 }
 
 export function incomplete(
-	method: SolverMethod,
+	{ method, duration }: CreateSolverResultBaseParams,
 	partialSolutions: BoardExportString[],
 ): SolverResultIncomplete {
 	return {
 		status: 'incomplete',
 		method,
+		duration,
 		exhaustive: false,
 		partialSolutions,
 	}

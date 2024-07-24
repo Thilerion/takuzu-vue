@@ -43,7 +43,7 @@ export class PuzzleSolver {
 			const err = e instanceof Error ? e : new Error(String(e));
 			this.setFinishedStatusWithResult(
 				solverResult.fromError(
-					'constraints',
+					{ method: 'constraints' },
 					err,
 					{
 						description: 'From Solver.runConstraintsApplication() => unknown error caught',
@@ -59,7 +59,10 @@ export class PuzzleSolver {
 		if (this.dfsHandler == null) {
 			// partially solved; unsolvable without DFS, single partial solution found
 			this.setFinishedStatusWithResult(
-				solverResult.unsolvablePartial('constraints', board.export())
+				solverResult.unsolvablePartial(
+					{ method: 'constraints'},
+					board.export()
+				)
 			)
 			return this;
 		}
@@ -73,7 +76,7 @@ export class PuzzleSolver {
 			const err = e instanceof Error ? e : new Error(String(e));
 			this.setFinishedStatusWithResult(
 				solverResult.fromError(
-					'dfs',
+					{ method: 'dfs' },
 					err,
 					{
 						description: 'From Solver.runDFS() => unknown error caught',
@@ -98,7 +101,10 @@ export class PuzzleSolver {
 		if (!isValid) {
 			// unsolvable, invalid input board
 			this.setFinishedStatusWithResult(
-				solverResult.unsolvableInvalid('initial', 'Invalid input board')
+				solverResult.unsolvableInvalid(
+					{ method: 'initial' },
+					'Invalid input board'
+				)
 			)
 			return;
 		}
@@ -106,7 +112,10 @@ export class PuzzleSolver {
 		if (isSolved) {
 			// solved, single exhaustive solution
 			this.setFinishedStatusWithResult(
-				solverResult.exhaustivelySolved('initial', [board.export()])
+				solverResult.exhaustivelySolved(
+					{ method: 'initial' },
+					[board.export()]
+				)
 			)
 			return;
 		}
@@ -117,7 +126,10 @@ export class PuzzleSolver {
 		if (constraintResult.error) {
 			// TODO: check if specific error (invalid line/board) or unknown error. For now, handle as unsolvable invalid board
 			this.setFinishedStatusWithResult(
-				solverResult.unsolvableInvalid('constraints', 'Invalid board after constraints application. Original error property: ' + constraintResult.error)
+				solverResult.unsolvableInvalid(
+					{ method: 'constraints' },
+					'Invalid board after constraints application. Original error property: ' + constraintResult.error
+				)
 			)
 			return;
 		}
@@ -125,13 +137,19 @@ export class PuzzleSolver {
 		if (!isValid && !constraintResult.changed) {
 			// unsolvable, invalid input board
 			this.setFinishedStatusWithResult(
-				solverResult.unsolvableInvalid('constraints', 'Invalid input board')
+				solverResult.unsolvableInvalid(
+					{ method: 'constraints' },
+					'Invalid input board'
+				)
 			)
 			return;
 		} else if (!isValid && constraintResult.changed) {
 			// unsolvable, invalid board after constraints application
 			this.setFinishedStatusWithResult(
-				solverResult.unsolvableInvalid('constraints', 'Invalid board after constraints application')
+				solverResult.unsolvableInvalid(
+					{ method: 'constraints' },
+					'Invalid board after constraints application'
+				)
 			)
 			return;
 		}
@@ -140,7 +158,10 @@ export class PuzzleSolver {
 		if (isSolved) {
 			// solved, single exhaustive solution
 			this.setFinishedStatusWithResult(
-				solverResult.exhaustivelySolved('constraints', [board.export()])
+				solverResult.exhaustivelySolved(
+					{ method: 'constraints' },
+					[board.export()]
+				)
 			)
 			return;
 		}
@@ -165,7 +186,7 @@ export class PuzzleSolver {
 			// unsolvable, caught DFS error (unknown error) TODO: which errors can be received here?
 			this.setFinishedStatusWithResult(
 				solverResult.fromError(
-					'dfs',
+					{ method: 'dfs' },
 					dfsErrorMessage,
 					{
 						description: 'From DFSHandler.runDFS() => dfsResult error status',
@@ -186,7 +207,7 @@ export class PuzzleSolver {
 					// max solutions reached, single/multiple non-exhaustive solution(s) found
 					this.setFinishedStatusWithResult(
 						solverResult.incomplete(
-							'dfs',
+							{ method: 'dfs' },
 							this.solutions.map(s => s.export())
 						)
 					)
@@ -205,7 +226,7 @@ export class PuzzleSolver {
 				// unsolvable, timed out, no/one/multiple (non-exhaustive) solution(s) found
 				this.setFinishedStatusWithResult(
 					solverResult.incomplete(
-						'dfs',
+						{ method: 'dfs' },
 						this.solutions.map(s => s.export())
 					),
 				)
@@ -215,19 +236,27 @@ export class PuzzleSolver {
 				if (solutionsFound === 0) {
 					// unsolvable, no solutions found, exhaustive; DFS would have found a solution if there were any
 					this.setFinishedStatusWithResult(
-						solverResult.unsolvableExhaustive('dfs')
+						solverResult.unsolvableExhaustive({
+							method: 'dfs'
+						})
 					)
 					return;
 				} else if (solutionsFound === 1) {
 					// solved, single exhaustive solution found
 					this.setFinishedStatusWithResult(
-						solverResult.exhaustivelySolved('dfs', [...this.solutions].map(s => s.export()))
+						solverResult.exhaustivelySolved(
+							{ method: 'dfs' },
+							[...this.solutions].map(s => s.export()
+						))
 					)
 					return;
 				} else {
 					// solved, multiple exhaustive solutions found
 					this.setFinishedStatusWithResult(
-						solverResult.exhaustivelySolved('dfs', this.solutions.map(s => s.export()))
+						solverResult.exhaustivelySolved(
+							{ method: 'dfs' },
+							this.solutions.map(s => s.export()
+						))
 					)
 					return;
 				}
