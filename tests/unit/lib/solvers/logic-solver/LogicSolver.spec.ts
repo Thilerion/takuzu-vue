@@ -1,6 +1,9 @@
 import { SimpleBoard } from "@/lib/board/Board.js";
 import { LogicSolver } from "@/lib/solvers/logic-solver/LogicSolver.js";
-import type { SolverResultIncompleteMaxSolutions, SolverResultSolved } from "@/lib/solvers/logic-solver/helpers/SolverResult.js";
+import { applyLineBalanceConstraint } from "@/lib/solvers/logic-solver/constraints/LineBalanceConstraint.js";
+import { applyTriplesConstraint } from "@/lib/solvers/logic-solver/constraints/TriplesConstraint.js";
+import type { SolverResultIncompleteMaxSolutions, SolverResultSolved, SolverResultUnsolvablePartial } from "@/lib/solvers/logic-solver/helpers/SolverResult.js";
+import type { ConstraintSolverConstraintsCollection } from "@/lib/solvers/logic-solver/types.js";
 
 
 describe('LogicSolver', () => {
@@ -125,6 +128,146 @@ describe('LogicSolver', () => {
 			// all found solutions are unique
 			const uniqueSolutions = new Set(result.solutions);
 			expect(uniqueSolutions.size).toBe(72);
+		})
+	})
+
+	describe('without backtracking, with specific constraints', () => {
+		const createSolver = (
+			constraintFns: ConstraintSolverConstraintsCollection
+		) => LogicSolver.create({
+			constraints: constraintFns,
+		}, null, {});
+
+		it('should solve a puzzle with triples only', () => {
+			const board = SimpleBoard.fromArrayOfLines([
+				'0.11.1',
+				'0....1',
+				'..11..',
+				'11..10',
+				'.1.1..',
+				'1..0.0'
+			]); // this board can be solved using just triples strat: pairs/doubles and sandwiches
+			const solver = createSolver([applyTriplesConstraint]);
+			const result = solver.solve(board);
+			expect(result).toEqual({
+				method: 'constraints',
+				status: 'solved',
+				duration: expect.any(Number),
+				solutions: ['6x6;001101010011101100110010010101101010']
+			})
+			const solutions = (result as SolverResultSolved).solutions;
+			expect(solutions).toHaveLength(1);
+		})
+
+		it('should solve a puzzle with line balance only', () => {
+			const board = SimpleBoard.fromArrayOfLines([
+				'0.00..',
+				'..11.1',
+				'..0010',
+				'.0..00',
+				'0.0.01',
+				'.0101.'
+			]) // board can be solved using just line balance strat
+			const solver = createSolver([applyLineBalanceConstraint]);
+			const result = solver.solve(board);
+			const expectedSolution = `${[
+				'6x6;010011',
+				'001101',
+				'110010',
+				'101100',
+				'010101',
+				'101010'
+			].join('')}`;
+			expect(result).toEqual({
+				method: 'constraints',
+				status: 'solved',
+				duration: expect.any(Number),
+				solutions: [expectedSolution]
+			})
+			const solutions = (result as SolverResultSolved).solutions;
+			expect(solutions).toHaveLength(1);
+		})
+
+		it('cannot solve a puzzle with line balance if it requires triples', () => {
+			const boardRequiresTriples = SimpleBoard.fromArrayOfLines([
+				'0.11.1',
+				'0....1',
+				'..11..',
+				'11..10',
+				'.1.1..',
+				'1..0.0'
+			]);
+			const boardExport = boardRequiresTriples.export();
+
+			const solverTriplesOnly = createSolver([applyTriplesConstraint]);
+			const solverBalanceOnly = createSolver([applyLineBalanceConstraint]);
+
+			// can be solved with triples, and with both
+			const resultTriplesOnly = solverTriplesOnly.solve(boardRequiresTriples) as SolverResultSolved;
+			expect(resultTriplesOnly).toEqual({
+				method: 'constraints',
+				status: 'solved',
+				duration: expect.any(Number),
+				solutions: expect.any(Array)
+			})
+			expect(resultTriplesOnly.solutions).toHaveLength(1);
+
+			// cannot be solved with balance
+			const resultBalanceOnly = solverBalanceOnly.solve(boardRequiresTriples) as SolverResultUnsolvablePartial;
+			expect(resultBalanceOnly).toEqual({
+				method: 'constraints',
+				status: 'unsolvable',
+				duration: expect.any(Number),
+				exhaustive: false,
+				partialSolution: expect.any(String),
+			})
+			expect(resultBalanceOnly.partialSolution).toMatchInlineSnapshot(`"6x6;0011010..0.1..11..110010.1.1..1..0.0"`);
+			// The partial solution is not the same as the boardExport => some parts could be solved
+			expect(resultBalanceOnly.partialSolution).not.toBe(boardExport);
+		})
+	})
+
+	describe('unsolvable_invalid results', () => {
+		it('should return an unsolvable_invalid result when the input board is invalid initially', () => {
+			const board = SimpleBoard.fromArrayOfLines([
+				'...1',
+				'...1',
+				'...1',
+				'....'
+			]);
+			const solver = LogicSolver.create({
+				constraints: 'default',
+			}, {
+				maxSolutions: Infinity,
+			}, {});
+			const result = solver.solve(board);
+			expect(result).toEqual({
+				method: 'initial',
+				status: 'unsolvable_invalid',
+				duration: expect.any(Number),
+				errMessage: 'Invalid input board',
+			})
+		})
+
+		it('should return an unsolvable_invalid result when the input board is found to be invalid during constraints solving', () => {
+			const board = SimpleBoard.fromArrayOfLines([
+				'...1',
+				'...1',
+				'0...',
+				'0...'
+			]); // first column and last column would be the same after solving
+			const solver = LogicSolver.create({
+				constraints: 'default',
+			}, {
+				maxSolutions: Infinity,
+			}, {});
+			const result = solver.solve(board);
+			expect(result).toEqual({
+				method: 'constraints',
+				status: 'unsolvable_invalid',
+				duration: expect.any(Number),
+				errMessage: 'Invalid board after constraints application',
+			})
 		})
 	})
 })
