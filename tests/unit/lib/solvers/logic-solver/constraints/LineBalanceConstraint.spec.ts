@@ -1,6 +1,6 @@
 import { BoardLine } from "@/lib/board/BoardLine.js";
 import { SimpleBoard } from "@/lib/board/Board.js";
-import { applyLineBalanceConstraint } from "@/lib/solvers/constraint-solver/constraints/LineBalanceConstraint.js";
+import { applyLineBalanceConstraint } from "@/lib/solvers/logic-solver/constraints/LineBalanceConstraint.js";
 import * as lineBalStratModule from '@/lib/solvers/common/LineBalanceStrategy.js';
 import { ONE, ZERO } from "@/lib/constants.js";
 import { splitLine } from "@/lib/utils/puzzle-line.utils.js";
