@@ -23,16 +23,14 @@ type DFSStatus = {
 export type DFSResult = Extract<DFSStatus, { status: 'error' }> | (Extract<DFSStatus, { status: 'done' }> & { solutionsFound: number });
 
 export interface DFSSelectionStrategiesConfig {
-	selectCell: SolverSelectCellFn | SelectCellStrategyName,
-	selectValue: SolverSelectValueFn | SelectValueStrategyName,
+	selectCell?: SolverSelectCellFn | SelectCellStrategyName,
+	selectValue?: SolverSelectValueFn | SelectValueStrategyName,
 }
 export interface DFSRunCallbacks {
 	onSolutionFound: (solution: SimpleBoard) => void,
 }
-export interface DFSHandlerConfig {
+export interface DFSHandlerConfig extends DFSSelectionStrategiesConfig {
 	timeout?: TimeoutChecker | number | null,
-	selectCell: SolverSelectCellFn | SelectCellStrategyName,
-	selectValue: SolverSelectValueFn | SelectValueStrategyName,
 	maxSolutions?: number,
 }
 
@@ -55,7 +53,10 @@ export class DFSHandler {
 	constructor(
 		constraintsHandler: ConstraintsHandler,
 		timeout: TimeoutChecker | number | null,
-		{ selectCell, selectValue }: DFSSelectionStrategiesConfig,
+		{
+			selectCell = 'firstEmpty',
+			selectValue = 'leastConstraining',
+		}: DFSSelectionStrategiesConfig,
 		maxSolutions: number = Infinity
 	) {
 		this.constraintsHandler = constraintsHandler;
@@ -68,8 +69,8 @@ export class DFSHandler {
 	static fromConfig(config: DFSHandlerConfig, constraintsHandler: ConstraintsHandler): DFSHandler {
 		const {
 			timeout = null,
-			selectCell,
-			selectValue,
+			selectCell = 'firstEmpty',
+			selectValue = 'leastConstraining',
 			maxSolutions = Infinity
 		} = config;
 		const selectStrategies = {
@@ -104,7 +105,7 @@ export class DFSHandler {
 
 		try {
             this.dfs(board, { onSolutionFound });
-			this.setDoneState('finished');
+			this.setDoneStateIfRunning('finished');
         } catch (error) {
 			this.setErrorState(typeof error === 'string' ? error : error instanceof Error ? error.message : 'Unknown error occurred during DFS')
         }
@@ -206,9 +207,17 @@ export class DFSHandler {
 		}
 	}
 	private setDoneState(reason: DFSDoneReason): void {
+		if (this.state.status !== 'running') {
+			throw new Error(`Cannot set done state in DFSHandler, because it is not running (current status is "${this.state.status}")`);
+		}
 		this.state = {
 			status: 'done',
 			reason
+		}
+	}
+	private setDoneStateIfRunning(reason: DFSDoneReason): void {
+		if (this.state.status === 'running') {
+			this.setDoneState(reason);
 		}
 	}
 	private setRunningState(): void {
