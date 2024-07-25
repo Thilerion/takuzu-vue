@@ -1,10 +1,17 @@
+import type { SimpleBoard } from "@/lib/board/Board.js";
 import * as selectCell from "./select-cell.js";
 import * as selectValue from "./select-value.js";
 
 export const selectCellStrategies = {
 	"random": selectCell.randomCell,
 	"firstEmpty": selectCell.firstEmptyCell,
-	"fewestEmptyPeers": selectCell.fewestEmptyPeersCell,
+	"fewestEmptyPeers": (board: SimpleBoard) => {
+		return selectCell.createFewestEmptyPeersCellSelectStrategy(
+			board,
+			undefined,
+			selectCell.firstEmptyCell
+		)
+	},
 } as const;
 
 export type SelectCellStrategyName = keyof typeof selectCellStrategies;
