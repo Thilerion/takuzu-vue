@@ -157,11 +157,11 @@ export class DFSHandler {
 		x: number,
 		y: number,
 		value: PuzzleSymbol,
-		{ onSolutionFound }: Pick<DFSRunCallbacks, 'onSolutionFound'>
+		cbs: Pick<DFSRunCallbacks, 'onSolutionFound'>
 	): void {
 		const nextBoard = this.getNextState(board, x, y, value);
         if (nextBoard) {
-            this.dfs(nextBoard, { onSolutionFound });
+            this.dfs(nextBoard, cbs);
         }
 	}
 
@@ -232,22 +232,15 @@ export class DFSHandler {
 	}
 
 	/**
-     * Gets the current status of the board (memoized).
+     * Gets the current status of the board.
      * @param board The board to check.
      * @returns 'solved' if the board is solved, 'invalid' if it's in an invalid state, or 'unsolved' otherwise.
      */
 	private getBoardStatus(board: SimpleBoard): BoardStatus {
-		// TODO: check if this lastStatusResult check is faster than simply running the checkStatus functions
-		const boardExport = board.export();
-		if (this.lastStatusResult?.board === boardExport) {
-			return this.lastStatusResult.result;
-		}
 		const isValid = board.isValid();
 		const isSolved = isValid && board.isFilled();
 		
 		const status = !isValid ? 'invalid' : isSolved ? 'solved' : 'unsolved';
-		this.lastStatusResult = { board: boardExport, result: status };
-
 		return status;
 	}
 
