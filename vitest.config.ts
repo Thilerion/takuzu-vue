@@ -20,6 +20,12 @@ export default defineConfig(configEnv => mergeConfig(
           ...(configDefaults.coverage.exclude ?? []),
           "**/types.ts"
         ]
+      },
+      fakeTimers: {
+        toFake: [
+          ...configDefaults.fakeTimers.toFake,
+          'performance'
+        ]
       }
     }
   })
