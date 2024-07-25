@@ -25,6 +25,10 @@ export class ConstraintsHandler {
         this.constraints = constraints;
     }
 
+	get isEnabled() {
+		return this.constraints.length > 0;
+	}
+
 	static getDefaultConstraints(): ConstraintSolverConstraintsCollection {
 		return getDefaultConstraintFns();
 	}
@@ -38,8 +42,11 @@ export class ConstraintsHandler {
 		}
 	}
 
-	private applyFirstConstraintFn(board: SimpleBoard): ConstraintResult {
-		for (const applyConstraint of this.constraints) {
+	applyConstraintsUntilChangesOrError(
+		board: SimpleBoard,
+		constraints: ConstraintSolverConstraintsCollection = this.constraints
+	): ConstraintResult {
+		for (const applyConstraint of constraints) {
 			const result = applyConstraint(board);
 			if (result.changed) {
 				return result;
@@ -56,18 +63,20 @@ export class ConstraintsHandler {
      * @returns A ConstraintResult indicating whether changes were made and if any errors occurred.
      */
     applyConstraints(board: SimpleBoard): ConstraintResult {
-		let result = this.applyFirstConstraintFn(board);
-		let hasChanged = result.changed;
+		if (!this.isEnabled) return { changed: false };
 		
-		while (result.changed) {
-			result = this.applyFirstConstraintFn(board);
-			hasChanged = hasChanged || result.changed;
+		let lastResult = this.applyConstraintsUntilChangesOrError(board);
+		let hasChanged = lastResult.changed;
+		
+		while (lastResult.changed) {
+			lastResult = this.applyConstraintsUntilChangesOrError(board);
+			hasChanged = hasChanged || lastResult.changed;
 		}
 
-		if (hasChanged && result.error == null) {
+		if (hasChanged && lastResult.error == null) {
 			// If any application of the constraints has changed the board, and there is no error, we can return { changed: true }
 			return { changed: true };
 		}
-		return result;
+		return lastResult;
     }
 }
