@@ -1,7 +1,6 @@
 import { EMPTY } from "@/lib/constants.js";
 import type { LineId, Vec } from "@/lib/types.js";
 import type { SolverSelectCellFn } from "../types.js";
-import type { SimpleBoard } from "@/lib/board/Board.js";
 import { countLineValues } from "@/lib/utils/puzzle-line.utils.js";
 
 export const firstEmptyCell: SolverSelectCellFn = (board) => {
@@ -24,7 +23,7 @@ export const fewestEmptyPeersCell: SolverSelectCellFn = (board) => {
 	}
 
 	let minVal = Infinity;
-	let bestCell = null;
+	let bestCell: Vec | null = null;
 
 	const lineCounts = board.lineIds.reduce((acc, lineId) => {
 		const line = board.getLine(lineId);
@@ -51,12 +50,13 @@ export const fewestEmptyPeersCell: SolverSelectCellFn = (board) => {
 	return bestCell;
 }
 
-export const randomCell = (board: SimpleBoard): Vec => {
+export const randomCell: SolverSelectCellFn = (board) => {
 	const emptyCells = board.cells({ skipFilled: true, shuffled: true });
 	const nextVal = emptyCells.next().value;
 	if (nextVal) {
 		const { x, y } = nextVal;
 		return { x, y };
+	} else {
+		return null;
 	}
-	throw new Error('No next value found.');
 }
