@@ -1,11 +1,11 @@
 import type { SimpleBoard } from "@/lib/board/Board.js";
-import type { ConstraintsHandler } from "./ConstraintsHandler.js";
 import { createTimeoutChecker, type TimeoutChecker } from "./timeout-check.js";
 import type { SolverSelectCellFn, SolverSelectValueFn } from "../types.js";
 import { getOppositeSymbol } from "@/lib/utils/puzzle-value.utils.js";
 import type { PuzzleSymbol } from "@/lib/constants.js";
 import type { BoardExportString } from "@/lib/types.js";
 import { selectCellStrategies, selectValueStrategies, type SelectCellStrategyName, type SelectValueStrategyName } from "../selection/index.js";
+import type { ConstraintResult } from "../constraints/types.js";
 
 type BoardStatus = 'solved' | 'invalid' | 'unsolved';
 
@@ -34,8 +34,12 @@ export interface DFSHandlerConfig extends DFSSelectionStrategiesConfig {
 	maxSolutions?: number,
 }
 
+export type IDfsConstraintHandler = {
+	applyConstraints: (board: SimpleBoard) => ConstraintResult,
+}
+
 export class DFSHandler {
-	private constraintsHandler: ConstraintsHandler;
+	private constraintsHandler: IDfsConstraintHandler;
 	readonly timeoutChecker: TimeoutChecker | null;
 	private selectCell: SolverSelectCellFn;
 	private selectValue: SolverSelectValueFn;
@@ -51,7 +55,7 @@ export class DFSHandler {
 	} | null = null;
 
 	constructor(
-		constraintsHandler: ConstraintsHandler,
+		constraintsHandler: IDfsConstraintHandler,
 		timeout: TimeoutChecker | number | null,
 		{
 			selectCell = 'firstEmpty',
@@ -66,7 +70,7 @@ export class DFSHandler {
 		this.maxSolutions = maxSolutions;
 	}
 
-	static fromConfig(config: DFSHandlerConfig, constraintsHandler: ConstraintsHandler): DFSHandler {
+	static fromConfig(config: DFSHandlerConfig, constraintsHandler: IDfsConstraintHandler): DFSHandler {
 		const {
 			timeout = null,
 			selectCell = 'firstEmpty',
@@ -102,6 +106,7 @@ export class DFSHandler {
 
 		this.setRunningState();
 		this.solutionsFound = 0;
+		if (this.timeoutChecker) this.timeoutChecker.reset();
 
 		try {
             this.dfs(board, { onSolutionFound });
